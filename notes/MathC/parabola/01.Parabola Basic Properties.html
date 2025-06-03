@@ -1,0 +1,225 @@
+<!-- tags: Parabola -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parabola: Basic Properties</title>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f8faf4;
+            color: #263238;
+        }
+        .container {
+            max-width: 950px;
+            margin: 40px auto;
+            padding: 32px 18px;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .title {
+            font-size: 2em;
+            font-weight: bold;
+            color: #b71c1c;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .operation-block {
+            background-color: #eef2f3;
+            border-left: 5px solid #1e88e5;
+            padding: 15px 20px;
+            margin-top: 20px;
+            border-radius: 4px;
+            font-size: 1.1em;
+            line-height: 1.8;
+            max-width: 850px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .formula {
+            color: #e65100;
+            font-size: 1.18em;
+        }
+        .parabola-img {
+            display: block;
+            margin: 18px auto 0 auto;
+            max-width: 260px;
+            width: 100%;
+        }
+        .hint-block {
+            background-color: #fff9c4;
+            border-left: 5px solid #f57f17;
+            padding: 15px 20px;
+            margin-top: 20px;
+            border-radius: 4px;
+            font-size: 0.95em;
+            max-width: 850px;
+            width: 100%;
+            box-sizing: border-box;
+            line-height: 1.6;
+        }
+        .highlight {
+            color: #e65100;
+            font-weight: bold;
+        }
+        @media (max-width: 700px) {
+            .container {
+                padding: 20px 15px;
+                margin: 20px auto;
+            }
+            .title {
+                font-size: 1.6em;
+            }
+            .operation-block {
+                font-size: 1em;
+            }
+            .hint-block {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">1. Parabola</div>
+        <div class="operation-block">
+            <div class="formula">
+                Parabola: \( y^2 = 4px \quad (p \neq 0) \)
+            </div>
+            <ul style="margin-top:1.2em; font-size:1.08em;">
+                <li>Vertex: <span class="highlight">Origin O</span></li>
+                <li>Focus: <span class="highlight">Point \( (p,\,0) \)</span></li>
+                <li>Directrix: <span class="highlight">Line \( x = -p \)</span></li>
+                <li>Axis: \( x \)-axis, symmetric with respect to the \( x \)-axis</li>
+            </ul>
+            <canvas id="parabola-canvas" class="parabola-img" width="260" height="180" aria-label="Parabola diagram"></canvas>
+        </div>
+        <div class="hint-block">
+            For any point on the parabola, the distance to the focus equals the distance to the directrix.
+        </div>
+    </div>
+    <script>
+        // Draw the parabola diagram
+        (function() {
+            const canvas = document.getElementById('parabola-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width, h = canvas.height;
+            // Parameters
+            const p = 40; // focus parameter in pixels
+            const ox = 40, oy = h / 2; // origin
+
+            // Draw axes
+            ctx.strokeStyle = "#888";
+            ctx.lineWidth = 1.2;
+            ctx.beginPath();
+            ctx.moveTo(ox, oy);
+            ctx.lineTo(w - 10, oy); // x-axis
+            ctx.moveTo(ox, h - 10);
+            ctx.lineTo(ox, 10); // y-axis
+            ctx.stroke();
+
+            // Axis labels
+            ctx.font = "bold 13px Segoe UI, Arial";
+            ctx.fillStyle = "#607d8b";
+            ctx.fillText("x", w - 18, oy + 16);
+            ctx.fillText("y", ox - 18, 18);
+
+            // Draw parabola
+            ctx.strokeStyle = "#29b6f6";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            for (let t = -60; t <= 100; t += 1) {
+                const x = ox + t;
+                const y = oy + Math.sqrt(4 * p * t);
+                if (t === -60) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            for (let t = 100; t >= -60; t -= 1) {
+                const x = ox + t;
+                const y = oy - Math.sqrt(4 * p * t);
+                ctx.lineTo(x, y);
+            }
+            ctx.closePath();
+            ctx.stroke();
+
+            // Focus
+            ctx.beginPath();
+            ctx.arc(ox + p, oy, 4, 0, 2 * Math.PI);
+            ctx.fillStyle = "#e65100";
+            ctx.fill();
+            ctx.font = "bold 13px Segoe UI, Arial";
+            ctx.fillText("p", ox + p - 2, oy + 18);
+
+            // Directrix
+            ctx.strokeStyle = "#e65100";
+            ctx.setLineDash([5, 4]);
+            ctx.beginPath();
+            ctx.moveTo(ox - p, 10);
+            ctx.lineTo(ox - p, h - 10);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.font = "bold 13px Segoe UI, Arial";
+            ctx.fillText("-p", ox - p - 16, oy + 18);
+
+            // Vertex
+            ctx.beginPath();
+            ctx.arc(ox, oy, 4, 0, 2 * Math.PI);
+            ctx.fillStyle = "#e65100";
+            ctx.fill();
+            ctx.font = "bold 13px Segoe UI, Arial";
+            ctx.fillText("O", ox - 18, oy + 18);
+
+            // Example point on parabola
+            const t0 = 60;
+            const px = ox + t0;
+            const py = oy + Math.sqrt(4 * p * t0);
+            ctx.beginPath();
+            ctx.arc(px, py, 3, 0, 2 * Math.PI);
+            ctx.fillStyle = "#263238";
+            ctx.fill();
+
+            // Distance to focus
+            ctx.strokeStyle = "#757575";
+            ctx.setLineDash([2, 2]);
+            ctx.beginPath();
+            ctx.moveTo(px, py);
+            ctx.lineTo(ox + p, oy);
+            ctx.stroke();
+
+            // Distance to directrix
+            ctx.beginPath();
+            ctx.moveTo(px, py);
+            ctx.lineTo(ox - p, py);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Labels
+            ctx.font = "13px Segoe UI, Arial";
+            ctx.fillStyle = "#263238";
+            ctx.fillText("Focus", ox + p + 10, oy - 10);
+            ctx.fillText("Directrix", ox - p - 32, 24);
+        })();
+
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "\\(", right: "\\)", display: false},
+                    {left: "\\[", right: "\\]", display: true}
+                ],
+                throwOnError: false
+            });
+        });
+    </script>
+</body>
+</html>

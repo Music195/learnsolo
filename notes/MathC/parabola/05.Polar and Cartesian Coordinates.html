@@ -1,0 +1,223 @@
+<!-- tags: Polar Coordinates, Cartesian Coordinates, Geometry -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polar and Cartesian Coordinates</title>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f8faf4;
+            color: #263238;
+        }
+        .container {
+            max-width: 950px;
+            margin: 40px auto;
+            padding: 32px 18px;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .title {
+            font-size: 2em;
+            font-weight: bold;
+            color: #b71c1c;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .operation-block {
+            background-color: #eef2f3;
+            border-left: 5px solid #1e88e5;
+            padding: 15px 20px;
+            margin-top: 20px;
+            border-radius: 4px;
+            font-size: 1.1em;
+            line-height: 1.8;
+            max-width: 850px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .formula {
+            color: #e65100;
+            font-size: 1.18em;
+        }
+        .polar-img {
+            display: block;
+            margin: 18px auto 0 auto;
+            max-width: 300px;
+            width: 100%;
+        }
+        .hint-block {
+            background-color: #fff9c4;
+            border-left: 5px solid #f57f17;
+            padding: 15px 20px;
+            margin-top: 20px;
+            border-radius: 4px;
+            font-size: 0.95em;
+            max-width: 850px;
+            width: 100%;
+            box-sizing: border-box;
+            line-height: 1.6;
+        }
+        .highlight {
+            color: #e65100;
+            font-weight: bold;
+        }
+        @media (max-width: 700px) {
+            .container {
+                padding: 20px 15px;
+                margin: 20px auto;
+            }
+            .title {
+                font-size: 1.6em;
+            }
+            .operation-block {
+                font-size: 1em;
+            }
+            .hint-block {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">5. Polar and Cartesian Coordinates</div>
+        <div class="operation-block">
+            <p>
+                Let the Cartesian coordinates of point \( P \) be \( (x, y) \), and the polar coordinates be \( (r, \theta) \).
+            </p>
+            <ol style="margin-left:1.2em; font-size:1.08em;">
+                <li>
+                    \( x = r \cos \theta,\quad y = r \sin \theta \)
+                </li>
+                <li>
+                    \( r = \sqrt{x^2 + y^2} \)
+                    <br>
+                    \( \cos \theta = \dfrac{x}{r},\quad \sin \theta = \dfrac{y}{r} \quad (r \neq 0) \)
+                </li>
+            </ol>
+            <canvas id="polar-canvas" class="polar-img" width="300" height="200" aria-label="Polar and Cartesian coordinates diagram"></canvas>
+        </div>
+        <div class="hint-block">
+            When considering polar coordinates in the coordinate plane, the origin \( O \) is usually taken as the <b>pole</b>, and the positive \( x \)-axis as the <b>initial line</b>.
+        </div>
+    </div>
+    <script>
+        // Draw the polar/cartesian diagram
+        (function() {
+            const canvas = document.getElementById('polar-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width, h = canvas.height;
+            // Origin
+            const ox = 60, oy = h - 40;
+            // Point P
+            const r = 110, theta = Math.PI / 5;
+            const px = ox + r * Math.cos(theta);
+            const py = oy - r * Math.sin(theta);
+
+            // Axes
+            ctx.strokeStyle = "#888";
+            ctx.lineWidth = 1.2;
+            ctx.beginPath();
+            ctx.moveTo(ox, oy);
+            ctx.lineTo(w - 10, oy); // x-axis
+            ctx.moveTo(ox, oy);
+            ctx.lineTo(ox, 20); // y-axis
+            ctx.stroke();
+
+            // Axis labels
+            ctx.font = "bold 13px Segoe UI, Arial";
+            ctx.fillStyle = "#607d8b";
+            ctx.fillText("x", w - 18, oy + 16);
+            ctx.fillText("y", ox - 18, 28);
+
+            // Point P (x, y)
+            ctx.beginPath();
+            ctx.arc(px, py, 4, 0, 2 * Math.PI);
+            ctx.fillStyle = "#1976d2";
+            ctx.fill();
+            ctx.font = "bold 14px Segoe UI, Arial";
+            ctx.fillText("P(x, y)", px + 10, py + 8);
+
+            // Point P (r, θ)
+            ctx.beginPath();
+            ctx.arc(px, py, 4, 0, 2 * Math.PI);
+            ctx.strokeStyle = "#039be5";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.font = "bold 14px Segoe UI, Arial";
+            ctx.fillStyle = "#039be5";
+            ctx.fillText("P(r, θ)", px + 10, py - 16);
+
+            // Draw r
+            ctx.strokeStyle = "#e65100";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(ox, oy);
+            ctx.lineTo(px, py);
+            ctx.stroke();
+
+            // Draw θ arc
+            ctx.beginPath();
+            ctx.arc(ox, oy, 28, -theta, 0, false);
+            ctx.strokeStyle = "#e65100";
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([4, 3]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // θ label
+            ctx.font = "15px Segoe UI, Arial";
+            ctx.fillStyle = "#e65100";
+            ctx.fillText("θ", ox + 18, oy - 8);
+
+            // r label
+            ctx.font = "15px Segoe UI, Arial";
+            ctx.fillStyle = "#e65100";
+            ctx.fillText("r", ox + (px - ox) / 2 + 6, oy + (py - oy) / 2 - 6);
+
+            // Dashed lines for projection
+            ctx.strokeStyle = "#1976d2";
+            ctx.setLineDash([4, 3]);
+            ctx.beginPath();
+            ctx.moveTo(px, py);
+            ctx.lineTo(px, oy);
+            ctx.moveTo(px, py);
+            ctx.lineTo(ox, py);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Dotted lines for right triangle
+            ctx.strokeStyle = "#bbb";
+            ctx.setLineDash([2, 2]);
+            ctx.beginPath();
+            ctx.moveTo(ox, oy);
+            ctx.lineTo(px, oy);
+            ctx.lineTo(px, py);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        })();
+
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "\\(", right: "\\)", display: false},
+                    {left: "\\[", right: "\\]", display: true}
+                ],
+                throwOnError: false
+            });
+        });
+    </script>
+</body>
+</html>
