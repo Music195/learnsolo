@@ -2,32 +2,69 @@ document.addEventListener("DOMContentLoaded", () => {
     const searchInput = document.getElementById("search");
     const resultsBox = document.getElementById("search-results");
     const noteSelect = document.getElementById("noteSelect");
-    const tagFilter = document.getElementById("tagFilter");
+    // const tagFilter = document.getElementById("tagFilter"); // Uncomment if using tags
 
-    // Populate tag dropdown
-    const tagsSet = new Set();
-    Object.values(NOTE_TAGS).forEach(tags => tags.forEach(tag => tagsSet.add(tag)));
-    Array.from(tagsSet).sort().forEach(tag => {
-        const opt = document.createElement("option");
-        opt.value = tag;
-        opt.textContent = tag;
-        tagFilter.appendChild(opt);
-    });
+    function updateSubfolderOptions() {
+        const folder = document.getElementById('folderFilter').value;
+        const subfolderFilter = document.getElementById('subfolderFilter');
+        // Save previous selection
+        const prev = subfolderFilter.value;
 
-    // Filter notes by tag
-    window.filterByTag = () => {
-        const selectedTag = tagFilter.value;
-        noteSelect.innerHTML = "";
+        // Find subfolders for the selected folder
+        let subfolders = new Set();
         NOTES_LIST.forEach(note => {
-            const tags = NOTE_TAGS[note] || [];
-            if (!selectedTag || tags.includes(selectedTag)) {
-                const opt = document.createElement("option");
-                opt.value = "/note/" + note;
-                opt.textContent = note.charAt(0).toUpperCase() + note.slice(1);
-                noteSelect.appendChild(opt);
+            const parts = note.split('/');
+            if (parts.length > 1 && (!folder || parts[0] === folder)) {
+                subfolders.add(parts[1]);
             }
         });
-    };
+
+        // Clear and repopulate options
+        subfolderFilter.innerHTML = '<option value="">Filter by Titles</option>';
+        let found = false;
+        Array.from(subfolders).sort().forEach(sub => {
+            const opt = document.createElement("option");
+            opt.value = sub;
+            opt.textContent = sub;
+            if (sub === prev) found = true;
+            subfolderFilter.appendChild(opt);
+        });
+        // Restore previous selection if still available
+        if (found) subfolderFilter.value = prev;
+        else subfolderFilter.value = "";
+    }
+
+    function filterNotes() {
+        const folder = document.getElementById('folderFilter').value;
+        const subfolder = document.getElementById('subfolderFilter').value;
+        noteSelect.innerHTML = "";
+
+        let filtered = NOTES_LIST;
+        if (folder) {
+            filtered = filtered.filter(n => n.startsWith(folder + '/'));
+        }
+        if (subfolder) {
+            filtered = filtered.filter(n => n.split('/')[1] === subfolder);
+        }
+
+        filtered.forEach(n => {
+            const opt = document.createElement("option");
+            opt.value = "/note/" + n;
+            opt.textContent = n.split('/').pop(); // Show only filename
+            noteSelect.appendChild(opt);
+        });
+    }
+
+    // Initialize dropdowns on page load
+    updateSubfolderOptions();
+    filterNotes();
+
+    // Link dropdowns
+    document.getElementById('folderFilter').addEventListener('change', () => {
+        updateSubfolderOptions();
+        filterNotes();
+    });
+    document.getElementById('subfolderFilter').addEventListener('change', filterNotes);
 
     // Fuzzy search with Fuse.js
     const fuse = new Fuse(NOTES_LIST, { includeScore: true, threshold: 0.4 });
@@ -40,9 +77,23 @@ document.addEventListener("DOMContentLoaded", () => {
         results.forEach(result => {
             const a = document.createElement("a");
             a.href = "/note/" + result.item;
-            a.textContent = result.item;
+            let filename = result.item.split('/').pop();
+            if (filename.endsWith('.html')) {
+                filename = filename.slice(0, -5);
+            }
+            a.textContent = filename;
             resultsBox.appendChild(a);
         });
+
+        searchInput.addEventListener("blur", () => {
+            setTimeout(() => { resultsBox.style.display = "none"; }, 200);
+        });
+        // Show or hide the box based on results
+        if (results.length > 0) {
+            resultsBox.style.display = "block";
+        } else {
+            resultsBox.style.display = "none";
+        }
     });
 
     // Arrow key navigation

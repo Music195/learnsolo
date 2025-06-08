@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ note_path }} - Math Notes</title>
+    <script>
+        const NOTES_LIST = {{ notes_json|safe }};
+        // const NOTE_TAGS = {{ tags_json|safe }};
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+    <script src="/static/script.js" defer></script>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script type="text/javascript" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+</head>
+<body style="border: 1px solid #ccc; padding: 1em; margin: 0 auto">
+    <div style="position: relative; margin-bottom: 1em;">
+        <input type="text" id="search" placeholder="Search notes...">
+        <div id="search-results"></div>
+    </div>
+    <nav>
+        <!-- <div class="nav-buttons">
+            {% if prev_note %}<a href="/note/{{ prev_note }}">&#8592;</a>{% endif %}
+            {% if next_note %}<a href="/note/{{ next_note }}">&#8594;</a>{% endif %}
+        </div> -->
+        
+        <div id="upNav">
+            <!-- <select id="tagFilter" onchange="filterByTag()">
+                <option value="">Filter by Tag</option>
+                        </select> -->
+            <select id="folderFilter">
+                <option value="">Filter by Courses</option>
+                {% for folder in folders %}
+                    <option value="{{ folder }}">{{ folder }}</option>
+                {% endfor %}
+            </select>
+            <select id="subfolderFilter">
+                <option value="">Filter by Titles</option>
+                <!-- JS will populate -->
+            </select>
+        </div>
+        <div id="downNav">
+            <select id="noteSelect" onchange="location = this.value;">
+                <!-- JS will populate -->
+            </select>
+        </div>
+    </nav>
+    <div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin: 0 0;">
+            {% if prev_note %}
+                <a href="/note/{{ prev_note }}" style="font-size: 2em; text-decoration: none;">&#9664;</a>
+            {% else %}
+                <span></span>
+            {% endif %}
+            <div class="note-content" style="padding: 1em; margin: auto 0 auto 0">{{ content|safe }}</div>
+            {% if next_note %}
+                <a href="/note/{{ next_note }}" style="font-size: 2em; text-decoration: none;">&#9654;</a>
+            {% else %}
+                <span></span>
+            {% endif %}
+        </div>
+    </div>
+    
+    
+</body>
+</html>

@@ -1,4 +1,4 @@
-from flask import Flask, render_template_string, redirect, url_for
+from flask import Flask, render_template, redirect, url_for
 import os
 import json
 
@@ -29,8 +29,20 @@ except FileNotFoundError:
 def index():
     return redirect(url_for("view_note", note_path=notes_list[0]))
 
+def get_folders_and_subfolders(notes_list):
+    folders = set()
+    subfolders = set()
+    for note in notes_list:
+        parts = note.split('/')
+        if len(parts) > 0:
+            folders.add(parts[0])
+        if len(parts) > 1:
+            subfolders.add(parts[1])
+    return sorted(folders), sorted(subfolders)
+
 @app.route("/note/<path:note_path>")
 def view_note(note_path):
+    folders, subfolders = get_folders_and_subfolders(notes_list)
     if note_path not in notes_list:
         return "<h1>Note not found</h1>", 404
 
@@ -48,65 +60,19 @@ def view_note(note_path):
 
     # ...existing code...
     notes_json = json.dumps(notes_list)
-    tags_json = json.dumps(note_tags)
-
-    return render_template_string("""
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>{{ note_path }} - Math Notes</title>
-            <script>
-                const NOTES_LIST = {{ notes_json|safe }};
-                const NOTE_TAGS = {{ tags_json|safe }};
-            </script>
-            <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
-            <script src="/static/script.js" defer></script>
-            <style>
-                body {
-                    font-family: sans-serif;
-                    padding: 2em;
-                    max-width: 800px;
-                    margin: auto;
-                }
-                nav {
-                    margin-bottom: 1em;
-                }
-                .nav-buttons a {
-                    margin-right: 1em;
-                }
-                #search-results a {
-                    display: block;
-                    margin-bottom: 5px;
-                }
-            </style>
-            <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-            <script type="text/javascript" async
-            src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
-            </script>
-        </head>
-        <body style="border: 1px solid #ccc; padding: 1em; margin: 0 auto">
-            <nav>
-                <div class="nav-buttons">
-                    {% if prev_note %}<a href="/note/{{ prev_note }}">⬅ Back</a>{% endif %}
-                    {% if next_note %}<a href="/note/{{ next_note }}">Next ➡</a>{% endif %}
-                </div>
-                <div>
-                    <input type="text" id="search" placeholder="Search notes...">
-                    <select id="tagFilter" onchange="filterByTag()">
-                        <option value="">Filter by Tag</option>
-                    </select>
-                    <select id="noteSelect" onchange="location = this.value;">
-                        {% for n in notes_list %}
-                            <option value="/note/{{ n }}" {% if n == note_path %}selected{% endif %}>{{ n }}</option>
-                        {% endfor %}
-                    </select>
-                    <div id="search-results"></div>
-                </div>
-            </nav>
-            <div style="padding: 1em; margin: auto 10% auto 10%">{{ content|safe }}</div>
-        </body>
-        </html>
-        """, note_path=note_path, notes_list=notes_list, prev_note=prev_note, next_note=next_note, content=content, notes_json=notes_json, tags_json=tags_json)
+    # tags_json = json.dumps(note_tags)
+    return render_template(
+        "note.html",
+        note_path=note_path,
+        notes_list=notes_list, 
+        prev_note=prev_note, 
+        next_note=next_note, 
+        content=content,
+        notes_json=notes_json,
+        folders=folders,
+        subfolders=subfolders 
+    )
+        # tags_json=tags_json)
 # ...existing code...
 
 if __name__ == "__main__":
