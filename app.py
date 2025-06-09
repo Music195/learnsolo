@@ -19,15 +19,17 @@ def get_all_notes():
 notes_list = get_all_notes()
 
 # Load tags from tags.json
-try:
-    with open("tags.json", encoding="utf-8") as f:
-        note_tags = json.load(f)
-except FileNotFoundError:
-    note_tags = {}
+# try:
+#     with open("tags.json", encoding="utf-8") as f:
+#         note_tags = json.load(f)
+# except FileNotFoundError:
+#     note_tags = {}
 
 @app.route("/")
 def index():
-    return redirect(url_for("view_note", note_path=notes_list[0]))
+    if notes_list:
+        return redirect(url_for("view_note", note_path=notes_list[0]))
+    return "<h1>No notes available</h1>", 404
 
 def get_folders_and_subfolders(notes_list):
     folders = set()
