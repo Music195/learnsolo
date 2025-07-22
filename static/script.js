@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById('subfolderFilter').addEventListener('change', filterNotes);
 
     // Fuzzy search with Fuse.js
-    const fuse = new Fuse(NOTES_LIST, { includeScore: true, threshold: 0.4 });
+    const fuse = new fuse(NOTES_LIST, { includeScore: true, threshold: 0.4 });
 
     searchInput.addEventListener("input", () => {
         const query = searchInput.value.trim();

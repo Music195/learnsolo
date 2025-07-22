@@ -104,29 +104,8 @@
                 </span>
             </span>
         </div>
-        <div class="svg-graph">
-            <!-- SVG: Curve, tangent, axes, and point -->
-            <svg width="340" height="220" viewBox="0 0 340 220">
-                <!-- Axes -->
-                <line x1="40" y1="180" x2="320" y2="180" stroke="#222" stroke-width="2"/>
-                <line x1="60" y1="200" x2="60" y2="30" stroke="#222" stroke-width="2"/>
-                <!-- Curve y=f(x) -->
-                <path d="M60,180 Q120,120 180,110 Q240,100 320,40" fill="none" stroke="#1976d2" stroke-width="3"/>
-                <!-- Tangent line at (a, f(a)) -->
-                <line x1="20" y1="150" x2="320" y2="70" stroke="#ff6600" stroke-width="2.5"/>
-                <!-- Point (a, f(a)) -->
-                <circle cx="140" cy="140" r="5" fill="#fff" stroke="#1976d2" stroke-width="2"/>
-                <!-- Dashed vertical from x axis to (a, f(a)) -->
-                <line x1="140" y1="180" x2="140" y2="140" stroke="#888" stroke-dasharray="5,5"/>
-                <!-- Labels -->
-                <text x="320" y="195" font-size="16" fill="#222">x</text>
-                <text x="45" y="35" font-size="16" fill="#222">y</text>
-                <text x="150" y="135" font-size="16" fill="#1976d2">A</text>
-                <text x="130" y="200" font-size="15" fill="#222">a</text>
-                <text x="150" y="155" font-size="15" fill="#1976d2">\( (a,\,f(a)) \)</text>
-                <text x="250" y="60" font-size="15" fill="#ff6600" style="background:#fff;">Tangent</text>
-                <text x="250" y="30" font-size="15" fill="#1976d2">\( y = f(x) \)</text>
-            </svg>
+        <div style="display: flex; justify-content: center; margin: 20px 0;">
+            <canvas id="my_canvas" width="600" height="400" style="border: 2px solid rgb(0, 213, 255);"></canvas>
         </div>
         <div class="explanation">
             <svg width="32" height="32" viewBox="0 0 32 32">
@@ -139,5 +118,63 @@
             </span>
         </div>
     </div>
+    <script>
+        const ctx=my_canvas.getContext('2d');
+        //set up canvas size and scale
+        const width=my_canvas.width;
+        const height=my_canvas.height;
+        const x_min=-3;
+        const x_max=7;
+        const y_min=-3;
+        const y_max=7;
+
+        function x_to_canvas_x(x) {
+            return (x - x_min)/(x_max - x_min) * width;
+        }
+
+        function y_to_canvas_y(y) {
+            return height - (y - y_min) / (y_max - y_min) * height;
+        }
+
+        //Draw axes
+        ctx.beginPath();
+        ctx.moveTo(x_to_canvas_x(0),0);
+        ctx.lineTo(x_to_canvas_x(0), height);
+        ctx.moveTo(0,y_to_canvas_y(0));
+        ctx.lineTo(width,y_to_canvas_y(0));
+        ctx.strokeStyle="black";
+        ctx.stroke();
+
+        //plot y=x^3+x^2+x+1
+        ctx.beginPath();
+        ctx.strokeStyle ="blue";
+        
+        function f1(x) { 
+            return x*x*x + x*x - x + 1;
+        }
+        // derivative of f1 => 3x^2 + 2x - 1
+        function f2(x) {
+            return 4*x - 2;
+        }
+
+        draw_graph_of(f1);
+        draw_graph_of(f2);
+        
+        function draw_graph_of (EQ) {
+            let first = true;
+            for(let x=x_min; x <= x_max; x +=0.01) {
+                let y = EQ(x);
+                const canvas_x = x_to_canvas_x(x);
+                const canvas_y = y_to_canvas_y(y);
+                if (first) {
+                    ctx.moveTo(canvas_x, canvas_y);
+                    first = false;
+                } else {
+                    ctx.lineTo(canvas_x, canvas_y);
+                }
+            }
+            ctx.stroke();
+        }
+    </script>
 </body>
 </html>
