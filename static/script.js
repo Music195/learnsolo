@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const searchInput = document.getElementById("search");
     const resultsBox = document.getElementById("search-results");
     const noteSelect = document.getElementById("noteSelect");
-    // const tagFilter = document.getElementById("tagFilter"); // Uncomment if using tags
 
     function updateSubfolderOptions() {
         const folder = document.getElementById('folderFilter').value;
@@ -14,13 +13,13 @@ document.addEventListener("DOMContentLoaded", () => {
         let subfolders = new Set();
         NOTES_LIST.forEach(note => {
             const parts = note.split('/');
-            if (parts.length > 1 && (!folder || parts[0] === folder)) {
+            if (parts.length > 1 && parts[0] === folder) {
                 subfolders.add(parts[1]);
             }
         });
 
         // Clear and repopulate options
-        subfolderFilter.innerHTML = '<option value="">Filter by Titles</option>';
+        subfolderFilter.innerHTML = `<option value="">Title</option>`;
         let found = false;
         Array.from(subfolders).sort().forEach(sub => {
             const opt = document.createElement("option");

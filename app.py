@@ -18,13 +18,6 @@ def get_all_notes():
 
 notes_list = get_all_notes()
 
-# Load tags from tags.json
-# try:
-#     with open("tags.json", encoding="utf-8") as f:
-#         note_tags = json.load(f)
-# except FileNotFoundError:
-#     note_tags = {}
-
 @app.route("/")
 def index():
     if notes_list:
@@ -62,7 +55,6 @@ def view_note(note_path):
 
     # ...existing code...
     notes_json = json.dumps(notes_list)
-    # tags_json = json.dumps(note_tags)
     return render_template(
         "note.html",
         note_path=note_path,
@@ -74,7 +66,6 @@ def view_note(note_path):
         folders=folders,
         subfolders=subfolders 
     )
-        # tags_json=tags_json)
 # ...existing code...
 
 if __name__ == "__main__":

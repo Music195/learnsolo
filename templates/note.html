@@ -5,7 +5,6 @@
     <title>{{ note_path }} - Math Notes</title>
     <script>
         const NOTES_LIST = {{ notes_json|safe }};
-        // const NOTE_TAGS = {{ tags_json|safe }};
     </script>
     <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
     <script src="/static/script.js" defer></script>
@@ -16,54 +15,44 @@
     </script>
     <link rel="icon" type="image/png" href="/static/favicon.png">
 </head>
-<body style="border: 1px solid #ccc; padding: 1em; margin: 0 auto">
-    <div style="position: relative; margin-bottom: 1em;">
-        <input type="text" id="search" placeholder="Search notes...">
-        <div id="search-results"></div>
-    </div>
+<body style=" padding: 0em; margin: 0 auto">
     <nav>
-        <!-- <div class="nav-buttons">
-            {% if prev_note %}<a href="/note/{{ prev_note }}">&#8592;</a>{% endif %}
-            {% if next_note %}<a href="/note/{{ next_note }}">&#8594;</a>{% endif %}
-        </div> -->
-        
-        <div id="upNav">
-            <!-- <select id="tagFilter" onchange="filterByTag()">
-                <option value="">Filter by Tag</option>
-                        </select> -->
+        <div id="up_nav" >
+            <!-- search bar-->
+            <input type="text" id="search" placeholder="Search notes...">
+            <div id="search-results"></div>
+            <!-- folder filter-->
             <select id="folderFilter">
-                <option value="">Filter by Courses</option>
                 {% for folder in folders %}
                     <option value="{{ folder }}">{{ folder }}</option>
                 {% endfor %}
             </select>
+            <!--subfolder filter-->
             <select id="subfolderFilter">
-                <option value="">Filter by Titles</option>
-                <!-- JS will populate -->
+                <option value=""></option>
             </select>
         </div>
-        <div id="downNav">
-            <select id="noteSelect" onchange="location = this.value;">
-                <!-- JS will populate -->
-            </select>
+        <!--Note.html filter-->
+        <div id="topic_nav">
+            <select id="noteSelect" onchange="location = this.value;"></select>
         </div>
     </nav>
-    <div class="content-container">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin: 0 0">
-            {% if prev_note %}
-                <a id="skip" href="/note/{{ prev_note }}" style="font-size: 2em; text-decoration: none;">&#9664;</a>
-            {% else %}
-                <span id="skip">&#9664;</span>
-            {% endif %}
-            <div class="note-content" style="padding: 1em; margin: auto 0 auto 0">{{ content|safe }}</div>
-            {% if next_note %}
-                <a id="skip" href="/note/{{ next_note }}" style=" text-decoration: none;">&#9654;</a>
-            {% else %}
-                <span id="skip">&#9654;</span>
-            {% endif %}
-        </div>
+
+    <div class="note_nav">
+        {% if prev_note %}
+        <a id="skip_backward" href="/note/{{ prev_note }}" >BACK</a>
+        {% else %}
+        <span id="skip_backward">BACK</span>
+        {% endif %}
+
+        {% if next_note %}
+        <a id="skip_forward" href="/note/{{ next_note }}" >NEXT</a>
+        {% else %}
+        <span id="skip_forward">NEXT</span>
+        {% endif %}
     </div>
-    
+                            
+    <div class="note-content" style="margin: auto 0 auto 0">{{ content|safe }}</div>
     
 </body>
 </html>

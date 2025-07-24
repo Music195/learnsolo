@@ -48,16 +48,6 @@
             color: #ff6600;
             font-weight: bold;
         }
-        .svg-graph {
-            display: flex;
-            justify-content: center;
-            margin: 32px 0 18px 0;
-        }
-        .svg-graph svg {
-            background: #f7fafd;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px #1976d222;
-        }
         .explanation {
             background: #fffde7;
             border-left: 6px solid #fbc02d;
@@ -146,21 +136,10 @@
         ctx.stroke();
 
         //plot y=x^3+x^2+x+1
-        ctx.beginPath();
-        ctx.strokeStyle ="blue";
         
-        function f1(x) { 
-            return x*x*x + x*x - x + 1;
-        }
-        // derivative of f1 => 3x^2 + 2x - 1
-        function f2(x) {
-            return 4*x - 2;
-        }
-
-        draw_graph_of(f1);
-        draw_graph_of(f2);
-        
-        function draw_graph_of (EQ) {
+        function draw_graph_of (EQ, color) {
+            ctx.beginPath();
+            ctx.strokeStyle = color;
             let first = true;
             for(let x=x_min; x <= x_max; x +=0.01) {
                 let y = EQ(x);
@@ -175,6 +154,52 @@
             }
             ctx.stroke();
         }
+
+        draw_graph_of(x => x*x*x + x*x - x + 1, "blue");
+        draw_graph_of(x => 4*x - 2, "green");
+        
+        // Draw X and Y axis labels
+        ctx.font = "18px Arial";
+        ctx.fillStyle = "black";
+        ctx.fillText("x", width - 20, y_to_canvas_y(0)- 10);
+        ctx.fillText("y",x_to_canvas_x(0) + 10, 20);
+
+        // Label a point
+        let px = x_to_canvas_x(1);
+        let py = y_to_canvas_y(2);
+
+        ctx.beginPath();
+        ctx.strokeStyle = "black";
+        ctx.setLineDash([5, 3]);
+        ctx.moveTo(px, y_to_canvas_y(0))
+        ctx.lineTo(px , py );
+        ctx.lineTo(x_to_canvas_x(0), py)
+        ctx.stroke();
+
+        ctx.fillStyle = "red";
+        ctx.beginPath();
+        ctx.arc(px, py, 4, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.fillStyle = "black";
+        ctx.fillText("f(a)", x_to_canvas_x(0) -30, py );
+        ctx.fillText("a", px , y_to_canvas_y(0) + 15)
+        ctx.fillText("( a , f(a) )", px + 8, py + 3);
+
+        // Label tangent line word
+
+        ctx.fillText("Tangent line", x_to_canvas_x(2.5), y_to_canvas_y(5));
+        ctx.beginPath();
+        ctx.moveTo(x_to_canvas_x(2.4), y_to_canvas_y(4.7));
+        ctx.lineTo(x_to_canvas_x(4.3), y_to_canvas_y(4.7));
+        ctx.lineTo(x_to_canvas_x(4.3), y_to_canvas_y(5.6));
+        ctx.lineTo(x_to_canvas_x(2.4), y_to_canvas_y(5.6));
+        ctx.lineTo(x_to_canvas_x(2), y_to_canvas_y(6));
+        ctx.lineTo(x_to_canvas_x(2.4), y_to_canvas_y(5.1));
+        ctx.lineTo(x_to_canvas_x(2.4), y_to_canvas_y(4.7));
+        ctx.setLineDash([]);
+        ctx.strokeStyle = "grey";
+        ctx.stroke();
+        
     </script>
 </body>
 </html>
