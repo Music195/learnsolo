@@ -6,8 +6,6 @@ document.addEventListener("DOMContentLoaded", () => {
     function updateSubfolderOptions() {
         const folder = document.getElementById('folderFilter').value;
         const subfolderFilter = document.getElementById('subfolderFilter');
-        // Save previous selection
-        const prev = subfolderFilter.value;
 
         // Find subfolders for the selected folder
         let subfolders = new Set();
@@ -20,17 +18,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Clear and repopulate options
         subfolderFilter.innerHTML = `<option value="">Title</option>`;
-        let found = false;
         Array.from(subfolders).sort().forEach(sub => {
             const opt = document.createElement("option");
             opt.value = sub;
             opt.textContent = sub;
-            if (sub === prev) found = true;
             subfolderFilter.appendChild(opt);
         });
-        // Restore previous selection if still available
-        if (found) subfolderFilter.value = prev;
-        else subfolderFilter.value = "";
     }
 
     function filterNotes() {
@@ -66,7 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById('subfolderFilter').addEventListener('change', filterNotes);
 
     // Fuzzy search with Fuse.js
-    const fuse = new fuse(NOTES_LIST, { includeScore: true, threshold: 0.4 });
+    const fuse = new Fuse(NOTES_LIST, { includeScore: true, threshold: 0.4 });
 
     searchInput.addEventListener("input", () => {
         const query = searchInput.value.trim();
