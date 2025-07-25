@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
             filtered = filtered.filter(n => n.split('/')[1] === subfolder);
         }
          
-        noteSelect.innerHTML = "<option value=''>-- Select a topic--</option>";
+        noteSelect.innerHTML = "<option value=''>-- Select a topic --</option>";
 
         filtered.forEach(n => {
             const opt = document.createElement("option");
