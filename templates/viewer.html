@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>PDF Viewer</title>
+  <style>
+    body { margin: 0; font-family: sans-serif; }
+    #controls { text-align: center; padding: 10px; background: #f4f4f4; }
+    canvas { display: block; margin: 10px auto; border: 1px solid #ddd; }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+</head>
+<body>
+
+    <div id="controls">
+        <button onclick="prevPage()">⬅️ Previous</button>
+        <span>Page: <span id="page_num">1</span> / <span id="page_count">?</span></span>
+        <button onclick="nextPage()">Next ➡️</button>
+    </div>
+
+    <canvas id="the-canvas"></canvas>
+
+    <script>
+    // Set worker source right away
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const url = urlParams.get('file') || "{{ file_url|safe }}";
+
+    let pdfDoc = null,
+        pageNum = 1,
+        canvas = document.getElementById('the-canvas'),
+        ctx = canvas.getContext('2d');
+
+    function renderPage(num) {
+        pdfDoc.getPage(num).then(page => {
+            const viewport = page.getViewport({ scale: 1.5 });
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+
+            page.render({ canvasContext: ctx, viewport });
+            document.getElementById('page_num').textContent = num;
+        });
+    }
+
+    function nextPage() {
+        if (pageNum < pdfDoc.numPages) {
+            pageNum++;
+            renderPage(pageNum);
+        }
+    }
+
+    function prevPage() {
+        if (pageNum > 1) {
+            pageNum--;
+            renderPage(pageNum);
+        }
+    }
+
+    // Load PDF
+    pdfjsLib.getDocument(url).promise.then(pdf => {
+        pdfDoc = pdf;
+        document.getElementById('page_count').textContent = pdf.numPages;
+        renderPage(pageNum);
+    }).catch(error => {
+        console.error("Error loading PDF:", error);
+        document.body.innerHTML += "<p style='color:red'>Error loading PDF: " + error.message + "</p>";
+    });
+    </script>
+</body>
+</html>

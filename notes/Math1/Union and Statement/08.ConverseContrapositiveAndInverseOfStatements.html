@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<!-- tags: Set and Elements -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Converse, Contrapositive, and Inverse of Statements</title>
+    <script>
+        MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <link rel="stylesheet" href="/style/style1.css">
+    <style>
+        .container {
+            position: relative;
+            max-width: 900px;
+            margin: 40px auto;
+            background: #f8fafd;
+            border-radius: 14px;
+            box-shadow: 0 4px 16px #0002;
+            padding: 32px 40px 28px 40px;
+        }
+        .section-title {
+            font-size: 2em;
+            color: #1976d2;
+            margin-bottom: 18px;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+        .diagram-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 18px;
+        }
+        .node {
+            background: #d8acce;
+            border-radius: 18px;
+            padding: 12px 28px;
+            margin: 0 18px;
+            font-size: 1.4em;
+            font-family: 'Times New Roman', Times, serif;
+            box-shadow: 2px 4px 0 #bdbdbd;
+            min-width: 120px;
+            text-align: center;
+            word-break: break-word;
+        }
+        .arrow {
+            font-size: 1.2em;
+            color: #2300e6;
+            margin: 0 8px;
+            font-weight: bold;
+        }
+        .diagram-container {
+            position: relative;
+            width: 600px;
+            height: 320px;
+            margin: 0 auto;
+            max-width: 98vw;
+            min-width: 260px;
+        }
+        @media (max-width: 700px) {
+            .diagram-container {
+                width: 98vw;
+                min-width: 0;
+                height: 52vw;
+                max-height: 320px;
+            }
+            .node {
+                min-width: 60px;
+                font-size: 1em;
+                padding: 8px 6px;
+                margin: 0 4vw;
+            }
+        }
+        @media (max-width: 400px) {
+            .diagram-container {
+                height: 120vw;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="section-title">Converse, Contrapositive, and Inverse of Statements</div>
+        <div style="text-align:center; font-size:1.3em; margin-bottom:18px;">
+            <span>Original, Converse, Contrapositive, Inverse</span>
+        </div>
+        <div class="diagram-container" id="diagram-container">
+        <!-- Top row -->
+        <div class="diagram-row" id="top-row" style="position: absolute; left: 0; top: 0; width: 100%;">
+            <div class="node">
+            $p \Rightarrow q$
+            </div>
+            <span class="arrow">Converse(逆)</span>
+            <div class="node">
+            $q \Rightarrow p$
+            </div>
+        </div>
+        <!-- Bottom row -->
+        <div class="diagram-row" id="bottom-row" style="position: absolute; left: 0; top: 200px; width: 100%;">
+            <div class="node">
+            $\overline{p} \Rightarrow \overline{q}$
+            </div>
+            <span class="arrow">Converse(逆)</span>
+            <div class="node">
+            $\overline{q} \Rightarrow \overline{p}$
+            </div>
+        </div>
+        <!-- Left vertical -->
+        <div style="position: absolute; left: 150px; top: 55px; color: #0c00e6; font-size: 1.2em;">
+            Inverse(裏)
+        </div>
+        <div style="position: absolute; left: 150px; top: 110px; width: 2px; height: 90px; background: #e65100;"></div>
+        <!-- Right vertical -->
+        <div style="position: absolute; right: 90px; top: 55px; color: #0c00e6; font-size: 1.2em;">
+            Inverse(裏)
+        </div>
+        <div style="position: absolute; right: 150px; top: 110px; width: 2px; height: 90px; background: #e65100;"></div>
+        <!-- Diagonal (contrapositive) -->
+        <div style="position: absolute; left: 50%; top: 100px; transform: translate(-50%, 0); color: #0c00e6; font-size: 1.2em;">
+            Contrapositive(対偶)
+        </div>
+        <svg id="crossline-svg" width="100%" height="100%" style="position:absolute; left:0; top:0; pointer-events:none;">
+            <line id="crossline1" stroke="#e65100" stroke-width="2"/>
+            <line id="crossline2" stroke="#e65100" stroke-width="2"/>
+        </svg>
+        <script>
+            // Responsive crossline calculation (even shorter lines)
+            function updateCrosslines() {
+                const container = document.getElementById('diagram-container');
+                const svg = document.getElementById('crossline-svg');
+                const w = container.offsetWidth;
+                const h = container.offsetHeight;
+
+                // Move SVG behind the nodes
+                if (svg && svg.parentNode) {
+                    svg.parentNode.insertBefore(svg, svg.parentNode.firstChild);
+                }
+
+                // Node centers
+                const x1 = w * 0.3, y1 = h * 0.13;
+                const x2 = w * 0.7, y2 = h * 0.13;
+                const x3 = w * 0.3, y3 = h * 0.66;
+                const x4 = w * 0.7, y4 = h * 0.66;
+
+                // Shorten the crosslines by moving endpoints closer to the center
+                const shorten = 0.32; // Increased shortening (was 0.18)
+                function lerp(a, b, t) { return a + (b - a) * t; }
+
+                // crossline1: from (x1, y1) to (x4, y4)
+                const cx1 = lerp(x1, x4, shorten);
+                const cy1 = lerp(y1, y4, shorten);
+                const cx4 = lerp(x4, x1, shorten);
+                const cy4 = lerp(y4, y1, shorten);
+                document.getElementById('crossline1').setAttribute('x1', cx1);
+                document.getElementById('crossline1').setAttribute('y1', cy1);
+                document.getElementById('crossline1').setAttribute('x2', cx4);
+                document.getElementById('crossline1').setAttribute('y2', cy4);
+
+                // crossline2: from (x2, y2) to (x3, y3)
+                const cx2 = lerp(x2, x3, shorten);
+                const cy2 = lerp(y2, y3, shorten);
+                const cx3 = lerp(x3, x2, shorten);
+                const cy3 = lerp(y3, y2, shorten);
+                document.getElementById('crossline2').setAttribute('x1', cx2);
+                document.getElementById('crossline2').setAttribute('y1', cy2);
+                document.getElementById('crossline2').setAttribute('x2', cx3);
+                document.getElementById('crossline2').setAttribute('y2', cy3);
+            }
+            window.addEventListener('resize', updateCrosslines);
+            window.addEventListener('DOMContentLoaded', updateCrosslines);
+        </script>
+    </div>
+    <script>
+        // Responsive crossline calculation
+        function updateCrosslines() {
+            const container = document.getElementById('diagram-container');
+            const svg = document.getElementById('crossline-svg');
+            const w = container.offsetWidth;
+            const h = container.offsetHeight;
+
+            // Calculate node positions as a percentage of width/height
+            // Top left node center
+            const x1 = w * 0.3, y1 = h * 0.13;
+            // Top right node center
+            const x2 = w * 0.7, y2 = h * 0.13;
+            // Bottom left node center
+            const x3 = w * 0.3, y3 = h * 0.66;
+            // Bottom right node center
+            const x4 = w * 0.7, y4 = h * 0.66;
+
+            // Set diagonal lines
+            document.getElementById('crossline1').setAttribute('x1', x1);
+            document.getElementById('crossline1').setAttribute('y1', y1);
+            document.getElementById('crossline1').setAttribute('x2', x4);
+            document.getElementById('crossline1').setAttribute('y2', y4);
+
+            document.getElementById('crossline2').setAttribute('x1', x2);
+            document.getElementById('crossline2').setAttribute('y1', y2);
+            document.getElementById('crossline2').setAttribute('x2', x3);
+            document.getElementById('crossline2').setAttribute('y2', y3);
+        }
+        window.addEventListener('resize', updateCrosslines);
+        window.addEventListener('DOMContentLoaded', updateCrosslines);
+    </script>
+        <div class="explanation">
+            The <strong>converse</strong> of a statement $p \Rightarrow q$ is $q \Rightarrow p$.
+        </div>
+        <div class="explanation">
+            The <strong>contrapositive</strong> of a statement $p \Rightarrow q$ is $\overline{q} \Rightarrow \overline{p}$.
+        </div>
+        <div class="explanation">
+            The <strong>inverse</strong> of a statement $p \Rightarrow q$ is $\overline{p} \Rightarrow \overline{q}$.
+        </div>
+    </div>
+</body>
+</html>

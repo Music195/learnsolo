@@ -1,4 +1,5 @@
-from flask import Flask, render_template, redirect, url_for
+import requests
+from flask import Flask, render_template, redirect, request, url_for, Response
 import os
 import json
 
@@ -18,12 +19,6 @@ def get_all_notes():
 
 notes_list = get_all_notes()
 
-@app.route("/")
-def index():
-    if notes_list:
-        return redirect(url_for("view_note", note_path=notes_list[0]))
-    return "<h1>No notes available</h1>", 404
-
 def get_folders_and_subfolders(notes_list):
     folders = set()
     subfolders = set()
@@ -34,6 +29,21 @@ def get_folders_and_subfolders(notes_list):
         if len(parts) > 1:
             subfolders.add(parts[1])
     return sorted(folders), sorted(subfolders)
+
+@app.route("/")
+def index():
+    """Returns a list of all application functions."""
+    functions = [
+        {"name": "view_note", "route": "/note/"},
+        {"name": "problem", "route": "/note/"}
+        # Add more functions as needed
+    ]
+    return render_template('index.html',
+                          notes_list=notes_list,
+                          functions=functions)
+    # if notes_list:
+    #     return redirect(url_for("view_note", note_path=notes_list[0]))
+    # return "<h1>No notes available</h1>", 404
 
 @app.route("/note/<path:note_path>")
 def view_note(note_path):
@@ -66,7 +76,49 @@ def view_note(note_path):
         folders=folders,
         subfolders=subfolders 
     )
-# ...existing code...
+    
+@app.route('/note/problem')
+def problem():
+    google_links = [
+        {'name': "Chemistry Syllabus", 'link_id': '1vnBqiwq6neanYDO-wsUgm32odCKNZwOU'},
+        {'name': "Mathematics Question", 'link_id': '1d0BPGZZ38j_nmfqwllgVzTWMdP12Jckh'}
+    ]    
+    return render_template('problem.html',
+                           google_links=google_links)
+
+@app.route('/note/problem/viewer')
+def viewer():
+    file_url = request.args.get('file')
+    return render_template('viewer.html', file_url=file_url)
+
+@app.route('/proxy-pdf')
+def proxy_pdf():
+    url = request.args.get('url')
+    
+    # Optional: Validate the URL is from trusted sources
+    if not url or not (url.startswith('https://drive.google.com') or url.startswith('/static/')):
+        return "Invalid URL", 400
+        
+    # For external URLs (like Google Drive)
+    if url.startswith('http'):
+        try:
+            response = requests.get(url)
+            if response.status_code == 200:
+                return Response(
+                    response.content, 
+                    mimetype='application/pdf',
+                    headers={
+                        'Content-Disposition': 'inline; filename=document.pdf'
+                    }
+                )
+            else:
+                return f"Failed to fetch PDF: {response.status_code}", 400
+        except Exception as e:
+            return f"Error fetching PDF: {str(e)}", 500
+    
+    # For local files, serve directly
+    else:
+        return redirect(url)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000)) # Default to 5000 if PORT not set

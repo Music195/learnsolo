@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PDF Viewer</title>
+    <style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background: #f7f7f7;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 600px;
+        margin: 80px auto;
+        padding: 20px;
+        background: white;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+        color: #333;
+        text-align: center;
+    }
+
+    .site-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .site-list li {
+        margin: 15px 0;
+    }
+
+    .site-list a {
+        text-decoration: none;
+        font-size: 1.2rem;
+        color: #007bff;
+        transition: 0.3s;
+    }
+
+    .site-list a:hover {
+        color: #0056b3;
+    }
+    </style>
+</head>
+<body>
+    <h1>📚 My PDF Notes</h1>
+    {% for google_link in google_links%}
+    <div class="container">
+        <ul>
+            <!-- Local PDF
+            <li><a href="{{ url_for('viewer') }}?file=/static/files/sample.pdf" target="_blank">📄 Local Sample PDF</a></li> -->
+            <!-- Google Drive PDF -->
+            <li>
+                <a href="{{ url_for('viewer') }}?file={{ url_for('proxy_pdf', url='https://drive.google.com/uc?id=' + google_link.link_id +'&export=download') }}" target="_blank">
+                    {{google_link.name}}
+                </a>
+            </li>
+        </ul>
+    </div>
+    {% endfor %}
+</body>
+</html>
