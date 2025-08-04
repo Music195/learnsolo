@@ -1,4 +1,4 @@
-import sys
+import sys, os, json
 from googleapiclient.discovery import build
 from google.oauth2 import service_account
 
@@ -7,7 +7,17 @@ def get_google_drive_files(folder_id, category_name):
     """Get files from a specific Google Drive folder"""
     # Set up credentials (you'll need a service account key file)
     SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
-    SERVICE_ACCOUNT_FILE = './math-problems-468009-6fcc2aee7b59.json'
+    # Option for deployment
+    if 'GOOGLE_CREDENTIALS_JSON' in os.environ:
+        # Get credentials from environment variable
+        credentials_info = json.loads(os.environ['GOOGLE_CREDENTIALS_JSON'])
+        credentials = service_account.Credentials.from_service_account_info(
+        credentials_info, scopes=['https://www.googleapis.com/auth/drive.readonly'])
+    else:
+        # Fallback for local development
+        SERVICE_ACCOUNT_FILE = './math-problems-468009-6fcc2aee7b59.json'
+        credentials = service_account.Credentials.from_service_account_file(
+            SERVICE_ACCOUNT_FILE, scopes=['https://www.googleapis.com/auth/drive.readonly'])
     
     credentials = service_account.Credentials.from_service_account_file(
         SERVICE_ACCOUNT_FILE, scopes=SCOPES)
