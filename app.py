@@ -2,6 +2,8 @@ import requests
 from flask import Flask, render_template, redirect, request, url_for, Response
 import os
 import json
+import lists_of_kind_of_problem as lkp
+import google_drive_link as gdl
 
 app = Flask(__name__)
 NOTES_FOLDER = "notes"
@@ -34,8 +36,9 @@ def get_folders_and_subfolders(notes_list):
 def index():
     """Returns a list of all application functions."""
     functions = [
-        {"name": "view_note", "route": "/note/"},
-        {"name": "problem", "route": "/note/"}
+        {"name": "View Formlae", "value": "view_note", "route": "/note/"},
+        {"name": "Math Problem Solving", "value": "kind_of_problem", "route": "/note/"},
+        {"name": "Future Projects", "value": "", "route": "/note/"}
         # Add more functions as needed
     ]
     return render_template('index.html',
@@ -77,16 +80,25 @@ def view_note(note_path):
         subfolders=subfolders 
     )
     
-@app.route('/note/problem')
-def problem():
-    google_links = [
-        {'name': "Chemistry Syllabus", 'link_id': '1vnBqiwq6neanYDO-wsUgm32odCKNZwOU'},
-        {'name': "Mathematics Question", 'link_id': '1d0BPGZZ38j_nmfqwllgVzTWMdP12Jckh'}
-    ]    
-    return render_template('problem.html',
-                           google_links=google_links)
+@app.route('/note/kind_of_problem')
+def kind_of_problem():
+    categorized_links=gdl.categorized_links
+    return render_template('kind_of_problem.html',
+                            categorized_links=categorized_links
+                           )
 
-@app.route('/note/problem/viewer')
+category= list(gdl.categorized_links.keys())
+
+@app.route('/note/kind_of_problem/<path:category>')
+def problem(category):
+    topic=category
+    lists_of_link_dic=gdl.categorized_links[category]
+    return render_template('problem.html',
+                            lists_of_link_dic=lists_of_link_dic,
+                            topic=topic
+                           )
+
+@app.route('/note/kind_of_problem/problem/viewer')
 def viewer():
     file_url = request.args.get('file')
     return render_template('viewer.html', file_url=file_url)

@@ -12,7 +12,7 @@
 
     .container {
         max-width: 600px;
-        margin: 80px auto;
+        margin: 40px auto;
         padding: 20px;
         background: white;
         border-radius: 10px;
@@ -24,43 +24,20 @@
         color: #333;
         text-align: center;
     }
-
-    .site-list {
-        list-style: none;
-        padding: 0;
-    }
-
-    .site-list li {
-        margin: 15px 0;
-    }
-
-    .site-list a {
-        text-decoration: none;
-        font-size: 1.2rem;
-        color: #007bff;
-        transition: 0.3s;
-    }
-
-    .site-list a:hover {
-        color: #0056b3;
-    }
     </style>
 </head>
 <body>
-    <h1>📚 My PDF Notes</h1>
-    {% for google_link in google_links%}
-    <div class="container">
-        <ul>
-            <!-- Local PDF
-            <li><a href="{{ url_for('viewer') }}?file=/static/files/sample.pdf" target="_blank">📄 Local Sample PDF</a></li> -->
-            <!-- Google Drive PDF -->
-            <li>
-                <a href="{{ url_for('viewer') }}?file={{ url_for('proxy_pdf', url='https://drive.google.com/uc?id=' + google_link.link_id +'&export=download') }}" target="_blank">
-                    {{google_link.name}}
-                </a>
-            </li>
-        </ul>
-    </div>
-    {% endfor %}
+    <h1>📚 {{topic}}</h1>
+    <ol>
+        {% for link_dic in lists_of_link_dic['files'] %}
+                <div class="container">
+                        <li>
+                            <a href="{{ url_for('viewer') }}?file={{ url_for('proxy_pdf', url='https://drive.google.com/uc?id=' + link_dic['link_id'] +'&export=download') }}" target="_blank">
+                                {{link_dic['name']}}
+                            </a>
+                        </li>    
+                </div>
+        {% endfor %}
+    </ol>
 </body>
 </html>
