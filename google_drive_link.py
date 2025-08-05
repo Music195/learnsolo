@@ -70,7 +70,7 @@ all_link_lists, categorized_links = collect_link_lists()
 # print(dir(sys.modules[__name__]))
 # print(all_link_lists)
 # print()
-print(categorized_links['EJU Past Problems']) 
+# print(categorized_links['EJU Past Problems']) 
 # category= list(categorized_links.keys())
 # print(type(list(category)))
 # lists_of_link_dic=categorized_links[category[0]]
