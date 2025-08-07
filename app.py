@@ -38,7 +38,8 @@ def index():
     functions = [
         {"name": "View Formlae", "value": "view_note", "route": "/note/"},
         {"name": "Math Problem Solving", "value": "kind_of_problem", "route": "/note/"},
-        {"name": "Future Projects", "value": "", "route": "/note/"}
+        {"name": "HIDE Channel", "value": "https://hide-channel.studio.site/", "route": "external"},
+        {"name": "Future Projects(Comming Soon)", "value": "", "route": "disabled"}
         # Add more functions as needed
     ]
     return render_template('index.html',
