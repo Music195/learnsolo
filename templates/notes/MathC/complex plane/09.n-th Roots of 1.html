@@ -1,0 +1,189 @@
+<!-- tags: Complex Plane, Complex Numbers, Roots of Unity -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>n-th Roots of 1</title>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f8faf4;
+            color: #263238;
+        }
+        .container {
+            max-width: 950px;
+            margin: 40px auto;
+            padding: 32px 18px;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .title {
+            font-size: 2em;
+            font-weight: bold;
+            color: #b71c1c;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .operation-block {
+            background-color: #eef2f3;
+            border-left: 5px solid #1e88e5;
+            padding: 15px 20px;
+            margin-top: 20px;
+            border-radius: 4px;
+            font-size: 1.1em;
+            line-height: 1.8;
+            max-width: 850px;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .roots-img {
+            display: block;
+            margin: 18px auto 0 auto;
+            max-width: 180px;
+            width: 100%;
+        }
+        .hint-block {
+            background-color: #fff9c4;
+            border-left: 5px solid #f57f17;
+            padding: 15px 20px;
+            margin-top: 20px;
+            border-radius: 4px;
+            font-size: 0.95em;
+            max-width: 850px;
+            width: 100%;
+            box-sizing: border-box;
+            line-height: 1.6;
+        }
+        @media (max-width: 700px) {
+            .container {
+                padding: 20px 15px;
+                margin: 20px auto;
+            }
+            .title {
+                font-size: 1.6em;
+            }
+            .operation-block {
+                font-size: 1em;
+            }
+            .hint-block {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">n-th Roots of 1</div>
+        <div class="operation-block">
+            <p>
+                The n-th roots of 1 are the following \( n \) complex numbers:
+            </p>
+            <div>
+                $$
+                z_k = \cos\left(\frac{2k\pi}{n}\right) + i\sin\left(\frac{2k\pi}{n}\right)
+                $$
+                <br>
+                \( (k = 0,\ 1,\ 2,\ \ldots,\ n-1) \)
+            </div>
+            <canvas id="roots-canvas" class="roots-img" width="180" height="180" aria-label="Roots of unity diagram"></canvas>
+        </div>
+        <div class="hint-block">
+            <strong>Note:</strong>
+            <ul>
+                <li>
+                    For \( n \geq 3 \), the points representing the n-th roots of unity are the vertices of a regular n-gon inscribed in the unit circle.
+                </li>
+                <li>
+                    In particular, one of the vertices is at the point \( 1 \).
+                </li>
+            </ul>
+        </div>
+    </div>
+    <script>
+        // Draw the roots of unity diagram
+        (function() {
+            const canvas = document.getElementById('roots-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width, h = canvas.height;
+            const cx = w / 2, cy = h / 2;
+            const r = 65;
+            const n = 6; // Example: n = 6
+
+            // Draw unit circle
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+            ctx.strokeStyle = "#888";
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            // Draw roots
+            for (let k = 0; k < n; ++k) {
+                const angle = -Math.PI / 2 + 2 * Math.PI * k / n;
+                const x = cx + r * Math.cos(angle);
+                const y = cy + r * Math.sin(angle);
+
+                // Draw point
+                ctx.beginPath();
+                ctx.arc(x, y, 4, 0, 2 * Math.PI);
+                ctx.fillStyle = k === 0 ? "#b71c1c" : "#1976d2";
+                ctx.fill();
+
+                // Draw line from center
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.lineTo(x, y);
+                ctx.strokeStyle = "#90caf9";
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // Label
+                ctx.font = "bold 13px Segoe UI, Arial";
+                ctx.fillStyle = "#263238";
+                if (k === 0) {
+                    ctx.fillText("1", x + 6, y - 6);
+                } else {
+                    ctx.fillText("z" + k, x + 6, y - 6);
+                }
+            }
+
+            // Draw axes
+            ctx.strokeStyle = "#888";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(cx + r + 10, cy);
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(cx, cy - r - 10);
+            ctx.stroke();
+
+            // Axis labels
+            ctx.font = "bold 13px Segoe UI, Arial";
+            ctx.fillStyle = "#607d8b";
+            ctx.fillText("x", cx + r + 12, cy + 4);
+            ctx.fillText("y", cx - 12, cy - r - 8);
+        })();
+
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "\\(", right: "\\)", display: false},
+                    {left: "\\[", right: "\\]", display: true}
+                ],
+                throwOnError: false
+            });
+        });
+    </script>
+</body>
+</html>

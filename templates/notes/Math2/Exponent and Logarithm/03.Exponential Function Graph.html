@@ -1,0 +1,214 @@
+<!-- tags: Exponent and Logarithm -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graph of Exponential Functions</title>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f4f7fa;
+            color: #263238;
+        }
+        .container {
+            max-width: 950px;
+            margin: 32px auto;
+            padding: 24px;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+        }
+        .title {
+            font-size: 2em;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 18px;
+            color: #1976d2;
+        }
+        .subtitle {
+            font-size: 1.15em;
+            text-align: center;
+            margin-bottom: 28px;
+            color: #388e3c;
+        }
+        .graph-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 32px;
+            justify-content: center;
+            margin-top: 24px;
+        }
+        .graph-box {
+            background: #e3f2fd;
+            border-left: 7px solid #1976d2;
+            border-radius: 12px;
+            padding: 18px 24px;
+            min-width: 320px;
+            flex: 1 1 320px;
+            max-width: 420px;
+            box-sizing: border-box;
+        }
+        .graph-label {
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+        .graph-label.up {
+            color: #d32f2f;
+        }
+        .graph-label.down {
+            color: #f57c00;
+        }
+        .canvas-wrap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 8px;
+        }
+        @media (max-width: 900px) {
+            .graph-section {
+                flex-direction: column;
+                gap: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">Graph of Exponential Functions</div>
+        <div class="subtitle">
+            The graph of the exponential function \( y = a^x \) passes through the points \( (0, 1) \) and \( (1, a) \), and has the x-axis as a horizontal asymptote.
+        </div>
+        <div class="graph-section">
+            <div class="graph-box">
+            <div class="graph-label up">When \( a &gt; 1 \): <span style="color:#d32f2f;">Increasing curve</span></div>
+            <div class="canvas-wrap">
+                <canvas id="expUp" width="300" height="220"></canvas>
+            </div>
+            </div>
+            <div class="graph-box">
+            <div class="graph-label down">When \( 0 &lt; a &lt; 1 \): <span style="color:#f57c00;">Decreasing curve</span></div>
+            <div class="canvas-wrap">
+                <canvas id="expDown" width="300" height="220"></canvas>
+            </div>
+            </div>
+        </div>
+        </div>
+        <script>
+        // KaTeX rendering
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+            delimiters: [
+                {left: "$$", right: "$$", display: true},
+                {left: "\\(", right: "\\)", display: false}
+            ]
+            });
+
+            // Draw y = a^x for a > 1
+            drawExponential("expUp", 2.2, "#1976d2");
+            // Draw y = a^x for 0 < a < 1
+            drawExponential("expDown", 0.5, "#f57c00");
+        });
+
+        function drawExponential(canvasId, a, color) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            const ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Axes
+            const margin = 36;
+            const w = canvas.width, h = canvas.height;
+            // Center y-axis
+            const x0 = w / 2, y0 = h - margin; // (0,0) in canvas
+            const xMax = w - margin, yMax = margin;
+            const xRange = 3; // x from -1.5 to 1.5
+            const yRange = a > 1 ? Math.pow(a, 1.5) : 1.2;
+
+            // Draw axes (extend to canvas edges)
+            ctx.strokeStyle = "#888";
+            ctx.lineWidth = 1.2;
+            // x-axis
+            ctx.beginPath();
+            ctx.moveTo(0, y0);
+            ctx.lineTo(w, y0);
+            ctx.stroke();
+            // y-axis (center)
+            ctx.beginPath();
+            ctx.moveTo(x0, 0);
+            ctx.lineTo(x0, h);
+            ctx.stroke();
+
+            // Draw function
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2.2;
+            ctx.beginPath();
+            let started = false;
+            for (let px = 0; px <= w; px++) {
+                let x = -1.5 + (px / w) * xRange; // x in [-1.5,1.5]
+                let y = Math.pow(a, x);
+                let py = y0 - (y / yRange) * (y0 - yMax);
+                let cx = x0 + ((x / xRange) * w);
+                if (y > 0 && py < h + 10) {
+                    if (!started) {
+                        ctx.moveTo(cx, py);
+                        started = true;
+                    } else {
+                        ctx.lineTo(cx, py);
+                    }
+                }
+            }
+            ctx.stroke();
+
+            // Mark points (0,1) and (1,a)
+            ctx.fillStyle = "#1976d2";
+            let px0 = x0; // x=0
+            let py0 = y0 - (1 / yRange) * (y0 - yMax);
+            ctx.beginPath();
+            ctx.arc(px0, py0, 4, 0, 2 * Math.PI);
+            ctx.fill();
+
+            ctx.fillStyle = "#f57c00";
+            let px1 = x0 + ((1 / xRange) * w);
+            let py1 = y0 - (Math.pow(a, 1) / yRange) * (y0 - yMax);
+            ctx.beginPath();
+            ctx.arc(px1, py1, 4, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // Labels
+            ctx.fillStyle = "#263238";
+            ctx.font = "15px Segoe UI, Arial";
+            ctx.fillText("x", w - 12, y0 + 18);
+            ctx.fillText("y", x0 - 18, 18);
+
+            // (0,1)
+            ctx.fillStyle = "#1976d2";
+            ctx.font = "13px Segoe UI, Arial";
+            ctx.fillText("(0, 1)", px0 - 34, py0 - 8);
+
+            // (1,a)
+            ctx.fillStyle = "#f57c00";
+            ctx.fillText(`(1, ${a.toFixed(1)})`, px1 + 6, py1 - 8);
+
+            // a label
+            ctx.fillStyle = "#263238";
+            ctx.font = "13px Segoe UI, Arial";
+            ctx.fillText("y = a^x", x0 + 80, yMax + 12);
+
+            // Asymptote (x-axis)
+            ctx.setLineDash([4, 4]);
+            ctx.strokeStyle = "#aaa";
+            ctx.beginPath();
+            ctx.moveTo(0, y0 + 0.5);
+            ctx.lineTo(w, y0 + 0.5);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+        </script>
+</body>
+</html>

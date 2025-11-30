@@ -1,0 +1,222 @@
+<!-- tags: Integration-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Definite Integral and Area (Case 3)</title>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f4f7fa;
+            color: #263238;
+        }
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 32px 18px;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+        }
+        .title {
+            font-size: 2em;
+            font-weight: bold;
+            color: #1976d2;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .explain {
+            font-size: 1.15em;
+            margin-bottom: 18px;
+        }
+        .formula {
+            font-size: 1.5em;
+            color: #263238;
+            margin: 32px 0 0 0;
+            text-align: center;
+        }
+        .formula .highlight {
+            color: #f57c00;
+            font-weight: bold;
+        }
+        .graph-wrap {
+            display: flex;
+            justify-content: center;
+            margin-top: 24px;
+        }
+        @media (max-width: 700px) {
+            .container {
+                padding: 10px 2vw;
+            }
+            .title {
+                font-size: 1.2em;
+            }
+            .formula {
+                font-size: 1.1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">Definite Integral and Area (Case 3)</div>
+        <div class="explain">
+            For \( a \leq x \leq b \) and \( f(x) \geq g(x) \), the area \( S \) bounded by the graphs of \( y = f(x) \), \( y = g(x) \), and the lines \( x = a \), \( x = b \) is:
+        </div>
+        <div class="formula">
+            \( S = \int_a^b \color{#f57c00}{f(x) - g(x)}\,dx \)
+        </div>
+        <div class="graph-wrap">
+            <canvas id="areaGraph3" width="340" height="220"></canvas>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "\\(", right: "\\)", display: false}
+                ]
+            });
+            drawAreaGraph3();
+        });
+
+        function drawAreaGraph3() {
+            const canvas = document.getElementById("areaGraph3");
+            if (!canvas) return;
+            const ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Axes
+            const margin = 36;
+            const w = canvas.width, h = canvas.height;
+            const x0 = margin, y0 = h - margin; // (0,0) in canvas
+            const xMax = w - margin, yMax = margin;
+            const xRange = 4; // x from 0 to 4
+            const yRange = 2.5; // y from -0.5 to 2
+
+            // Draw axes
+            ctx.strokeStyle = "#888";
+            ctx.lineWidth = 1.2;
+            // x-axis
+            ctx.beginPath();
+            ctx.moveTo(x0, y0);
+            ctx.lineTo(xMax, y0);
+            ctx.stroke();
+            // y-axis
+            ctx.beginPath();
+            ctx.moveTo(x0, y0);
+            ctx.lineTo(x0, yMax);
+            ctx.stroke();
+
+            // Draw y = f(x) (upper curve)
+            ctx.strokeStyle = "#263238";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            let started = false;
+            for (let px = 0; px <= xMax - x0; px++) {
+                let x = (px / (xMax - x0)) * xRange;
+                let y = -0.25 * Math.pow(x - 2, 2) + 1.5; // upper curve
+                let py = y0 - ((y + 0.5) / yRange) * (y0 - yMax);
+                let cx = x0 + px;
+                if (!started) {
+                    ctx.moveTo(cx, py);
+                    started = true;
+                } else {
+                    ctx.lineTo(cx, py);
+                }
+            }
+            ctx.stroke();
+
+            // Draw y = g(x) (lower curve)
+            ctx.strokeStyle = "#1976d2";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            started = false;
+            for (let px = 0; px <= xMax - x0; px++) {
+                let x = (px / (xMax - x0)) * xRange;
+                let y = 0.25 * Math.pow(x - 2, 2) + 0.3; // lower curve
+                let py = y0 - ((y + 0.5) / yRange) * (y0 - yMax);
+                let cx = x0 + px;
+                if (!started) {
+                    ctx.moveTo(cx, py);
+                    started = true;
+                } else {
+                    ctx.lineTo(cx, py);
+                }
+            }
+            ctx.stroke();
+
+            // Area S (shaded between curves)
+            let a = 1, b = 3;
+            ctx.save();
+            ctx.beginPath();
+            // Top curve from a to b
+            for (let px = 0; px <= xMax - x0; px++) {
+                let x = (px / (xMax - x0)) * xRange;
+                if (x < a) continue;
+                if (x > b) break;
+                let y = -0.25 * Math.pow(x - 2, 2) + 1.5;
+                let py = y0 - ((y + 0.5) / yRange) * (y0 - yMax);
+                let cx = x0 + px;
+                if (px === 0 || x === a) ctx.moveTo(cx, py);
+                else ctx.lineTo(cx, py);
+            }
+            // Bottom curve from b to a (reverse)
+            for (let px = xMax - x0; px >= 0; px--) {
+                let x = (px / (xMax - x0)) * xRange;
+                if (x < a) break;
+                if (x > b) continue;
+                let y = 0.25 * Math.pow(x - 2, 2) + 0.3;
+                let py = y0 - ((y + 0.5) / yRange) * (y0 - yMax);
+                let cx = x0 + px;
+                ctx.lineTo(cx, py);
+            }
+            ctx.closePath();
+            ctx.globalAlpha = 0.18;
+            ctx.fillStyle = "#1976d2";
+            ctx.fill();
+            ctx.globalAlpha = 1;
+            ctx.restore();
+
+            // Draw vertical lines at x=a and x=b
+            let px_a = x0 + ((a / xRange) * (xMax - x0));
+            let px_b = x0 + ((b / xRange) * (xMax - x0));
+            ctx.strokeStyle = "#888";
+            ctx.setLineDash([3, 3]);
+            ctx.beginPath();
+            ctx.moveTo(px_a, y0);
+            ctx.lineTo(px_a, yMax);
+            ctx.moveTo(px_b, y0);
+            ctx.lineTo(px_b, yMax);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Labels
+            ctx.fillStyle = "#263238";
+            ctx.font = "13px Segoe UI, Arial";
+            ctx.fillText("x", xMax + 8, y0 + 4);
+            ctx.fillText("y", x0 - 16, yMax - 6);
+
+            ctx.font = "13px Segoe UI, Arial";
+            ctx.fillText("O", x0 - 16, y0 + 16);
+            ctx.fillText("a", px_a - 6, y0 + 16);
+            ctx.fillText("b", px_b - 6, y0 + 16);
+
+            ctx.fillStyle = "#263238";
+            ctx.fillText("y = f(x)", x0 + 180, yMax + 10);
+            ctx.fillStyle = "#1976d2";
+            ctx.fillText("y = g(x)", x0 + 180, y0 - 18);
+
+            ctx.fillStyle = "#1976d2";
+            ctx.font = "bold 15px Segoe UI, Arial";
+            ctx.fillText("S", x0 + 110, y0 - 38);
+        }
+    </script>
+</body>
+</html>

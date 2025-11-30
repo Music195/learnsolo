@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<!--tags: Trigonometry -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sum of Sine and Cosine Formula</title>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f8fafc;
+            color: #263238;
+        }
+        .container {
+            max-width: 900px;
+            margin: 32px auto;
+            padding: 24px;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+        }
+        .title {
+            font-size: 2em;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 24px;
+            color: #1976d2;
+        }
+        .formula-main {
+            font-size: 1.4em;
+            color: #37474f;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .formula-main .highlight {
+            color: #f57c00;
+        }
+        .section {
+            margin-top: 24px;
+            padding: 18px;
+            border-radius: 10px;
+            background: #e3f2fd;
+            border-left: 7px solid #1976d2;
+        }
+        .section .formula {
+            font-size: 1.15em;
+            margin-bottom: 8px;
+        }
+        .diagram {
+            display: flex;
+            justify-content: center;
+            margin-top: 24px;
+        }
+        .note {
+            margin-top: 14px;
+            font-size: 0.95em;
+            color: #616161;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">Sum of Sine and Cosine Formula</div>
+
+        <div class="formula-main">
+            \( a\sin\theta + b\cos\theta = \)
+            <span class="highlight">\( \sqrt{a^2 + b^2} \)</span>
+            \( \sin(\theta + \alpha) \)
+        </div>
+
+        <div class="section">
+            <div class="formula">
+                Where:<br>
+                \( \cos\alpha = \dfrac{a}{\sqrt{a^2 + b^2}} \) <br>
+                \( \sin\alpha = \dfrac{b}{\sqrt{a^2 + b^2}} \)
+            </div>
+            <div class="note">
+                \( \alpha \) is the angle such that \( \cos\alpha \) and \( \sin\alpha \) match the ratios above.
+            </div>
+        </div>
+
+        <div class="diagram">
+            <canvas id="diagramCanvas" width="320" height="200"></canvas>
+        </div>
+    </div>
+    <script>
+        function drawDiagram() {
+            var canvas = document.getElementById("diagramCanvas");
+            if (!canvas || !canvas.getContext) return;
+            var ctx = canvas.getContext("2d");
+
+            // Draw axes
+            ctx.beginPath();
+            ctx.moveTo(40, 160);
+            ctx.lineTo(300, 160);  // horizontal axis
+            ctx.strokeStyle = "#263238";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(40, 160);
+            ctx.lineTo(40, 40);  // vertical axis
+            ctx.stroke();
+
+            // Draw vector OP from O(40,160) to P(200,80)
+            ctx.beginPath();
+            ctx.moveTo(40, 160);
+            ctx.lineTo(200, 80);
+            ctx.strokeStyle = "#1976d2";
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // Draw dashed line from P to the horizontal axis at (200,160)
+            ctx.beginPath();
+            ctx.setLineDash([5, 5]);
+            ctx.moveTo(200, 80);
+            ctx.lineTo(200, 160);
+            ctx.strokeStyle = "#888";
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            ctx.setLineDash([]); // reset dash
+
+            // Label points
+            ctx.fillStyle = "#263238";
+            ctx.beginPath();
+            ctx.arc(40, 160, 4, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(200, 80, 4, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Draw labels
+            ctx.font = "16px Arial";
+            ctx.fillStyle = "#263238";
+            ctx.fillText("O", 25, 175);
+            ctx.fillText("P(a, b)", 205, 80);
+            
+            // Label horizontal segment (a)
+            ctx.fillStyle = "#f57c00";
+            ctx.fillText("a", 120, 175);
+            
+            // Label vertical segment (b)
+            ctx.fillStyle = "#43a047";
+            ctx.fillText("b", 210, 120);
+            
+            // Label the hypotenuse
+            ctx.fillStyle = "#f57c00";
+            ctx.fillText("√(a²+b²)", 120, 100);
+            
+            // Draw angle α arc near O (approximation)
+            ctx.beginPath();
+            ctx.arc(40, 160, 15, 0.7 * Math.PI, 0.95 * Math.PI, false);
+            ctx.strokeStyle = "#1976d2";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.fillStyle = "#1976d2";
+            ctx.fillText("α", 55, 150);
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "\\(", right: "\\)", display: false}
+                ]
+            });
+            drawDiagram();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,225 @@
+<!-- tags: Space Vector, Sphere, Equation -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equation of a Sphere</title>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f8faf4;
+            color: #263238;
+        }
+        .container {
+            max-width: 950px;
+            margin: 40px auto;
+            padding: 32px 18px;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .title {
+            font-size: 2em;
+            font-weight: bold;
+            color: #b71c1c;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .operation-block {
+            background-color: #eef2f3;
+            border-left: 5px solid #1e88e5;
+            padding: 15px 20px;
+            margin-top: 20px;
+            border-radius: 4px;
+            font-size: 1.1em;
+            line-height: 1.8;
+            max-width: 850px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .operation-block:last-of-type {
+            margin-bottom: 20px;
+        }
+        .operation-block h3 {
+            margin-top: 0;
+            color: #1e88e5;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+        .centered {
+            text-align: center;
+        }
+        .sphere-img {
+            display: block;
+            margin: 18px auto 0 auto;
+            max-width: 260px;
+            width: 100%;
+        }
+        .hint-block {
+            background-color: #fff9c4;
+            border-left: 5px solid #f57f17;
+            padding: 15px 20px;
+            margin-top: 20px;
+            border-radius: 4px;
+            font-size: 0.95em;
+            max-width: 850px;
+            width: 100%;
+            box-sizing: border-box;
+            line-height: 1.6;
+        }
+        @media (max-width: 700px) {
+            .container {
+                padding: 20px 15px;
+                margin: 20px auto;
+            }
+            .title {
+                font-size: 1.6em;
+            }
+            .operation-block {
+                font-size: 1em;
+            }
+            .operation-block h3 {
+                font-size: 1.2em;
+            }
+            .hint-block {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">10. Equation of a Sphere</div>
+
+        <div class="operation-block">
+            <h3>Sphere with Center \((a,\,b,\,c)\) and Radius \(r\)</h3>
+            <p>
+                The equation of a sphere with center \((a,\,b,\,c)\) and radius \(r\) is:
+            </p>
+            <div class="centered">
+                $$
+                (x - a)^2 + (y - b)^2 + (z - c)^2 = r^2
+                $$
+            </div>
+        </div>
+
+        <div class="operation-block">
+            <h3>Sphere with Center at the Origin</h3>
+            <p>
+                The equation of a sphere with center at the origin and radius \(r\) is:
+            </p>
+            <div class="centered">
+                $$
+                x^2 + y^2 + z^2 = r^2
+                $$
+            </div>
+            <!-- <img class="sphere-img" src="https://latex.codecogs.com/svg.image?\dpi{120}&space;\begin{array}{c}\text{C}(a,b,c)\\\text{P}(x,y,z)\\\text{Sphere}\end{array}" alt="Sphere diagram"> -->
+            <canvas id="sphere-canvas" class="sphere-img" width="260" height="200" aria-label="Sphere diagram"></canvas>
+            <script>
+            (function() {
+                const canvas = document.getElementById('sphere-canvas');
+                const ctx = canvas.getContext('2d');
+                const w = canvas.width, h = canvas.height;
+
+                // Sphere parameters
+                const cx = w/2, cy = h/2 + 10, r = 65;
+
+                // Draw sphere outline
+                ctx.beginPath();
+                ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+                ctx.strokeStyle = "#1e88e5";
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Draw equator (ellipse)
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.scale(1, 0.45);
+                ctx.beginPath();
+                ctx.arc(0, 0, r, 0, 2 * Math.PI);
+                ctx.strokeStyle = "#90caf9";
+                ctx.lineWidth = 1.2;
+                ctx.setLineDash([4,3]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.restore();
+
+                // Draw center point O
+                ctx.beginPath();
+                ctx.arc(cx, cy, 4, 0, 2 * Math.PI);
+                ctx.fillStyle = "#b71c1c";
+                ctx.fill();
+
+                // Draw radius line
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                // Point P on surface (top right)
+                const angle = -Math.PI/4;
+                const px = cx + r * Math.cos(angle);
+                const py = cy + r * Math.sin(angle);
+                ctx.lineTo(px, py);
+                ctx.strokeStyle = "#f57f17";
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Draw point P
+                ctx.beginPath();
+                ctx.arc(px, py, 4, 0, 2 * Math.PI);
+                ctx.fillStyle = "#388e3c";
+                ctx.fill();
+
+                // Label O (origin)
+                ctx.font = "bold 15px Segoe UI, Arial";
+                ctx.fillStyle = "#b71c1c";
+                ctx.fillText("O (0,0,0)", cx - 54, cy + 18);
+
+                // Label P
+                ctx.font = "bold 15px Segoe UI, Arial";
+                ctx.fillStyle = "#388e3c";
+                ctx.fillText("P(x, y, z)", px + 8, py - 8);
+
+                // Label r
+                ctx.font = "italic 15px Segoe UI, Arial";
+                ctx.fillStyle = "#f57f17";
+                ctx.fillText("r", (cx + px)/2 + 6, (cy + py)/2 - 6);
+            })();
+            </script>
+        </div>
+
+        <div class="hint-block">
+            <strong>Note:</strong>
+            <ul>
+                <li>
+                    The equation represents all points \((x, y, z)\) at a distance \(r\) from the center \((a, b, c)\).
+                </li>
+                <li>
+                    For the origin as center, the formula simplifies as shown above.
+                </li>
+                <li>
+                    This is the standard form for the equation of a sphere in 3D space.
+                </li>
+            </ul>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "\\(", right: "\\)", display: false},
+                    {left: "\\[", right: "\\]", display: true}
+                ],
+                throwOnError: false
+            });
+        });
+    </script>
+</body>
+</html>
