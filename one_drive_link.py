@@ -111,5 +111,25 @@ def collect_link_lists():
         all_lists.append(listing)
     return all_lists, categorized
 
-all_link_lists, categorized_links = collect_link_lists()
+# Lazy-load cache
+_categorized_links_cache = None
+_all_link_lists_cache = None
+_last_refresh = 0  # epoch seconds
+
+def get_categorized_links():
+    global _categorized_links_cache, _all_link_lists_cache, _last_refresh
+    if _categorized_links_cache is None:
+        _all_link_lists_cache, _categorized_links_cache = collect_link_lists()
+        _last_refresh = time.time()
+    return _categorized_links_cache
+
+def get_all_link_lists():
+    # optional if you use the list version elsewhere
+    global _categorized_links_cache, _all_link_lists_cache, _last_refresh
+    if _all_link_lists_cache is None:
+        _all_link_lists_cache, _categorized_links_cache = collect_link_lists()
+        _last_refresh = time.time()
+    return _all_link_lists_cache
+
+#Optionally add TTL, lock, and soft-fail logic later.
 
