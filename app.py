@@ -83,18 +83,19 @@ def view_note(note_path):
     
 @app.route('/note/kind_of_problem')
 def kind_of_problem():
-    categorized_links=gdl.categorized_links
-    return render_template('kind_of_problem.html',
+    categorized_links=gdl.categorized_links #function call (lazy loaded)
+    return render_template('problems_list.html',
                             categorized_links=categorized_links
                            )
 
-category= list(gdl.categorized_links.keys())
+#category= list(gdl.categorized_links.keys())
 
 @app.route('/note/kind_of_problem/<path:category>')
 def problem(category):
     topic=category
-    lists_of_link_dic=gdl.categorized_links[category]
-    return render_template('problem.html',
+    categorized_links = gdl.categorized_links#fetch data
+    lists_of_link_dic=categorized_links[category] #Safe acess
+    return render_template('problems_list.html',
                             lists_of_link_dic=lists_of_link_dic,
                             topic=topic
                            )
@@ -108,12 +109,11 @@ def viewer():
 def proxy_pdf():
     url = request.args.get('url')
     
-    # Optional: Validate the URL is from trusted sources
-    if not url or not (url.startswith('https://drive.google.com') or url.startswith('/static/')):
-        return "Invalid URL", 400
-        
-    # For external URLs (like Google Drive)
-    if url.startswith('http'):
+    if not url:
+        return "No URL provided", 400
+    
+    # Google Drive
+    if url.startswith('https://drive.google.com'):
         try:
             response = requests.get(url)
             if response.status_code == 200:
@@ -129,9 +129,12 @@ def proxy_pdf():
         except Exception as e:
             return f"Error fetching PDF: {str(e)}", 500
     
-    # For local files, serve directly
-    else:
+    # Local files
+    elif url.startswith('/static/'):
         return redirect(url)
+    
+    else:
+        return "Invalid URL", 400
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000)) # Default to 5000 if PORT not set

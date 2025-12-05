@@ -55,8 +55,8 @@ def get_google_drive_files(folder_id, category_name):
 # usage:
 past_problems_juni_id= "1kwIwb28AJo2-MhuE9V4pzcDxwXimIUxr"
 eju_folder_id = "1ZJ6zQFpYhtKarExGgMN4nyWH2UTT7cvl"
-google_links_of_eju = get_google_drive_files(eju_folder_id, "EJU Past Problems")
-google_links_of_past_problems_juni = get_google_drive_files(past_problems_juni_id, "Past Problems of J-Universites")
+google_links_of_eju = get_google_drive_files(eju_folder_id, "EJU Past Question")
+google_links_of_past_problems_juni = get_google_drive_files(past_problems_juni_id, "Past Questions of J-Universites")
 
 # Automatically collect all lists with a certain naming pattern
 def collect_link_lists():

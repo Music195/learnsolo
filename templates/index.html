@@ -3,42 +3,182 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Learn With NO-ONE</title>
+    <title>Learning With NO-ONE</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        a{ 
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .hero-section {
+            padding: 60px 0;
+            color: white;
+            text-align: center;
+        }
+        
+        .hero-section h1 {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: fadeInDown 1s;
+        }
+        
+        .hero-section .tagline {
+            font-size: 1.5rem;
+            opacity: 0.95;
+            margin-bottom: 10px;
+        }
+        
+        .hero-section .emoji {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+        
+        .card-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            border: none;
+            animation: fadeInUp 0.8s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        
+        .feature-item {
+            padding: 20px;
+            margin: 10px 0;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
             text-decoration: none;
+            color: #333;
+        }
+        
+        .feature-item:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        .feature-item.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #e0e0e0;
+        }
+        
+        .feature-item.disabled:hover {
+            transform: none;
+            background: #e0e0e0;
+            color: #999;
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
+            margin-right: 20px;
+            min-width: 50px;
+            text-align: center;
+        }
+        
+        .feature-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            padding: 20px;
+            margin-top: 40px;
+            opacity: 0.8;
         }
     </style>
 </head>
 <body>
-    <div class="container py-5">
-        <header class="text-center mb-5">
-            <h1>Learning With NO-ONE</h1>
-            <p class="lead">You Can Do It !!!</p>
-        </header>
-        
-        <div class="row">
-            <div class="col-md-6 offset-md-3">
-                <div class="card">
-                    <div class="card-body">
-                      <h5 class="card-title">Let's Start Learning By Clicking</h5>
-                      <ul class="list-group mt-3">
-                          {% for function in functions %}
-                          <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <a href="{% if function.route == 'external' %}{{ function.value }}{% elif function.route == 'disabled' %}#{% else %}{{ function.route }}{% if function.route == '/note/' %}{% if function.value == 'view_note' %}{{notes_list[0]}}{% else %}{{function.value}}{% endif %}{% endif %}{% endif %}"
-                                    {% if function.route == 'disabled' %}class="disabled" style="color:gray; cursor:not-allowed;"{% endif %}
-                                    {% if function.route == 'external' %}target="_blank"{% endif %}>
-                                    {{ function.name }}
-                                </a>
-                          </li>
-                          {% endfor %}
-                      </ul>
-                    </div>
+    <div class="hero-section">
+        <div class="emoji">📚</div>
+        <h1>Learning With NO-ONE</h1>
+        <p class="tagline">Your Personal Learning Hub</p>
+        <p style="opacity: 0.9;">✨ You Can Do It! ✨</p>
+    </div>
+    
+    <div class="card-container">
+        <div class="feature-card">
+            <h3 style="text-align: center; color: #667eea; margin-bottom: 30px;">
+                <i class="fas fa-rocket"></i> Choose Your Learning Path
+            </h3>
+            
+            {% for function in functions %}
+            <a href="{% if function.route == 'external' %}{{ function.value }}{% elif function.route == 'disabled' %}#{% else %}{{ function.route }}{% if function.route == '/note/' %}{% if function.value == 'view_note' %}{{notes_list[0]}}{% else %}{{function.value}}{% endif %}{% endif %}{% endif %}"
+               class="feature-item {% if function.route == 'disabled' %}disabled{% endif %}"
+               {% if function.route == 'external' %}target="_blank"{% endif %}
+               {% if function.route == 'disabled' %}onclick="return false;"{% endif %}>
+                <div class="feature-icon">
+                    {% if function.value == 'view_note' %}
+                        <i class="fas fa-book-open"></i>
+                    {% elif function.value == 'kind_of_problem' %}
+                        <i class="fas fa-puzzle-piece"></i>
+                    {% elif function.route == 'external' %}
+                        <i class="fas fa-external-link-alt"></i>
+                    {% else %}
+                        <i class="fas fa-hourglass-half"></i>
+                    {% endif %}
                 </div>
-            </div>
+                <div class="feature-title">{{ function.name }}</div>
+            </a>
+            {% endfor %}
         </div>
+    </div>
+    
+    <div class="footer">
+        <p>💡 Keep learning, keep growing!</p>
+        <p style="font-size: 0.9rem; margin-top: 10px;">Made with ❤️ for learners</p>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
