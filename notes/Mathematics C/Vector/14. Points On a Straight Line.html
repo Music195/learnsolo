@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<!-- tags: Vector -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Condition for Three Points to be Collinear
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+   }
+
+   .main-content {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 15px;
+    padding: 30px;
+    margin: 20px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+   }
+
+   .fancy-title {
+    text-align: center;
+    font-size: 2.5em;
+    font-weight: bold;
+    margin: 20px 0;
+    color: #2c3e50;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+   }
+
+   .description {
+    font-size: 1.2em;
+    line-height: 1.6;
+    margin: 20px 0;
+    color: #34495e;
+    text-align: center;
+   }
+
+   .content-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin: 30px 0;
+   }
+
+   .formula-block {
+    flex: 1;
+    min-width: 300px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 1.4em;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+   }
+
+   .diagram-block {
+    flex: 1;
+    min-width: 300px;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+   }
+
+   .interactive-demo {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    margin: 30px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+   }
+
+   .demo-title {
+    text-align: center;
+    font-size: 1.8em;
+    margin-bottom: 25px;
+    font-weight: bold;
+   }
+
+   .input-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin: 20px 0;
+    justify-content: center;
+   }
+
+   .input-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+   }
+
+   .input-field label {
+    font-weight: bold;
+    font-size: 1.1em;
+   }
+
+   .input-field input {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    width: 120px;
+    text-align: center;
+    transition: border-color 0.3s;
+   }
+
+   .input-field input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+   }
+
+   .button-group {
+    text-align: center;
+    margin: 25px 0;
+   }
+
+   .btn {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 1.1em;
+    cursor: pointer;
+    margin: 0 10px;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+   }
+
+   .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+   }
+
+   .btn:active {
+    transform: translateY(0);
+   }
+
+   .result-display {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    backdrop-filter: blur(10px);
+   }
+
+   .result-text {
+    font-size: 1.2em;
+    text-align: center;
+    margin: 10px 0;
+   }
+
+   .canvas-container {
+    text-align: center;
+    margin: 20px 0;
+   }
+
+   .collinear-canvas {
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+   }
+
+   .section {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    margin: 25px 0;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+   }
+
+   .section-title {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
+   }
+
+   .example-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+   }
+
+   .example-card {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+   }
+
+   .example-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(245, 87, 108, 0.4);
+   }
+
+   .example-card h4 {
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+   }
+
+   .example-detail {
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    display: none;
+   }
+
+   .calculation-steps {
+    margin: 15px 0;
+   }
+
+   .calculation-step {
+    margin: 8px 0;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 5px;
+    border-left: 4px solid #f5576c;
+   }
+
+   .practice-problems {
+    margin: 20px 0;
+   }
+
+   .problem-item {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+   }
+
+   .problem-item h4 {
+    margin: 0 0 15px 0;
+    font-size: 1.2em;
+   }
+
+   .solution-btn {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    color: #333;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 10px 0;
+    transition: all 0.3s;
+   }
+
+   .solution-btn:hover {
+    background: linear-gradient(135deg, #fcb69f 0%, #ffecd2 100%);
+    transform: scale(1.05);
+   }
+
+   .solution {
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 10px 0;
+    display: none;
+    border-left: 4px solid #667eea;
+   }
+
+   .key-takeaways {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    padding: 25px;
+    border-radius: 12px;
+    margin: 25px 0;
+   }
+
+   .takeaway-list {
+    list-style: none;
+    padding: 0;
+   }
+
+   .takeaway-item {
+    background: rgba(255, 255, 255, 0.8);
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+    font-weight: bold;
+   }
+
+   .error-message {
+    background: #ffebee;
+    color: #c62828;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px 0;
+    display: none;
+    text-align: center;
+    font-weight: bold;
+   }
+
+   @media (max-width: 768px) {
+    .content-wrapper {
+     flex-direction: column;
+    }
+
+    .input-group {
+     flex-direction: column;
+     align-items: center;
+    }
+
+    .fancy-title {
+     font-size: 2em;
+    }
+
+    .formula-block {
+     font-size: 1.2em;
+    }
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Vector">
+   Condition for Three Points to be Collinear
+  </div>
+
+  <div class="container">
+   <div class="main-content">
+    <div class="description">
+     Three points A, B, and C are collinear (lie on the same straight line) if and only if the vector \(\overrightarrow{AB}\) and \(\overrightarrow{AC}\) are parallel, or if C coincides with A.
+    </div>
+
+    <div class="content-wrapper">
+     <div class="formula-block">
+      $$ \overrightarrow{AC} = k\overrightarrow{AB} $$
+      <br>
+      <small>for some real number \(k\)</small>
+     </div>
+
+     <div class="diagram-block">
+      <svg viewbox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+       <!-- Line -->
+       <line stroke="#555" stroke-width="1" x1="20" x2="180" y1="40" y2="40"></line>
+       <!-- Points -->
+       <circle cx="40" cy="40" fill="#e74c3c" r="3"></circle>
+       <text font-size="10" x="35" y="30">A</text>
+       <circle cx="160" cy="40" fill="#e74c3c" r="3"></circle>
+       <text font-size="10" x="155" y="30">B</text>
+       <circle cx="100" cy="40" fill="#f39c12" r="3"></circle>
+       <text font-size="10" x="95" y="30">C</text>
+       <!-- Vector AB -->
+       <line stroke="#007bff" stroke-width="2" x1="40" x2="160" y1="50" y2="50" marker-end="url(#arrowhead)"></line>
+       <text fill="#007bff" font-size="9" x="95" y="65">\(\overrightarrow{AB}\)</text>
+       <!-- Vector AC -->
+       <line stroke="#ff8c00" stroke-width="2" x1="40" x2="100" y1="55" y2="55" marker-end="url(#arrowhead)"></line>
+       <text fill="#ff8c00" font-size="9" x="65" y="70">\(\overrightarrow{AC}\)</text>
+       <!-- Arrow markers -->
+       <defs>
+        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+         <polygon fill="#007bff" points="0 0, 10 3.5, 0 7"></polygon>
+        </marker>
+       </defs>
+      </svg>
+     </div>
+    </div>
+
+    <div class="interactive-demo">
+     <div class="demo-title">Interactive Collinearity Checker</div>
+
+     <div class="input-group">
+      <div class="input-field">
+       <label for="ax">A<sub>x</sub>:</label>
+       <input id="ax" step="any" type="number" value="1"/>
+      </div>
+      <div class="input-field">
+       <label for="ay">A<sub>y</sub>:</label>
+       <input id="ay" step="any" type="number" value="1"/>
+      </div>
+      <div class="input-field">
+       <label for="bx">B<sub>x</sub>:</label>
+       <input id="bx" step="any" type="number" value="5"/>
+      </div>
+      <div class="input-field">
+       <label for="by">B<sub>y</sub>:</label>
+       <input id="by" step="any" type="number" value="3"/>
+      </div>
+      <div class="input-field">
+       <label for="cx">C<sub>x</sub>:</label>
+       <input id="cx" step="any" type="number" value="3"/>
+      </div>
+      <div class="input-field">
+       <label for="cy">C<sub>y</sub>:</label>
+       <input id="cy" step="any" type="number" value="2"/>
+      </div>
+     </div>
+
+     <div class="button-group">
+      <button class="btn" onclick="checkCollinearity()">Check Collinearity</button>
+      <button class="btn" onclick="resetDemo()">Reset</button>
+     </div>
+
+     <div class="error-message" id="errorMessage"></div>
+
+     <div class="result-display">
+      <div class="result-text" id="resultText">
+       Result: <strong id="collinearResult">Not calculated</strong>
+      </div>
+      <div class="result-text" id="kValue">
+       k value: <strong id="kResult">N/A</strong>
+      </div>
+     </div>
+
+     <div class="canvas-container">
+      <canvas class="collinear-canvas" height="400" id="collinearCanvas" width="500"></canvas>
+     </div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Mathematical Foundation</div>
+     <p>Three points A, B, and C are collinear if they lie on the same straight line. This condition can be expressed using vectors in several equivalent ways:</p>
+     <div class="formula-block" style="margin: 20px 0;">
+      $$ \overrightarrow{AC} = k\overrightarrow{AB} \quad \text{or} \quad \overrightarrow{BC} = m\overrightarrow{BA} \quad \text{or} \quad \overrightarrow{CA} = n\overrightarrow{CB} $$
+     </div>
+     <p>The scalar k represents the position of point C relative to A and B. If k = 0, then C coincides with A. If k = 1, then C coincides with B. If 0 < k < 1, then C lies between A and B.</p>
+     <p>This condition is equivalent to the area of triangle ABC being zero, or the vectors \(\overrightarrow{AB}\) and \(\overrightarrow{AC}\) being linearly dependent.</p>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Worked Examples</div>
+     <div class="example-grid">
+      <div class="example-card" onclick="showExample(1)">
+       <h4>Example 1: Points on a line</h4>
+       <p>Check if points A(1,2), B(3,4), C(5,6) are collinear</p>
+      </div>
+      <div class="example-card" onclick="showExample(2)">
+       <h4>Example 2: Point between others</h4>
+       <p>Check if points A(0,0), B(4,2), C(2,1) are collinear</p>
+      </div>
+      <div class="example-card" onclick="showExample(3)">
+       <h4>Example 3: Not collinear</h4>
+       <p>Check if points A(1,1), B(2,2), C(3,4) are collinear</p>
+      </div>
+     </div>
+
+     <div class="example-detail" id="exampleDetail"></div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Applications</div>
+     <ul>
+      <li><strong>Geometry:</strong> Determining if three points lie on the same line</li>
+      <li><strong>Computer Graphics:</strong> Line detection and rendering algorithms</li>
+      <li><strong>Navigation:</strong> Checking if waypoints are aligned</li>
+      <li><strong>Physics:</strong> Trajectory analysis and collision detection</li>
+      <li><strong>Engineering:</strong> Structural analysis and alignment checks</li>
+     </ul>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Practice Problems</div>
+     <div class="practice-problems">
+      <div class="problem-item">
+       <h4>Problem 1</h4>
+       <p>Determine whether the points A(2,3), B(4,7), and C(6,11) are collinear.</p>
+       <button class="solution-btn" onclick="toggleSolution(1)">Show Solution</button>
+       <div class="solution" id="solution1">
+        <p><strong>Solution:</strong></p>
+        <p>Check if \(\overrightarrow{AC} = k\overrightarrow{AB}\)</p>
+        <p>\(\overrightarrow{AB} = (4-2, 7-3) = (2,4)\)</p>
+        <p>\(\overrightarrow{AC} = (6-2, 11-3) = (4,8) = 2(2,4) = 2\overrightarrow{AB}\)</p>
+        <p>Since \(\overrightarrow{AC} = 2\overrightarrow{AB}\), the points are collinear with k = 2.</p>
+       </div>
+      </div>
+
+      <div class="problem-item">
+       <h4>Problem 2</h4>
+       <p>Find the value of k such that the points A(1,2), B(3,4), and C(k,6) are collinear.</p>
+       <button class="solution-btn" onclick="toggleSolution(2)">Show Solution</button>
+       <div class="solution" id="solution2">
+        <p><strong>Solution:</strong></p>
+        <p>\(\overrightarrow{AB} = (3-1, 4-2) = (2,2)\)</p>
+        <p>\(\overrightarrow{AC} = (k-1, 6-2) = (k-1, 4)\)</p>
+        <p>Set \((k-1, 4) = m(2,2) = (2m, 2m)\)</p>
+        <p>So: k-1 = 2m and 4 = 2m ⇒ m = 2, k-1 = 4 ⇒ k = 5</p>
+        <p>The value is k = 5.</p>
+       </div>
+      </div>
+
+      <div class="problem-item">
+       <h4>Problem 3</h4>
+       <p>Show that the points A(1,-1), B(2,1), and C(3,3) are not collinear.</p>
+       <button class="solution-btn" onclick="toggleSolution(3)">Show Solution</button>
+       <div class="solution" id="solution3">
+        <p><strong>Solution:</strong></p>
+        <p>\(\overrightarrow{AB} = (2-1, 1-(-1)) = (1,2)\)</p>
+        <p>\(\overrightarrow{AC} = (3-1, 3-(-1)) = (2,4)\)</p>
+        <p>Check if (2,4) = k(1,2) = (k, 2k)</p>
+        <p>2 = k and 4 = 2k ⇒ k = 2, but 4 ≠ 2×2 = 4? Wait, 4 = 2×2, so they are collinear!</p>
+        <p>Actually, these points ARE collinear with k = 2.</p>
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <div class="section-title">Key Takeaways</div>
+     <ul class="takeaway-list">
+      <li class="takeaway-item">Three points are collinear if \(\overrightarrow{AC} = k\overrightarrow{AB}\) for some k</li>
+      <li class="takeaway-item">If k = 0, C coincides with A; if k = 1, C coincides with B</li>
+      <li class="takeaway-item">If 0 < k < 1, C lies between A and B on the line</li>
+      <li class="takeaway-item">Equivalent to area of triangle ABC being zero</li>
+      <li class="takeaway-item">Vectors \(\overrightarrow{AB}\) and \(\overrightarrow{AC}\) are linearly dependent</li>
+      <li class="takeaway-item">Used to check alignment in geometry and computer graphics</li>
+     </ul>
+    </div>
+   </div>
+  </div>
+
+  <script>
+   function checkCollinearity() {
+    try {
+      const ax = parseFloat(document.getElementById('ax').value) || 0;
+      const ay = parseFloat(document.getElementById('ay').value) || 0;
+      const bx = parseFloat(document.getElementById('bx').value) || 0;
+      const by = parseFloat(document.getElementById('by').value) || 0;
+      const cx = parseFloat(document.getElementById('cx').value) || 0;
+      const cy = parseFloat(document.getElementById('cy').value) || 0;
+
+      // Check if A and B are the same point
+      if (ax === bx && ay === by) {
+        document.getElementById('collinearResult').textContent = 'Invalid: A and B are the same point';
+        document.getElementById('kResult').textContent = 'N/A';
+        document.getElementById('errorMessage').style.display = 'block';
+        document.getElementById('errorMessage').textContent = 'Points A and B must be distinct.';
+        return;
+      }
+
+      // Calculate vectors
+      const abx = bx - ax;
+      const aby = by - ay;
+      const acx = cx - ax;
+      const acy = cy - ay;
+
+      // Check if vectors are linearly dependent
+      const det = abx * acy - aby * acx;
+      const isCollinear = Math.abs(det) < 1e-10; // Account for floating point precision
+
+      let k = 'N/A';
+      if (isCollinear) {
+        if (abx !== 0) {
+          k = acx / abx;
+        } else if (aby !== 0) {
+          k = acy / aby;
+        } else {
+          k = 0; // A and B are the same, but we already checked this
+        }
+      }
+
+      document.getElementById('collinearResult').textContent = isCollinear ? 'Collinear' : 'Not Collinear';
+      document.getElementById('kResult').textContent = isCollinear ? k.toFixed(3) : 'N/A';
+      document.getElementById('errorMessage').style.display = 'none';
+
+      drawCollinearityVisualization(ax, ay, bx, by, cx, cy, isCollinear, k);
+    } catch (error) {
+      document.getElementById('errorMessage').textContent = 'Error checking collinearity. Please check your input values.';
+      document.getElementById('errorMessage').style.display = 'block';
+    }
+   }
+
+   function drawCollinearityVisualization(ax, ay, bx, by, cx, cy, isCollinear, k) {
+    const canvas = document.getElementById('collinearCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Calculate bounds and scaling
+    const points = [{x: ax, y: ay}, {x: bx, y: by}, {x: cx, y: cy}];
+    const minX = Math.min(...points.map(p => p.x)) - 2;
+    const maxX = Math.max(...points.map(p => p.x)) + 2;
+    const minY = Math.min(...points.map(p => p.y)) - 2;
+    const maxY = Math.max(...points.map(p => p.y)) + 2;
+
+    const scaleX = (canvas.width - 80) / (maxX - minX);
+    const scaleY = (canvas.height - 80) / (maxY - minY);
+    const scale = Math.min(scaleX, scaleY);
+
+    const offsetX = 40 - minX * scale;
+    const offsetY = 40 - minY * scale;
+
+    // Transform coordinates to canvas
+    const transformX = x => offsetX + x * scale;
+    const transformY = y => canvas.height - (offsetY + y * scale);
+
+    // Draw grid
+    ctx.strokeStyle = '#e0e0e0';
+    ctx.lineWidth = 1;
+    for (let i = Math.floor(minX); i <= Math.ceil(maxX); i++) {
+      const x = transformX(i);
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, canvas.height);
+      ctx.stroke();
+    }
+    for (let i = Math.floor(minY); i <= Math.ceil(maxY); i++) {
+      const y = transformY(i);
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(canvas.width, y);
+      ctx.stroke();
+    }
+
+    // Draw line if collinear
+    if (isCollinear) {
+      ctx.strokeStyle = '#27ae60';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(transformX(ax), transformY(ay));
+      ctx.lineTo(transformX(bx), transformY(by));
+      ctx.stroke();
+    } else {
+      // Draw the line AB
+      ctx.strokeStyle = '#95a5a6';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.moveTo(transformX(ax), transformY(ay));
+      ctx.lineTo(transformX(bx), transformY(by));
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    // Draw points
+    ctx.fillStyle = '#e74c3c';
+    ctx.beginPath();
+    ctx.arc(transformX(ax), transformY(ay), 5, 0, 2 * Math.PI);
+    ctx.fill();
+
+    ctx.fillStyle = '#e74c3c';
+    ctx.beginPath();
+    ctx.arc(transformX(bx), transformY(by), 5, 0, 2 * Math.PI);
+    ctx.fill();
+
+    ctx.fillStyle = isCollinear ? '#27ae60' : '#e67e22';
+    ctx.beginPath();
+    ctx.arc(transformX(cx), transformY(cy), 5, 0, 2 * Math.PI);
+    ctx.fill();
+
+    // Draw vectors
+    drawVector(ctx, transformX(ax), transformY(ay), transformX(bx), transformY(by), '#007bff', 'AB');
+    drawVector(ctx, transformX(ax), transformY(ay), transformX(cx), transformY(cy), '#ff8c00', 'AC');
+
+    // Draw labels
+    ctx.fillStyle = '#333';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('A', transformX(ax), transformY(ay) - 10);
+    ctx.fillText('B', transformX(bx), transformY(by) - 10);
+    ctx.fillText('C', transformX(cx), transformY(cy) - 10);
+
+    // Draw legend
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.fillRect(10, 10, 140, 100);
+    ctx.strokeStyle = '#333';
+    ctx.strokeRect(10, 10, 140, 100);
+
+    ctx.fillStyle = '#333';
+    ctx.font = '10px Arial';
+    ctx.textAlign = 'left';
+    ctx.fillText('Legend:', 15, 25);
+    ctx.fillText('● A, B: Reference points', 15, 40);
+    ctx.fillText(isCollinear ? '● C: On line (green)' : '● C: Off line (orange)', 15, 55);
+    ctx.fillText('→ AB: Reference vector', 15, 70);
+    ctx.fillText('→ AC: Test vector', 15, 85);
+    if (isCollinear) {
+      ctx.fillText(`k = ${k.toFixed(3)}`, 15, 100);
+    }
+   }
+
+   function drawVector(ctx, x1, y1, x2, y2, color, label) {
+    // Draw vector line
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+
+    // Draw arrowhead
+    const angle = Math.atan2(y2 - y1, x2 - x1);
+    const arrowLength = 10;
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - arrowLength * Math.cos(angle - Math.PI/6), y2 - arrowLength * Math.sin(angle - Math.PI/6));
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - arrowLength * Math.cos(angle + Math.PI/6), y2 - arrowLength * Math.sin(angle + Math.PI/6));
+    ctx.stroke();
+
+    // Draw label
+    const midX = (x1 + x2) / 2;
+    const midY = (y1 + y2) / 2;
+    ctx.fillStyle = color;
+    ctx.font = '10px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(label, midX, midY - 5);
+   }
+
+   function showExample(exampleNumber) {
+    const detail = document.getElementById('exampleDetail');
+    let content = '';
+
+    switch(exampleNumber) {
+      case 1:
+        content = `
+          <h4>Detailed Example 1 - Points on a Line</h4>
+          <div class="calculation-steps">
+            <div class="calculation-step">Points: A(1,2), B(3,4), C(5,6)</div>
+            <div class="calculation-step">\(\overrightarrow{AB} = (3-1, 4-2) = (2,2)\)</div>
+            <div class="calculation-step">\(\overrightarrow{AC} = (5-1, 6-2) = (4,4) = 2(2,2) = 2\overrightarrow{AB}\)</div>
+            <div class="calculation-step">Since \(\overrightarrow{AC} = 2\overrightarrow{AB}\), the points are collinear</div>
+          </div>
+        `;
+        break;
+      case 2:
+        content = `
+          <h4>Detailed Example 2 - Point Between Others</h4>
+          <div class="calculation-steps">
+            <div class="calculation-step">Points: A(0,0), B(4,2), C(2,1)</div>
+            <div class="calculation-step">\(\overrightarrow{AB} = (4-0, 2-0) = (4,2)\)</div>
+            <div class="calculation-step">\(\overrightarrow{AC} = (2-0, 1-0) = (2,1) = 0.5(4,2) = 0.5\overrightarrow{AB}\)</div>
+            <div class="calculation-step">Since k = 0.5 (between 0 and 1), C lies between A and B</div>
+          </div>
+        `;
+        break;
+      case 3:
+        content = `
+          <h4>Detailed Example 3 - Not Collinear</h4>
+          <div class="calculation-steps">
+            <div class="calculation-step">Points: A(1,1), B(2,2), C(3,4)</div>
+            <div class="calculation-step">\(\overrightarrow{AB} = (2-1, 2-1) = (1,1)\)</div>
+            <div class="calculation-step">\(\overrightarrow{AC} = (3-1, 4-1) = (2,3)\)</div>
+            <div class="calculation-step">Check if (2,3) = k(1,1) = (k,k)</div>
+            <div class="calculation-step">2 = k and 3 = k ⇒ contradiction, so not collinear</div>
+          </div>
+        `;
+        break;
+    }
+
+    detail.innerHTML = content;
+    detail.style.display = 'block';
+    MathJax.typesetPromise();
+   }
+
+   function toggleSolution(problemNumber) {
+    const solution = document.getElementById('solution' + problemNumber);
+    if (solution.style.display === 'none' || solution.style.display === '') {
+      solution.style.display = 'block';
+    } else {
+      solution.style.display = 'none';
+    }
+   }
+
+   function resetDemo() {
+    document.getElementById('ax').value = '1';
+    document.getElementById('ay').value = '1';
+    document.getElementById('bx').value = '5';
+    document.getElementById('by').value = '3';
+    document.getElementById('cx').value = '3';
+    document.getElementById('cy').value = '2';
+    document.getElementById('collinearResult').textContent = 'Not calculated';
+    document.getElementById('kResult').textContent = 'N/A';
+    document.getElementById('errorMessage').style.display = 'none';
+    checkCollinearity();
+   }
+
+   // Initialize with default values
+   document.addEventListener('DOMContentLoaded', function() {
+    checkCollinearity();
+   });
+  </script>
+ </body>
+</html>

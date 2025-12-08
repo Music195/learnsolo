@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<!-- tags: Integration, Distance, Absolute Value, Definite Integral, Velocity -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Distance Traveled on a Number Line
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Integration">
+   Distance Traveled on a Number Line
+  </div>
+  <style>
+    .solution-btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 14px;
+      margin: 10px 0;
+      cursor: pointer;
+      border-radius: 25px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    .solution-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+    .solution {
+      display: none;
+      margin-top: 15px;
+      padding: 15px;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      border-left: 5px solid #667eea;
+      border-radius: 0 10px 10px 0;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      overflow: hidden;
+      white-space: normal;
+    }
+    .problem-item {
+      margin: 20px 0;
+      padding: 15px;
+      border: 2px solid #e1e8ed;
+      border-radius: 10px;
+      background: #fafbfc;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      overflow: hidden;
+      white-space: normal;
+    }
+    .highlight-box {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 15px 0;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      overflow: hidden;
+      white-space: normal;
+    }
+    .section {
+      margin: 25px 0;
+      padding: 20px;
+      border: 1px solid #e1e8ed;
+      border-radius: 10px;
+      background: white;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      overflow: hidden;
+      white-space: normal;
+    }
+    .key-takeaways {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 15px;
+      margin: 20px 0;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      overflow: hidden;
+      white-space: normal;
+    }
+    .formula-block {
+      background: #f8f9fa;
+      border: 2px solid #dee2e6;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      text-align: center;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      overflow: hidden;
+      white-space: normal;
+    }
+    .canvas-container {
+      text-align: center;
+      margin: 20px 0;
+      padding: 15px;
+      border: 1px solid #e1e8ed;
+      border-radius: 10px;
+      background: #fafbfc;
+    }
+    canvas {
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background: white;
+    }
+  </style>
+  <div class="container">
+   <div class="main-content">
+    <div class="section">
+     <h2>📐 Concepts</h2>
+     <p>When a particle moves along a number line with velocity \( v(t) \) at time \( t \), the <strong>distance traveled</strong> between times \( t_1 \) and \( t_2 \) is found by integrating the absolute value of the velocity function:</p>
+     
+     <div class="formula-block">
+      <div class="math" style="font-size:1.3em;">
+       \( s = \int_{t_1}^{t_2} |v(t)| \, dt \)
+      </div>
+     </div>
+     
+     <p>This formula accounts for the fact that distance is always positive, regardless of the direction of motion. The absolute value ensures that both forward and backward motion contribute positively to the total distance traveled.</p>
+     
+     <div class="highlight-box">
+      <strong>Key Insight:</strong> Distance traveled ≠ Displacement. While displacement considers direction and can be negative, distance traveled is always positive and represents the total path length covered.
+     </div>
+    </div>
+
+    <div class="section">
+     <h2>🔍 Examples</h2>
+     
+     <h3>Example 1: Constant Velocity</h3>
+     <p>A car moves at a constant speed of 60 km/h for 2 hours. Find the distance traveled.</p>
+     <p>Solution: Since velocity is constant and positive, \( v(t) = 60 \) km/h</p>
+     <div class="formula-block">
+      \( s = \int_{0}^{2} |60| \, dt = \int_{0}^{2} 60 \, dt = 60 \times 2 = 120 \) km
+     </div>
+     
+     <h3>Example 2: Piecewise Velocity</h3>
+     <p>A particle has velocity \( v(t) = \begin{cases} 2t & 0 \leq t \leq 2 \\ -t + 4 & 2 < t \leq 4 \end{cases} \). Find distance from t=0 to t=4.</p>
+     <div class="formula-block">
+      \( s = \int_{0}^{2} |2t| \, dt + \int_{2}^{4} |-t + 4| \, dt = \int_{0}^{2} 2t \, dt + \int_{2}^{4} (t - 4) \, dt \)
+      <br><br>
+      \( = \left[t^2\right]_{0}^{2} + \left[\frac{1}{2}t^2 - 4t\right]_{2}^{4} = (4 - 0) + \left(8 - 16 - \frac{1}{2}(4) + 8\right) = 4 + (8 - 16 - 2 + 8) = 4 + (-2) = 2 \)
+     </div>
+    </div>
+
+    <div class="section">
+     <h2>📊 Visual Guide</h2>
+     <p>The interactive diagram below shows how distance traveled relates to velocity over time. The shaded area represents the distance traveled, while the position curve shows the actual displacement.</p>
+     
+     <div class="canvas-container">
+      <canvas id="distanceCanvas" width="600" height="400"></canvas>
+     </div>
+    </div>
+
+    <div class="section">
+     <h2>🚀 Applications</h2>
+     <ul>
+      <li><strong>Physics:</strong> Calculating total distance covered by moving objects, regardless of direction changes</li>
+      <li><strong>Engineering:</strong> Determining wear and tear on mechanical components based on total movement</li>
+      <li><strong>Sports Analytics:</strong> Measuring total running distance in athletic performance</li>
+      <li><strong>Transportation:</strong> Computing odometer readings and fuel consumption calculations</li>
+     </ul>
+    </div>
+
+    <div class="section">
+     <h2>✏️ Practice Problems</h2>
+     
+     <div class="problem-item">
+      <strong>Problem 1:</strong> A particle moves with velocity \( v(t) = 3t^2 - 6t + 3 \) m/s. Find the distance traveled from t=0 to t=2 seconds.
+      <br><br>
+      <button class="solution-btn" onclick="toggleSolution('sol1')">Show Solution</button>
+      <div id="sol1" class="solution">
+       <p>First, find where velocity is zero: \( 3t^2 - 6t + 3 = 0 \) → \( t^2 - 2t + 1 = 0 \) → \( (t-1)^2 = 0 \) → t=1</p>
+       <p>For 0 ≤ t ≤ 1: v(t) = 3t²-6t+3 ≥ 0</p>
+       <p>For 1 < t ≤ 2: v(t) = 3t²-6t+3 < 0</p>
+       <div class="formula-block">
+        \( s = \int_{0}^{1} (3t^2 - 6t + 3) dt + \int_{1}^{2} -(3t^2 - 6t + 3) dt \)
+        <br><br>
+        \( = \left[t^3 - 3t^2 + 3t\right]_{0}^{1} + \left[-(t^3 - 3t^2 + 3t)\right]_{1}^{2} \)
+        <br><br>
+        \( = (1 - 3 + 3) - 0 + \left[-(8 - 12 + 6) - (-(1 - 3 + 3))\right] \)
+        <br><br>
+        \( = 1 + [(-2) - (-1)] = 1 + (-2 + 1) = 0 \) meters
+       </div>
+      </div>
+     </div>
+
+     <div class="problem-item">
+      <strong>Problem 2:</strong> The velocity of a car is given by \( v(t) = 20 + 5\sin(\pi t) \) km/h. Find the distance traveled in the first hour.
+      <br><br>
+      <button class="solution-btn" onclick="toggleSolution('sol2')">Show Solution</button>
+      <div id="sol2" class="solution">
+       <p>Since 20 + 5sin(πt) ≥ 0 for all t (minimum value is 15), we can drop the absolute value.</p>
+       <div class="formula-block">
+        \( s = \int_{0}^{1} (20 + 5\sin(\pi t)) dt = \left[20t - \frac{5}{\pi}\cos(\pi t)\right]_{0}^{1} \)
+        <br><br>
+        \( = \left(20 - \frac{5}{\pi}\cos(\pi)\right) - \left(0 - \frac{5}{\pi}\cos(0)\right) = 20 - \frac{5}{\pi}(-1) + \frac{5}{\pi}(1) \)
+        <br><br>
+        \( = 20 + \frac{5}{\pi} + \frac{5}{\pi} = 20 + \frac{10}{\pi} \approx 23.18 \) km
+       </div>
+      </div>
+     </div>
+
+     <div class="problem-item">
+      <strong>Problem 3:</strong> A jogger runs back and forth along a straight path. Her velocity is \( v(t) = 4 - 8t \) m/min for 0 ≤ t ≤ 1. Find the total distance traveled.
+      <br><br>
+      <button class="solution-btn" onclick="toggleSolution('sol3')">Show Solution</button>
+      <div id="sol3" class="solution">
+       <p>Find when velocity changes direction: 4 - 8t = 0 → t = 0.5</p>
+       <p>For 0 ≤ t ≤ 0.5: v(t) ≥ 0</p>
+       <p>For 0.5 < t ≤ 1: v(t) < 0</p>
+       <div class="formula-block">
+        \( s = \int_{0}^{0.5} (4 - 8t) dt + \int_{0.5}^{1} -(4 - 8t) dt = \int_{0}^{0.5} (4 - 8t) dt + \int_{0.5}^{1} (8t - 4) dt \)
+        <br><br>
+        \( = \left[4t - 4t^2\right]_{0}^{0.5} + \left[4t^2 - 4t\right]_{0.5}^{1} \)
+        <br><br>
+        \( = (2 - 1) - 0 + \left[(4 - 4) - (1 - 2)\right] = 1 + [0 - (-1)] = 1 + 1 = 2 \) meters
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <h3>🎯 Key Takeaways</h3>
+     <ul>
+      <li>Distance traveled is always positive and equals \( \int |v(t)| dt \)</li>
+      <li>Displacement considers direction and equals \( \int v(t) dt \)</li>
+      <li>The absolute value accounts for changes in direction of motion</li>
+      <li>For velocity functions that never change sign, distance = |displacement|</li>
+      <li>Integration of absolute value requires careful analysis of where the function is positive/negative</li>
+     </ul>
+    </div>
+   </div>
+  </div>
+  <script>
+    function toggleSolution(id) {
+      const solution = document.getElementById(id);
+      const button = solution.previousElementSibling;
+      
+      if (solution.style.display === 'none' || solution.style.display === '') {
+        solution.style.display = 'block';
+        button.textContent = 'Hide Solution';
+      } else {
+        solution.style.display = 'none';
+        button.textContent = 'Show Solution';
+      }
+    }
+
+    function drawDistanceVisualization() {
+      const canvas = document.getElementById('distanceCanvas');
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+      
+      // Clear canvas
+      ctx.clearRect(0, 0, width, height);
+      
+      // Set up coordinate system
+      const margin = 60;
+      const plotWidth = width - 2 * margin;
+      const plotHeight = height - 2 * margin;
+      
+      // Draw axes
+      ctx.strokeStyle = '#333';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(margin, margin);
+      ctx.lineTo(margin, height - margin);
+      ctx.lineTo(width - margin, height - margin);
+      ctx.stroke();
+      
+      // Labels
+      ctx.fillStyle = '#333';
+      ctx.font = '14px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('Time (t)', width - margin, height - margin + 40);
+      ctx.save();
+      ctx.translate(margin - 40, height/2);
+      ctx.rotate(-Math.PI/2);
+      ctx.fillText('Velocity (v)', 0, 0);
+      ctx.restore();
+      
+      // Sample velocity function: v(t) = 2 - 4t (changes sign at t=0.5)
+      const velocity = (t) => 2 - 4 * t;
+      const absVelocity = (t) => Math.abs(velocity(t));
+      
+      // Scale factors
+      const tMin = 0, tMax = 1;
+      const vMin = -2, vMax = 3;
+      const tScale = plotWidth / (tMax - tMin);
+      const vScale = plotHeight / (vMax - vMin);
+      
+      // Function to convert to canvas coordinates
+      const toCanvasX = (t) => margin + (t - tMin) * tScale;
+      const toCanvasY = (v) => height - margin - (v - vMin) * vScale;
+      
+      // Draw grid
+      ctx.strokeStyle = '#eee';
+      ctx.lineWidth = 1;
+      for (let t = tMin; t <= tMax; t += 0.2) {
+        const x = toCanvasX(t);
+        ctx.beginPath();
+        ctx.moveTo(x, margin);
+        ctx.lineTo(x, height - margin);
+        ctx.stroke();
+      }
+      for (let v = vMin; v <= vMax; v += 1) {
+        const y = toCanvasY(v);
+        ctx.beginPath();
+        ctx.moveTo(margin, y);
+        ctx.lineTo(width - margin, y);
+        ctx.stroke();
+      }
+      
+      // Draw velocity curve
+      ctx.strokeStyle = '#e74c3c';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      for (let t = tMin; t <= tMax; t += 0.01) {
+        const x = toCanvasX(t);
+        const y = toCanvasY(velocity(t));
+        if (t === tMin) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      
+      // Draw absolute value curve (distance contribution)
+      ctx.strokeStyle = '#27ae60';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      for (let t = tMin; t <= tMax; t += 0.01) {
+        const x = toCanvasX(t);
+        const y = toCanvasY(absVelocity(t));
+        if (t === tMin) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+      
+      // Fill area under absolute value curve (distance traveled)
+      ctx.fillStyle = 'rgba(39, 174, 96, 0.3)';
+      ctx.beginPath();
+      ctx.moveTo(toCanvasX(tMin), toCanvasY(0));
+      for (let t = tMin; t <= tMax; t += 0.01) {
+        const x = toCanvasX(t);
+        const y = toCanvasY(absVelocity(t));
+        ctx.lineTo(x, y);
+      }
+      ctx.lineTo(toCanvasX(tMax), toCanvasY(0));
+      ctx.closePath();
+      ctx.fill();
+      
+      // Legend
+      ctx.fillStyle = '#333';
+      ctx.font = '12px Arial';
+      ctx.textAlign = 'left';
+      ctx.fillText('Velocity v(t) = 2 - 4t', margin + 10, margin + 20);
+      ctx.fillText('Distance contribution |v(t)|', margin + 10, margin + 40);
+      ctx.fillText('Total distance = shaded area', margin + 10, margin + 60);
+      
+      // Draw color indicators
+      ctx.strokeStyle = '#e74c3c';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(margin + 200, margin + 15);
+      ctx.lineTo(margin + 230, margin + 15);
+      ctx.stroke();
+      
+      ctx.strokeStyle = '#27ae60';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.moveTo(margin + 200, margin + 35);
+      ctx.lineTo(margin + 230, margin + 35);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    // Initialize visualization when page loads
+    window.onload = function() {
+      drawDistanceVisualization();
+    };
+  </script>
+ </body>
+</html>

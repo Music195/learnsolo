@@ -24,6 +24,12 @@ document.addEventListener("DOMContentLoaded", () => {
             opt.textContent = sub;
             subfolderFilter.appendChild(opt);
         });
+
+        // Restore saved subfolder selection if available
+        const savedSubfolder = localStorage.getItem('selectedSubfolder');
+        if (savedSubfolder && folder === localStorage.getItem('selectedFolder')) {
+            subfolderFilter.value = savedSubfolder;
+        }
     }
 
     function filterNotes() {
@@ -49,16 +55,31 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // Restore saved selections on page load
+    const savedFolder = localStorage.getItem('selectedFolder');
+    const folderFilter = document.getElementById('folderFilter');
+    if (savedFolder) {
+        folderFilter.value = savedFolder;
+    }
+
     // Initialize dropdowns on page load
     updateSubfolderOptions();
     filterNotes();
 
-    // Link dropdowns
-    document.getElementById('folderFilter').addEventListener('change', () => {
+    // Link dropdowns with save functionality
+    folderFilter.addEventListener('change', () => {
+        const selectedFolder = folderFilter.value;
+        localStorage.setItem('selectedFolder', selectedFolder);
+        localStorage.removeItem('selectedSubfolder'); // Clear subfolder when folder changes
         updateSubfolderOptions();
         filterNotes();
     });
-    document.getElementById('subfolderFilter').addEventListener('change', filterNotes);
+    
+    document.getElementById('subfolderFilter').addEventListener('change', () => {
+        const selectedSubfolder = document.getElementById('subfolderFilter').value;
+        localStorage.setItem('selectedSubfolder', selectedSubfolder);
+        filterNotes();
+    });
 
     // Fuzzy search with Fuse.js
     const fuse = new Fuse(NOTES_LIST, { includeScore: true, threshold: 0.4 });

@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<!-- tags: Set and Elements -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Complement of a Set
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: white;
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      hyphens: auto;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #7f8c8d;
+      font-size: 1.2em;
+      margin-bottom: 40px;
+      font-style: italic;
+    }
+
+    .theorem-statement {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 25px;
+      border-radius: 15px;
+      margin: 30px 0;
+      text-align: center;
+      font-size: 1.3em;
+      font-weight: bold;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .interactive-demo {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      padding: 25px;
+      margin: 30px 0;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .demo-title {
+      text-align: center;
+      color: #2c3e50;
+      font-size: 1.8em;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+
+    .canvas-container {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    canvas {
+      border: 3px solid #667eea;
+      border-radius: 10px;
+      background: #f8f9fa;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .complement-notation {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin: 20px 0;
+    }
+
+    .notation-card {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .notation-symbol {
+      font-size: 3em;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+
+    .section {
+      margin: 40px 0;
+    }
+
+    .section-title {
+      color: #2c3e50;
+      font-size: 1.8em;
+      margin-bottom: 20px;
+      border-bottom: 3px solid #667eea;
+      padding-bottom: 10px;
+    }
+
+    .examples {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 20px;
+      margin: 20px 0;
+    }
+
+    .example-card {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .example-title {
+      color: #2c3e50;
+      font-weight: bold;
+      margin-bottom: 15px;
+      font-size: 1.2em;
+    }
+
+    .set-display {
+      background: #f8f9fa;
+      border: 2px solid #667eea;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      text-align: center;
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+
+    .venn-diagram-large {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    .complement-diagram {
+      position: relative;
+      width: 400px;
+      height: 250px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .universal-rect {
+      position: absolute;
+      width: 360px;
+      height: 200px;
+      border: 3px solid #667eea;
+      border-radius: 10px;
+      background: rgba(102, 126, 234, 0.1);
+      top: 20px;
+      left: 20px;
+    }
+
+    .subset-circle {
+      position: absolute;
+      width: 140px;
+      height: 140px;
+      border: 3px solid #764ba2;
+      border-radius: 50%;
+      background: rgba(118, 75, 162, 0.2);
+      top: 55px;
+      left: 130px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 1.5em;
+      color: #764ba2;
+    }
+
+    .complement-area {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 360px;
+      height: 200px;
+      background: rgba(255, 193, 7, 0.3);
+      border-radius: 10px;
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 65% 100%, 35% 65%, 35% 35%, 65% 35%);
+    }
+
+    .diagram-label {
+      position: absolute;
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+
+    .label-u {
+      top: 5px;
+      left: 190px;
+      color: #667eea;
+    }
+
+    .label-a {
+      top: 115px;
+      left: 190px;
+      color: #764ba2;
+    }
+
+    .label-ac {
+      top: 80px;
+      left: 50px;
+      color: #856404;
+    }
+
+    .properties {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+    }
+
+    .property-item {
+      margin: 10px 0;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 5px;
+    }
+
+    .practice-problems {
+      margin: 40px 0;
+    }
+
+    .problem {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .problem-title {
+      color: #2c3e50;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .solution-toggle {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      margin: 10px 0;
+      transition: transform 0.2s;
+    }
+
+    .solution-toggle:hover {
+      transform: scale(1.05);
+    }
+
+    .solution {
+      background: #f8f9fa;
+      border-radius: 5px;
+      padding: 15px;
+      margin: 10px 0;
+      border-left: 4px solid #28a745;
+      display: none;
+    }
+
+    .key-takeaways {
+      background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+      padding: 25px;
+      border-radius: 15px;
+      margin: 30px 0;
+    }
+
+    .takeaway-item {
+      margin: 10px 0;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+    .math {
+      font-family: 'Computer Modern', 'Latin Modern Roman', serif;
+    }
+
+    .highlight {
+      background: #fff3cd;
+      padding: 2px 4px;
+      border-radius: 3px;
+    }
+
+    .set {
+      background: #e3f2fd;
+      color: #1565c0;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+
+      .container {
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 2em;
+      }
+
+      .complement-notation {
+        grid-template-columns: 1fr;
+      }
+
+      .examples {
+        grid-template-columns: 1fr;
+      }
+
+      .venn-diagram-large {
+        flex-direction: column;
+      }
+
+      .complement-diagram {
+        width: 300px;
+        height: 200px;
+      }
+    }
+  </style>
+  <div class="fancy-title" data-topic="Set and Elements">
+   Complement of a Set
+  </div>
+  <div class="container">
+   <div class="main-content">
+
+    <div class="theorem-statement">
+      The complement of a set A with respect to a universal set U is the set of all elements in U that are not in A.<br>
+      Notation: A' or Ā or Aᶜ
+    </div>
+
+    <div class="interactive-demo">
+      <div class="demo-title">Interactive Complement Visualization</div>
+      <div class="canvas-container">
+        <canvas id="complementCanvas" width="600" height="400"></canvas>
+      </div>
+      <div style="text-align: center; margin-top: 20px;">
+        <button onclick="toggleElements()" class="solution-toggle">Toggle Elements</button>
+        <button onclick="showComplement()" class="solution-toggle">Highlight Complement</button>
+        <button onclick="resetDiagram()" class="solution-toggle">Reset</button>
+      </div>
+    </div>
+
+    <div class="complement-notation">
+      <div class="notation-card">
+        <div class="notation-symbol">A'</div>
+        <h3>Complement</h3>
+        <p>A' = {x ∈ U | x ∉ A}</p>
+        <p>Elements in universal set but not in A</p>
+      </div>
+      <div class="notation-card">
+        <div class="notation-symbol">Ā</div>
+        <h3>Overbar Notation</h3>
+        <p>Common mathematical notation</p>
+        <p>Alternative to A'</p>
+      </div>
+      <div class="notation-card">
+        <div class="notation-symbol">Aᶜ</div>
+        <h3>Superscript c</h3>
+        <p>Sometimes used in set theory</p>
+        <p>Less common but valid</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2 class="section-title">Visual Representation</h2>
+      <div class="venn-diagram-large">
+        <div class="complement-diagram">
+          <div class="universal-rect"></div>
+          <div class="subset-circle">A</div>
+          <div class="complement-area"></div>
+          <div class="diagram-label label-u">U (Universal Set)</div>
+          <div class="diagram-label label-a">A</div>
+          <div class="diagram-label label-ac">A' (Complement)</div>
+        </div>
+      </div>
+      <p style="text-align: center; margin-top: 20px; font-style: italic;">
+        The shaded region represents the complement of set A with respect to the universal set U
+      </p>
+    </div>
+
+    <div class="section">
+      <h2 class="section-title">Fundamental Properties</h2>
+      <div class="properties">
+        <div class="property-item">
+          <strong>Law of Complement:</strong> A ∩ A' = ∅ and A ∪ A' = U
+        </div>
+        <div class="property-item">
+          <strong>Double Complement:</strong> (A')' = A
+        </div>
+        <div class="property-item">
+          <strong>Complement of Empty Set:</strong> ∅' = U
+        </div>
+        <div class="property-item">
+          <strong>Complement of Universal Set:</strong> U' = ∅
+        </div>
+        <div class="property-item">
+          <strong>De Morgan's Laws:</strong> (A ∩ B)' = A' ∪ B' and (A ∪ B)' = A' ∩ B'
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2 class="section-title">Detailed Examples</h2>
+      <div class="examples">
+        <div class="example-card">
+          <div class="example-title">Example 1: Basic Complement</div>
+          <div class="set-display">
+            U = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}<br>
+            A = {2, 4, 6, 8}<br>
+            A' = {1, 3, 5, 7, 9, 10}
+          </div>
+          <p>The complement contains all elements from the universal set that are not in A.</p>
+        </div>
+        <div class="example-card">
+          <div class="example-title">Example 2: Empty Set Complement</div>
+          <div class="set-display">
+            U = {a, b, c, d, e}<br>
+            A = ∅<br>
+            A' = {a, b, c, d, e} = U
+          </div>
+          <p>The complement of the empty set is the universal set.</p>
+        </div>
+        <div class="example-card">
+          <div class="example-title">Example 3: Universal Set Complement</div>
+          <div class="set-display">
+            U = {x, y, z}<br>
+            A = {x, y, z} = U<br>
+            A' = ∅
+          </div>
+          <p>The complement of the universal set is the empty set.</p>
+        </div>
+        <div class="example-card">
+          <div class="example-title">Example 4: Double Complement</div>
+          <div class="set-display">
+            U = {1, 2, 3, 4, 5}<br>
+            A = {1, 3, 5}<br>
+            A' = {2, 4}<br>
+            (A')' = {1, 3, 5} = A
+          </div>
+          <p>The complement of the complement returns the original set.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="practice-problems">
+      <h2 class="section-title">Practice Problems</h2>
+
+      <div class="problem">
+        <div class="problem-title">Problem 1</div>
+        <p>If U = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10} and A = {2, 4, 6, 8, 10}, find A'.</p>
+        <button class="solution-toggle" onclick="toggleSolution(1)">Show Solution</button>
+        <div id="solution1" class="solution">
+          <p><strong>A' = {1, 3, 5, 7, 9}</strong></p>
+          <p>All elements in U that are not in A.</p>
+        </div>
+      </div>
+
+      <div class="problem">
+        <div class="problem-title">Problem 2</div>
+        <p>Given U = {a, b, c, d, e, f} and B = {a, c, e}, find B' and (B')'.</p>
+        <button class="solution-toggle" onclick="toggleSolution(2)">Show Solution</button>
+        <div id="solution2" class="solution">
+          <p><strong>B' = {b, d, f}</strong></p>
+          <p><strong>(B')' = {a, c, e} = B</strong></p>
+          <p>This demonstrates the double complement property.</p>
+        </div>
+      </div>
+
+      <div class="problem">
+        <div class="problem-title">Problem 3</div>
+        <p>Verify De Morgan's Law: (A ∪ B)' = A' ∩ B'</p>
+        <p>Let U = {1, 2, 3, 4, 5}, A = {1, 2}, B = {2, 3}</p>
+        <button class="solution-toggle" onclick="toggleSolution(3)">Show Solution</button>
+        <div id="solution3" class="solution">
+          <p><strong>Left side: (A ∪ B)'</strong></p>
+          <p>A ∪ B = {1, 2, 3}</p>
+          <p>(A ∪ B)' = {4, 5}</p>
+          <p><strong>Right side: A' ∩ B'</strong></p>
+          <p>A' = {3, 4, 5}, B' = {1, 4, 5}</p>
+          <p>A' ∩ B' = {4, 5}</p>
+          <p><strong>Both sides equal: {4, 5}</strong></p>
+        </div>
+      </div>
+
+      <div class="problem">
+        <div class="problem-title">Problem 4</div>
+        <p>If A ∩ B = ∅, what can you say about A' ∪ B'?</p>
+        <button class="solution-toggle" onclick="toggleSolution(4)">Show Solution</button>
+        <div id="solution4" class="solution">
+          <p>If A ∩ B = ∅, then A and B are disjoint.</p>
+          <p><strong>A' ∪ B' = U</strong></p>
+          <p>This follows from the law of complement and the properties of union.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="key-takeaways">
+      <h2 class="section-title">Key Takeaways</h2>
+      <div class="takeaway-item">
+        • The complement A' contains all elements in U that are not in A
+      </div>
+      <div class="takeaway-item">
+        • A ∩ A' = ∅ and A ∪ A' = U (Law of Complement)
+      </div>
+      <div class="takeaway-item">
+        • (A')' = A (Double Complement Law)
+      </div>
+      <div class="takeaway-item">
+        • ∅' = U and U' = ∅
+      </div>
+      <div class="takeaway-item">
+        • De Morgan's Laws relate complement to intersection and union
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('complementCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Universal set and subset elements
+    let universalSet = [1, 2, 3, 4, 5, 6, 7, 8];
+    let subsetA = [2, 4, 6];
+    let showElements = true;
+    let showComplement = false;
+
+    function drawComplementDiagram() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw universal set (rectangle)
+      ctx.strokeStyle = '#667eea';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(50, 50, 500, 300);
+      ctx.fillStyle = showComplement ? 'rgba(255, 193, 7, 0.3)' : 'rgba(102, 126, 234, 0.1)';
+      ctx.fillRect(50, 50, 500, 300);
+
+      // Draw subset A (circle)
+      ctx.beginPath();
+      ctx.arc(300, 200, 100, 0, 2 * Math.PI);
+      ctx.strokeStyle = '#764ba2';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      ctx.fillStyle = 'rgba(118, 75, 162, 0.2)';
+      ctx.fill();
+
+      // Highlight complement area if enabled
+      if (showComplement) {
+        // Create complement highlighting by drawing over the circle area
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.beginPath();
+        ctx.arc(300, 200, 100, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.globalCompositeOperation = 'source-over';
+      }
+
+      // Draw labels
+      ctx.fillStyle = '#667eea';
+      ctx.font = 'bold 24px Arial';
+      ctx.fillText('U', 290, 70);
+
+      ctx.fillStyle = '#764ba2';
+      ctx.fillText('A', 290, 210);
+
+      if (showComplement) {
+        ctx.fillStyle = '#856404';
+        ctx.fillText("A'", 100, 150);
+      }
+
+      // Draw elements if enabled
+      if (showElements) {
+        drawElements();
+      }
+    }
+
+    function drawElements() {
+      // Draw universal set elements (outside the circle)
+      const uElements = [
+        {x: 100, y: 80, value: 1}, {x: 150, y: 80, value: 3}, {x: 450, y: 80, value: 5},
+        {x: 500, y: 80, value: 7}, {x: 100, y: 320, value: 8}, {x: 500, y: 320, value: 9}
+      ];
+
+      // Draw subset A elements (inside the circle)
+      const aElements = [
+        {x: 250, y: 170, value: 2}, {x: 300, y: 140, value: 4}, {x: 350, y: 170, value: 6}
+      ];
+
+      // Draw universal set elements
+      ctx.fillStyle = '#667eea';
+      ctx.font = '16px Arial';
+      uElements.forEach(elem => {
+        ctx.beginPath();
+        ctx.arc(elem.x, elem.y, 15, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.fillStyle = 'white';
+        ctx.fillText(elem.value.toString(), elem.x - 4, elem.y + 5);
+        ctx.fillStyle = '#667eea';
+      });
+
+      // Draw subset A elements
+      ctx.fillStyle = '#764ba2';
+      aElements.forEach(elem => {
+        ctx.beginPath();
+        ctx.arc(elem.x, elem.y, 15, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.fillStyle = 'white';
+        ctx.fillText(elem.value.toString(), elem.x - 4, elem.y + 5);
+        ctx.fillStyle = '#764ba2';
+      });
+    }
+
+    function toggleElements() {
+      showElements = !showElements;
+      drawComplementDiagram();
+    }
+
+    function showComplement() {
+      showComplement = !showComplement;
+      drawComplementDiagram();
+    }
+
+    function resetDiagram() {
+      showElements = true;
+      showComplement = false;
+      drawComplementDiagram();
+    }
+
+    function toggleSolution(problemNumber) {
+      const solution = document.getElementById(`solution${problemNumber}`);
+      if (solution.style.display === 'block') {
+        solution.style.display = 'none';
+      } else {
+        solution.style.display = 'block';
+      }
+    }
+
+    // Initialize the diagram
+    drawComplementDiagram();
+  </script>
+</html>

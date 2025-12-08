@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<!-- tags: Geometry -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Ceva's Theorem (チェバの定理)
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   /* Enhanced text containment and scrolling */
+   .container, .main-content, .section, .explain, .formula, .condition, .example, .application, .problem-item, .solution-content, .key-takeaways, .interactive-demo, .demo-result, .calculation-steps, .calculation-step, .rule-card, .visualization-container, .diagram-container, .theorem-statement, .proof-steps, .proof-step, .geometry-explanation {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    overflow: auto;
+   }
+   
+   /* Theorem statement styling */
+   .theorem-statement {
+    background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+    border: 3px solid #f57c00;
+    border-radius: 15px;
+    padding: 25px;
+    margin: 25px 0;
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: bold;
+    box-shadow: 0 6px 12px rgba(245, 124, 0, 0.15);
+   }
+   
+   .theorem-statement .formula {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px solid #f57c00;
+    margin: 15px 0;
+    font-size: 1.1em;
+   }
+   
+   /* Geometry explanation */
+   .geometry-explanation {
+    background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%);
+    border: 2px solid #e91e63;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 4px 8px rgba(233, 30, 99, 0.1);
+   }
+   
+   .geometry-explanation h3 {
+    color: #c2185b;
+    margin-top: 0;
+    font-size: 1.1em;
+   }
+   
+   /* Interactive demo container */
+   .interactive-demo {
+    background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+    border: 2px solid #4caf50;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 4px 8px rgba(76, 175, 80, 0.1);
+   }
+   
+   .interactive-demo h3 {
+    color: #2e7d32;
+    margin-top: 0;
+    font-size: 1.1em;
+   }
+   
+   /* Canvas styling */
+   #cevaCanvas {
+    border: 2px solid #2196f3;
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0 2px 8px rgba(33, 150, 243, 0.2);
+   }
+   
+   /* Control panel */
+   .control-panel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin: 15px 0;
+    padding: 15px;
+    background: #f5f5f5;
+    border-radius: 8px;
+   }
+   
+   .control-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 120px;
+   }
+   
+   .control-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+   }
+   
+   .control-group input[type="range"] {
+    width: 100%;
+   }
+   
+   .control-group .value-display {
+    text-align: center;
+    font-weight: bold;
+    color: #2196f3;
+    margin-top: 5px;
+   }
+   
+   /* Proof steps */
+   .proof-steps {
+    background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+    border: 2px solid #9c27b0;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 4px 8px rgba(156, 39, 176, 0.1);
+   }
+   
+   .proof-step {
+    background: white;
+    border: 1px solid #9c27b0;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px 0;
+    box-shadow: 0 2px 4px rgba(156, 39, 176, 0.1);
+   }
+   
+   .proof-step h4 {
+    color: #7b1fa2;
+    margin: 0 0 10px 0;
+    font-size: 1em;
+   }
+   
+   /* Examples and applications */
+   .example, .application {
+    background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+    border: 2px solid #ff9800;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 4px 8px rgba(255, 152, 0, 0.1);
+   }
+   
+   .example h3, .application h3 {
+    color: #e65100;
+    margin-top: 0;
+    font-size: 1.1em;
+   }
+   
+   /* Practice problems */
+   .practice-problems {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    border: 2px solid #2196f3;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 4px 8px rgba(33, 150, 243, 0.1);
+   }
+   
+   .practice-problems h3 {
+    color: #0d47a1;
+    margin-top: 0;
+    font-size: 1.1em;
+   }
+   
+   .problem-item {
+    background: white;
+    border: 1px solid #2196f3;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px 0;
+    box-shadow: 0 2px 4px rgba(33, 150, 243, 0.1);
+   }
+   
+   .problem-item .problem-text {
+    font-weight: bold;
+    margin-bottom: 10px;
+   }
+   
+   .solution-toggle {
+    background: #2196f3;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+   }
+   
+   .solution-toggle:hover {
+    background: #1976d2;
+   }
+   
+   .solution-content {
+    margin-top: 15px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 5px;
+    border-left: 4px solid #2196f3;
+   }
+   
+   /* Key takeaways */
+   .key-takeaways {
+    background: linear-gradient(135deg, #f1f8e9 0%, #dcedc8 100%);
+    border: 2px solid #689f38;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 4px 8px rgba(104, 159, 56, 0.1);
+   }
+   
+   .key-takeaways h3 {
+    color: #33691e;
+    margin-top: 0;
+    font-size: 1.1em;
+   }
+   
+   .key-takeaways ul {
+    margin: 0;
+    padding-left: 20px;
+   }
+   
+   .key-takeaways li {
+    margin: 8px 0;
+    line-height: 1.5;
+   }
+   
+   /* Responsive design */
+   @media (max-width: 768px) {
+    .control-panel {
+     flex-direction: column;
+    }
+    
+    .control-group {
+     min-width: auto;
+    }
+    
+    .theorem-statement {
+     font-size: 1.1em;
+     padding: 20px;
+    }
+    
+    .interactive-demo, .proof-steps, .example, .application, .practice-problems, .key-takeaways {
+     padding: 15px;
+    }
+   }
+  </style>
+ <body>
+  <div class="fancy-title" data-topic="Geometry">
+   Ceva's Theorem (チェバの定理)
+  </div>
+  <div class="container">
+   <div class="main-content">
+    <header style="display: flex; align-items: center; gap: 20px; margin-bottom: 38px; background: linear-gradient(90deg, #e3f2fd 60%, #fff 100%); border-radius: 14px 14px 0 0; box-shadow: 0 2px 12px #1976d222; padding: 18px 28px;">
+     <svg height="38" style="flex-shrink:0;" viewbox="0 0 38 38" width="38">
+      <circle cx="19" cy="19" fill="#fff3e0" r="18" stroke="#e65100" stroke-width="2">
+      </circle>
+      <path d="M10 28 L19 8 L28 28 Z" fill="#e65100" opacity="0.7">
+      </path>
+      <circle cx="19" cy="8" fill="#1976d2" r="2.2">
+      </circle>
+      <circle cx="10" cy="28" fill="#1976d2" r="2.2">
+      </circle>
+      <circle cx="28" cy="28" fill="#558b2f" r="2.2">
+      </circle>
+     </svg>
+     <div>
+      <h1 style="font-family: 'Noto Sans JP', 'Segoe UI', serif; font-size: 2.2em; color: #1976d2; margin: 0 0 2px 0; letter-spacing: 1px; text-shadow: 0 2px 8px #90caf9aa;">
+       Ceva's Theorem
+      </h1>
+      <div style="color: #607d8b; font-size: 1.08em; font-weight: 500; margin-top: 2px;">
+       Geometry • Triangle Properties
+      </div>
+     </div>
+    </header>
+
+    <div class="theorem-statement">
+     <h2>Ceva's Theorem</h2>
+     <p>Three lines from the vertices of a triangle to the opposite sides are concurrent if and only if the product of the ratios of the segments equals 1.</p>
+     <div class="formula">
+      If lines $AD$, $BE$, $CF$ are concurrent, then:<br>
+      $\frac{AF}{FB} \cdot \frac{BD}{DC} \cdot \frac{CE}{EA} = 1$<br>
+      where $D$, $E$, $F$ are points on the opposite sides.
+     </div>
+    </div>
+
+    <div class="geometry-explanation">
+     <h3>Understanding Ceva's Theorem</h3>
+     <p>Ceva's Theorem provides a necessary and sufficient condition for three lines from the vertices of a triangle to the opposite sides to be concurrent (meet at a single point). This theorem is fundamental in triangle geometry and has numerous applications in proving concurrency of lines.</p>
+     <p><strong>Key Concepts:</strong></p>
+     <ul>
+      <li><strong>Concurrent lines:</strong> Lines that intersect at a single point</li>
+      <li><strong>Ceva's ratio:</strong> The ratio of segments created by the intersection points</li>
+      <li><strong>Trilinear coordinates:</strong> Alternative coordinate system for points in triangles</li>
+      <li><strong>Mass point geometry:</strong> Physical interpretation using balance points</li>
+     </ul>
+    </div>
+
+    <div class="interactive-demo">
+     <h3>Interactive Ceva's Theorem Demonstration</h3>
+     <p>Move the sliders to adjust the position of point O and observe how the Ceva ratios change:</p>
+     
+     <div class="control-panel">
+      <div class="control-group">
+       <label for="pointX">Point O X: <span id="pointXValue">0.5</span></label>
+       <input type="range" id="pointX" min="0.1" max="0.9" value="0.5" step="0.05">
+      </div>
+      <div class="control-group">
+       <label for="pointY">Point O Y: <span id="pointYValue">0.4</span></label>
+       <input type="range" id="pointY" min="0.1" max="0.7" value="0.4" step="0.05">
+      </div>
+     </div>
+     
+     <canvas id="cevaCanvas" width="500" height="400"></canvas>
+     
+     <div class="demo-result">
+      <p><strong>Ceva Ratio:</strong> <span id="cevaRatio">1.000</span></p>
+      <p><strong>AF/FB:</strong> <span id="ratioAF">0.000</span></p>
+      <p><strong>BD/DC:</strong> <span id="ratioBD">0.000</span></p>
+      <p><strong>CE/EA:</strong> <span id="ratioCE">0.000</span></p>
+     </div>
+    </div>
+
+    <div class="proof-steps">
+     <h3>Proof of Ceva's Theorem</h3>
+     
+     <div class="proof-step">
+      <h4>Step 1: Coordinate Setup</h4>
+      <p>Place $\triangle ABC$ on coordinate plane with $A(0,0)$, $B(1,0)$, $C(0.5, \sqrt{3}/2)$. Let point $O(h,k)$ be inside the triangle.</p>
+     </div>
+     
+     <div class="proof-step">
+      <h4>Step 2: Parametric Equations</h4>
+      <p>Find equations of lines from vertices through $O$ to opposite sides:</p>
+      <ul>
+       <li>Line from $A$ through $O$: parametric form</li>
+       <li>Line from $B$ through $O$: parametric form</li>
+       <li>Line from $C$ through $O$: parametric form</li>
+      </ul>
+     </div>
+     
+     <div class="proof-step">
+      <h4>Step 3: Intersection with Opposite Sides</h4>
+      <p>Find intersection points $D$ on $BC$, $E$ on $AC$, $F$ on $AB$:</p>
+      <ul>
+       <li>$D$ divides $BC$ in ratio $BD:DC$</li>
+       <li>$E$ divides $AC$ in ratio $AE:EC$</li>
+       <li>$F$ divides $AB$ in ratio $AF:FB$</li>
+      </ul>
+     </div>
+     
+     <div class="proof-step">
+      <h4>Step 4: Ceva's Ratio Product</h4>
+      <p>The product $\frac{AF}{FB} \cdot \frac{BD}{DC} \cdot \frac{CE}{EA} = 1$ when the lines are concurrent.</p>
+      <p>This can be shown using coordinate geometry or area ratios.</p>
+     </div>
+    </div>
+
+    <div class="example">
+     <h3>Example 1: Verifying Ceva's Theorem</h3>
+     <p>In $\triangle ABC$, lines from vertices to opposite sides meet at point $O$. Given that $AF = 3$, $FB = 2$, $BD = 4$, $DC = 3$, $CE = 5$, $EA = 1$, verify Ceva's theorem.</p>
+     
+     <h4>Solution:</h4>
+     <p>Calculate the Ceva ratio:</p>
+     <p>$\frac{AF}{FB} \cdot \frac{BD}{DC} \cdot \frac{CE}{EA} = \frac{3}{2} \cdot \frac{4}{3} \cdot \frac{5}{1} = \frac{3}{2} \times \frac{4}{3} \times 5 = \frac{4}{2} \times 5 = 2 \times 5 = 10$</p>
+     <p>Since the product is 10 ≠ 1, the lines are not concurrent.</p>
+     
+     <p><strong>Note:</strong> The theorem states that concurrency occurs if and only if the product equals 1.</p>
+    </div>
+
+    <div class="example">
+     <h3>Example 2: Finding Missing Ratio</h3>
+     <p>In $\triangle ABC$, three lines are concurrent. Given $\frac{AF}{FB} = \frac{2}{3}$ and $\frac{BD}{DC} = \frac{4}{5}$, find $\frac{CE}{EA}$.</p>
+     
+     <h4>Solution:</h4>
+     <p>By Ceva's theorem: $\frac{AF}{FB} \cdot \frac{BD}{DC} \cdot \frac{CE}{EA} = 1$</p>
+     <p>$\frac{2}{3} \cdot \frac{4}{5} \cdot \frac{CE}{EA} = 1$</p>
+     <p>$\frac{8}{15} \cdot \frac{CE}{EA} = 1$</p>
+     <p>$\frac{CE}{EA} = \frac{15}{8}$</p>
+    </div>
+
+    <div class="application">
+     <h3>Applications of Ceva's Theorem</h3>
+     
+     <h4>Proving Concurrency</h4>
+     <p>Ceva's theorem is used to prove that certain lines in triangles are concurrent, such as the lines joining vertices to points on opposite sides that satisfy specific ratio conditions.</p>
+     
+     <h4>Triangle Centers</h4>
+     <p>The theorem helps establish relationships between different triangle centers and their concurrence properties.</p>
+     
+     <h4>Geometric Constructions</h4>
+     <p>Used in advanced geometric constructions where specific ratios need to be maintained for concurrency.</p>
+    </div>
+
+    <div class="practice-problems">
+     <h3>Practice Problems</h3>
+     
+     <div class="problem-item">
+      <div class="problem-text">
+       1. In $\triangle ABC$, lines from vertices to opposite sides are concurrent. If $\frac{AF}{FB} = \frac{3}{2}$ and $\frac{BD}{DC} = \frac{5}{4}$, find $\frac{CE}{EA}$.
+      </div>
+      <button class="solution-toggle" onclick="toggleSolution(1)">Show Solution</button>
+      <div class="solution-content" id="solution1" style="display: none;">
+       <p>$\frac{3}{2} \cdot \frac{5}{4} \cdot \frac{CE}{EA} = 1$</p>
+       <p>$\frac{15}{8} \cdot \frac{CE}{EA} = 1$</p>
+       <p>$\frac{CE}{EA} = \frac{8}{15}$</p>
+      </div>
+     </div>
+     
+     <div class="problem-item">
+      <div class="problem-text">
+       2. Verify if the lines are concurrent: $\frac{AF}{FB} = 2$, $\frac{BD}{DC} = \frac{1}{3}$, $\frac{CE}{EA} = \frac{3}{2}$.
+      </div>
+      <button class="solution-toggle" onclick="toggleSolution(2)">Show Solution</button>
+      <div class="solution-content" id="solution2" style="display: none;">
+       <p>$2 \cdot \frac{1}{3} \cdot \frac{3}{2} = 2 \times \frac{1}{3} \times \frac{3}{2} = \frac{2}{2} = 1$</p>
+       <p>Since the product equals 1, the lines are concurrent.</p>
+      </div>
+     </div>
+     
+     <div class="problem-item">
+      <div class="problem-text">
+       3. In $\triangle ABC$, the medians intersect at $G$. Show that the lines from vertices to midpoints of opposite sides satisfy Ceva's condition.
+      </div>
+      <button class="solution-toggle" onclick="toggleSolution(3)">Show Solution</button>
+      <div class="solution-content" id="solution3" style="display: none;">
+       <p>For medians: $\frac{AF}{FB} = 1$ (midpoint), $\frac{BD}{DC} = 1$ (midpoint), $\frac{CE}{EA} = 1$ (midpoint)</p>
+       <p>Product: $1 \cdot 1 \cdot 1 = 1$</p>
+       <p>Therefore, medians are concurrent (at centroid).</p>
+      </div>
+     </div>
+     
+     <div class="problem-item">
+      <div class="problem-text">
+       4. In $\triangle ABC$, angle bisectors intersect at $I$. Find the Ceva ratios for angle bisectors.
+      </div>
+      <button class="solution-toggle" onclick="toggleSolution(4)">Show Solution</button>
+      <div class="solution-content" id="solution4" style="display: none;">
+       <p>Angle bisectors divide opposite sides in ratios equal to the adjacent sides.</p>
+       <p>$\frac{AF}{FB} = \frac{c}{b}$, $\frac{BD}{DC} = \frac{a}{c}$, $\frac{CE}{EA} = \frac{b}{a}$</p>
+       <p>Product: $\frac{c}{b} \cdot \frac{a}{c} \cdot \frac{b}{a} = 1$</p>
+       <p>Therefore, angle bisectors are concurrent.</p>
+      </div>
+     </div>
+     
+     <div class="problem-item">
+      <div class="problem-text">
+       5. Prove that the lines joining vertices to the midpoints of the opposite sides in the medial triangle satisfy Ceva's condition.
+      </div>
+      <button class="solution-toggle" onclick="toggleSolution(5)">Show Solution</button>
+      <div class="solution-content" id="solution5" style="display: none;">
+       <p>In the medial triangle, each side is parallel to the original triangle's sides.</p>
+       <p>The ratios are all equal to 1 (midpoints), so the product is 1.</p>
+       <p>Therefore, these lines are concurrent.</p>
+      </div>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <h3>Key Takeaways</h3>
+     <ul>
+      <li>Ceva's theorem gives the condition for three lines from triangle vertices to opposite sides to be concurrent.</li>
+      <li>The condition is that the product of the ratios $\frac{AF}{FB} \cdot \frac{BD}{DC} \cdot \frac{CE}{EA} = 1$.</li>
+      <li>The theorem is bidirectional: the product equals 1 if and only if the lines are concurrent.</li>
+      <li>Ceva's theorem is fundamental in proving concurrency of lines in triangles.</li>
+      <li>It has applications in coordinate geometry, trilinear coordinates, and advanced triangle geometry.</li>
+      <li>The theorem can be extended to other polygons and has generalizations in projective geometry.</li>
+     </ul>
+    </div>
+   </div>
+  </div>
+
+  <script>
+   // Interactive Ceva's theorem demonstration
+   const canvas = document.getElementById('cevaCanvas');
+   const ctx = canvas.getContext('2d');
+   const pointXInput = document.getElementById('pointX');
+   const pointYInput = document.getElementById('pointY');
+   const pointXValue = document.getElementById('pointXValue');
+   const pointYValue = document.getElementById('pointYValue');
+   const cevaRatioDisplay = document.getElementById('cevaRatio');
+   const ratioAFDisplay = document.getElementById('ratioAF');
+   const ratioBDDisplay = document.getElementById('ratioBD');
+   const ratioCEDisplay = document.getElementById('ratioCE');
+
+   function drawTriangle() {
+    const pointX = parseFloat(pointXInput.value);
+    const pointY = parseFloat(pointYInput.value);
+    
+    // Triangle vertices
+    const A = { x: 100, y: 350 };
+    const B = { x: 400, y: 350 };
+    const C = { x: 250, y: 100 };
+    
+    // Point O (scaled to triangle coordinates)
+    const O = {
+     x: A.x + pointX * (B.x - A.x) + pointY * (C.x - A.x),
+     y: A.y + pointX * (B.y - A.y) + pointY * (C.y - A.y)
+    };
+    
+    // Calculate intersection points
+    const F = lineIntersection(A, O, B, C); // A-O intersects BC at F
+    const D = lineIntersection(B, O, A, C); // B-O intersects AC at D
+    const E = lineIntersection(C, O, A, B); // C-O intersects AB at E
+    
+    // Calculate ratios
+    const ratioAF = distance(A, F) / distance(F, B);
+    const ratioBD = distance(B, D) / distance(D, C);
+    const ratioCE = distance(C, E) / distance(E, A);
+    const cevaRatio = ratioAF * ratioBD * ratioCE;
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw triangle
+    ctx.beginPath();
+    ctx.moveTo(A.x, A.y);
+    ctx.lineTo(B.x, B.y);
+    ctx.lineTo(C.x, C.y);
+    ctx.closePath();
+    ctx.strokeStyle = '#222';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    // Draw lines from vertices through O
+    ctx.beginPath();
+    ctx.moveTo(A.x, A.y);
+    ctx.lineTo(O.x, O.y);
+    ctx.lineTo(B.x, B.y);
+    ctx.strokeStyle = '#e65100';
+    ctx.setLineDash([5, 4]);
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.moveTo(B.x, B.y);
+    ctx.lineTo(O.x, O.y);
+    ctx.lineTo(C.x, C.y);
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.moveTo(C.x, C.y);
+    ctx.lineTo(O.x, O.y);
+    ctx.lineTo(A.x, A.y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    
+    // Draw point O
+    ctx.beginPath();
+    ctx.arc(O.x, O.y, 4, 0, 2 * Math.PI);
+    ctx.fillStyle = '#8e24aa';
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    // Label points
+    ctx.fillStyle = '#1976d2';
+    ctx.font = '16px Arial';
+    ctx.fillText('A', A.x - 15, A.y + 5);
+    ctx.fillText('B', B.x + 5, B.y + 5);
+    ctx.fillText('C', C.x - 5, C.y - 5);
+    ctx.fillText('O', O.x + 5, O.y - 5);
+    
+    // Update displays
+    cevaRatioDisplay.textContent = cevaRatio.toFixed(3);
+    ratioAFDisplay.textContent = ratioAF.toFixed(3);
+    ratioBDDisplay.textContent = ratioBD.toFixed(3);
+    ratioCEDisplay.textContent = ratioCE.toFixed(3);
+   }
+   
+   function lineIntersection(p1, p2, p3, p4) {
+    // Line p1-p2 intersects line p3-p4
+    const denom = (p1.x - p2.x) * (p3.y - p4.y) - (p1.y - p2.y) * (p3.x - p4.x);
+    if (Math.abs(denom) < 1e-6) return p3; // Parallel lines
+    
+    const t = ((p1.x - p3.x) * (p3.y - p4.y) - (p1.y - p3.y) * (p3.x - p4.x)) / denom;
+    return {
+     x: p1.x + t * (p2.x - p1.x),
+     y: p1.y + t * (p2.y - p1.y)
+    };
+   }
+   
+   function distance(p1, p2) {
+    return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
+   }
+   
+   // Event listeners
+   pointXInput.addEventListener('input', function() {
+    pointXValue.textContent = this.value;
+    drawTriangle();
+   });
+   
+   pointYInput.addEventListener('input', function() {
+    pointYValue.textContent = this.value;
+    drawTriangle();
+   });
+   
+   // Initial draw
+   drawTriangle();
+   
+   // Solution toggle function
+   function toggleSolution(problemNumber) {
+    const solution = document.getElementById('solution' + problemNumber);
+    const button = solution.previousElementSibling;
+    
+    if (solution.style.display === 'none') {
+     solution.style.display = 'block';
+     button.textContent = 'Hide Solution';
+    } else {
+     solution.style.display = 'none';
+     button.textContent = 'Show Solution';
+    }
+   }
+  </script>
+ </body>
+</html>

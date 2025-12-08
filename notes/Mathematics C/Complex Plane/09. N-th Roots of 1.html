@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<!-- tags: Complex Plane, Complex Numbers, Roots of Unity -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   n-th Roots of 1
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+    /* Enhanced text containment and readability */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      hyphens: auto;
+    }
+
+    .main-content {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      border-radius: 15px;
+      padding: 30px;
+      margin: 20px 0;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .section {
+      margin-bottom: 40px;
+      background: rgba(255,255,255,0.9);
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .section h2 {
+      color: #2c3e50;
+      border-bottom: 3px solid #3498db;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+      font-size: 1.8em;
+      font-weight: 600;
+    }
+
+    .section h3 {
+      color: #34495e;
+      margin-bottom: 15px;
+      font-size: 1.4em;
+      font-weight: 500;
+    }
+
+    /* Law blocks with gradient backgrounds */
+    .law-block {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      color: white;
+      box-shadow: 0 4px 15px rgba(102,126,234,0.3);
+    }
+
+    .law-eq {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin-bottom: 15px;
+      text-align: center;
+      border-bottom: 2px solid rgba(255,255,255,0.3);
+      padding-bottom: 10px;
+    }
+
+    .law-block .math {
+      margin: 8px 0;
+      font-size: 1.1em;
+      line-height: 1.6;
+    }
+
+    /* Operation blocks */
+    .operation-block {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      color: white;
+      box-shadow: 0 4px 15px rgba(245,87,108,0.3);
+    }
+
+    .operation-block .theorem {
+      background: rgba(255,255,255,0.9);
+      color: #333;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      text-align: center;
+      font-size: 1.3em;
+      font-weight: bold;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    /* Hint blocks */
+    .hint-block {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      color: white;
+      box-shadow: 0 4px 15px rgba(79,172,254,0.3);
+    }
+
+    .hint-block strong {
+      font-size: 1.2em;
+      display: block;
+      margin-bottom: 15px;
+      text-align: center;
+      border-bottom: 2px solid rgba(255,255,255,0.3);
+      padding-bottom: 10px;
+    }
+
+    /* Interactive demo styling */
+    .interactive-demo {
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      border-radius: 12px;
+      padding: 25px;
+      margin: 25px 0;
+      box-shadow: 0 4px 15px rgba(168,237,234,0.3);
+    }
+
+    .interactive-demo h3 {
+      color: #2c3e50;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 1.5em;
+    }
+
+    .demo-input {
+      width: 80px;
+      padding: 8px 12px;
+      border: 2px solid #3498db;
+      border-radius: 6px;
+      font-size: 1em;
+      margin: 0 5px;
+      background: rgba(255,255,255,0.9);
+      color: #333;
+    }
+
+    .demo-input:focus {
+      outline: none;
+      border-color: #2980b9;
+      box-shadow: 0 0 5px rgba(52,152,219,0.5);
+    }
+
+    .demo-button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1em;
+      margin: 5px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 10px rgba(102,126,234,0.3);
+    }
+
+    .demo-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(102,126,234,0.4);
+    }
+
+    .demo-result {
+      background: rgba(255,255,255,0.9);
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 15px;
+      font-family: 'Courier New', monospace;
+      font-size: 1em;
+      color: #333;
+      white-space: pre-line;
+      border: 1px solid #ddd;
+      min-height: 40px;
+    }
+
+    /* Problem items */
+    .problem-item {
+      background: rgba(255,255,255,0.95);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 15px 0;
+      border-left: 5px solid #3498db;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .problem-number {
+      display: inline-block;
+      background: #3498db;
+      color: white;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 30px;
+      font-weight: bold;
+      margin-right: 15px;
+      vertical-align: top;
+    }
+
+    .problem-content {
+      display: inline-block;
+      width: calc(100% - 50px);
+      vertical-align: top;
+    }
+
+    .solution-button {
+      background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+      color: #333;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9em;
+      margin: 10px 0;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(255,154,158,0.3);
+    }
+
+    .solution-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 3px 12px rgba(255,154,158,0.4);
+    }
+
+    .solution-content {
+      display: none;
+      margin-top: 15px;
+      padding: 15px;
+      background: rgba(240,240,240,0.8);
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+
+    .calculation-steps {
+      margin: 10px 0;
+    }
+
+    .calculation-step {
+      margin: 8px 0;
+      padding: 8px 12px;
+      background: rgba(255,255,255,0.7);
+      border-radius: 6px;
+      border-left: 3px solid #3498db;
+    }
+
+    /* Key takeaways */
+    .key-takeaways {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 12px;
+      padding: 25px;
+      margin: 25px 0;
+      color: white;
+      box-shadow: 0 4px 15px rgba(102,126,234,0.3);
+    }
+
+    .key-takeaways h3 {
+      text-align: center;
+      font-size: 1.5em;
+      margin-bottom: 20px;
+      border-bottom: 2px solid rgba(255,255,255,0.3);
+      padding-bottom: 10px;
+    }
+
+    .key-takeaways ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .key-takeaways li {
+      margin: 10px 0;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .key-takeaways li:last-child {
+      border-bottom: none;
+    }
+
+    /* Enhanced canvas styling */
+    .roots-img {
+      display: block;
+      margin: 20px auto;
+      border: 2px solid #3498db;
+      border-radius: 8px;
+      background: white;
+      box-shadow: 0 4px 15px rgba(52,152,219,0.2);
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 10px;
+      }
+
+      .main-content {
+        padding: 20px;
+      }
+
+      .section {
+        padding: 15px;
+      }
+
+      .interactive-demo {
+        padding: 15px;
+      }
+
+      .demo-input {
+        width: 60px;
+        margin: 5px;
+      }
+
+      .demo-button {
+        display: block;
+        width: 100%;
+        margin: 5px 0;
+      }
+
+      .problem-content {
+        width: calc(100% - 40px);
+      }
+    }
+
+    /* MathJax styling */
+    .mjx-chtml {
+      font-size: 1.1em !important;
+    }
+
+    /* Formula boxes */
+    .formula-box {
+      background: rgba(255,255,255,0.9);
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      text-align: center;
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #333;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    /* Property lists */
+    .property-list {
+      background: rgba(255,255,255,0.9);
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      color: #333;
+    }
+
+    .property-list li {
+      margin: 8px 0;
+      padding: 5px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .property-list li:last-child {
+      border-bottom: none;
+    }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Complex Plane">
+   n-th Roots of Unity
+  </div>
+  <div class="container">
+   <div class="main-content">
+    <div class="section">
+     <h2>Core Concept: Roots of Unity</h2>
+     <p>The n-th roots of unity are the solutions to the equation zⁿ = 1. These are fundamental objects in complex analysis and have important applications in algebra, geometry, and number theory.</p>
+     
+     <div class="operation-block">
+      <p>
+       The n-th roots of unity are given by:
+      </p>
+      <div class="theorem">
+       $$
+        z_k = \cos\left(\frac{2k\pi}{n}\right) + i\sin\left(\frac{2k\pi}{n}\right)
+       $$
+       <br>
+       for k = 0, 1, 2, ..., n-1
+      </div>
+     </div>
+     
+     <div class="hint-block">
+      <strong>
+       Key Properties:
+      </strong>
+      <ul>
+       <li><strong>Unit circle:</strong> All roots lie on the unit circle |z| = 1</li>
+       <li><strong>Regular polygon:</strong> Vertices of regular n-gon inscribed in unit circle</li>
+       <li><strong>Primitive root:</strong> ω = e^(2πi/n) generates all roots</li>
+       <li><strong>Cyclotomic equation:</strong> Minimal polynomial divides xⁿ - 1</li>
+       <li><strong>Multiplicative group:</strong> Form cyclic group of order n under multiplication</li>
+       <li><strong>Sum formula:</strong> Sum of all n-th roots of unity is 0 for n > 1</li>
+      </ul>
+     </div>
+    </div>
+
+    <div class="interactive-demo">
+      <h3>Interactive Roots Calculator</h3>
+      <div style="margin: 20px 0;">
+        <div style="margin-bottom: 15px;">
+          <strong>Find n-th roots of unity:</strong> n = <input type="number" id="rootOrder" value="6" min="1" max="20" class="demo-input">
+        </div>
+      </div>
+      <button onclick="calculateRoots()" class="demo-button">Compute Roots</button>
+      <button onclick="showProperties()" class="demo-button">Show Properties</button>
+      <button onclick="drawPolygon()" class="demo-button">Draw Regular Polygon</button>
+      <div class="demo-result" id="rootsResult"></div>
+      <canvas id="rootsCanvas" width="400" height="400" style="display: block; margin: 20px auto; border: 2px solid #3498db; border-radius: 8px; background: white;"></canvas>
+    </div>
+
+    <div class="section">
+     <h2>Mathematical Properties</h2>
+     
+     <div class="law-block">
+      <div class="law-eq">Fundamental Properties</div>
+      <div class="math">1. All roots satisfy zⁿ = 1</div>
+      <div class="math">2. They form a cyclic group under multiplication</div>
+      <div class="math">3. Sum of all roots: 1 + ω + ω² + ... + ω^(n-1) = 0 for n > 1</div>
+      <div class="math">4. Product of roots: (xⁿ - 1)/(x - 1) = x^(n-1) + x^(n-2) + ... + 1</div>
+      <div class="math">5. Primitive roots: ω^k where gcd(k,n) = 1</div>
+     </div>
+     
+     <div class="law-block">
+      <div class="law-eq">Special Cases</div>
+      <ul style="color: white;">
+        <li><strong>n=1:</strong> Only root is 1</li>
+        <li><strong>n=2:</strong> Roots are 1 and -1</li>
+        <li><strong>n=3:</strong> Cube roots: 1, ω, ω² where ω = -1/2 + i√3/2</li>
+        <li><strong>n=4:</strong> Fourth roots: 1, i, -1, -i</li>
+        <li><strong>n=6:</strong> Sixth roots combine square and cube roots</li>
+        <li><strong>Prime n:</strong> All roots except 1 are primitive</li>
+      </ul>
+     </div>
+    </div>
+
+    <div class="section">
+      <h2>Worked Examples</h2>
+      <div class="problem-item">
+        <div class="problem-number">1</div>
+        <div class="problem-content">
+          <p>Find the cube roots of unity and verify they sum to zero.</p>
+          <button class="solution-button" onclick="toggleSolution(1)">Show Solution</button>
+          <div class="solution-content" id="solution1">
+            <div class="calculation-steps">
+              <div class="calculation-step">Solve z³ = 1</div>
+              <div class="calculation-step">Roots: z₀ = cos(0°) + i sin(0°) = 1</div>
+              <div class="calculation-step">z₁ = cos(120°) + i sin(120°) = -1/2 + i√3/2</div>
+              <div class="calculation-step">z₂ = cos(240°) + i sin(240°) = -1/2 - i√3/2</div>
+              <div class="calculation-step">Sum: 1 + (-1/2 + i√3/2) + (-1/2 - i√3/2) = 1 - 1/2 - 1/2 + 0i = 0</div>
+              <div class="calculation-step">Notice: 1 + ω + ω² = 0 where ω = e^(2πi/3)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="problem-item">
+        <div class="problem-number">2</div>
+        <div class="problem-content">
+          <p>Show that the 6th roots of unity are 1, -1, i, -i, and two complex cube roots.</p>
+          <button class="solution-button" onclick="toggleSolution(2)">Show Solution</button>
+          <div class="solution-content" id="solution2">
+            <div class="calculation-steps">
+              <div class="calculation-step">6th roots: cos(2kπ/6) + i sin(2kπ/6) for k=0 to 5</div>
+              <div class="calculation-step">k=0: cos(0°) + i sin(0°) = 1</div>
+              <div class="calculation-step">k=1: cos(60°) + i sin(60°) = 1/2 + i√3/2</div>
+              <div class="calculation-step">k=2: cos(120°) + i sin(120°) = -1/2 + i√3/2</div>
+              <div class="calculation-step">k=3: cos(180°) + i sin(180°) = -1</div>
+              <div class="calculation-step">k=4: cos(240°) + i sin(240°) = -1/2 - i√3/2</div>
+              <div class="calculation-step">k=5: cos(300°) + i sin(300°) = 1/2 - i√3/2</div>
+              <div class="calculation-step">Notice k=0,3 are ±1; k=1,5 are 6th roots that are also square roots; k=2,4 are 6th roots that are also cube roots</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="problem-item">
+        <div class="problem-number">3</div>
+        <div class="problem-content">
+          <p>Find the minimal polynomial for the 5th roots of unity.</p>
+          <button class="solution-button" onclick="toggleSolution(3)">Show Solution</button>
+          <div class="solution-content" id="solution3">
+            <div class="calculation-steps">
+              <div class="calculation-step">5th roots: 1, ζ, ζ², ζ³, ζ⁴ where ζ = e^(2πi/5)</div>
+              <div class="calculation-step">The cyclotomic polynomial Φ₅(x) = (x⁵ - 1)/(x - 1) = x⁴ + x³ + x² + x + 1</div>
+              <div class="calculation-step">This is the minimal polynomial for ζ over ℚ</div>
+              <div class="calculation-step">It generates the 5th cyclotomic field ℚ(ζ)</div>
+              <div class="calculation-step">All other roots are powers of ζ</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+     <h2>Applications and Importance</h2>
+     <div class="law-block">
+      <div class="law-eq">Key Applications</div>
+      <ul style="color: white;">
+        <li><strong>Algebraic number theory:</strong> Cyclotomic fields and Galois theory</li>
+        <li><strong>Discrete mathematics:</strong> Fast Fourier transform algorithms</li>
+        <li><strong>Computer science:</strong> Error-correcting codes and cryptography</li>
+        <li><strong>Signal processing:</strong> Digital signal processing and filtering</li>
+        <li><strong>Geometry:</strong> Construction of regular polygons</li>
+        <li><strong>Physics:</strong> Quantum mechanics and symmetry groups</li>
+      </ul>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+      <h3>Key Takeaways</h3>
+      <ul>
+        <li>n-th roots of unity solve zⁿ = 1 and lie on the unit circle</li>
+        <li>They form vertices of regular n-gon inscribed in unit circle</li>
+        <li>Sum of all roots is 0 for n > 1</li>
+        <li>Primitive roots generate the full set under multiplication</li>
+        <li>Fundamental to cyclotomic polynomials and field extensions</li>
+        <li>Essential in FFT algorithms and many mathematical applications</li>
+      </ul>
+    </div>
+   </div>
+  </div>
+
+  <script>
+    let currentRoots = [];
+    let canvas = document.getElementById('rootsCanvas');
+    let ctx = canvas.getContext('2d');
+
+    function calculateRoots() {
+      const n = parseInt(document.getElementById('rootOrder').value) || 6;
+      currentRoots = [];
+      
+      let result = `The ${n} ${n === 1 ? 'root' : 'roots'} of unity are:\n\n`;
+      
+      for (let k = 0; k < n; k++) {
+        const angle = (2 * Math.PI * k) / n;
+        const real = Math.cos(angle);
+        const imag = Math.sin(angle);
+        currentRoots.push({real, imag, angle});
+        
+        const angleDeg = (angle * 180 / Math.PI).toFixed(1);
+        result += `z_${k} = cos(${angleDeg}°) + i sin(${angleDeg}°)`;
+        if (Math.abs(real) < 0.001) result += ` ≈ i sin(${angleDeg}°)`;
+        else if (Math.abs(imag) < 0.001) result += ` ≈ cos(${angleDeg}°)`;
+        else result += ` ≈ ${real.toFixed(3)} + i ${imag.toFixed(3)}`;
+        result += '\n';
+      }
+      
+      document.getElementById('rootsResult').textContent = result;
+      drawPolygon();
+    }
+
+    function showProperties() {
+      const n = parseInt(document.getElementById('rootOrder').value) || 6;
+      
+      let result = `Properties of ${n}-th roots of unity:\n\n`;
+      result += `1. All roots satisfy z^${n} = 1\n`;
+      result += `2. They lie on the unit circle |z| = 1\n`;
+      
+      if (n > 1) {
+        result += `3. Sum of all roots = 0\n`;
+        result += `4. Product of roots = (-1)^${n-1}\n`;
+      }
+      
+      result += `5. Number of primitive roots: φ(${n})\n`;
+      result += `6. Regular ${n}-gon vertices\n`;
+      
+      document.getElementById('rootsResult').textContent = result;
+    }
+
+    function drawPolygon() {
+      const n = parseInt(document.getElementById('rootOrder').value) || 6;
+      if (currentRoots.length !== n) calculateRoots();
+      
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      const radius = 150;
+      
+      // Draw unit circle
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+      ctx.strokeStyle = '#888';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      
+      // Draw axes
+      ctx.beginPath();
+      ctx.moveTo(centerX - radius - 20, centerY);
+      ctx.lineTo(centerX + radius + 20, centerY);
+      ctx.moveTo(centerX, centerY - radius - 20);
+      ctx.lineTo(centerX, centerY + radius + 20);
+      ctx.strokeStyle = '#ccc';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      
+      // Draw roots and polygon
+      ctx.beginPath();
+      for (let i = 0; i < n; i++) {
+        const x = centerX + radius * currentRoots[i].real;
+        const y = centerY - radius * currentRoots[i].imag; // Flip y for canvas coordinates
+        
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+        
+        // Draw point
+        ctx.fillStyle = i === 0 ? '#b71c1c' : '#1976d2';
+        ctx.beginPath();
+        ctx.arc(x, y, 5, 0, 2 * Math.PI);
+        ctx.fill();
+        
+        // Draw radius line
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.lineTo(x, y);
+        ctx.strokeStyle = '#90caf9';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        
+        // Label
+        ctx.fillStyle = '#263238';
+        ctx.font = 'bold 12px Arial';
+        const label = i === 0 ? '1' : `z${i}`;
+        ctx.fillText(label, x + 8, y - 8);
+      }
+      ctx.closePath();
+      ctx.strokeStyle = '#4caf50';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      
+      // Axis labels
+      ctx.fillStyle = '#607d8b';
+      ctx.font = 'bold 14px Arial';
+      ctx.fillText('Re', centerX + radius + 25, centerY + 5);
+      ctx.fillText('Im', centerX - 15, centerY - radius - 25);
+    }
+
+    function toggleSolution(problemNumber) {
+      const solution = document.getElementById(`solution${problemNumber}`);
+      if (solution.style.display === 'block') {
+        solution.style.display = 'none';
+      } else {
+        solution.style.display = 'block';
+      }
+    }
+
+    // Initialize
+    calculateRoots();
+
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [
+                {left: "$$", right: "$$", display: true},
+                {left: "\\(", right: "\\)", display: false},
+                {left: "\\[", right: "\\]", display: true}
+            ],
+            throwOnError: false
+        });
+    });
+  </script>
+ </body>
+</html>

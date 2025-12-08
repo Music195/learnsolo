@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<!-- tags: Formula -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Relationship Between Roots and Coefficients
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+   }
+
+   .main-content {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 15px;
+    padding: 30px;
+    margin: 20px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+   }
+
+   .fancy-title {
+    text-align: center;
+    font-size: 2.5em;
+    font-weight: bold;
+    margin: 20px 0;
+    color: #2c3e50;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+   }
+
+   .description {
+    font-size: 1.2em;
+    line-height: 1.6;
+    margin: 20px 0;
+    color: #34495e;
+    text-align: center;
+   }
+
+   .content-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin: 30px 0;
+   }
+
+   .formula-block {
+    flex: 1;
+    min-width: 300px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 1.4em;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+   }
+
+   .formula-item {
+    margin: 15px 0;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+   }
+
+   .diagram-block {
+    flex: 1;
+    min-width: 300px;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+   }
+
+   .interactive-demo {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    margin: 30px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+   }
+
+   .demo-title {
+    text-align: center;
+    font-size: 1.8em;
+    margin-bottom: 25px;
+    font-weight: bold;
+   }
+
+   .input-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin: 20px 0;
+    justify-content: center;
+   }
+
+   .input-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+   }
+
+   .input-field label {
+    font-weight: bold;
+    font-size: 1.1em;
+   }
+
+   .input-field input {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    width: 100px;
+    text-align: center;
+    transition: border-color 0.3s;
+   }
+
+   .input-field input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+   }
+
+   .button-group {
+    text-align: center;
+    margin: 25px 0;
+   }
+
+   .btn {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 1.1em;
+    cursor: pointer;
+    margin: 0 10px;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+   }
+
+   .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+   }
+
+   .btn:active {
+    transform: translateY(0);
+   }
+
+   .result-display {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    backdrop-filter: blur(10px);
+   }
+
+   .result-text {
+    font-size: 1.2em;
+    text-align: center;
+    margin: 10px 0;
+   }
+
+   .canvas-container {
+    text-align: center;
+    margin: 20px 0;
+   }
+
+   .roots-canvas {
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+   }
+
+   .section {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    margin: 25px 0;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+   }
+
+   .section-title {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
+   }
+
+   .relationship-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+   }
+
+   .relationship-card {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(252, 182, 159, 0.3);
+   }
+
+   .relationship-card h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 1.3em;
+   }
+
+   .relationship-card .formula {
+    font-weight: bold;
+    color: #e74c3c;
+    font-size: 1.2em;
+    margin: 10px 0;
+   }
+
+   .relationship-card .description {
+    color: #555;
+    line-height: 1.5;
+   }
+
+   .example-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+   }
+
+   .example-card {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+   }
+
+   .example-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(245, 87, 108, 0.4);
+   }
+
+   .example-card h4 {
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+   }
+
+   .example-detail {
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    display: none;
+   }
+
+   .calculation-steps {
+    margin: 15px 0;
+   }
+
+   .calculation-step {
+    margin: 8px 0;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 5px;
+    border-left: 4px solid #f5576c;
+   }
+
+   .practice-problems {
+    margin: 20px 0;
+   }
+
+   .problem-item {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+   }
+
+   .problem-item h4 {
+    margin: 0 0 15px 0;
+    font-size: 1.2em;
+   }
+
+   .solution-btn {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    color: #333;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 10px 0;
+    transition: all 0.3s;
+   }
+
+   .solution-btn:hover {
+    background: linear-gradient(135deg, #fcb69f 0%, #ffecd2 100%);
+    transform: scale(1.05);
+   }
+
+   .solution {
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 10px 0;
+    display: none;
+    border-left: 4px solid #667eea;
+   }
+
+   .key-takeaways {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    padding: 25px;
+    border-radius: 12px;
+    margin: 25px 0;
+   }
+
+   .takeaway-list {
+    list-style: none;
+    padding: 0;
+   }
+
+   .takeaway-item {
+    background: rgba(255, 255, 255, 0.8);
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+    font-weight: bold;
+   }
+
+   .error-message {
+    background: #ffebee;
+    color: #c62828;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px 0;
+    display: none;
+    text-align: center;
+    font-weight: bold;
+   }
+
+   @media (max-width: 768px) {
+    .content-wrapper {
+     flex-direction: column;
+    }
+
+    .input-group {
+     flex-direction: column;
+     align-items: center;
+    }
+
+    .fancy-title {
+     font-size: 2em;
+    }
+
+    .formula-block {
+     font-size: 1.2em;
+    }
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Formula">
+   Relationship Between Roots and Coefficients
+  </div>
+
+  <div class="container">
+   <div class="main-content">
+    <div class="description">
+     For any quadratic equation ax² + bx + c = 0, there are fundamental relationships between its roots and coefficients that hold true regardless of whether the roots are real or complex.
+    </div>
+
+    <div class="content-wrapper">
+     <div class="formula-block">
+      <div class="formula-item">
+       <strong>Sum of Roots:</strong> $$α + β = -\frac{b}{a}$$
+      </div>
+      <div class="formula-item">
+       <strong>Product of Roots:</strong> $$α \cdot β = \frac{c}{a}$$
+      </div>
+      <div class="formula-item">
+       <strong>Quadratic Equation:</strong> $$x^2 - (α+β)x + (αβ) = 0$$
+      </div>
+     </div>
+
+     <div class="diagram-block">
+      <svg viewbox="0 0 250 200" xmlns="http://www.w3.org/2000/svg">
+       <!-- Roots on number line -->
+       <line stroke="#666" stroke-width="2" x1="20" x2="220" y1="150" y2="150"></line>
+       <!-- Root α -->
+       <circle cx="80" cy="150" fill="#e74c3c" r="4"></circle>
+       <text fill="#e74c3c" font-size="12" x="75" y="135">α</text>
+       <!-- Root β -->
+       <circle cx="160" cy="150" fill="#27ae60" r="4"></circle>
+       <text fill="#27ae60" font-size="12" x="155" y="135">β</text>
+       <!-- Sum arrow -->
+       <line marker-end="url(#arrowhead-sum)" stroke="#f39c12" stroke-width="2" x1="80" x2="160" y1="120" y2="120"></line>
+       <text fill="#f39c12" font-size="12" x="120" y="115">α + β = -b/a</text>
+       <!-- Product indication -->
+       <text fill="#9b59b6" font-size="12" x="120" y="175">α × β = c/a</text>
+       <!-- Arrow markers -->
+       <defs>
+        <marker id="arrowhead-sum" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+         <polygon fill="#f39c12" points="0 0, 10 3.5, 0 7"></polygon>
+        </marker>
+       </defs>
+      </svg>
+     </div>
+    </div>
+
+    <div class="relationship-grid">
+     <div class="relationship-card">
+      <h3>Sum of Roots</h3>
+      <div class="formula">α + β = -b/a</div>
+      <div class="description">
+       The sum of the roots equals the negative of the coefficient of x divided by the coefficient of x².
+       <br><br>
+       For x² + px + q = 0:<br>
+       α + β = -p
+      </div>
+     </div>
+
+     <div class="relationship-card">
+      <h3>Product of Roots</h3>
+      <div class="formula">α × β = c/a</div>
+      <div class="description">
+       The product of the roots equals the constant term divided by the coefficient of x².
+       <br><br>
+       For x² + px + q = 0:<br>
+       α × β = q
+      </div>
+     </div>
+
+     <div class="relationship-card">
+      <h3>Quadratic from Roots</h3>
+      <div class="formula">x² - (sum)x + product = 0</div>
+      <div class="description">
+       If you know the roots, you can form the quadratic equation.
+       <br><br>
+       Roots α, β:<br>
+       (x - α)(x - β) = 0
+      </div>
+     </div>
+    </div>
+
+    <div class="interactive-demo">
+     <div class="demo-title">Interactive Roots and Coefficients Explorer</div>
+
+     <div class="input-group">
+      <div class="input-field">
+       <label for="root1">Root α:</label>
+       <input id="root1" step="any" type="number" value="2"/>
+      </div>
+      <div class="input-field">
+       <label for="root2">Root β:</label>
+       <input id="root2" step="any" type="number" value="-3"/>
+      </div>
+     </div>
+
+     <div class="button-group">
+      <button class="btn" onclick="generateEquation()">Generate Equation</button>
+      <button class="btn" onclick="verifyRelationships()">Verify Relationships</button>
+      <button class="btn" onclick="resetDemo()">Reset</button>
+     </div>
+
+     <div class="error-message" id="errorMessage"></div>
+
+     <div class="result-display">
+      <div class="result-text" id="equationDisplay">
+       Equation: <strong id="equationText">Not generated</strong>
+      </div>
+      <div class="result-text" id="sumDisplay">
+       Sum of Roots: <strong id="sumValue">Not calculated</strong>
+      </div>
+      <div class="result-text" id="productDisplay">
+       Product of Roots: <strong id="productValue">Not calculated</strong>
+      </div>
+     </div>
+
+     <div class="canvas-container">
+      <canvas class="roots-canvas" height="400" id="rootsCanvas" width="500"></canvas>
+     </div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Mathematical Foundation</div>
+     <p>For a quadratic equation ax² + bx + c = 0 with roots α and β, we can write:</p>
+     <div class="formula-block" style="margin: 20px 0;">
+      $$ax^2 + bx + c = a(x - \alpha)(x - \beta)$$
+     </div>
+     <p>Expanding the right side:</p>
+     <div class="formula-block" style="margin: 20px 0;">
+      $$a(x - \alpha)(x - \beta) = a[x^2 - (\alpha + \beta)x + \alpha\beta] = ax^2 - a(\alpha + \beta)x + a\alpha\beta$$
+     </div>
+     <p>Comparing coefficients with ax² + bx + c:</p>
+     <div class="formula-block" style="margin: 20px 0;">
+      $$\begin{cases}
+      -a(\alpha + \beta) = b \implies \alpha + \beta = -\frac{b}{a} \\
+      a\alpha\beta = c \implies \alpha\beta = \frac{c}{a}
+      \end{cases}$$
+     </div>
+     <p>These relationships hold for both real and complex roots, making them extremely useful for solving problems involving quadratic equations.</p>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Worked Examples</div>
+     <div class="example-grid">
+      <div class="example-card" onclick="showExample(1)">
+       <h4>Example 1: Find equation from roots</h4>
+       <p>Find equation with roots 3 and -2</p>
+      </div>
+      <div class="example-card" onclick="showExample(2)">
+       <h4>Example 2: Find roots from equation</h4>
+       <p>Find sum and product for x² - 5x + 6 = 0</p>
+      </div>
+      <div class="example-card" onclick="showExample(3)">
+       <h4>Example 3: Complex roots</h4>
+       <p>Verify relationships for x² + 4x + 5 = 0</p>
+      </div>
+     </div>
+
+     <div class="example-detail" id="exampleDetail"></div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Applications</div>
+     <ul>
+      <li><strong>Equation Formation:</strong> Creating quadratic equations with given roots</li>
+      <li><strong>Root Properties:</strong> Finding relationships without solving</li>
+      <li><strong>Polynomial Division:</strong> Using root factor theorem</li>
+      <li><strong>Symmetric Functions:</strong> Working with root sums and products</li>
+      <li><strong>Complex Analysis:</strong> Properties of complex polynomial roots</li>
+     </ul>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Practice Problems</div>
+     <div class="practice-problems">
+      <div class="problem-item">
+       <h4>Problem 1</h4>
+       <p>Form the quadratic equation whose roots are 4 and -1.</p>
+       <button class="solution-btn" onclick="toggleSolution(1)">Show Solution</button>
+       <div class="solution" id="solution1">
+        <p><strong>Solution:</strong></p>
+        <p>Sum of roots: 4 + (-1) = 3</p>
+        <p>Product of roots: 4 × (-1) = -4</p>
+        <p>Equation: x² - (sum)x + product = 0</p>
+        <p>x² - 3x - 4 = 0</p>
+       </div>
+      </div>
+
+      <div class="problem-item">
+       <h4>Problem 2</h4>
+       <p>For the equation 2x² + 3x - 5 = 0, find the sum and product of the roots.</p>
+       <button class="solution-btn" onclick="toggleSolution(2)">Show Solution</button>
+       <div class="solution" id="solution2">
+        <p><strong>Solution:</strong></p>
+        <p>Sum of roots = -b/a = -3/2 = -1.5</p>
+        <p>Product of roots = c/a = -5/2 = -2.5</p>
+       </div>
+      </div>
+
+      <div class="problem-item">
+       <h4>Problem 3</h4>
+       <p>If α and β are roots of x² + px + q = 0, find the equation whose roots are α + 1 and β + 1.</p>
+       <button class="solution-btn" onclick="toggleSolution(3)">Show Solution</button>
+       <div class="solution" id="solution3">
+        <p><strong>Solution:</strong></p>
+        <p>New sum: (α + 1) + (β + 1) = α + β + 2 = -p + 2</p>
+        <p>New product: (α + 1)(β + 1) = αβ + (α + β) + 1 = q - p + 1</p>
+        <p>Equation: x² - (-p + 2)x + (q - p + 1) = 0</p>
+        <p>x² + (p - 2)x + (q - p + 1) = 0</p>
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <div class="section-title">Key Takeaways</div>
+     <ul class="takeaway-list">
+      <li class="takeaway-item">Sum of roots α + β = -b/a (negative of x coefficient over x² coefficient)</li>
+      <li class="takeaway-item">Product of roots α × β = c/a (constant term over x² coefficient)</li>
+      <li class="takeaway-item">These relationships work for both real and complex roots</li>
+      <li class="takeaway-item">To form equation from roots: x² - (sum)x + product = 0</li>
+      <li class="takeaway-item">For monic equations (a=1): sum = -b, product = c</li>
+      <li class="takeaway-item">Useful for finding new equations with transformed roots</li>
+     </ul>
+    </div>
+   </div>
+  </div>
+
+  <script>
+   function generateEquation() {
+    try {
+     const root1 = parseFloat(document.getElementById('root1').value) || 0;
+     const root2 = parseFloat(document.getElementById('root2').value) || 0;
+
+     // Calculate sum and product
+     const sum = root1 + root2;
+     const product = root1 * root2;
+
+     // Generate equation: x² - (sum)x + product = 0
+     let equationStr = 'x²';
+     if (sum !== 0) {
+      equationStr += sum > 0 ? ' - ' + sum + 'x' : ' + ' + Math.abs(sum) + 'x';
+     }
+     if (product !== 0) {
+      if (product > 0) {
+       equationStr += ' + ' + product;
+      } else {
+       equationStr += ' - ' + Math.abs(product);
+      }
+     }
+     equationStr += ' = 0';
+
+     document.getElementById('equationText').textContent = equationStr;
+     document.getElementById('sumValue').textContent = sum;
+     document.getElementById('productValue').textContent = product;
+     document.getElementById('errorMessage').style.display = 'none';
+
+     drawRootsVisualization(root1, root2);
+    } catch (error) {
+     document.getElementById('errorMessage').textContent = 'Error generating equation. Please check your input values.';
+     document.getElementById('errorMessage').style.display = 'block';
+    }
+   }
+
+   function verifyRelationships() {
+    try {
+     const root1 = parseFloat(document.getElementById('root1').value) || 0;
+     const root2 = parseFloat(document.getElementById('root2').value) || 0;
+
+     const sum = root1 + root2;
+     const product = root1 * root2;
+
+     // From the equation x² - (sum)x + product = 0
+     // We have a=1, b=-(sum), c=product
+     const expectedSum = -(-sum) / 1; // -b/a = -(-sum)/1 = sum
+     const expectedProduct = product / 1; // c/a = product/1 = product
+
+     const sumMatch = Math.abs(sum - expectedSum) < 1e-10;
+     const productMatch = Math.abs(product - expectedProduct) < 1e-10;
+
+     document.getElementById('sumValue').innerHTML = `${sum} ✓`;
+     document.getElementById('productValue').innerHTML = `${product} ✓`;
+     document.getElementById('errorMessage').style.display = 'none';
+    } catch (error) {
+     document.getElementById('errorMessage').textContent = 'Error verifying relationships.';
+     document.getElementById('errorMessage').style.display = 'block';
+    }
+   }
+
+   function drawRootsVisualization(root1, root2) {
+    const canvas = document.getElementById('rootsCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Calculate bounds
+    const points = [root1, root2, 0];
+    const minX = Math.min(...points) - 2;
+    const maxX = Math.max(...points) + 2;
+    const centerY = canvas.height / 2;
+
+    const scaleX = canvas.width / (maxX - minX);
+
+    // Transform function
+    const transformX = x => (x - minX) * scaleX;
+
+    // Draw number line
+    ctx.strokeStyle = '#666';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, centerY);
+    ctx.lineTo(canvas.width, centerY);
+    ctx.stroke();
+
+    // Draw tick marks
+    ctx.strokeStyle = '#ccc';
+    ctx.lineWidth = 1;
+    for (let i = Math.floor(minX); i <= Math.ceil(maxX); i++) {
+     const x = transformX(i);
+     ctx.beginPath();
+     ctx.moveTo(x, centerY - 5);
+     ctx.lineTo(x, centerY + 5);
+     ctx.stroke();
+    }
+
+    // Draw roots
+    ctx.fillStyle = '#e74c3c';
+    ctx.beginPath();
+    ctx.arc(transformX(root1), centerY, 6, 0, 2 * Math.PI);
+    ctx.fill();
+
+    ctx.fillStyle = '#27ae60';
+    ctx.beginPath();
+    ctx.arc(transformX(root2), centerY, 6, 0, 2 * Math.PI);
+    ctx.fill();
+
+    // Draw origin
+    ctx.fillStyle = '#666';
+    ctx.beginPath();
+    ctx.arc(transformX(0), centerY, 3, 0, 2 * Math.PI);
+    ctx.fill();
+
+    // Labels
+    ctx.fillStyle = '#333';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(`α = ${root1}`, transformX(root1), centerY - 15);
+    ctx.fillText(`β = ${root2}`, transformX(root2), centerY - 15);
+    ctx.fillText('0', transformX(0) - 10, centerY + 20);
+
+    // Sum and product display
+    const sum = root1 + root2;
+    const product = root1 * root2;
+
+    ctx.fillText(`Sum: ${sum}`, canvas.width / 2, centerY + 40);
+    ctx.fillText(`Product: ${product}`, canvas.width / 2, centerY + 60);
+
+    // Legend
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.fillRect(10, 10, 120, 80);
+    ctx.strokeStyle = '#333';
+    ctx.strokeRect(10, 10, 120, 80);
+
+    ctx.fillStyle = '#333';
+    ctx.font = '10px Arial';
+    ctx.textAlign = 'left';
+    ctx.fillText('Legend:', 15, 25);
+    ctx.fillText('● α: First root', 15, 40);
+    ctx.fillText('● β: Second root', 15, 55);
+    ctx.fillText('● Origin', 15, 70);
+   }
+
+   function showExample(exampleNumber) {
+    const detail = document.getElementById('exampleDetail');
+    let content = '';
+
+    switch(exampleNumber) {
+     case 1:
+      content = `
+       <h4>Detailed Example 1 - Find equation from roots</h4>
+       <div class="calculation-steps">
+        <div class="calculation-step">Roots: α = 3, β = -2</div>
+        <div class="calculation-step">Sum: α + β = 3 + (-2) = 1</div>
+        <div class="calculation-step">Product: α × β = 3 × (-2) = -6</div>
+        <div class="calculation-step">Equation: x² - (sum)x + product = 0</div>
+        <div class="calculation-step">x² - 1x + (-6) = 0</div>
+        <div class="calculation-step">x² - x - 6 = 0</div>
+       </div>
+      `;
+      break;
+     case 2:
+      content = `
+       <h4>Detailed Example 2 - Find roots properties from equation</h4>
+       <div class="calculation-steps">
+        <div class="calculation-step">Equation: x² - 5x + 6 = 0</div>
+        <div class="calculation-step">Here a = 1, b = -5, c = 6</div>
+        <div class="calculation-step">Sum of roots = -b/a = -(-5)/1 = 5</div>
+        <div class="calculation-step">Product of roots = c/a = 6/1 = 6</div>
+        <div class="calculation-step">Verification: Roots are 2 and 3</div>
+        <div class="calculation-step">Sum: 2 + 3 = 5 ✓, Product: 2 × 3 = 6 ✓</div>
+       </div>
+      `;
+      break;
+     case 3:
+      content = `
+       <h4>Detailed Example 3 - Complex roots</h4>
+       <div class="calculation-steps">
+        <div class="calculation-step">Equation: x² + 4x + 5 = 0</div>
+        <div class="calculation-step">a = 1, b = 4, c = 5</div>
+        <div class="calculation-step">Sum of roots = -b/a = -4/1 = -4</div>
+        <div class="calculation-step">Product of roots = c/a = 5/1 = 5</div>
+        <div class="calculation-step">Roots: -2 + i, -2 - i</div>
+        <div class="calculation-step">Sum: (-2 + i) + (-2 - i) = -4 ✓</div>
+        <div class="calculation-step">Product: (-2 + i)(-2 - i) = 4 + 1 = 5 ✓</div>
+       </div>
+      `;
+      break;
+    }
+
+    detail.innerHTML = content;
+    detail.style.display = 'block';
+    MathJax.typesetPromise();
+   }
+
+   function toggleSolution(problemNumber) {
+    const solution = document.getElementById('solution' + problemNumber);
+    if (solution.style.display === 'none' || solution.style.display === '') {
+     solution.style.display = 'block';
+    } else {
+     solution.style.display = 'none';
+    }
+   }
+
+   function resetDemo() {
+    document.getElementById('root1').value = '2';
+    document.getElementById('root2').value = '-3';
+    document.getElementById('equationText').textContent = 'Not generated';
+    document.getElementById('sumValue').textContent = 'Not calculated';
+    document.getElementById('productValue').textContent = 'Not calculated';
+    document.getElementById('errorMessage').style.display = 'none';
+    generateEquation();
+   }
+
+   // Initialize with default values
+   document.addEventListener('DOMContentLoaded', function() {
+    generateEquation();
+   });
+  </script>
+ </body>
+</html>

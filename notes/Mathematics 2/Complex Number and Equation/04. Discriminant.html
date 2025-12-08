@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<!-- tags: Complex Number and Equation -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Discriminant and Types of Solutions
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+   }
+
+   .main-content {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 15px;
+    padding: 30px;
+    margin: 20px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+   }
+
+   .fancy-title {
+    text-align: center;
+    font-size: 2.5em;
+    font-weight: bold;
+    margin: 20px 0;
+    color: #2c3e50;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+   }
+
+   .description {
+    font-size: 1.2em;
+    line-height: 1.6;
+    margin: 20px 0;
+    color: #34495e;
+    text-align: center;
+   }
+
+   .content-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin: 30px 0;
+   }
+
+   .formula-block {
+    flex: 1;
+    min-width: 300px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 1.4em;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+   }
+
+   .formula-item {
+    margin: 15px 0;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+   }
+
+   .diagram-block {
+    flex: 1;
+    min-width: 300px;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+   }
+
+   .interactive-demo {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    margin: 30px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+   }
+
+   .demo-title {
+    text-align: center;
+    font-size: 1.8em;
+    margin-bottom: 25px;
+    font-weight: bold;
+   }
+
+   .input-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin: 20px 0;
+    justify-content: center;
+   }
+
+   .input-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+   }
+
+   .input-field label {
+    font-weight: bold;
+    font-size: 1.1em;
+   }
+
+   .input-field input {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    width: 100px;
+    text-align: center;
+    transition: border-color 0.3s;
+   }
+
+   .input-field input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+   }
+
+   .button-group {
+    text-align: center;
+    margin: 25px 0;
+   }
+
+   .btn {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 1.1em;
+    cursor: pointer;
+    margin: 0 10px;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+   }
+
+   .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+   }
+
+   .btn:active {
+    transform: translateY(0);
+   }
+
+   .result-display {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    backdrop-filter: blur(10px);
+   }
+
+   .result-text {
+    font-size: 1.2em;
+    text-align: center;
+    margin: 10px 0;
+   }
+
+   .canvas-container {
+    text-align: center;
+    margin: 20px 0;
+   }
+
+   .discriminant-canvas {
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+   }
+
+   .section {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    margin: 25px 0;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+   }
+
+   .section-title {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
+   }
+
+   .discriminant-cases {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+   }
+
+   .case-card {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(252, 182, 159, 0.3);
+   }
+
+   .case-card h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 1.3em;
+   }
+
+   .case-card .condition {
+    font-weight: bold;
+    color: #e74c3c;
+    font-size: 1.2em;
+    margin: 10px 0;
+   }
+
+   .case-card .description {
+    color: #555;
+    line-height: 1.5;
+   }
+
+   .example-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+   }
+
+   .example-card {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+   }
+
+   .example-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(245, 87, 108, 0.4);
+   }
+
+   .example-card h4 {
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+   }
+
+   .example-detail {
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    display: none;
+   }
+
+   .calculation-steps {
+    margin: 15px 0;
+   }
+
+   .calculation-step {
+    margin: 8px 0;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 5px;
+    border-left: 4px solid #f5576c;
+   }
+
+   .practice-problems {
+    margin: 20px 0;
+   }
+
+   .problem-item {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+   }
+
+   .problem-item h4 {
+    margin: 0 0 15px 0;
+    font-size: 1.2em;
+   }
+
+   .solution-btn {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    color: #333;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 10px 0;
+    transition: all 0.3s;
+   }
+
+   .solution-btn:hover {
+    background: linear-gradient(135deg, #fcb69f 0%, #ffecd2 100%);
+    transform: scale(1.05);
+   }
+
+   .solution {
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 10px 0;
+    display: none;
+    border-left: 4px solid #667eea;
+   }
+
+   .key-takeaways {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    padding: 25px;
+    border-radius: 12px;
+    margin: 25px 0;
+   }
+
+   .takeaway-list {
+    list-style: none;
+    padding: 0;
+   }
+
+   .takeaway-item {
+    background: rgba(255, 255, 255, 0.8);
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+    font-weight: bold;
+   }
+
+   .error-message {
+    background: #ffebee;
+    color: #c62828;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px 0;
+    display: none;
+    text-align: center;
+    font-weight: bold;
+   }
+
+   @media (max-width: 768px) {
+    .content-wrapper {
+     flex-direction: column;
+    }
+
+    .input-group {
+     flex-direction: column;
+     align-items: center;
+    }
+
+    .fancy-title {
+     font-size: 2em;
+    }
+
+    .formula-block {
+     font-size: 1.2em;
+    }
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Complex Number and Equation">
+   Discriminant and Types of Solutions
+  </div>
+
+  <div class="container">
+   <div class="main-content">
+    <div class="description">
+     The discriminant of a quadratic equation determines the nature and number of its solutions. It provides crucial information about whether the equation has real or complex roots.
+    </div>
+
+    <div class="content-wrapper">
+     <div class="formula-block">
+      <div class="formula-item">
+       <strong>Discriminant:</strong> $$D = b^2 - 4ac$$
+      </div>
+      <div class="formula-item">
+       <strong>Quadratic Formula:</strong> $$x = \frac{-b \pm \sqrt{D}}{2a}$$
+      </div>
+      <div class="formula-item">
+       <strong>Sum of Roots:</strong> $$x_1 + x_2 = -\frac{b}{a}$$
+      </div>
+      <div class="formula-item">
+       <strong>Product of Roots:</strong> $$x_1 \cdot x_2 = \frac{c}{a}$$
+      </div>
+     </div>
+
+     <div class="diagram-block">
+      <svg viewbox="0 0 250 200" xmlns="http://www.w3.org/2000/svg">
+       <!-- Three parabolas showing different discriminant cases -->
+       <!-- D > 0: crosses x-axis twice -->
+       <path d="M30,170 Q80,80 130,170" fill="none" stroke="#27ae60" stroke-width="3"></path>
+       <circle cx="60" cy="170" fill="#27ae60" r="4"></circle>
+       <circle cx="100" cy="170" fill="#27ae60" r="4"></circle>
+       <text fill="#27ae60" font-size="10" x="75" y="185">D > 0</text>
+
+       <!-- D = 0: touches x-axis -->
+       <path d="M140,170 Q170,100 200,170" fill="none" stroke="#f39c12" stroke-width="3"></path>
+       <circle cx="170" cy="170" fill="#f39c12" r="4"></circle>
+       <text fill="#f39c12" font-size="10" x="170" y="185">D = 0</text>
+
+       <!-- D < 0: doesn't cross x-axis -->
+       <path d="M30,170 Q80,120 130,170" fill="none" stroke="#e74c3c" stroke-width="3"></path>
+       <text fill="#e74c3c" font-size="10" x="80" y="135">D < 0</text>
+
+       <!-- x-axis -->
+       <line stroke="#666" stroke-width="2" x1="20" x2="220" y1="170" y2="170"></line>
+       <text fill="#666" font-size="12" x="215" y="175">x</text>
+      </svg>
+     </div>
+    </div>
+
+    <div class="discriminant-cases">
+     <div class="case-card">
+      <h3>Two Distinct Real Roots</h3>
+      <div class="condition">D > 0</div>
+      <div class="description">
+       The parabola crosses the x-axis at two different points. Roots are real and unequal.
+       <br><br>
+       Example: x² - 5x + 6 = 0<br>
+       D = 25 - 24 = 1 > 0
+      </div>
+     </div>
+
+     <div class="case-card">
+      <h3>One Repeated Real Root</h3>
+      <div class="condition">D = 0</div>
+      <div class="description">
+       The parabola touches the x-axis at exactly one point. Roots are real and equal.
+       <br><br>
+       Example: x² - 4x + 4 = 0<br>
+       D = 16 - 16 = 0
+      </div>
+     </div>
+
+     <div class="case-card">
+      <h3>Two Complex Conjugate Roots</h3>
+      <div class="condition">D < 0</div>
+      <div class="description">
+       The parabola doesn't cross the x-axis. Roots are complex conjugates.
+       <br><br>
+       Example: x² + 2x + 5 = 0<br>
+       D = 4 - 20 = -16 < 0
+      </div>
+     </div>
+    </div>
+
+    <div class="interactive-demo">
+     <div class="demo-title">Interactive Discriminant Analyzer</div>
+
+     <div class="input-group">
+      <div class="input-field">
+       <label for="aCoeff">a:</label>
+       <input id="aCoeff" step="any" type="number" value="1"/>
+      </div>
+      <div class="input-field">
+       <label for="bCoeff">b:</label>
+       <input id="bCoeff" step="any" type="number" value="-5"/>
+      </div>
+      <div class="input-field">
+       <label for="cCoeff">c:</label>
+       <input id="cCoeff" step="any" type="number" value="6"/>
+      </div>
+     </div>
+
+     <div class="button-group">
+      <button class="btn" onclick="analyzeDiscriminant()">Analyze</button>
+      <button class="btn" onclick="findRoots()">Find Roots</button>
+      <button class="btn" onclick="resetDemo()">Reset</button>
+     </div>
+
+     <div class="error-message" id="errorMessage"></div>
+
+     <div class="result-display">
+      <div class="result-text" id="equationDisplay">
+       Equation: <strong id="equationText">Not set</strong>
+      </div>
+      <div class="result-text" id="discriminantDisplay">
+       Discriminant: <strong id="discriminantValue">Not calculated</strong>
+      </div>
+      <div class="result-text" id="natureDisplay">
+       Nature of Roots: <strong id="natureValue">Not determined</strong>
+      </div>
+      <div class="result-text" id="rootsDisplay">
+       Roots: <strong id="rootsValue">Not calculated</strong>
+      </div>
+     </div>
+
+     <div class="canvas-container">
+      <canvas class="discriminant-canvas" height="400" id="discriminantCanvas" width="500"></canvas>
+     </div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Mathematical Foundation</div>
+     <p>The discriminant D = b² - 4ac appears in the quadratic formula and determines the nature of the roots:</p>
+     <div class="formula-block" style="margin: 20px 0;">
+      $$x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a} = \frac{-b \pm \sqrt{D}}{2a}$$
+     </div>
+     <p>The value of D determines whether √D is real or imaginary:</p>
+     <ul>
+      <li><strong>D > 0:</strong> √D is real, so both roots are real and distinct</li>
+      <li><strong>D = 0:</strong> √D = 0, so both roots are real and equal</li>
+      <li><strong>D < 0:</strong> √D is imaginary, so roots are complex conjugates</li>
+     </ul>
+     <p>For complex roots of the form α ± βi, the relationship between roots and coefficients gives:</p>
+     <div class="formula-block" style="margin: 20px 0;">
+      $$(\alpha + \beta i) + (\alpha - \beta i) = 2\alpha = -\frac{b}{a}$$
+      $$(\alpha + \beta i)(\alpha - \beta i) = \alpha^2 + \beta^2 = \frac{c}{a}$$
+     </div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Worked Examples</div>
+     <div class="example-grid">
+      <div class="example-card" onclick="showExample(1)">
+       <h4>Example 1: Positive Discriminant</h4>
+       <p>Analyze x² - 3x - 4 = 0</p>
+      </div>
+      <div class="example-card" onclick="showExample(2)">
+       <h4>Example 2: Zero Discriminant</h4>
+       <p>Analyze 4x² - 12x + 9 = 0</p>
+      </div>
+      <div class="example-card" onclick="showExample(3)">
+       <h4>Example 3: Negative Discriminant</h4>
+       <p>Analyze x² + 4x + 5 = 0</p>
+      </div>
+     </div>
+
+     <div class="example-detail" id="exampleDetail"></div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Applications</div>
+     <ul>
+      <li><strong>Physics:</strong> Determining if projectiles hit the ground, maximum heights</li>
+      <li><strong>Engineering:</strong> Stability analysis, resonance frequencies</li>
+      <li><strong>Finance:</strong> Break-even analysis, profit maximization</li>
+      <li><strong>Computer Graphics:</strong> Collision detection, ray tracing</li>
+      <li><strong>Statistics:</strong> Variance analysis, correlation studies</li>
+     </ul>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Practice Problems</div>
+     <div class="practice-problems">
+      <div class="problem-item">
+       <h4>Problem 1</h4>
+       <p>Determine the nature of roots for 2x² + 3x + 1 = 0 without solving.</p>
+       <button class="solution-btn" onclick="toggleSolution(1)">Show Solution</button>
+       <div class="solution" id="solution1">
+        <p><strong>Solution:</strong></p>
+        <p>a = 2, b = 3, c = 1</p>
+        <p>D = 3² - 4(2)(1) = 9 - 8 = 1 > 0</p>
+        <p>Two distinct real roots</p>
+       </div>
+      </div>
+
+      <div class="problem-item">
+       <h4>Problem 2</h4>
+       <p>Find the value of k so that x² + kx + 4 = 0 has equal roots.</p>
+       <button class="solution-btn" onclick="toggleSolution(2)">Show Solution</button>
+       <div class="solution" id="solution2">
+        <p><strong>Solution:</strong></p>
+        <p>For equal roots: D = 0</p>
+        <p>k² - 4(1)(4) = 0</p>
+        <p>k² - 16 = 0 ⇒ k² = 16 ⇒ k = ±4</p>
+       </div>
+      </div>
+
+      <div class="problem-item">
+       <h4>Problem 3</h4>
+       <p>Show that the roots of x² + px + q = 0 are complex if p² < 4q.</p>
+       <button class="solution-btn" onclick="toggleSolution(3)">Show Solution</button>
+       <div class="solution" id="solution3">
+        <p><strong>Solution:</strong></p>
+        <p>D = p² - 4(1)(q) = p² - 4q</p>
+        <p>For complex roots: D < 0 ⇒ p² - 4q < 0 ⇒ p² < 4q</p>
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <div class="section-title">Key Takeaways</div>
+     <ul class="takeaway-list">
+      <li class="takeaway-item">Discriminant D = b² - 4ac determines the nature of quadratic equation roots</li>
+      <li class="takeaway-item">D > 0: two distinct real roots</li>
+      <li class="takeaway-item">D = 0: one repeated real root (multiplicity 2)</li>
+      <li class="takeaway-item">D < 0: two complex conjugate roots of the form α ± βi</li>
+      <li class="takeaway-item">Complex roots always appear in conjugate pairs</li>
+      <li class="takeaway-item">Sum of roots = -b/a, product of roots = c/a (works for complex roots too)</li>
+     </ul>
+    </div>
+   </div>
+  </div>
+
+  <script>
+   function analyzeDiscriminant() {
+    try {
+     const a = parseFloat(document.getElementById('aCoeff').value) || 0;
+     const b = parseFloat(document.getElementById('bCoeff').value) || 0;
+     const c = parseFloat(document.getElementById('cCoeff').value) || 0;
+
+     if (a === 0) {
+      document.getElementById('errorMessage').textContent = 'Coefficient a cannot be zero.';
+      document.getElementById('errorMessage').style.display = 'block';
+      return;
+     }
+
+     // Display equation
+     let equationStr = '';
+     if (a !== 0) equationStr += a === 1 ? 'x²' : a === -1 ? '-x²' : a + 'x²';
+     if (b !== 0) {
+      if (equationStr && b > 0) equationStr += ' + ';
+      equationStr += b === 1 ? 'x' : b === -1 ? '-x' : b + 'x';
+     }
+     if (c !== 0) {
+      if (equationStr && c > 0) equationStr += ' + ';
+      equationStr += c;
+     }
+     equationStr += ' = 0';
+     document.getElementById('equationText').textContent = equationStr;
+
+     // Calculate discriminant
+     const discriminant = b * b - 4 * a * c;
+     document.getElementById('discriminantValue').textContent = discriminant;
+
+     // Determine nature
+     let nature = '';
+     if (discriminant > 0) {
+      nature = 'Two distinct real roots';
+     } else if (discriminant === 0) {
+      nature = 'One repeated real root';
+     } else {
+      nature = 'Two complex conjugate roots';
+     }
+     document.getElementById('natureValue').textContent = nature;
+
+     document.getElementById('errorMessage').style.display = 'none';
+
+     drawDiscriminantGraph(a, b, c);
+    } catch (error) {
+     document.getElementById('errorMessage').textContent = 'Error analyzing discriminant. Please check your input values.';
+     document.getElementById('errorMessage').style.display = 'block';
+    }
+   }
+
+   function findRoots() {
+    try {
+     const a = parseFloat(document.getElementById('aCoeff').value) || 0;
+     const b = parseFloat(document.getElementById('bCoeff').value) || 0;
+     const c = parseFloat(document.getElementById('cCoeff').value) || 0;
+
+     const discriminant = b * b - 4 * a * c;
+
+     let rootsStr = '';
+     if (discriminant > 0) {
+      const sqrtD = Math.sqrt(discriminant);
+      const root1 = (-b + sqrtD) / (2 * a);
+      const root2 = (-b - sqrtD) / (2 * a);
+      rootsStr = `${root1.toFixed(3)} and ${root2.toFixed(3)}`;
+     } else if (discriminant === 0) {
+      const root = -b / (2 * a);
+      rootsStr = `${root.toFixed(3)} (multiplicity 2)`;
+     } else {
+      const sqrtD = Math.sqrt(-discriminant);
+      const realPart = (-b / (2 * a)).toFixed(3);
+      const imagPart = (sqrtD / (2 * a)).toFixed(3);
+      rootsStr = `${realPart} + ${imagPart}i and ${realPart} - ${imagPart}i`;
+     }
+
+     document.getElementById('rootsValue').innerHTML = rootsStr;
+     document.getElementById('errorMessage').style.display = 'none';
+    } catch (error) {
+     document.getElementById('errorMessage').textContent = 'Error finding roots.';
+     document.getElementById('errorMessage').style.display = 'block';
+    }
+   }
+
+   function drawDiscriminantGraph(a, b, c) {
+    const canvas = document.getElementById('discriminantCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Calculate vertex and range
+    const vertexX = -b / (2 * a);
+    const vertexY = a * vertexX * vertexX + b * vertexX + c;
+
+    const xMin = vertexX - 4;
+    const xMax = vertexX + 4;
+    const yMin = vertexY - 8;
+    const yMax = vertexY + 8;
+
+    const scaleX = canvas.width / (xMax - xMin);
+    const scaleY = canvas.height / (yMax - yMin);
+
+    // Transform functions
+    const transformX = x => (x - xMin) * scaleX;
+    const transformY = y => canvas.height - (y - yMin) * scaleY;
+
+    // Draw axes
+    ctx.strokeStyle = '#ccc';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(0, transformY(0));
+    ctx.lineTo(canvas.width, transformY(0));
+    ctx.moveTo(transformX(0), 0);
+    ctx.lineTo(transformX(0), canvas.height);
+    ctx.stroke();
+
+    // Draw parabola
+    ctx.strokeStyle = '#e74c3c';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    for (let x = xMin; x <= xMax; x += 0.1) {
+     const y = a * x * x + b * x + c;
+     const canvasX = transformX(x);
+     const canvasY = transformY(y);
+     if (x === xMin) {
+      ctx.moveTo(canvasX, canvasY);
+     } else {
+      ctx.lineTo(canvasX, canvasY);
+     }
+    }
+    ctx.stroke();
+
+    // Draw x-axis
+    ctx.strokeStyle = '#666';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, transformY(0));
+    ctx.lineTo(canvas.width, transformY(0));
+    ctx.stroke();
+
+    // Draw roots if real
+    const discriminant = b * b - 4 * a * c;
+    if (discriminant >= 0) {
+     const sqrtD = Math.sqrt(Math.abs(discriminant));
+     const root1 = (-b + sqrtD) / (2 * a);
+     const root2 = (-b - sqrtD) / (2 * a);
+
+     ctx.fillStyle = '#27ae60';
+     ctx.beginPath();
+     ctx.arc(transformX(root1), transformY(0), 6, 0, 2 * Math.PI);
+     ctx.fill();
+
+     if (discriminant > 0) {
+      ctx.fillStyle = '#f39c12';
+      ctx.beginPath();
+      ctx.arc(transformX(root2), transformY(0), 6, 0, 2 * Math.PI);
+      ctx.fill();
+     }
+    }
+
+    // Draw vertex
+    ctx.fillStyle = '#9b59b6';
+    ctx.beginPath();
+    ctx.arc(transformX(vertexX), transformY(vertexY), 5, 0, 2 * Math.PI);
+    ctx.fill();
+
+    // Labels
+    ctx.fillStyle = '#333';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('Vertex', transformX(vertexX), transformY(vertexY) - 10);
+
+    if (discriminant >= 0) {
+     if (discriminant > 0) {
+      ctx.fillText('Root 1', transformX((-b + Math.sqrt(discriminant)) / (2 * a)), transformY(0) + 15);
+      ctx.fillText('Root 2', transformX((-b - Math.sqrt(discriminant)) / (2 * a)), transformY(0) + 15);
+     } else {
+      ctx.fillText('Double Root', transformX(-b / (2 * a)), transformY(0) + 15);
+     }
+    }
+
+    // Legend
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.fillRect(10, 10, 140, discriminant >= 0 ? 100 : 70);
+    ctx.strokeStyle = '#333';
+    ctx.strokeRect(10, 10, 140, discriminant >= 0 ? 100 : 70);
+
+    ctx.fillStyle = '#333';
+    ctx.font = '10px Arial';
+    ctx.textAlign = 'left';
+    ctx.fillText('Legend:', 15, 25);
+    ctx.fillText('● Vertex', 15, 40);
+    if (discriminant > 0) {
+     ctx.fillText('● Root 1', 15, 55);
+     ctx.fillText('● Root 2', 15, 70);
+    } else if (discriminant === 0) {
+     ctx.fillText('● Double root', 15, 55);
+    } else {
+     ctx.fillText('— Parabola', 15, 40);
+     ctx.fillText('(no real roots)', 15, 55);
+    }
+   }
+
+   function showExample(exampleNumber) {
+    const detail = document.getElementById('exampleDetail');
+    let content = '';
+
+    switch(exampleNumber) {
+     case 1:
+      content = `
+       <h4>Detailed Example 1 - Positive Discriminant</h4>
+       <div class="calculation-steps">
+        <div class="calculation-step">Equation: x² - 3x - 4 = 0</div>
+        <div class="calculation-step">a = 1, b = -3, c = -4</div>
+        <div class="calculation-step">D = (-3)² - 4(1)(-4) = 9 + 16 = 25 > 0</div>
+        <div class="calculation-step">Two distinct real roots</div>
+        <div class="calculation-step">Roots: [3 ± √25]/2 = [3 ± 5]/2</div>
+        <div class="calculation-step">x = 4 or x = -1</div>
+       </div>
+      `;
+      break;
+     case 2:
+      content = `
+       <h4>Detailed Example 2 - Zero Discriminant</h4>
+       <div class="calculation-steps">
+        <div class="calculation-step">Equation: 4x² - 12x + 9 = 0</div>
+        <div class="calculation-step">a = 4, b = -12, c = 9</div>
+        <div class="calculation-step">D = (-12)² - 4(4)(9) = 144 - 144 = 0</div>
+        <div class="calculation-step">One repeated real root</div>
+        <div class="calculation-step">Root: [12 ± √0]/(2×4) = 12/8 = 1.5</div>
+       </div>
+      `;
+      break;
+     case 3:
+      content = `
+       <h4>Detailed Example 3 - Negative Discriminant</h4>
+       <div class="calculation-steps">
+        <div class="calculation-step">Equation: x² + 4x + 5 = 0</div>
+        <div class="calculation-step">a = 1, b = 4, c = 5</div>
+        <div class="calculation-step">D = 4² - 4(1)(5) = 16 - 20 = -4 < 0</div>
+        <div class="calculation-step">Two complex conjugate roots</div>
+        <div class="calculation-step">Roots: [-4 ± √(-4)]/2 = [-4 ± 2i]/2</div>
+        <div class="calculation-step">x = -2 + i or x = -2 - i</div>
+       </div>
+      `;
+      break;
+    }
+
+    detail.innerHTML = content;
+    detail.style.display = 'block';
+    MathJax.typesetPromise();
+   }
+
+   function toggleSolution(problemNumber) {
+    const solution = document.getElementById('solution' + problemNumber);
+    if (solution.style.display === 'none' || solution.style.display === '') {
+     solution.style.display = 'block';
+    } else {
+     solution.style.display = 'none';
+    }
+   }
+
+   function resetDemo() {
+    document.getElementById('aCoeff').value = '1';
+    document.getElementById('bCoeff').value = '-5';
+    document.getElementById('cCoeff').value = '6';
+    document.getElementById('equationText').textContent = 'Not set';
+    document.getElementById('discriminantValue').textContent = 'Not calculated';
+    document.getElementById('natureValue').textContent = 'Not determined';
+    document.getElementById('rootsValue').textContent = 'Not calculated';
+    document.getElementById('errorMessage').style.display = 'none';
+    analyzeDiscriminant();
+   }
+
+   // Initialize with default values
+   document.addEventListener('DOMContentLoaded', function() {
+    analyzeDiscriminant();
+   });
+  </script>
+ </body>
+</html>

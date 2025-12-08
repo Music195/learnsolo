@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<!-- tags: Set and Elements -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Intersection and Union of Sets
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   .interactive-demo {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    border: 2px solid #e1e8ed;
+   }
+   .demo-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 15px;
+   }
+   .demo-input-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 150px;
+   }
+   .demo-input-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #2c3e50;
+   }
+   .demo-input {
+    padding: 8px;
+    border: 2px solid #bdc3c7;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+   }
+   .demo-input:focus {
+    outline: none;
+    border-color: #3498db;
+   }
+   .demo-button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: transform 0.2s;
+   }
+   .demo-button:hover {
+    transform: translateY(-2px);
+   }
+   .demo-result {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+    border-left: 4px solid #3498db;
+   }
+   .math-foundation {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .worked-example {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .practice-problem {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .solution-toggle {
+    background: #2c3e50;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+   }
+   .solution-toggle:hover {
+    background: #34495e;
+   }
+   .solution-content {
+    display: none;
+    background: rgba(255, 255, 255, 0.9);
+    color: #2c3e50;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+   }
+   .key-takeaways {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .key-takeaways h3 {
+    color: #2c3e50;
+    margin-top: 0;
+   }
+   .key-takeaways ul {
+    color: #2c3e50;
+   }
+   .set-operations {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+   }
+   .operation-card {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #e67e22;
+   }
+   .operation-card h4 {
+    margin-top: 0;
+    color: #2c3e50;
+   }
+   .venn-interactive {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+    border: 2px solid #ecf0f1;
+    text-align: center;
+   }
+   .operation-results {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin: 15px 0;
+   }
+   .result-card {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    border: 2px solid #dee2e6;
+    text-align: center;
+   }
+   .result-card h4 {
+    margin-top: 0;
+    color: #2c3e50;
+   }
+   .math-blue {
+    color: #3498db;
+    font-weight: bold;
+   }
+   .venn-container {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    margin: 40px 0;
+    flex-wrap: wrap;
+   }
+   .venn-diagram {
+    text-align: center;
+   }
+   .venn-label {
+    font-size: 1.3em;
+    margin-bottom: 15px;
+    font-weight: 600;
+    color: #667eea;
+   }
+   .venn-description {
+    margin-top: 15px;
+    font-size: 0.95em;
+    color: #555;
+    max-width: 250px;
+   }
+   canvas {
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Set and Elements">
+   Intersection and Union of Sets
+  </div>
+  <div class="container">
+   <div class="main-content">
+    <div class="section-title">
+     Intersection and Union of Sets
+    </div>
+
+    <div class="math-foundation">
+     <h3>Mathematical Foundations</h3>
+     <p>Set operations combine sets in different ways. The intersection finds common elements, while the union combines all elements from both sets.</p>
+
+     <div class="set-operations">
+      <div class="operation-card">
+       <h4>Intersection</h4>
+       <p class="math-blue">A ∩ B</p>
+       <p>Elements in both A and B</p>
+       <p>Common to both sets</p>
+       <p>Can be empty if no common elements</p>
+      </div>
+
+      <div class="operation-card">
+       <h4>Union</h4>
+       <p class="math-blue">A ∪ B</p>
+       <p>Elements in A or B or both</p>
+       <p>All elements from both sets</p>
+       <p>Removes duplicates</p>
+      </div>
+
+      <div class="operation-card">
+       <h4>Properties</h4>
+       <p>Commutative: A ∩ B = B ∩ A</p>
+       <p>Associative: (A ∩ B) ∩ C = A ∩ (B ∩ C)</p>
+       <p>Distributive: A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C)</p>
+       <p>Identity: A ∩ U = A, A ∪ ∅ = A</p>
+      </div>
+     </div>
+    </div>
+
+    <div class="interactive-demo">
+     <h3>Interactive Set Operations Calculator</h3>
+     <p>Enter two sets and see their intersection and union.</p>
+
+     <div class="demo-controls">
+      <div class="demo-input-group">
+       <label for="set-a">Set A (comma-separated):</label>
+       <input type="text" id="set-a" class="demo-input" value="1, 2, 3, 4" placeholder="e.g., 1, 2, 3, 4">
+      </div>
+      <div class="demo-input-group">
+       <label for="set-b">Set B (comma-separated):</label>
+       <input type="text" id="set-b" class="demo-input" value="3, 4, 5, 6" placeholder="e.g., 3, 4, 5, 6">
+      </div>
+      <button onclick="calculateOperations()" class="demo-button">Calculate</button>
+     </div>
+
+     <div class="venn-interactive">
+      <h4>Sets Visualization:</h4>
+      <canvas id="interactive-venn" width="400" height="200" style="display: block; margin: 0 auto; border: 1px solid #ccc;"></canvas>
+     </div>
+
+     <div class="operation-results">
+      <div class="result-card">
+       <h4>Set A</h4>
+       <p id="display-a">A = {1, 2, 3, 4}</p>
+      </div>
+      <div class="result-card">
+       <h4>Set B</h4>
+       <p id="display-b">B = {3, 4, 5, 6}</p>
+      </div>
+      <div class="result-card">
+       <h4>Intersection</h4>
+       <p id="display-intersection">A ∩ B = {3, 4}</p>
+      </div>
+      <div class="result-card">
+       <h4>Union</h4>
+       <p id="display-union">A ∪ B = {1, 2, 3, 4, 5, 6}</p>
+      </div>
+     </div>
+    </div>
+
+    <div class="worked-example">
+     <h3>Worked Examples</h3>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Example 1: Basic Operations</h4>
+      <p>Let A = {1, 2, 3, 4} and B = {3, 4, 5, 6}</p>
+      <p>Intersection: A ∩ B = {3, 4} (elements in both sets)</p>
+      <p>Union: A ∪ B = {1, 2, 3, 4, 5, 6} (all elements from both sets)</p>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Example 2: Disjoint Sets</h4>
+      <p>Let C = {1, 2} and D = {3, 4}</p>
+      <p>Intersection: C ∩ D = ∅ (no common elements)</p>
+      <p>Union: C ∪ D = {1, 2, 3, 4} (all elements combined)</p>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Example 3: One Set Subset of Another</h4>
+      <p>Let E = {2, 4} and F = {1, 2, 3, 4, 5}</p>
+      <p>Intersection: E ∩ F = {2, 4} (same as E since E ⊂ F)</p>
+      <p>Union: E ∪ F = {1, 2, 3, 4, 5} (same as F since E ⊂ F)</p>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Example 4: Same Sets</h4>
+      <p>Let G = {a, b, c} and H = {a, b, c}</p>
+      <p>Intersection: G ∩ H = {a, b, c} (same as both sets)</p>
+      <p>Union: G ∪ H = {a, b, c} (same as both sets)</p>
+     </div>
+    </div>
+
+    <div class="practice-problem">
+     <h3>Practice Problems</h3>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Problem 1</h4>
+      <p>Given A = {1, 2, 3, 4, 5} and B = {4, 5, 6, 7, 8}:</p>
+      <p>Find A ∩ B and A ∪ B</p>
+      <button onclick="toggleSolution('sol1')" class="solution-toggle">Show Solution</button>
+      <div id="sol1" class="solution-content">
+       <p>A ∩ B = {4, 5}</p>
+       <p>A ∪ B = {1, 2, 3, 4, 5, 6, 7, 8}</p>
+      </div>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Problem 2</h4>
+      <p>Given P = {a, b, c} and Q = {c, d, e}:</p>
+      <p>Find P ∩ Q and P ∪ Q</p>
+      <button onclick="toggleSolution('sol2')" class="solution-toggle">Show Solution</button>
+      <div id="sol2" class="solution-content">
+       <p>P ∩ Q = {c}</p>
+       <p>P ∪ Q = {a, b, c, d, e}</p>
+      </div>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Problem 3</h4>
+      <p>Given R = {1, 3, 5} and S = {2, 4, 6}:</p>
+      <p>Find R ∩ S and R ∪ S</p>
+      <button onclick="toggleSolution('sol3')" class="solution-toggle">Show Solution</button>
+      <div id="sol3" class="solution-content">
+       <p>R ∩ S = ∅ (no common elements)</p>
+       <p>R ∪ S = {1, 2, 3, 4, 5, 6}</p>
+      </div>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <h3>Key Takeaways</h3>
+     <ul>
+      <li>A ∩ B contains elements that are in both A and B</li>
+      <li>A ∪ B contains elements that are in A or B or both</li>
+      <li>Intersection and union are commutative: A ∩ B = B ∩ A, A ∪ B = B ∪ A</li>
+      <li>Intersection and union are associative: (A ∩ B) ∩ C = A ∩ (B ∩ C)</li>
+      <li>Distributive property: A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C)</li>
+      <li>Identity elements: A ∩ U = A, A ∪ ∅ = A where U is universal set</li>
+      <li>If A and B are disjoint (A ∩ B = ∅), then |A ∪ B| = |A| + |B|</li>
+      <li>Inclusion-exclusion: |A ∪ B| = |A| + |B| - |A ∩ B|</li>
+      <li>Intersection can be empty, union is never empty if at least one set is non-empty</li>
+     </ul>
+    </div>
+
+    <div class="explanation">
+     The set of all elements that belong to both sets $A$ and $B$ is called the
+     <strong>
+      intersection
+     </strong>
+     of $A$ and $B$, written as
+     <span class="math-blue">
+      $A \cap B$
+     </span>
+     .
+    </div>
+    <div class="explanation">
+     The set of all elements that belong to at least one of $A$ or $B$ is called the
+     <strong>
+      union
+     </strong>
+     of $A$ and $B$, written as
+     <span class="math-blue">
+      $A \cup B$
+     </span>
+     .
+    </div>
+    <div class="venn-container">
+     <div class="venn-diagram">
+      <div class="venn-label">
+       Intersection: $A \cap B$
+      </div>
+      <canvas height="180" id="intersectionCanvas" width="250">
+      </canvas>
+      <div class="venn-description">
+       Elements that belong to
+       <strong>
+        both
+       </strong>
+       A and B
+      </div>
+     </div>
+     <div class="venn-diagram">
+      <div class="venn-label">
+       Union: $A \cup B$
+      </div>
+      <canvas height="180" id="unionCanvas" width="250">
+      </canvas>
+      <div class="venn-description">
+       Elements that belong to
+       <strong>
+        A or B or both
+       </strong>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+
+  <script>
+   function parseSet(input) {
+    return input.split(',').map(x => x.trim()).filter(x => x !== '');
+   }
+
+   function calculateOperations() {
+    const aInput = document.getElementById('set-a').value;
+    const bInput = document.getElementById('set-b').value;
+
+    const setA = parseSet(aInput);
+    const setB = parseSet(bInput);
+
+    // Calculate intersection
+    const intersection = setA.filter(x => setB.includes(x));
+
+    // Calculate union
+    const union = [...new Set([...setA, ...setB])];
+
+    // Update displays
+    document.getElementById('display-a').textContent = `A = {${setA.join(', ')}}`;
+    document.getElementById('display-b').textContent = `B = {${setB.join(', ')}}`;
+    document.getElementById('display-intersection').textContent = `A ∩ B = {${intersection.join(', ')}}`;
+    document.getElementById('display-union').textContent = `A ∪ B = {${union.join(', ')}}`;
+
+    drawInteractiveVenn(setA, setB, intersection, union);
+   }
+
+   function drawInteractiveVenn(setA, setB, intersection, union) {
+    const canvas = document.getElementById('interactive-venn');
+    const ctx = canvas.getContext('2d');
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Background
+    ctx.fillStyle = '#f8f9fa';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Set A (left circle) - filled
+    ctx.beginPath();
+    ctx.arc(120, 100, 60, 0, 2 * Math.PI);
+    ctx.fillStyle = 'rgba(102, 126, 234, 0.3)';
+    ctx.fill();
+    ctx.strokeStyle = '#667eea';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // Set B (right circle) - filled
+    ctx.beginPath();
+    ctx.arc(280, 100, 60, 0, 2 * Math.PI);
+    ctx.fillStyle = 'rgba(118, 75, 162, 0.3)';
+    ctx.fill();
+    ctx.strokeStyle = '#764ba2';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // Intersection area (darker overlap)
+    ctx.save();
+    ctx.globalCompositeOperation = 'multiply';
+    ctx.beginPath();
+    ctx.arc(120, 100, 60, 0, 2 * Math.PI);
+    ctx.clip();
+    ctx.beginPath();
+    ctx.arc(280, 100, 60, 0, 2 * Math.PI);
+    ctx.fillStyle = 'rgba(102, 126, 234, 0.4)';
+    ctx.fill();
+    ctx.restore();
+
+    // Redraw circles
+    ctx.beginPath();
+    ctx.arc(120, 100, 60, 0, 2 * Math.PI);
+    ctx.strokeStyle = '#667eea';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(280, 100, 60, 0, 2 * Math.PI);
+    ctx.strokeStyle = '#764ba2';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // Labels
+    ctx.fillStyle = '#222';
+    ctx.font = 'bold 20px Times New Roman';
+    ctx.fillText('A', 105, 105);
+    ctx.fillText('B', 295, 105);
+
+    // Sample elements (show first few)
+    ctx.font = '12px Arial';
+    ctx.fillStyle = '#333';
+
+    // A only elements
+    const aOnly = setA.filter(x => !setB.includes(x));
+    if (aOnly.length > 0) {
+     ctx.fillText(aOnly.slice(0, 2).join(', '), 80, 80);
+    }
+
+    // B only elements
+    const bOnly = setB.filter(x => !setA.includes(x));
+    if (bOnly.length > 0) {
+     ctx.fillText(bOnly.slice(0, 2).join(', '), 320, 80);
+    }
+
+    // Intersection elements
+    if (intersection.length > 0) {
+     ctx.fillText(intersection.slice(0, 2).join(', '), 190, 95);
+    }
+   }
+
+   function drawVennIntersection() {
+    const canvas = document.getElementById('intersectionCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Background
+    ctx.fillStyle = '#f8f9fa';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Set A (left circle) - outline only
+    ctx.beginPath();
+    ctx.arc(90, 90, 50, 0, 2 * Math.PI);
+    ctx.strokeStyle = '#667eea';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // Set B (right circle) - outline only
+    ctx.beginPath();
+    ctx.arc(160, 90, 50, 0, 2 * Math.PI);
+    ctx.strokeStyle = '#764ba2';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // Intersection (filled)
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(90, 90, 50, 0, 2 * Math.PI);
+    ctx.clip();
+    ctx.beginPath();
+    ctx.arc(160, 90, 50, 0, 2 * Math.PI);
+    ctx.fillStyle = 'rgba(102, 126, 234, 0.5)';
+    ctx.fill();
+    ctx.restore();
+
+    // Redraw circles to fix clipping artifacts
+    ctx.beginPath();
+    ctx.arc(90, 90, 50, 0, 2 * Math.PI);
+    ctx.strokeStyle = '#667eea';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(160, 90, 50, 0, 2 * Math.PI);
+    ctx.strokeStyle = '#764ba2';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // Labels
+    ctx.fillStyle = '#222';
+    ctx.font = 'bold 24px Times New Roman';
+    ctx.fillText('A', 70, 95);
+    ctx.fillText('B', 175, 95);
+
+    // Sample elements
+    ctx.font = '14px Arial';
+    ctx.fillStyle = '#555';
+    ctx.fillText('1, 2', 55, 75);
+    ctx.fillText('3, 4', 115, 85);
+    ctx.fillText('5, 6', 180, 75);
+   }
+
+   function drawVennUnion() {
+    const canvas = document.getElementById('unionCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Background
+    ctx.fillStyle = '#f8f9fa';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Set A (left circle) - filled
+    ctx.beginPath();
+    ctx.arc(90, 90, 50, 0, 2 * Math.PI);
+    ctx.fillStyle = 'rgba(102, 126, 234, 0.5)';
+    ctx.fill();
+    ctx.strokeStyle = '#667eea';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // Set B (right circle) - filled
+    ctx.beginPath();
+    ctx.arc(160, 90, 50, 0, 2 * Math.PI);
+    ctx.fillStyle = 'rgba(118, 75, 162, 0.5)';
+    ctx.fill();
+    ctx.strokeStyle = '#764ba2';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // Intersection area (darker overlap)
+    ctx.save();
+    ctx.globalCompositeOperation = 'multiply';
+    ctx.beginPath();
+    ctx.arc(90, 90, 50, 0, 2 * Math.PI);
+    ctx.clip();
+    ctx.beginPath();
+    ctx.arc(160, 90, 50, 0, 2 * Math.PI);
+    ctx.fillStyle = 'rgba(102, 126, 234, 0.3)';
+    ctx.fill();
+    ctx.restore();
+
+    // Redraw circles to fix clipping
+    ctx.beginPath();
+    ctx.arc(90, 90, 50, 0, 2 * Math.PI);
+    ctx.strokeStyle = '#667eea';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(160, 90, 50, 0, 2 * Math.PI);
+    ctx.strokeStyle = '#764ba2';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // Labels
+    ctx.fillStyle = '#222';
+    ctx.font = 'bold 24px Times New Roman';
+    ctx.fillText('A', 70, 95);
+    ctx.fillText('B', 175, 95);
+
+    // Sample elements
+    ctx.font = '14px Arial';
+    ctx.fillStyle = '#333';
+    ctx.fillText('1, 2', 55, 75);
+    ctx.fillText('3, 4', 115, 85);
+    ctx.fillText('5, 6', 180, 75);
+   }
+
+   function toggleSolution(id) {
+    const element = document.getElementById(id);
+    element.style.display = element.style.display === 'none' ? 'block' : 'none';
+   }
+
+   // Initialize
+   drawVennIntersection();
+   drawVennUnion();
+   calculateOperations();
+  </script>
+ </body>
+</html>

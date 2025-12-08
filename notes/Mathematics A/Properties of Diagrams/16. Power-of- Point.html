@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<!-- tags: Geometry -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Power of a Point Theorem
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+    /* Enhanced text containment and responsive design */
+    body, .container, .main-content {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      hyphens: auto;
+    }
+
+    /* Gradient backgrounds for theorem statements */
+    .theorem-statement {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      border-left: 5px solid #ff6b6b;
+    }
+
+    .theorem-statement h2 {
+      margin: 0 0 10px 0;
+      font-size: 1.5em;
+      color: #fff;
+    }
+
+    /* Interactive demo container */
+    .interactive-demo {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      border-radius: 15px;
+      padding: 25px;
+      margin: 20px 0;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .interactive-demo::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="20" cy="20" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="80" r="1" fill="rgba(255,255,255,0.1)"/></svg>');
+      opacity: 0.1;
+    }
+
+    .demo-title {
+      color: white;
+      font-size: 1.3em;
+      font-weight: bold;
+      margin-bottom: 15px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    /* Canvas styling */
+    #powerCanvas {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      display: block;
+      margin: 0 auto;
+    }
+
+    /* Control panel */
+    .control-panel {
+      background: rgba(255,255,255,0.9);
+      border-radius: 10px;
+      padding: 15px;
+      margin-top: 15px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .control-group label {
+      font-weight: bold;
+      color: #333;
+      font-size: 0.9em;
+    }
+
+    .control-group input[type="range"] {
+      width: 120px;
+      height: 6px;
+      border-radius: 3px;
+      background: #ddd;
+      outline: none;
+    }
+
+    .control-group input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #f5576c;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    .length-display {
+      font-size: 1.1em;
+      font-weight: bold;
+      color: #333;
+      background: rgba(255,255,255,0.8);
+      padding: 5px 10px;
+      border-radius: 5px;
+      margin-top: 5px;
+    }
+
+    /* Power display */
+    .power-display {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.1em;
+      background: rgba(255,255,255,0.9);
+      color: #333;
+    }
+
+    .power-equal {
+      background: linear-gradient(135deg, #4CAF50, #45a049);
+      color: white;
+    }
+
+    .power-different {
+      background: linear-gradient(135deg, #ff9800, #f57c00);
+      color: white;
+    }
+
+    /* Proof steps styling */
+    .proof-steps {
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+
+    .proof-step {
+      background: white;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 10px 0;
+      border-left: 4px solid #74b9ff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .proof-step h4 {
+      margin: 0 0 8px 0;
+      color: #2d3436;
+      font-size: 1.1em;
+    }
+
+    .proof-step .math {
+      color: #0984e3;
+      font-weight: bold;
+    }
+
+    /* Examples section */
+    .examples-section {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 25px;
+      border-radius: 15px;
+      margin: 20px 0;
+    }
+
+    .example {
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 15px 0;
+      backdrop-filter: blur(10px);
+    }
+
+    .example h4 {
+      margin: 0 0 10px 0;
+      color: #fff;
+      font-size: 1.2em;
+    }
+
+    .example .calculation {
+      background: rgba(255,255,255,0.2);
+      padding: 10px;
+      border-radius: 5px;
+      margin: 10px 0;
+      font-family: 'Courier New', monospace;
+    }
+
+    /* Applications section */
+    .applications {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+      padding: 25px;
+      border-radius: 15px;
+      margin: 20px 0;
+    }
+
+    .application {
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 15px 0;
+      backdrop-filter: blur(10px);
+    }
+
+    /* Practice problems */
+    .practice-problems {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: white;
+      padding: 25px;
+      border-radius: 15px;
+      margin: 20px 0;
+    }
+
+    .problem {
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 15px 0;
+      backdrop-filter: blur(10px);
+    }
+
+    .problem .solution {
+      background: rgba(255,255,255,0.2);
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 15px;
+      display: none;
+    }
+
+    .problem .solution.show {
+      display: block;
+    }
+
+    .solution-toggle {
+      background: #ff6b6b;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 10px;
+      transition: background 0.3s;
+    }
+
+    .solution-toggle:hover {
+      background: #ff5252;
+    }
+
+    /* Key takeaways */
+    .key-takeaways {
+      background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+      color: white;
+      padding: 25px;
+      border-radius: 15px;
+      margin: 20px 0;
+    }
+
+    .takeaway {
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 15px;
+      margin: 10px 0;
+      backdrop-filter: blur(10px);
+      border-left: 4px solid #ffeaa7;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .control-panel {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .control-group {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .control-group input[type="range"] {
+        width: 150px;
+      }
+
+      .interactive-demo, .theorem-statement, .proof-steps, .examples-section, .applications, .practice-problems, .key-takeaways {
+        padding: 15px;
+      }
+    }
+
+    /* Enhanced diagram area */
+    .diagram-area {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .diagram-label {
+      margin-top: 10px;
+      font-weight: bold;
+      color: #2d3436;
+    }
+
+    /* MathJax styling */
+    .mjx-chtml {
+      font-size: 1.1em !important;
+    }
+
+    /* Highlight important terms */
+    .highlight {
+      background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%);
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-weight: bold;
+    }
+
+    /* Equal marks styling */
+    .equal-mark {
+      stroke: #6a1b9a;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    /* Angle mark styling */
+    .angle-mark {
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .angle-red {
+      stroke: #d84315;
+    }
+
+    .angle-blue {
+      stroke: #1976d2;
+    }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Geometry">
+   Power of a Point Theorem
+  </div>
+
+  <div class="theorem-statement">
+   <h2>⚡ Power of a Point Theorem</h2>
+   <p>If two chords AB and CD of a circle intersect at a point P (inside or outside the circle), then:</p>
+   <ul>
+    <li><strong>Power Equation:</strong> PA × PB = PC × PD</li>
+    <li><strong>Internal Division:</strong> When P is inside the circle</li>
+    <li><strong>External Division:</strong> When P is outside the circle</li>
+    <li><strong>Tangent Case:</strong> If P is on the circle, power is zero</li>
+   </ul>
+   <p><em>This theorem provides a fundamental relationship between segments created by intersecting chords and has numerous applications in circle geometry.</em></p>
+  </div>
+
+  <div class="interactive-demo">
+   <div class="demo-title">⚡ Interactive Power of a Point Demonstration</div>
+   <canvas id="powerCanvas" width="600" height="400"></canvas>
+
+   <div class="control-panel">
+    <div class="control-group">
+     <label for="circleCenterX">Center X:</label>
+     <input type="range" id="circleCenterX" min="250" max="350" value="300">
+     <span class="length-display" id="circleCenterXValue">300</span>
+    </div>
+    <div class="control-group">
+     <label for="circleCenterY">Center Y:</label>
+     <input type="range" id="circleCenterY" min="150" max="250" value="200">
+     <span class="length-display" id="circleCenterYValue">200</span>
+    </div>
+    <div class="control-group">
+     <label for="circleRadius">Radius:</label>
+     <input type="range" id="circleRadius" min="40" max="90" value="60">
+     <span class="length-display" id="circleRadiusValue">60</span>
+    </div>
+    <div class="control-group">
+     <label for="pointPX">Point P X:</label>
+     <input type="range" id="pointPX" min="150" max="450" value="300">
+     <span class="length-display" id="pointPXValue">300</span>
+    </div>
+    <div class="control-group">
+     <label for="pointPY">Point P Y:</label>
+     <input type="range" id="pointPY" min="100" max="300" value">200">
+     <span class="length-display" id="pointPYValue">200</span>
+    </div>
+   </div>
+
+   <div class="power-display power-equal">
+    Power of P: <span id="powerPA">PA × PB = --</span> | 
+    <span id="powerPC">PC × PD = --</span> | 
+    Difference: <span id="powerDifference">--</span>
+   </div>
+  </div>
+
+  <div class="proof-steps">
+   <h3>🔍 Proof of Power of a Point Theorem</h3>
+
+   <div class="proof-step">
+    <h4>Intersecting Chords</h4>
+    <p>Consider two chords AB and CD intersecting at point P inside the circle.</p>
+    <p>Draw radii to points A, B, C, D. Since all points are on the circle, ∠PAO = ∠PBO and ∠PCO = ∠PDO.</p>
+    <div class="math">
+     △PAO ≅ △PBO (SAS: PA = PB, ∠PAO = ∠PBO, AO = BO)<br>
+     △PCO ≅ △PDO (SAS: PC = PD, ∠PCO = ∠PDO, CO = DO)
+    </div>
+   </div>
+
+   <div class="proof-step">
+    <h4>Angle Relationships</h4>
+    <p>From congruent triangles: ∠PAO = ∠PBO and ∠PCO = ∠PDO</p>
+    <p>∠PAO + ∠PCO = ∠PBO + ∠PDO = 180° (straight angles)</p>
+    <div class="math">
+     ∠PAO + ∠PCO = ∠PBO + ∠PDO = 180°<br>
+     ∠PAO = ∠PBO, ∠PCO = ∠PDO<br>
+     ∴ ∠PCO = ∠PDO
+    </div>
+   </div>
+
+   <div class="proof-step">
+    <h4>Triangle Similarity</h4>
+    <p>△PAC ∼ △PBD (AA similarity: equal vertical angles)</p>
+    <p>Corresponding sides are proportional: PA/PB = PC/PD</p>
+    <div class="math">
+     △PAC ∼ △PBD<br>
+     PA/PB = PC/PD<br>
+     ∴ PA × PD = PB × PC
+    </div>
+   </div>
+
+   <div class="proof-step">
+    <h4>Alternative Proof: Trigonometry</h4>
+    <p>Using trigonometric identities in the intersecting chords.</p>
+    <p>The product of segments is constant for any intersecting chords.</p>
+    <div class="math">
+     PA × PB = PC × PD<br>
+     This holds for both internal and external intersections
+    </div>
+   </div>
+  </div>
+
+  <div class="examples-section">
+   <h3>📚 Detailed Examples</h3>
+
+   <div class="example">
+    <h4>Example 1: Internal Intersection</h4>
+    <p>Chords AB and CD intersect at P inside circle. PA = 3, PB = 4, PC = 2. Find PD.</p>
+    <div class="calculation">
+     Power of P: PA × PB = PC × PD<br>
+     3 × 4 = 2 × PD<br>
+     12 = 2 × PD<br>
+     PD = 6
+    </div>
+    <p><strong>Solution:</strong> Using the power of a point equation for intersecting chords.</p>
+   </div>
+
+   <div class="example">
+    <h4>Example 2: External Intersection</h4>
+    <p>Chords AB and CD intersect at P outside circle. PA = 5, PB = 3, PC = 4. Find PD.</p>
+    <div class="calculation">
+     Power of P: PA × PB = PC × PD<br>
+     5 × 3 = 4 × PD<br>
+     15 = 4 × PD<br>
+     PD = 15/4 = 3.75
+    </div>
+    <p><strong>Solution:</strong> The theorem applies to external intersections as well.</p>
+   </div>
+
+   <div class="example">
+    <h4>Example 3: Coordinate Geometry</h4>
+    <p>Circle x² + y² = 25. Chords from (3,4) and (4,3) intersect at P(2,2). Find PD if PC = 2.</p>
+    <div class="calculation">
+     Distance from center to P: √(2² + 2²) = √8 = 2√2<br>
+     Power of P = (distance)² - radius² = 8 - 25 = -17<br>
+     PA × PB = PC × PD = -17<br>
+     If PC = 2, then PD = -17/2 = -8.5 (external segment)
+    </div>
+    <p><strong>Solution:</strong> Negative power indicates external intersection.</p>
+   </div>
+  </div>
+
+  <div class="applications">
+   <h3>🚀 Real-World Applications</h3>
+
+   <div class="application">
+    <h4>Geometric Constructions</h4>
+    <p>Used in compass and straightedge constructions to find intersection points and segment lengths.</p>
+   </div>
+
+   <div class="application">
+    <h4>Navigation and Surveying</h4>
+    <p>Applied in triangulation and surveying calculations to determine distances and positions.</p>
+   </div>
+
+   <div class="application">
+    <h4>Computer Graphics</h4>
+    <p>Used in rendering algorithms for calculating intersections and perspective corrections in 3D graphics.</p>
+   </div>
+  </div>
+
+  <div class="practice-problems">
+   <h3>✏️ Practice Problems</h3>
+
+   <div class="problem">
+    <h4>Problem 1</h4>
+    <p>Chords AB and CD intersect at P. PA = 4, PB = 6, PC = 3. Find PD.</p>
+    <button class="solution-toggle" onclick="toggleSolution(1)">Show Solution</button>
+    <div class="solution" id="solution1">
+     <p>PA × PB = PC × PD</p>
+     <p>4 × 6 = 3 × PD</p>
+     <p>24 = 3 × PD</p>
+     <p>PD = 8</p>
+    </div>
+   </div>
+
+   <div class="problem">
+    <h4>Problem 2</h4>
+    <p>Two chords intersect at P outside circle. PA = 7, PB = 2, PD = 8. Find PC.</p>
+    <button class="solution-toggle" onclick="toggleSolution(2)">Show Solution</button>
+    <div class="solution" id="solution2">
+     <p>PA × PB = PC × PD</p>
+     <p>7 × 2 = PC × 8</p>
+     <p>14 = 8 × PC</p>
+     <p>PC = 14/8 = 1.75</p>
+    </div>
+   </div>
+
+   <div class="problem">
+    <h4>Problem 3</h4>
+    <p>In circle with radius 5, chords intersect at P(3,4). PA = 2, PB = 3. Find PC × PD.</p>
+    <button class="solution-toggle" onclick="toggleSolution(3)">Show Solution</button>
+    <div class="solution" id="solution3">
+     <p>Power of P = OP² - r² = (3² + 4²) - 25 = 25 - 25 = 0</p>
+     <p>PA × PB = PC × PD = 0</p>
+     <p>2 × 3 = PC × PD</p>
+     <p>PC × PD = 6</p>
+    </div>
+   </div>
+
+   <div class="problem">
+    <h4>Problem 4</h4>
+    <p>Chords AB and CD intersect at P. PA:PB = 2:3, PC:PD = 1:4. Find ratio PA:PC.</p>
+    <button class="solution-toggle" onclick="toggleSolution(4)">Show Solution</button>
+    <div class="solution" id="solution4">
+     <p>Let PA = 2k, PB = 3k, PC = m, PD = 4m</p>
+     <p>PA × PB = PC × PD</p>
+     <p>2k × 3k = m × 4m</p>
+     <p>6k² = 4m²</p>
+     <p>3k² = 2m²</p>
+     <p>m²/k² = 3/2</p>
+     <p>m/k = √(3/2)</p>
+     <p>PA:PC = 2k:m = 2:√(3/2) = 2/√(3/2) = 2√2/√3 = √2/√3 × 2 = (2√6)/3</p>
+    </div>
+   </div>
+
+   <div class="problem">
+    <h4>Problem 5</h4>
+    <p>Circle x² + y² = 50. Chords intersect at P(4,6). PA = 3. Find PB.</p>
+    <button class="solution-toggle" onclick="toggleSolution(5)">Show Solution</button>
+    <div class="solution" id="solution5">
+     <p>Power of P = OP² - r² = (16 + 36) - 50 = 52 - 50 = 2</p>
+     <p>PA × PB = 2</p>
+     <p>3 × PB = 2</p>
+     <p>PB = 2/3</p>
+    </div>
+   </div>
+  </div>
+
+  <div class="key-takeaways">
+   <h3>🎯 Key Takeaways</h3>
+
+   <div class="takeaway">
+    <strong>Power Equation:</strong> For intersecting chords, the product of segments from the intersection point is constant: PA × PB = PC × PD.
+   </div>
+
+   <div class="takeaway">
+    <strong>Internal vs External:</strong> The theorem applies whether the intersection point is inside or outside the circle.
+   </div>
+
+   <div class="takeaway">
+    <strong>Zero Power:</strong> When the intersection point lies on the circle, the power is zero (tangent case).
+   </div>
+
+   <div class="takeaway">
+    <strong>Coordinate Geometry:</strong> Power can be calculated as OP² - r², where O is center and r is radius.
+   </div>
+
+   <div class="takeaway">
+    <strong>Practical Application:</strong> Essential for solving problems involving intersecting chords and determining unknown segment lengths.
+   </div>
+  </div>
+
+  <script>
+   // Interactive Canvas Demonstration
+   const canvas = document.getElementById('powerCanvas');
+   const ctx = canvas.getContext('2d');
+
+   // Control elements
+   const controls = {
+    centerX: document.getElementById('circleCenterX'),
+    centerY: document.getElementById('circleCenterY'),
+    radius: document.getElementById('circleRadius'),
+    pointX: document.getElementById('pointPX'),
+    pointY: document.getElementById('pointPY')
+   };
+
+   // Display elements
+   const displays = {
+    centerX: document.getElementById('circleCenterXValue'),
+    centerY: document.getElementById('circleCenterYValue'),
+    radius: document.getElementById('circleRadiusValue'),
+    pointX: document.getElementById('pointPXValue'),
+    pointY: document.getElementById('pointPYValue'),
+    powerPA: document.getElementById('powerPA'),
+    powerPC: document.getElementById('powerPC'),
+    difference: document.getElementById('powerDifference')
+   };
+
+   const powerDisplay = document.querySelector('.power-display');
+
+   // Update display values
+   Object.keys(controls).forEach(key => {
+    controls[key].addEventListener('input', () => {
+     displays[key].textContent = controls[key].value;
+     drawPowerOfPoint();
+    });
+   });
+
+   function calculateDistance(p1, p2) {
+    return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
+   }
+
+   function drawPowerOfPoint() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const center = {
+     x: parseInt(controls.centerX.value),
+     y: parseInt(controls.centerY.value)
+    };
+
+    const radius = parseInt(controls.radius.value);
+    const P = {
+     x: parseInt(controls.pointX.value),
+     y: parseInt(controls.pointY.value)
+    };
+
+    // Draw circle
+    ctx.beginPath();
+    ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI);
+    ctx.strokeStyle = '#6a1b9a';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // Draw center point
+    ctx.beginPath();
+    ctx.arc(center.x, center.y, 4, 0, 2 * Math.PI);
+    ctx.fillStyle = '#6a1b9a';
+    ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 14px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('O', center.x, center.y - 10);
+
+    // Draw intersection point P
+    ctx.beginPath();
+    ctx.arc(P.x, P.y, 5, 0, 2 * Math.PI);
+    ctx.fillStyle = '#d84315';
+    ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 14px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('P', P.x, P.y - 10);
+
+    // Calculate intersection points of chords through P
+    const angle = Math.atan2(P.y - center.y, P.x - center.x);
+    const distToP = calculateDistance(center, P);
+
+    if (distToP > 0) {
+     // Calculate chord intersection points
+     const chordLength = Math.sqrt(radius * radius - distToP * distToP);
+     const perpAngle = angle + Math.PI / 2;
+
+     const dirX = Math.cos(perpAngle);
+     const dirY = Math.sin(perpAngle);
+
+     const A = {
+      x: P.x + chordLength * dirX,
+      y: P.y + chordLength * dirY
+     };
+
+     const B = {
+      x: P.x - chordLength * dirX,
+      y: P.y - chordLength * dirY
+     };
+
+     // Second chord (perpendicular to first)
+     const perpAngle2 = angle;
+     const dirX2 = Math.cos(perpAngle2);
+     const dirY2 = Math.sin(perpAngle2);
+
+     const C = {
+      x: P.x + chordLength * dirX2,
+      y: P.y + chordLength * dirY2
+     };
+
+     const D = {
+      x: P.x - chordLength * dirX2,
+      y: P.y - chordLength * dirY2
+     };
+
+     // Draw chords
+     ctx.beginPath();
+     ctx.moveTo(A.x, A.y);
+     ctx.lineTo(B.x, B.y);
+     ctx.moveTo(C.x, C.y);
+     ctx.lineTo(D.x, D.y);
+     ctx.strokeStyle = '#6d4c41';
+     ctx.lineWidth = 3;
+     ctx.stroke();
+
+     // Draw points A, B, C, D
+     [A, B, C, D].forEach((point, index) => {
+      ctx.beginPath();
+      ctx.arc(point.x, point.y, 4, 0, 2 * Math.PI);
+      ctx.fillStyle = '#6a1b9a';
+      ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 12px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText(['A', 'B', 'C', 'D'][index], point.x, point.y - 8);
+     });
+
+     // Calculate segment lengths
+     const PA = calculateDistance(P, A);
+     const PB = calculateDistance(P, B);
+     const PC = calculateDistance(P, C);
+     const PD = calculateDistance(P, D);
+
+     // Calculate powers
+     const powerAB = PA * PB;
+     const powerCD = PC * PD;
+     const difference = Math.abs(powerAB - powerCD);
+
+     // Update displays
+     displays.powerPA.textContent = `PA × PB = ${(PA * PB).toFixed(2)}`;
+     displays.powerPC.textContent = `PC × PD = ${(PC * PD).toFixed(2)}`;
+     displays.difference.textContent = difference.toFixed(4);
+
+     // Update power display styling
+     if (difference < 0.01) {
+      powerDisplay.className = 'power-display power-equal';
+     } else {
+      powerDisplay.className = 'power-display power-different';
+     }
+
+     // Draw equal marks if powers are equal
+     if (difference < 0.01) {
+      drawEqualMarks(P, A, B);
+      drawEqualMarks(P, C, D);
+     }
+    } else {
+     displays.powerPA.textContent = 'PA × PB = --';
+     displays.powerPC.textContent = 'PC × PD = --';
+     displays.difference.textContent = '--';
+    }
+   }
+
+   function drawEqualMarks(P, point1, point2) {
+    // Draw equal marks on the segments
+    const mid1x = (P.x + point1.x) / 2;
+    const mid1y = (P.y + point1.y) / 2;
+    const mid2x = (P.x + point2.x) / 2;
+    const mid2y = (P.y + point2.y) / 2;
+
+    // Calculate perpendicular direction for equal marks
+    const dir1x = point1.x - P.x;
+    const dir1y = point1.y - P.y;
+    const length1 = Math.sqrt(dir1x * dir1x + dir1y * dir1y);
+    const perp1x = -dir1y / length1 * 8;
+    const perp1y = dir1x / length1 * 8;
+
+    const dir2x = point2.x - P.x;
+    const dir2y = point2.y - P.y;
+    const length2 = Math.sqrt(dir2x * dir2x + dir2y * dir2y);
+    const perp2x = -dir2y / length2 * 8;
+    const perp2y = dir2x / length2 * 8;
+
+    // Draw equal marks
+    ctx.beginPath();
+    ctx.moveTo(mid1x - perp1x/2, mid1y - perp1y/2);
+    ctx.lineTo(mid1x + perp1x/2, mid1y + perp1y/2);
+    ctx.moveTo(mid2x - perp2x/2, mid2y - perp2y/2);
+    ctx.lineTo(mid2x + perp2x/2, mid2y + perp2y/2);
+    ctx.strokeStyle = '#6a1b9a';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+   }
+
+   function toggleSolution(problemNumber) {
+    const solution = document.getElementById('solution' + problemNumber);
+    solution.classList.toggle('show');
+   }
+
+   // Initial draw
+   drawPowerOfPoint();
+  </script>
+ </body>
+</html>

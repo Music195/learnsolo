@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<!-- tags: Data Analysis -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Average (Mean) of Data
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <link href="/static/data_analysis_style.css" rel="stylesheet"/>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Data Analysis">
+   Average (Mean) of Data
+  </div>
+  <div class="container">
+   <div class="main-content">
+
+    <div class="math-foundation">
+     <h3>Mathematical Foundation</h3>
+     <p>The mean, or arithmetic average, is a fundamental measure of central tendency that represents the typical value in a dataset. 
+        It provides a single representative value that summarizes the entire collection of data points by distributing the total sum equally across all observations. 
+        The mean is sensitive to extreme values and serves as the foundation for many statistical calculations and data analysis techniques.</p>
+
+     <div class="formula-block">
+      <strong>Arithmetic Mean Formula:</strong>
+      <ul>
+       <li>For individual data values: $\overline{x} = \frac{1}{n} \sum_{i=1}^{n} x_i = \frac{x_1 + x_2 + \cdots + x_n}{n}$</li>
+       <li>For grouped data: $\overline{x} = \frac{\sum (f_i \cdot x_i)}{\sum f_i}$ where $f_i$ is frequency</li>
+       <li>For data with weights: $\overline{x} = \frac{\sum (w_i \cdot x_i)}{\sum w_i}$ where $w_i$ is weight</li>
+      </ul>
+      <strong>Where:</strong>
+      <ul>
+       <li>$\overline{x}$ = sample mean</li>
+       <li>$n$ = number of data points</li>
+       <li>$x_i$ = individual data values</li>
+       <li>$\sum$ = summation symbol</li>
+      </ul>
+     </div>
+    </div>
+
+    <div class="interactive-demo">
+     <h3>Interactive Mean Calculator</h3>
+     <div class="demo-controls">
+      <div class="control-group">
+       <label for="data-input">Data Values (comma-separated):</label>
+       <textarea id="data-input" placeholder="e.g., 5, 7, 3, 8, 12, 6">5, 7, 3, 8, 12, 6</textarea>
+      </div>
+      <button onclick="calculateMean()" style="padding: 8px 16px; background: #27ae60; color: white; border: none; border-radius: 5px; cursor: pointer; align-self: flex-end;">Calculate Mean</button>
+     </div>
+
+     <div class="data-visualization" id="data-viz">
+      <h4>Data Visualization</h4>
+      <div id="data-points"></div>
+      <div id="mean-indicator" class="mean-line" style="display: none;"></div>
+      <div id="mean-label" class="mean-label" style="display: none;"></div>
+     </div>
+
+     <div class="demo-output" id="demo-output">
+      <strong>Current Data:</strong> [5, 7, 3, 8, 12, 6]<br>
+      <strong>Sum:</strong> 41<br>
+      <strong>Count:</strong> 6<br>
+      <strong>Mean:</strong> 6.83<br>
+      <div class="stats-summary">
+       <div class="stat-item">
+        <div class="stat-value">6.83</div>
+        <div class="stat-label">Mean</div>
+       </div>
+       <div class="stat-item">
+        <div class="stat-value">41</div>
+        <div class="stat-label">Total Sum</div>
+       </div>
+       <div class="stat-item">
+        <div class="stat-value">6</div>
+        <div class="stat-label">Data Points</div>
+       </div>
+       <div class="stat-item">
+        <div class="stat-value">4.07</div>
+        <div class="stat-label">Variance</div>
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="worked-example">
+     <h4>Worked Example 1: Calculating Mean of Test Scores</h4>
+     <p>A student scored 85, 92, 78, 96, and 88 on five math tests. Find the mean score.</p>
+     <p><strong>Solution:</strong></p>
+     <p>Sum = 85 + 92 + 78 + 96 + 88 = 439</p>
+     <p>Mean = 439 ÷ 5 = 87.8</p>
+     <p>The student's average test score is 87.8</p>
+    </div>
+
+    <div class="worked-example">
+     <h4>Worked Example 2: Mean with Frequencies (Grouped Data)</h4>
+     <p>The table shows the number of hours students spent studying:</p>
+     <table style="border-collapse: collapse; margin: 10px 0;">
+      <tr><th style="border: 1px solid #ddd; padding: 8px;">Hours</th><th style="border: 1px solid #ddd; padding: 8px;">Frequency</th></tr>
+      <tr><td style="border: 1px solid #ddd; padding: 8px;">2</td><td style="border: 1px solid #ddd; padding: 8px;">5</td></tr>
+      <tr><td style="border: 1px solid #ddd; padding: 8px;">4</td><td style="border: 1px solid #ddd; padding: 8px;">8</td></tr>
+      <tr><td style="border: 1px solid #ddd; padding: 8px;">6</td><td style="border: 1px solid #ddd; padding: 8px;">6</td></tr>
+      <tr><td style="border: 1px solid #ddd; padding: 8px;">8</td><td style="border: 1px solid #ddd; padding: 8px;">3</td></tr>
+     </table>
+     <p><strong>Solution:</strong></p>
+     <p>Mean = (2×5 + 4×8 + 6×6 + 8×3) ÷ (5+8+6+3) = (10 + 32 + 36 + 24) ÷ 22 = 102 ÷ 22 = 4.64</p>
+     <p>The average study time is 4.64 hours</p>
+    </div>
+
+    <div class="worked-example">
+     <h4>Worked Example 3: Weighted Mean</h4>
+     <p>A student's grades are: Quiz (20% weight): 85, Midterm (30%): 78, Final (50%): 92. Find the weighted mean.</p>
+     <p><strong>Solution:</strong></p>
+     <p>Weighted Mean = (85×0.2 + 78×0.3 + 92×0.5) ÷ (0.2 + 0.3 + 0.5) = (17 + 23.4 + 46) ÷ 1 = 86.4</p>
+     <p>The weighted average grade is 86.4</p>
+    </div>
+
+    <div style="margin: 30px 0;">
+     <strong>Properties of the Mean</strong>
+     <ul>
+      <li><strong>Balance Point:</strong> The mean acts as a balance point for the data - the sum of deviations from the mean equals zero.</li>
+      <li><strong>Least Squares Property:</strong> The mean minimizes the sum of squared deviations from any point.</li>
+      <li><strong>Effect of Extreme Values:</strong> Outliers can significantly affect the mean, making it less representative of the data.</li>
+      <li><strong>Additive Property:</strong> The mean of combined datasets can be calculated from individual means and sample sizes.</li>
+     </ul>
+    </div>
+
+    <div style="margin: 30px 0;">
+     <strong>Comparison with Other Measures</strong>
+     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 15px;">
+      <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+       <h4 style="margin-top: 0; color: #3498db;">Mean (Average)</h4>
+       <ul style="margin: 10px 0;">
+        <li>Uses all data points</li>
+        <li>Affected by outliers</li>
+        <li>Mathematically useful</li>
+        <li>Balance point of data</li>
+       </ul>
+      </div>
+      <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+       <h4 style="margin-top: 0; color: #27ae60;">Median</h4>
+       <ul style="margin: 10px 0;">
+        <li>Middle value when ordered</li>
+        <li>Resistant to outliers</li>
+        <li>Position-based measure</li>
+        <li>Not affected by extreme values</li>
+       </ul>
+      </div>
+      <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+       <h4 style="margin-top: 0; color: #e74c3c;">Mode</h4>
+       <ul style="margin: 10px 0;">
+        <li>Most frequent value</li>
+        <li>Can have multiple modes</li>
+        <li>Resistant to outliers</li>
+        <li>May not exist</li>
+       </ul>
+      </div>
+     </div>
+    </div>
+
+    <h3>Practice Problems</h3>
+
+    <div class="practice-problem">
+     <strong>Problem 1:</strong> Find the mean of: 12, 15, 18, 22, 25, 30
+     <br><button class="solution-button" onclick="toggleSolution(1)">Show Solution</button>
+     <div class="solution" id="solution1">
+      <strong>Solution:</strong><br>
+      Sum = 12 + 15 + 18 + 22 + 25 + 30 = 122<br>
+      Mean = 122 ÷ 6 = 20.33
+     </div>
+    </div>
+
+    <div class="practice-problem">
+     <strong>Problem 2:</strong> The mean of 8 numbers is 25. If one number is removed, the mean becomes 22. Find the removed number.
+     <br><button class="solution-button" onclick="toggleSolution(2)">Show Solution</button>
+     <div class="solution" id="solution2">
+      <strong>Solution:</strong><br>
+      Original sum = 8 × 25 = 200<br>
+      New sum = 7 × 22 = 154<br>
+      Removed number = 200 - 154 = 46
+     </div>
+    </div>
+
+    <div class="practice-problem">
+     <strong>Problem 3:</strong> Calculate the mean of the following frequency distribution:
+     <table style="border-collapse: collapse; margin: 10px 0;">
+      <tr><th style="border: 1px solid #ddd; padding: 8px;">Score</th><th style="border: 1px solid #ddd; padding: 8px;">Frequency</th></tr>
+      <tr><td style="border: 1px solid #ddd; padding: 8px;">60</td><td style="border: 1px solid #ddd; padding: 8px;">3</td></tr>
+      <tr><td style="border: 1px solid #ddd; padding: 8px;">70</td><td style="border: 1px solid #ddd; padding: 8px;">5</td></tr>
+      <tr><td style="border: 1px solid #ddd; padding: 8px;">80</td><td style="border: 1px solid #ddd; padding: 8px;">4</td></tr>
+      <tr><td style="border: 1px solid #ddd; padding: 8px;">90</td><td style="border: 1px solid #ddd; padding: 8px;">2</td></tr>
+     </table>
+     <br><button class="solution-button" onclick="toggleSolution(3)">Show Solution</button>
+     <div class="solution" id="solution3">
+      <strong>Solution:</strong><br>
+      Sum = (60×3) + (70×5) + (80×4) + (90×2) = 180 + 350 + 320 + 180 = 1030<br>
+      Total frequency = 3 + 5 + 4 + 2 = 14<br>
+      Mean = 1030 ÷ 14 = 73.57
+     </div>
+    </div>
+
+    <div class="practice-problem">
+     <strong>Problem 4:</strong> The mean of three numbers is 15. When a fourth number is added, the mean becomes 17. Find the fourth number.
+     <br><button class="solution-button" onclick="toggleSolution(4)">Show Solution</button>
+     <div class="solution" id="solution4">
+      <strong>Solution:</strong><br>
+      Original sum = 3 × 15 = 45<br>
+      New sum = 4 × 17 = 68<br>
+      Fourth number = 68 - 45 = 23
+     </div>
+    </div>
+
+    <div class="practice-problem">
+     <strong>Problem 5:</strong> Find the missing value if the mean of 5, 8, 12, x, 15 is 10.
+     <br><button class="solution-button" onclick="toggleSolution(5)">Show Solution</button>
+     <div class="solution" id="solution5">
+      <strong>Solution:</strong><br>
+      Sum = 5 + 8 + 12 + x + 15 = 40 + x<br>
+      Mean = (40 + x) ÷ 5 = 10<br>
+      40 + x = 50<br>
+      x = 10
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <h3>Key Takeaways</h3>
+     <ul>
+      <li><strong>Definition:</strong> The mean is the arithmetic average, calculated by summing all values and dividing by the number of values.</li>
+      <li><strong>Formula:</strong> $\overline{x} = \frac{\sum x_i}{n}$ for individual data, or $\overline{x} = \frac{\sum (f_i \cdot x_i)}{\sum f_i}$ for grouped data.</li>
+      <li><strong>Properties:</strong> The mean serves as the balance point of the data; sum of deviations from mean equals zero.</li>
+      <li><strong>Sensitivity:</strong> The mean is affected by extreme values (outliers), unlike the median.</li>
+      <li><strong>Applications:</strong> Used in quality control, performance evaluation, financial analysis, and scientific research.</li>
+      <li><strong>Weighted Mean:</strong> When data points have different importance, use weights: $\overline{x} = \frac{\sum (w_i \cdot x_i)}{\sum w_i}$.</li>
+      <li><strong>Comparison:</strong> Mean uses all data points but is sensitive to outliers; median is robust but ignores magnitude of values.</li>
+     </ul>
+    </div>
+
+    <script>
+     function calculateMean() {
+      const input = document.getElementById('data-input').value;
+      const values = input.split(',').map(x => parseFloat(x.trim())).filter(x => !isNaN(x));
+
+      if (values.length === 0) {
+       alert('Please enter valid numbers separated by commas.');
+       return;
+      }
+
+      const sum = values.reduce((a, b) => a + b, 0);
+      const mean = sum / values.length;
+      const variance = values.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / values.length;
+
+      // Update visualization
+      updateVisualization(values, mean);
+
+      // Update output
+      const output = document.getElementById('demo-output');
+      output.innerHTML = `<strong>Current Data:</strong> [${values.join(', ')}]<br>
+      <strong>Sum:</strong> ${sum.toFixed(2)}<br>
+      <strong>Count:</strong> ${values.length}<br>
+      <strong>Mean:</strong> ${mean.toFixed(2)}<br>
+      <div class="stats-summary">
+       <div class="stat-item">
+        <div class="stat-value">${mean.toFixed(2)}</div>
+        <div class="stat-label">Mean</div>
+       </div>
+       <div class="stat-item">
+        <div class="stat-value">${sum.toFixed(2)}</div>
+        <div class="stat-label">Total Sum</div>
+       </div>
+       <div class="stat-item">
+        <div class="stat-value">${values.length}</div>
+        <div class="stat-label">Data Points</div>
+       </div>
+       <div class="stat-item">
+        <div class="stat-value">${variance.toFixed(2)}</div>
+        <div class="stat-label">Variance</div>
+       </div>
+      </div>`;
+
+      // Re-render MathJax
+      if (window.MathJax) {
+       MathJax.typesetPromise([output]).catch(function(err) {
+        console.log('MathJax re-render error:', err);
+       });
+      }
+     }
+
+     function updateVisualization(values, mean) {
+      const container = document.getElementById('data-points');
+      const meanIndicator = document.getElementById('mean-indicator');
+      const meanLabel = document.getElementById('mean-label');
+
+      // Clear previous points
+      container.innerHTML = '';
+
+      // Create data points
+      values.forEach((value, index) => {
+       const point = document.createElement('div');
+       point.className = 'data-point';
+       point.textContent = value;
+       point.style.left = `${index * 60 + 20}px`;
+       point.style.top = `${100 - value * 5}px`;
+       container.appendChild(point);
+      });
+
+      // Position mean line
+      const minValue = Math.min(...values);
+      const maxValue = Math.max(...values);
+      const range = maxValue - minValue;
+      const meanPosition = 100 - mean * 5;
+
+      meanIndicator.style.display = 'block';
+      meanIndicator.style.left = '20px';
+      meanIndicator.style.top = `${meanPosition}px`;
+      meanIndicator.style.width = `${values.length * 60}px`;
+
+      meanLabel.style.display = 'block';
+      meanLabel.style.left = `${values.length * 60 + 30}px`;
+      meanLabel.style.top = `${meanPosition - 25}px`;
+      meanLabel.textContent = `Mean: ${mean.toFixed(2)}`;
+     }
+
+     function toggleSolution(num) {
+      const solution = document.getElementById('solution' + num);
+      if (solution.style.display === 'none' || solution.style.display === '') {
+       solution.style.display = 'block';
+      } else {
+       solution.style.display = 'none';
+      }
+     }
+
+     // Initialize with default data
+     calculateMean();
+    </script>
+   </div>
+  </div>
+ </body>
+</html>

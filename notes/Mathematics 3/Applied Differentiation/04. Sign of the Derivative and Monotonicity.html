@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<!-- tags: Mathematics -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Sign of the Derivative and Monotonicity
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   .interactive-demo {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    border: 2px solid #e1e8ed;
+   }
+   .demo-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 15px;
+   }
+   .demo-input-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 200px;
+   }
+   .demo-input-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #2c3e50;
+   }
+   .demo-input {
+    padding: 8px;
+    border: 2px solid #bdc3c7;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+   }
+   .demo-input:focus {
+    outline: none;
+    border-color: #3498db;
+   }
+   .demo-button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: transform 0.2s;
+   }
+   .demo-button:hover {
+    transform: translateY(-2px);
+   }
+   .demo-result {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+    border-left: 4px solid #3498db;
+   }
+   .math-foundation {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .worked-example {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .practice-problem {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .solution-toggle {
+    background: #2c3e50;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+   }
+   .solution-toggle:hover {
+    background: #34495e;
+   }
+   .solution-content {
+    display: none;
+    background: rgba(255, 255, 255, 0.9);
+    color: #2c3e50;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+   }
+   .key-takeaways {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .key-takeaways h3 {
+    color: #2c3e50;
+    margin-top: 0;
+   }
+   .key-takeaways ul {
+    color: #2c3e50;
+   }
+   .monotonicity-concepts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+   }
+   .concept-card {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #e67e22;
+   }
+   .concept-card h4 {
+    margin-top: 0;
+    color: #2c3e50;
+   }
+   .math-orange {
+    color: #e67e22;
+    font-weight: bold;
+   }
+   .visualization-section {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+    border: 2px solid #ecf0f1;
+    text-align: center;
+   }
+   canvas {
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin: 10px 0;
+   }
+   .theorem-box {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+    border-left: 5px solid #3498db;
+   }
+   .sign-analysis {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Mathematics">
+   Sign of the Derivative and Monotonicity
+  </div>
+  <div class="container">
+   <div class="main-content">
+    <div class="section-title">
+     Sign of the Derivative and Monotonicity
+    </div>
+
+    <div class="theorem-box">
+     <h3>Fundamental Theorem: Derivative Sign and Monotonicity</h3>
+     <p>Suppose $f(x)$ is continuous on $[a, b]$ and differentiable on $(a, b)$. Then:</p>
+     <ol style="line-height: 2;">
+      <li>If $f'(x) > 0$ for all $x$ in $(a, b)$, then $f$ is <strong>strictly increasing</strong> on $[a, b]$</li>
+      <li>If $f'(x) < 0$ for all $x$ in $(a, b)$, then $f$ is <strong>strictly decreasing</strong> on $[a, b]$</li>
+      <li>If $f'(x) = 0$ for all $x$ in $(a, b)$, then $f$ is <strong>constant</strong> on $[a, b]$</li>
+     </ol>
+    </div>
+
+    <div class="math-foundation">
+     <h3>Mathematical Foundations</h3>
+     <p>The sign of the derivative reveals the monotonic behavior of a function. This relationship is fundamental to understanding function behavior, optimization, and curve sketching.</p>
+
+     <div class="monotonicity-concepts">
+      <div class="concept-card">
+       <h4>Increasing Functions</h4>
+       <p>$f'(x) > 0$ everywhere</p>
+       <p>Positive slope tangent lines</p>
+       <p>Function rises as x increases</p>
+       <p>$f(x_1) < f(x_2)$ for $x_1 < x_2$</p>
+      </div>
+
+      <div class="concept-card">
+       <h4>Decreasing Functions</h4>
+       <p>$f'(x) < 0$ everywhere</p>
+       <p>Negative slope tangent lines</p>
+       <p>Function falls as x increases</p>
+       <p>$f(x_1) > f(x_2)$ for $x_1 < x_2$</p>
+      </div>
+
+      <div class="concept-card">
+       <h4>Constant Functions</h4>
+       <p>$f'(x) = 0$ everywhere</p>
+       <p>Horizontal tangent lines</p>
+       <p>Function stays at same level</p>
+       <p>$f(x_1) = f(x_2)$ for all x</p>
+      </div>
+
+      <div class="concept-card">
+       <h4>Critical Points</h4>
+       <p>$f'(x) = 0$ at local extrema</p>
+       <p>Horizontal tangent at turning points</p>
+       <p>Sign changes indicate maxima/minima</p>
+       <p>Second derivative test applies</p>
+      </div>
+     </div>
+    </div>
+
+    <div class="interactive-demo">
+     <h3>Interactive Monotonicity Analyzer</h3>
+     <p>Enter a function to analyze its derivative sign and determine monotonicity intervals.</p>
+
+     <div class="demo-controls">
+      <div class="demo-input-group">
+       <label for="function-input">Function f(x):</label>
+       <input type="text" id="function-input" class="demo-input" value="x^2 - 4" placeholder="e.g., x^2 - 4, x^3 - 3x, sin(x)">
+      </div>
+      <div class="demo-input-group">
+       <label for="analysis-interval">Analysis Interval:</label>
+       <input type="text" id="analysis-interval" class="demo-input" value="-3, 3" placeholder="e.g., -3, 3 or -2, 5">
+      </div>
+      <button onclick="analyzeMonotonicity()" class="demo-button">Analyze Monotonicity</button>
+     </div>
+
+     <div class="demo-result">
+      <h4>Monotonicity Analysis Results:</h4>
+      <p><strong>Function:</strong> <span id="function-display">f(x) = x² - 4</span></p>
+      <p><strong>Derivative:</strong> <span id="derivative-display">f'(x) = 2x</span></p>
+      <p><strong>Critical Points:</strong> <span id="critical-points">x = 0 (f'(0) = 0)</span></p>
+      <p><strong>Increasing Intervals:</strong> <span id="increasing-intervals">(0, ∞)</span></p>
+      <p><strong>Decreasing Intervals:</strong> <span id="decreasing-intervals">(-∞, 0)</span></p>
+      <p><strong>Local Maximum:</strong> <span id="local-max">f(0) = -4</span></p>
+     </div>
+
+     <div class="visualization-section">
+      <h4>Function and Derivative Visualization:</h4>
+      <canvas id="monotonicityCanvas" width="600" height="400"></canvas>
+      <p><em>Blue: function, Red: derivative. Green regions show increasing intervals, red regions show decreasing intervals.</em></p>
+     </div>
+    </div>
+
+    <div class="sign-analysis">
+     <h3>Derivative Sign Analysis</h3>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Test Points Method</h4>
+      <p>To determine monotonicity intervals:</p>
+      <ol>
+       <li>Find critical points where $f'(x) = 0$</li>
+       <li>Determine intervals between critical points</li>
+       <li>Test derivative sign in each interval</li>
+       <li>Apply the monotonicity theorem</li>
+      </ol>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Example Analysis</h4>
+      <p>For $f(x) = x^3 - 3x$:</p>
+      <p>$f'(x) = 3x^2 - 3 = 3(x^2 - 1) = 3(x-1)(x+1)$</p>
+      <p>Critical points: x = -1, x = 1</p>
+      <p>Test intervals: (-∞, -1), (-1, 1), (1, ∞)</p>
+      <p>Sign analysis determines increasing/decreasing behavior</p>
+     </div>
+    </div>
+
+    <div class="worked-example">
+     <h3>Worked Examples</h3>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Example 1: Quadratic Function</h4>
+      <p>Determine monotonicity of $f(x) = x^2 - 4x + 3$.</p>
+      <p><strong>Step 1:</strong> f'(x) = 2x - 4</p>
+      <p><strong>Step 2:</strong> Critical point: 2x - 4 = 0 ⇒ x = 2</p>
+      <p><strong>Step 3:</strong> Test intervals: (-∞, 2) and (2, ∞)</p>
+      <p><strong>Step 4:</strong> For x < 2: f'(x) = 2x - 4 < 0 (decreasing)</p>
+      <p><strong>Step 5:</strong> For x > 2: f'(x) = 2x - 4 > 0 (increasing)</p>
+      <p><strong>Step 6:</strong> Local minimum at x = 2, f(2) = 2² - 4(2) + 3 = -1</p>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Example 2: Cubic Function</h4>
+      <p>Analyze monotonicity of $f(x) = x^3 - 3x^2 + 2$.</p>
+      <p><strong>Step 1:</strong> f'(x) = 3x² - 6x = 3x(x - 2)</p>
+      <p><strong>Step 2:</strong> Critical points: x = 0, x = 2</p>
+      <p><strong>Step 3:</strong> Test intervals: (-∞, 0), (0, 2), (2, ∞)</p>
+      <p><strong>Step 4:</strong> x < 0: f'(x) > 0 (increasing)</p>
+      <p><strong>Step 5:</strong> 0 < x < 2: f'(x) < 0 (decreasing)</p>
+      <p><strong>Step 6:</strong> x > 2: f'(x) > 0 (increasing)</p>
+      <p><strong>Step 7:</strong> Local maximum at x = 0, local minimum at x = 2</p>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Example 3: Trigonometric Function</h4>
+      <p>Find monotonicity intervals of $f(x) = \sin(x)$ on [0, 2π].</p>
+      <p><strong>Step 1:</strong> f'(x) = cos(x)</p>
+      <p><strong>Step 2:</strong> Critical points: cos(x) = 0 ⇒ x = π/2, 3π/2</p>
+      <p><strong>Step 3:</strong> Test intervals: (0, π/2), (π/2, 3π/2), (3π/2, 2π)</p>
+      <p><strong>Step 4:</strong> (0, π/2): cos(x) > 0 (increasing)</p>
+      <p><strong>Step 5:</strong> (π/2, 3π/2): cos(x) < 0 (decreasing)</p>
+      <p><strong>Step 6:</strong> (3π/2, 2π): cos(x) > 0 (increasing)</p>
+     </div>
+    </div>
+
+    <div class="practice-problem">
+     <h3>Practice Problems</h3>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Problem 1</h4>
+      <p>Determine the monotonicity intervals of $f(x) = x^4 - 4x^2$.</p>
+      <button onclick="toggleSolution('sol1')" class="solution-toggle">Show Solution</button>
+      <div id="sol1" class="solution-content">
+       <p><strong>Step 1:</strong> f'(x) = 4x³ - 8x = 4x(x² - 2)</p>
+       <p><strong>Step 2:</strong> Critical points: x = 0, x = ±√2</p>
+       <p><strong>Step 3:</strong> Test intervals: (-∞, -√2), (-√2, 0), (0, √2), (√2, ∞)</p>
+       <p><strong>Step 4:</strong> (-∞, -√2): f'(x) > 0 (increasing)</p>
+       <p><strong>Step 5:</strong> (-√2, 0): f'(x) < 0 (decreasing)</p>
+       <p><strong>Step 6:</strong> (0, √2): f'(x) > 0 (increasing)</p>
+       <p><strong>Step 7:</strong> (√2, ∞): f'(x) > 0 (increasing)</p>
+       <p><strong>Step 8:</strong> Local maximum at x = 0, local minima at x = ±√2</p>
+      </div>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Problem 2</h4>
+      <p>Find intervals where $f(x) = e^x - x$ is increasing.</p>
+      <button onclick="toggleSolution('sol2')" class="solution-toggle">Show Solution</button>
+      <div id="sol2" class="solution-content">
+       <p><strong>Step 1:</strong> f'(x) = e^x - 1</p>
+       <p><strong>Step 2:</strong> Critical point: e^x - 1 = 0 ⇒ x = 0</p>
+       <p><strong>Step 3:</strong> Test intervals: (-∞, 0), (0, ∞)</p>
+       <p><strong>Step 4:</strong> x < 0: e^x - 1 < 0 (decreasing)</p>
+       <p><strong>Step 5:</strong> x > 0: e^x - 1 > 0 (increasing)</p>
+       <p><strong>Step 6:</strong> Local minimum at x = 0</p>
+      </div>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Problem 3</h4>
+      <p>Determine monotonicity of $f(x) = \ln(x)$ for x > 0.</p>
+      <button onclick="toggleSolution('sol3')" class="solution-toggle">Show Solution</button>
+      <div id="sol3" class="solution-content">
+       <p><strong>Step 1:</strong> f'(x) = 1/x</p>
+       <p><strong>Step 2:</strong> No critical points (f'(x) ≠ 0)</p>
+       <p><strong>Step 3:</strong> For all x > 0: f'(x) = 1/x > 0</p>
+       <p><strong>Step 4:</strong> Function is increasing on (0, ∞)</p>
+      </div>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Problem 4</h4>
+      <p>Analyze $f(x) = x^3 + x^2 - 2x + 1$ for monotonicity.</p>
+      <button onclick="toggleSolution('sol4')" class="solution-toggle">Show Solution</button>
+      <div id="sol4" class="solution-content">
+       <p><strong>Step 1:</strong> f'(x) = 3x² + 2x - 2</p>
+       <p><strong>Step 2:</strong> Critical points: 3x² + 2x - 2 = 0 ⇒ x = (-2±√(4+24))/6 = (-2±√28)/6 = (-1±√7)/3</p>
+       <p><strong>Step 3:</strong> x₁ ≈ (-1-2.645)/3 ≈ -1.215, x₂ ≈ (-1+2.645)/3 ≈ 0.548</p>
+       <p><strong>Step 4:</strong> Test intervals: (-∞, x₁), (x₁, x₂), (x₂, ∞)</p>
+       <p><strong>Step 5:</strong> (-∞, x₁): f'(x) > 0 (increasing)</p>
+       <p><strong>Step 6:</strong> (x₁, x₂): f'(x) < 0 (decreasing)</p>
+       <p><strong>Step 7:</strong> (x₂, ∞): f'(x) > 0 (increasing)</p>
+      </div>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <h3>Key Takeaways</h3>
+     <ul>
+      <li><strong>Positive derivative:</strong> $f'(x) > 0$ ⇒ function is increasing</li>
+      <li><strong>Negative derivative:</strong> $f'(x) < 0$ ⇒ function is decreasing</li>
+      <li><strong>Zero derivative:</strong> $f'(x) = 0$ ⇒ constant function or critical point</li>
+      <li><strong>Test points method:</strong> Use critical points to divide domain into intervals</li>
+      <li><strong>Geometric interpretation:</strong> Slope of tangent line indicates direction</li>
+      <li><strong>Applications:</strong> Optimization, curve sketching, inequality proofs</li>
+      <li><strong>Critical points:</strong> Where derivative is zero or undefined</li>
+      <li><strong>Local extrema:</strong> Turning points where monotonicity changes</li>
+     </ul>
+    </div>
+
+    <div class="formula-list">
+     <div class="formula-row">
+      <span class="number">
+       1
+      </span>
+      <span class="formula">
+       $f'(x) > 0 \implies f$ increasing
+       <span class="math-orange">
+        (Positive Slope)
+       </span>
+      </span>
+     </div>
+     <div class="formula-row">
+      <span class="number">
+       2
+      </span>
+      <span class="formula">
+       $f'(x) < 0 \implies f$ decreasing
+       <span class="math-orange">
+        (Negative Slope)
+       </span>
+      </span>
+     </div>
+     <div class="formula-row">
+      <span class="number">
+       3
+      </span>
+      <span class="formula">
+       $f'(x) = 0 \implies f$ constant
+       <span class="math-orange">
+        (Zero Slope)
+       </span>
+      </span>
+     </div>
+    </div>
+
+    <div class="visualization-section">
+     <h4>Monotonicity Visualization</h4>
+     <p>Interactive demonstration of how derivative sign determines function behavior:</p>
+     <canvas id="monotonicityVisualizationCanvas" width="600" height="400"></canvas>
+     <p><em>The colored regions show where the function is increasing (green) or decreasing (red)</em></p>
+    </div>
+   </div>
+  </div>
+
+  <script>
+   function evaluateFunction(func, x) {
+    const expr = func.toLowerCase().replace(/\s/g, '');
+    if (expr === 'x^2-4') return x*x - 4;
+    if (expr === 'x^3-3x') return x*x*x - 3*x;
+    if (expr === 'sin(x)') return Math.sin(x);
+    if (expr === 'cos(x)') return Math.cos(x);
+    if (expr === 'e^x') return Math.exp(x);
+    if (expr === 'ln(x)' || expr === 'log(x)') return Math.log(x);
+    if (expr.includes('x^2-4x+3')) return x*x - 4*x + 3;
+    if (expr.includes('x^3-3x^2+2')) return x*x*x - 3*x*x + 2;
+    if (expr.includes('x^4-4x^2')) return x*x*x*x - 4*x*x;
+    if (expr.includes('e^x-x')) return Math.exp(x) - x;
+    if (expr.includes('x^3+x^2-2x+1')) return x*x*x + x*x - 2*x + 1;
+    return x*x - 4; // default
+   }
+
+   function evaluateDerivative(func, x) {
+    const expr = func.toLowerCase().replace(/\s/g, '');
+    if (expr === 'x^2-4') return 2*x;
+    if (expr === 'x^3-3x') return 3*x*x - 3;
+    if (expr === 'sin(x)') return Math.cos(x);
+    if (expr === 'cos(x)') return -Math.sin(x);
+    if (expr === 'e^x') return Math.exp(x);
+    if (expr === 'ln(x)' || expr === 'log(x)') return 1/x;
+    if (expr.includes('x^2-4x+3')) return 2*x - 4;
+    if (expr.includes('x^3-3x^2+2')) return 3*x*x - 6*x;
+    if (expr.includes('x^4-4x^2')) return 4*x*x*x - 8*x;
+    if (expr.includes('e^x-x')) return Math.exp(x) - 1;
+    if (expr.includes('x^3+x^2-2x+1')) return 3*x*x + 2*x - 2;
+    return 2*x; // default
+   }
+
+   function findCriticalPoints(func) {
+    // For demo purposes, return known critical points for specific functions
+    const expr = func.toLowerCase().replace(/\s/g, '');
+    if (expr === 'x^2-4') return [0];
+    if (expr === 'x^3-3x') return [-1, 1];
+    if (expr === 'sin(x)') return [Math.PI/2, 3*Math.PI/2];
+    if (expr.includes('x^2-4x+3')) return [2];
+    if (expr.includes('x^3-3x^2+2')) return [0, 2];
+    if (expr.includes('x^4-4x^2')) return [-Math.sqrt(2), 0, Math.sqrt(2)];
+    if (expr.includes('e^x-x')) return [0];
+    if (expr.includes('x^3+x^2-2x+1')) return [-1.215, 0.548]; // approximate
+    return [0]; // default
+   }
+
+   function analyzeMonotonicity() {
+    const funcInput = document.getElementById('function-input').value;
+    const intervalInput = document.getElementById('analysis-interval').value;
+    const [start, end] = intervalInput.split(',').map(x => parseFloat(x.trim()));
+
+    if (!funcInput || isNaN(start) || isNaN(end)) {
+     alert('Please enter valid function and interval');
+     return;
+    }
+
+    const criticalPoints = findCriticalPoints(funcInput);
+    const filteredPoints = criticalPoints.filter(x => x >= start && x <= end);
+
+    // Analyze intervals
+    const intervals = [start, ...filteredPoints, end];
+    let increasingIntervals = [];
+    let decreasingIntervals = [];
+
+    for (let i = 0; i < intervals.length - 1; i++) {
+     const testPoint = (intervals[i] + intervals[i+1]) / 2;
+     const derivValue = evaluateDerivative(funcInput, testPoint);
+
+     if (derivValue > 0) {
+      increasingIntervals.push(`(${intervals[i].toFixed(2)}, ${intervals[i+1].toFixed(2)})`);
+     } else if (derivValue < 0) {
+      decreasingIntervals.push(`(${intervals[i].toFixed(2)}, ${intervals[i+1].toFixed(2)})`);
+     }
+    }
+
+    document.getElementById('function-display').textContent = `f(x) = ${funcInput}`;
+    document.getElementById('derivative-display').textContent = `f'(x) = ${getDerivativeString(funcInput)}`;
+    document.getElementById('critical-points').textContent = filteredPoints.length > 0 ?
+     filteredPoints.map(x => `x = ${x.toFixed(2)}`).join(', ') : 'None in interval';
+    document.getElementById('increasing-intervals').textContent = increasingIntervals.join(', ') || 'None';
+    document.getElementById('decreasing-intervals').textContent = decreasingIntervals.join(', ') || 'None';
+    document.getElementById('local-max').textContent = filteredPoints.length > 0 ?
+     `Check second derivative at critical points` : 'None';
+
+    drawMonotonicityVisualization(funcInput, start, end, filteredPoints);
+   }
+
+   function getDerivativeString(func) {
+    const expr = func.toLowerCase().replace(/\s/g, '');
+    if (expr === 'x^2-4') return '2x';
+    if (expr === 'x^3-3x') return '3x² - 3';
+    if (expr === 'sin(x)') return 'cos(x)';
+    if (expr === 'cos(x)') return '-sin(x)';
+    if (expr === 'e^x') return 'e^x';
+    if (expr === 'ln(x)') return '1/x';
+    if (expr.includes('x^2-4x+3')) return '2x - 4';
+    if (expr.includes('x^3-3x^2+2')) return '3x² - 6x';
+    if (expr.includes('x^4-4x^2')) return '4x³ - 8x';
+    if (expr.includes('e^x-x')) return 'e^x - 1';
+    if (expr.includes('x^3+x^2-2x+1')) return '3x² + 2x - 2';
+    return '2x'; // default
+   }
+
+   function drawMonotonicityVisualization(func, start, end, criticalPoints) {
+    const canvas = document.getElementById('monotonicityCanvas');
+    const ctx = canvas.getContext('2d');
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const width = canvas.width;
+    const height = canvas.height;
+    const scale = 40;
+    const originX = width / 2;
+    const originY = height / 2;
+
+    function toCanvasX(x) { return originX + x * scale; }
+    function toCanvasY(y) { return originY - y * scale; }
+
+    // Draw axes
+    ctx.strokeStyle = '#ddd';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(0, originY);
+    ctx.lineTo(width, originY);
+    ctx.moveTo(originX, 0);
+    ctx.lineTo(originX, height);
+    ctx.stroke();
+
+    // Draw function curve
+    ctx.strokeStyle = '#2196F3';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let x = start; x <= end; x += 0.1) {
+     const y = evaluateFunction(func, x);
+     const canvasX = toCanvasX(x);
+     const canvasY = toCanvasY(y);
+     if (x === start) ctx.moveTo(canvasX, canvasY);
+     else ctx.lineTo(canvasX, canvasY);
+    }
+    ctx.stroke();
+
+    // Draw monotonicity regions
+    ctx.globalAlpha = 0.3;
+    for (let x = start; x < end; x += 0.1) {
+     const deriv = evaluateDerivative(func, x);
+     const y1 = evaluateFunction(func, x);
+     const y2 = evaluateFunction(func, x + 0.1);
+
+     ctx.strokeStyle = deriv > 0 ? '#27ae60' : '#e74c3c';
+     ctx.lineWidth = 20;
+     ctx.beginPath();
+     ctx.moveTo(toCanvasX(x), toCanvasY(y1));
+     ctx.lineTo(toCanvasX(x + 0.1), toCanvasY(y2));
+     ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+
+    // Draw critical points
+    ctx.fillStyle = '#e74c3c';
+    criticalPoints.forEach(x => {
+     const y = evaluateFunction(func, x);
+     ctx.beginPath();
+     ctx.arc(toCanvasX(x), toCanvasY(y), 6, 0, 2 * Math.PI);
+     ctx.fill();
+    });
+   }
+
+   function toggleSolution(id) {
+    const element = document.getElementById(id);
+    element.style.display = element.style.display === 'none' ? 'block' : 'none';
+   }
+
+   // Initialize
+   analyzeMonotonicity();
+  </script>
+ </body>
+</html>

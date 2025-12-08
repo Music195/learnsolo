@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<!-- tags: Trigonometry -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Law of Cosines
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   .interactive-demo {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border: 2px solid #3498db;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+   }
+   .demo-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 20px;
+   }
+   .control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+   }
+   .control-group label {
+    font-weight: bold;
+    color: #2c3e50;
+   }
+   .control-group input {
+    padding: 8px;
+    border: 1px solid #bdc3c7;
+    border-radius: 5px;
+    font-size: 14px;
+    width: 120px;
+   }
+   .demo-output {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+    border: 1px solid #ecf0f1;
+   }
+   .formula-block {
+    background: #ecf0f1;
+    border-left: 4px solid #3498db;
+    padding: 15px;
+    margin: 15px 0;
+    font-family: 'Times New Roman', serif;
+   }
+   .practice-problem {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+   }
+   .solution {
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px 0;
+    display: none;
+   }
+   .solution-button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+   }
+   .solution-button:hover {
+    background: #0056b3;
+   }
+   .key-takeaways {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+   }
+   .key-takeaways h3 {
+    margin-top: 0;
+    color: white;
+   }
+   .key-takeaways ul {
+    margin: 10px 0 0 0;
+    padding-left: 20px;
+   }
+   .key-takeaways li {
+    margin: 8px 0;
+   }
+   .worked-example {
+    background: #e8f4f8;
+    border: 1px solid #bee5eb;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+   }
+   .worked-example h4 {
+    margin-top: 0;
+    color: #0c5460;
+   }
+   .math-foundation {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+   }
+   .math-foundation h3 {
+    margin-top: 0;
+    color: #2c3e50;
+   }
+   .derivation-section {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+   }
+   .derivation-section h4 {
+    margin-top: 0;
+    color: #495057;
+   }
+   .pythagorean-connection {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 20px 0;
+   }
+   .pythagorean-connection h4 {
+    margin-top: 0;
+    color: #856404;
+   }
+   .law-cosines-solver {
+    background: white;
+    border: 1px solid #ecf0f1;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+   }
+   .input-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+   }
+   .result-display {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+   }
+   .result-item {
+    display: flex;
+    justify-content: space-between;
+    margin: 8px 0;
+    padding: 8px;
+    background: white;
+    border-radius: 5px;
+   }
+   .result-label {
+    font-weight: bold;
+    color: #2c3e50;
+   }
+   .result-value {
+    color: #3498db;
+    font-weight: bold;
+   }
+   .applications-section {
+    background: #e8f4f8;
+    border: 1px solid #bee5eb;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+   }
+   .applications-section h4 {
+    margin-top: 0;
+    color: #0c5460;
+   }
+   .coordinate-proof {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+   }
+   .coordinate-proof h4 {
+    margin-top: 0;
+    color: #495057;
+   }
+   .triangle-diagram {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+   }
+   .triangle-svg {
+    background: white;
+    border: 1px solid #ecf0f1;
+    border-radius: 8px;
+    padding: 20px;
+   }
+   @media (max-width: 768px) {
+    .demo-controls {
+     flex-direction: column;
+     align-items: stretch;
+    }
+    .control-group {
+     width: 100%;
+    }
+    .input-grid {
+     grid-template-columns: 1fr;
+    }
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Trigonometry">
+   Law of Cosines
+  </div>
+  <div class="container">
+   <div class="main-content">
+
+    <div class="math-foundation">
+     <h3>Mathematical Foundation</h3>
+     <p>The Law of Cosines is a fundamental relationship that connects the lengths of the sides of a triangle with the cosine of one of its angles. It generalizes the Pythagorean theorem to all triangles (not just right-angled ones) and is particularly useful when you know two sides and the included angle, or when you know all three sides and want to find an angle.</p>
+    </div>
+
+    <div class="formula-block">
+     <h3>Law of Cosines</h3>
+     <div style="font-size: 1.4em; text-align: center; margin: 15px 0;">
+      $a^2 = b^2 + c^2 - 2bc \cos A$<br>
+      $b^2 = c^2 + a^2 - 2ca \cos B$<br>
+      $c^2 = a^2 + b^2 - 2ab \cos C$
+     </div>
+     <p><strong>Where:</strong></p>
+     <ul>
+      <li><strong>a, b, c</strong> are the lengths of the sides</li>
+      <li><strong>A, B, C</strong> are the measures of the opposite angles</li>
+      <li><strong>cos</strong> is the cosine function</li>
+     </ul>
+    </div>
+
+    <div class="pythagorean-connection">
+     <h4>Connection to Pythagorean Theorem</h4>
+     <p>When angle C = 90°, cos C = 0, so the Law of Cosines becomes:</p>
+     <p style="text-align: center; font-size: 1.2em; margin: 10px 0;">$c^2 = a^2 + b^2$</p>
+     <p>This is exactly the Pythagorean theorem! The Law of Cosines is a generalization that works for all triangles.</p>
+    </div>
+
+    <div class="derivation-section">
+     <h4>Derivation: Coordinate Geometry Method</h4>
+     <div class="coordinate-proof">
+      <p>Place △ABC with vertex C at the origin (0,0), and side c along the x-axis:</p>
+      <ul>
+       <li>Point A: (c, 0)</li>
+       <li>Point B: (b cos A, b sin A)</li>
+       <li>Point C: (0, 0)</li>
+      </ul>
+      <p><strong>Distance formula for side a (between B and C):</strong></p>
+      <p>$a^2 = (b \cos A - 0)^2 + (b \sin A - 0)^2$</p>
+      <p>$a^2 = b^2 \cos^2 A + b^2 \sin^2 A$</p>
+      <p>$a^2 = b^2 (\cos^2 A + \sin^2 A) = b^2 (1)$</p>
+      <p>$a^2 = b^2$</p>
+      <p>This is incomplete! We need to consider the angle at C. Let me try again...</p>
+      <p><strong>Correct approach:</strong> Place △ABC with vertex C at (0,0), side b along x-axis, side c at angle A:</p>
+      <ul>
+       <li>Point A: (b, 0)</li>
+       <li>Point B: (c cos A, c sin A)</li>
+       <li>Point C: (0, 0)</li>
+      </ul>
+      <p><strong>Distance between A and B:</strong></p>
+      <p>$a^2 = (c \cos A - b)^2 + (c \sin A - 0)^2$</p>
+      <p>$a^2 = c^2 \cos^2 A - 2bc \cos A + b^2 + c^2 \sin^2 A$</p>
+      <p>$a^2 = c^2 (\cos^2 A + \sin^2 A) + b^2 - 2bc \cos A$</p>
+      <p>$a^2 = c^2 (1) + b^2 - 2bc \cos A$</p>
+      <p>$a^2 = b^2 + c^2 - 2bc \cos A$ ✓</p>
+     </div>
+    </div>
+
+    <div class="triangle-diagram">
+     <div class="triangle-svg">
+      <svg height="250" viewbox="0 0 300 250" width="300">
+       <!-- Triangle -->
+       <polygon fill="#fff8e1" points="50,200 250,200 150,50" stroke="#222" stroke-width="2"/>
+       <!-- Angle arcs -->
+       <path d="M55,195 A15,15 0 0,1 75,185" fill="none" stroke="#e65100" stroke-width="2"/>
+       <path d="M245,195 A15,15 0 0,1 225,185" fill="none" stroke="#1976d2" stroke-width="2"/>
+       <path d="M155,55 A15,15 0 0,1 175,75" fill="none" stroke="#388e3c" stroke-width="2"/>
+       <!-- Angle labels -->
+       <text fill="#e65100" font-family="serif" font-size="16" x="45" y="180">A</text>
+       <text fill="#1976d2" font-family="serif" font-size="16" x="255" y="180">B</text>
+       <text fill="#388e3c" font-family="serif" font-size="16" x="175" y="45">C</text>
+       <!-- Side labels -->
+       <text fill="#e65100" font-family="serif" font-size="18" text-anchor="middle" x="150" y="225">c</text>
+       <text fill="#1976d2" font-family="serif" font-size="18" text-anchor="middle" x="200" y="125">a</text>
+       <text fill="#388e3c" font-family="serif" font-size="18" text-anchor="middle" x="100" y="125">b</text>
+       <!-- Vertex labels -->
+       <text fill="#222" font-family="serif" font-size="18" text-anchor="middle" x="50" y="210">A</text>
+       <text fill="#222" font-family="serif" font-size="18" text-anchor="middle" x="250" y="210">B</text>
+       <text fill="#222" font-family="serif" font-size="18" text-anchor="middle" x="150" y="40">C</text>
+       <!-- Formula display -->
+       <text fill="#666" font-family="serif" font-size="14" text-anchor="middle" x="150" y="240">a² = b² + c² - 2bc cos A</text>
+      </svg>
+     </div>
+    </div>
+
+    <div class="applications-section">
+     <h4>Applications of the Law of Cosines</h4>
+     <ul>
+      <li><strong>SAS Triangles:</strong> Two sides and included angle → find third side</li>
+      <li><strong>SSS Triangles:</strong> All three sides → find any angle</li>
+      <li><strong>Navigation:</strong> Distance and bearing calculations</li>
+      <li><strong>Physics:</strong> Vector analysis and force decomposition</li>
+      <li><strong>Engineering:</strong> Structural analysis and surveying</li>
+      <li><strong>Computer Graphics:</strong> 3D modeling and animation</li>
+     </ul>
+    </div>
+
+    <div class="interactive-demo">
+     <h3>Interactive Law of Cosines Calculator</h3>
+     <div class="law-cosines-solver">
+      <div style="margin-bottom: 15px;">
+       <strong>Select calculation type:</strong>
+       <select id="calc-type" onchange="updateInputs()" style="margin-left: 10px; padding: 5px;">
+        <option value="sas">SAS: Find side (two sides + included angle)</option>
+        <option value="sss">SSS: Find angle (three sides)</option>
+       </select>
+      </div>
+
+      <div id="sas-inputs" class="input-grid">
+       <div class="control-group">
+        <label for="side-b">Side b:</label>
+        <input id="side-b" placeholder="length" type="number" step="0.01">
+       </div>
+       <div class="control-group">
+        <label for="side-c">Side c:</label>
+        <input id="side-c" placeholder="length" type="number" step="0.01">
+       </div>
+       <div class="control-group">
+        <label for="angle-A">Included angle A (°):</label>
+        <input id="angle-A" placeholder="0-180" type="number" step="0.1">
+       </div>
+      </div>
+
+      <div id="sss-inputs" class="input-grid" style="display: none;">
+       <div class="control-group">
+        <label for="side-a-sss">Side a:</label>
+        <input id="side-a-sss" placeholder="length" type="number" step="0.01">
+       </div>
+       <div class="control-group">
+        <label for="side-b-sss">Side b:</label>
+        <input id="side-b-sss" placeholder="length" type="number" step="0.01">
+       </div>
+       <div class="control-group">
+        <label for="side-c-sss">Side c:</label>
+        <input id="side-c-sss" placeholder="length" type="number" step="0.01">
+       </div>
+       <div class="control-group">
+        <label for="find-angle">Find angle:</label>
+        <select id="find-angle">
+         <option value="A">Angle A (opposite side a)</option>
+         <option value="B">Angle B (opposite side b)</option>
+         <option value="C">Angle C (opposite side c)</option>
+        </select>
+       </div>
+      </div>
+
+      <button onclick="calculateLawOfCosines()" style="padding: 10px 20px; background: #27ae60; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">Calculate</button>
+      <div class="result-display" id="cosines-results" style="display: none;">
+       <h4>Result:</h4>
+       <div id="cosines-result-content"></div>
+      </div>
+     </div>
+    </div>
+
+    <div class="worked-example">
+     <h4>Worked Example 1: SAS Triangle</h4>
+     <p>In △ABC, sides b = 8 cm, c = 6 cm, and included angle A = 60°. Find side a.</p>
+     <p><strong>Solution:</strong></p>
+     <p>Using Law of Cosines: a² = b² + c² - 2bc cos A</p>
+     <p>a² = 8² + 6² - 2×8×6×cos 60°</p>
+     <p>a² = 64 + 36 - 96×0.5</p>
+     <p>a² = 100 - 48 = 52</p>
+     <p>a = √52 ≈ 7.21 cm</p>
+    </div>
+
+    <div class="worked-example">
+     <h4>Worked Example 2: SSS Triangle</h4>
+     <p>In △ABC, sides a = 7 cm, b = 5 cm, c = 9 cm. Find angle A.</p>
+     <p><strong>Solution:</strong></p>
+     <p>Using Law of Cosines: cos A = (b² + c² - a²)/(2bc)</p>
+     <p>cos A = (25 + 81 - 49)/(2×5×9) = (57 - 49)/90 = 8/90 = 4/45</p>
+     <p>A = cos⁻¹(4/45) ≈ 83.7°</p>
+    </div>
+
+    <div class="worked-example">
+     <h4>Worked Example 3: Right Triangle Check</h4>
+     <p>Verify if △ABC with sides 3, 4, 5 is right-angled.</p>
+     <p><strong>Solution:</strong></p>
+     <p>Check angle opposite side 5: cos C = (3² + 4² - 5²)/(2×3×4) = (9 + 16 - 25)/24 = 0/24 = 0</p>
+     <p>cos C = 0, so C = 90° ✓</p>
+     <p>This confirms the Pythagorean triple 3-4-5.</p>
+    </div>
+
+    <h3>Practice Problems</h3>
+
+    <div class="practice-problem">
+     <strong>Problem 1:</strong> In △ABC, sides b = 10 cm, c = 8 cm, angle A = 45°. Find side a.
+     <br><button class="solution-button" onclick="toggleSolution(1)">Show Solution</button>
+     <div class="solution" id="solution1">
+      <strong>Solution:</strong><br>
+      a² = 10² + 8² - 2×10×8×cos 45°<br>
+      a² = 100 + 64 - 160×0.7071 ≈ 164 - 113.14 ≈ 50.86<br>
+      a ≈ 7.13 cm
+     </div>
+    </div>
+
+    <div class="practice-problem">
+     <strong>Problem 2:</strong> In △ABC, sides a = 12, b = 9, c = 15. Find angle C.
+     <br><button class="solution-button" onclick="toggleSolution(2)">Show Solution</button>
+     <div class="solution" id="solution2">
+      <strong>Solution:</strong><br>
+      cos C = (a² + b² - c²)/(2ab) = (144 + 81 - 225)/(2×12×9)<br>
+      cos C = (0)/216 = 0<br>
+      C = 90°
+     </div>
+    </div>
+
+    <div class="practice-problem">
+     <strong>Problem 3:</strong> Find the length of the third side of a triangle with sides 7 and 11 and included angle 120°.
+     <br><button class="solution-button" onclick="toggleSolution(3)">Show Solution</button>
+     <div class="solution" id="solution3">
+      <strong>Solution:</strong><br>
+      a² = 7² + 11² - 2×7×11×cos 120°<br>
+      a² = 49 + 121 - 154×(-0.5) = 170 + 77 = 247<br>
+      a ≈ 15.72
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <h3>Key Takeaways</h3>
+     <ul>
+      <li><strong>Formula:</strong> a² = b² + c² - 2bc cos A (and cyclic permutations)</li>
+      <li><strong>Pythagorean:</strong> When angle = 90°, reduces to a² = b² + c²</li>
+      <li><strong>SAS Case:</strong> Two sides + included angle → third side</li>
+      <li><strong>SSS Case:</strong> Three sides → any angle using cos A = (b²+c²-a²)/(2bc)</li>
+      <li><strong>Angle Range:</strong> cos A between -1 and 1, so angles 0°-180°</li>
+      <li><strong>Triangle Check:</strong> All sides positive, triangle inequalities</li>
+      <li><strong>Acute/Obtuse:</strong> cos A > 0 (acute), cos A < 0 (obtuse)</li>
+      <li><strong>Coordinate Proof:</strong> Distance formula with angle placement</li>
+      <li><strong>Applications:</strong> Navigation, physics, engineering, computer graphics</li>
+      <li><strong>Units:</strong> Angles in degrees, sides in consistent units</li>
+     </ul>
+    </div>
+
+    <script>
+     function updateInputs() {
+      const calcType = document.getElementById('calc-type').value;
+      const sasInputs = document.getElementById('sas-inputs');
+      const sssInputs = document.getElementById('sss-inputs');
+
+      if (calcType === 'sas') {
+       sasInputs.style.display = 'grid';
+       sssInputs.style.display = 'none';
+      } else {
+       sasInputs.style.display = 'none';
+       sssInputs.style.display = 'grid';
+      }
+     }
+
+     function calculateLawOfCosines() {
+      const calcType = document.getElementById('calc-type').value;
+      const resultsDiv = document.getElementById('cosines-results');
+      const resultContent = document.getElementById('cosines-result-content');
+
+      if (calcType === 'sas') {
+       // SAS calculation
+       const b = parseFloat(document.getElementById('side-b').value);
+       const c = parseFloat(document.getElementById('side-c').value);
+       const A = parseFloat(document.getElementById('angle-A').value);
+
+       if (isNaN(b) || isNaN(c) || isNaN(A)) {
+        resultContent.innerHTML = '<p style="color: red;">Please enter valid values for all fields.</p>';
+        resultsDiv.style.display = 'block';
+        return;
+       }
+
+       if (A <= 0 || A >= 180) {
+        resultContent.innerHTML = '<p style="color: red;">Angle must be between 0° and 180°.</p>';
+        resultsDiv.style.display = 'block';
+        return;
+       }
+
+       const cosA = Math.cos(A * Math.PI / 180);
+       const aSquared = b*b + c*c - 2*b*c*cosA;
+       const a = Math.sqrt(aSquared);
+
+       resultContent.innerHTML = `
+        <div class="result-item"><span class="result-label">Calculation:</span> <span class="result-value">a² = b² + c² - 2bc cos A</span></div>
+        <div class="result-item"><span class="result-label">a² =</span> <span class="result-value">${b}² + ${c}² - 2×${b}×${c}×cos(${A}°)</span></div>
+        <div class="result-item"><span class="result-label">a² =</span> <span class="result-value">${aSquared.toFixed(2)}</span></div>
+        <div class="result-item"><span class="result-label">Side a =</span> <span class="result-value">${a.toFixed(2)} units</span></div>
+       `;
+
+      } else {
+       // SSS calculation
+       const a = parseFloat(document.getElementById('side-a-sss').value);
+       const b = parseFloat(document.getElementById('side-b-sss').value);
+       const c = parseFloat(document.getElementById('side-c-sss').value);
+       const findAngle = document.getElementById('find-angle').value;
+
+       if (isNaN(a) || isNaN(b) || isNaN(c)) {
+        resultContent.innerHTML = '<p style="color: red;">Please enter valid values for all sides.</p>';
+        resultsDiv.style.display = 'block';
+        return;
+       }
+
+       let cosValue, angleRad, angleDeg;
+
+       if (findAngle === 'A') {
+        cosValue = (b*b + c*c - a*a) / (2*b*c);
+        angleRad = Math.acos(Math.max(-1, Math.min(1, cosValue)));
+        angleDeg = angleRad * 180 / Math.PI;
+       } else if (findAngle === 'B') {
+        cosValue = (a*a + c*c - b*b) / (2*a*c);
+        angleRad = Math.acos(Math.max(-1, Math.min(1, cosValue)));
+        angleDeg = angleRad * 180 / Math.PI;
+       } else {
+        cosValue = (a*a + b*b - c*c) / (2*a*b);
+        angleRad = Math.acos(Math.max(-1, Math.min(1, cosValue)));
+        angleDeg = angleRad * 180 / Math.PI;
+       }
+
+       resultContent.innerHTML = `
+        <div class="result-item"><span class="result-label">cos ${findAngle} =</span> <span class="result-value">${cosValue.toFixed(4)}</span></div>
+        <div class="result-item"><span class="result-label">Angle ${findAngle} =</span> <span class="result-value">${angleDeg.toFixed(1)}°</span></div>
+       `;
+      }
+
+      resultsDiv.style.display = 'block';
+     }
+
+     function toggleSolution(num) {
+      const solution = document.getElementById('solution' + num);
+      if (solution.style.display === 'none' || solution.style.display === '') {
+       solution.style.display = 'block';
+      } else {
+       solution.style.display = 'none';
+      }
+     }
+
+     // Initialize
+     updateInputs();
+    </script>
+   </div>
+  </div>
+ </body>
+</html>

@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<!-- tags: Mathematics -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Velocity and Acceleration (Plane)
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   .interactive-demo {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    border: 2px solid #e1e8ed;
+   }
+   .demo-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 15px;
+   }
+   .demo-input-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 200px;
+   }
+   .demo-input-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #2c3e50;
+   }
+   .demo-input {
+    padding: 8px;
+    border: 2px solid #bdc3c7;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+   }
+   .demo-input:focus {
+    outline: none;
+    border-color: #3498db;
+   }
+   .demo-button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: transform 0.2s;
+   }
+   .demo-button:hover {
+    transform: translateY(-2px);
+   }
+   .demo-result {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+    border-left: 4px solid #3498db;
+   }
+   .math-foundation {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .worked-example {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .practice-problem {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .solution-toggle {
+    background: #2c3e50;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+   }
+   .solution-toggle:hover {
+    background: #34495e;
+   }
+   .solution-content {
+    display: none;
+    background: rgba(255, 255, 255, 0.9);
+    color: #2c3e50;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+   }
+   .key-takeaways {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .key-takeaways h3 {
+    color: #2c3e50;
+    margin-top: 0;
+   }
+   .key-takeaways ul {
+    color: #2c3e50;
+   }
+   .planar-motion-concepts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+   }
+   .concept-card {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #e67e22;
+   }
+   .concept-card h4 {
+    margin-top: 0;
+    color: #2c3e50;
+   }
+   .math-orange {
+    color: #e67e22;
+    font-weight: bold;
+   }
+   .visualization-section {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+    border: 2px solid #ecf0f1;
+    text-align: center;
+   }
+   canvas {
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin: 10px 0;
+   }
+   .theorem-box {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+    border-left: 5px solid #3498db;
+   }
+   .vector-analysis {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .special-motions {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Mathematics">
+   Velocity and Acceleration (Plane)
+  </div>
+  <div class="container">
+   <div class="main-content">
+    <div class="section-title">
+     Velocity and Acceleration (Plane)
+    </div>
+
+    <div class="theorem-box">
+     <h3>Vector Motion in Two Dimensions</h3>
+     <p>In planar motion, position, velocity, and acceleration are all vector quantities with both magnitude and direction:</p>
+     <div style="text-align: center; font-size: 1.2em; margin: 20px 0;">
+      <div style="margin: 10px 0;">$\vec{r}(t) = (x(t), y(t)) \xrightarrow{\frac{d}{dt}} \vec{v}(t) = \left(\frac{dx}{dt}, \frac{dy}{dt}\right) \xrightarrow{\frac{d}{dt}} \vec{a}(t) = \left(\frac{d^2x}{dt^2}, \frac{d^2y}{dt^2}\right)$</div>
+      <div style="margin: 10px 0;">$\text{Position} \to \text{Velocity} \to \text{Acceleration}$</div>
+     </div>
+     <p>Each vector has components that are found by differentiating the corresponding position components.</p>
+    </div>
+
+    <div class="math-foundation">
+     <h3>Mathematical Foundations</h3>
+     <p>Two-dimensional motion requires vector calculus to fully describe an object's path, speed, and rate of change of motion. Unlike straight-line motion, acceleration can point in any direction, not necessarily along the path of motion.</p>
+
+     <div class="planar-motion-concepts">
+      <div class="concept-card">
+       <h4>Position Vector</h4>
+       <p>$\vec{r}(t) = (x(t), y(t))$</p>
+       <p>Parametric equations</p>
+       <p>Location in plane</p>
+       <p>Reference point based</p>
+      </div>
+
+      <div class="concept-card">
+       <h4>Velocity Vector</h4>
+       <p>$\vec{v}(t) = \vec{r}'(t)$</p>
+       <p>Tangent to path</p>
+       <p>Direction of motion</p>
+       <p>Speed = |v(t)|</p>
+      </div>
+
+      <div class="concept-card">
+       <h4>Acceleration Vector</h4>
+       <p>$\vec{a}(t) = \vec{v}'(t) = \vec{r}''(t)$</p>
+       <p>Rate of velocity change</p>
+       <p>Can point anywhere</p>
+       <p>Components: a_x, a_y</p>
+      </div>
+
+      <div class="concept-card">
+       <h4>Vector Components</h4>
+       <p>x and y directions</p>
+       <p>Independent derivatives</p>
+       <p>Combined effects</p>
+       <p>Magnitude and direction</p>
+      </div>
+     </div>
+    </div>
+
+    <div class="interactive-demo">
+     <h3>Interactive Planar Motion Calculator</h3>
+     <p>Enter parametric equations and analyze position, velocity, and acceleration vectors.</p>
+
+     <div class="demo-controls">
+      <div class="demo-input-group">
+       <label for="x-equation">x(t):</label>
+       <input type="text" id="x-equation" class="demo-input" value="2*t" placeholder="e.g., 2*t, 3*cos(t), t^2">
+      </div>
+      <div class="demo-input-group">
+       <label for="y-equation">y(t):</label>
+       <input type="text" id="y-equation" class="demo-input" value="t^2" placeholder="e.g., t^2, 3*sin(t), t^3 - 3*t">
+      </div>
+      <div class="demo-input-group">
+       <label for="analysis-time">Time t =</label>
+       <input type="number" id="analysis-time" class="demo-input" value="1" step="0.1">
+      </div>
+      <button onclick="analyzePlanarMotion()" class="demo-button">Analyze Motion</button>
+     </div>
+
+     <div class="demo-result">
+      <h4>Vector Analysis:</h4>
+      <p><strong>Position:</strong> <span id="position-vector-display">$\vec{r}(t) = (2t, t^2)$</span></p>
+      <p><strong>Velocity:</strong> <span id="velocity-vector-display">$\vec{v}(t) = (2, 2t)$</span></p>
+      <p><strong>Acceleration:</strong> <span id="acceleration-vector-display">$\vec{a}(t) = (0, 2)$</span></p>
+      <p><strong>At t = 1:</strong> <span id="instantaneous-vectors-display">$\vec{r}(1) = (2, 1)$, $\vec{v}(1) = (2, 2)$, $\vec{a}(1) = (0, 2)$</span></p>
+      <p><strong>Speed:</strong> <span id="speed-display">|v(1)| = 2.828</span></p>
+      <p><strong>Velocity Direction:</strong> <span id="velocity-direction-display">45° from positive x-axis</span></p>
+     </div>
+
+     <div class="visualization-section">
+      <h4>Vector Visualization:</h4>
+      <canvas id="planarMotionCanvas" width="600" height="400"></canvas>
+      <p><em>Blue: position path, Red arrow: velocity vector, Green arrow: acceleration vector</em></p>
+     </div>
+    </div>
+
+    <div class="vector-analysis">
+     <h3>Vector Relationships and Properties</h3>
+
+     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+      <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+       <h4 style="margin-top: 0;">Velocity Properties</h4>
+       <ul style="line-height: 1.8;">
+        <li>Always tangent to the path</li>
+        <li>Direction indicates motion direction</li>
+        <li>Speed = |v(t)| = √(v_x² + v_y²)</li>
+        <li>Zero velocity means instantaneous stop</li>
+       </ul>
+      </div>
+
+      <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+       <h4 style="margin-top: 0;">Acceleration Properties</h4>
+       <ul style="line-height: 1.8;">
+        <li>Can point in any direction</li>
+        <li>Not necessarily along the path</li>
+        <li>Changes both speed and direction</li>
+        <li>Components: a_x, a_y independent</li>
+       </ul>
+      </div>
+     </div>
+
+     <p style="margin-top: 20px;"><strong>Key Relationship:</strong> When speed is constant, velocity and acceleration are perpendicular (v · a = 0).</p>
+    </div>
+
+    <div class="special-motions">
+     <h3>Special Cases of Planar Motion</h3>
+
+     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+      <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+       <h4 style="margin-top: 0;">Uniform Circular Motion</h4>
+       <ul style="line-height: 1.8;">
+        <li>Speed constant: |v| = Rω</li>
+        <li>Velocity ⊥ acceleration</li>
+        <li>Centripetal acceleration: toward center</li>
+        <li>a = -ω²r (points to center)</li>
+       </ul>
+      </div>
+
+      <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+       <h4 style="margin-top: 0;">Projectile Motion</h4>
+       <ul style="line-height: 1.8;">
+        <li>Horizontal: constant velocity</li>
+        <li>Vertical: constant acceleration (-g)</li>
+        <li>Parabolic trajectory</li>
+        <li>Acceleration always downward</li>
+       </ul>
+      </div>
+     </div>
+    </div>
+
+    <div class="worked-example">
+     <h3>Worked Examples</h3>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Example 1: Parabolic Motion</h4>
+      <p>A particle moves with $\vec{r}(t) = (2t, t^2)$. Find velocity, acceleration, and speed at t = 1.</p>
+      <p><strong>Step 1:</strong> Velocity: $\vec{v}(t) = (2, 2t)$</p>
+      <p><strong>Step 2:</strong> Acceleration: $\vec{a}(t) = (0, 2)$</p>
+      <p><strong>Step 3:</strong> At t = 1: $\vec{v}(1) = (2, 2)$, $\vec{a}(1) = (0, 2)$</p>
+      <p><strong>Step 4:</strong> Speed: $|\vec{v}(1)| = \sqrt{2^2 + 2^2} = \sqrt{8} = 2\sqrt{2}$</p>
+      <p><strong>Step 5:</strong> Velocity direction: tan⁻¹(2/2) = 45° from positive x-axis</p>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Example 2: Circular Motion</h4>
+      <p>Point moves on circle: $\vec{r}(t) = (3\cos t, 3\sin t)$. Find velocity and acceleration.</p>
+      <p><strong>Step 1:</strong> $\vec{v}(t) = (-3\sin t, 3\cos t)$</p>
+      <p><strong>Step 2:</strong> Speed: $|\vec{v}| = \sqrt{9\sin^2 t + 9\cos^2 t} = 3$ (constant)</p>
+      <p><strong>Step 3:</strong> $\vec{a}(t) = (-3\cos t, -3\sin t) = -3(\cos t, \sin t) = -\vec{r}(t)$</p>
+      <p><strong>Step 4:</strong> Acceleration points toward center (centripetal)</p>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Example 3: Projectile Motion</h4>
+      <p>Ball thrown with initial velocity (10, 15) m/s under gravity. Find position, velocity, acceleration.</p>
+      <p><strong>Step 1:</strong> $\vec{a}(t) = (0, -10)$ m/s² (constant gravity)</p>
+      <p><strong>Step 2:</strong> $\vec{v}(t) = (10, 15 - 10t)$ m/s</p>
+      <p><strong>Step 3:</strong> $\vec{r}(t) = (10t, 15t - 5t^2)$ m</p>
+      <p><strong>Step 4:</strong> Max height when v_y = 0: t = 1.5 s, h = 11.25 m</p>
+     </div>
+    </div>
+
+    <div class="practice-problem">
+     <h3>Practice Problems</h3>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Problem 1</h4>
+      <p>A particle moves with $\vec{r}(t) = (t^2, t^3 - 3t)$. Find when velocity is zero.</p>
+      <button onclick="toggleSolution('sol1')" class="solution-toggle">Show Solution</button>
+      <div id="sol1" class="solution-content">
+       <p><strong>Step 1:</strong> $\vec{v}(t) = (2t, 3t^2 - 3)$</p>
+       <p><strong>Step 2:</strong> Zero when 2t = 0 and 3t² - 3 = 0</p>
+       <p><strong>Step 3:</strong> t = 0: v = (0, -3) ≠ 0</p>
+       <p><strong>Step 4:</strong> t = ±1: v = (±2, 0) ≠ 0</p>
+       <p><strong>Step 5:</strong> Never zero simultaneously</p>
+      </div>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Problem 2</h4>
+      <p>Find angle between velocity and acceleration for $\vec{r}(t) = (e^t, e^{-t})$ at t = 0.</p>
+      <button onclick="toggleSolution('sol2')" class="solution-toggle">Show Solution</button>
+      <div id="sol2" class="solution-content">
+       <p><strong>Step 1:</strong> $\vec{v}(t) = (e^t, -e^{-t})$, $\vec{v}(0) = (1, -1)$</p>
+       <p><strong>Step 2:</strong> $\vec{a}(t) = (e^t, e^{-t})$, $\vec{a}(0) = (1, 1)$</p>
+       <p><strong>Step 3:</strong> Dot product: (1, -1) · (1, 1) = 1 - 1 = 0</p>
+       <p><strong>Step 4:</strong> cosθ = 0 ⇒ θ = 90° (perpendicular)</p>
+      </div>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Problem 3</h4>
+      <p>A particle moves with $\vec{r}(t) = (\cos 2t, \sin 2t)$. Find speed and acceleration.</p>
+      <button onclick="toggleSolution('sol3')" class="solution-toggle">Show Solution</button>
+      <div id="sol3" class="solution-content">
+       <p><strong>Step 1:</strong> $\vec{v}(t) = (-2\sin 2t, 2\cos 2t)$</p>
+       <p><strong>Step 2:</strong> Speed: |v| = √(4sin²2t + 4cos²2t) = 2</p>
+       <p><strong>Step 3:</strong> $\vec{a}(t) = (-4\cos 2t, -4\sin 2t) = -4(\cos 2t, \sin 2t)$</p>
+       <p><strong>Step 4:</strong> Centripetal acceleration toward center</p>
+      </div>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Problem 4</h4>
+      <p>Find the tangential and normal components of acceleration for circular motion.</p>
+      <button onclick="toggleSolution('sol4')" class="solution-toggle">Show Solution</button>
+      <div id="sol4" class="solution-content">
+       <p><strong>Step 1:</strong> For uniform circular motion, speed constant</p>
+       <p><strong>Step 2:</strong> Tangential component a_T = 0 (no speed change)</p>
+       <p><strong>Step 3:</strong> Normal component a_N = v²/R (centripetal)</p>
+       <p><strong>Step 4:</strong> Total acceleration = a_N (toward center)</p>
+      </div>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <h3>Key Takeaways</h3>
+     <ul>
+      <li><strong>Vector Nature:</strong> All quantities (position, velocity, acceleration) are vectors in 2D</li>
+      <li><strong>Component Method:</strong> Find x and y components separately, then combine</li>
+      <li><strong>Velocity Direction:</strong> Always tangent to the path of motion</li>
+      <li><strong>Acceleration Freedom:</strong> Can point in any direction (not necessarily along path)</li>
+      <li><strong>Speed vs Velocity:</strong> Speed = |v(t)|, always ≥ 0; velocity includes direction</li>
+      <li><strong>Circular Motion:</strong> Constant speed, centripetal acceleration toward center</li>
+      <li><strong>Projectile Motion:</strong> Parabolic path, constant horizontal velocity, constant vertical acceleration</li>
+      <li><strong>Perpendicular Vectors:</strong> When speed is constant, v ⊥ a</li>
+      <li><strong>Applications:</strong> Ballistics, orbital mechanics, robotics, computer animation</li>
+     </ul>
+    </div>
+
+    <div class="formula-list">
+     <div class="formula-row">
+      <span class="number">
+       1
+      </span>
+      <span class="formula">
+       $\vec{v}(t) = \left(\frac{dx}{dt}, \frac{dy}{dt}\right)$
+       <span class="math-orange">
+        (Velocity Vector)
+       </span>
+      </span>
+     </div>
+     <div class="formula-row">
+      <span class="number">
+       2
+      </span>
+      <span class="formula">
+       $\vec{a}(t) = \left(\frac{d^2x}{dt^2}, \frac{d^2y}{dt^2}\right)$
+       <span class="math-orange">
+        (Acceleration Vector)
+       </span>
+      </span>
+     </div>
+     <div class="formula-row">
+      <span class="number">
+       3
+      </span>
+      <span class="formula">
+       $\text{Speed} = |\vec{v}| = \sqrt{v_x^2 + v_y^2}$
+       <span class="math-orange">
+        (Scalar Magnitude)
+       </span>
+      </span>
+     </div>
+     <div class="formula-row">
+      <span class="number">
+       4
+      </span>
+      <span class="formula">
+       $\vec{v} \cdot \vec{a} = 0$
+       <span class="math-orange">
+        (Constant Speed)
+       </span>
+      </span>
+     </div>
+    </div>
+
+    <div class="visualization-section">
+     <h4>Interactive Planar Motion Explorer</h4>
+     <p>Explore different types of planar motion:</p>
+     <canvas id="interactivePlanarCanvas" width="600" height="400"></canvas>
+     <p><em>Select motion type and time to see vectors change</em></p>
+     <div style="margin-top: 10px;">
+      <select id="motionType" style="padding: 5px; margin-right: 10px;">
+       <option value="parabolic">Parabolic Motion</option>
+       <option value="circular">Circular Motion</option>
+       <option value="projectile">Projectile Motion</option>
+       <option value="elliptical">Elliptical Motion</option>
+      </select>
+      <input type="range" id="planarTimeSlider" min="0" max="4" step="0.1" value="0" style="width: 200px;">
+      <span id="timeDisplay" style="margin-left: 10px;">t = 0</span>
+     </div>
+    </div>
+   </div>
+  </div>
+
+  <script>
+   function evaluateX(func, t) {
+    const expr = func.toLowerCase().replace(/\s/g, '');
+    if (expr === '2*t') return 2*t;
+    if (expr === '3*cos(t)') return 3*Math.cos(t);
+    if (expr === 't^2') return t*t;
+    if (expr === '10*t') return 10*t;
+    if (expr === 'cos(2*t)') return Math.cos(2*t);
+    if (expr === 'e^t') return Math.exp(t);
+    return 2*t; // default
+   }
+
+   function evaluateY(func, t) {
+    const expr = func.toLowerCase().replace(/\s/g, '');
+    if (expr === 't^2') return t*t;
+    if (expr === '3*sin(t)') return 3*Math.sin(t);
+    if (expr === 't^3-3*t') return t*t*t - 3*t;
+    if (expr === '15*t-5*t^2') return 15*t - 5*t*t;
+    if (expr === 'sin(2*t)') return Math.sin(2*t);
+    if (expr === 'e^{-t}') return Math.exp(-t);
+    return t*t; // default
+   }
+
+   function evaluateVelocityX(func, t) {
+    const expr = func.toLowerCase().replace(/\s/g, '');
+    if (expr === '2*t') return 2;
+    if (expr === '3*cos(t)') return -3*Math.sin(t);
+    if (expr === 't^2') return 2*t;
+    if (expr === '10*t') return 10;
+    if (expr === 'cos(2*t)') return -2*Math.sin(2*t);
+    if (expr === 'e^t') return Math.exp(t);
+    return 2; // default
+   }
+
+   function evaluateVelocityY(func, t) {
+    const expr = func.toLowerCase().replace(/\s/g, '');
+    if (expr === 't^2') return 2*t;
+    if (expr === '3*sin(t)') return 3*Math.cos(t);
+    if (expr === 't^3-3*t') return 3*t*t - 3;
+    if (expr === '15*t-5*t^2') return 15 - 10*t;
+    if (expr === 'sin(2*t)') return 2*Math.cos(2*t);
+    if (expr === 'e^{-t}') return -Math.exp(-t);
+    return 2*t; // default
+   }
+
+   function evaluateAccelerationX(func, t) {
+    const expr = func.toLowerCase().replace(/\s/g, '');
+    if (expr === '2*t') return 0;
+    if (expr === '3*cos(t)') return -3*Math.cos(t);
+    if (expr === 't^2') return 2;
+    if (expr === '10*t') return 0;
+    if (expr === 'cos(2*t)') return -4*Math.cos(2*t);
+    if (expr === 'e^t') return Math.exp(t);
+    return 0; // default
+   }
+
+   function evaluateAccelerationY(func, t) {
+    const expr = func.toLowerCase().replace(/\s/g, '');
+    if (expr === 't^2') return 2;
+    if (expr === '3*sin(t)') return -3*Math.sin(t);
+    if (expr === 't^3-3*t') return 6*t;
+    if (expr === '15*t-5*t^2') return -10;
+    if (expr === 'sin(2*t)') return -4*Math.sin(2*t);
+    if (expr === 'e^{-t}') return Math.exp(-t);
+    return 2; // default
+   }
+
+   function getVelocityXString(func) {
+    const expr = func.toLowerCase().replace(/\s/g, '');
+    if (expr === '2*t') return '2';
+    if (expr === '3*cos(t)') return '-3sin(t)';
+    if (expr === 't^2') return '2t';
+    if (expr === '10*t') return '10';
+    if (expr === 'cos(2*t)') return '-2sin(2t)';
+    if (expr === 'e^t') return 'e^t';
+    return '2'; // default
+   }
+
+   function getVelocityYString(func) {
+    const expr = func.toLowerCase().replace(/\s/g, '');
+    if (expr === 't^2') return '2t';
+    if (expr === '3*sin(t)') return '3cos(t)';
+    if (expr === 't^3-3*t') return '3t² - 3';
+    if (expr === '15*t-5*t^2') return '15 - 10t';
+    if (expr === 'sin(2*t)') return '2cos(2t)';
+    if (expr === 'e^{-t}') return '-e^{-t}';
+    return '2t'; // default
+   }
+
+   function getAccelerationXString(func) {
+    const expr = func.toLowerCase().replace(/\s/g, '');
+    if (expr === '2*t') return '0';
+    if (expr === '3*cos(t)') return '-3cos(t)';
+    if (expr === 't^2') return '2';
+    if (expr === '10*t') return '0';
+    if (expr === 'cos(2*t)') return '-4cos(2t)';
+    if (expr === 'e^t') return 'e^t';
+    return '0'; // default
+   }
+
+   function getAccelerationYString(func) {
+    const expr = func.toLowerCase().replace(/\s/g, '');
+    if (expr === 't^2') return '2';
+    if (expr === '3*sin(t)') return '-3sin(t)';
+    if (expr === 't^3-3*t') return '6t';
+    if (expr === '15*t-5*t^2') return '-10';
+    if (expr === 'sin(2*t)') return '-4sin(2t)';
+    if (expr === 'e^{-t}') return 'e^{-t}';
+    return '2'; // default
+   }
+
+   function analyzePlanarMotion() {
+    const xFunc = document.getElementById('x-equation').value;
+    const yFunc = document.getElementById('y-equation').value;
+    const time = parseFloat(document.getElementById('analysis-time').value);
+
+    if (!xFunc || !yFunc || isNaN(time)) {
+     alert('Please enter valid functions and time');
+     return;
+    }
+
+    const posX = evaluateX(xFunc, time);
+    const posY = evaluateY(yFunc, time);
+    const velX = evaluateVelocityX(xFunc, time);
+    const velY = evaluateVelocityY(yFunc, time);
+    const accX = evaluateAccelerationX(xFunc, time);
+    const accY = evaluateAccelerationY(yFunc, time);
+
+    const speed = Math.sqrt(velX*velX + velY*velY);
+    const velocityAngle = Math.atan2(velY, velX) * 180 / Math.PI;
+
+    document.getElementById('position-vector-display').textContent = `\\vec{r}(t) = (${xFunc}, ${yFunc})`;
+    document.getElementById('velocity-vector-display').textContent = `\\vec{v}(t) = (${getVelocityXString(xFunc)}, ${getVelocityYString(yFunc)})`;
+    document.getElementById('acceleration-vector-display').textContent = `\\vec{a}(t) = (${getAccelerationXString(xFunc)}, ${getAccelerationYString(yFunc)})`;
+    document.getElementById('instantaneous-vectors-display').textContent = `\\vec{r}(${time}) = (${posX.toFixed(2)}, ${posY.toFixed(2)}), \\vec{v}(${time}) = (${velX.toFixed(2)}, ${velY.toFixed(2)}), \\vec{a}(${time}) = (${accX.toFixed(2)}, ${accY.toFixed(2)})`;
+    document.getElementById('speed-display').textContent = `|\\vec{v}(${time})| = ${speed.toFixed(3)}`;
+    document.getElementById('velocity-direction-display').textContent = `${velocityAngle.toFixed(1)}° from positive x-axis`;
+
+    drawPlanarMotionVisualization(xFunc, yFunc, time);
+   }
+
+   function drawPlanarMotionVisualization(xFunc, yFunc, time) {
+    const canvas = document.getElementById('planarMotionCanvas');
+    const ctx = canvas.getContext('2d');
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const width = canvas.width;
+    const height = canvas.height;
+    const scale = 30;
+    const originX = width / 2;
+    const originY = height / 2;
+
+    function toCanvasX(x) { return originX + x * scale; }
+    function toCanvasY(y) { return originY - y * scale; }
+
+    // Draw path
+    ctx.strokeStyle = '#2196F3';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let t = 0; t <= 4; t += 0.1) {
+     const x = evaluateX(xFunc, t);
+     const y = evaluateY(yFunc, t);
+     if (t === 0) ctx.moveTo(toCanvasX(x), toCanvasY(y));
+     else ctx.lineTo(toCanvasX(x), toCanvasY(y));
+    }
+    ctx.stroke();
+
+    // Draw current position
+    const posX = evaluateX(xFunc, time);
+    const posY = evaluateY(yFunc, time);
+    ctx.fillStyle = '#000';
+    ctx.beginPath();
+    ctx.arc(toCanvasX(posX), toCanvasY(posY), 6, 0, 2 * Math.PI);
+    ctx.fill();
+
+    // Draw velocity vector (red)
+    const velX = evaluateVelocityX(xFunc, time);
+    const velY = evaluateVelocityY(yFunc, time);
+    const velScale = 0.3;
+    ctx.strokeStyle = '#e74c3c';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(toCanvasX(posX), toCanvasY(posY));
+    ctx.lineTo(toCanvasX(posX + velX * velScale), toCanvasY(posY + velY * velScale));
+    ctx.stroke();
+
+    // Draw acceleration vector (green)
+    const accX = evaluateAccelerationX(xFunc, time);
+    const accY = evaluateAccelerationY(yFunc, time);
+    const accScale = 0.3;
+    ctx.strokeStyle = '#27ae60';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(toCanvasX(posX), toCanvasY(posY));
+    ctx.lineTo(toCanvasX(posX + accX * accScale), toCanvasY(posY + accY * accScale));
+    ctx.stroke();
+   }
+
+   function toggleSolution(id) {
+    const element = document.getElementById(id);
+    element.style.display = element.style.display === 'none' ? 'block' : 'none';
+   }
+
+   // Initialize
+   analyzePlanarMotion();
+
+   // Interactive visualization
+   const slider = document.getElementById('planarTimeSlider');
+   const motionSelect = document.getElementById('motionType');
+   const timeDisplay = document.getElementById('timeDisplay');
+   const canvas = document.getElementById('interactivePlanarCanvas');
+
+   function drawInteractivePlanarVisualization() {
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const t = parseFloat(slider.value);
+    const motionType = motionSelect.value;
+    timeDisplay.textContent = `t = ${t.toFixed(1)}`;
+
+    let xFunc, yFunc;
+
+    switch(motionType) {
+     case 'parabolic':
+      xFunc = '2*t';
+      yFunc = 't^2';
+      break;
+     case 'circular':
+      xFunc = '3*cos(t)';
+      yFunc = '3*sin(t)';
+      break;
+     case 'projectile':
+      xFunc = '10*t';
+      yFunc = '15*t-5*t^2';
+      break;
+     case 'elliptical':
+      xFunc = '4*cos(t)';
+      yFunc = '2*sin(t)';
+      break;
+    }
+
+    drawPlanarMotionVisualization(xFunc, yFunc, t);
+   }
+
+   slider.addEventListener('input', drawInteractivePlanarVisualization);
+   motionSelect.addEventListener('change', drawInteractivePlanarVisualization);
+   drawInteractivePlanarVisualization();
+  </script>
+ </body>
+</html>

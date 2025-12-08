@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<!-- tags: Others -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Euclidean Algorithm
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+    /* Enhanced text containment and scrolling */
+    .main-content {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      overflow: auto;
+      max-height: none;
+    }
+    
+    .graybox, .section {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      overflow: auto;
+    }
+    
+    /* Algorithm box styling */
+    .algorithm-box {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 15px 0;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+    
+    .algorithm-box h3 {
+      margin-top: 0;
+      font-size: 1.3em;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    }
+    
+    .algorithm-box .steps {
+      background: rgba(255,255,255,0.1);
+      padding: 15px;
+      border-radius: 8px;
+      margin: 10px 0;
+    }
+    
+    /* Interactive demo styling */
+    .interactive-demo {
+      background: #f8f9fa;
+      border: 2px solid #007acc;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+      text-align: center;
+    }
+    
+    .demo-input {
+      padding: 10px;
+      font-size: 16px;
+      border: 2px solid #007acc;
+      border-radius: 6px;
+      margin: 10px;
+      width: 150px;
+    }
+    
+    .demo-button {
+      background: #007acc;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px;
+      transition: background 0.3s;
+    }
+    
+    .demo-button:hover {
+      background: #0056b3;
+    }
+    
+    .demo-result {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 15px 0;
+      min-height: 30px;
+    }
+    
+    /* Problem items styling */
+    .problem-item {
+      background: #fff3cd;
+      border: 2px solid #ffc107;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      position: relative;
+    }
+    
+    .problem-item .problem-number {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: #ffc107;
+      color: #000;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: bold;
+      font-size: 0.9em;
+    }
+    
+    .problem-item .problem-content {
+      margin-left: 60px;
+    }
+    
+    /* Solution button styling */
+    .solution-button {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      margin: 10px 0;
+      transition: background 0.3s;
+    }
+    
+    .solution-button:hover {
+      background: #218838;
+    }
+    
+    .solution-content {
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      border-radius: 6px;
+      padding: 15px;
+      margin: 10px 0;
+      display: none;
+    }
+    
+    /* Key takeaways styling */
+    .key-takeaways {
+      background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+      color: #333;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 20px 0;
+      border: 2px solid rgba(255,255,255,0.3);
+    }
+    
+    .key-takeaways h3 {
+      margin-top: 0;
+      text-align: center;
+      font-size: 1.4em;
+      text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
+    }
+    
+    .key-takeaways ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+    
+    .key-takeaways li {
+      margin: 8px 0;
+      font-weight: bold;
+    }
+    
+    /* Canvas visualization styling */
+    .visualization-container {
+      text-align: center;
+      margin: 20px 0;
+    }
+    
+    #euclideanCanvas {
+      border: 2px solid #007acc;
+      border-radius: 8px;
+      background: white;
+      max-width: 100%;
+      height: auto;
+    }
+    
+    /* Section styling */
+    .section {
+      margin: 30px 0;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border-left: 4px solid #007acc;
+    }
+    
+    .section h2 {
+      color: #007acc;
+      margin-top: 0;
+      font-size: 1.5em;
+    }
+    
+    /* Enhanced math styling */
+    .math {
+      font-family: 'Times New Roman', serif;
+    }
+    
+    .highlight {
+      background: #fff3cd;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    
+    .blue { color: #007bff; }
+    .orange { color: #fd7e14; }
+    .green { color: #28a745; }
+    .red { color: #dc3545; }
+    
+    /* Euclidean algorithm specific */
+    .euclidean-steps {
+      background: #e9ecef;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: monospace;
+      font-size: 16px;
+    }
+    
+    .euclidean-step {
+      margin: 8px 0;
+      padding: 5px;
+      background: white;
+      border-radius: 4px;
+      border-left: 3px solid #007acc;
+    }
+    
+    .gcd-highlight {
+      background: #d4edda;
+      border-color: #28a745;
+    }
+    
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .algorithm-box, .interactive-demo, .section {
+        padding: 15px;
+      }
+      
+      .demo-input {
+        width: 120px;
+      }
+      
+      .problem-item .problem-content {
+        margin-left: 50px;
+      }
+    }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Others">
+   Euclidean Algorithm
+  </div>
+  <div class="container">
+   <div class="main-content">
+    <div class="section">
+     <h2>Core Concept: Euclidean Algorithm</h2>
+     <p>The Euclidean Algorithm is an efficient method for finding the greatest common divisor (GCD) of two integers. It works on the principle that the GCD of two numbers doesn't change if you replace the larger number with the remainder of dividing the larger by the smaller.</p>
+     
+     <div class="algorithm-box">
+      <h3>Euclidean Algorithm Steps</h3>
+      <div class="steps">
+       <p><strong>To find GCD(a, b) where a > b:</strong></p>
+       <ol>
+        <li>Divide a by b to get quotient q and remainder r: a = bq + r</li>
+        <li>If r = 0, then GCD(a, b) = b</li>
+        <li>If r ≠ 0, then GCD(a, b) = GCD(b, r)</li>
+        <li>Repeat the process with b and r until remainder is 0</li>
+       </ol>
+      </div>
+     </div>
+     
+     <p>The algorithm terminates because the remainders decrease with each step and eventually reach zero.</p>
+    </div>
+
+    <div class="section">
+     <h2>Detailed Examples</h2>
+     
+     <h3>Example 1: GCD(48, 18)</h3>
+     <div class="euclidean-steps">
+      <div class="euclidean-step">48 ÷ 18 = 2 with remainder 12</div>
+      <div class="euclidean-step">18 ÷ 12 = 1 with remainder 6</div>
+      <div class="euclidean-step">12 ÷ 6 = 2 with remainder 0</div>
+      <div class="euclidean-step gcd-highlight">GCD(48, 18) = 6</div>
+     </div>
+     
+     <h3>Example 2: GCD(100, 75)</h3>
+     <div class="euclidean-steps">
+      <div class="euclidean-step">100 ÷ 75 = 1 with remainder 25</div>
+      <div class="euclidean-step">75 ÷ 25 = 3 with remainder 0</div>
+      <div class="euclidean-step gcd-highlight">GCD(100, 75) = 25</div>
+     </div>
+     
+     <h3>Example 3: GCD(17, 13) - Coprime Numbers</h3>
+     <div class="euclidean-steps">
+      <div class="euclidean-step">17 ÷ 13 = 1 with remainder 4</div>
+      <div class="euclidean-step">13 ÷ 4 = 3 with remainder 1</div>
+      <div class="euclidean-step">4 ÷ 1 = 4 with remainder 0</div>
+      <div class="euclidean-step gcd-highlight">GCD(17, 13) = 1</div>
+     </div>
+    </div>
+
+    <div class="section">
+     <h2>Visual Guide</h2>
+     <div class="visualization-container">
+      <canvas id="euclideanCanvas" width="800" height="500"></canvas>
+     </div>
+     <p>The visualization above shows the Euclidean Algorithm process step by step, demonstrating how the algorithm reduces the problem until finding the GCD.</p>
+    </div>
+
+    <div class="section">
+     <h2>Interactive Demo</h2>
+     <div class="interactive-demo">
+      <h3>Euclidean Algorithm Calculator</h3>
+      <p>Enter two positive integers to find their GCD:</p>
+      <input type="number" id="numA" class="demo-input" placeholder="First number" min="1" value="48">
+      <input type="number" id="numB" class="demo-input" placeholder="Second number" min="1" value="18">
+      <br>
+      <button onclick="calculateGCD()" class="demo-button">Find GCD</button>
+      <div id="demoResult" class="demo-result"></div>
+      <div id="gcdSteps"></div>
+     </div>
+    </div>
+
+    <div class="section">
+     <h2>Applications</h2>
+     <ul>
+      <li><strong>Fraction Simplification:</strong> Reducing fractions to lowest terms</li>
+      <li><strong>Cryptography:</strong> Essential for RSA algorithm and public-key cryptography</li>
+      <li><strong>Computer Science:</strong> Used in algorithms for rational number arithmetic</li>
+      <li><strong>Number Theory:</strong> Foundation for solving linear Diophantine equations</li>
+      <li><strong>Engineering:</strong> Used in gear ratio calculations and signal processing</li>
+     </ul>
+    </div>
+
+    <div class="section">
+     <h2>Practice Problems</h2>
+     
+     <div class="problem-item">
+      <div class="problem-number">1</div>
+      <div class="problem-content">
+       <p>Find the GCD of 84 and 36 using the Euclidean Algorithm.</p>
+       <button class="solution-button" onclick="toggleSolution('sol1')">Show Solution</button>
+       <div id="sol1" class="solution-content">
+        <div class="euclidean-steps">
+         <div class="euclidean-step">84 ÷ 36 = 2 with remainder 12</div>
+         <div class="euclidean-step">36 ÷ 12 = 3 with remainder 0</div>
+         <div class="euclidean-step gcd-highlight">GCD(84, 36) = 12</div>
+        </div>
+       </div>
+      </div>
+     </div>
+     
+     <div class="problem-item">
+      <div class="problem-number">2</div>
+      <div class="problem-content">
+       <p>Determine if 15 and 28 are coprime (GCD = 1).</p>
+       <button class="solution-button" onclick="toggleSolution('sol2')">Show Solution</button>
+       <div id="sol2" class="solution-content">
+        <div class="euclidean-steps">
+         <div class="euclidean-step">28 ÷ 15 = 1 with remainder 13</div>
+         <div class="euclidean-step">15 ÷ 13 = 1 with remainder 2</div>
+         <div class="euclidean-step">13 ÷ 2 = 6 with remainder 1</div>
+         <div class="euclidean-step">2 ÷ 1 = 2 with remainder 0</div>
+         <div class="euclidean-step gcd-highlight">GCD(15, 28) = 1</div>
+        </div>
+        <p>Yes, 15 and 28 are coprime.</p>
+       </div>
+      </div>
+     </div>
+     
+     <div class="problem-item">
+      <div class="problem-number">3</div>
+      <div class="problem-content">
+       <p>Find GCD(120, 75).</p>
+       <button class="solution-button" onclick="toggleSolution('sol3')">Show Solution</button>
+       <div id="sol3" class="solution-content">
+        <div class="euclidean-steps">
+         <div class="euclidean-step">120 ÷ 75 = 1 with remainder 45</div>
+         <div class="euclidean-step">75 ÷ 45 = 1 with remainder 30</div>
+         <div class="euclidean-step">45 ÷ 30 = 1 with remainder 15</div>
+         <div class="euclidean-step">30 ÷ 15 = 2 with remainder 0</div>
+         <div class="euclidean-step gcd-highlight">GCD(120, 75) = 15</div>
+        </div>
+       </div>
+      </div>
+     </div>
+     
+     <div class="problem-item">
+      <div class="problem-number">4</div>
+      <div class="problem-content">
+       <p>Use the Euclidean Algorithm to find GCD(252, 105).</p>
+       <button class="solution-button" onclick="toggleSolution('sol4')">Show Solution</button>
+       <div id="sol4" class="solution-content">
+        <div class="euclidean-steps">
+         <div class="euclidean-step">252 ÷ 105 = 2 with remainder 42</div>
+         <div class="euclidean-step">105 ÷ 42 = 2 with remainder 21</div>
+         <div class="euclidean-step">42 ÷ 21 = 2 with remainder 0</div>
+         <div class="euclidean-step gcd-highlight">GCD(252, 105) = 21</div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <h3>Key Takeaways</h3>
+     <ul>
+      <li>The Euclidean Algorithm is efficient and terminates in a finite number of steps</li>
+      <li>GCD(a, b) = GCD(b, r) where r is the remainder of a ÷ b</li>
+      <li>The algorithm works for any two positive integers</li>
+      <li>If the final remainder is 1, the numbers are coprime</li>
+      <li>The algorithm is the basis for many important mathematical and computational applications</li>
+     </ul>
+    </div>
+   </div>
+  </div>
+  <script>
+    function toggleSolution(id) {
+      const solution = document.getElementById(id);
+      const button = solution.previousElementSibling;
+      
+      if (solution.style.display === 'none' || solution.style.display === '') {
+        solution.style.display = 'block';
+        button.textContent = 'Hide Solution';
+      } else {
+        solution.style.display = 'none';
+        button.textContent = 'Show Solution';
+      }
+    }
+
+    function drawEuclideanVisualization() {
+      const canvas = document.getElementById('euclideanCanvas');
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+      
+      // Clear canvas
+      ctx.clearRect(0, 0, width, height);
+      
+      // Set up coordinate system
+      const margin = 60;
+      const plotWidth = width - 2 * margin;
+      const plotHeight = height - 2 * margin;
+      
+      // Draw background
+      ctx.fillStyle = '#f8f9fa';
+      ctx.fillRect(0, 0, width, height);
+      
+      // Title
+      ctx.fillStyle = '#333';
+      ctx.font = '16px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('Euclidean Algorithm: GCD(48, 18)', width/2, 30);
+      
+      // Draw the Euclidean algorithm steps as a flowchart
+      const steps = [
+        { a: 48, b: 18, quotient: 2, remainder: 12 },
+        { a: 18, b: 12, quotient: 1, remainder: 6 },
+        { a: 12, b: 6, quotient: 2, remainder: 0 },
+        { a: 6, b: 0, gcd: 6 }
+      ];
+      
+      const boxWidth = 120;
+      const boxHeight = 60;
+      const spacing = 40;
+      
+      // Draw steps
+      for (let i = 0; i < steps.length; i++) {
+        const x = margin + i * (boxWidth + spacing);
+        const y = height/2 - boxHeight/2;
+        
+        // Draw box
+        ctx.fillStyle = i === steps.length - 1 ? '#d4edda' : '#fff';
+        ctx.strokeStyle = i === steps.length - 1 ? '#28a745' : '#007acc';
+        ctx.lineWidth = 2;
+        ctx.fillRect(x, y, boxWidth, boxHeight);
+        ctx.strokeRect(x, y, boxWidth, boxHeight);
+        
+        // Draw content
+        ctx.fillStyle = '#333';
+        ctx.font = '12px Arial';
+        ctx.textAlign = 'center';
+        
+        if (i < steps.length - 1) {
+          ctx.fillText(`GCD(${steps[i].a}, ${steps[i].b})`, x + boxWidth/2, y + 20);
+          ctx.fillText(`${steps[i].a} = ${steps[i].b}×${steps[i].quotient} + ${steps[i].remainder}`, x + boxWidth/2, y + 35);
+          ctx.fillText(`Next: GCD(${steps[i].b}, ${steps[i].remainder})`, x + boxWidth/2, y + 50);
+        } else {
+          ctx.fillText('GCD(6, 0)', x + boxWidth/2, y + 25);
+          ctx.fillText('= 6', x + boxWidth/2, y + 40);
+        }
+        
+        // Draw arrow to next step
+        if (i < steps.length - 1) {
+          const arrowX = x + boxWidth + spacing/2;
+          const arrowY = y + boxHeight/2;
+          
+          ctx.strokeStyle = '#666';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(x + boxWidth, arrowY);
+          ctx.lineTo(arrowX - 10, arrowY);
+          ctx.stroke();
+          
+          // Arrow head
+          ctx.beginPath();
+          ctx.moveTo(arrowX - 10, arrowY);
+          ctx.lineTo(arrowX - 15, arrowY - 5);
+          ctx.lineTo(arrowX - 15, arrowY + 5);
+          ctx.closePath();
+          ctx.fillStyle = '#666';
+          ctx.fill();
+        }
+      }
+      
+      // Draw legend
+      ctx.fillStyle = '#333';
+      ctx.font = '12px Arial';
+      ctx.textAlign = 'left';
+      ctx.fillText('Algorithm Flow:', margin, height - 40);
+      ctx.fillText('1. Divide larger by smaller number', margin + 10, height - 25);
+      ctx.fillText('2. Replace with remainder until remainder = 0', margin + 10, height - 10);
+    }
+
+    function euclideanAlgorithm(a, b) {
+      const steps = [];
+      
+      while (b !== 0) {
+        const quotient = Math.floor(a / b);
+        const remainder = a % b;
+        steps.push({ a, b, quotient, remainder });
+        a = b;
+        b = remainder;
+      }
+      
+      return { gcd: a, steps };
+    }
+
+    function calculateGCD() {
+      const numAInput = document.getElementById('numA');
+      const numBInput = document.getElementById('numB');
+      const result = document.getElementById('demoResult');
+      const stepsDiv = document.getElementById('gcdSteps');
+      
+      const a = parseInt(numAInput.value);
+      const b = parseInt(numBInput.value);
+      
+      if (isNaN(a) || isNaN(b) || a <= 0 || b <= 0) {
+        result.textContent = 'Please enter positive integers';
+        result.style.color = '#f44336';
+        stepsDiv.innerHTML = '';
+        return;
+      }
+      
+      const { gcd, steps } = euclideanAlgorithm(a, b);
+      
+      // Display result
+      result.innerHTML = `<strong>GCD(${a}, ${b}) = ${gcd}</strong>`;
+      result.style.color = '#4caf50';
+      
+      // Display steps
+      let stepsHTML = '<div style="background: #e9ecef; padding: 15px; border-radius: 8px; margin-top: 10px;"><h4>Euclidean Algorithm Steps:</h4><div style="font-family: monospace; font-size: 14px; line-height: 1.5;">';
+      
+      steps.forEach((step, index) => {
+        stepsHTML += `<div style="margin: 5px 0; padding: 5px; background: white; border-radius: 4px; border-left: 3px solid #007acc;">`;
+        stepsHTML += `${step.a} ÷ ${step.b} = ${step.quotient} with remainder ${step.remainder}`;
+        if (step.remainder !== 0) {
+          stepsHTML += ` → GCD(${step.b}, ${step.remainder})`;
+        }
+        stepsHTML += '</div>';
+      });
+      
+      stepsHTML += `<div style="margin: 5px 0; padding: 5px; background: #d4edda; border-radius: 4px; border-left: 3px solid #28a745; font-weight: bold;">`;
+      stepsHTML += `GCD(${a}, ${b}) = ${gcd}`;
+      stepsHTML += '</div></div></div>';
+      
+      stepsDiv.innerHTML = stepsHTML;
+    }
+
+    // Initialize visualization when page loads
+    window.onload = function() {
+      drawEuclideanVisualization();
+      
+      // Set up interactive demo
+      const numAInput = document.getElementById('numA');
+      const numBInput = document.getElementById('numB');
+      
+      numAInput.addEventListener('input', calculateGCD);
+      numBInput.addEventListener('input', calculateGCD);
+      calculateGCD(); // Initial calculation
+    };
+  </script>
+ </body>
+</html>

@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<!-- tags: Mathematics -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Approximation Formula
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   .interactive-demo {
+     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+     border: 2px solid #4a90e2;
+     border-radius: 15px;
+     padding: 25px;
+     margin: 20px 0;
+     box-shadow: 0 8px 25px rgba(74, 144, 226, 0.2);
+   }
+   .demo-controls {
+     display: flex;
+     flex-wrap: wrap;
+     gap: 15px;
+     margin-bottom: 20px;
+     align-items: center;
+   }
+   .control-group {
+     display: flex;
+     flex-direction: column;
+     gap: 5px;
+   }
+   .control-group label {
+     font-weight: bold;
+     color: #2c3e50;
+     font-size: 14px;
+   }
+   .control-group input, .control-group select {
+     padding: 8px 12px;
+     border: 2px solid #bdc3c7;
+     border-radius: 8px;
+     font-size: 14px;
+     transition: border-color 0.3s;
+   }
+   .control-group input:focus, .control-group select:focus {
+     outline: none;
+     border-color: #4a90e2;
+     box-shadow: 0 0 5px rgba(74, 144, 226, 0.3);
+   }
+   .demo-button {
+     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+     color: white;
+     border: none;
+     padding: 12px 25px;
+     border-radius: 8px;
+     cursor: pointer;
+     font-weight: bold;
+     transition: transform 0.2s, box-shadow 0.2s;
+     align-self: flex-end;
+   }
+   .demo-button:hover {
+     transform: translateY(-2px);
+     box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+   }
+   .demo-result {
+     background: white;
+     border-radius: 10px;
+     padding: 20px;
+     margin-top: 20px;
+     border-left: 5px solid #4a90e2;
+     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+   }
+   .result-highlight {
+     background: #ecf0f1;
+     padding: 10px;
+     border-radius: 5px;
+     margin: 10px 0;
+     font-family: 'Courier New', monospace;
+   }
+   .practice-problem {
+     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+     color: white;
+     border: none;
+     padding: 15px 25px;
+     border-radius: 10px;
+     cursor: pointer;
+     font-weight: bold;
+     margin: 10px 0;
+     width: 100%;
+     transition: all 0.3s;
+   }
+   .practice-problem:hover {
+     background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+     transform: translateY(-2px);
+   }
+   .solution {
+     background: #f8f9fa;
+     border: 2px solid #28a745;
+     border-radius: 10px;
+     padding: 20px;
+     margin-top: 15px;
+     display: none;
+     border-left: 5px solid #28a745;
+   }
+   .solution.show {
+     display: block;
+   }
+   .toggle-btn {
+     background: #28a745;
+     color: white;
+     border: none;
+     padding: 8px 16px;
+     border-radius: 5px;
+     cursor: pointer;
+     font-size: 14px;
+     margin-top: 10px;
+     transition: background 0.3s;
+   }
+   .toggle-btn:hover {
+     background: #218838;
+   }
+   .key-takeaways {
+     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+     color: white;
+     padding: 25px;
+     border-radius: 15px;
+     margin: 30px 0;
+     box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+   }
+   .key-takeaways h3 {
+     margin-top: 0;
+     color: white;
+     text-align: center;
+     font-size: 1.4em;
+   }
+   .key-takeaways ul {
+     line-height: 2.2;
+     margin: 0;
+   }
+   .key-takeaways li {
+     margin: 10px 0;
+     padding-left: 20px;
+     position: relative;
+   }
+   .key-takeaways li:before {
+     content: "✓";
+     position: absolute;
+     left: 0;
+     color: #ffd700;
+     font-weight: bold;
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Differentiation">
+   Approximation Formula
+  </div>
+  <div class="container">
+   <div class="main-content">
+
+    <!-- Interactive Approximation Calculator -->
+    <div class="interactive-demo">
+     <h3 style="color: #2c3e50; margin-top: 0; text-align: center;">🧮 Interactive Linear Approximation Calculator</h3>
+     <p style="text-align: center; color: #34495e; margin-bottom: 20px;">Input a function, a point, and a small change to see the linear approximation in action!</p>
+
+     <div class="demo-controls">
+      <div class="control-group">
+       <label for="function-input">Function f(x):</label>
+       <select id="function-input">
+        <option value="sqrt">√x (square root)</option>
+        <option value="exp">e^x</option>
+        <option value="ln">ln(x)</option>
+        <option value="sin">sin(x)</option>
+        <option value="cos">cos(x)</option>
+        <option value="custom">Custom function...</option>
+       </select>
+      </div>
+
+      <div class="control-group" id="custom-function-group" style="display: none;">
+       <label for="custom-function">Custom f(x):</label>
+       <input type="text" id="custom-function" placeholder="e.g., x*x + 2*x + 1" value="x*x + 2*x + 1">
+      </div>
+
+      <div class="control-group">
+       <label for="point-input">Point a:</label>
+       <input type="number" id="point-input" step="0.1" value="4">
+      </div>
+
+      <div class="control-group">
+       <label for="change-input">Change h:</label>
+       <input type="number" id="change-input" step="0.01" value="0.1">
+      </div>
+
+      <button class="demo-button" onclick="calculateApproximation()">Calculate Approximation</button>
+     </div>
+
+     <div id="demo-result" class="demo-result" style="display: none;">
+      <h4 style="color: #2c3e50; margin-top: 0;">Calculation Results:</h4>
+      <div id="calculation-steps"></div>
+      <div id="approximation-canvas" style="text-align: center; margin-top: 20px;">
+       <canvas id="interactiveCanvas" width="600" height="400"></canvas>
+      </div>
+     </div>
+    </div>
+
+    <p>One of the most practical applications of derivatives is approximating function values near known points. The tangent line at a point provides a linear approximation to the function, which is extremely useful for estimating values and analyzing errors.</p>
+
+    <div style="margin: 30px 0;">
+     <strong>1. Linear Approximation Formula</strong>
+     <div class="graybox">
+      <strong>Theorem (Linear Approximation):</strong>
+      <p>For a differentiable function $f$ at point $a$, when $h$ is small:</p>
+      <div style="text-align: center; margin: 15px 0; font-size: 1.1em;">
+       $$f(a+h) \approx f(a) + f'(a)h$$
+      </div>
+      <p>This is also called the <strong>tangent line approximation</strong> or <strong>linear approximation</strong>.</p>
+     </div>
+     <div class="graybox" style="margin-top: 15px;">
+      <strong>Alternative Form (centered at 0):</strong>
+      <p>When approximating near $x = 0$:</p>
+      <div style="text-align: center; margin: 15px 0; font-size: 1.1em;">
+       $$f(x) \approx f(0) + f'(0)x$$
+      </div>
+      <p>This form is particularly useful for standard functions like $e^x$, $\ln(1+x)$, $\sin x$, etc.</p>
+     </div>
+    </div>
+
+    <div style="margin: 30px 0;">
+     <strong>2. Geometric Interpretation</strong>
+     <div class="graybox">
+      <strong>The Tangent Line as Approximation:</strong>
+      <p>The linear approximation $L(x) = f(a) + f'(a)(x-a)$ is simply the equation of the tangent line at point $(a, f(a))$.</p>
+      <ul style="line-height: 1.8;">
+       <li>Near point $a$, the function curve and its tangent line are very close</li>
+       <li>As we move away from $a$, the approximation becomes less accurate</li>
+       <li>The derivative $f'(a)$ is the slope that determines how the approximation changes</li>
+      </ul>
+     </div>
+     <div style="text-align: center; margin: 15px 0;">
+      <canvas id="linearApproxCanvas" width="700" height="500"></canvas>
+     </div>
+     <p style="text-align: center; font-style: italic;">Function curve (blue) and tangent line approximation (orange)</p>
+    </div>
+
+    <div style="margin: 30px 0;">
+     <strong>3. Derivation from Definition of Derivative</strong>
+     <div class="graybox">
+      <strong>Proof:</strong>
+      <p>Recall the definition of the derivative:</p>
+      <div style="text-align: center; margin: 10px 0;">
+       $$f'(a) = \lim_{h \to 0} \frac{f(a+h) - f(a)}{h}$$
+      </div>
+      <p>When $h$ is small (but not zero), we have approximately:</p>
+      <div style="text-align: center; margin: 10px 0;">
+       $$f'(a) \approx \frac{f(a+h) - f(a)}{h}$$
+      </div>
+      <p>Multiplying both sides by $h$:</p>
+      <div style="text-align: center; margin: 10px 0;">
+       $$f'(a) \cdot h \approx f(a+h) - f(a)$$
+      </div>
+      <p>Therefore:</p>
+      <div style="text-align: center; margin: 10px 0;">
+       $$f(a+h) \approx f(a) + f'(a)h$$
+      </div>
+     </div>
+    </div>
+
+    <div style="margin: 30px 0;">
+     <strong>4. Standard Approximation Formulas (near $x = 0$)</strong>
+     <div class="graybox">
+      <strong>Common approximations when $|x|$ is small:</strong>
+      <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+       <tr style="background-color: #f5f5f5;">
+        <th style="border: 1px solid #ddd; padding: 10px;">Function $f(x)$</th>
+        <th style="border: 1px solid #ddd; padding: 10px;">Approximation near $x=0$</th>
+       </tr>
+       <tr>
+        <td style="border: 1px solid #ddd; padding: 10px;">$e^x$</td>
+        <td style="border: 1px solid #ddd; padding: 10px;">$e^x \approx 1 + x$</td>
+       </tr>
+       <tr>
+        <td style="border: 1px solid #ddd; padding: 10px;">$\ln(1+x)$</td>
+        <td style="border: 1px solid #ddd; padding: 10px;">$\ln(1+x) \approx x$</td>
+       </tr>
+       <tr>
+        <td style="border: 1px solid #ddd; padding: 10px;">$\sin x$</td>
+        <td style="border: 1px solid #ddd; padding: 10px;">$\sin x \approx x$</td>
+       </tr>
+       <tr>
+        <td style="border: 1px solid #ddd; padding: 10px;">$\cos x$</td>
+        <td style="border: 1px solid #ddd; padding: 10px;">$\cos x \approx 1$</td>
+       </tr>
+       <tr>
+        <td style="border: 1px solid #ddd; padding: 10px;">$(1+x)^n$</td>
+        <td style="border: 1px solid #ddd; padding: 10px;">$(1+x)^n \approx 1 + nx$</td>
+       </tr>
+       <tr>
+        <td style="border: 1px solid #ddd; padding: 10px;">$\sqrt{1+x}$</td>
+        <td style="border: 1px solid #ddd; padding: 10px;">$\sqrt{1+x} \approx 1 + \frac{x}{2}$</td>
+       </tr>
+       <tr>
+        <td style="border: 1px solid #ddd; padding: 10px;">$\frac{1}{1+x}$</td>
+        <td style="border: 1px solid #ddd; padding: 10px;">$\frac{1}{1+x} \approx 1 - x$</td>
+       </tr>
+       <tr>
+        <td style="border: 1px solid #ddd; padding: 10px;">$\tan x$</td>
+        <td style="border: 1px solid #ddd; padding: 10px;">$\tan x \approx x$</td>
+       </tr>
+      </table>
+      <p style="margin-top: 10px;"><strong>Note:</strong> These are derived using $f(x) \approx f(0) + f'(0)x$</p>
+     </div>
+    </div>
+
+    <div style="margin: 30px 0;">
+     <strong>5. Examples</strong>
+     <div class="graybox">
+      <strong>Example 1:</strong> Use linear approximation to estimate $\sqrt{9.1}$.
+      <div style="margin: 10px 0;">
+       <strong>Solution:</strong>
+       <br/><br/>
+       <strong>Step 1:</strong> Choose a nearby point where we know the exact value.
+       <br/>
+       Let $f(x) = \sqrt{x}$, and use $a = 9$ (since $\sqrt{9} = 3$ is known).
+       <br/>
+       We want $f(9.1) = f(9 + 0.1)$, so $h = 0.1$.
+       <br/><br/>
+       <strong>Step 2:</strong> Find the derivative:
+       $$f'(x) = \frac{1}{2\sqrt{x}}$$
+       $$f'(9) = \frac{1}{2\sqrt{9}} = \frac{1}{6}$$
+       <br/><br/>
+       <strong>Step 3:</strong> Apply the approximation formula:
+       $$f(9 + 0.1) \approx f(9) + f'(9) \cdot 0.1$$
+       $$\sqrt{9.1} \approx 3 + \frac{1}{6}(0.1) = 3 + \frac{0.1}{6} = 3 + 0.01667 \approx 3.0167$$
+       <br/><br/>
+       <strong>Verification:</strong> Using a calculator, $\sqrt{9.1} \approx 3.01662...$
+       <br/>
+       Our approximation is accurate to 4 decimal places!
+      </div>
+     </div>
+     <div class="graybox" style="margin-top: 15px;">
+      <strong>Example 2:</strong> Approximate $e^{0.1}$ using the formula for $e^x$ near $x = 0$.
+      <div style="margin: 10px 0;">
+       <strong>Solution:</strong>
+       <br/><br/>
+       Using the standard approximation $e^x \approx 1 + x$ when $x$ is small:
+       $$e^{0.1} \approx 1 + 0.1 = 1.1$$
+       <br/><br/>
+       <strong>Verification:</strong> $e^{0.1} \approx 1.10517...$
+       <br/>
+       Error: $|1.10517 - 1.1| = 0.00517$ (about 0.47% error)
+       <br/><br/>
+       <strong>Note:</strong> The approximation is quite good for small values like 0.1.
+      </div>
+     </div>
+     <div class="graybox" style="margin-top: 15px;">
+      <strong>Example 3:</strong> Approximate $\sin(0.2)$ using linear approximation.
+      <div style="margin: 10px 0;">
+       <strong>Solution:</strong>
+       <br/><br/>
+       Using $\sin x \approx x$ near $x = 0$:
+       $$\sin(0.2) \approx 0.2$$
+       <br/><br/>
+       <strong>Verification:</strong> $\sin(0.2) \approx 0.19867...$
+       <br/>
+       Error: $|0.19867 - 0.2| = 0.00133$ (about 0.67% error)
+       <br/><br/>
+       <strong>Important:</strong> $x$ must be in radians for this approximation!
+      </div>
+     </div>
+     <div class="graybox" style="margin-top: 15px;">
+      <strong>Example 4:</strong> Estimate $(1.02)^5$ using the binomial approximation.
+      <div style="margin: 10px 0;">
+       <strong>Solution:</strong>
+       <br/><br/>
+       Write as $(1 + 0.02)^5$ and use $(1+x)^n \approx 1 + nx$:
+       $$(1.02)^5 = (1 + 0.02)^5 \approx 1 + 5(0.02) = 1 + 0.1 = 1.1$$
+       <br/><br/>
+       <strong>Verification:</strong> $(1.02)^5 = 1.10408...$
+       <br/>
+       Error: $|1.10408 - 1.1| = 0.00408$ (about 0.37% error)
+      </div>
+     </div>
+     <div class="graybox" style="margin-top: 15px;">
+      <strong>Example 5:</strong> A spherical balloon has radius 10 cm. If the radius increases by 0.2 cm, approximately how much does the volume increase?
+      <div style="margin: 10px 0;">
+       <strong>Solution:</strong>
+       <br/><br/>
+       Volume of sphere: $V(r) = \frac{4}{3}\pi r^3$
+       <br/><br/>
+       We want $\Delta V = V(10.2) - V(10)$.
+       <br/><br/>
+       Using approximation: $\Delta V \approx V'(10) \cdot \Delta r$
+       <br/><br/>
+       <strong>Step 1:</strong> Find derivative:
+       $$V'(r) = 4\pi r^2$$
+       $$V'(10) = 4\pi (10)^2 = 400\pi$$
+       <br/><br/>
+       <strong>Step 2:</strong> Apply approximation:
+       $$\Delta V \approx 400\pi \cdot 0.2 = 80\pi \approx 251.3 \text{ cm}^3$$
+       <br/><br/>
+       <strong>Interpretation:</strong> The volume increases by approximately 251 cubic centimeters.
+      </div>
+     </div>
+     <div class="graybox" style="margin-top: 15px;">
+      <strong>Example 6:</strong> Use linear approximation to estimate $\ln(1.05)$.
+      <div style="margin: 10px 0;">
+       <strong>Solution:</strong>
+       <br/><br/>
+       <strong>Method 1:</strong> Using $\ln(1+x) \approx x$ with $x = 0.05$:
+       $$\ln(1.05) \approx 0.05$$
+       <br/><br/>
+       <strong>Method 2:</strong> From first principles with $f(x) = \ln x$ at $a = 1$:
+       $$f'(x) = \frac{1}{x}, \quad f'(1) = 1$$
+       $$f(1) = \ln 1 = 0$$
+       $$\ln(1.05) = f(1 + 0.05) \approx f(1) + f'(1)(0.05) = 0 + 1(0.05) = 0.05$$
+       <br/><br/>
+       <strong>Verification:</strong> $\ln(1.05) \approx 0.04879...$
+       <br/>
+       Error: $|0.04879 - 0.05| = 0.00121$ (about 2.5% error)
+      </div>
+     </div>
+    </div>
+
+    <div style="margin: 30px 0;">
+     <strong>6. Differentials and Error Estimation</strong>
+     <div class="graybox">
+      <strong>Differential Notation:</strong>
+      <p>The approximation can be written using differentials:</p>
+      <div style="text-align: center; margin: 10px 0;">
+       $$dy = f'(x)dx$$
+      </div>
+      <p>Where:</p>
+      <ul style="line-height: 1.8;">
+       <li>$dx$ is the change in $x$ (same as $h$ or $\Delta x$)</li>
+       <li>$dy$ is the approximate change in $y$ (approximate $\Delta y$)</li>
+       <li>$\Delta y = f(x + dx) - f(x)$ is the actual change</li>
+      </ul>
+      <br/>
+      <strong>Relationship:</strong>
+      <div style="text-align: center; margin: 10px 0;">
+       $$\Delta y \approx dy = f'(x)dx$$
+      </div>
+     </div>
+    </div>
+
+    <div style="margin: 30px 0;">
+     <strong>7. Error Analysis</strong>
+     <div class="graybox">
+      <strong>Absolute Error:</strong>
+      <div style="text-align: center; margin: 10px 0;">
+       $$\text{Absolute Error} = |\text{True Value} - \text{Approximation}|$$
+      </div>
+     </div>
+     <div class="graybox" style="margin-top: 15px;">
+      <strong>Relative Error:</strong>
+      <div style="text-align: center; margin: 10px 0;">
+       $$\text{Relative Error} = \frac{|\text{True Value} - \text{Approximation}|}{|\text{True Value}|}$$
+      </div>
+      <p>Often expressed as a percentage.</p>
+     </div>
+     <div class="graybox" style="margin-top: 15px;">
+      <strong>Error Bound (from Taylor's Theorem):</strong>
+      <p>The error in linear approximation is:</p>
+      <div style="text-align: center; margin: 10px 0;">
+       $$|f(a+h) - (f(a) + f'(a)h)| \leq \frac{M}{2}h^2$$
+      </div>
+      <p>Where $M$ is the maximum value of $|f''(x)|$ between $a$ and $a+h$.</p>
+      <p><strong>Key insight:</strong> Error is proportional to $h^2$, so halving $h$ reduces error by a factor of 4.</p>
+     </div>
+    </div>
+
+    <div style="margin: 30px 0;">
+     <strong>8. Comparison of Function and Approximation</strong>
+     <p>Visualizing multiple standard approximations:</p>
+     <div style="text-align: center; margin: 15px 0;">
+      <canvas id="approximationsCanvas" width="700" height="500"></canvas>
+     </div>
+     <p style="text-align: center; font-style: italic;">Several functions (solid) with their linear approximations (dashed) near $x = 0$</p>
+    </div>
+
+    <div style="margin: 30px 0;">
+     <strong>9. When to Use Linear Approximation</strong>
+     <div class="graybox">
+      <strong>Best uses:</strong>
+      <ul style="line-height: 1.8;">
+       <li>Quick mental calculations without a calculator</li>
+       <li>Estimating small changes in physical quantities</li>
+       <li>Error propagation in measurements</li>
+       <li>When exact answers are difficult or impossible to compute</li>
+       <li>Understanding sensitivity of functions to input changes</li>
+      </ul>
+     </div>
+     <div class="graybox" style="margin-top: 15px;">
+      <strong>Limitations:</strong>
+      <ul style="line-height: 1.8;">
+       <li>Only accurate for small changes (small $h$)</li>
+       <li>Accuracy depends on the curvature of the function</li>
+       <li>Linear approximation fails for functions with discontinuities or sharp corners</li>
+       <li>For better accuracy with larger changes, use higher-order Taylor polynomials</li>
+      </ul>
+     </div>
+    </div>
+
+    <div style="margin: 30px 0;">
+     <strong>10. Linearization</strong>
+     <div class="graybox">
+      <strong>Definition:</strong>
+      <p>The <strong>linearization</strong> of $f$ at $a$ is the linear function:</p>
+      <div style="text-align: center; margin: 15px 0; font-size: 1.1em;">
+       $$L(x) = f(a) + f'(a)(x - a)$$
+      </div>
+      <p>This is the tangent line to $f$ at $(a, f(a))$, and $L(x)$ is the best linear approximation to $f(x)$ near $x = a$.</p>
+     </div>
+     <div class="graybox" style="margin-top: 15px;">
+      <strong>Example:</strong> Find the linearization of $f(x) = \sqrt{x}$ at $a = 4$.
+      <div style="margin: 10px 0;">
+       <strong>Solution:</strong>
+       <br/><br/>
+       $f(4) = \sqrt{4} = 2$
+       <br/>
+       $f'(x) = \frac{1}{2\sqrt{x}}$, so $f'(4) = \frac{1}{4}$
+       <br/><br/>
+       Linearization:
+       $$L(x) = 2 + \frac{1}{4}(x - 4) = 2 + \frac{x}{4} - 1 = 1 + \frac{x}{4}$$
+       <br/><br/>
+       Use it to estimate: $\sqrt{4.2} \approx L(4.2) = 1 + \frac{4.2}{4} = 1 + 1.05 = 2.05$
+       <br/>
+       (True value: $\sqrt{4.2} \approx 2.0494...$)
+      </div>
+     </div>
+    </div>
+
+    <div style="margin: 30px 0;">
+     <strong>11. Applications in Science and Engineering</strong>
+     <div class="graybox">
+      <strong>Physics - Small Angle Approximations:</strong>
+      <p>For small angles in radians: $\sin\theta \approx \theta$, $\cos\theta \approx 1$, $\tan\theta \approx \theta$</p>
+      <p>Used in analyzing pendulum motion, wave physics, and optics.</p>
+     </div>
+     <div class="graybox" style="margin-top: 15px;">
+      <strong>Engineering - Sensitivity Analysis:</strong>
+      <p>If $y = f(x)$ and $x$ changes by $\Delta x$, then:</p>
+      <div style="text-align: center; margin: 10px 0;">
+       $$\Delta y \approx f'(x) \Delta x$$
+      </div>
+      <p>Used to determine how sensitive output is to input changes.</p>
+     </div>
+     <div class="graybox" style="margin-top: 15px;">
+      <strong>Economics - Marginal Analysis:</strong>
+      <p>If $C(x)$ is cost to produce $x$ units, the marginal cost $C'(x)$ approximates the cost of producing one more unit:</p>
+      <div style="text-align: center; margin: 10px 0;">
+       $$C(x+1) - C(x) \approx C'(x)$$
+      </div>
+     </div>
+     <div class="graybox" style="margin-top: 15px;">
+      <strong>Measurement Error Propagation:</strong>
+      <p>If measuring $x$ with error $\pm \delta x$, the error in $f(x)$ is approximately:</p>
+      <div style="text-align: center; margin: 10px 0;">
+       $$\delta f \approx |f'(x)| \cdot \delta x$$
+      </div>
+     </div>
+    </div>
+
+    <div style="margin: 30px 0;">
+     <strong>12. Practice Problems</strong>
+     <div class="graybox">
+      <strong>Problem 1:</strong> Use linear approximation to estimate $\sqrt[3]{27.1}$.
+      <br/><br/>
+      <strong>Hint:</strong> Use $f(x) = \sqrt[3]{x}$ at $a = 27$.
+      <br/><br/>
+      <button class="practice-problem" onclick="toggleSolution('sol1')">Show Solution</button>
+      <div id="sol1" class="solution">
+       <strong>Solution:</strong>
+       <br/><br/>
+       Let $f(x) = \sqrt[3]{x}$, and use $a = 27$ (since $\sqrt[3]{27} = 3$).
+       <br/>
+       We want $f(27.1) = f(27 + 0.1)$, so $h = 0.1$.
+       <br/><br/>
+       <strong>Step 1:</strong> Find the derivative:
+       $$f'(x) = \frac{1}{3\sqrt[3]{x^2}} = \frac{1}{3x^{2/3}}$$
+       $$f'(27) = \frac{1}{3(27)^{2/3}} = \frac{1}{3 \cdot 9} = \frac{1}{27}$$
+       <br/><br/>
+       <strong>Step 2:</strong> Apply the approximation:
+       $$f(27 + 0.1) \approx f(27) + f'(27) \cdot 0.1$$
+       $$\sqrt[3]{27.1} \approx 3 + \frac{1}{27}(0.1) = 3 + \frac{0.1}{27} \approx 3 + 0.0037 = 3.0037$$
+       <br/><br/>
+       <strong>Verification:</strong> $\sqrt[3]{27.1} \approx 3.0037...$ ✓
+      </div>
+     </div>
+     <div class="graybox" style="margin-top: 15px;">
+      <strong>Problem 2:</strong> Approximate $\cos(0.1)$ using linear approximation.
+      <br/><br/>
+      <strong>Hint:</strong> Use $f(x) = \cos x$ at $a = 0$.
+      <br/><br/>
+      <button class="practice-problem" onclick="toggleSolution('sol2')">Show Solution</button>
+      <div id="sol2" class="solution">
+       <strong>Solution:</strong>
+       <br/><br/>
+       Using the standard approximation $\cos x \approx 1$ near $x = 0$:
+       $$\cos(0.1) \approx 1$$
+       <br/><br/>
+       <strong>Verification:</strong> $\cos(0.1) \approx 0.9950...$
+       <br/>
+       Error: $|0.9950 - 1| = 0.005$ (about 0.5% error)
+       <br/><br/>
+       <strong>More precise calculation:</strong>
+       <br/>
+       $f(x) = \cos x$, $f(0) = 1$, $f'(x) = -\sin x$, $f'(0) = 0$
+       <br/>
+       $\cos(0.1) \approx 1 + 0 \cdot 0.1 = 1$ ✓
+      </div>
+     </div>
+     <div class="graybox" style="margin-top: 15px;">
+      <strong>Problem 3:</strong> A cube has edge length 5 cm. If each edge increases by 0.1 cm, approximately how much does the volume increase?
+      <br/><br/>
+      <strong>Hint:</strong> $V = x^3$, use $dV = V'(x)dx = 3x^2 dx$
+      <br/><br/>
+      <button class="practice-problem" onclick="toggleSolution('sol3')">Show Solution</button>
+      <div id="sol3" class="solution">
+       <strong>Solution:</strong>
+       <br/><br/>
+       Volume of cube: $V(x) = x^3$
+       <br/>
+       We want $\Delta V = V(5.1) - V(5)$.
+       <br/><br/>
+       Using approximation: $\Delta V \approx V'(5) \cdot \Delta x$
+       <br/><br/>
+       <strong>Step 1:</strong> Find derivative:
+       $$V'(x) = 3x^2$$
+       $$V'(5) = 3(5)^2 = 3 \cdot 25 = 75$$
+       <br/><br/>
+       <strong>Step 2:</strong> Apply approximation:
+       $$\Delta V \approx 75 \cdot 0.1 = 7.5 \text{ cm}^3$$
+       <br/><br/>
+       <strong>Interpretation:</strong> The volume increases by approximately 7.5 cubic centimeters.
+       <br/><br/>
+       <strong>Verification:</strong> Exact increase: $(5.1)^3 - 5^3 = 132.651 - 125 = 7.651$ cm³
+       <br/>
+       Approximation error: $7.651 - 7.5 = 0.151$ cm³ (about 2% error)
+      </div>
+     </div>
+     <div class="graybox" style="margin-top: 15px;">
+      <strong>Problem 4:</strong> Use linear approximation to estimate $\tan(0.1)$.
+      <br/><br/>
+      <strong>Hint:</strong> Use the standard approximation near $x = 0$.
+      <br/><br/>
+      <button class="practice-problem" onclick="toggleSolution('sol4')">Show Solution</button>
+      <div id="sol4" class="solution">
+       <strong>Solution:</strong>
+       <br/><br/>
+       Using the standard approximation $\tan x \approx x$ near $x = 0$:
+       $$\tan(0.1) \approx 0.1$$
+       <br/><br/>
+       <strong>Verification:</strong> $\tan(0.1) \approx 0.1003...$
+       <br/>
+       Error: $|0.1003 - 0.1| = 0.0003$ (about 0.3% error)
+       <br/><br/>
+       <strong>More precise calculation:</strong>
+       <br/>
+       $f(x) = \tan x$, $f(0) = 0$, $f'(x) = \sec^2 x$, $f'(0) = 1$
+       <br/>
+       $\tan(0.1) \approx 0 + 1 \cdot 0.1 = 0.1$ ✓
+      </div>
+     </div>
+     <div class="graybox" style="margin-top: 15px;">
+      <strong>Problem 5:</strong> Approximate $\frac{1}{\sqrt{1.02}}$ using linear approximation.
+      <br/><br/>
+      <strong>Hint:</strong> Write as $f(1.02)$ where $f(x) = \frac{1}{\sqrt{x}}$.
+      <br/><br/>
+      <button class="practice-problem" onclick="toggleSolution('sol5')">Show Solution</button>
+      <div id="sol5" class="solution">
+       <strong>Solution:</strong>
+       <br/><br/>
+       Let $f(x) = \frac{1}{\sqrt{x}} = x^{-1/2}$, and use $a = 1$.
+       <br/>
+       We want $f(1.02) = f(1 + 0.02)$, so $h = 0.02$.
+       <br/><br/>
+       <strong>Step 1:</strong> Find values at $a = 1$:
+       $$f(1) = \frac{1}{\sqrt{1}} = 1$$
+       $$f'(x) = -\frac{1}{2}x^{-3/2} = -\frac{1}{2\sqrt{x^3}}$$
+       $$f'(1) = -\frac{1}{2}$$
+       <br/><br/>
+       <strong>Step 2:</strong> Apply approximation:
+       $$f(1 + 0.02) \approx f(1) + f'(1) \cdot 0.02$$
+       $$\frac{1}{\sqrt{1.02}} \approx 1 + \left(-\frac{1}{2}\right)(0.02) = 1 - 0.01 = 0.99$$
+       <br/><br/>
+       <strong>Verification:</strong> $\frac{1}{\sqrt{1.02}} \approx 0.9901...$
+       <br/>
+       Error: $|0.9901 - 0.99| = 0.0001$ (about 0.01% error) ✓
+      </div>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <h3>🎯 Key Takeaways</h3>
+     <ul>
+      <li>Linear approximation: $f(a+h) \approx f(a) + f'(a)h$ for small $h$</li>
+      <li>Geometric interpretation: using the tangent line to approximate the function</li>
+      <li>Standard formulas near $x=0$: $e^x \approx 1+x$, $\ln(1+x) \approx x$, $\sin x \approx x$, etc.</li>
+      <li>Error is proportional to $h^2$ (from second derivative)</li>
+      <li>Linearization $L(x) = f(a) + f'(a)(x-a)$ is the best linear approximation at $a$</li>
+      <li>Used extensively for quick estimates, error analysis, and sensitivity studies</li>
+      <li>Differential notation: $dy = f'(x)dx$ represents the approximate change</li>
+      <li>Accuracy improves as $|h|$ decreases</li>
+      <li>Interactive calculator helps visualize approximations in real-time</li>
+      <li>Practice problems with toggle-able solutions reinforce understanding</li>
+     </ul>
+    </div>
+
+    <script>
+     // Interactive Approximation Calculator Functions
+     function evaluateFunction(funcType, x, customFunc = '') {
+       switch(funcType) {
+         case 'sqrt': return Math.sqrt(x);
+         case 'exp': return Math.exp(x);
+         case 'ln': return Math.log(x);
+         case 'sin': return Math.sin(x);
+         case 'cos': return Math.cos(x);
+         case 'custom':
+           try {
+             // Simple evaluation of custom functions
+             // Replace ^ with ** for exponentiation
+             let expr = customFunc.replace(/\^/g, '**');
+             // Replace common functions
+             expr = expr.replace(/sqrt\(/g, 'Math.sqrt(');
+             expr = expr.replace(/sin\(/g, 'Math.sin(');
+             expr = expr.replace(/cos\(/g, 'Math.cos(');
+             expr = expr.replace(/tan\(/g, 'Math.tan(');
+             expr = expr.replace(/exp\(/g, 'Math.exp(');
+             expr = expr.replace(/ln\(/g, 'Math.log(');
+             expr = expr.replace(/log\(/g, 'Math.log(');
+             return eval(expr.replace(/x/g, `(${x})`));
+           } catch(e) {
+             return NaN;
+           }
+         default: return NaN;
+       }
+     }
+
+     function evaluateDerivative(funcType, x, customFunc = '') {
+       const h = 1e-8;
+       return (evaluateFunction(funcType, x + h, customFunc) - evaluateFunction(funcType, x, customFunc)) / h;
+     }
+
+     function calculateApproximation() {
+       const funcSelect = document.getElementById('function-input');
+       const funcType = funcSelect.value;
+       const customFunc = document.getElementById('custom-function').value;
+       const a = parseFloat(document.getElementById('point-input').value);
+       const h = parseFloat(document.getElementById('change-input').value);
+
+       if (isNaN(a) || isNaN(h)) {
+         alert('Please enter valid numbers for point and change.');
+         return;
+       }
+
+       const f_a = evaluateFunction(funcType, a, customFunc);
+       const f_prime_a = evaluateDerivative(funcType, a, customFunc);
+       const approximation = f_a + f_prime_a * h;
+       const actual = evaluateFunction(funcType, a + h, customFunc);
+       const error = Math.abs(actual - approximation);
+
+       let funcName = '';
+       switch(funcType) {
+         case 'sqrt': funcName = '√x'; break;
+         case 'exp': funcName = 'e^x'; break;
+         case 'ln': funcName = 'ln(x)'; break;
+         case 'sin': funcName = 'sin(x)'; break;
+         case 'cos': funcName = 'cos(x)'; break;
+         case 'custom': funcName = customFunc; break;
+       }
+
+       const resultDiv = document.getElementById('demo-result');
+       const stepsDiv = document.getElementById('calculation-steps');
+
+       stepsDiv.innerHTML = `
+         <div class="result-highlight">
+           <strong>Function:</strong> f(x) = ${funcName}<br>
+           <strong>Point:</strong> a = ${a}<br>
+           <strong>Change:</strong> h = ${h}
+         </div>
+         <br>
+         <strong>Step 1:</strong> Calculate f(a) and f'(a)<br>
+         f(${a}) = ${f_a.toFixed(6)}<br>
+         f'(${a}) ≈ ${f_prime_a.toFixed(6)}<br>
+         <br>
+         <strong>Step 2:</strong> Apply linear approximation<br>
+         f(a+h) ≈ f(a) + f'(a)×h<br>
+         f(${a} + ${h}) ≈ ${f_a.toFixed(6)} + ${f_prime_a.toFixed(6)} × ${h}<br>
+         f(${a + h}) ≈ ${approximation.toFixed(6)}<br>
+         <br>
+         <strong>Verification:</strong><br>
+         Actual value: f(${a + h}) = ${actual.toFixed(6)}<br>
+         Absolute error: |${actual.toFixed(6)} - ${approximation.toFixed(6)}| = ${error.toFixed(6)}<br>
+         Relative error: ${(error / Math.abs(actual) * 100).toFixed(3)}%
+       `;
+
+       resultDiv.style.display = 'block';
+
+       // Draw the approximation visualization
+       drawApproximationVisualization(funcType, a, h, customFunc);
+     }
+
+     function drawApproximationVisualization(funcType, a, h, customFunc) {
+       const canvas = document.getElementById('interactiveCanvas');
+       const ctx = canvas.getContext('2d');
+       const w = canvas.width;
+       const h_canvas = canvas.height;
+       const padding = 50;
+       const graphW = w - 2 * padding;
+       const graphH = h_canvas - 2 * padding;
+
+       // Determine range based on function and point
+       let xMin, xMax, yMin, yMax;
+       if (funcType === 'ln') {
+         xMin = Math.max(0.1, a - 2);
+         xMax = a + 2;
+       } else {
+         xMin = a - 2;
+         xMax = a + 2;
+       }
+
+       // Sample some points to determine y range
+       let yValues = [];
+       for (let x = xMin; x <= xMax; x += 0.1) {
+         const y = evaluateFunction(funcType, x, customFunc);
+         if (!isNaN(y) && isFinite(y)) yValues.push(y);
+       }
+
+       if (yValues.length === 0) {
+         yMin = -5; yMax = 5;
+       } else {
+         yMin = Math.min(...yValues) - 1;
+         yMax = Math.max(...yValues) + 1;
+       }
+
+       function toCanvasX(x) { return padding + ((x - xMin) / (xMax - xMin)) * graphW; }
+       function toCanvasY(y) { return h_canvas - padding - ((y - yMin) / (yMax - yMin)) * graphH; }
+
+       // Clear canvas
+       ctx.clearRect(0, 0, w, h_canvas);
+
+       // Title
+       ctx.font = 'bold 16px Arial';
+       ctx.fillStyle = '#2c3e50';
+       ctx.fillText(`Linear Approximation of f(x) at x = ${a}`, padding, 25);
+
+       // Axes
+       ctx.strokeStyle = '#333';
+       ctx.lineWidth = 1.5;
+       ctx.beginPath();
+       ctx.moveTo(toCanvasX(0), padding);
+       ctx.lineTo(toCanvasX(0), h_canvas - padding);
+       ctx.moveTo(padding, toCanvasY(0));
+       ctx.lineTo(w - padding, toCanvasY(0));
+       ctx.stroke();
+
+       // Grid
+       ctx.strokeStyle = '#e0e0e0';
+       ctx.lineWidth = 0.5;
+       for (let x = Math.ceil(xMin); x <= Math.floor(xMax); x++) {
+         ctx.beginPath();
+         ctx.moveTo(toCanvasX(x), padding);
+         ctx.lineTo(toCanvasX(x), h_canvas - padding);
+         ctx.stroke();
+       }
+       for (let y = Math.ceil(yMin); y <= Math.floor(yMax); y++) {
+         ctx.beginPath();
+         ctx.moveTo(padding, toCanvasY(y));
+         ctx.lineTo(w - padding, toCanvasY(y));
+         ctx.stroke();
+       }
+
+       // Draw function curve
+       ctx.strokeStyle = '#2196F3';
+       ctx.lineWidth = 2.5;
+       ctx.beginPath();
+       let firstPoint = true;
+       for (let x = xMin; x <= xMax; x += 0.05) {
+         const y = evaluateFunction(funcType, x, customFunc);
+         if (!isNaN(y) && isFinite(y)) {
+           if (firstPoint) {
+             ctx.moveTo(toCanvasX(x), toCanvasY(y));
+             firstPoint = false;
+           } else {
+             ctx.lineTo(toCanvasX(x), toCanvasY(y));
+           }
+         }
+       }
+       ctx.stroke();
+
+       // Draw tangent line
+       const f_a = evaluateFunction(funcType, a, customFunc);
+       const f_prime_a = evaluateDerivative(funcType, a, customFunc);
+       const x1 = a - 1;
+       const x2 = a + 1;
+       const y1 = f_a + f_prime_a * (x1 - a);
+       const y2 = f_a + f_prime_a * (x2 - a);
+
+       ctx.strokeStyle = '#FF9800';
+       ctx.lineWidth = 2;
+       ctx.setLineDash([8, 4]);
+       ctx.beginPath();
+       ctx.moveTo(toCanvasX(x1), toCanvasY(y1));
+       ctx.lineTo(toCanvasX(x2), toCanvasY(y2));
+       ctx.stroke();
+       ctx.setLineDash([]);
+
+       // Mark point of tangency
+       ctx.fillStyle = '#e74c3c';
+       ctx.beginPath();
+       ctx.arc(toCanvasX(a), toCanvasY(f_a), 6, 0, 2 * Math.PI);
+       ctx.fill();
+
+       // Mark approximation point
+       const x_approx = a + h;
+       const y_actual = evaluateFunction(funcType, x_approx, customFunc);
+       const y_approx = f_a + f_prime_a * h;
+
+       ctx.fillStyle = '#2196F3';
+       ctx.beginPath();
+       ctx.arc(toCanvasX(x_approx), toCanvasY(y_actual), 5, 0, 2 * Math.PI);
+       ctx.fill();
+
+       ctx.fillStyle = '#FF9800';
+       ctx.beginPath();
+       ctx.arc(toCanvasX(x_approx), toCanvasY(y_approx), 5, 0, 2 * Math.PI);
+       ctx.fill();
+
+       // Legend
+       ctx.font = '12px Arial';
+       ctx.fillStyle = '#2196F3';
+       ctx.fillText('— f(x)', padding + 10, h_canvas - 50);
+       ctx.fillStyle = '#FF9800';
+       ctx.fillText('--- L(x)', padding + 10, h_canvas - 30);
+       ctx.fillStyle = '#e74c3c';
+       ctx.fillText('• Tangent point', padding + 10, h_canvas - 10);
+     }
+
+     // Function selector handler
+     document.getElementById('function-input').addEventListener('change', function() {
+       const customGroup = document.getElementById('custom-function-group');
+       customGroup.style.display = this.value === 'custom' ? 'block' : 'none';
+     });
+
+     // Toggle solution visibility
+     function toggleSolution(id) {
+       const solution = document.getElementById(id);
+       solution.classList.toggle('show');
+       const button = solution.previousElementSibling;
+       button.textContent = solution.classList.contains('show') ? 'Hide Solution' : 'Show Solution';
+     }
+
+     // Original canvas visualizations
+     window.addEventListener('load', function() {
+       // Linear Approximation Canvas
+       const canvas1 = document.getElementById('linearApproxCanvas');
+       const ctx1 = canvas1.getContext('2d');
+       const w1 = canvas1.width;
+       const h1 = canvas1.height;
+       const padding1 = 60;
+       const graphW1 = w1 - 2 * padding1;
+       const graphH1 = h1 - 2 * padding1;
+
+       const xMin1 = -1;
+       const xMax1 = 5;
+       const yMin1 = -1;
+       const yMax1 = 5;
+
+       function toCanvasX1(x) {
+         return padding1 + ((x - xMin1) / (xMax1 - xMin1)) * graphW1;
+       }
+
+       function toCanvasY1(y) {
+         return h1 - padding1 - ((y - yMin1) / (yMax1 - yMin1)) * graphH1;
+       }
+
+       // Function: f(x) = sqrt(x)
+       function f(x) {
+         return Math.sqrt(x);
+       }
+
+       // Tangent line at x = 4: L(x) = f(4) + f'(4)(x-4) = 2 + (1/4)(x-4)
+       function tangentLine(x) {
+         return 2 + 0.25 * (x - 4);
+       }
+
+       // Title
+       ctx1.font = 'bold 18px Arial';
+       ctx1.fillStyle = '#000';
+       ctx1.fillText('Linear Approximation of f(x) = √x at x = 4', padding1, 30);
+
+       // Axes
+       ctx1.strokeStyle = '#333';
+       ctx1.lineWidth = 1.5;
+       ctx1.beginPath();
+       ctx1.moveTo(toCanvasX1(0), padding1);
+       ctx1.lineTo(toCanvasX1(0), h1 - padding1);
+       ctx1.moveTo(padding1, toCanvasY1(0));
+       ctx1.lineTo(w1 - padding1, toCanvasY1(0));
+       ctx1.stroke();
+
+       // Axis labels
+       ctx1.font = '14px Arial';
+       ctx1.fillStyle = '#000';
+       ctx1.fillText('x', w1 - padding1 + 10, toCanvasY1(0) + 5);
+       ctx1.fillText('y', toCanvasX1(0) + 10, padding1 - 10);
+
+       // Grid
+       ctx1.strokeStyle = '#e0e0e0';
+       ctx1.lineWidth = 0.5;
+       for (let x = 0; x <= 5; x++) {
+         ctx1.beginPath();
+         ctx1.moveTo(toCanvasX1(x), padding1);
+         ctx1.lineTo(toCanvasX1(x), h1 - padding1);
+         ctx1.stroke();
+         ctx1.fillStyle = '#666';
+         ctx1.fillText(x.toString(), toCanvasX1(x) - 5, toCanvasY1(0) + 20);
+       }
+       for (let y = 0; y <= 5; y++) {
+         ctx1.beginPath();
+         ctx1.moveTo(padding1, toCanvasY1(y));
+         ctx1.lineTo(w1 - padding1, toCanvasY1(y));
+         ctx1.stroke();
+         ctx1.fillStyle = '#666';
+         ctx1.fillText(y.toString(), toCanvasX1(0) - 25, toCanvasY1(y) + 5);
+       }
+
+       // Draw function curve
+       ctx1.strokeStyle = '#2196F3';
+       ctx1.lineWidth = 3;
+       ctx1.beginPath();
+       for (let x = 0; x <= 5; x += 0.02) {
+         const y = f(x);
+         if (x === 0) ctx1.moveTo(toCanvasX1(x), toCanvasY1(y));
+         else ctx1.lineTo(toCanvasX1(x), toCanvasY1(y));
+       }
+       ctx1.stroke();
+
+       // Draw tangent line
+       ctx1.strokeStyle = '#FF9800';
+       ctx1.lineWidth = 2.5;
+       ctx1.setLineDash([8, 4]);
+       ctx1.beginPath();
+       for (let x = 1; x <= 5; x += 0.1) {
+         const y = tangentLine(x);
+         if (x === 1) ctx1.moveTo(toCanvasX1(x), toCanvasY1(y));
+         else ctx1.lineTo(toCanvasX1(x), toCanvasY1(y));
+       }
+       ctx1.stroke();
+       ctx1.setLineDash([]);
+
+       // Mark point of tangency
+       ctx1.fillStyle = '#e74c3c';
+       ctx1.beginPath();
+       ctx1.arc(toCanvasX1(4), toCanvasY1(2), 6, 0, 2 * Math.PI);
+       ctx1.fill();
+
+       ctx1.font = '14px Arial';
+       ctx1.fillText('(4, 2)', toCanvasX1(4) + 10, toCanvasY1(2) - 10);
+
+       // Show approximation at x = 4.5
+       const x_test = 4.5;
+       const y_actual = f(x_test);
+       const y_approx = tangentLine(x_test);
+
+       // Vertical line showing difference
+       ctx1.strokeStyle = '#9C27B0';
+       ctx1.lineWidth = 2;
+       ctx1.setLineDash([4, 4]);
+       ctx1.beginPath();
+       ctx1.moveTo(toCanvasX1(x_test), toCanvasY1(y_actual));
+       ctx1.lineTo(toCanvasX1(x_test), toCanvasY1(y_approx));
+       ctx1.stroke();
+       ctx1.setLineDash([]);
+
+       // Mark points
+       ctx1.fillStyle = '#2196F3';
+       ctx1.beginPath();
+       ctx1.arc(toCanvasX1(x_test), toCanvasY1(y_actual), 5, 0, 2 * Math.PI);
+       ctx1.fill();
+
+       ctx1.fillStyle = '#FF9800';
+       ctx1.beginPath();
+       ctx1.arc(toCanvasX1(x_test), toCanvasY1(y_approx), 5, 0, 2 * Math.PI);
+       ctx1.fill();
+
+       // Labels
+       ctx1.font = '13px Arial';
+       ctx1.fillStyle = '#2196F3';
+       ctx1.fillText('Actual', toCanvasX1(x_test) + 12, toCanvasY1(y_actual));
+       ctx1.fillStyle = '#FF9800';
+       ctx1.fillText('Approx', toCanvasX1(x_test) + 12, toCanvasY1(y_approx));
+
+       // Legend
+       ctx1.font = '14px Arial';
+       ctx1.fillStyle = '#2196F3';
+       ctx1.fillText('— f(x) = √x', padding1, h1 - 30);
+       ctx1.fillStyle = '#FF9800';
+       ctx1.fillText('--- L(x) = 2 + ¼(x-4)', padding1, h1 - 10);
+       ctx1.fillStyle = '#9C27B0';
+       ctx1.fillText('Error', padding1 + 250, h1 - 20);
+
+       // Multiple Approximations Canvas
+       const canvas2 = document.getElementById('approximationsCanvas');
+       const ctx2 = canvas2.getContext('2d');
+       const w2 = canvas2.width;
+       const h2 = canvas2.height;
+       const padding2 = 60;
+       const graphW2 = w2 - 2 * padding2;
+       const graphH2 = h2 - 2 * padding2;
+
+       const xMin2 = -1;
+       const xMax2 = 1;
+       const yMin2 = -1;
+       const yMax2 = 2;
+
+       function toCanvasX2(x) {
+         return padding2 + ((x - xMin2) / (xMax2 - xMin2)) * graphW2;
+       }
+
+       function toCanvasY2(y) {
+         return h2 - padding2 - ((y - yMin2) / (yMax2 - yMin2)) * graphH2;
+       }
+
+       // Title
+       ctx2.font = 'bold 18px Arial';
+       ctx2.fillStyle = '#000';
+       ctx2.fillText('Common Linear Approximations Near x = 0', padding2, 30);
+
+       // Axes
+       ctx2.strokeStyle = '#333';
+       ctx2.lineWidth = 1.5;
+       ctx2.beginPath();
+       ctx2.moveTo(toCanvasX2(0), padding2);
+       ctx2.lineTo(toCanvasX2(0), h2 - padding2);
+       ctx2.moveTo(padding2, toCanvasY2(0));
+       ctx2.lineTo(w2 - padding2, toCanvasY2(0));
+       ctx2.stroke();
+
+       // Labels
+       ctx2.font = '14px Arial';
+       ctx2.fillStyle = '#000';
+       ctx2.fillText('x', w2 - padding2 + 10, toCanvasY2(0) + 5);
+       ctx2.fillText('y', toCanvasX2(0) + 10, padding2 - 10);
+
+       // Grid
+       ctx2.strokeStyle = '#e0e0e0';
+       ctx2.lineWidth = 0.5;
+       for (let x = -1; x <= 1; x += 0.5) {
+         ctx2.beginPath();
+         ctx2.moveTo(toCanvasX2(x), padding2);
+         ctx2.lineTo(toCanvasX2(x), h2 - padding2);
+         ctx2.stroke();
+       }
+       for (let y = -1; y <= 2; y += 0.5) {
+         ctx2.beginPath();
+         ctx2.moveTo(padding2, toCanvasY2(y));
+         ctx2.lineTo(w2 - padding2, toCanvasY2(y));
+         ctx2.stroke();
+       }
+
+       // e^x and 1+x
+       ctx2.strokeStyle = '#2196F3';
+       ctx2.lineWidth = 2.5;
+       ctx2.beginPath();
+       for (let x = -0.8; x <= 0.8; x += 0.01) {
+         const y = Math.exp(x);
+         if (x === -0.8) ctx2.moveTo(toCanvasX2(x), toCanvasY2(y));
+         else ctx2.lineTo(toCanvasX2(x), toCanvasY2(y));
+       }
+       ctx2.stroke();
+
+       ctx2.strokeStyle = '#2196F3';
+       ctx2.setLineDash([6, 3]);
+       ctx2.beginPath();
+       ctx2.moveTo(toCanvasX2(-0.8), toCanvasY2(1 - 0.8));
+       ctx2.lineTo(toCanvasX2(0.8), toCanvasY2(1 + 0.8));
+       ctx2.stroke();
+       ctx2.setLineDash([]);
+
+       // sin(x) and x
+       ctx2.strokeStyle = '#4CAF50';
+       ctx2.lineWidth = 2.5;
+       ctx2.beginPath();
+       for (let x = -0.8; x <= 0.8; x += 0.01) {
+         const y = Math.sin(x);
+         if (x === -0.8) ctx2.moveTo(toCanvasX2(x), toCanvasY2(y));
+         else ctx2.lineTo(toCanvasX2(x), toCanvasY2(y));
+       }
+       ctx2.stroke();
+
+       ctx2.strokeStyle = '#4CAF50';
+       ctx2.setLineDash([6, 3]);
+       ctx2.beginPath();
+       ctx2.moveTo(toCanvasX2(-0.8), toCanvasY2(-0.8));
+       ctx2.lineTo(toCanvasX2(0.8), toCanvasY2(0.8));
+       ctx2.stroke();
+       ctx2.setLineDash([]);
+
+       // ln(1+x) and x
+       ctx2.strokeStyle = '#FF9800';
+       ctx2.lineWidth = 2.5;
+       ctx2.beginPath();
+       for (let x = -0.7; x <= 0.8; x += 0.01) {
+         const y = Math.log(1 + x);
+         if (x === -0.7) ctx2.moveTo(toCanvasX2(x), toCanvasY2(y));
+         else ctx2.lineTo(toCanvasX2(x), toCanvasY2(y));
+       }
+       ctx2.stroke();
+
+       ctx2.strokeStyle = '#FF9800';
+       ctx2.setLineDash([6, 3]);
+       ctx2.beginPath();
+       ctx2.moveTo(toCanvasX2(-0.7), toCanvasY2(-0.7));
+       ctx2.lineTo(toCanvasX2(0.8), toCanvasY2(0.8));
+       ctx2.stroke();
+       ctx2.setLineDash([]);
+
+       // Legend
+       ctx2.font = '13px Arial';
+       const legendX = padding2 + 20;
+       let legendY = h2 - 80;
+
+       ctx2.fillStyle = '#2196F3';
+       ctx2.fillText('— e^x ≈ 1+x', legendX, legendY);
+       legendY += 20;
+
+       ctx2.fillStyle = '#4CAF50';
+       ctx2.fillText('— sin(x) ≈ x', legendX, legendY);
+       legendY += 20;
+
+       ctx2.fillStyle = '#FF9800';
+       ctx2.fillText('— ln(1+x) ≈ x', legendX, legendY);
+
+       ctx2.font = '12px Arial';
+       ctx2.fillStyle = '#666';
+       ctx2.fillText('(Solid: actual function, Dashed: linear approximation)', padding2, h2 - 15);
+     });
+    </script>
+   </div>
+  </div>
+ </body>
+</html>

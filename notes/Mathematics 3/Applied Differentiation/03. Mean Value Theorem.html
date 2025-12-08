@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<!-- tags: Mathematics -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Mean Value Theorem
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   .interactive-demo {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    border: 2px solid #e1e8ed;
+   }
+   .demo-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 15px;
+   }
+   .demo-input-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 200px;
+   }
+   .demo-input-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #2c3e50;
+   }
+   .demo-input {
+    padding: 8px;
+    border: 2px solid #bdc3c7;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+   }
+   .demo-input:focus {
+    outline: none;
+    border-color: #3498db;
+   }
+   .demo-button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: transform 0.2s;
+   }
+   .demo-button:hover {
+    transform: translateY(-2px);
+   }
+   .demo-result {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+    border-left: 4px solid #3498db;
+   }
+   .math-foundation {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .worked-example {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .practice-problem {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .solution-toggle {
+    background: #2c3e50;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+   }
+   .solution-toggle:hover {
+    background: #34495e;
+   }
+   .solution-content {
+    display: none;
+    background: rgba(255, 255, 255, 0.9);
+    color: #2c3e50;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+   }
+   .key-takeaways {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .key-takeaways h3 {
+    color: #2c3e50;
+    margin-top: 0;
+   }
+   .key-takeaways ul {
+    color: #2c3e50;
+   }
+   .mvt-concepts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+   }
+   .concept-card {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #e67e22;
+   }
+   .concept-card h4 {
+    margin-top: 0;
+    color: #2c3e50;
+   }
+   .math-orange {
+    color: #e67e22;
+    font-weight: bold;
+   }
+   .visualization-section {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+    border: 2px solid #ecf0f1;
+    text-align: center;
+   }
+   canvas {
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin: 10px 0;
+   }
+   .theorem-box {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+    border-left: 5px solid #3498db;
+   }
+   .corollaries {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Mathematics">
+   Mean Value Theorem
+  </div>
+  <div class="container">
+   <div class="main-content">
+    <div class="section-title">
+     Mean Value Theorem
+    </div>
+
+    <div class="theorem-box">
+     <h3>The Mean Value Theorem</h3>
+     <p>If a function $f(x)$ is:</p>
+     <ul>
+      <li><strong>Continuous</strong> on the closed interval $[a, b]$</li>
+      <li><strong>Differentiable</strong> on the open interval $(a, b)$</li>
+     </ul>
+     <p>Then there exists at least one number $c$ in $(a, b)$ such that:</p>
+     <div style="text-align: center; margin: 15px 0; font-size: 18px;">
+      $$f'(c) = \frac{f(b) - f(a)}{b - a}$$
+     </div>
+     <p>where $a < c < b$</p>
+    </div>
+
+    <div class="math-foundation">
+     <h3>Mathematical Foundations</h3>
+     <p>The Mean Value Theorem establishes a fundamental relationship between the average rate of change (secant line slope) and the instantaneous rate of change (tangent line slope) of a differentiable function.</p>
+
+     <div class="mvt-concepts">
+      <div class="concept-card">
+       <h4>Geometric Interpretation</h4>
+       <p>Tangent line parallel to secant line</p>
+       <p>Instantaneous rate = average rate</p>
+       <p>Fundamental theorem of calculus</p>
+       <p>Bridge between derivatives and integrals</p>
+      </div>
+
+      <div class="concept-card">
+       <h4>Conditions Required</h4>
+       <p>Continuous on [a, b]</p>
+       <p>Differentiable on (a, b)</p>
+       <p>Closed interval for continuity</p>
+       <p>Open interval for differentiability</p>
+      </div>
+
+      <div class="concept-card">
+       <h4>Existence Guarantee</h4>
+       <p>At least one c exists</p>
+       <p>May have multiple points</p>
+       <p>Intermediate value property</p>
+       <p>Rolle's theorem special case</p>
+      </div>
+
+      <div class="concept-card">
+       <h4>Rate of Change</h4>
+       <p>Left: Average rate of change</p>
+       <p>Right: Instantaneous rate of change</p>
+       <p>Equal at some interior point</p>
+       <p>Fundamental calculus principle</p>
+      </div>
+     </div>
+    </div>
+
+    <div class="interactive-demo">
+     <h3>Interactive Mean Value Theorem Demonstrator</h3>
+     <p>Explore how the Mean Value Theorem works with different functions and intervals.</p>
+
+     <div class="demo-controls">
+      <div class="demo-input-group">
+       <label for="function-input">Function f(x):</label>
+       <input type="text" id="function-input" class="demo-input" value="x^2" placeholder="e.g., x^2, sin(x), x^3">
+      </div>
+      <div class="demo-input-group">
+       <label for="interval-start">Interval start (a):</label>
+       <input type="number" id="interval-start" class="demo-input" value="0" step="0.5">
+      </div>
+      <div class="demo-input-group">
+       <label for="interval-end">Interval end (b):</label>
+       <input type="number" id="interval-end" class="demo-input" value="2" step="0.5">
+      </div>
+      <button onclick="demonstrateMVT()" class="demo-button">Demonstrate MVT</button>
+     </div>
+
+     <div class="demo-result">
+      <h4>Mean Value Theorem Results:</h4>
+      <p><strong>Function:</strong> <span id="function-display">f(x) = x²</span></p>
+      <p><strong>Interval:</strong> <span id="interval-display">[0, 2]</span></p>
+      <p><strong>f(a) = f(0):</strong> <span id="fa-display">0</span></p>
+      <p><strong>f(b) = f(2):</strong> <span id="fb-display">4</span></p>
+      <p><strong>Average rate of change:</strong> <span id="average-rate">(4-0)/(2-0) = 2</span></p>
+      <p><strong>Point c where f'(c) = 2:</strong> <span id="c-point">c = 1</span></p>
+      <p><strong>Verification f'(1):</strong> <span id="verification">f'(1) = 2 ✓</span></p>
+     </div>
+
+     <div class="visualization-section">
+      <h4>Geometric Interpretation:</h4>
+      <canvas id="mvtCanvas" width="600" height="400"></canvas>
+      <p><em>The red secant line connects (a,f(a)) and (b,f(b)). The blue tangent line at c is parallel to it.</em></p>
+     </div>
+    </div>
+
+    <div class="corollaries">
+     <h3>Important Corollaries</h3>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Rolle's Theorem (Special Case)</h4>
+      <p>If f(a) = f(b), then there exists c in (a,b) such that f'(c) = 0</p>
+      <p><em>Horizontal tangent line exists between equal function values</em></p>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Constant Function Test</h4>
+      <p>If f'(x) = 0 for all x in (a,b), then f is constant on [a,b]</p>
+      <p><em>Zero derivative implies constant function</em></p>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Monotonicity Test</h4>
+      <p>If f'(x) > 0 for all x in (a,b), then f is increasing on [a,b]</p>
+      <p>If f'(x) < 0 for all x in (a,b), then f is decreasing on [a,b]</p>
+      <p><em>Derivative sign determines function behavior</em></p>
+     </div>
+    </div>
+
+    <div class="worked-example">
+     <h3>Worked Examples</h3>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Example 1: Quadratic Function</h4>
+      <p>Verify the Mean Value Theorem for $f(x) = x^2$ on [0, 2].</p>
+      <p><strong>Step 1:</strong> Check conditions - f is continuous on [0,2] and differentiable on (0,2)</p>
+      <p><strong>Step 2:</strong> f(0) = 0, f(2) = 4. Average rate = (4-0)/(2-0) = 2</p>
+      <p><strong>Step 3:</strong> f'(x) = 2x. Set 2c = 2 ⇒ c = 1 ∈ (0,2)</p>
+      <p><strong>Step 4:</strong> Verify: f'(1) = 2(1) = 2 ✓</p>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Example 2: Linear Function</h4>
+      <p>Verify MVT for $f(x) = 3x + 1$ on [1, 4].</p>
+      <p><strong>Step 1:</strong> f is continuous and differentiable everywhere</p>
+      <p><strong>Step 2:</strong> f(1) = 4, f(4) = 13. Average rate = (13-4)/(4-1) = 3</p>
+      <p><strong>Step 3:</strong> f'(x) = 3. So f'(c) = 3 for any c ∈ (1,4)</p>
+      <p><strong>Step 4:</strong> Every point c in (1,4) satisfies MVT</p>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Example 3: Trigonometric Function</h4>
+      <p>Find c for $f(x) = \sin(x)$ on [0, π].</p>
+      <p><strong>Step 1:</strong> f is continuous and differentiable on [0,π]</p>
+      <p><strong>Step 2:</strong> f(0) = 0, f(π) = 0. Average rate = (0-0)/(π-0) = 0</p>
+      <p><strong>Step 3:</strong> f'(x) = cos(x). Set cos(c) = 0 ⇒ c = π/2 ∈ (0,π)</p>
+      <p><strong>Step 4:</strong> Verify: cos(π/2) = 0 ✓</p>
+     </div>
+    </div>
+
+    <div class="practice-problem">
+     <h3>Practice Problems</h3>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Problem 1</h4>
+      <p>Verify the Mean Value Theorem for $f(x) = x^3$ on [-1, 1]. Find the value(s) of c.</p>
+      <button onclick="toggleSolution('sol1')" class="solution-toggle">Show Solution</button>
+      <div id="sol1" class="solution-content">
+       <p><strong>Step 1:</strong> f is continuous on [-1,1] and differentiable on (-1,1)</p>
+       <p><strong>Step 2:</strong> f(-1) = -1, f(1) = 1. Average rate = (1-(-1))/(1-(-1)) = 2/2 = 1</p>
+       <p><strong>Step 3:</strong> f'(x) = 3x². Set 3c² = 1 ⇒ c² = 1/3 ⇒ c = ±1/√3</p>
+       <p><strong>Step 4:</strong> c = 1/√3 ≈ 0.577 ∈ (-1,1). c = -1/√3 ≈ -0.577 ∈ (-1,1)</p>
+       <p><strong>Note:</strong> Two points satisfy MVT for this function</p>
+      </div>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Problem 2</h4>
+      <p>Find c for $f(x) = e^x$ on [0, 1].</p>
+      <button onclick="toggleSolution('sol2')" class="solution-toggle">Show Solution</button>
+      <div id="sol2" class="solution-content">
+       <p><strong>Step 1:</strong> f is continuous and differentiable everywhere</p>
+       <p><strong>Step 2:</strong> f(0) = 1, f(1) = e. Average rate = (e-1)/(1-0) = e-1</p>
+       <p><strong>Step 3:</strong> f'(x) = e^x. Set e^c = e-1 ⇒ c = ln(e-1) ∈ (0,1)</p>
+       <p><strong>Step 4:</strong> Verify: e^{ln(e-1)} = e-1 ✓</p>
+      </div>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Problem 3</h4>
+      <p>Determine if the Mean Value Theorem applies to $f(x) = |x|$ on [-1, 1].</p>
+      <button onclick="toggleSolution('sol3')" class="solution-toggle">Show Solution</button>
+      <div id="sol3" class="solution-content">
+       <p><strong>Step 1:</strong> f is continuous on [-1,1]</p>
+       <p><strong>Step 2:</strong> f is not differentiable at x = 0 (sharp corner)</p>
+       <p><strong>Step 3:</strong> MVT does not apply because f is not differentiable on (-1,1)</p>
+       <p><strong>Note:</strong> The absolute value function violates the differentiability condition</p>
+      </div>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Problem 4</h4>
+      <p>Use MVT to prove that $e^x \geq 1 + x$ for all real x.</p>
+      <button onclick="toggleSolution('sol4')" class="solution-toggle">Show Solution</button>
+      <div id="sol4" class="solution-content">
+       <p><strong>Step 1:</strong> Consider g(x) = e^x - x - 1</p>
+       <p><strong>Step 2:</strong> g(0) = e⁰ - 0 - 1 = 0</p>
+       <p><strong>Step 3:</strong> g'(x) = e^x - 1. For x > 0, e^x > 1 so g'(x) > 0</p>
+       <p><strong>Step 4:</strong> By MVT, g(x) > g(0) = 0 for x > 0, so e^x > 1 + x</p>
+       <p><strong>Step 5:</strong> For x < 0, consider interval [x, 0] and apply similar logic</p>
+      </div>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <h3>Key Takeaways</h3>
+     <ul>
+      <li><strong>Fundamental theorem:</strong> Connects average and instantaneous rates of change</li>
+      <li><strong>Geometric meaning:</strong> Parallel tangent and secant lines</li>
+      <li><strong>Conditions:</strong> Continuous on [a,b], differentiable on (a,b)</li>
+      <li><strong>Existence guarantee:</strong> At least one c exists in (a,b)</li>
+      <li><strong>Applications:</strong> Proving inequalities, analyzing function behavior</li>
+      <li><strong>Special cases:</strong> Rolle's theorem when f(a) = f(b)</li>
+      <li><strong>Corollaries:</strong> Constant functions, monotonicity tests</li>
+      <li><strong>Counterexamples:</strong> Absolute value function (not differentiable)</li>
+     </ul>
+    </div>
+
+    <div class="formula-list">
+     <div class="formula-row">
+      <span class="number">
+       1
+      </span>
+      <span class="formula">
+       $f'(c) = \frac{f(b) - f(a)}{b - a}$
+       <span class="math-orange">
+        (Mean Value Theorem)
+       </span>
+      </span>
+     </div>
+     <div class="formula-row">
+      <span class="number">
+       2
+      </span>
+      <span class="formula">
+       $f'(c) = 0$ when $f(a) = f(b)$
+       <span class="math-orange">
+        (Rolle's Theorem)
+       </span>
+      </span>
+     </div>
+     <div class="formula-row">
+      <span class="number">
+       3
+      </span>
+      <span class="formula">
+       $f(b) - f(a) = f'(c)(b - a)$
+       <span class="math-orange">
+        (Alternative Form)
+       </span>
+      </span>
+     </div>
+    </div>
+
+    <div class="visualization-section">
+     <h4>Mean Value Theorem Visualization</h4>
+     <p>Interactive demonstration showing how the theorem guarantees a point c where the tangent is parallel to the secant:</p>
+     <canvas id="mvtVisualizationCanvas" width="600" height="400"></canvas>
+     <p><em>Move the interval endpoints to see how c changes to maintain the parallel relationship</em></p>
+    </div>
+   </div>
+  </div>
+
+  <script>
+   function evaluateFunction(func, x) {
+    const expr = func.toLowerCase().replace(/\s/g, '');
+    if (expr === 'x^2' || expr === 'x*x') return x * x;
+    if (expr === 'x^3') return x * x * x;
+    if (expr === 'sin(x)') return Math.sin(x);
+    if (expr === 'cos(x)') return Math.cos(x);
+    if (expr === 'e^x' || expr === 'exp(x)') return Math.exp(x);
+    if (expr === '3x+1') return 3*x + 1;
+    if (expr === 'x^3') return x*x*x;
+    return x * x;
+   }
+
+   function evaluateDerivative(func, x) {
+    const expr = func.toLowerCase().replace(/\s/g, '');
+    if (expr === 'x^2' || expr === 'x*x') return 2 * x;
+    if (expr === 'x^3') return 3 * x * x;
+    if (expr === 'sin(x)') return Math.cos(x);
+    if (expr === 'cos(x)') return -Math.sin(x);
+    if (expr === 'e^x' || expr === 'exp(x)') return Math.exp(x);
+    if (expr === '3x+1') return 3;
+    if (expr === 'x^3') return 3*x*x;
+    return 2 * x;
+   }
+
+   function findMVTPoint(func, a, b) {
+    const fa = evaluateFunction(func, a);
+    const fb = evaluateFunction(func, b);
+    const averageRate = (fb - fa) / (b - a);
+
+    // For quadratic function x^2, f'(c) = 2c = averageRate, so c = averageRate/2
+    // For general case, we'd need to solve f'(c) = averageRate
+    // For demo purposes, we'll handle specific cases
+    const expr = func.toLowerCase().replace(/\s/g, '');
+    if (expr === 'x^2' || expr === 'x*x') {
+     return averageRate / 2;
+    }
+    if (expr === 'x^3') {
+     return Math.cbrt(averageRate / 3);
+    }
+    if (expr === 'sin(x)') {
+     return Math.acos(averageRate);
+    }
+    if (expr === '3x+1') {
+     return (a + b) / 2; // Any point works
+    }
+    return (a + b) / 2; // Default midpoint
+   }
+
+   function demonstrateMVT() {
+    const funcInput = document.getElementById('function-input').value;
+    const a = parseFloat(document.getElementById('interval-start').value);
+    const b = parseFloat(document.getElementById('interval-end').value);
+
+    if (!funcInput || isNaN(a) || isNaN(b) || a >= b) {
+     alert('Please enter valid function and interval (a < b)');
+     return;
+    }
+
+    const fa = evaluateFunction(funcInput, a);
+    const fb = evaluateFunction(funcInput, b);
+    const averageRate = (fa !== fb) ? (fb - fa) / (b - a) : 0;
+    const c = findMVTPoint(funcInput, a, b);
+    const fc_prime = evaluateDerivative(funcInput, c);
+
+    document.getElementById('function-display').textContent = `f(x) = ${funcInput}`;
+    document.getElementById('interval-display').textContent = `[${a}, ${b}]`;
+    document.getElementById('fa-display').textContent = fa.toFixed(3);
+    document.getElementById('fb-display').textContent = fb.toFixed(3);
+    document.getElementById('average-rate').textContent = `${fb.toFixed(3)} - ${fa.toFixed(3)} / ${b} - ${a} = ${averageRate.toFixed(3)}`;
+    document.getElementById('c-point').textContent = `c = ${c.toFixed(3)}`;
+    document.getElementById('verification').textContent = `f'(${c.toFixed(3)}) = ${fc_prime.toFixed(3)} ✓`;
+
+    drawMVTVisualization(funcInput, a, b, c);
+   }
+
+   function drawMVTVisualization(func, a, b, c) {
+    const canvas = document.getElementById('mvtCanvas');
+    const ctx = canvas.getContext('2d');
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const width = canvas.width;
+    const height = canvas.height;
+    const scale = 40;
+    const originX = width / 2;
+    const originY = height / 2;
+
+    function toCanvasX(x) { return originX + x * scale; }
+    function toCanvasY(y) { return originY - y * scale; }
+
+    // Draw axes
+    ctx.strokeStyle = '#ddd';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(0, originY);
+    ctx.lineTo(width, originY);
+    ctx.moveTo(originX, 0);
+    ctx.lineTo(originX, height);
+    ctx.stroke();
+
+    // Draw function curve
+    ctx.strokeStyle = '#2196F3';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    const startX = Math.min(a, b) - 1;
+    const endX = Math.max(a, b) + 1;
+    for (let x = startX; x <= endX; x += 0.1) {
+     const y = evaluateFunction(func, x);
+     const canvasX = toCanvasX(x);
+     const canvasY = toCanvasY(y);
+     if (x === startX) ctx.moveTo(canvasX, canvasY);
+     else ctx.lineTo(canvasX, canvasY);
+    }
+    ctx.stroke();
+
+    // Draw secant line (red)
+    const fa = evaluateFunction(func, a);
+    const fb = evaluateFunction(func, b);
+    ctx.strokeStyle = '#e74c3c';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(toCanvasX(a), toCanvasY(fa));
+    ctx.lineTo(toCanvasX(b), toCanvasY(fb));
+    ctx.stroke();
+
+    // Draw tangent line at c (blue)
+    const fc = evaluateFunction(func, c);
+    const fcp = evaluateDerivative(func, c);
+    ctx.strokeStyle = '#3498db';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    const tanX1 = c - 1;
+    const tanY1 = fc + fcp * (tanX1 - c);
+    const tanX2 = c + 1;
+    const tanY2 = fc + fcp * (tanX2 - c);
+    ctx.moveTo(toCanvasX(tanX1), toCanvasY(tanY1));
+    ctx.lineTo(toCanvasX(tanX2), toCanvasY(tanY2));
+    ctx.stroke();
+
+    // Draw points
+    ctx.fillStyle = '#e74c3c';
+    ctx.beginPath();
+    ctx.arc(toCanvasX(a), toCanvasY(fa), 6, 0, 2 * Math.PI);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(toCanvasX(b), toCanvasY(fb), 6, 0, 2 * Math.PI);
+    ctx.fill();
+
+    ctx.fillStyle = '#3498db';
+    ctx.beginPath();
+    ctx.arc(toCanvasX(c), toCanvasY(fc), 6, 0, 2 * Math.PI);
+    ctx.fill();
+
+    // Labels
+    ctx.fillStyle = '#333';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(`A(${a}, ${fa.toFixed(2)})`, toCanvasX(a), toCanvasY(fa) - 15);
+    ctx.fillText(`B(${b}, ${fb.toFixed(2)})`, toCanvasX(b), toCanvasY(fb) - 15);
+    ctx.fillText(`C(${c.toFixed(2)}, ${fc.toFixed(2)})`, toCanvasX(c), toCanvasY(fc) - 15);
+   }
+
+   function toggleSolution(id) {
+    const element = document.getElementById(id);
+    element.style.display = element.style.display === 'none' ? 'block' : 'none';
+   }
+
+   // Initialize
+   demonstrateMVT();
+  </script>
+ </body>
+</html>

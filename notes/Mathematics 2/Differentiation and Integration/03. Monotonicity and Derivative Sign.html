@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<!-- tags: Differentiation -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Monotonicity and the Sign of the Derivative
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+   }
+
+   .main-content {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 15px;
+    padding: 30px;
+    margin: 20px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+   }
+
+   .fancy-title {
+    text-align: center;
+    font-size: 2.5em;
+    font-weight: bold;
+    margin: 20px 0;
+    color: #2c3e50;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+   }
+
+   .description {
+    font-size: 1.2em;
+    line-height: 1.6;
+    margin: 20px 0;
+    color: #34495e;
+    text-align: center;
+   }
+
+   .content-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin: 30px 0;
+   }
+
+   .formula-block {
+    flex: 1;
+    min-width: 300px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 1.4em;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+   }
+
+   .formula-item {
+    margin: 15px 0;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+   }
+
+   .diagram-block {
+    flex: 1;
+    min-width: 300px;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+   }
+
+   .monotonicity-diagram {
+    max-width: 700px;
+    margin: 30px auto;
+    padding: 30px;
+    background: #f8f9fa;
+    border-radius: 12px;
+   }
+
+   .monotonicity-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 25px 0;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+   }
+
+   .derivative-condition {
+    flex: 0 0 140px;
+    font-size: 1.3em;
+    font-weight: 600;
+    text-align: center;
+   }
+
+   .arrow-connector {
+    flex: 0 0 80px;
+    text-align: center;
+    font-size: 2em;
+    color: #667eea;
+   }
+
+   .behavior-result {
+    flex: 0 0 200px;
+    font-size: 1.2em;
+    font-weight: 600;
+    text-align: center;
+    padding: 12px 20px;
+    border-radius: 8px;
+   }
+
+   .increasing-result {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+   }
+
+   .decreasing-result {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+   }
+
+   .constant-result {
+    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+    color: white;
+   }
+
+   .curve-visual {
+    flex: 0 0 120px;
+    height: 80px;
+    position: relative;
+   }
+
+   .interactive-demo {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    margin: 30px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+   }
+
+   .demo-title {
+    text-align: center;
+    font-size: 1.8em;
+    margin-bottom: 25px;
+    font-weight: bold;
+   }
+
+   .input-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin: 20px 0;
+    justify-content: center;
+   }
+
+   .input-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+   }
+
+   .input-field label {
+    font-weight: bold;
+    font-size: 1.1em;
+   }
+
+   .input-field input {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    width: 100px;
+    text-align: center;
+    transition: border-color 0.3s;
+   }
+
+   .input-field input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+   }
+
+   .button-group {
+    text-align: center;
+    margin: 25px 0;
+   }
+
+   .btn {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 1.1em;
+    cursor: pointer;
+    margin: 0 10px;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+   }
+
+   .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+   }
+
+   .btn:active {
+    transform: translateY(0);
+   }
+
+   .result-display {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    backdrop-filter: blur(10px);
+   }
+
+   .result-text {
+    font-size: 1.2em;
+    text-align: center;
+    margin: 10px 0;
+   }
+
+   .canvas-container {
+    text-align: center;
+    margin: 20px 0;
+   }
+
+   .monotonicity-canvas {
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+   }
+
+   .section {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    margin: 25px 0;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+   }
+
+   .section-title {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
+   }
+
+   .mono-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+   }
+
+   .mono-card {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(252, 182, 159, 0.3);
+   }
+
+   .mono-card h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 1.3em;
+   }
+
+   .mono-card .formula {
+    font-weight: bold;
+    color: #e74c3c;
+    font-size: 1.2em;
+    margin: 10px 0;
+   }
+
+   .mono-card .description {
+    color: #555;
+    line-height: 1.5;
+   }
+
+   .example-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+   }
+
+   .example-card {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+   }
+
+   .example-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(245, 87, 108, 0.4);
+   }
+
+   .example-card h4 {
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+   }
+
+   .example-detail {
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    display: none;
+   }
+
+   .calculation-steps {
+    margin: 15px 0;
+   }
+
+   .calculation-step {
+    margin: 8px 0;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 5px;
+    border-left: 4px solid #f5576c;
+   }
+
+   .practice-problems {
+    margin: 20px 0;
+   }
+
+   .problem-item {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+   }
+
+   .problem-item h4 {
+    margin: 0 0 15px 0;
+    font-size: 1.2em;
+   }
+
+   .solution-btn {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    color: #333;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 10px 0;
+    transition: all 0.3s;
+   }
+
+   .solution-btn:hover {
+    background: linear-gradient(135deg, #fcb69f 0%, #ffecd2 100%);
+    transform: scale(1.05);
+   }
+
+   .solution {
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 10px 0;
+    display: none;
+    border-left: 4px solid #667eea;
+   }
+
+   .key-takeaways {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    padding: 25px;
+    border-radius: 12px;
+    margin: 25px 0;
+   }
+
+   .takeaway-list {
+    list-style: none;
+    padding: 0;
+   }
+
+   .takeaway-item {
+    background: rgba(255, 255, 255, 0.8);
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+    font-weight: bold;
+   }
+
+   .error-message {
+    background: #ffebee;
+    color: #c62828;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px 0;
+    display: none;
+    text-align: center;
+    font-weight: bold;
+   }
+
+   @media (max-width: 768px) {
+    .content-wrapper {
+     flex-direction: column;
+    }
+
+    .input-group {
+     flex-direction: column;
+     align-items: center;
+    }
+
+    .fancy-title {
+     font-size: 2em;
+    }
+
+    .formula-block {
+     font-size: 1.2em;
+    }
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Differentiation">
+   Monotonicity and the Sign of the Derivative
+  </div>
+
+  <div class="container">
+   <div class="main-content">
+    <div class="description">
+     The sign of the derivative reveals whether a function is increasing, decreasing, or constant on an interval, providing crucial information about function behavior.
+    </div>
+
+    <div class="content-wrapper">
+     <div class="formula-block">
+      <div class="formula-item">
+       <strong>Increasing:</strong> $$f'(x) > 0$$ on interval I
+      </div>
+      <div class="formula-item">
+       <strong>Decreasing:</strong> $$f'(x) < 0$$ on interval I
+      </div>
+      <div class="formula-item">
+       <strong>Constant:</strong> $$f'(x) = 0$$ on interval I
+      </div>
+     </div>
+
+     <div class="diagram-block">
+      <div class="monotonicity-diagram">
+       <div class="monotonicity-row">
+        <div class="derivative-condition">\( f'(x) > 0 \)</div>
+        <div class="arrow-connector">⇒</div>
+        <div class="behavior-result increasing-result">Increasing (増加)</div>
+        <div class="curve-visual">
+         <canvas id="increasingCurve" width="120" height="80"></canvas>
+        </div>
+       </div>
+
+       <div class="monotonicity-row">
+        <div class="derivative-condition">\( f'(x) < 0 \)</div>
+        <div class="arrow-connector">⇒</div>
+        <div class="behavior-result decreasing-result">Decreasing (減少)</div>
+        <div class="curve-visual">
+         <canvas id="decreasingCurve" width="120" height="80"></canvas>
+        </div>
+       </div>
+
+       <div class="monotonicity-row">
+        <div class="derivative-condition">\( f'(x) = 0 \)</div>
+        <div class="arrow-connector">⇒</div>
+        <div class="behavior-result constant-result">Constant (定数)</div>
+        <div class="curve-visual">
+         <canvas id="constantCurve" width="120" height="80"></canvas>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="mono-grid">
+     <div class="mono-card">
+      <h3>Strictly Increasing</h3>
+      <div class="formula">f'(x) > 0 ∀ x ∈ I</div>
+      <div class="description">
+       Function increases throughout the interval. For any x₁ < x₂ in I, f(x₁) < f(x₂).
+       <br><br>
+       Example: f(x) = x² on (0, ∞)
+      </div>
+     </div>
+
+     <div class="mono-card">
+      <h3>Strictly Decreasing</h3>
+      <div class="formula">f'(x) < 0 ∀ x ∈ I</div>
+      <div class="description">
+       Function decreases throughout the interval. For any x₁ < x₂ in I, f(x₁) > f(x₂).
+       <br><br>
+       Example: f(x) = -x² on (-∞, 0)
+      </div>
+     </div>
+
+     <div class="mono-card">
+      <h3>Non-Decreasing</h3>
+      <div class="formula">f'(x) ≥ 0 ∀ x ∈ I</div>
+      <div class="description">
+       Function never decreases, may be constant in parts. For any x₁ < x₂ in I, f(x₁) ≤ f(x₂).
+       <br><br>
+       Includes constant functions.
+      </div>
+     </div>
+    </div>
+
+    <div class="interactive-demo">
+     <div class="demo-title">Interactive Monotonicity Analyzer</div>
+
+     <div class="input-group">
+      <div class="input-field">
+       <label for="functionInput">Function f(x):</label>
+       <input id="functionInput" placeholder="e.g., x^2, -x^2, x^3" value="x^2"/>
+      </div>
+      <div class="input-field">
+       <label for="intervalStart">Interval Start:</label>
+       <input id="intervalStart" step="any" type="number" value="-2"/>
+      </div>
+      <div class="input-field">
+       <label for="intervalEnd">Interval End:</label>
+       <input id="intervalEnd" step="any" type="number" value="2"/>
+      </div>
+     </div>
+
+     <div class="button-group">
+      <button class="btn" onclick="analyzeMonotonicity()">Analyze Monotonicity</button>
+      <button class="btn" onclick="showCriticalPoints()">Find Critical Points</button>
+      <button class="btn" onclick="resetDemo()">Reset</button>
+     </div>
+
+     <div class="error-message" id="errorMessage"></div>
+
+     <div class="result-display">
+      <div class="result-text" id="functionDisplay">
+       Function: <strong id="functionText">f(x) = x²</strong>
+      </div>
+      <div class="result-text" id="derivativeDisplay">
+       Derivative: <strong id="derivativeText">f'(x) = 2x</strong>
+      </div>
+      <div class="result-text" id="monotonicityDisplay">
+       Behavior: <strong id="monotonicityText">Not analyzed</strong>
+      </div>
+     </div>
+
+     <div class="canvas-container">
+      <canvas class="monotonicity-canvas" height="400" id="monotonicityCanvas" width="500"></canvas>
+     </div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Mathematical Foundation</div>
+     <p>The relationship between derivative sign and monotonicity follows from the Mean Value Theorem:</p>
+     <div class="formula-block" style="margin: 20px 0;">
+      $$\text{If } f'(x) > 0 \text{ on } [a,b], \text{ then } f(b) > f(a)$$
+     </div>
+     <p>Proof: By MVT, there exists c ∈ (a,b) such that:</p>
+     <div class="formula-block" style="margin: 20px 0;">
+      $$f(b) - f(a) = f'(c)(b - a)$$
+     </div>
+     <p>If f'(c) > 0 and b > a, then f(b) > f(a).</p>
+     <p>Similar logic applies to decreasing functions and constant functions.</p>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Worked Examples</div>
+     <div class="example-grid">
+      <div class="example-card" onclick="showExample(1)">
+       <h4>Example 1: Quadratic Function</h4>
+       <p>Analyze monotonicity of f(x) = x² - 4x + 3</p>
+      </div>
+      <div class="example-card" onclick="showExample(2)">
+       <h4>Example 2: Cubic Function</h4>
+       <p>Find intervals where f(x) = x³ - 3x is increasing/decreasing</p>
+      </div>
+      <div class="example-card" onclick="showExample(3)">
+       <h4>Example 3: Rational Function</h4>
+       <p>Determine monotonicity of f(x) = 1/x on (-∞, 0) and (0, ∞)</p>
+      </div>
+     </div>
+
+     <div class="example-detail" id="exampleDetail"></div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Applications</div>
+     <ul>
+      <li><strong>Optimization:</strong> Finding maximum and minimum values</li>
+      <li><strong>Economic Analysis:</strong> Marginal cost and revenue behavior</li>
+      <li><strong>Physics:</strong> Velocity and acceleration relationships</li>
+      <li><strong>Biology:</strong> Population growth models</li>
+      <li><strong>Curve Sketching:</strong> Understanding function behavior</li>
+     </ul>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Practice Problems</div>
+     <div class="practice-problems">
+      <div class="problem-item">
+       <h4>Problem 1</h4>
+       <p>Determine where f(x) = x³ - 3x² + 2 is increasing and decreasing.</p>
+       <button class="solution-btn" onclick="toggleSolution(1)">Show Solution</button>
+       <div class="solution" id="solution1">
+        <p><strong>Solution:</strong></p>
+        <p>f'(x) = 3x² - 6x = 3x(x - 2)</p>
+        <p>Critical points: x = 0, x = 2</p>
+        <p>Test intervals: (-∞, 0), (0, 2), (2, ∞)</p>
+        <p>f'(x) > 0 for x < 0 and x > 2 (increasing)</p>
+        <p>f'(x) < 0 for 0 < x < 2 (decreasing)</p>
+       </div>
+      </div>
+
+      <div class="problem-item">
+       <h4>Problem 2</h4>
+       <p>On what intervals is f(x) = x⁴ - 2x² + 1 increasing?</p>
+       <button class="solution-btn" onclick="toggleSolution(2)">Show Solution</button>
+       <div class="solution" id="solution2">
+        <p><strong>Solution:</strong></p>
+        <p>f'(x) = 4x³ - 4x = 4x(x² - 1) = 4x(x - 1)(x + 1)</p>
+        <p>Critical points: x = -1, x = 0, x = 1</p>
+        <p>Test intervals: (-∞, -1), (-1, 0), (0, 1), (1, ∞)</p>
+        <p>f'(x) > 0 for -1 < x < 0 and x > 1 (increasing)</p>
+        <p>f'(x) < 0 for x < -1 and 0 < x < 1 (decreasing)</p>
+       </div>
+      </div>
+
+      <div class="problem-item">
+       <h4>Problem 3</h4>
+       <p>Show that f(x) = e^x is increasing on (-∞, ∞).</p>
+       <button class="solution-btn" onclick="toggleSolution(3)">Show Solution</button>
+       <div class="solution" id="solution3">
+        <p><strong>Solution:</strong></p>
+        <p>f'(x) = e^x</p>
+        <p>e^x > 0 for all x ∈ (-∞, ∞)</p>
+        <p>Therefore, f(x) = e^x is increasing on its entire domain.</p>
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <div class="section-title">Key Takeaways</div>
+     <ul class="takeaway-list">
+      <li class="takeaway-item">f'(x) > 0 ⇒ function is increasing on that interval</li>
+      <li class="takeaway-item">f'(x) < 0 ⇒ function is decreasing on that interval</li>
+      <li class="takeaway-item">f'(x) = 0 ⇒ function is constant on that interval</li>
+      <li class="takeaway-item">Critical points occur where f'(x) = 0 or f'(x) is undefined</li>
+      <li class="takeaway-item">Test intervals between critical points to determine monotonicity</li>
+      <li class="takeaway-item">Essential for understanding function behavior and optimization</li>
+     </ul>
+    </div>
+   </div>
+  </div>
+
+  <script>
+   function drawIncreasingCurve() {
+    const canvas = document.getElementById('increasingCurve');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width;
+    const h = canvas.height;
+
+    ctx.strokeStyle = '#10b981';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(10, h - 10);
+    ctx.quadraticCurveTo(w/2, 20, w - 10, 10);
+    ctx.stroke();
+
+    // Arrow
+    ctx.fillStyle = '#10b981';
+    ctx.beginPath();
+    ctx.moveTo(w - 10, 10);
+    ctx.lineTo(w - 20, 5);
+    ctx.lineTo(w - 20, 15);
+    ctx.closePath();
+    ctx.fill();
+   }
+
+   function drawDecreasingCurve() {
+    const canvas = document.getElementById('decreasingCurve');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width;
+    const h = canvas.height;
+
+    ctx.strokeStyle = '#ef4444';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(10, 10);
+    ctx.quadraticCurveTo(w/2, h - 20, w - 10, h - 10);
+    ctx.stroke();
+
+    // Arrow
+    ctx.fillStyle = '#ef4444';
+    ctx.beginPath();
+    ctx.moveTo(w - 10, h - 10);
+    ctx.lineTo(w - 20, h - 15);
+    ctx.lineTo(w - 20, h - 5);
+    ctx.closePath();
+    ctx.fill();
+   }
+
+   function drawConstantCurve() {
+    const canvas = document.getElementById('constantCurve');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width;
+    const h = canvas.height;
+
+    ctx.strokeStyle = '#6b7280';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(10, h/2);
+    ctx.lineTo(w - 10, h/2);
+    ctx.stroke();
+
+    // Arrow
+    ctx.fillStyle = '#6b7280';
+    ctx.beginPath();
+    ctx.moveTo(w - 10, h/2);
+    ctx.lineTo(w - 20, h/2 - 5);
+    ctx.lineTo(w - 20, h/2 + 5);
+    ctx.closePath();
+    ctx.fill();
+   }
+
+   function evaluateFunction(funcStr, x) {
+    try {
+     if (funcStr === 'x^2') return x * x;
+     if (funcStr === 'x^3') return x * x * x;
+     if (funcStr === '-x^2') return -x * x;
+     if (funcStr === 'x^4') return x * x * x * x;
+     if (funcStr === 'sin(x)') return Math.sin(x);
+     if (funcStr === 'cos(x)') return Math.cos(x);
+     if (funcStr === 'e^x') return Math.exp(x);
+     if (funcStr === 'ln(x)' && x > 0) return Math.log(x);
+     if (funcStr === '1/x' && x !== 0) return 1/x;
+     if (funcStr === 'sqrt(x)' && x >= 0) return Math.sqrt(x);
+     return NaN;
+    } catch (error) {
+     return NaN;
+    }
+   }
+
+   function evaluateDerivative(funcStr, x) {
+    try {
+     if (funcStr === 'x^2') return 2 * x;
+     if (funcStr === 'x^3') return 3 * x * x;
+     if (funcStr === '-x^2') return -2 * x;
+     if (funcStr === 'x^4') return 4 * x * x * x;
+     if (funcStr === 'sin(x)') return Math.cos(x);
+     if (funcStr === 'cos(x)') return -Math.sin(x);
+     if (funcStr === 'e^x') return Math.exp(x);
+     if (funcStr === 'ln(x)' && x > 0) return 1/x;
+     if (funcStr === '1/x' && x !== 0) return -1/(x*x);
+     if (funcStr === 'sqrt(x)' && x > 0) return 1/(2 * Math.sqrt(x));
+     return NaN;
+    } catch (error) {
+     return NaN;
+    }
+   }
+
+   function analyzeMonotonicity() {
+    try {
+     const funcStr = document.getElementById('functionInput').value.trim();
+     const start = parseFloat(document.getElementById('intervalStart').value) || -2;
+     const end = parseFloat(document.getElementById('intervalEnd').value) || 2;
+
+     if (start >= end) {
+      document.getElementById('errorMessage').textContent = 'Start must be less than end.';
+      document.getElementById('errorMessage').style.display = 'block';
+      return;
+     }
+
+     // Simple monotonicity analysis by sampling points
+     const samples = 20;
+     const step = (end - start) / samples;
+     let increasingCount = 0;
+     let decreasingCount = 0;
+     let zeroCount = 0;
+
+     for (let i = 0; i < samples; i++) {
+      const x = start + i * step;
+      const deriv = evaluateDerivative(funcStr, x);
+      if (!isNaN(deriv)) {
+       if (deriv > 0.01) increasingCount++;
+       else if (deriv < -0.01) decreasingCount++;
+       else zeroCount++;
+      }
+     }
+
+     let behavior = 'Mixed behavior';
+     if (increasingCount > samples * 0.8) behavior = 'Increasing';
+     else if (decreasingCount > samples * 0.8) behavior = 'Decreasing';
+     else if (zeroCount > samples * 0.8) behavior = 'Constant';
+
+     document.getElementById('functionText').textContent = `f(x) = ${funcStr}`;
+     document.getElementById('derivativeText').textContent = `f'(x) = ${getDerivativeStr(funcStr)}`;
+     document.getElementById('monotonicityText').textContent = behavior;
+     document.getElementById('errorMessage').style.display = 'none';
+
+     drawMonotonicityVisualization(funcStr, start, end);
+    } catch (error) {
+     document.getElementById('errorMessage').textContent = 'Error analyzing function. Please check your input.';
+     document.getElementById('errorMessage').style.display = 'block';
+    }
+   }
+
+   function getDerivativeStr(funcStr) {
+    if (funcStr === 'x^2') return '2x';
+    if (funcStr === 'x^3') return '3x²';
+    if (funcStr === '-x^2') return '-2x';
+    if (funcStr === 'x^4') return '4x³';
+    if (funcStr === 'sin(x)') return 'cos(x)';
+    if (funcStr === 'cos(x)') return '-sin(x)';
+    if (funcStr === 'e^x') return 'e^x';
+    if (funcStr === 'ln(x)') return '1/x';
+    if (funcStr === '1/x') return '-1/x²';
+    if (funcStr === 'sqrt(x)') return '1/(2√x)';
+    return 'Unknown';
+   }
+
+   function showCriticalPoints() {
+    try {
+     const funcStr = document.getElementById('functionInput').value.trim();
+     const start = parseFloat(document.getElementById('intervalStart').value) || -2;
+     const end = parseFloat(document.getElementById('intervalEnd').value) || 2;
+
+     // Find approximate critical points by sampling
+     const samples = 100;
+     const step = (end - start) / samples;
+     const criticalPoints = [];
+
+     for (let i = 1; i < samples - 1; i++) {
+      const x = start + i * step;
+      const deriv = evaluateDerivative(funcStr, x);
+      const prevDeriv = evaluateDerivative(funcStr, x - step);
+      const nextDeriv = evaluateDerivative(funcStr, x + step);
+
+      if (!isNaN(deriv) && !isNaN(prevDeriv) && !isNaN(nextDeriv)) {
+       // Check for sign change or zero
+       if ((deriv * prevDeriv < 0) || (deriv * nextDeriv < 0) || Math.abs(deriv) < 0.01) {
+        criticalPoints.push(x.toFixed(2));
+       }
+      }
+     }
+
+     const pointsStr = criticalPoints.length > 0 ? criticalPoints.join(', ') : 'None found';
+     document.getElementById('monotonicityText').textContent = `Critical points: ${pointsStr}`;
+     document.getElementById('errorMessage').style.display = 'none';
+    } catch (error) {
+     document.getElementById('errorMessage').textContent = 'Error finding critical points.';
+     document.getElementById('errorMessage').style.display = 'block';
+    }
+   }
+
+   function drawMonotonicityVisualization(funcStr, start, end) {
+    const canvas = document.getElementById('monotonicityCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const centerY = canvas.height / 2;
+    const scaleX = canvas.width / (end - start);
+    const scaleY = canvas.height / 8; // Rough scale
+
+    // Transform functions
+    const transformX = xi => (xi - start) * scaleX;
+    const transformY = yi => centerY - yi * scaleY;
+
+    // Draw axes
+    ctx.strokeStyle = '#666';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, centerY);
+    ctx.lineTo(canvas.width, centerY);
+    ctx.moveTo(transformX(0), 0);
+    ctx.lineTo(transformX(0), canvas.height);
+    ctx.stroke();
+
+    // Draw function curve
+    ctx.strokeStyle = '#e74c3c';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    let firstPoint = true;
+    for (let xi = start; xi <= end; xi += 0.05) {
+     const yi = evaluateFunction(funcStr, xi);
+     if (!isNaN(yi)) {
+      const canvasX = transformX(xi);
+      const canvasY = transformY(yi);
+      if (firstPoint) {
+       ctx.moveTo(canvasX, canvasY);
+       firstPoint = false;
+      } else {
+       ctx.lineTo(canvasX, canvasY);
+      }
+     }
+    }
+    ctx.stroke();
+
+    // Draw derivative sign indicators
+    ctx.strokeStyle = '#27ae60';
+    ctx.lineWidth = 2;
+    for (let xi = start; xi <= end; xi += 0.2) {
+     const deriv = evaluateDerivative(funcStr, xi);
+     if (!isNaN(deriv) && deriv > 0.01) {
+      const canvasX = transformX(xi);
+      ctx.beginPath();
+      ctx.moveTo(canvasX, centerY - 10);
+      ctx.lineTo(canvasX, centerY - 20);
+      ctx.stroke();
+     }
+    }
+
+    ctx.strokeStyle = '#ef4444';
+    for (let xi = start; xi <= end; xi += 0.2) {
+     const deriv = evaluateDerivative(funcStr, xi);
+     if (!isNaN(deriv) && deriv < -0.01) {
+      const canvasX = transformX(xi);
+      ctx.beginPath();
+      ctx.moveTo(canvasX, centerY + 10);
+      ctx.lineTo(canvasX, centerY + 20);
+      ctx.stroke();
+     }
+    }
+
+    // Labels
+    ctx.fillStyle = '#333';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(`f(x) = ${funcStr}`, canvas.width / 2, 20);
+    ctx.fillText(`Interval: [${start}, ${end}]`, canvas.width / 2, canvas.height - 5);
+
+    // Legend
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.fillRect(10, 10, 140, 60);
+    ctx.strokeStyle = '#333';
+    ctx.strokeRect(10, 10, 140, 60);
+
+    ctx.fillStyle = '#333';
+    ctx.font = '10px Arial';
+    ctx.textAlign = 'left';
+    ctx.fillText('Legend:', 15, 25);
+    ctx.fillText('● Function', 15, 40);
+    ctx.fillText('↑ Increasing', 15, 50);
+    ctx.fillText('↓ Decreasing', 15, 60);
+   }
+
+   function showExample(exampleNumber) {
+    const detail = document.getElementById('exampleDetail');
+    let content = '';
+
+    switch(exampleNumber) {
+     case 1:
+      content = `
+       <h4>Detailed Example 1 - Quadratic Function</h4>
+       <div class="calculation-steps">
+        <div class="calculation-step">Function: f(x) = x² - 4x + 3</div>
+        <div class="calculation-step">Derivative: f'(x) = 2x - 4</div>
+        <div class="calculation-step">Critical point: 2x - 4 = 0 ⇒ x = 2</div>
+        <div class="calculation-step">Test intervals: (-∞, 2) and (2, ∞)</div>
+        <div class="calculation-step">For x < 2: f'(x) = 2x - 4 < 0 (decreasing)</div>
+        <div class="calculation-step">For x > 2: f'(x) = 2x - 4 > 0 (increasing)</div>
+        <div class="calculation-step">Local minimum at x = 2, f(2) = 4 - 8 + 3 = -1</div>
+       </div>
+      `;
+      break;
+     case 2:
+      content = `
+       <h4>Detailed Example 2 - Cubic Function</h4>
+       <div class="calculation-steps">
+        <div class="calculation-step">Function: f(x) = x³ - 3x</div>
+        <div class="calculation-step">Derivative: f'(x) = 3x² - 3 = 3(x² - 1) = 3(x - 1)(x + 1)</div>
+        <div class="calculation-step">Critical points: x = -1, x = 1</div>
+        <div class="calculation-step">Test intervals: (-∞, -1), (-1, 1), (1, ∞)</div>
+        <div class="calculation-step">For x < -1: f'(x) = 3(x - 1)(x + 1) > 0 (increasing)</div>
+        <div class="calculation-step">For -1 < x < 1: f'(x) = 3(x - 1)(x + 1) < 0 (decreasing)</div>
+        <div class="calculation-step">For x > 1: f'(x) = 3(x - 1)(x + 1) > 0 (increasing)</div>
+        <div class="calculation-step">Local maximum at x = -1, local minimum at x = 1</div>
+       </div>
+      `;
+      break;
+     case 3:
+      content = `
+       <h4>Detailed Example 3 - Rational Function</h4>
+       <div class="calculation-steps">
+        <div class="calculation-step">Function: f(x) = 1/x</div>
+        <div class="calculation-step">Derivative: f'(x) = -1/x²</div>
+        <div class="calculation-step">Domain: x ≠ 0, so intervals (-∞, 0) and (0, ∞)</div>
+        <div class="calculation-step">For x ∈ (-∞, 0): -1/x² < 0 (decreasing)</div>
+        <div class="calculation-step">For x ∈ (0, ∞): -1/x² < 0 (decreasing)</div>
+        <div class="calculation-step">The function is decreasing on its entire domain</div>
+        <div class="calculation-step">As x → -∞, f(x) → 0⁻; as x → 0⁻, f(x) → -∞</div>
+        <div class="calculation-step">As x → 0⁺, f(x) → +∞; as x → ∞, f(x) → 0⁺</div>
+       </div>
+      `;
+      break;
+    }
+
+    detail.innerHTML = content;
+    detail.style.display = 'block';
+    MathJax.typesetPromise();
+   }
+
+   function toggleSolution(problemNumber) {
+    const solution = document.getElementById('solution' + problemNumber);
+    if (solution.style.display === 'none' || solution.style.display === '') {
+     solution.style.display = 'block';
+    } else {
+     solution.style.display = 'none';
+    }
+   }
+
+   function resetDemo() {
+    document.getElementById('functionInput').value = 'x^2';
+    document.getElementById('intervalStart').value = '-2';
+    document.getElementById('intervalEnd').value = '2';
+    document.getElementById('functionText').textContent = 'f(x) = x²';
+    document.getElementById('derivativeText').textContent = 'f\'(x) = 2x';
+    document.getElementById('monotonicityText').textContent = 'Not analyzed';
+    document.getElementById('errorMessage').style.display = 'none';
+    analyzeMonotonicity();
+   }
+
+   // Initialize
+   window.addEventListener('load', function() {
+    drawIncreasingCurve();
+    drawDecreasingCurve();
+    drawConstantCurve();
+    analyzeMonotonicity();
+   });
+  </script>
+ </body>
+</html>

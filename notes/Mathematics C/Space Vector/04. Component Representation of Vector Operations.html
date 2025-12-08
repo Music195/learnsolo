@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<!-- tags: Space Vector -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Component Representation of Vector Operations
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   .interactive-demo {
+     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+     border: 2px solid #4a90e2;
+     border-radius: 15px;
+     padding: 25px;
+     margin: 20px 0;
+     box-shadow: 0 8px 25px rgba(74, 144, 226, 0.2);
+     color: white;
+   }
+   .demo-controls {
+     display: flex;
+     flex-wrap: wrap;
+     gap: 15px;
+     margin-bottom: 20px;
+     align-items: center;
+   }
+   .control-group {
+     display: flex;
+     flex-direction: column;
+     gap: 5px;
+   }
+   .control-group label {
+     font-weight: bold;
+     color: #e8f4f8;
+     font-size: 14px;
+   }
+   .control-group input {
+     padding: 8px 12px;
+     border: 2px solid #bdc3c7;
+     border-radius: 8px;
+     font-size: 14px;
+     transition: border-color 0.3s;
+     width: 100px;
+   }
+   .control-group input:focus {
+     outline: none;
+     border-color: #4a90e2;
+     box-shadow: 0 0 5px rgba(74, 144, 226, 0.3);
+   }
+   .demo-button {
+     background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+     color: #2c3e50;
+     border: none;
+     padding: 12px 25px;
+     border-radius: 8px;
+     cursor: pointer;
+     font-weight: bold;
+     transition: transform 0.2s, box-shadow 0.2s;
+     align-self: flex-end;
+   }
+   .demo-button:hover {
+     transform: translateY(-2px);
+     box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
+   }
+   .demo-result {
+     background: white;
+     border-radius: 10px;
+     padding: 20px;
+     margin-top: 20px;
+     border-left: 5px solid #4a90e2;
+     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+   }
+   .result-highlight {
+     background: #ecf0f1;
+     padding: 10px;
+     border-radius: 5px;
+     margin: 10px 0;
+     font-family: 'Courier New', monospace;
+   }
+   .practice-problem {
+     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+     color: white;
+     border: none;
+     padding: 15px 25px;
+     border-radius: 10px;
+     cursor: pointer;
+     font-weight: bold;
+     margin: 10px 0;
+     width: 100%;
+     transition: all 0.3s;
+   }
+   .practice-problem:hover {
+     background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+     transform: translateY(-2px);
+   }
+   .solution {
+     background: #f8f9fa;
+     border: 2px solid #28a745;
+     border-radius: 10px;
+     padding: 20px;
+     margin-top: 15px;
+     display: none;
+     border-left: 5px solid #28a745;
+   }
+   .solution.show {
+     display: block;
+   }
+   .key-takeaways {
+     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+     color: white;
+     padding: 25px;
+     border-radius: 15px;
+     margin: 30px 0;
+     box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+   }
+   .key-takeaways h3 {
+     margin-top: 0;
+     color: white;
+     text-align: center;
+     font-size: 1.4em;
+   }
+   .key-takeaways ul {
+     line-height: 2.2;
+     margin: 0;
+   }
+   .key-takeaways li {
+     margin: 10px 0;
+     padding-left: 20px;
+     position: relative;
+   }
+   .key-takeaways li:before {
+     content: "✓";
+     position: absolute;
+     left: 0;
+     color: #ffd700;
+     font-weight: bold;
+   }
+   .operation-block {
+     background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+     color: white;
+     padding: 20px;
+     border-radius: 12px;
+     margin: 20px 0;
+     box-shadow: 0 6px 20px rgba(245, 87, 108, 0.3);
+   }
+   .operation-block h3 {
+     margin-top: 0;
+     color: white;
+     text-align: center;
+   }
+   .enhanced-diagram {
+     background: white;
+     border-radius: 15px;
+     padding: 20px;
+     margin: 20px 0;
+     box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+     text-align: center;
+   }
+   .tab-container {
+     display: flex;
+     margin-bottom: 20px;
+     background: #f8f9fa;
+     border-radius: 10px;
+     overflow: hidden;
+   }
+   .tab-button {
+     flex: 1;
+     padding: 15px;
+     border: none;
+     background: #e9ecef;
+     cursor: pointer;
+     font-weight: bold;
+     transition: all 0.3s;
+   }
+   .tab-button.active {
+     background: #667eea;
+     color: white;
+   }
+   .tab-content {
+     display: none;
+   }
+   .tab-content.active {
+     display: block;
+   }
+   .point-inputs {
+     display: grid;
+     grid-template-columns: 1fr 1fr;
+     gap: 15px;
+     margin-bottom: 15px;
+   }
+   .point-group {
+     display: flex;
+     flex-direction: column;
+     gap: 5px;
+   }
+   .point-group label {
+     font-weight: bold;
+     color: #e8f4f8;
+     font-size: 14px;
+   }
+   .point-group input {
+     padding: 8px 12px;
+     border: 2px solid #bdc3c7;
+     border-radius: 8px;
+     font-size: 14px;
+     transition: border-color 0.3s;
+   }
+   .point-group input:focus {
+     outline: none;
+     border-color: #4a90e2;
+     box-shadow: 0 0 5px rgba(74, 144, 226, 0.3);
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Space Vector">
+   Component Representation of Vector Operations
+  </div>
+  <div class="container">
+   <div class="main-content">
+
+    <!-- Interactive Vector Operations Calculator -->
+    <div class="interactive-demo">
+     <h3 style="color: #e8f4f8; margin-top: 0; text-align: center;">🧮 Interactive Vector Operations Calculator</h3>
+     <p style="text-align: center; color: #e8f4f8; margin-bottom: 20px;">Perform vector operations and calculate vectors between points!</p>
+
+     <!-- Tab Navigation -->
+     <div class="tab-container">
+      <button class="tab-button active" onclick="switchTab('operations')">Vector Operations</button>
+      <button class="tab-button" onclick="switchTab('points')">Vector Between Points</button>
+     </div>
+
+     <!-- Vector Operations Tab -->
+     <div id="operations" class="tab-content active">
+      <div class="demo-controls">
+       <div class="control-group">
+        <label for="vec-a1">Vector A (x,y,z):</label>
+        <input type="number" id="vec-a1" step="0.1" value="2" placeholder="x">
+        <input type="number" id="vec-a2" step="0.1" value="3" placeholder="y">
+        <input type="number" id="vec-a3" step="0.1" value="4" placeholder="z">
+       </div>
+       <div class="control-group">
+        <label for="vec-b1">Vector B (x,y,z):</label>
+        <input type="number" id="vec-b1" step="0.1" value="1" placeholder="x">
+        <input type="number" id="vec-b2" step="0.1" value="-2" placeholder="y">
+        <input type="number" id="vec-b3" step="0.1" value="3" placeholder="z">
+       </div>
+       <div class="control-group">
+        <label for="scalar-k">Scalar (k):</label>
+        <input type="number" id="scalar-k" step="0.1" value="2" placeholder="k">
+       </div>
+       <button class="demo-button" onclick="calculateOperations()">Calculate All</button>
+      </div>
+     </div>
+
+     <!-- Vector Between Points Tab -->
+     <div id="points" class="tab-content">
+      <div class="point-inputs">
+       <div class="point-group">
+        <label for="point-ax">Point A (x,y,z):</label>
+        <input type="number" id="point-ax" step="0.1" value="1" placeholder="x">
+        <input type="number" id="point-ay" step="0.1" value="2" placeholder="y">
+        <input type="number" id="point-az" step="0.1" value="3" placeholder="z">
+       </div>
+       <div class="point-group">
+        <label for="point-bx">Point B (x,y,z):</label>
+        <input type="number" id="point-bx" step="0.1" value="4" placeholder="x">
+        <input type="number" id="point-by" step="0.1" value="-1" placeholder="y">
+        <input type="number" id="point-bz" step="0.1" value="2" placeholder="z">
+       </div>
+      </div>
+      <button class="demo-button" onclick="calculateVectorBetweenPoints()">Calculate Vector AB</button>
+     </div>
+
+     <div id="demo-result" class="demo-result" style="display: none;">
+      <h4 style="color: #2c3e50; margin-top: 0;">Operation Results:</h4>
+      <div id="calculation-steps"></div>
+      <div id="operation-canvas" style="text-align: center; margin-top: 20px;">
+       <canvas id="interactiveCanvas" width="600" height="400"></canvas>
+      </div>
+     </div>
+    </div>
+
+    <div class="enhanced-diagram">
+     <h3 style="color: #667eea; margin-top: 0;">3D Vector Operations and Points Visualization</h3>
+     <svg viewbox="0 40 200 160" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+       <marker id="arrowhead" markerheight="4" markerwidth="6" orient="auto" refx="3" refy="2">
+        <polygon fill="#333" points="0 0, 3 2, 0 4"></polygon>
+       </marker>
+       <marker id="arrowhead-vec" markerheight="5" markerwidth="7" orient="auto" refx="3.5" refy="2.5">
+        <polygon fill="#e74c3c" points="0 0, 3.5 2.5, 0 5"></polygon>
+       </marker>
+       <marker id="arrowhead-vec-b" markerheight="5" markerwidth="7" orient="auto" refx="3.5" refy="2.5">
+        <polygon fill="#3498db" points="0 0, 3.5 2.5, 0 5"></polygon>
+       </marker>
+       <marker id="arrowhead-result" markerheight="5" markerwidth="7" orient="auto" refx="3.5" refy="2.5">
+        <polygon fill="#27ae60" points="0 0, 3.5 2.5, 0 5"></polygon>
+       </marker>
+      </defs>
+      <!-- Axes -->
+      <line marker-end="url(#arrowhead)" stroke="#333" stroke-width="1" x1="90" x2="20" y1="150" y2="174.5"></line>
+      <text font-size="10" x="15" y="178">x</text>
+      <line marker-end="url(#arrowhead)" stroke="#333" stroke-width="1" x1="90" x2="145" y1="150" y2="171"></line>
+      <text font-size="10" x="150" y="174">y</text>
+      <line marker-end="url(#arrowhead)" stroke="#333" stroke-width="1" x1="90" x2="90" y1="150" y2="70"></line>
+      <text font-size="10" x="95" y="70">z</text>
+      <!-- Origin O -->
+      <circle cx="90" cy="150" fill="#000" r="2"></circle>
+      <text font-size="10" x="80" y="155">O</text>
+      <!-- Point A -->
+      <circle cx="110" cy="135" fill="#e74c3c" r="4"></circle>
+      <text fill="#e74c3c" font-size="12" font-weight="bold" x="125" y="130">A</text>
+      <!-- Point B -->
+      <circle cx="140" cy="145" fill="#3498db" r="4"></circle>
+      <text fill="#3498db" font-size="12" font-weight="bold" x="155" y="140">B</text>
+      <!-- Vector AB -->
+      <line marker-end="url(#arrowhead-result)" stroke="#27ae60" stroke-width="3" x1="110" x2="140" y1="135" y2="145"></line>
+      <text fill="#27ae60" font-size="12" font-weight="bold" x="125" y="125">$\vec{AB}$</text>
+     </svg>
+     <p style="margin-top: 15px; color: #666;"><em>The green vector shows $\vec{AB}$ from point A to point B, with magnitude equal to the distance between the points</em></p>
+    </div>
+
+    <div class="operation-block">
+     <h3>Vector Addition</h3>
+     <p>The sum of two vectors $\vec{a}$ and $\vec{b}$ is found by adding their corresponding components:</p>
+     $$
+     \begin{array}{l}
+     (a_1, a_2, a_3) + (b_1, b_2, b_3) \\
+     = (a_1 + b_1, a_2 + b_2, a_3 + b_3)
+     \end{array}
+     $$
+     <div class="example">
+      <strong>Example:</strong> $(2, 3, 4) + (1, -2, 3) = (3, 1, 7)$
+     </div>
+    </div>
+
+    <div class="operation-block">
+     <h3>Vector Subtraction</h3>
+     <p>The difference of vector $\vec{b}$ from vector $\vec{a}$ is found by subtracting the corresponding components:</p>
+     $$
+     \begin{array}{l}
+     (a_1, a_2, a_3) - (b_1, b_2, b_3) \\
+     = (a_1 - b_1, a_2 - b_2, a_3 - b_3)
+     \end{array}
+     $$
+     <div class="example">
+      <strong>Example:</strong> $(5, 7, 2) - (1, 3, -1) = (4, 4, 3)$
+     </div>
+    </div>
+
+    <div class="operation-block">
+     <h3>Scalar Multiplication</h3>
+     <p>The product of a scalar $k$ and a vector $\vec{a}$ is found by multiplying each component of $\vec{a}$ by $k$:</p>
+     $$
+     \begin{array}{l}
+     k(a_1, a_2, a_3) \\
+     = (ka_1, ka_2, ka_3)
+     \end{array}
+     $$
+     <p style="font-size: 0.9em; text-align: right; margin-top: 10px;">(Note: $k$ is a real number)</p>
+     <div class="example">
+      <strong>Example:</strong> $2(3, -1, 4) = (6, -2, 8)$
+     </div>
+    </div>
+
+    <div class="operation-block">
+     <h3>Vector from Two Points and Its Magnitude</h3>
+     <p>Given two points in 3D space:</p>
+     <p>$A(a_1, a_2, a_3)$, $B(b_1, b_2, b_3)$</p>
+
+     <p><strong>The vector from $A$ to $B$:</strong></p>
+     $$\vec{AB} = (b_1 - a_1,\;\; b_2 - a_2,\;\; b_3 - a_3)$$
+
+     <p><strong>The magnitude (length) of $\vec{AB}$:</strong></p>
+     $$|\vec{AB}| = \sqrt{(b_1 - a_1)^2 + (b_2 - a_2)^2 + (b_3 - a_3)^2}$$
+
+     <div class="example">
+      <strong>Example:</strong> Points $A(1, 2, 3)$ and $B(4, -1, 2)$
+      <br>
+      $\vec{AB} = (4-1, -1-2, 2-3) = (3, -3, -1)$
+      <br>
+      $|\vec{AB}| = \sqrt{3^2 + (-3)^2 + (-1)^2} = \sqrt{9 + 9 + 1} = \sqrt{19} \approx 4.36$
+     </div>
+    </div>
+
+    <div class="hint-block">
+     💡
+     <strong>Key Concepts:</strong>
+     <ul>
+      <li>Vector operations in 3D (and other dimensions) are performed <strong>component-wise</strong>.</li>
+      <li><strong>Vector Addition:</strong> Add corresponding components. Geometrically, this follows the parallelogram law or head-to-tail rule.</li>
+      <li><strong>Vector Subtraction:</strong> Subtract corresponding components. $\vec{a} - \vec{b}$ is equivalent to $\vec{a} + (-\vec{b})$.</li>
+      <li><strong>Scalar Multiplication:</strong> Multiply each component by the scalar. This scales the vector's magnitude and/or reverses its direction.
+       <ul>
+        <li>If $k > 0$, the direction is unchanged, magnitude scales by $|k|$.</li>
+        <li>If $k < 0$, the direction is reversed, magnitude scales by $|k|$.</li>
+        <li>If $k = 0$, the result is the zero vector $(0,0,0)$.</li>
+       </ul>
+      </li>
+      <li>These operations are fundamental in linear algebra, physics, computer graphics, and many other fields.</li>
+     </ul>
+    </div>
+
+    <h2>Worked Examples</h2>
+
+    <div class="example">
+     <h4>Example 1: Vector Operations</h4>
+     <p>Given $\vec{a} = (4, -2, 3)$ and $\vec{b} = (-1, 5, 2)$, compute:</p>
+     <p>a) $\vec{a} + \vec{b}$</p>
+     <p>b) $\vec{a} - \vec{b}$</p>
+     <p>c) $3\vec{a}$</p>
+
+     <p><strong>Solutions:</strong></p>
+     <p>a) $\vec{a} + \vec{b} = (4 + (-1), -2 + 5, 3 + 2) = (3, 3, 5)$</p>
+     <p>b) $\vec{a} - \vec{b} = (4 - (-1), -2 - 5, 3 - 2) = (5, -7, 1)$</p>
+     <p>c) $3\vec{a} = (3×4, 3×(-2), 3×3) = (12, -6, 9)$</p>
+    </div>
+
+    <div class="example">
+     <h4>Example 2: Vector Between Points</h4>
+     <p>Find the vector from $A(2, 1, -1)$ to $B(5, 3, 4)$ and its magnitude.</p>
+
+     <p><strong>Solution:</strong></p>
+     <p>$\vec{AB} = (5-2, 3-1, 4-(-1)) = (3, 2, 5)$</p>
+     <p>$|\vec{AB}| = \sqrt{3^2 + 2^2 + 5^2} = \sqrt{9 + 4 + 25} = \sqrt{38} \approx 6.16$</p>
+    </div>
+
+    <div class="example">
+     <h4>Example 3: Distance Between Points</h4>
+     <p>Find the distance between points $P(1, -2, 3)$ and $Q(-3, 4, 1)$.</p>
+
+     <p><strong>Solution:</strong></p>
+     <p>The distance is the magnitude of $\vec{PQ}$:</p>
+     <p>$\vec{PQ} = (-3-1, 4-(-2), 1-3) = (-4, 6, -2)$</p>
+     <p>$|\vec{PQ}| = \sqrt{(-4)^2 + 6^2 + (-2)^2} = \sqrt{16 + 36 + 4} = \sqrt{56} = 2\sqrt{14} \approx 7.48$</p>
+    </div>
+
+    <h2>Practice Problems</h2>
+
+    <div class="graybox">
+     <strong>Problem 1:</strong> Given $\vec{u} = (3, -1, 4)$ and $\vec{v} = (2, 5, -3)$, compute $\vec{u} + \vec{v}$ and $2\vec{u} - 3\vec{v}$.
+     <br><br>
+     <button class="practice-problem" onclick="toggleSolution('sol1')">Show Solution</button>
+     <div id="sol1" class="solution">
+      <strong>Solution:</strong>
+      <br><br>
+      $\vec{u} + \vec{v} = (3+2, -1+5, 4+(-3)) = (5, 4, 1)$
+      <br>
+      $2\vec{u} = (6, -2, 8)$, $3\vec{v} = (6, 15, -9)$
+      <br>
+      $2\vec{u} - 3\vec{v} = (6-6, -2-15, 8-(-9)) = (0, -17, 17)$
+     </div>
+    </div>
+
+    <div class="graybox" style="margin-top: 15px;">
+     <strong>Problem 2:</strong> Find the vector from $A(1, 2, 3)$ to $B(4, 0, -1)$ and its magnitude.
+     <br><br>
+     <button class="practice-problem" onclick="toggleSolution('sol2')">Show Solution</button>
+     <div id="sol2" class="solution">
+      <strong>Solution:</strong>
+      <br><br>
+      $\vec{AB} = (4-1, 0-2, -1-3) = (3, -2, -4)$
+      <br>
+      $|\vec{AB}| = \sqrt{3^2 + (-2)^2 + (-4)^2} = \sqrt{9 + 4 + 16} = \sqrt{29} \approx 5.39$
+     </div>
+    </div>
+
+    <div class="graybox" style="margin-top: 15px;">
+     <strong>Problem 3:</strong> Points $P(2, -1, 3)$ and $Q(5, 4, -2)$. Find the distance between them.
+     <br><br>
+     <button class="practice-problem" onclick="toggleSolution('sol3')">Show Solution</button>
+     <div id="sol3" class="solution">
+      <strong>Solution:</strong>
+      <br><br>
+      $\vec{PQ} = (5-2, 4-(-1), -2-3) = (3, 5, -5)$
+      <br>
+      Distance = $|\vec{PQ}| = \sqrt{3^2 + 5^2 + (-5)^2} = \sqrt{9 + 25 + 25} = \sqrt{59} \approx 7.68$
+     </div>
+    </div>
+
+    <div class="graybox" style="margin-top: 15px;">
+     <strong>Problem 4:</strong> If $\vec{a} + \vec{b} = (7, 3, -1)$ and $\vec{a} - \vec{b} = (1, -5, 3)$, find $\vec{a}$ and $\vec{b}$.
+     <br><br>
+     <button class="practice-problem" onclick="toggleSolution('sol4')">Show Solution</button>
+     <div id="sol4" class="solution">
+      <strong>Solution:</strong>
+      <br><br>
+      Adding equations: $2\vec{a} = (8, -2, 2)$ → $\vec{a} = (4, -1, 1)$
+      <br>
+      Subtracting equations: $2\vec{b} = (6, -8, 4)$ → $\vec{b} = (3, -4, 2)$
+     </div>
+    </div>
+
+    <div class="graybox" style="margin-top: 15px;">
+     <strong>Problem 5:</strong> Find a unit vector in the direction of $\vec{v} = (3, 4, 12)$.
+     <br><br>
+     <button class="practice-problem" onclick="toggleSolution('sol5')">Show Solution</button>
+     <div id="sol5" class="solution">
+      <strong>Solution:</strong>
+      <br><br>
+      First find magnitude: $|\vec{v}| = \sqrt{3^2 + 4^2 + 12^2} = \sqrt{9 + 16 + 144} = \sqrt{169} = 13$
+      <br>
+      Unit vector: $\hat{v} = \frac{1}{13}(3, 4, 12) = \left(\frac{3}{13}, \frac{4}{13}, \frac{12}{13}\right)$
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <h3>🎯 Key Takeaways</h3>
+     <ul>
+      <li>Vector operations are performed component-wise in each dimension</li>
+      <li>Vector addition: $(a_x, a_y, a_z) + (b_x, b_y, b_z) = (a_x + b_x, a_y + b_y, a_z + b_z)$</li>
+      <li>Vector subtraction: $(a_x, a_y, a_z) - (b_x, b_y, b_z) = (a_x - b_x, a_y - b_y, a_z - b_z)$</li>
+      <li>Scalar multiplication: $k(a_x, a_y, a_z) = (k a_x, k a_y, k a_z)$</li>
+      <li>Vector between points: $\vec{AB} = (b_x - a_x, b_y - a_y, b_z - a_z)$</li>
+      <li>Distance between points: $d = \sqrt{(b_x - a_x)^2 + (b_y - a_y)^2 + (b_z - a_z)^2}$</li>
+      <li>Interactive calculator allows real-time computation of all operations</li>
+      <li>Practice problems with toggle-able solutions reinforce understanding</li>
+      <li>Component-wise operations are fundamental to 3D mathematics</li>
+     </ul>
+    </div>
+
+    <script>
+     function switchTab(tabName) {
+       // Hide all tabs
+       const tabs = document.querySelectorAll('.tab-content');
+       tabs.forEach(tab => tab.classList.remove('active'));
+
+       // Remove active class from all buttons
+       const buttons = document.querySelectorAll('.tab-button');
+       buttons.forEach(button => button.classList.remove('active'));
+
+       // Show selected tab
+       document.getElementById(tabName).classList.add('active');
+
+       // Add active class to clicked button
+       event.target.classList.add('active');
+
+       // Hide results when switching tabs
+       document.getElementById('demo-result').style.display = 'none';
+     }
+
+     function calculateOperations() {
+       const a1 = parseFloat(document.getElementById('vec-a1').value);
+       const a2 = parseFloat(document.getElementById('vec-a2').value);
+       const a3 = parseFloat(document.getElementById('vec-a3').value);
+       const b1 = parseFloat(document.getElementById('vec-b1').value);
+       const b2 = parseFloat(document.getElementById('vec-b2').value);
+       const b3 = parseFloat(document.getElementById('vec-b3').value);
+       const k = parseFloat(document.getElementById('scalar-k').value);
+
+       if (isNaN(a1) || isNaN(a2) || isNaN(a3) || isNaN(b1) || isNaN(b2) || isNaN(b3) || isNaN(k)) {
+         alert('Please enter valid numbers for all vector components and scalar.');
+         return;
+       }
+
+       const add1 = a1 + b1;
+       const add2 = a2 + b2;
+       const add3 = a3 + b3;
+
+       const sub1 = a1 - b1;
+       const sub2 = a2 - b2;
+       const sub3 = a3 - b3;
+
+       const scalar1 = k * a1;
+       const scalar2 = k * a2;
+       const scalar3 = k * a3;
+
+       const resultDiv = document.getElementById('demo-result');
+       const stepsDiv = document.getElementById('calculation-steps');
+
+       stepsDiv.innerHTML = `
+         <div class="result-highlight">
+           <strong>Vectors:</strong> $\\vec{a} = (${a1}, ${a2}, ${a3})$ and $\\vec{b} = (${b1}, ${b2}, ${b3})$<br>
+           <strong>Scalar:</strong> $k = ${k}$
+         </div>
+         <br>
+         <strong>Vector Addition:</strong> $\\vec{a} + \\vec{b} = (${add1}, ${add2}, ${add3})$<br>
+         <strong>Vector Subtraction:</strong> $\\vec{a} - \\vec{b} = (${sub1}, ${sub2}, ${sub3})$<br>
+         <strong>Scalar Multiplication:</strong> $k\\vec{a} = (${scalar1}, ${scalar2}, ${scalar3})$<br>
+       `;
+
+       resultDiv.style.display = 'block';
+
+       // Draw the vector visualization
+       drawVectorOperations(a1, a2, a3, b1, b2, b3, add1, add2, add3, 'operations', k);
+     }
+
+     function calculateVectorBetweenPoints() {
+       const ax = parseFloat(document.getElementById('point-ax').value);
+       const ay = parseFloat(document.getElementById('point-ay').value);
+       const az = parseFloat(document.getElementById('point-az').value);
+       const bx = parseFloat(document.getElementById('point-bx').value);
+       const by = parseFloat(document.getElementById('point-by').value);
+       const bz = parseFloat(document.getElementById('point-bz').value);
+
+       if (isNaN(ax) || isNaN(ay) || isNaN(az) || isNaN(bx) || isNaN(by) || isNaN(bz)) {
+         alert('Please enter valid numbers for all point coordinates.');
+         return;
+       }
+
+       const vec1 = bx - ax;
+       const vec2 = by - ay;
+       const vec3 = bz - az;
+       const magnitude = Math.sqrt(vec1*vec1 + vec2*vec2 + vec3*vec3);
+
+       const resultDiv = document.getElementById('demo-result');
+       const stepsDiv = document.getElementById('calculation-steps');
+
+       stepsDiv.innerHTML = `
+         <div class="result-highlight">
+           <strong>Points:</strong> $A(${ax}, ${ay}, ${az})$ and $B(${bx}, ${by}, ${bz})$
+         </div>
+         <br>
+         <strong>Vector AB:</strong> $\\vec{AB} = (${vec1}, ${vec2}, ${vec3})$<br>
+         <strong>Magnitude:</strong> $|\\vec{AB}| = \\sqrt{(${bx} - ${ax})^2 + (${by} - ${ay})^2 + (${bz} - ${az})^2} = \\sqrt{${vec1*vec1} + ${vec2*vec2} + ${vec3*vec3}} = ${magnitude.toFixed(4)}$<br>
+         <strong>Distance between points:</strong> ${magnitude.toFixed(4)} units<br>
+       `;
+
+       resultDiv.style.display = 'block';
+
+       // Draw the vector visualization
+       drawVectorOperations(ax, ay, az, bx, by, bz, vec1, vec2, vec3, 'points');
+     }
+
+     function drawVectorOperations(a1, a2, a3, b1, b2, b3, r1, r2, r3, operation, scalar = 1) {
+       const canvas = document.getElementById('interactiveCanvas');
+       const ctx = canvas.getContext('2d');
+       const w = canvas.width;
+       const h = canvas.height;
+       const scale = 15;
+       const originX = w / 2;
+       const originY = h / 2;
+
+       // Clear canvas
+       ctx.clearRect(0, 0, w, h);
+
+       // Set up coordinate system
+       function toCanvasX(x) { return originX + x * scale; }
+       function toCanvasY(y) { return originY - y * scale; }
+
+       // Draw axes
+       ctx.strokeStyle = '#333';
+       ctx.lineWidth = 2;
+       ctx.beginPath();
+       ctx.moveTo(toCanvasX(-15), toCanvasY(0));
+       ctx.lineTo(toCanvasX(15), toCanvasY(0));
+       ctx.moveTo(toCanvasX(0), toCanvasY(-12));
+       ctx.lineTo(toCanvasX(0), toCanvasY(12));
+       ctx.stroke();
+
+       // Draw grid
+       ctx.strokeStyle = '#e0e0e0';
+       ctx.lineWidth = 0.5;
+       for (let x = -15; x <= 15; x++) {
+         ctx.beginPath();
+         ctx.moveTo(toCanvasX(x), toCanvasY(-12));
+         ctx.lineTo(toCanvasX(x), toCanvasY(12));
+         ctx.stroke();
+       }
+       for (let y = -12; y <= 12; y++) {
+         ctx.beginPath();
+         ctx.moveTo(toCanvasX(-15), toCanvasY(y));
+         ctx.lineTo(toCanvasX(15), toCanvasY(y));
+         ctx.stroke();
+       }
+
+       // Draw origin
+       ctx.fillStyle = '#000';
+       ctx.beginPath();
+       ctx.arc(toCanvasX(0), toCanvasY(0), 4, 0, 2 * Math.PI);
+       ctx.fill();
+
+       if (operation === 'operations') {
+         // Draw vector A (red)
+         drawVector(ctx, 0, 0, a1, a2, '#e74c3c', scale, originX, originY, 'A');
+
+         // Draw vector B (blue)
+         drawVector(ctx, 0, 0, b1, b2, '#3498db', scale, originX, originY, 'B');
+
+         // Draw result vector (green)
+         drawVector(ctx, 0, 0, r1, r2, '#27ae60', scale, originX, originY, 'Result');
+
+         // Draw scalar multiple (purple)
+         const scalarVec1 = scalar * a1;
+         const scalarVec2 = scalar * a2;
+         drawVector(ctx, 0, 0, scalarVec1, scalarVec2, '#9b59b6', scale, originX, originY, `${scalar}A`);
+
+       } else if (operation === 'points') {
+         // Draw point A (red dot)
+         ctx.fillStyle = '#e74c3c';
+         ctx.beginPath();
+         ctx.arc(toCanvasX(a1), toCanvasY(a2), 6, 0, 2 * Math.PI);
+         ctx.fill();
+         ctx.fillText('A', toCanvasX(a1) + 10, toCanvasY(a2) - 10);
+
+         // Draw point B (blue dot)
+         ctx.fillStyle = '#3498db';
+         ctx.beginPath();
+         ctx.arc(toCanvasX(b1), toCanvasY(b2), 6, 0, 2 * Math.PI);
+         ctx.fill();
+         ctx.fillText('B', toCanvasX(b1) + 10, toCanvasY(b2) - 10);
+
+         // Draw vector AB (green)
+         drawVector(ctx, a1, a2, r1, r2, '#27ae60', scale, originX, originY, 'AB');
+       }
+
+       // Labels
+       ctx.fillStyle = '#000';
+       ctx.font = '14px Arial';
+       ctx.textAlign = 'center';
+       ctx.fillText('Interactive Vector Operations', w/2, 30);
+     }
+
+     function drawVector(ctx, startX, startY, endX, endY, color, scale, originX, originY, label) {
+       const canvasStartX = originX + startX * scale;
+       const canvasStartY = originY - startY * scale;
+       const canvasEndX = canvasStartX + endX * scale;
+       const canvasEndY = canvasStartY - endY * scale;
+
+       // Draw vector line
+       ctx.strokeStyle = color;
+       ctx.lineWidth = 4;
+       ctx.beginPath();
+       ctx.moveTo(canvasStartX, canvasStartY);
+       ctx.lineTo(canvasEndX, canvasEndY);
+       ctx.stroke();
+
+       // Draw arrowhead
+       const angle = Math.atan2(canvasEndY - canvasStartY, canvasEndX - canvasStartX);
+       const arrowLength = 12;
+       ctx.beginPath();
+       ctx.moveTo(canvasEndX, canvasEndY);
+       ctx.lineTo(
+         canvasEndX - arrowLength * Math.cos(angle - Math.PI/6),
+         canvasEndY - arrowLength * Math.sin(angle - Math.PI/6)
+       );
+       ctx.moveTo(canvasEndX, canvasEndY);
+       ctx.lineTo(
+         canvasEndX - arrowLength * Math.cos(angle + Math.PI/6),
+         canvasEndY - arrowLength * Math.sin(angle + Math.PI/6)
+       );
+       ctx.stroke();
+
+       // Label
+       ctx.fillStyle = color;
+       ctx.font = 'bold 14px Arial';
+       const midX = (canvasStartX + canvasEndX) / 2;
+       const midY = (canvasStartY + canvasEndY) / 2;
+       ctx.fillText(label, midX, midY - 10);
+     }
+
+     // Toggle solution visibility
+     function toggleSolution(id) {
+       const solution = document.getElementById(id);
+       solution.classList.toggle('show');
+       const button = solution.previousElementSibling;
+       button.textContent = solution.classList.contains('show') ? 'Hide Solution' : 'Show Solution';
+     }
+
+     // Initialize with default values
+     calculateOperations();
+    </script>
+   </div>
+  </div>
+ </body>
+</html>

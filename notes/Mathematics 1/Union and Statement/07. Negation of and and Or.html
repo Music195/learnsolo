@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<!-- tags: Set and Elements -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Negation of "And" and "Or"
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   .interactive-demo {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    border: 2px solid #e1e8ed;
+   }
+   .demo-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 15px;
+   }
+   .demo-input-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 200px;
+   }
+   .demo-input-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #2c3e50;
+   }
+   .demo-input {
+    padding: 8px;
+    border: 2px solid #bdc3c7;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+   }
+   .demo-input:focus {
+    outline: none;
+    border-color: #3498db;
+   }
+   .demo-button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: transform 0.2s;
+   }
+   .demo-button:hover {
+    transform: translateY(-2px);
+   }
+   .demo-result {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+    border-left: 4px solid #3498db;
+   }
+   .math-foundation {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .worked-example {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .practice-problem {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .solution-toggle {
+    background: #2c3e50;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+   }
+   .solution-toggle:hover {
+    background: #34495e;
+   }
+   .solution-content {
+    display: none;
+    background: rgba(255, 255, 255, 0.9);
+    color: #2c3e50;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+   }
+   .key-takeaways {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .key-takeaways h3 {
+    color: #2c3e50;
+    margin-top: 0;
+   }
+   .key-takeaways ul {
+    color: #2c3e50;
+   }
+   .negation-laws {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+   }
+   .law-card {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #e67e22;
+   }
+   .law-card h4 {
+    margin-top: 0;
+    color: #2c3e50;
+   }
+   .logic-verification {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin: 15px 0;
+   }
+   .verification-card {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    border: 2px solid #dee2e6;
+    text-align: center;
+   }
+   .verification-card h4 {
+    margin-top: 0;
+    color: #2c3e50;
+   }
+   .math-orange {
+    color: #e67e22;
+    font-weight: bold;
+   }
+   .logic-diagram {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+    border: 2px solid #ecf0f1;
+    text-align: center;
+   }
+   .logic-flow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+   }
+   .logic-box {
+    background: #3498db;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    min-width: 60px;
+    text-align: center;
+   }
+   .logic-negation {
+    background: #e74c3c;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    min-width: 60px;
+    text-align: center;
+   }
+   .logic-arrow {
+    font-size: 24px;
+    color: #2c3e50;
+   }
+   .logic-equivalent {
+    background: #27ae60;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    min-width: 60px;
+    text-align: center;
+   }
+   .truth-table {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+    border: 2px solid #ecf0f1;
+    overflow-x: auto;
+   }
+   .truth-table table {
+    width: 100%;
+    border-collapse: collapse;
+   }
+   .truth-table th, .truth-table td {
+    padding: 8px;
+    border: 1px solid #dee2e6;
+    text-align: center;
+   }
+   .truth-table th {
+    background: #f8f9fa;
+    font-weight: bold;
+   }
+   .truth-highlight {
+    background: #fff3cd;
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Set and Elements">
+   Negation of "And" and "Or"
+  </div>
+  <div class="container">
+   <div class="main-content">
+    <div class="section-title">
+     Negation of "And" and "Or"
+    </div>
+
+    <div class="math-foundation">
+     <h3>Mathematical Foundations</h3>
+     <p>The negation of compound statements follows specific rules. When negating "and" and "or" statements, the logical operators change according to De Morgan's laws. These rules are fundamental to logical reasoning and mathematical proofs.</p>
+
+     <div class="negation-laws">
+      <div class="law-card">
+       <h4>Negation of "And"</h4>
+       <p>$\neg(p \land q) \equiv \neg p \lor \neg q$</p>
+       <p>The negation of "p and q" is "not p or not q"</p>
+       <p>Example: ¬(A ∧ B) = ¬A ∨ ¬B</p>
+       <p>Logic: If it's not true that both are true, then at least one is false</p>
+      </div>
+
+      <div class="law-card">
+       <h4>Negation of "Or"</h4>
+       <p>$\neg(p \lor q) \equiv \neg p \land \neg q$</p>
+       <p>The negation of "p or q" is "not p and not q"</p>
+       <p>Example: ¬(A ∨ B) = ¬A ∧ ¬B</p>
+       <p>Logic: If it's not true that at least one is true, then both are false</p>
+      </div>
+
+      <div class="law-card">
+       <h4>Word Form</h4>
+       <p>¬"p and q" = "not p or not q"</p>
+       <p>¬"p or q" = "not p and not q"</p>
+       <p>Essential for negating complex statements</p>
+       <p>Foundation of logical reasoning</p>
+      </div>
+
+      <div class="law-card">
+       <h4>Set Theory Equivalent</h4>
+       <p>¬(A ∩ B) = ¬A ∪ ¬B</p>
+       <p>¬(A ∪ B) = ¬A ∩ ¬B</p>
+       <p>Same laws apply to sets</p>
+       <p>Complement of intersection/union</p>
+      </div>
+     </div>
+    </div>
+
+    <div class="interactive-demo">
+     <h3>Interactive Negation Tester</h3>
+     <p>Test how negation works with "and" and "or" statements.</p>
+
+     <div class="demo-controls">
+      <div class="demo-input-group">
+       <label for="statement-p">Statement P:</label>
+       <input type="text" id="statement-p" class="demo-input" value="x > 5" placeholder="e.g., x > 5">
+      </div>
+      <div class="demo-input-group">
+       <label for="statement-q">Statement Q:</label>
+       <input type="text" id="statement-q" class="demo-input" value="x < 10" placeholder="e.g., x < 10">
+      </div>
+      <div class="demo-input-group">
+       <label for="test-value">Test Value:</label>
+       <input type="number" id="test-value" class="demo-input" value="7" placeholder="e.g., 7">
+      </div>
+      <button onclick="testNegation()" class="demo-button">Test Negation</button>
+     </div>
+
+     <div class="logic-verification">
+      <div class="verification-card">
+       <h4>P ∧ Q</h4>
+       <p id="pandq">Not tested</p>
+       <p><small>Both true</small></p>
+      </div>
+      <div class="verification-card">
+       <h4>¬(P ∧ Q)</h4>
+       <p id="notpandq">Not tested</p>
+       <p><small>Negation of and</small></p>
+      </div>
+      <div class="verification-card">
+       <h4>¬P ∨ ¬Q</h4>
+       <p id="notpornotq">Not tested</p>
+       <p><small>Equivalent form</small></p>
+      </div>
+      <div class="verification-card">
+       <h4>P ∨ Q</h4>
+       <p id="porq">Not tested</p>
+       <p><small>At least one true</small></p>
+      </div>
+      <div class="verification-card">
+       <h4>¬(P ∨ Q)</h4>
+       <p id="notporq">Not tested</p>
+       <p><small>Negation of or</small></p>
+      </div>
+      <div class="verification-card">
+       <h4>¬P ∧ ¬Q</h4>
+       <p id="notpandnotq">Not tested</p>
+       <p><small>Equivalent form</small></p>
+      </div>
+     </div>
+
+     <div class="logic-diagram">
+      <h4>Negation Logic Flow:</h4>
+      <div class="logic-flow">
+       <div class="logic-box" id="p-box">P</div>
+       <span class="logic-arrow">∧</span>
+       <div class="logic-box" id="q-box">Q</div>
+       <span class="logic-arrow">→</span>
+       <div class="logic-negation" id="not-and">¬(P∧Q)</div>
+       <span class="logic-arrow">≡</span>
+       <div class="logic-negation" id="not-p">¬P</div>
+       <span class="logic-arrow">∨</span>
+       <div class="logic-negation" id="not-q">¬Q</div>
+      </div>
+      <div class="logic-flow">
+       <div class="logic-box" id="p-box2">P</div>
+       <span class="logic-arrow">∨</span>
+       <div class="logic-box" id="q-box2">Q</div>
+       <span class="logic-arrow">→</span>
+       <div class="logic-negation" id="not-or">¬(P∨Q)</div>
+       <span class="logic-arrow">≡</span>
+       <div class="logic-negation" id="not-p2">¬P</div>
+       <span class="logic-arrow">∧</span>
+       <div class="logic-negation" id="not-q2">¬Q</div>
+      </div>
+     </div>
+    </div>
+
+    <div class="truth-table">
+     <h4>Truth Table Verification</h4>
+     <table>
+      <thead>
+       <tr>
+        <th>P</th>
+        <th>Q</th>
+        <th>P ∧ Q</th>
+        <th>¬(P ∧ Q)</th>
+        <th>¬P ∨ ¬Q</th>
+        <th>P ∨ Q</th>
+        <th>¬(P ∨ Q)</th>
+        <th>¬P ∧ ¬Q</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td>T</td>
+        <td>T</td>
+        <td>T</td>
+        <td>F</td>
+        <td>F</td>
+        <td>T</td>
+        <td>F</td>
+        <td>F</td>
+       </tr>
+       <tr>
+        <td>T</td>
+        <td>F</td>
+        <td>F</td>
+        <td>T</td>
+        <td>T</td>
+        <td>T</td>
+        <td>F</td>
+        <td>F</td>
+       </tr>
+       <tr>
+        <td>F</td>
+        <td>T</td>
+        <td>F</td>
+        <td>T</td>
+        <td>T</td>
+        <td>T</td>
+        <td>F</td>
+        <td>F</td>
+       </tr>
+       <tr class="truth-highlight">
+        <td>F</td>
+        <td>F</td>
+        <td>F</td>
+        <td>T</td>
+        <td>T</td>
+        <td>F</td>
+        <td>T</td>
+        <td>T</td>
+       </tr>
+      </tbody>
+     </table>
+     <p><small>The highlighted row shows where both negations are true, demonstrating the equivalence.</small></p>
+    </div>
+
+    <div class="worked-example">
+     <h3>Worked Examples</h3>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Example 1: Negation of "And"</h4>
+      <p>Statement: "x > 2 and x < 8"</p>
+      <p>Let P: x > 2, Q: x < 8</p>
+      <p>Original: P ∧ Q</p>
+      <p>Negation: ¬(P ∧ Q) ≡ ¬P ∨ ¬Q</p>
+      <p>¬(x > 2 ∧ x < 8) ≡ ¬(x > 2) ∨ ¬(x < 8)</p>
+      <p>≡ x ≤ 2 ∨ x ≥ 8</p>
+      <p>The solution is x ≤ 2 or x ≥ 8</p>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Example 2: Negation of "Or"</h4>
+      <p>Statement: "x = 3 or x = 5"</p>
+      <p>Let P: x = 3, Q: x = 5</p>
+      <p>Original: P ∨ Q</p>
+      <p>Negation: ¬(P ∨ Q) ≡ ¬P ∧ ¬Q</p>
+      <p>¬(x = 3 ∨ x = 5) ≡ ¬(x = 3) ∧ ¬(x = 5)</p>
+      <p>≡ x ≠ 3 ∧ x ≠ 5</p>
+      <p>The solution is x ≠ 3 and x ≠ 5</p>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Example 3: Complex Statement</h4>
+      <p>Statement: "The number is even and greater than 10"</p>
+      <p>Let P: number is even, Q: number > 10</p>
+      <p>Negation: ¬(P ∧ Q) ≡ ¬P ∨ ¬Q</p>
+      <p>≡ "number is odd or number ≤ 10"</p>
+      <p>This shows how the "and" becomes "or" when negated</p>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Example 4: Set Theory Application</h4>
+      <p>Statement: x ∈ A ∩ B (x is in A and B)</p>
+      <p>Negation: x ∉ A ∩ B</p>
+      <p>Using De Morgan: x ∉ A ∩ B ≡ x ∉ A ∨ x ∉ B</p>
+      <p>≡ x ∈ Ā ∪ B̄</p>
+      <p>Same principle applies to set operations</p>
+     </div>
+    </div>
+
+    <div class="practice-problem">
+     <h3>Practice Problems</h3>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Problem 1</h4>
+      <p>Negate the statement: "x ≥ 5 and x ≤ 15"</p>
+      <button onclick="toggleSolution('sol1')" class="solution-toggle">Show Solution</button>
+      <div id="sol1" class="solution-content">
+       <p>Let P: x ≥ 5, Q: x ≤ 15</p>
+       <p>¬(P ∧ Q) ≡ ¬P ∨ ¬Q</p>
+       <p>¬(x ≥ 5 ∧ x ≤ 15) ≡ ¬(x ≥ 5) ∨ ¬(x ≤ 15)</p>
+       <p>≡ x < 5 ∨ x > 15</p>
+       <p>The solution is x < 5 or x > 15</p>
+      </div>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Problem 2</h4>
+      <p>Negate the statement: "The triangle is equilateral or isosceles"</p>
+      <button onclick="toggleSolution('sol2')" class="solution-toggle">Show Solution</button>
+      <div id="sol2" class="solution-content">
+       <p>Let P: triangle is equilateral, Q: triangle is isosceles</p>
+       <p>¬(P ∨ Q) ≡ ¬P ∧ ¬Q</p>
+       <p>≡ "triangle is not equilateral and not isosceles"</p>
+       <p>≡ "triangle is scalene"</p>
+       <p>The triangle is scalene</p>
+      </div>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Problem 3</h4>
+      <p>Write the negation of: "x ∈ A ∪ B"</p>
+      <button onclick="toggleSolution('sol3')" class="solution-toggle">Show Solution</button>
+      <div id="sol3" class="solution-content">
+       <p>¬(x ∈ A ∪ B) ≡ x ∉ A ∪ B</p>
+       <p>Using De Morgan: x ∉ A ∪ B ≡ x ∉ A ∧ x ∉ B</p>
+       <p>≡ x ∈ Ā ∩ B̄</p>
+       <p>The element is in neither A nor B</p>
+      </div>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Problem 4</h4>
+      <p>Negate: "The student passed math and passed science"</p>
+      <button onclick="toggleSolution('sol4')" class="solution-toggle">Show Solution</button>
+      <div id="sol4" class="solution-content">
+       <p>Let P: passed math, Q: passed science</p>
+       <p>¬(P ∧ Q) ≡ ¬P ∨ ¬Q</p>
+       <p>≡ "failed math or failed science"</p>
+       <p>The student failed math or failed science (or both)</p>
+      </div>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <h3>Key Takeaways</h3>
+     <ul>
+      <li><strong>Negation of AND:</strong> ¬(P ∧ Q) ≡ ¬P ∨ ¬Q</li>
+      <li><strong>Negation of OR:</strong> ¬(P ∨ Q) ≡ ¬P ∧ ¬Q</li>
+      <li><strong>Word rule:</strong> "Not (A and B)" = "Not A or Not B"</li>
+      <li><strong>Word rule:</strong> "Not (A or B)" = "Not A and Not B"</li>
+      <li><strong>Set theory:</strong> Same rules apply with ∩, ∪, and complements</li>
+      <li><strong>Truth tables:</strong> Verify equivalence with truth tables</li>
+      <li><strong>Essential for:</strong> Logical reasoning, mathematical proofs, programming</li>
+      <li><strong>Common mistake:</strong> Forgetting to switch AND ↔ OR when negating</li>
+     </ul>
+    </div>
+
+    <div class="formula-list">
+     <div class="formula-row">
+      <span>
+       $\overline{p \text{ and } q}$
+      </span>
+      <span class="iff">
+       $\Leftrightarrow$
+      </span>
+      <span>
+       $\overline{p}$
+       <span class="math-orange">
+        or
+       </span>
+       $\overline{q}$
+      </span>
+     </div>
+     <div class="formula-row">
+      <span>
+       $\overline{p \text{ or } q}$
+      </span>
+      <span class="iff">
+       $\Leftrightarrow$
+      </span>
+      <span>
+       $\overline{p}$
+       <span class="math-orange">
+        and
+       </span>
+       $\overline{q}$
+      </span>
+     </div>
+    </div>
+   </div>
+  </div>
+
+  <script>
+   function testNegation() {
+    const pText = document.getElementById('statement-p').value;
+    const qText = document.getElementById('statement-q').value;
+    const testValue = parseFloat(document.getElementById('test-value').value);
+
+    // Evaluate statements
+    let pResult = evaluateStatement(pText, testValue);
+    let qResult = evaluateStatement(qText, testValue);
+
+    // Calculate compound statements
+    let pandq = pResult && qResult;
+    let porq = pResult || qResult;
+    let notpandq = !pandq;
+    let notporq = !porq;
+    let notpornotq = !pResult || !qResult;
+    let notpandnotq = !pResult && !qResult;
+
+    // Update verification cards
+    document.getElementById('pandq').textContent = pandq ? 'True' : 'False';
+    document.getElementById('porq').textContent = porq ? 'True' : 'False';
+    document.getElementById('notpandq').textContent = notpandq ? 'True' : 'False';
+    document.getElementById('notporq').textContent = notporq ? 'True' : 'False';
+    document.getElementById('notpornotq').textContent = notpornotq ? 'True' : 'False';
+    document.getElementById('notpandnotq').textContent = notpandnotq ? 'True' : 'False';
+
+    // Update logic flow visualization
+    updateLogicFlow(pResult, qResult);
+   }
+
+   function evaluateStatement(statement, value) {
+    // Simple mathematical statement evaluator
+    const stmt = statement.toLowerCase().trim();
+
+    if (stmt.includes('>')) {
+      const num = parseFloat(stmt.split('>')[1]);
+      return value > num;
+    } else if (stmt.includes('<')) {
+      const num = parseFloat(stmt.split('<')[1]);
+      return value < num;
+    } else if (stmt.includes('=')) {
+      const num = parseFloat(stmt.split('=')[1]);
+      return value === num;
+    } else if (stmt.includes('even')) {
+      return value % 2 === 0;
+    } else if (stmt.includes('odd')) {
+      return value % 2 === 1;
+    }
+
+    return false;
+   }
+
+   function updateLogicFlow(pResult, qResult) {
+    const pBox = document.getElementById('p-box');
+    const qBox = document.getElementById('q-box');
+    const notAnd = document.getElementById('not-and');
+    const notP = document.getElementById('not-p');
+    const notQ = document.getElementById('not-q');
+
+    const pBox2 = document.getElementById('p-box2');
+    const qBox2 = document.getElementById('q-box2');
+    const notOr = document.getElementById('not-or');
+    const notP2 = document.getElementById('not-p2');
+    const notQ2 = document.getElementById('not-q2');
+
+    // Update colors based on truth values
+    pBox.className = pResult ? 'logic-box' : 'logic-negation';
+    qBox.className = qResult ? 'logic-box' : 'logic-negation';
+    pBox2.className = pResult ? 'logic-box' : 'logic-negation';
+    qBox2.className = qResult ? 'logic-box' : 'logic-negation';
+
+    // Calculate negations
+    let pandq = pResult && qResult;
+    let porq = pResult || qResult;
+    let notpandq = !pandq;
+    let notporq = !porq;
+    let notpornotq = !pResult || !qResult;
+    let notpandnotq = !pResult && !qResult;
+
+    // Update negation results
+    notAnd.className = notpandq ? 'logic-negation' : 'logic-box';
+    notOr.className = notporq ? 'logic-negation' : 'logic-box';
+    notP.className = !pResult ? 'logic-negation' : 'logic-box';
+    notQ.className = !qResult ? 'logic-negation' : 'logic-box';
+    notP2.className = !pResult ? 'logic-negation' : 'logic-box';
+    notQ2.className = !qResult ? 'logic-negation' : 'logic-box';
+
+    // Highlight equivalences
+    if (notpandq === notpornotq) {
+      notAnd.classList.add('logic-equivalent');
+    }
+    if (notporq === notpandnotq) {
+      notOr.classList.add('logic-equivalent');
+    }
+   }
+
+   function toggleSolution(id) {
+    const element = document.getElementById(id);
+    element.style.display = element.style.display === 'none' ? 'block' : 'none';
+   }
+
+   // Initialize with default values
+   testNegation();
+  </script>
+ </body>
+</html>

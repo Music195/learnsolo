@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<!-- tags: Differentiation -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Derivative of Power and Constant Functions
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+   }
+
+   .main-content {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 15px;
+    padding: 30px;
+    margin: 20px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+   }
+
+   .fancy-title {
+    text-align: center;
+    font-size: 2.5em;
+    font-weight: bold;
+    margin: 20px 0;
+    color: #2c3e50;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+   }
+
+   .description {
+    font-size: 1.2em;
+    line-height: 1.6;
+    margin: 20px 0;
+    color: #34495e;
+    text-align: center;
+   }
+
+   .content-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin: 30px 0;
+   }
+
+   .formula-block {
+    flex: 1;
+    min-width: 300px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 1.4em;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+   }
+
+   .formula-item {
+    margin: 15px 0;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+   }
+
+   .diagram-block {
+    flex: 1;
+    min-width: 300px;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+   }
+
+   .interactive-demo {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    margin: 30px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+   }
+
+   .demo-title {
+    text-align: center;
+    font-size: 1.8em;
+    margin-bottom: 25px;
+    font-weight: bold;
+   }
+
+   .input-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin: 20px 0;
+    justify-content: center;
+   }
+
+   .input-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+   }
+
+   .input-field label {
+    font-weight: bold;
+    font-size: 1.1em;
+   }
+
+   .input-field input {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    width: 100px;
+    text-align: center;
+    transition: border-color 0.3s;
+   }
+
+   .input-field input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+   }
+
+   .button-group {
+    text-align: center;
+    margin: 25px 0;
+   }
+
+   .btn {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 1.1em;
+    cursor: pointer;
+    margin: 0 10px;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+   }
+
+   .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+   }
+
+   .btn:active {
+    transform: translateY(0);
+   }
+
+   .result-display {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    backdrop-filter: blur(10px);
+   }
+
+   .result-text {
+    font-size: 1.2em;
+    text-align: center;
+    margin: 10px 0;
+   }
+
+   .canvas-container {
+    text-align: center;
+    margin: 20px 0;
+   }
+
+   .derivative-canvas {
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+   }
+
+   .section {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    margin: 25px 0;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+   }
+
+   .section-title {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
+   }
+
+   .power-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+   }
+
+   .power-card {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(252, 182, 159, 0.3);
+   }
+
+   .power-card h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 1.3em;
+   }
+
+   .power-card .formula {
+    font-weight: bold;
+    color: #e74c3c;
+    font-size: 1.2em;
+    margin: 10px 0;
+   }
+
+   .power-card .description {
+    color: #555;
+    line-height: 1.5;
+   }
+
+   .example-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+   }
+
+   .example-card {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+   }
+
+   .example-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(245, 87, 108, 0.4);
+   }
+
+   .example-card h4 {
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+   }
+
+   .example-detail {
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    display: none;
+   }
+
+   .calculation-steps {
+    margin: 15px 0;
+   }
+
+   .calculation-step {
+    margin: 8px 0;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 5px;
+    border-left: 4px solid #f5576c;
+   }
+
+   .practice-problems {
+    margin: 20px 0;
+   }
+
+   .problem-item {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+   }
+
+   .problem-item h4 {
+    margin: 0 0 15px 0;
+    font-size: 1.2em;
+   }
+
+   .solution-btn {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    color: #333;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 10px 0;
+    transition: all 0.3s;
+   }
+
+   .solution-btn:hover {
+    background: linear-gradient(135deg, #fcb69f 0%, #ffecd2 100%);
+    transform: scale(1.05);
+   }
+
+   .solution {
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 10px 0;
+    display: none;
+    border-left: 4px solid #667eea;
+   }
+
+   .key-takeaways {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    padding: 25px;
+    border-radius: 12px;
+    margin: 25px 0;
+   }
+
+   .takeaway-list {
+    list-style: none;
+    padding: 0;
+   }
+
+   .takeaway-item {
+    background: rgba(255, 255, 255, 0.8);
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+    font-weight: bold;
+   }
+
+   .error-message {
+    background: #ffebee;
+    color: #c62828;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px 0;
+    display: none;
+    text-align: center;
+    font-weight: bold;
+   }
+
+   @media (max-width: 768px) {
+    .content-wrapper {
+     flex-direction: column;
+    }
+
+    .input-group {
+     flex-direction: column;
+     align-items: center;
+    }
+
+    .fancy-title {
+     font-size: 2em;
+    }
+
+    .formula-block {
+     font-size: 1.2em;
+    }
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Differentiation">
+   Derivative of Power and Constant Functions
+  </div>
+
+  <div class="container">
+   <div class="main-content">
+    <div class="description">
+     The power rule is one of the most fundamental rules in differential calculus, allowing us to find derivatives of power functions efficiently.
+    </div>
+
+    <div class="content-wrapper">
+     <div class="formula-block">
+      <div class="formula-item">
+       <strong>Power Rule:</strong> $$\frac{d}{dx}[x^n] = nx^{n-1}$$
+      </div>
+      <div class="formula-item">
+       <strong>Constant Rule:</strong> $$\frac{d}{dx}[c] = 0$$
+      </div>
+      <div class="formula-item">
+       <strong>Special Cases:</strong> $$\frac{d}{dx}[x] = 1,\quad \frac{d}{dx}[x^0] = 0$$
+      </div>
+     </div>
+
+     <div class="diagram-block">
+      <svg viewbox="0 0 250 200" xmlns="http://www.w3.org/2000/svg">
+       <!-- Power function visualization -->
+       <text fill="#333" font-size="14" x="125" y="20" text-anchor="middle">Power Function f(x) = x²</text>
+       <!-- Function curve -->
+       <path d="M50 150 Q75 100 100 75 Q125 50 150 75 Q175 100 200 150" fill="none" stroke="#e74c3c" stroke-width="3"></path>
+       <!-- Tangent line -->
+       <line marker-end="url(#arrowhead)" stroke="#27ae60" stroke-width="2" x1="100" x2="150" y1="75" y2="125"></line>
+       <!-- Point -->
+       <circle cx="100" cy="75" fill="#f39c12" r="4"></circle>
+       <text fill="#f39c12" font-size="12" x="95" y="60">Point (1,1)</text>
+       <text fill="#27ae60" font-size="12" x="160" y="120">Tangent: f'(1) = 2</text>
+       <!-- Arrow markers -->
+       <defs>
+        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+         <polygon fill="#27ae60" points="0 0, 10 3.5, 0 7"></polygon>
+        </marker>
+       </defs>
+      </svg>
+     </div>
+    </div>
+
+    <div class="power-grid">
+     <div class="power-card">
+      <h3>Power Rule</h3>
+      <div class="formula">$$\frac{d}{dx}[x^n] = nx^{n-1}$$</div>
+      <div class="description">
+       For any real number n, the derivative of x raised to the power n is n times x raised to the power n-1.
+       <br><br>
+       Examples:<br>
+       $$\frac{d}{dx}[x^3] = 3x^2$$<br>
+       $$\frac{d}{dx}[x^5] = 5x^4$$
+      </div>
+     </div>
+
+     <div class="power-card">
+      <h3>Constant Rule</h3>
+      <div class="formula">$$\frac{d}{dx}[c] = 0$$</div>
+      <div class="description">
+       The derivative of any constant function is zero. Constants don't change, so their rate of change is zero.
+       <br><br>
+       Examples:<br>
+       $$\frac{d}{dx}[5] = 0$$<br>
+       $$\frac{d}{dx}[\pi] = 0$$
+      </div>
+     </div>
+
+     <div class="power-card">
+      <h3>Special Cases</h3>
+      <div class="formula">$$\frac{d}{dx}[x] = 1,\quad \frac{d}{dx}[x^0] = 0$$</div>
+      <div class="description">
+       When n = 1: derivative of x is 1<br>
+       When n = 0: derivative of constant 1 is 0<br>
+       These follow directly from the power rule.
+      </div>
+     </div>
+    </div>
+
+    <div class="interactive-demo">
+     <div class="demo-title">Interactive Derivative Calculator</div>
+
+     <div class="input-group">
+      <div class="input-field">
+       <label for="powerInput">Power n:</label>
+       <input id="powerInput" step="any" type="number" value="2"/>
+      </div>
+      <div class="input-field">
+       <label for="pointInput">At point x:</label>
+       <input id="pointInput" step="any" type="number" value="1"/>
+      </div>
+     </div>
+
+     <div class="button-group">
+      <button class="btn" onclick="calculateDerivative()">Calculate Derivative</button>
+      <button class="btn" onclick="showPowerRule()">Show Power Rule</button>
+      <button class="btn" onclick="resetDemo()">Reset</button>
+     </div>
+
+     <div class="error-message" id="errorMessage"></div>
+
+     <div class="result-display">
+      <div class="result-text" id="functionDisplay">
+       Function: <strong id="functionText">f(x) = x²</strong>
+      </div>
+      <div class="result-text" id="derivativeDisplay">
+       Derivative: <strong id="derivativeText">f'(x) = 2x</strong>
+      </div>
+      <div class="result-text" id="valueDisplay">
+       Value at x = 1: <strong id="valueText">f'(1) = 2</strong>
+      </div>
+     </div>
+
+     <div class="canvas-container">
+      <canvas class="derivative-canvas" height="400" id="derivativeCanvas" width="500"></canvas>
+     </div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Mathematical Foundation</div>
+     <p>The power rule can be derived from the definition of the derivative:</p>
+     <div class="formula-block" style="margin: 20px 0;">
+      $$f'(x) = \lim_{h \to 0} \frac{f(x+h) - f(x)}{h}$$
+     </div>
+     <p>For f(x) = xⁿ:</p>
+     <div class="formula-block" style="margin: 20px 0;">
+      $$\begin{align}
+      f'(x) &= \lim_{h \to 0} \frac{(x+h)^n - x^n}{h} \\
+      &= \lim_{h \to 0} \frac{1}{h} \left[ x^n + nx^{n-1}h + \binom{n}{2}x^{n-2}h^2 + \cdots + h^n - x^n \right] \\
+      &= \lim_{h \to 0} \frac{1}{h} \left[ nx^{n-1}h + \binom{n}{2}x^{n-2}h^2 + \cdots + h^n \right] \\
+      &= \lim_{h \to 0} \left[ nx^{n-1} + \binom{n}{2}x^{n-2}h + \cdots + h^{n-1} \right] \\
+      &= nx^{n-1}
+      \end{align}$$
+     </div>
+     <p>The constant rule follows from the fact that a constant function has zero slope everywhere.</p>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Worked Examples</div>
+     <div class="example-grid">
+      <div class="example-card" onclick="showExample(1)">
+       <h4>Example 1: Basic Power Rule</h4>
+       <p>Find the derivative of f(x) = x⁴</p>
+      </div>
+      <div class="example-card" onclick="showExample(2)">
+       <h4>Example 2: Negative Powers</h4>
+       <p>Find the derivative of f(x) = x⁻²</p>
+      </div>
+      <div class="example-card" onclick="showExample(3)">
+       <h4>Example 3: Fractional Powers</h4>
+       <p>Find the derivative of f(x) = x^(1/2)</p>
+      </div>
+     </div>
+
+     <div class="example-detail" id="exampleDetail"></div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Applications</div>
+     <ul>
+      <li><strong>Rate of Change:</strong> Finding instantaneous rates of change for power functions</li>
+      <li><strong>Tangent Lines:</strong> Determining slopes of tangent lines to curves</li>
+      <li><strong>Optimization:</strong> Finding maximum/minimum values of functions</li>
+      <li><strong>Physics:</strong> Velocity and acceleration calculations</li>
+      <li><strong>Economics:</strong> Marginal cost and revenue functions</li>
+     </ul>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Practice Problems</div>
+     <div class="practice-problems">
+      <div class="problem-item">
+       <h4>Problem 1</h4>
+       <p>Find the derivative of f(x) = x³ + 5.</p>
+       <button class="solution-btn" onclick="toggleSolution(1)">Show Solution</button>
+       <div class="solution" id="solution1">
+        <p><strong>Solution:</strong></p>
+        <p>f(x) = x³ + 5</p>
+        <p>f'(x) = 3x² + 0 = 3x²</p>
+        <p>The derivative of the constant 5 is 0.</p>
+       </div>
+      </div>
+
+      <div class="problem-item">
+       <h4>Problem 2</h4>
+       <p>Find f'(2) for f(x) = x⁴.</p>
+       <button class="solution-btn" onclick="toggleSolution(2)">Show Solution</button>
+       <div class="solution" id="solution2">
+        <p><strong>Solution:</strong></p>
+        <p>f(x) = x⁴</p>
+        <p>f'(x) = 4x³</p>
+        <p>f'(2) = 4×(2)³ = 4×8 = 32</p>
+       </div>
+      </div>
+
+      <div class="problem-item">
+       <h4>Problem 3</h4>
+       <p>Find the derivative of g(x) = 7x² - 3x + 2.</p>
+       <button class="solution-btn" onclick="toggleSolution(3)">Show Solution</button>
+       <div class="solution" id="solution3">
+        <p><strong>Solution:</strong></p>
+        <p>g(x) = 7x² - 3x + 2</p>
+        <p>g'(x) = 14x - 3 + 0 = 14x - 3</p>
+        <p>Apply power rule to each term: derivative of 7x² is 14x, derivative of -3x is -3, derivative of constant 2 is 0.</p>
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <div class="section-title">Key Takeaways</div>
+     <ul class="takeaway-list">
+      <li class="takeaway-item">Power rule: d/dx[xⁿ] = nxⁿ⁻¹ for any real number n</li>
+      <li class="takeaway-item">Constant rule: d/dx[c] = 0 for any constant c</li>
+      <li class="takeaway-item">Special case: d/dx[x] = 1</li>
+      <li class="takeaway-item">Power rule applies to polynomials, fractional powers, and negative powers</li>
+      <li class="takeaway-item">Derivative represents instantaneous rate of change</li>
+      <li class="takeaway-item">Essential foundation for all other differentiation rules</li>
+     </ul>
+    </div>
+   </div>
+  </div>
+
+  <script>
+   function calculateDerivative() {
+    try {
+     const n = parseFloat(document.getElementById('powerInput').value) || 0;
+     const x = parseFloat(document.getElementById('pointInput').value) || 0;
+
+     let functionStr = 'f(x) = x';
+     if (n !== 1) {
+      functionStr += '^' + n;
+     }
+
+     let derivativeStr = 'f\'(x) = ';
+     if (n === 0) {
+      derivativeStr += '0';
+     } else if (n === 1) {
+      derivativeStr += '1';
+     } else {
+      derivativeStr += n + 'x';
+      if (n - 1 !== 1) {
+       derivativeStr += '^' + (n - 1);
+      }
+     }
+
+     const derivativeValue = n * Math.pow(x, n - 1);
+     let valueStr = `f'(${x}) = ${derivativeValue}`;
+
+     document.getElementById('functionText').textContent = functionStr;
+     document.getElementById('derivativeText').textContent = derivativeStr;
+     document.getElementById('valueText').textContent = valueStr;
+     document.getElementById('errorMessage').style.display = 'none';
+
+     drawDerivativeVisualization(n, x);
+    } catch (error) {
+     document.getElementById('errorMessage').textContent = 'Error calculating derivative. Please check your input values.';
+     document.getElementById('errorMessage').style.display = 'block';
+    }
+   }
+
+   function showPowerRule() {
+    const n = parseFloat(document.getElementById('powerInput').value) || 0;
+    const explanation = `Power Rule: d/dx[x^${n}] = ${n}x^${n-1}`;
+    document.getElementById('valueText').textContent = explanation;
+    document.getElementById('errorMessage').style.display = 'none';
+   }
+
+   function drawDerivativeVisualization(n, x) {
+    const canvas = document.getElementById('derivativeCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Calculate bounds
+    const points = [];
+    for (let i = -2; i <= 2; i += 0.1) {
+     if (i !== 0 || n > 0) { // Avoid division by zero for negative powers
+      points.push(i);
+     }
+    }
+
+    const minX = -2;
+    const maxX = 2;
+    const minY = Math.min(...points.map(xi => Math.pow(xi, n)));
+    const maxY = Math.max(...points.map(xi => Math.pow(xi, n)));
+
+    const scaleX = canvas.width / (maxX - minX);
+    const scaleY = canvas.height / (maxY - minY);
+
+    // Transform functions
+    const transformX = xi => (xi - minX) * scaleX;
+    const transformY = yi => canvas.height - (yi - minY) * scaleY;
+
+    // Draw axes
+    ctx.strokeStyle = '#666';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, transformY(0));
+    ctx.lineTo(canvas.width, transformY(0));
+    ctx.moveTo(transformX(0), 0);
+    ctx.lineTo(transformX(0), canvas.height);
+    ctx.stroke();
+
+    // Draw function curve
+    ctx.strokeStyle = '#e74c3c';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    let firstPoint = true;
+    for (let xi = minX; xi <= maxX; xi += 0.05) {
+     if (xi === 0 && n <= 0) continue; // Skip undefined points
+     const yi = Math.pow(xi, n);
+     const canvasX = transformX(xi);
+     const canvasY = transformY(yi);
+     if (firstPoint) {
+      ctx.moveTo(canvasX, canvasY);
+      firstPoint = false;
+     } else {
+      ctx.lineTo(canvasX, canvasY);
+     }
+    }
+    ctx.stroke();
+
+    // Draw tangent line at point x
+    if (x >= minX && x <= maxX && (x !== 0 || n > 0)) {
+     const y = Math.pow(x, n);
+     const slope = n * Math.pow(x, n - 1);
+
+     // Draw point
+     ctx.fillStyle = '#f39c12';
+     ctx.beginPath();
+     ctx.arc(transformX(x), transformY(y), 5, 0, 2 * Math.PI);
+     ctx.fill();
+
+     // Draw tangent line
+     ctx.strokeStyle = '#27ae60';
+     ctx.lineWidth = 2;
+     ctx.beginPath();
+     const tangentStartX = x - 0.5;
+     const tangentEndX = x + 0.5;
+     const tangentStartY = y - slope * 0.5;
+     const tangentEndY = y + slope * 0.5;
+     ctx.moveTo(transformX(tangentStartX), transformY(tangentStartY));
+     ctx.lineTo(transformX(tangentEndX), transformY(tangentEndY));
+     ctx.stroke();
+    }
+
+    // Labels
+    ctx.fillStyle = '#333';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(`f(x) = x^${n}`, canvas.width / 2, 20);
+    ctx.fillText(`Point (${x}, ${Math.pow(x, n).toFixed(2)})`, canvas.width / 2, canvas.height - 20);
+    ctx.fillText(`Slope = ${n}×${x}^${n-1} = ${(n * Math.pow(x, n-1)).toFixed(2)}`, canvas.width / 2, canvas.height - 5);
+
+    // Legend
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.fillRect(10, 10, 120, 60);
+    ctx.strokeStyle = '#333';
+    ctx.strokeRect(10, 10, 120, 60);
+
+    ctx.fillStyle = '#333';
+    ctx.font = '10px Arial';
+    ctx.textAlign = 'left';
+    ctx.fillText('Legend:', 15, 25);
+    ctx.fillText('● Function', 15, 40);
+    ctx.fillText('● Tangent', 15, 55);
+   }
+
+   function showExample(exampleNumber) {
+    const detail = document.getElementById('exampleDetail');
+    let content = '';
+
+    switch(exampleNumber) {
+     case 1:
+      content = `
+       <h4>Detailed Example 1 - Basic Power Rule</h4>
+       <div class="calculation-steps">
+        <div class="calculation-step">Function: f(x) = x⁴</div>
+        <div class="calculation-step">Apply power rule: d/dx[xⁿ] = nxⁿ⁻¹</div>
+        <div class="calculation-step">Here n = 4, so f'(x) = 4x⁴⁻¹ = 4x³</div>
+        <div class="calculation-step">Verification: At x = 2, f(2) = 16, slope should be 4×8 = 32</div>
+        <div class="calculation-step">Using limit definition: lim(h→0) [(2+h)⁴ - 16]/h = lim(h→0) [16 + 32h + 24h² + 8h³ + h⁴ - 16]/h = lim(h→0) [32h + 24h² + 8h³ + h⁴]/h = lim(h→0) [32 + 24h + 8h² + h³] = 32 ✓</div>
+       </div>
+      `;
+      break;
+     case 2:
+      content = `
+       <h4>Detailed Example 2 - Negative Powers</h4>
+       <div class="calculation-steps">
+        <div class="calculation-step">Function: f(x) = x⁻²</div>
+        <div class="calculation-step">Apply power rule: d/dx[xⁿ] = nxⁿ⁻¹</div>
+        <div class="calculation-step">Here n = -2, so f'(x) = -2x⁻²⁻¹ = -2x⁻³</div>
+        <div class="calculation-step">Alternative form: f'(x) = -2/x³</div>
+        <div class="calculation-step">Domain: x ≠ 0 (since original function is undefined at x = 0)</div>
+        <div class="calculation-step">At x = 1: f'(1) = -2×(1)⁻³ = -2×1 = -2</div>
+       </div>
+      `;
+      break;
+     case 3:
+      content = `
+       <h4>Detailed Example 3 - Fractional Powers</h4>
+       <div class="calculation-steps">
+        <div class="calculation-step">Function: f(x) = x^(1/2) = √x</div>
+        <div class="calculation-step">Apply power rule: d/dx[xⁿ] = nxⁿ⁻¹</div>
+        <div class="calculation-step">Here n = 1/2, so f'(x) = (1/2)x^(1/2 - 1) = (1/2)x^(-1/2)</div>
+        <div class="calculation-step">Alternative form: f'(x) = 1/(2√x)</div>
+        <div class="calculation-step">Domain: x > 0 (since square root requires positive values)</div>
+        <div class="calculation-step">At x = 4: f'(4) = 1/(2√4) = 1/(2×2) = 1/4 = 0.25</div>
+       </div>
+      `;
+      break;
+    }
+
+    detail.innerHTML = content;
+    detail.style.display = 'block';
+    MathJax.typesetPromise();
+   }
+
+   function toggleSolution(problemNumber) {
+    const solution = document.getElementById('solution' + problemNumber);
+    if (solution.style.display === 'none' || solution.style.display === '') {
+     solution.style.display = 'block';
+    } else {
+     solution.style.display = 'none';
+    }
+   }
+
+   function resetDemo() {
+    document.getElementById('powerInput').value = '2';
+    document.getElementById('pointInput').value = '1';
+    document.getElementById('functionText').textContent = 'f(x) = x²';
+    document.getElementById('derivativeText').textContent = 'f\'(x) = 2x';
+    document.getElementById('valueText').textContent = 'f\'(1) = 2';
+    document.getElementById('errorMessage').style.display = 'none';
+    calculateDerivative();
+   }
+
+   // Initialize with default values
+   document.addEventListener('DOMContentLoaded', function() {
+    calculateDerivative();
+   });
+  </script>
+ </body>
+</html>

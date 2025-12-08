@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<!-- tags: Space Vector, Dot Product, Inner Product -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Dot Product of Vectors in 3D
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   .interactive-demo {
+     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+     border: 2px solid #4a90e2;
+     border-radius: 15px;
+     padding: 25px;
+     margin: 20px 0;
+     box-shadow: 0 8px 25px rgba(74, 144, 226, 0.2);
+     color: white;
+   }
+   .demo-controls {
+     display: flex;
+     flex-wrap: wrap;
+     gap: 15px;
+     margin-bottom: 20px;
+     align-items: center;
+   }
+   .control-group {
+     display: flex;
+     flex-direction: column;
+     gap: 5px;
+   }
+   .control-group label {
+     font-weight: bold;
+     color: #e8f4f8;
+     font-size: 14px;
+   }
+   .control-group input {
+     padding: 8px 12px;
+     border: 2px solid #bdc3c7;
+     border-radius: 8px;
+     font-size: 14px;
+     transition: border-color 0.3s;
+     width: 100px;
+   }
+   .control-group input:focus {
+     outline: none;
+     border-color: #4a90e2;
+     box-shadow: 0 0 5px rgba(74, 144, 226, 0.3);
+   }
+   .demo-button {
+     background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+     color: #2c3e50;
+     border: none;
+     padding: 12px 25px;
+     border-radius: 8px;
+     cursor: pointer;
+     font-weight: bold;
+     transition: transform 0.2s, box-shadow 0.2s;
+     align-self: flex-end;
+   }
+   .demo-button:hover {
+     transform: translateY(-2px);
+     box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
+   }
+   .demo-result {
+     background: white;
+     border-radius: 10px;
+     padding: 20px;
+     margin-top: 20px;
+     border-left: 5px solid #4a90e2;
+     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+   }
+   .result-highlight {
+     background: #ecf0f1;
+     padding: 10px;
+     border-radius: 5px;
+     margin: 10px 0;
+     font-family: 'Courier New', monospace;
+   }
+   .practice-problem {
+     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+     color: white;
+     border: none;
+     padding: 15px 25px;
+     border-radius: 10px;
+     cursor: pointer;
+     font-weight: bold;
+     margin: 10px 0;
+     width: 100%;
+     transition: all 0.3s;
+   }
+   .practice-problem:hover {
+     background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+     transform: translateY(-2px);
+   }
+   .solution {
+     background: #f8f9fa;
+     border: 2px solid #28a745;
+     border-radius: 10px;
+     padding: 20px;
+     margin-top: 15px;
+     display: none;
+     border-left: 5px solid #28a745;
+   }
+   .solution.show {
+     display: block;
+   }
+   .key-takeaways {
+     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+     color: white;
+     padding: 25px;
+     border-radius: 15px;
+     margin: 30px 0;
+     box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+   }
+   .key-takeaways h3 {
+     margin-top: 0;
+     color: white;
+     text-align: center;
+     font-size: 1.4em;
+   }
+   .key-takeaways ul {
+     line-height: 2.2;
+     margin: 0;
+   }
+   .key-takeaways li {
+     margin: 10px 0;
+     padding-left: 20px;
+     position: relative;
+   }
+   .key-takeaways li:before {
+     content: "✓";
+     position: absolute;
+     left: 0;
+     color: #ffd700;
+     font-weight: bold;
+   }
+   .operation-block {
+     background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+     color: white;
+     padding: 20px;
+     border-radius: 12px;
+     margin: 20px 0;
+     box-shadow: 0 6px 20px rgba(245, 87, 108, 0.3);
+   }
+   .operation-block h3 {
+     margin-top: 0;
+     color: white;
+     text-align: center;
+   }
+   .enhanced-diagram {
+     background: white;
+     border-radius: 15px;
+     padding: 20px;
+     margin: 20px 0;
+     box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+     text-align: center;
+   }
+   .tab-container {
+     display: flex;
+     margin-bottom: 20px;
+     background: #f8f9fa;
+     border-radius: 10px;
+     overflow: hidden;
+   }
+   .tab-button {
+     flex: 1;
+     padding: 15px;
+     border: none;
+     background: #e9ecef;
+     cursor: pointer;
+     font-weight: bold;
+     transition: all 0.3s;
+   }
+   .tab-button.active {
+     background: #667eea;
+     color: white;
+   }
+   .tab-content {
+     display: none;
+   }
+   .tab-content.active {
+     display: block;
+   }
+   .angle-display {
+     background: #f8f9fa;
+     border-radius: 10px;
+     padding: 15px;
+     margin: 15px 0;
+     text-align: center;
+     border: 2px solid #28a745;
+   }
+   .perpendicular-check {
+     background: #fff3cd;
+     border: 2px solid #ffc107;
+     border-radius: 10px;
+     padding: 15px;
+     margin: 15px 0;
+     text-align: center;
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Space Vector, Dot Product, Inner Product">
+   Dot Product of Vectors in 3D
+  </div>
+  <div class="container">
+   <div class="main-content">
+
+    <!-- Interactive Dot Product Calculator -->
+    <div class="interactive-demo">
+     <h3 style="color: #e8f4f8; margin-top: 0; text-align: center;">🧮 Interactive Dot Product Calculator</h3>
+     <p style="text-align: center; color: #e8f4f8; margin-bottom: 20px;">Calculate dot products, angles, and check perpendicularity!</p>
+
+     <!-- Tab Navigation -->
+     <div class="tab-container">
+      <button class="tab-button active" onclick="switchTab('dotproduct')">Dot Product</button>
+      <button class="tab-button" onclick="switchTab('angle')">Angle Between Vectors</button>
+      <button class="tab-button" onclick="switchTab('perpendicular')">Perpendicular Check</button>
+     </div>
+
+     <!-- Dot Product Tab -->
+     <div id="dotproduct" class="tab-content active">
+      <div class="demo-controls">
+       <div class="control-group">
+        <label for="vec-a1">Vector A (x,y,z):</label>
+        <input type="number" id="vec-a1" step="0.1" value="3" placeholder="x">
+        <input type="number" id="vec-a2" step="0.1" value="4" placeholder="y">
+        <input type="number" id="vec-a3" step="0.1" value="5" placeholder="z">
+       </div>
+       <div class="control-group">
+        <label for="vec-b1">Vector B (x,y,z):</label>
+        <input type="number" id="vec-b1" step="0.1" value="1" placeholder="x">
+        <input type="number" id="vec-b2" step="0.1" value="-2" placeholder="y">
+        <input type="number" id="vec-b3" step="0.1" value="3" placeholder="z">
+       </div>
+       <button class="demo-button" onclick="calculateDotProduct()">Calculate Dot Product</button>
+      </div>
+     </div>
+
+     <!-- Angle Tab -->
+     <div id="angle" class="tab-content">
+      <div class="demo-controls">
+       <div class="control-group">
+        <label for="angle-a1">Vector A (x,y,z):</label>
+        <input type="number" id="angle-a1" step="0.1" value="3" placeholder="x">
+        <input type="number" id="angle-a2" step="0.1" value="4" placeholder="y">
+        <input type="number" id="angle-a3" step="0.1" value="0" placeholder="z">
+       </div>
+       <div class="control-group">
+        <label for="angle-b1">Vector B (x,y,z):</label>
+        <input type="number" id="angle-b1" step="0.1" value="6" placeholder="x">
+        <input type="number" id="angle-b2" step="0.1" value="8" placeholder="y">
+        <input type="number" id="angle-b3" step="0.1" value="0" placeholder="z">
+       </div>
+       <button class="demo-button" onclick="calculateAngle()">Calculate Angle</button>
+      </div>
+     </div>
+
+     <!-- Perpendicular Check Tab -->
+     <div id="perpendicular" class="tab-content">
+      <div class="demo-controls">
+       <div class="control-group">
+        <label for="perp-a1">Vector A (x,y,z):</label>
+        <input type="number" id="perp-a1" step="0.1" value="2" placeholder="x">
+        <input type="number" id="perp-a2" step="0.1" value="3" placeholder="y">
+        <input type="number" id="perp-a3" step="0.1" value="0" placeholder="z">
+       </div>
+       <div class="control-group">
+        <label for="perp-b1">Vector B (x,y,z):</label>
+        <input type="number" id="perp-b1" step="0.1" value="-3" placeholder="x">
+        <input type="number" id="perp-b2" step="0.1" value="2" placeholder="y">
+        <input type="number" id="perp-b3" step="0.1" value="0" placeholder="z">
+       </div>
+       <button class="demo-button" onclick="checkPerpendicular()">Check Perpendicularity</button>
+      </div>
+     </div>
+
+     <div id="demo-result" class="demo-result" style="display: none;">
+      <h4 style="color: #2c3e50; margin-top: 0;">Results:</h4>
+      <div id="calculation-steps"></div>
+      <div id="dotproduct-canvas" style="text-align: center; margin-top: 20px;">
+       <canvas id="interactiveCanvas" width="600" height="400"></canvas>
+      </div>
+     </div>
+    </div>
+
+    <div class="enhanced-diagram">
+     <h3 style="color: #667eea; margin-top: 0;">Dot Product and Angle Visualization</h3>
+     <svg viewbox="0 40 200 160" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+       <marker id="arrowhead" markerheight="4" markerwidth="6" orient="auto" refx="3" refy="2">
+        <polygon fill="#333" points="0 0, 3 2, 0 4"></polygon>
+       </marker>
+       <marker id="arrowhead-vec" markerheight="5" markerwidth="7" orient="auto" refx="3.5" refy="2.5">
+        <polygon fill="#e74c3c" points="0 0, 3.5 2.5, 0 5"></polygon>
+       </marker>
+       <marker id="arrowhead-vec-b" markerheight="5" markerwidth="7" orient="auto" refx="3.5" refy="2.5">
+        <polygon fill="#3498db" points="0 0, 3.5 2.5, 0 5"></polygon>
+       </marker>
+      </defs>
+      <!-- Axes -->
+      <line marker-end="url(#arrowhead)" stroke="#333" stroke-width="1" x1="90" x2="20" y1="150" y2="174.5"></line>
+      <text font-size="10" x="15" y="178">x</text>
+      <line marker-end="url(#arrowhead)" stroke="#333" stroke-width="1" x1="90" x2="145" y1="150" y2="171"></line>
+      <text font-size="10" x="150" y="174">y</text>
+      <line marker-end="url(#arrowhead)" stroke="#333" stroke-width="1" x1="90" x2="90" y1="150" y2="70"></line>
+      <text font-size="10" x="95" y="70">z</text>
+      <!-- Origin O -->
+      <circle cx="90" cy="150" fill="#000" r="2"></circle>
+      <text font-size="10" x="80" y="155">O</text>
+      <!-- Vector A -->
+      <line marker-end="url(#arrowhead-vec)" stroke="#e74c3c" stroke-width="3" x1="90" x2="50" y1="150" y2="167.5"></line>
+      <text fill="#e74c3c" font-size="12" font-weight="bold" x="55" y="145">$\vec{a}$</text>
+      <!-- Vector B -->
+      <line marker-end="url(#arrowhead-vec-b)" stroke="#3498db" stroke-width="3" x1="90" x2="125" y1="150" y2="165.75"></line>
+      <text fill="#3498db" font-size="12" font-weight="bold" x="120" y="140">$\vec{b}$</text>
+      <!-- Angle θ -->
+      <path d="M 90 150 Q 80 130 50 167.5" fill="none" stroke="#27ae60" stroke-width="2" stroke-dasharray="3,3"></path>
+      <text fill="#27ae60" font-size="14" font-weight="bold" x="65" y="125">θ</text>
+     </svg>
+     <p style="margin-top: 15px; color: #666;"><em>The angle θ between vectors determines their dot product: $\vec{a} \cdot \vec{b} = |\vec{a}||\vec{b}|\cos\theta$</em></p>
+    </div>
+
+    <div class="operation-block">
+     <h3>1. Dot Product Formula</h3>
+     <p>The dot product (inner product) of $\vec{a}$ and $\vec{b}$ is:</p>
+     $$\vec{a} \cdot \vec{b} = a_1 b_1 + a_2 b_2 + a_3 b_3$$
+     <div class="example">
+      <strong>Example:</strong> $(3, 4, 5) \cdot (1, -2, 3) = 3×1 + 4×(-2) + 5×3 = 3 - 8 + 15 = 10$
+     </div>
+    </div>
+
+    <div class="operation-block">
+     <h3>2. Dot Product and Angle</h3>
+     <p>The cosine of the angle $\theta$ between $\vec{a}$ and $\vec{b}$ is given by:</p>
+     $$\cos\theta = \frac{\vec{a} \cdot \vec{b}}{|\vec{a}|\,|\vec{b}|}$$
+     <p>Substituting the formulas for the dot product and magnitudes:</p>
+     $$\cos\theta = \frac{a_1 b_1 + a_2 b_2 + a_3 b_3}
+     {\sqrt{a_1^2 + a_2^2 + a_3^2}\;\sqrt{b_1^2 + b_2^2 + b_3^2}}$$
+     <div class="example">
+      <strong>Example:</strong> Find angle between $(3, 4, 0)$ and $(6, 8, 0)$
+      <br>
+      Dot product: $3×6 + 4×8 + 0×0 = 18 + 32 = 50$
+      <br>
+      Magnitudes: $|\vec{a}| = \sqrt{9 + 16} = 5$, $|\vec{b}| = \sqrt{36 + 64} = 10$
+      <br>
+      $\cos\theta = 50/(5×10) = 1$ → $\theta = 0°$ (vectors are parallel)
+     </div>
+    </div>
+
+    <div class="hint-block">
+     💡
+     <strong>Key Properties:</strong>
+     <ul>
+      <li>The dot product is a scalar (not a vector).</li>
+      <li>If $\vec{a} \cdot \vec{b} = 0$, then $\vec{a}$ and $\vec{b}$ are perpendicular (orthogonal).</li>
+      <li>The formula for $\cos\theta$ allows you to find the angle between two vectors.</li>
+      <li>The dot product is commutative: $\vec{a} \cdot \vec{b} = \vec{b} \cdot \vec{a}$</li>
+      <li>The dot product is distributive: $\vec{a} \cdot (\vec{b} + \vec{c}) = \vec{a} \cdot \vec{b} + \vec{a} \cdot \vec{c}$</li>
+      <li>The dot product is widely used in geometry, physics (work, projection), and computer graphics.</li>
+     </ul>
+    </div>
+
+    <h2>Worked Examples</h2>
+
+    <div class="example">
+     <h4>Example 1: Basic Dot Product</h4>
+     <p>Compute the dot product of $\vec{a} = (2, 3, 4)$ and $\vec{b} = (1, -1, 2)$.</p>
+     <p><strong>Solution:</strong></p>
+     <p>$\vec{a} \cdot \vec{b} = 2×1 + 3×(-1) + 4×2 = 2 - 3 + 8 = 7$</p>
+    </div>
+
+    <div class="example">
+     <h4>Example 2: Angle Between Vectors</h4>
+     <p>Find the angle between $\vec{u} = (1, 2, 2)$ and $\vec{v} = (2, 1, -1)$.</p>
+     <p><strong>Solution:</strong></p>
+     <p>Dot product: $1×2 + 2×1 + 2×(-1) = 2 + 2 - 2 = 2$</p>
+     <p>$|\vec{u}| = \sqrt{1 + 4 + 4} = \sqrt{9} = 3$</p>
+     <p>$|\vec{v}| = \sqrt{4 + 1 + 1} = \sqrt{6}$</p>
+     <p>$\cos\theta = 2/(3\sqrt{6}) = 2/(3\sqrt{6}) \times \sqrt{6}/\sqrt{6} = (2\sqrt{6})/18 = \sqrt{6}/9$</p>
+     <p>$\theta = \cos^{-1}(\sqrt{6}/9) \approx 65.9°$</p>
+    </div>
+
+    <div class="example">
+     <h4>Example 3: Perpendicular Vectors</h4>
+     <p>Determine if $\vec{p} = (3, 2, 1)$ and $\vec{q} = (1, -2, 3)$ are perpendicular.</p>
+     <p><strong>Solution:</strong></p>
+     <p>$\vec{p} \cdot \vec{q} = 3×1 + 2×(-2) + 1×3 = 3 - 4 + 3 = 2 ≠ 0$</p>
+     <p>The vectors are not perpendicular.</p>
+    </div>
+
+    <div class="example">
+     <h4>Example 4: Projection</h4>
+     <p>Find the projection of $\vec{a} = (4, 2, 1)$ onto $\vec{b} = (2, 1, 0)$.</p>
+     <p><strong>Solution:</strong></p>
+     <p>Projection formula: $\text{proj}_{\vec{b}}\vec{a} = \frac{\vec{a} \cdot \vec{b}}{|\vec{b}|^2} \vec{b}$</p>
+     <p>$\vec{a} \cdot \vec{b} = 4×2 + 2×1 + 1×0 = 8 + 2 = 10$</p>
+     <p>$|\vec{b}|^2 = 4 + 1 + 0 = 5$</p>
+     <p>$\text{proj}_{\vec{b}}\vec{a} = \frac{10}{5} (2, 1, 0) = 2(2, 1, 0) = (4, 2, 0)$</p>
+    </div>
+
+    <h2>Practice Problems</h2>
+
+    <div class="graybox">
+     <strong>Problem 1:</strong> Calculate $\vec{a} \cdot \vec{b}$ where $\vec{a} = (4, -1, 3)$ and $\vec{b} = (2, 5, -2)$.
+     <br><br>
+     <button class="practice-problem" onclick="toggleSolution('sol1')">Show Solution</button>
+     <div id="sol1" class="solution">
+      <strong>Solution:</strong>
+      <br><br>
+      $\vec{a} \cdot \vec{b} = 4×2 + (-1)×5 + 3×(-2) = 8 - 5 - 6 = -3$
+     </div>
+    </div>
+
+    <div class="graybox" style="margin-top: 15px;">
+     <strong>Problem 2:</strong> Find the angle between $\vec{u} = (3, 4, 0)$ and $\vec{v} = (0, 4, 3)$.
+     <br><br>
+     <button class="practice-problem" onclick="toggleSolution('sol2')">Show Solution</button>
+     <div id="sol2" class="solution">
+      <strong>Solution:</strong>
+      <br><br>
+      $\vec{u} \cdot \vec{v} = 3×0 + 4×4 + 0×3 = 16$
+      <br>
+      $|\vec{u}| = \sqrt{9 + 16 + 0} = 5$
+      <br>
+      $|\vec{v}| = \sqrt{0 + 16 + 9} = 5$
+      <br>
+      $\cos\theta = 16/(5×5) = 16/25 = 0.64$
+      <br>
+      $\theta = \cos^{-1}(0.64) \approx 50°$
+     </div>
+    </div>
+
+    <div class="graybox" style="margin-top: 15px;">
+     <strong>Problem 3:</strong> Are vectors $\vec{p} = (1, 2, 3)$ and $\vec{q} = (3, -6, 1)$ perpendicular?
+     <br><br>
+     <button class="practice-problem" onclick="toggleSolution('sol3')">Show Solution</button>
+     <div id="sol3" class="solution">
+      <strong>Solution:</strong>
+      <br><br>
+      $\vec{p} \cdot \vec{q} = 1×3 + 2×(-6) + 3×1 = 3 - 12 + 3 = -6 ≠ 0$
+      <br>
+      The vectors are not perpendicular.
+     </div>
+    </div>
+
+    <div class="graybox" style="margin-top: 15px;">
+     <strong>Problem 4:</strong> Find the projection of $\vec{a} = (6, 2, 3)$ onto $\vec{b} = (2, 1, 0)$.
+     <br><br>
+     <button class="practice-problem" onclick="toggleSolution('sol4')">Show Solution</button>
+     <div id="sol4" class="solution">
+      <strong>Solution:</strong>
+      <br><br>
+      $\vec{a} \cdot \vec{b} = 6×2 + 2×1 + 3×0 = 12 + 2 = 14$
+      <br>
+      $|\vec{b}|^2 = 4 + 1 + 0 = 5$
+      <br>
+      $\text{proj}_{\vec{b}}\vec{a} = \frac{14}{5} (2, 1, 0) = \left(\frac{28}{5}, \frac{14}{5}, 0\right) = (5.6, 2.8, 0)$
+     </div>
+    </div>
+
+    <div class="graybox" style="margin-top: 15px;">
+     <strong>Problem 5:</strong> Find a unit vector perpendicular to both $\vec{u} = (1, 1, 0)$ and $\vec{v} = (0, 1, 1)$.
+     <br><br>
+     <button class="practice-problem" onclick="toggleSolution('sol5')">Show Solution</button>
+     <div id="sol5" class="solution">
+      <strong>Solution:</strong>
+      <br><br>
+      Cross product: $\vec{u} × \vec{v} = (1×1 - 0×1, 0×0 - 1×1, 1×1 - 1×0) = (1, -1, 1)$
+      <br>
+      Magnitude: $\sqrt{1 + 1 + 1} = \sqrt{3}$
+      <br>
+      Unit vector: $\frac{1}{\sqrt{3}}(1, -1, 1)$
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <h3>🎯 Key Takeaways</h3>
+     <ul>
+      <li>Dot product formula: $\vec{a} \cdot \vec{b} = a_1 b_1 + a_2 b_2 + a_3 b_3$</li>
+      <li>Angle formula: $\cos\theta = \frac{\vec{a} \cdot \vec{b}}{|\vec{a}||\vec{b}|}$</li>
+      <li>Perpendicular condition: $\vec{a} \cdot \vec{b} = 0$</li>
+      <li>Dot product is commutative and distributive</li>
+      <li>Interactive calculator computes dot products and angles in real-time</li>
+      <li>Practice problems with toggle-able solutions reinforce understanding</li>
+      <li>Applications in physics (work), geometry (projections), and computer graphics</li>
+     </ul>
+    </div>
+
+    <script>
+     function switchTab(tabName) {
+       // Hide all tabs
+       const tabs = document.querySelectorAll('.tab-content');
+       tabs.forEach(tab => tab.classList.remove('active'));
+
+       // Remove active class from all buttons
+       const buttons = document.querySelectorAll('.tab-button');
+       buttons.forEach(button => button.classList.remove('active'));
+
+       // Show selected tab
+       document.getElementById(tabName).classList.add('active');
+
+       // Add active class to clicked button
+       event.target.classList.add('active');
+
+       // Hide results when switching tabs
+       document.getElementById('demo-result').style.display = 'none';
+     }
+
+     function calculateDotProduct() {
+       const a1 = parseFloat(document.getElementById('vec-a1').value);
+       const a2 = parseFloat(document.getElementById('vec-a2').value);
+       const a3 = parseFloat(document.getElementById('vec-a3').value);
+       const b1 = parseFloat(document.getElementById('vec-b1').value);
+       const b2 = parseFloat(document.getElementById('vec-b2').value);
+       const b3 = parseFloat(document.getElementById('vec-b3').value);
+
+       if (isNaN(a1) || isNaN(a2) || isNaN(a3) || isNaN(b1) || isNaN(b2) || isNaN(b3)) {
+         alert('Please enter valid numbers for all vector components.');
+         return;
+       }
+
+       const dotProduct = a1*b1 + a2*b2 + a3*b3;
+       const magA = Math.sqrt(a1*a1 + a2*a2 + a3*a3);
+       const magB = Math.sqrt(b1*b1 + b2*b2 + b3*b3);
+
+       const resultDiv = document.getElementById('demo-result');
+       const stepsDiv = document.getElementById('calculation-steps');
+
+       stepsDiv.innerHTML = `
+         <div class="result-highlight">
+           <strong>Vectors:</strong> $\\vec{a} = (${a1}, ${a2}, ${a3})$ and $\\vec{b} = (${b1}, ${b2}, ${b3})$<br>
+           <strong>Formula:</strong> $\\vec{a} \\cdot \\vec{b} = a_1 b_1 + a_2 b_2 + a_3 b_3$
+         </div>
+         <br>
+         <strong>Component-wise calculation:</strong><br>
+         $a_1 b_1 = ${a1} \\times ${b1} = ${a1*b1}$<br>
+         $a_2 b_2 = ${a2} \\times ${b2} = ${a2*b2}$<br>
+         $a_3 b_3 = ${a3} \\times ${b3} = ${a3*b3}$<br>
+         <strong>Dot Product:</strong> $\\vec{a} \\cdot \\vec{b} = ${dotProduct}$<br>
+         <br>
+         <strong>Magnitudes:</strong> $|\\vec{a}| = ${magA.toFixed(4)}, |\\vec{b}| = ${magB.toFixed(4)}$
+       `;
+
+       resultDiv.style.display = 'block';
+
+       // Draw the vector visualization
+       drawDotProductVisualization(a1, a2, a3, b1, b2, b3, dotProduct, magA, magB);
+     }
+
+     function calculateAngle() {
+       const a1 = parseFloat(document.getElementById('angle-a1').value);
+       const a2 = parseFloat(document.getElementById('angle-a2').value);
+       const a3 = parseFloat(document.getElementById('angle-a3').value);
+       const b1 = parseFloat(document.getElementById('angle-b1').value);
+       const b2 = parseFloat(document.getElementById('angle-b2').value);
+       const b3 = parseFloat(document.getElementById('angle-b3').value);
+
+       if (isNaN(a1) || isNaN(a2) || isNaN(a3) || isNaN(b1) || isNaN(b2) || isNaN(b3)) {
+         alert('Please enter valid numbers for all vector components.');
+         return;
+       }
+
+       const dotProduct = a1*b1 + a2*b2 + a3*b3;
+       const magA = Math.sqrt(a1*a1 + a2*a2 + a3*a3);
+       const magB = Math.sqrt(b1*b1 + b2*b2 + b3*b3);
+       const cosTheta = dotProduct / (magA * magB);
+       const theta = Math.acos(Math.max(-1, Math.min(1, cosTheta))) * 180 / Math.PI;
+
+       const resultDiv = document.getElementById('demo-result');
+       const stepsDiv = document.getElementById('calculation-steps');
+
+       stepsDiv.innerHTML = `
+         <div class="result-highlight">
+           <strong>Vectors:</strong> $\\vec{a} = (${a1}, ${a2}, ${a3})$ and $\\vec{b} = (${b1}, ${b2}, ${b3})$<br>
+           <strong>Formula:</strong> $\\cos\\theta = \\frac{\\vec{a} \\cdot \\vec{b}}{|\\vec{a}||\\vec{b}|}$
+         </div>
+         <br>
+         <strong>Dot Product:</strong> $\\vec{a} \\cdot \\vec{b} = ${dotProduct}$<br>
+         <strong>Magnitudes:</strong> $|\\vec{a}| = ${magA.toFixed(4)}, |\\vec{b}| = ${magB.toFixed(4)}$<br>
+         <strong>Cosine:</strong> $\\cos\\theta = ${cosTheta.toFixed(4)}$<br>
+         <div class="angle-display">
+           <strong>Angle:</strong> $\\theta = ${theta.toFixed(2)}^\\circ$
+         </div>
+       `;
+
+       resultDiv.style.display = 'block';
+
+       // Draw the vector visualization
+       drawDotProductVisualization(a1, a2, a3, b1, b2, b3, dotProduct, magA, magB);
+     }
+
+     function checkPerpendicular() {
+       const a1 = parseFloat(document.getElementById('perp-a1').value);
+       const a2 = parseFloat(document.getElementById('perp-a2').value);
+       const a3 = parseFloat(document.getElementById('perp-a3').value);
+       const b1 = parseFloat(document.getElementById('perp-b1').value);
+       const b2 = parseFloat(document.getElementById('perp-b2').value);
+       const b3 = parseFloat(document.getElementById('perp-b3').value);
+
+       if (isNaN(a1) || isNaN(a2) || isNaN(a3) || isNaN(b1) || isNaN(b2) || isNaN(b3)) {
+         alert('Please enter valid numbers for all vector components.');
+         return;
+       }
+
+       const dotProduct = a1*b1 + a2*b2 + a3*b3;
+       const isPerpendicular = Math.abs(dotProduct) < 0.0001;
+
+       const resultDiv = document.getElementById('demo-result');
+       const stepsDiv = document.getElementById('calculation-steps');
+
+       stepsDiv.innerHTML = `
+         <div class="result-highlight">
+           <strong>Vectors:</strong> $\\vec{a} = (${a1}, ${a2}, ${a3})$ and $\\vec{b} = (${b1}, ${b2}, ${b3})$<br>
+           <strong>Perpendicular Condition:</strong> $\\vec{a} \\cdot \\vec{b} = 0$
+         </div>
+         <br>
+         <strong>Dot Product:</strong> $\\vec{a} \\cdot \\vec{b} = ${dotProduct}$<br>
+         <div class="perpendicular-check">
+           <strong>Result:</strong> ${isPerpendicular ? 'The vectors are perpendicular (orthogonal) ✓' : 'The vectors are NOT perpendicular ✗'}
+         </div>
+       `;
+
+       resultDiv.style.display = 'block';
+
+       // Draw the vector visualization
+       const magA = Math.sqrt(a1*a1 + a2*a2 + a3*a3);
+       const magB = Math.sqrt(b1*b1 + b2*b2 + b3*b3);
+       drawDotProductVisualization(a1, a2, a3, b1, b2, b3, dotProduct, magA, magB);
+     }
+
+     function drawDotProductVisualization(a1, a2, a3, b1, b2, b3, dotProduct, magA, magB) {
+       const canvas = document.getElementById('interactiveCanvas');
+       const ctx = canvas.getContext('2d');
+       const w = canvas.width;
+       const h = canvas.height;
+       const scale = 20;
+       const originX = w / 2;
+       const originY = h / 2;
+
+       // Clear canvas
+       ctx.clearRect(0, 0, w, h);
+
+       // Set up coordinate system
+       function toCanvasX(x) { return originX + x * scale; }
+       function toCanvasY(y) { return originY - y * scale; }
+
+       // Draw axes
+       ctx.strokeStyle = '#333';
+       ctx.lineWidth = 2;
+       ctx.beginPath();
+       ctx.moveTo(toCanvasX(-12), toCanvasY(0));
+       ctx.lineTo(toCanvasX(12), toCanvasY(0));
+       ctx.moveTo(toCanvasX(0), toCanvasY(-10));
+       ctx.lineTo(toCanvasX(0), toCanvasY(10));
+       ctx.stroke();
+
+       // Draw grid
+       ctx.strokeStyle = '#e0e0e0';
+       ctx.lineWidth = 0.5;
+       for (let x = -12; x <= 12; x++) {
+         ctx.beginPath();
+         ctx.moveTo(toCanvasX(x), toCanvasY(-10));
+         ctx.lineTo(toCanvasX(x), toCanvasY(10));
+         ctx.stroke();
+       }
+       for (let y = -10; y <= 10; y++) {
+         ctx.beginPath();
+         ctx.moveTo(toCanvasX(-12), toCanvasY(y));
+         ctx.lineTo(toCanvasX(12), toCanvasY(y));
+         ctx.stroke();
+       }
+
+       // Draw origin
+       ctx.fillStyle = '#000';
+       ctx.beginPath();
+       ctx.arc(toCanvasX(0), toCanvasY(0), 4, 0, 2 * Math.PI);
+       ctx.fill();
+
+       // Normalize vectors for display (scale to reasonable size)
+       const displayScale = 8;
+       const displayA1 = (a1 / magA) * displayScale;
+       const displayA2 = (a2 / magA) * displayScale;
+       const displayB1 = (b1 / magB) * displayScale;
+       const displayB2 = (b2 / magB) * displayScale;
+
+       // Draw vector A (red)
+       drawVector(ctx, 0, 0, displayA1, displayA2, '#e74c3c', scale, originX, originY, 'A');
+
+       // Draw vector B (blue)
+       drawVector(ctx, 0, 0, displayB1, displayB2, '#3498db', scale, originX, originY, 'B');
+
+       // Calculate and draw angle arc if acute
+       const cosTheta = dotProduct / (magA * magB);
+       if (cosTheta >= -1 && cosTheta <= 1) {
+         const theta = Math.acos(cosTheta);
+         if (theta > 0 && theta < Math.PI) {
+           ctx.strokeStyle = '#27ae60';
+           ctx.lineWidth = 2;
+           ctx.setLineDash([3, 3]);
+           ctx.beginPath();
+           const radius = 30;
+           ctx.arc(toCanvasX(0), toCanvasY(0), radius, 0, theta);
+           ctx.stroke();
+           ctx.setLineDash([]);
+         }
+       }
+
+       // Labels
+       ctx.fillStyle = '#000';
+       ctx.font = '14px Arial';
+       ctx.textAlign = 'center';
+       ctx.fillText('Dot Product Visualization', w/2, 30);
+       ctx.fillText(`Dot Product: ${dotProduct.toFixed(2)}`, w/2, 50);
+     }
+
+     function drawVector(ctx, startX, startY, endX, endY, color, scale, originX, originY, label) {
+       const canvasStartX = originX + startX * scale;
+       const canvasStartY = originY - startY * scale;
+       const canvasEndX = canvasStartX + endX * scale;
+       const canvasEndY = canvasStartY - endY * scale;
+
+       // Draw vector line
+       ctx.strokeStyle = color;
+       ctx.lineWidth = 4;
+       ctx.beginPath();
+       ctx.moveTo(canvasStartX, canvasStartY);
+       ctx.lineTo(canvasEndX, canvasEndY);
+       ctx.stroke();
+
+       // Draw arrowhead
+       const angle = Math.atan2(canvasEndY - canvasStartY, canvasEndX - canvasStartX);
+       const arrowLength = 12;
+       ctx.beginPath();
+       ctx.moveTo(canvasEndX, canvasEndY);
+       ctx.lineTo(
+         canvasEndX - arrowLength * Math.cos(angle - Math.PI/6),
+         canvasEndY - arrowLength * Math.sin(angle - Math.PI/6)
+       );
+       ctx.moveTo(canvasEndX, canvasEndY);
+       ctx.lineTo(
+         canvasEndX - arrowLength * Math.cos(angle + Math.PI/6),
+         canvasEndY - arrowLength * Math.sin(angle + Math.PI/6)
+       );
+       ctx.stroke();
+
+       // Label
+       ctx.fillStyle = color;
+       ctx.font = 'bold 14px Arial';
+       const midX = (canvasStartX + canvasEndX) / 2;
+       const midY = (canvasStartY + canvasEndY) / 2;
+       ctx.fillText(label, midX, midY - 10);
+     }
+
+     // Toggle solution visibility
+     function toggleSolution(id) {
+       const solution = document.getElementById(id);
+       solution.classList.toggle('show');
+       const button = solution.previousElementSibling;
+       button.textContent = solution.classList.contains('show') ? 'Hide Solution' : 'Show Solution';
+     }
+
+     // Initialize with default values
+     calculateDotProduct();
+    </script>
+   </div>
+  </div>
+ </body>
+</html>

@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Position Vectors - Interactive Learning</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #e8e9ef 0%, #bea3d8 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            color: #4a5568;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .formula-block {
+            background: #f8f9fa;
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .centered {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .calculator-section {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            color: white;
+        }
+
+        .calculator-title {
+            text-align: center;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .calculator-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 5px;
+        }
+
+        .tab-button {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .tab-button.active {
+            background: white;
+            color: #f5576c;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .calculator-content {
+            display: none;
+        }
+
+        .calculator-content.active {
+            display: block;
+        }
+
+        .input-group {
+            margin: 15px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .input-field {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+            background: rgba(255,255,255,0.9);
+            color: #333;
+            font-size: 14px;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: white;
+            box-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        .calculate-btn {
+            background: white;
+            color: #f5576c;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .result-display {
+            background: rgba(255,255,255,0.9);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            color: #333;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .result-title {
+            font-weight: bold;
+            color: #f5576c;
+            margin-bottom: 10px;
+        }
+
+        .canvas-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .visualization-canvas {
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 10px;
+            background: rgba(255,255,255,0.9);
+            max-width: 100%;
+            height: auto;
+        }
+
+        .practice-section {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            color: white;
+        }
+
+        .practice-title {
+            text-align: center;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .problem-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .problem-text {
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .solution-toggle {
+            background: white;
+            color: #4facfe;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .solution-toggle:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+
+        .solution {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .solution.show {
+            display: block;
+        }
+
+        .key-takeaways {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            border-radius: 15px;
+            padding: 30px;
+            color: white;
+            margin-top: 30px;
+        }
+
+        .key-takeaways h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .takeaway-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+
+        .takeaway-item {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .takeaway-item strong {
+            color: #fff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .input-row {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .takeaway-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="fancy-title" data-topic="Space Vector">
+        Perpendicular Condition for Vectors
+        </div>
+        <!-- <div class="">
+            <h1>Position Vectors & Section Formula</h1>
+            <p>Interactive Learning with 3D Visualizations</p>
+        </div> -->
+
+        <div class="content-card">
+            <h2 class="section-title">1. Position Vectors</h2>
+            <p>A position vector represents the position of a point in 3D space relative to the origin. If a point P has coordinates (x, y, z), then its position vector is:</p>
+            <div class="formula-block">
+                <div class="centered">
+                    $$\vec{OP} = x\hat{i} + y\hat{j} + z\hat{k}$$
+                </div>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h2 class="section-title">2. Section Formula</h2>
+            <p>The section formula gives the position vector of a point that divides a line segment joining two points A and B in the ratio m:n.</p>
+            <div class="formula-block">
+                <div class="centered">
+                    $$\vec{r} = \frac{n\vec{a} + m\vec{b}}{m + n}$$
+                </div>
+            </div>
+            <p>Where m:n is the ratio in which the point divides the segment, with m parts from A and n parts from B.</p>
+        </div>
+
+        <div class="content-card">
+            <h2 class="section-title">3. Special Cases</h2>
+            <div class="operation-block">
+                <h3>1. Midpoint Formula</h3>
+                <p>The position vector of the midpoint of AB is:</p>
+                <div class="centered">
+                    $$\frac{\vec{a} + \vec{b}}{2}$$
+                </div>
+            </div>
+            <div class="operation-block">
+                <h3>2. Centroid of Triangle</h3>
+                <p>For triangle ABC with vertices A($\vec{a}$), B($\vec{b}$), C($\vec{c}$), the position vector of the centroid G is:</p>
+                <div class="centered">
+                    $$\vec{g} = \frac{\vec{a} + \vec{b} + \vec{c}}{3}$$
+                </div>
+            </div>
+        </div>
+
+        <div class="calculator-section">
+            <h2 class="calculator-title">Interactive Calculator</h2>
+            <div class="calculator-tabs">
+                <button class="tab-button active" onclick="showCalculator('section')">Section Formula</button>
+                <button class="tab-button" onclick="showCalculator('midpoint')">Midpoint</button>
+                <button class="tab-button" onclick="showCalculator('centroid')">Centroid</button>
+            </div>
+
+            <div id="section-calculator" class="calculator-content active">
+                <h3>Section Formula Calculator</h3>
+                <div class="input-group">
+                    <label>Point A (x₁, y₁, z₁):</label>
+                    <div class="input-row">
+                        <input type="number" id="ax" class="input-field" placeholder="x₁" step="any">
+                        <input type="number" id="ay" class="input-field" placeholder="y₁" step="any">
+                        <input type="number" id="az" class="input-field" placeholder="z₁" step="any">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Point B (x₂, y₂, z₂):</label>
+                    <div class="input-row">
+                        <input type="number" id="bx" class="input-field" placeholder="x₂" step="any">
+                        <input type="number" id="by" class="input-field" placeholder="y₂" step="any">
+                        <input type="number" id="bz" class="input-field" placeholder="z₂" step="any">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Ratio m:n (m parts from A, n parts from B):</label>
+                    <div class="input-row">
+                        <input type="number" id="m" class="input-field" placeholder="m" min="1">
+                        <input type="number" id="n" class="input-field" placeholder="n" min="1">
+                    </div>
+                </div>
+                <button class="calculate-btn" onclick="calculateSectionFormula()">Calculate Section Point</button>
+                <div id="section-result" class="result-display" style="display: none;"></div>
+            </div>
+
+            <div id="midpoint-calculator" class="calculator-content">
+                <h3>Midpoint Calculator</h3>
+                <div class="input-group">
+                    <label>Point A (x₁, y₁, z₁):</label>
+                    <div class="input-row">
+                        <input type="number" id="max" class="input-field" placeholder="x₁" step="any">
+                        <input type="number" id="may" class="input-field" placeholder="y₁" step="any">
+                        <input type="number" id="maz" class="input-field" placeholder="z₁" step="any">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Point B (x₂, y₂, z₂):</label>
+                    <div class="input-row">
+                        <input type="number" id="mbx" class="input-field" placeholder="x₂" step="any">
+                        <input type="number" id="mby" class="input-field" placeholder="y₂" step="any">
+                        <input type="number" id="mbz" class="input-field" placeholder="z₂" step="any">
+                    </div>
+                </div>
+                <button class="calculate-btn" onclick="calculateMidpoint()">Calculate Midpoint</button>
+                <div id="midpoint-result" class="result-display" style="display: none;"></div>
+            </div>
+
+            <div id="centroid-calculator" class="calculator-content">
+                <h3>Centroid Calculator</h3>
+                <div class="input-group">
+                    <label>Vertex A (x₁, y₁, z₁):</label>
+                    <div class="input-row">
+                        <input type="number" id="cax" class="input-field" placeholder="x₁" step="any">
+                        <input type="number" id="cay" class="input-field" placeholder="y₁" step="any">
+                        <input type="number" id="caz" class="input-field" placeholder="z₁" step="any">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Vertex B (x₂, y₂, z₂):</label>
+                    <div class="input-row">
+                        <input type="number" id="cbx" class="input-field" placeholder="x₂" step="any">
+                        <input type="number" id="cby" class="input-field" placeholder="y₂" step="any">
+                        <input type="number" id="cbz" class="input-field" placeholder="z₂" step="any">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Vertex C (x₃, y₃, z₃):</label>
+                    <div class="input-row">
+                        <input type="number" id="ccx" class="input-field" placeholder="x₃" step="any">
+                        <input type="number" id="ccy" class="input-field" placeholder="y₃" step="any">
+                        <input type="number" id="ccz" class="input-field" placeholder="z₃" step="any">
+                    </div>
+                </div>
+                <button class="calculate-btn" onclick="calculateCentroid()">Calculate Centroid</button>
+                <div id="centroid-result" class="result-display" style="display: none;"></div>
+            </div>
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="visualization-canvas" width="600" height="400" class="visualization-canvas"></canvas>
+        </div>
+
+        <div class="practice-section">
+            <h2 class="practice-title">Practice Problems</h2>
+
+            <div class="problem-card">
+                <div class="problem-text">
+                    <strong>Problem 1:</strong> Find the position vector of the point that divides the line segment joining A(2, 3, 4) and B(6, 7, 8) in the ratio 1:2.
+                </div>
+                <button class="solution-toggle" onclick="toggleSolution('sol1')">Show Solution</button>
+                <div id="sol1" class="solution">
+                    <p>Using the section formula: \(\vec{r} = \frac{n\vec{a} + m\vec{b}}{m + n}\)</p>
+                    <p>Here m=1, n=2, so: \(\vec{r} = \frac{2(2\hat{i} + 3\hat{j} + 4\hat{k}) + 1(6\hat{i} + 7\hat{j} + 8\hat{k})}{1 + 2} = \frac{4\hat{i} + 6\hat{j} + 8\hat{k} + 6\hat{i} + 7\hat{j} + 8\hat{k}}{3} = \frac{10\hat{i} + 13\hat{j} + 16\hat{k}}{3}\)</p>
+                    <p>Final answer: \(\left(\dfrac{10}{3}, \dfrac{13}{3}, \dfrac{16}{3}\right)\)</p>
+                </div>
+            </div>
+
+            <div class="problem-card">
+                <div class="problem-text">
+                    <strong>Problem 2:</strong> Find the midpoint of the line segment joining points A(1, -2, 3) and B(4, 5, -1).
+                </div>
+                <button class="solution-toggle" onclick="toggleSolution('sol2')">Show Solution</button>
+                <div id="sol2" class="solution">
+                    <p>Midpoint = \(\frac{\vec{a} + \vec{b}}{2} = \frac{(1\hat{i} - 2\hat{j} + 3\hat{k}) + (4\hat{i} + 5\hat{j} - 1\hat{k})}{2} = \frac{5\hat{i} + 3\hat{j} + 2\hat{k}}{2}\)</p>
+                    <p>Final answer: \(\left(\dfrac{5}{2}, \dfrac{3}{2}, 1\right)\)</p>
+                </div>
+            </div>
+
+            <div class="problem-card">
+                <div class="problem-text">
+                    <strong>Problem 3:</strong> Find the centroid of triangle ABC with vertices A(1, 2, 3), B(4, 5, 6), and C(7, 8, 9).
+                </div>
+                <button class="solution-toggle" onclick="toggleSolution('sol3')">Show Solution</button>
+                <div id="sol3" class="solution">
+                    <p>Centroid = \(\frac{\vec{a} + \vec{b} + \vec{c}}{3} = \frac{(1\hat{i} + 2\hat{j} + 3\hat{k}) + (4\hat{i} + 5\hat{j} + 6\hat{k}) + (7\hat{i} + 8\hat{j} + 9\hat{k})}{3} = \frac{12\hat{i} + 15\hat{j} + 18\hat{k}}{3}\)</p>
+                    <p>Final answer: (4, 5, 6)</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="key-takeaways">
+            <h3>Key Takeaways</h3>
+            <div class="takeaway-list">
+                <div class="takeaway-item">
+                    <strong>Position Vector:</strong> Represents the position of a point relative to the origin in 3D space.
+                </div>
+                <div class="takeaway-item">
+                    <strong>Section Formula:</strong> \(\vec{r} = \frac{n\vec{a} + m\vec{b}}{m + n}\) divides the segment in ratio m:n.
+                </div>
+                <div class="takeaway-item">
+                    <strong>Midpoint:</strong> Special case where m=n=1, giving \(\frac{\vec{a} + \vec{b}}{2}\).
+                </div>
+                <div class="takeaway-item">
+                    <strong>Centroid:</strong> Average position of triangle vertices: \(\frac{\vec{a} + \vec{b} + \vec{c}}{3}\).
+                </div>
+                <div class="takeaway-item">
+                    <strong>3D Extension:</strong> All formulas work identically in 3D space as in 2D.
+                </div>
+                <div class="takeaway-item">
+                    <strong>Applications:</strong> Useful in coordinate geometry, physics, and computer graphics.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showCalculator(type) {
+            // Hide all calculator contents
+            const contents = document.querySelectorAll('.calculator-content');
+            contents.forEach(content => content.classList.remove('active'));
+
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(button => button.classList.remove('active'));
+
+            // Show selected calculator
+            document.getElementById(type + '-calculator').classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function calculateSectionFormula() {
+            const ax = parseFloat(document.getElementById('ax').value) || 0;
+            const ay = parseFloat(document.getElementById('ay').value) || 0;
+            const az = parseFloat(document.getElementById('az').value) || 0;
+            const bx = parseFloat(document.getElementById('bx').value) || 0;
+            const by = parseFloat(document.getElementById('by').value) || 0;
+            const bz = parseFloat(document.getElementById('bz').value) || 0;
+            const m = parseFloat(document.getElementById('m').value) || 1;
+            const n = parseFloat(document.getElementById('n').value) || 1;
+
+            const x = (n * ax + m * bx) / (m + n);
+            const y = (n * ay + m * by) / (m + n);
+            const z = (n * az + m * bz) / (m + n);
+
+            const resultDiv = document.getElementById('section-result');
+            resultDiv.innerHTML = `
+                <div class="result-title">Section Point:</div>
+                <div>$$\\vec{r} = \\left(${x.toFixed(3)}, ${y.toFixed(3)}, ${z.toFixed(3)}\\right)$$</div>
+                <div>$$\\vec{r} = \\frac{${n}(${ax}\\hat{i} + ${ay}\\hat{j} + ${az}\\hat{k}) + ${m}(${bx}\\hat{i} + ${by}\\hat{j} + ${bz}\\hat{k})}{${m} + ${n}} = \\frac{${(n*ax + m*bx).toFixed(1)}\\hat{i} + ${(n*ay + m*by).toFixed(1)}\\hat{j} + ${(n*az + m*bz).toFixed(1)}\\hat{k}}{${m + n}}$$</div>
+            `;
+            resultDiv.style.display = 'block';
+
+            // Trigger MathJax re-render
+            if (window.MathJax) {
+                MathJax.typesetPromise([resultDiv]).catch(console.error);
+            }
+
+            drawVisualization(ax, ay, az, bx, by, bz, x, y, z, 'section');
+        }
+
+        function calculateMidpoint() {
+            const ax = parseFloat(document.getElementById('max').value) || 0;
+            const ay = parseFloat(document.getElementById('may').value) || 0;
+            const az = parseFloat(document.getElementById('maz').value) || 0;
+            const bx = parseFloat(document.getElementById('mbx').value) || 0;
+            const by = parseFloat(document.getElementById('mby').value) || 0;
+            const bz = parseFloat(document.getElementById('mbz').value) || 0;
+
+            const x = (ax + bx) / 2;
+            const y = (ay + by) / 2;
+            const z = (az + bz) / 2;
+
+            const resultDiv = document.getElementById('midpoint-result');
+            resultDiv.innerHTML = `
+                <div class="result-title">Midpoint:</div>
+                <div>$$\\vec{m} = \\left(${x.toFixed(3)}, ${y.toFixed(3)}, ${z.toFixed(3)}\\right)$$</div>
+                <div>$$\\vec{m} = \\frac{(${ax}\\hat{i} + ${ay}\\hat{j} + ${az}\\hat{k}) + (${bx}\\hat{i} + ${by}\\hat{j} + ${bz}\\hat{k})}{2} = \\frac{${(ax+bx).toFixed(1)}\\hat{i} + ${(ay+by).toFixed(1)}\\hat{j} + ${(az+bz).toFixed(1)}\\hat{k}}{2}$$</div>
+            `;
+            resultDiv.style.display = 'block';
+
+            // Trigger MathJax re-render
+            if (window.MathJax) {
+                MathJax.typesetPromise([resultDiv]).catch(console.error);
+            }
+
+            drawVisualization(ax, ay, az, bx, by, bz, x, y, z, 'midpoint');
+        }
+
+        function calculateCentroid() {
+            const ax = parseFloat(document.getElementById('cax').value) || 0;
+            const ay = parseFloat(document.getElementById('cay').value) || 0;
+            const az = parseFloat(document.getElementById('caz').value) || 0;
+            const bx = parseFloat(document.getElementById('cbx').value) || 0;
+            const by = parseFloat(document.getElementById('cby').value) || 0;
+            const bz = parseFloat(document.getElementById('cbz').value) || 0;
+            const cx = parseFloat(document.getElementById('ccx').value) || 0;
+            const cy = parseFloat(document.getElementById('ccy').value) || 0;
+            const cz = parseFloat(document.getElementById('ccz').value) || 0;
+
+            const x = (ax + bx + cx) / 3;
+            const y = (ay + by + cy) / 3;
+            const z = (az + bz + cz) / 3;
+
+            const resultDiv = document.getElementById('centroid-result');
+            resultDiv.innerHTML = `
+                <div class="result-title">Centroid:</div>
+                <div>$$\\vec{g} = \\left(${x.toFixed(3)}, ${y.toFixed(3)}, ${z.toFixed(3)}\\right)$$</div>
+                <div>$$\\vec{g} = \\frac{(${ax}\\hat{i} + ${ay}\\hat{j} + ${az}\\hat{k}) + (${bx}\\hat{i} + ${by}\\hat{j} + ${bz}\\hat{k}) + (${cx}\\hat{i} + ${cy}\\hat{j} + ${cz}\\hat{k})}{3} = \\frac{${(ax+bx+cx).toFixed(1)}\\hat{i} + ${(ay+by+cy).toFixed(1)}\\hat{j} + ${(az+bz+cz).toFixed(1)}\\hat{k}}{3}$$</div>
+            `;
+            resultDiv.style.display = 'block';
+
+            // Trigger MathJax re-render
+            if (window.MathJax) {
+                MathJax.typesetPromise([resultDiv]).catch(console.error);
+            }
+
+            drawVisualization(ax, ay, az, bx, by, bz, x, y, z, 'centroid', cx, cy, cz);
+        }
+
+        function drawVisualization(ax, ay, az, bx, by, bz, px, py, pz, type, cx, cy, cz) {
+            const canvas = document.getElementById('visualization-canvas');
+            const ctx = canvas.getContext('2d');
+
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Set up coordinate system (simple isometric projection)
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const scale = 30;
+
+            // Project 3D to 2D (simple isometric)
+            function project(x, y, z) {
+                return {
+                    x: centerX + (x - y) * scale * 0.7,
+                    y: centerY + (x + y) * scale * 0.4 - z * scale * 0.6
+                };
+            }
+
+            // Draw axes
+            ctx.strokeStyle = '#666';
+            ctx.lineWidth = 2;
+
+            // X-axis
+            ctx.beginPath();
+            ctx.moveTo(centerX - 100, centerY);
+            ctx.lineTo(centerX + 100, centerY);
+            ctx.stroke();
+
+            // Y-axis
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY - 70);
+            ctx.lineTo(centerX, centerY + 70);
+            ctx.stroke();
+
+            // Z-axis
+            const zStart = project(0, 0, -3);
+            const zEnd = project(0, 0, 3);
+            ctx.beginPath();
+            ctx.moveTo(zStart.x, zStart.y);
+            ctx.lineTo(zEnd.x, zEnd.y);
+            ctx.stroke();
+
+            // Draw points
+            function drawPoint(x, y, z, label, color) {
+                const proj = project(x, y, z);
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.arc(proj.x, proj.y, 5, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.fillStyle = '#333';
+                ctx.font = '12px Arial';
+                ctx.fillText(label, proj.x + 8, proj.y - 8);
+            }
+
+            drawPoint(ax, ay, az, 'A', '#e74c3c');
+            drawPoint(bx, by, bz, 'B', '#3498db');
+
+            if (type === 'centroid') {
+                drawPoint(cx, cy, cz, 'C', '#2ecc71');
+            }
+
+            drawPoint(px, py, pz, type === 'centroid' ? 'G' : (type === 'midpoint' ? 'M' : 'P'), '#f39c12');
+
+            // Draw lines
+            const aProj = project(ax, ay, az);
+            const bProj = project(bx, by, bz);
+            const pProj = project(px, py, pz);
+
+            ctx.strokeStyle = '#666';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(aProj.x, aProj.y);
+            ctx.lineTo(bProj.x, bProj.y);
+            ctx.stroke();
+
+            if (type === 'centroid') {
+                const cProj = project(cx, cy, cz);
+                ctx.beginPath();
+                ctx.moveTo(bProj.x, bProj.y);
+                ctx.lineTo(cProj.x, cProj.y);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(cProj.x, cProj.y);
+                ctx.lineTo(aProj.x, aProj.y);
+                ctx.stroke();
+            }
+        }
+
+        function toggleSolution(id) {
+            const solution = document.getElementById(id);
+            solution.classList.toggle('show');
+        }
+
+        // Initialize MathJax
+        document.addEventListener("DOMContentLoaded", function() {
+            if (window.MathJax) {
+                MathJax.typesetPromise().catch(console.error);
+            }
+        });
+    </script>
+</body>
+</html>

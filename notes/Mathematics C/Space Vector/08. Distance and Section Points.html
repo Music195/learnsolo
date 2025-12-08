@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distance & Section Points - Interactive Learning</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            color: #4a5568;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .formula-block {
+            background: #f8f9fa;
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .centered {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .operation-block {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .operation-block h3 {
+            color: #4a5568;
+            margin-bottom: 15px;
+        }
+
+        .calculator-section {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            color: white;
+        }
+
+        .calculator-title {
+            text-align: center;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .calculator-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 5px;
+        }
+
+        .tab-button {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .tab-button.active {
+            background: white;
+            color: #f5576c;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .calculator-content {
+            display: none;
+        }
+
+        .calculator-content.active {
+            display: block;
+        }
+
+        .input-group {
+            margin: 15px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .input-field {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+            background: rgba(255,255,255,0.9);
+            color: #333;
+            font-size: 14px;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: white;
+            box-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        .calculate-btn {
+            background: white;
+            color: #f5576c;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .result-display {
+            background: rgba(255,255,255,0.9);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            color: #333;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .result-title {
+            font-weight: bold;
+            color: #f5576c;
+            margin-bottom: 10px;
+        }
+
+        .canvas-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .visualization-canvas {
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 10px;
+            background: rgba(255,255,255,0.9);
+            max-width: 100%;
+            height: auto;
+        }
+
+        .practice-section {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            color: white;
+        }
+
+        .practice-title {
+            text-align: center;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .problem-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .problem-text {
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .solution-toggle {
+            background: white;
+            color: #4facfe;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .solution-toggle:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+
+        .solution {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .solution.show {
+            display: block;
+        }
+
+        .key-takeaways {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            border-radius: 15px;
+            padding: 30px;
+            color: white;
+            margin-top: 30px;
+        }
+
+        .key-takeaways h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .takeaway-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+
+        .takeaway-item {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .takeaway-item strong {
+            color: #fff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .hint-block {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .hint-block strong {
+            color: #1976d2;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .input-row {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .takeaway-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Distance & Section Points</h1>
+            <p>Interactive Learning with 3D Visualizations</p>
+        </div>
+
+        <div class="content-card">
+            <h2 class="section-title">1. Distance Between Two Points</h2>
+            <p>For points \(A(a_1, a_2, a_3)\) and \(B(b_1, b_2, b_3)\), the distance \(AB\) is:</p>
+            <div class="formula-block">
+                <div class="centered">
+                    $$AB = \sqrt{(b_1 - a_1)^2 + (b_2 - a_2)^2 + (b_3 - a_3)^2}$$
+                </div>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h2 class="section-title">2. Section Points</h2>
+            <div class="operation-block">
+                <h3>Internal Division</h3>
+                <p>The coordinates of the point dividing segment \(AB\) in the ratio \(m:n\) (where the division is internal) are:</p>
+                <div class="centered">
+                    $$\left(\frac{n a_1 + m b_1}{m + n},\;\frac{n a_2 + m b_2}{m + n},\;\frac{n a_3 + m b_3}{m + n}\right)$$
+                </div>
+            </div>
+            <div class="operation-block">
+                <h3>External Division</h3>
+                <p>The coordinates of the point dividing segment \(AB\) in the ratio \(m:n\) (where the division is external) are:</p>
+                <div class="centered">
+                    $$\left(\frac{-n a_1 + m b_1}{m - n},\;\frac{-n a_2 + m b_2}{m - n},\;\frac{-n a_3 + m b_3}{m - n}\right)$$
+                </div>
+            </div>
+        </div>
+
+        <div class="calculator-section">
+            <h2 class="calculator-title">Interactive Calculator</h2>
+            <div class="calculator-tabs">
+                <button class="tab-button active" onclick="showCalculator('distance')">Distance</button>
+                <button class="tab-button" onclick="showCalculator('internal')">Internal Division</button>
+                <button class="tab-button" onclick="showCalculator('external')">External Division</button>
+            </div>
+
+            <div id="distance-calculator" class="calculator-content active">
+                <h3>Distance Calculator</h3>
+                <div class="input-group">
+                    <label>Point A (x₁, y₁, z₁):</label>
+                    <div class="input-row">
+                        <input type="number" id="ax" class="input-field" placeholder="x₁" step="any">
+                        <input type="number" id="ay" class="input-field" placeholder="y₁" step="any">
+                        <input type="number" id="az" class="input-field" placeholder="z₁" step="any">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Point B (x₂, y₂, z₂):</label>
+                    <div class="input-row">
+                        <input type="number" id="bx" class="input-field" placeholder="x₂" step="any">
+                        <input type="number" id="by" class="input-field" placeholder="y₂" step="any">
+                        <input type="number" id="bz" class="input-field" placeholder="z₂" step="any">
+                    </div>
+                </div>
+                <button class="calculate-btn" onclick="calculateDistance()">Calculate Distance</button>
+                <div id="distance-result" class="result-display" style="display: none;"></div>
+            </div>
+
+            <div id="internal-calculator" class="calculator-content">
+                <h3>Internal Division Calculator</h3>
+                <div class="input-group">
+                    <label>Point A (x₁, y₁, z₁):</label>
+                    <div class="input-row">
+                        <input type="number" id="iax" class="input-field" placeholder="x₁" step="any">
+                        <input type="number" id="iay" class="input-field" placeholder="y₁" step="any">
+                        <input type="number" id="iaz" class="input-field" placeholder="z₁" step="any">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Point B (x₂, y₂, z₂):</label>
+                    <div class="input-row">
+                        <input type="number" id="ibx" class="input-field" placeholder="x₂" step="any">
+                        <input type="number" id="iby" class="input-field" placeholder="y₂" step="any">
+                        <input type="number" id="ibz" class="input-field" placeholder="z₂" step="any">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Ratio m:n (internal division):</label>
+                    <div class="input-row">
+                        <input type="number" id="im" class="input-field" placeholder="m" min="1">
+                        <input type="number" id="in" class="input-field" placeholder="n" min="1">
+                    </div>
+                </div>
+                <button class="calculate-btn" onclick="calculateInternalDivision()">Calculate Internal Division</button>
+                <div id="internal-result" class="result-display" style="display: none;"></div>
+            </div>
+
+            <div id="external-calculator" class="calculator-content">
+                <h3>External Division Calculator</h3>
+                <div class="input-group">
+                    <label>Point A (x₁, y₁, z₁):</label>
+                    <div class="input-row">
+                        <input type="number" id="eax" class="input-field" placeholder="x₁" step="any">
+                        <input type="number" id="eay" class="input-field" placeholder="y₁" step="any">
+                        <input type="number" id="eaz" class="input-field" placeholder="z₁" step="any">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Point B (x₂, y₂, z₂):</label>
+                    <div class="input-row">
+                        <input type="number" id="ebx" class="input-field" placeholder="x₂" step="any">
+                        <input type="number" id="eby" class="input-field" placeholder="y₂" step="any">
+                        <input type="number" id="ebz" class="input-field" placeholder="z₂" step="any">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Ratio m:n (external division, m > n):</label>
+                    <div class="input-row">
+                        <input type="number" id="em" class="input-field" placeholder="m" min="1">
+                        <input type="number" id="en" class="input-field" placeholder="n" min="1">
+                    </div>
+                </div>
+                <button class="calculate-btn" onclick="calculateExternalDivision()">Calculate External Division</button>
+                <div id="external-result" class="result-display" style="display: none;"></div>
+            </div>
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="visualization-canvas" width="600" height="400" class="visualization-canvas"></canvas>
+        </div>
+
+        <div class="practice-section">
+            <h2 class="practice-title">Practice Problems</h2>
+
+            <div class="problem-card">
+                <div class="problem-text">
+                    <strong>Problem 1:</strong> Find the distance between points A(2, 3, 4) and B(6, 7, 8).
+                </div>
+                <button class="solution-toggle" onclick="toggleSolution('sol1')">Show Solution</button>
+                <div id="sol1" class="solution">
+                    <p>Using the distance formula: \(AB = \sqrt{(6-2)^2 + (7-3)^2 + (8-4)^2} = \sqrt{4^2 + 4^2 + 4^2} = \sqrt{16 + 16 + 16} = \sqrt{48} = 4\sqrt{3}\)</p>
+                    <p>Final answer: \(4\sqrt{3}\) units</p>
+                </div>
+            </div>
+
+            <div class="problem-card">
+                <div class="problem-text">
+                    <strong>Problem 2:</strong> Find the coordinates of the point that divides the line segment joining A(1, 2, 3) and B(4, 5, 6) internally in the ratio 2:1.
+                </div>
+                <button class="solution-toggle" onclick="toggleSolution('sol2')">Show Solution</button>
+                <div id="sol2" class="solution">
+                    <p>Internal division formula: \(\left(\frac{n x_1 + m x_2}{m + n}, \frac{n y_1 + m y_2}{m + n}, \frac{n z_1 + m z_2}{m + n}\right)\)</p>
+                    <p>Here m=2, n=1: \(\left(\frac{1\cdot1 + 2\cdot4}{2+1}, \frac{1\cdot2 + 2\cdot5}{3}, \frac{1\cdot3 + 2\cdot6}{3}\right) = \left(\frac{1+8}{3}, \frac{2+10}{3}, \frac{3+12}{3}\right) = \left(\frac{9}{3}, \frac{12}{3}, \frac{15}{3}\right) = (3, 4, 5)\)</p>
+                    <p>Final answer: (3, 4, 5)</p>
+                </div>
+            </div>
+
+            <div class="problem-card">
+                <div class="problem-text">
+                    <strong>Problem 3:</strong> Find the coordinates of the point that divides the line segment joining A(2, 3, 4) and B(6, 7, 8) externally in the ratio 3:1.
+                </div>
+                <button class="solution-toggle" onclick="toggleSolution('sol3')">Show Solution</button>
+                <div id="sol3" class="solution">
+                    <p>External division formula: \(\left(\frac{m x_2 - n x_1}{m - n}, \frac{m y_2 - n y_1}{m - n}, \frac{m z_2 - n z_1}{m - n}\right)\)</p>
+                    <p>Here m=3, n=1: \(\left(\frac{3\cdot6 - 1\cdot2}{3-1}, \frac{3\cdot7 - 1\cdot3}{2}, \frac{3\cdot8 - 1\cdot4}{2}\right) = \left(\frac{18-2}{2}, \frac{21-3}{2}, \frac{24-4}{2}\right) = \left(\frac{16}{2}, \frac{18}{2}, \frac{20}{2}\right) = (8, 9, 10)\)</p>
+                    <p>Final answer: (8, 9, 10)</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <div class="hint-block">
+                <strong>Notes:</strong>
+                <ul>
+                    <li>The distance formula gives the straight-line distance between two points in 3D space.</li>
+                    <li>The section formulas (internal and external) are useful for finding points that divide a segment in a given ratio.</li>
+                    <li>Internal division gives points between the two given points, while external division can give points outside the segment.</li>
+                    <li>These formulas are valid in both 2D and 3D coordinate systems.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="key-takeaways">
+            <h3>Key Takeaways</h3>
+            <div class="takeaway-list">
+                <div class="takeaway-item">
+                    <strong>Distance Formula:</strong> \(AB = \sqrt{(b_1 - a_1)^2 + (b_2 - a_2)^2 + (b_3 - a_3)^2}\) for 3D space.
+                </div>
+                <div class="takeaway-item">
+                    <strong>Internal Division:</strong> Point divides segment internally in ratio m:n.
+                </div>
+                <div class="takeaway-item">
+                    <strong>External Division:</strong> Point divides segment externally in ratio m:n (m > n).
+                </div>
+                <div class="takeaway-item">
+                    <strong>Pythagorean Extension:</strong> Distance formula extends Pythagorean theorem to 3D.
+                </div>
+                <div class="takeaway-item">
+                    <strong>Applications:</strong> Used in physics, engineering, computer graphics, and navigation.
+                </div>
+                <div class="takeaway-item">
+                    <strong>Coordinate Geometry:</strong> Foundation for vector operations and analytic geometry.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showCalculator(type) {
+            // Hide all calculator contents
+            const contents = document.querySelectorAll('.calculator-content');
+            contents.forEach(content => content.classList.remove('active'));
+
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(button => button.classList.remove('active'));
+
+            // Show selected calculator
+            document.getElementById(type + '-calculator').classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function calculateDistance() {
+            const ax = parseFloat(document.getElementById('ax').value) || 0;
+            const ay = parseFloat(document.getElementById('ay').value) || 0;
+            const az = parseFloat(document.getElementById('az').value) || 0;
+            const bx = parseFloat(document.getElementById('bx').value) || 0;
+            const by = parseFloat(document.getElementById('by').value) || 0;
+            const bz = parseFloat(document.getElementById('bz').value) || 0;
+
+            const dx = bx - ax;
+            const dy = by - ay;
+            const dz = bz - az;
+            const distance = Math.sqrt(dx*dx + dy*dy + dz*dz);
+
+            const resultDiv = document.getElementById('distance-result');
+            resultDiv.innerHTML = `
+                <div class="result-title">Distance:</div>
+                <div>$$AB = \\sqrt{(${bx} - ${ax})^2 + (${by} - ${ay})^2 + (${bz} - ${az})^2} = \\sqrt{${dx}^2 + ${dy}^2 + ${dz}^2} = \\sqrt{${dx*dx + dy*dy + dz*dz}} = ${distance.toFixed(3)}$$</div>
+                <div>$$AB = ${distance.toFixed(3)}$$ units</div>
+            `;
+            resultDiv.style.display = 'block';
+
+            // Trigger MathJax re-render
+            if (window.MathJax) {
+                MathJax.typesetPromise([resultDiv]).catch(console.error);
+            }
+
+            drawVisualization(ax, ay, az, bx, by, bz, null, null, null, 'distance');
+        }
+
+        function calculateInternalDivision() {
+            const ax = parseFloat(document.getElementById('iax').value) || 0;
+            const ay = parseFloat(document.getElementById('iay').value) || 0;
+            const az = parseFloat(document.getElementById('iaz').value) || 0;
+            const bx = parseFloat(document.getElementById('ibx').value) || 0;
+            const by = parseFloat(document.getElementById('iby').value) || 0;
+            const bz = parseFloat(document.getElementById('ibz').value) || 0;
+            const m = parseFloat(document.getElementById('im').value) || 1;
+            const n = parseFloat(document.getElementById('in').value) || 1;
+
+            const x = (n * ax + m * bx) / (m + n);
+            const y = (n * ay + m * by) / (m + n);
+            const z = (n * az + m * bz) / (m + n);
+
+            const resultDiv = document.getElementById('internal-result');
+            resultDiv.innerHTML = `
+                <div class="result-title">Internal Division Point:</div>
+                <div>$$P = \\left(\\frac{${n} \\cdot ${ax} + ${m} \\cdot ${bx}}{${m} + ${n}}, \\frac{${n} \\cdot ${ay} + ${m} \\cdot ${by}}{${m} + ${n}}, \\frac{${n} \\cdot ${az} + ${m} \\cdot ${bz}}{${m} + ${n}}\\right) = \\left(${x.toFixed(3)}, ${y.toFixed(3)}, ${z.toFixed(3)}\\right)$$</div>
+            `;
+            resultDiv.style.display = 'block';
+
+            // Trigger MathJax re-render
+            if (window.MathJax) {
+                MathJax.typesetPromise([resultDiv]).catch(console.error);
+            }
+
+            drawVisualization(ax, ay, az, bx, by, bz, x, y, z, 'internal');
+        }
+
+        function calculateExternalDivision() {
+            const ax = parseFloat(document.getElementById('eax').value) || 0;
+            const ay = parseFloat(document.getElementById('eay').value) || 0;
+            const az = parseFloat(document.getElementById('eaz').value) || 0;
+            const bx = parseFloat(document.getElementById('ebx').value) || 0;
+            const by = parseFloat(document.getElementById('eby').value) || 0;
+            const bz = parseFloat(document.getElementById('ebz').value) || 0;
+            const m = parseFloat(document.getElementById('em').value) || 1;
+            const n = parseFloat(document.getElementById('en').value) || 1;
+
+            if (m <= n) {
+                alert("For external division, m must be greater than n.");
+                return;
+            }
+
+            const x = (-n * ax + m * bx) / (m - n);
+            const y = (-n * ay + m * by) / (m - n);
+            const z = (-n * az + m * bz) / (m - n);
+
+            const resultDiv = document.getElementById('external-result');
+            resultDiv.innerHTML = `
+                <div class="result-title">External Division Point:</div>
+                <div>$$P = \\left(\\frac{${m} \\cdot ${bx} - ${n} \\cdot ${ax}}{${m} - ${n}}, \\frac{${m} \\cdot ${by} - ${n} \\cdot ${ay}}{${m} - ${n}}, \\frac{${m} \\cdot ${bz} - ${n} \\cdot ${az}}{${m} - ${n}}\\right) = \\left(${x.toFixed(3)}, ${y.toFixed(3)}, ${z.toFixed(3)}\\right)$$</div>
+            `;
+            resultDiv.style.display = 'block';
+
+            // Trigger MathJax re-render
+            if (window.MathJax) {
+                MathJax.typesetPromise([resultDiv]).catch(console.error);
+            }
+
+            drawVisualization(ax, ay, az, bx, by, bz, x, y, z, 'external');
+        }
+
+        function drawVisualization(ax, ay, az, bx, by, bz, px, py, pz, type) {
+            const canvas = document.getElementById('visualization-canvas');
+            const ctx = canvas.getContext('2d');
+
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Set up coordinate system (simple isometric projection)
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const scale = 30;
+
+            // Project 3D to 2D (simple isometric)
+            function project(x, y, z) {
+                return {
+                    x: centerX + (x - y) * scale * 0.7,
+                    y: centerY + (x + y) * scale * 0.4 - z * scale * 0.6
+                };
+            }
+
+            // Draw axes
+            ctx.strokeStyle = '#666';
+            ctx.lineWidth = 2;
+
+            // X-axis
+            ctx.beginPath();
+            ctx.moveTo(centerX - 100, centerY);
+            ctx.lineTo(centerX + 100, centerY);
+            ctx.stroke();
+
+            // Y-axis
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY - 70);
+            ctx.lineTo(centerX, centerY + 70);
+            ctx.stroke();
+
+            // Z-axis
+            const zStart = project(0, 0, -3);
+            const zEnd = project(0, 0, 3);
+            ctx.beginPath();
+            ctx.moveTo(zStart.x, zStart.y);
+            ctx.lineTo(zEnd.x, zEnd.y);
+            ctx.stroke();
+
+            // Draw points
+            function drawPoint(x, y, z, label, color) {
+                const proj = project(x, y, z);
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.arc(proj.x, proj.y, 5, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.fillStyle = '#333';
+                ctx.font = '12px Arial';
+                ctx.fillText(label, proj.x + 8, proj.y - 8);
+            }
+
+            drawPoint(ax, ay, az, 'A', '#e74c3c');
+            drawPoint(bx, by, bz, 'B', '#3498db');
+
+            if (px !== null && py !== null && pz !== null) {
+                drawPoint(px, py, pz, 'P', '#f39c12');
+            }
+
+            // Draw lines
+            const aProj = project(ax, ay, az);
+            const bProj = project(bx, by, bz);
+
+            ctx.strokeStyle = '#666';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(aProj.x, aProj.y);
+            ctx.lineTo(bProj.x, bProj.y);
+            ctx.stroke();
+
+            if (px !== null && py !== null && pz !== null) {
+                const pProj = project(px, py, pz);
+                ctx.strokeStyle = '#f39c12';
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(aProj.x, aProj.y);
+                ctx.lineTo(pProj.x, pProj.y);
+                ctx.moveTo(bProj.x, bProj.y);
+                ctx.lineTo(pProj.x, pProj.y);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+        }
+
+        function toggleSolution(id) {
+            const solution = document.getElementById(id);
+            solution.classList.toggle('show');
+        }
+
+        // Initialize MathJax
+        document.addEventListener("DOMContentLoaded", function() {
+            if (window.MathJax) {
+                MathJax.typesetPromise().catch(console.error);
+            }
+        });
+    </script>
+</body>
+</html>

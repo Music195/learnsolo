@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<!-- tags: Vector -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Equation of a Line Perpendicular to a Vector
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+   }
+
+   .main-content {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 15px;
+    padding: 30px;
+    margin: 20px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+   }
+
+   .fancy-title {
+    text-align: center;
+    font-size: 2.5em;
+    font-weight: bold;
+    margin: 20px 0;
+    color: #2c3e50;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+   }
+
+   .description {
+    font-size: 1.2em;
+    line-height: 1.6;
+    margin: 20px 0;
+    color: #34495e;
+    text-align: center;
+   }
+
+   .content-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin: 30px 0;
+   }
+
+   .formula-block {
+    flex: 1;
+    min-width: 300px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 1.4em;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+   }
+
+   .formula-item {
+    margin: 15px 0;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+   }
+
+   .diagram-block {
+    flex: 1;
+    min-width: 300px;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+   }
+
+   .interactive-demo {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    margin: 30px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+   }
+
+   .demo-title {
+    text-align: center;
+    font-size: 1.8em;
+    margin-bottom: 25px;
+    font-weight: bold;
+   }
+
+   .input-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin: 20px 0;
+    justify-content: center;
+   }
+
+   .input-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+   }
+
+   .input-field label {
+    font-weight: bold;
+    font-size: 1.1em;
+   }
+
+   .input-field input {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    width: 120px;
+    text-align: center;
+    transition: border-color 0.3s;
+   }
+
+   .input-field input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+   }
+
+   .button-group {
+    text-align: center;
+    margin: 25px 0;
+   }
+
+   .btn {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 1.1em;
+    cursor: pointer;
+    margin: 0 10px;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+   }
+
+   .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+   }
+
+   .btn:active {
+    transform: translateY(0);
+   }
+
+   .result-display {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    backdrop-filter: blur(10px);
+   }
+
+   .result-text {
+    font-size: 1.2em;
+    text-align: center;
+    margin: 10px 0;
+   }
+
+   .canvas-container {
+    text-align: center;
+    margin: 20px 0;
+   }
+
+   .perpendicular-canvas {
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+   }
+
+   .section {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    margin: 25px 0;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+   }
+
+   .section-title {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
+   }
+
+   .example-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+   }
+
+   .example-card {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+   }
+
+   .example-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(245, 87, 108, 0.4);
+   }
+
+   .example-card h4 {
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+   }
+
+   .example-detail {
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    display: none;
+   }
+
+   .calculation-steps {
+    margin: 15px 0;
+   }
+
+   .calculation-step {
+    margin: 8px 0;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 5px;
+    border-left: 4px solid #f5576c;
+   }
+
+   .practice-problems {
+    margin: 20px 0;
+   }
+
+   .problem-item {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+   }
+
+   .problem-item h4 {
+    margin: 0 0 15px 0;
+    font-size: 1.2em;
+   }
+
+   .solution-btn {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    color: #333;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 10px 0;
+    transition: all 0.3s;
+   }
+
+   .solution-btn:hover {
+    background: linear-gradient(135deg, #fcb69f 0%, #ffecd2 100%);
+    transform: scale(1.05);
+   }
+
+   .solution {
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 10px 0;
+    display: none;
+    border-left: 4px solid #667eea;
+   }
+
+   .key-takeaways {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    padding: 25px;
+    border-radius: 12px;
+    margin: 25px 0;
+   }
+
+   .takeaway-list {
+    list-style: none;
+    padding: 0;
+   }
+
+   .takeaway-item {
+    background: rgba(255, 255, 255, 0.8);
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+    font-weight: bold;
+   }
+
+   .error-message {
+    background: #ffebee;
+    color: #c62828;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px 0;
+    display: none;
+    text-align: center;
+    font-weight: bold;
+   }
+
+   .normal-vector-info {
+    background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+   }
+
+   .normal-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin: 15px 0;
+   }
+
+   .normal-item {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+   }
+
+   @media (max-width: 768px) {
+    .content-wrapper {
+     flex-direction: column;
+    }
+
+    .input-group {
+     flex-direction: column;
+     align-items: center;
+    }
+
+    .fancy-title {
+     font-size: 2em;
+    }
+
+    .formula-block {
+     font-size: 1.2em;
+    }
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Vector">
+   Equation of a Line Perpendicular to a Vector
+  </div>
+
+  <div class="container">
+   <div class="main-content">
+    <div class="description">
+     A line is perpendicular to a vector when the vector is normal (perpendicular) to the line. The normal vector determines the orientation of the line in the plane.
+    </div>
+
+    <div class="content-wrapper">
+     <div class="formula-block">
+      <div class="formula-item">
+       <strong>Vector Form:</strong> $$\vec{n} \cdot (\vec{r} - \vec{a}) = 0$$
+      </div>
+      <div class="formula-item">
+       <strong>Cartesian Form:</strong> $$n_1(x - a_1) + n_2(y - a_2) = 0$$
+      </div>
+     </div>
+
+     <div class="diagram-block">
+      <svg viewbox="0 0 250 180" xmlns="http://www.w3.org/2000/svg">
+       <!-- Coordinate axes -->
+       <line stroke="#ccc" stroke-width="1" x1="20" x2="220" y1="150" y2="150"></line>
+       <line stroke="#ccc" stroke-width="1" x1="20" x2="20" y1="30" y2="150"></line>
+       <!-- Line -->
+       <line stroke="#e74c3c" stroke-width="3" x1="60" x2="180" y2="100" y1="80"></line>
+       <!-- Point A -->
+       <circle cx="120" cy="90" fill="#f39c12" r="4"></circle>
+       <text fill="#f39c12" font-size="12" x="115" y="85">A(\(\vec{a}\))</text>
+       <!-- Point R (on line) -->
+       <circle cx="80" cy="85" fill="#27ae60" r="4"></circle>
+       <text fill="#27ae60" font-size="12" x="75" y="80">R(\(\vec{r}\))</text>
+       <!-- Normal vector from A -->
+       <line marker-end="url(#arrowhead-blue)" stroke="#007bff" stroke-width="3" x1="120" x2="140" y1="90" y2="70"></line>
+       <text fill="#007bff" font-size="10" x="135" y="65">\(\vec{n}\)</text>
+       <!-- Right angle symbol -->
+       <path d="M120,90 L125,90 L125,85" fill="none" stroke="#333" stroke-width="2"></path>
+       <!-- Arrow markers -->
+       <defs>
+        <marker id="arrowhead-blue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+         <polygon fill="#007bff" points="0 0, 10 3.5, 0 7"></polygon>
+        </marker>
+       </defs>
+      </svg>
+     </div>
+    </div>
+
+    <div class="normal-vector-info">
+     <div class="section-title">Normal Vector Properties</div>
+     <div class="normal-grid">
+      <div class="normal-item">
+       <strong>Definition</strong>
+       <br>A vector perpendicular to all vectors lying on the line
+      </div>
+      <div class="normal-item">
+       <strong>Dot Product</strong>
+       <br>\(\vec{n} \cdot \vec{d} = 0\) for any direction vector \(\vec{d}\) of the line
+      </div>
+      <div class="normal-item">
+       <strong>Scalar Multiple</strong>
+       <br>k\(\vec{n}\) is also normal for any non-zero scalar k
+      </div>
+      <div class="normal-item">
+       <strong>Line Equation</strong>
+       <br>Coefficients of x,y in ax+by+c=0 give normal vector (a,b)
+      </div>
+     </div>
+    </div>
+
+    <div class="interactive-demo">
+     <div class="demo-title">Interactive Normal Vector Explorer</div>
+
+     <div class="input-group">
+      <div class="input-field">
+       <label for="ax">A<sub>x</sub>:</label>
+       <input id="ax" step="any" type="number" value="2"/>
+      </div>
+      <div class="input-field">
+       <label for="ay">A<sub>y</sub>:</label>
+       <input id="ay" step="any" type="number" value="1"/>
+      </div>
+      <div class="input-field">
+       <label for="nx">n<sub>x</sub>:</label>
+       <input id="nx" step="any" type="number" value="1"/>
+      </div>
+      <div class="input-field">
+       <label for="ny">n<sub>y</sub>:</label>
+       <input id="ny" step="any" type="number" value="2"/>
+      </div>
+     </div>
+
+     <div class="button-group">
+      <button class="btn" onclick="generatePerpendicularLine()">Generate Line</button>
+      <button class="btn" onclick="checkPointOnLine()">Check Point</button>
+      <button class="btn" onclick="resetDemo()">Reset</button>
+     </div>
+
+     <div class="error-message" id="errorMessage"></div>
+
+     <div class="result-display">
+      <div class="result-text" id="equationResult">
+       Line Equation: <strong id="lineEq">Not calculated</strong>
+      </div>
+      <div class="result-text" id="pointResult">
+       Point Check: <strong id="pointCheck">No point selected</strong>
+      </div>
+     </div>
+
+     <div class="canvas-container">
+      <canvas class="perpendicular-canvas" height="400" id="perpendicularCanvas" width="500"></canvas>
+     </div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Mathematical Foundation</div>
+     <p>A line perpendicular to a vector \(\vec{n}\) has \(\vec{n}\) as its normal vector. The condition for a point \(\vec{r}\) to lie on the line is:</p>
+     <div class="formula-block" style="margin: 20px 0;">
+      $$\vec{n} \cdot (\vec{r} - \vec{a}) = 0$$
+     </div>
+     <p>This can be expanded to:</p>
+     <div class="formula-block" style="margin: 20px 0;">
+      $$\vec{n} \cdot \vec{r} = \vec{n} \cdot \vec{a}$$
+     </div>
+     <p>In Cartesian coordinates, if \(\vec{n} = (n_1, n_2)\) and point A has coordinates (a₁, a₂), then:</p>
+     <div class="formula-block" style="margin: 20px 0;">
+      $$n_1(x - a_1) + n_2(y - a_2) = 0$$
+     </div>
+     <p>This is equivalent to the general line equation ax + by + c = 0, where (a,b) is the normal vector.</p>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Worked Examples</div>
+     <div class="example-grid">
+      <div class="example-card" onclick="showExample(1)">
+       <h4>Example 1: Line through point with normal vector</h4>
+       <p>Find equation of line through (2,3) perpendicular to (1,2)</p>
+      </div>
+      <div class="example-card" onclick="showExample(2)">
+       <h4>Example 2: Normal vector from line equation</h4>
+       <p>Find normal vector of line 3x + 4y - 12 = 0</p>
+      </div>
+      <div class="example-card" onclick="showExample(3)">
+       <h4>Example 3: Point on perpendicular line</h4>
+       <p>Check if (5,1) lies on line through (1,2) ⊥ to (2,3)</p>
+      </div>
+     </div>
+
+     <div class="example-detail" id="exampleDetail"></div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Applications</div>
+     <ul>
+      <li><strong>Geometry:</strong> Finding perpendicular lines and distances</li>
+      <li><strong>Physics:</strong> Normal forces and reflection laws</li>
+      <li><strong>Computer Graphics:</strong> Surface normals and lighting calculations</li>
+      <li><strong>Engineering:</strong> Structural analysis and stress calculations</li>
+      <li><strong>Navigation:</strong> Determining perpendicular paths</li>
+     </ul>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Practice Problems</div>
+     <div class="practice-problems">
+      <div class="problem-item">
+       <h4>Problem 1</h4>
+       <p>Find the equation of the line passing through the point (3,4) and perpendicular to the vector \(\vec{n} = (2,5)\).</p>
+       <button class="solution-btn" onclick="toggleSolution(1)">Show Solution</button>
+       <div class="solution" id="solution1">
+        <p><strong>Solution:</strong></p>
+        <p>Using the formula: \(\vec{n} \cdot (\vec{r} - \vec{a}) = 0\)</p>
+        <p>\((2,5) \cdot ((x,y) - (3,4)) = 0\)</p>
+        <p>\(2(x-3) + 5(y-4) = 0\)</p>
+        <p>\(2x - 6 + 5y - 20 = 0\)</p>
+        <p>\(2x + 5y - 26 = 0\)</p>
+       </div>
+      </div>
+
+      <div class="problem-item">
+       <h4>Problem 2</h4>
+       <p>Determine whether the point (1,2) lies on the line through (0,1) that is perpendicular to the vector (3,4).</p>
+       <button class="solution-btn" onclick="toggleSolution(2)">Show Solution</button>
+       <div class="solution" id="solution2">
+        <p><strong>Solution:</strong></p>
+        <p>Check if \((3,4) \cdot ((1,2) - (0,1)) = 0\)</p>
+        <p>\((3,4) \cdot (1,1) = 3 + 4 = 7 ≠ 0\)</p>
+        <p>The point does not lie on the line.</p>
+       </div>
+      </div>
+
+      <div class="problem-item">
+       <h4>Problem 3</h4>
+       <p>Find the normal vector of the line 2x - 3y + 6 = 0.</p>
+       <button class="solution-btn" onclick="toggleSolution(3)">Show Solution</button>
+       <div class="solution" id="solution3">
+        <p><strong>Solution:</strong></p>
+        <p>The coefficients of x and y give the normal vector: (2,-3)</p>
+        <p>Any scalar multiple like (4,-6) or (-2,3) is also a normal vector.</p>
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <div class="section-title">Key Takeaways</div>
+     <ul class="takeaway-list">
+      <li class="takeaway-item">Normal vector \(\vec{n}\) satisfies \(\vec{n} \cdot \vec{d} = 0\) for any direction vector \(\vec{d}\) of the line</li>
+      <li class="takeaway-item">Line equation: \(\vec{n} \cdot (\vec{r} - \vec{a}) = 0\) where \(\vec{a}\) is a point on the line</li>
+      <li class="takeaway-item">Cartesian form: \(n_1(x - a_1) + n_2(y - a_2) = 0\)</li>
+      <li class="takeaway-item">For ax + by + c = 0, normal vector is (a,b)</li>
+      <li class="takeaway-item">Scalar multiples of normal vectors are also normal vectors</li>
+      <li class="takeaway-item">Used to find perpendicular lines and distances from points to lines</li>
+     </ul>
+    </div>
+   </div>
+  </div>
+
+  <script>
+   function generatePerpendicularLine() {
+    try {
+      const ax = parseFloat(document.getElementById('ax').value) || 0;
+      const ay = parseFloat(document.getElementById('ay').value) || 0;
+      const nx = parseFloat(document.getElementById('nx').value) || 0;
+      const ny = parseFloat(document.getElementById('ny').value) || 0;
+
+      if (nx === 0 && ny === 0) {
+        document.getElementById('errorMessage').textContent = 'Normal vector cannot be zero vector.';
+        document.getElementById('errorMessage').style.display = 'block';
+        return;
+      }
+
+      // Calculate the constant term
+      const c = -(nx * ax + ny * ay);
+
+      document.getElementById('lineEq').textContent = `${nx}x + ${ny}y + ${c} = 0`;
+      document.getElementById('errorMessage').style.display = 'none';
+
+      drawPerpendicularVisualization(ax, ay, nx, ny);
+    } catch (error) {
+      document.getElementById('errorMessage').textContent = 'Error generating line equation. Please check your input values.';
+      document.getElementById('errorMessage').style.display = 'block';
+    }
+   }
+
+   function checkPointOnLine() {
+    try {
+      const ax = parseFloat(document.getElementById('ax').value) || 0;
+      const ay = parseFloat(document.getElementById('ay').value) || 0;
+      const nx = parseFloat(document.getElementById('nx').value) || 0;
+      const ny = parseFloat(document.getElementById('ny').value) || 0;
+
+      // For demo purposes, check a test point (ax+1, ay+1)
+      const testX = ax + 1;
+      const testY = ay + 1;
+
+      const dotProduct = nx * (testX - ax) + ny * (testY - ay);
+      const isOnLine = Math.abs(dotProduct) < 1e-10;
+
+      document.getElementById('pointCheck').textContent = `Point (${testX}, ${testY}): ${isOnLine ? 'On line' : 'Not on line'}`;
+      document.getElementById('errorMessage').style.display = 'none';
+
+      drawPerpendicularVisualization(ax, ay, nx, ny, testX, testY);
+    } catch (error) {
+      document.getElementById('errorMessage').textContent = 'Error checking point. Please check your input values.';
+      document.getElementById('errorMessage').style.display = 'block';
+    }
+   }
+
+   function drawPerpendicularVisualization(ax, ay, nx, ny, testX, testY) {
+    const canvas = document.getElementById('perpendicularCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Calculate bounds
+    const points = [
+      {x: ax, y: ay},
+      {x: ax + nx, y: ay + ny},
+      {x: ax - ny, y: ay + nx}, // perpendicular direction
+      {x: ax + ny, y: ay - nx}  // perpendicular direction
+    ];
+
+    if (testX !== undefined && testY !== undefined) {
+      points.push({x: testX, y: testY});
+    }
+
+    const minX = Math.min(...points.map(p => p.x)) - 2;
+    const maxX = Math.max(...points.map(p => p.x)) + 2;
+    const minY = Math.min(...points.map(p => p.y)) - 2;
+    const maxY = Math.max(...points.map(p => p.y)) + 2;
+
+    const scaleX = (canvas.width - 80) / (maxX - minX);
+    const scaleY = (canvas.height - 80) / (maxY - minY);
+    const scale = Math.min(scaleX, scaleY);
+
+    const offsetX = 40 - minX * scale;
+    const offsetY = 40 - minY * scale;
+
+    // Transform coordinates
+    const transformX = x => offsetX + x * scale;
+    const transformY = y => canvas.height - (offsetY + y * scale);
+
+    // Draw grid
+    ctx.strokeStyle = '#e0e0e0';
+    ctx.lineWidth = 1;
+    for (let i = Math.floor(minX); i <= Math.ceil(maxX); i++) {
+      const x = transformX(i);
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, canvas.height);
+      ctx.stroke();
+    }
+    for (let i = Math.floor(minY); i <= Math.ceil(maxY); i++) {
+      const y = transformY(i);
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(canvas.width, y);
+      ctx.stroke();
+    }
+
+    // Draw the line (perpendicular to normal vector)
+    // The line passes through (ax, ay) and is perpendicular to (nx, ny)
+    // So its direction vector is (-ny, nx) or (ny, -nx)
+    const dx = -ny;
+    const dy = nx;
+
+    // Draw line through the point
+    const lineLength = 5;
+    const lineStartX = ax - lineLength * dx / Math.sqrt(dx*dx + dy*dy);
+    const lineStartY = ay - lineLength * dy / Math.sqrt(dx*dx + dy*dy);
+    const lineEndX = ax + lineLength * dx / Math.sqrt(dx*dx + dy*dy);
+    const lineEndY = ay + lineLength * dy / Math.sqrt(dx*dx + dy*dy);
+
+    ctx.strokeStyle = '#e74c3c';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(transformX(lineStartX), transformY(lineStartY));
+    ctx.lineTo(transformX(lineEndX), transformY(lineEndY));
+    ctx.stroke();
+
+    // Draw point A
+    ctx.fillStyle = '#f39c12';
+    ctx.beginPath();
+    ctx.arc(transformX(ax), transformY(ay), 6, 0, 2 * Math.PI);
+    ctx.fill();
+
+    // Draw normal vector
+    const normalLength = 2;
+    const normalEndX = ax + normalLength * nx / Math.sqrt(nx*nx + ny*ny);
+    const normalEndY = ay + normalLength * ny / Math.sqrt(nx*nx + ny*ny);
+
+    ctx.strokeStyle = '#007bff';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(transformX(ax), transformY(ay));
+    ctx.lineTo(transformX(normalEndX), transformY(normalEndY));
+    ctx.stroke();
+
+    // Draw test point if provided
+    if (testX !== undefined && testY !== undefined) {
+      const dotProduct = nx * (testX - ax) + ny * (testY - ay);
+      const isOnLine = Math.abs(dotProduct) < 1e-10;
+
+      ctx.fillStyle = isOnLine ? '#27ae60' : '#e67e22';
+      ctx.beginPath();
+      ctx.arc(transformX(testX), transformY(testY), 6, 0, 2 * Math.PI);
+      ctx.fill();
+    }
+
+    // Draw right angle symbol
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 2;
+    const angleSize = 15;
+    ctx.beginPath();
+    ctx.moveTo(transformX(ax), transformY(ay));
+    ctx.lineTo(transformX(ax) + angleSize, transformY(ay));
+    ctx.moveTo(transformX(ax), transformY(ay));
+    ctx.lineTo(transformX(ax), transformY(ay) - angleSize);
+    ctx.stroke();
+
+    // Draw labels
+    ctx.fillStyle = '#333';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('A', transformX(ax), transformY(ay) - 10);
+    if (testX !== undefined && testY !== undefined) {
+      ctx.fillText('P', transformX(testX), transformY(testY) - 10);
+    }
+
+    // Draw legend
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.fillRect(10, 10, 160, 100);
+    ctx.strokeStyle = '#333';
+    ctx.strokeRect(10, 10, 160, 100);
+
+    ctx.fillStyle = '#333';
+    ctx.font = '10px Arial';
+    ctx.textAlign = 'left';
+    ctx.fillText('Legend:', 15, 25);
+    ctx.fillText('● A: Reference point', 15, 40);
+    ctx.fillText('→ Blue: Normal vector', 15, 55);
+    ctx.fillText('— Red: Line', 15, 70);
+    if (testX !== undefined && testY !== undefined) {
+      ctx.fillText('● P: Test point', 15, 85);
+    }
+   }
+
+   function showExample(exampleNumber) {
+    const detail = document.getElementById('exampleDetail');
+    let content = '';
+
+    switch(exampleNumber) {
+      case 1:
+        content = `
+          <h4>Detailed Example 1 - Line through point with normal vector</h4>
+          <div class="calculation-steps">
+            <div class="calculation-step">Point A: (2,3), Normal vector n: (1,2)</div>
+            <div class="calculation-step">Equation: \(\vec{n} \cdot (\vec{r} - \vec{a}) = 0\)</div>
+            <div class="calculation-step">\((1,2) \cdot ((x,y) - (2,3)) = 0\)</div>
+            <div class="calculation-step">\(1(x-2) + 2(y-3) = 0\)</div>
+            <div class="calculation-step">\(x - 2 + 2y - 6 = 0\)</div>
+            <div class="calculation-step">\(x + 2y - 8 = 0\)</div>
+          </div>
+        `;
+        break;
+      case 2:
+        content = `
+          <h4>Detailed Example 2 - Normal vector from line equation</h4>
+          <div class="calculation-steps">
+            <div class="calculation-step">Line equation: 3x + 4y - 12 = 0</div>
+            <div class="calculation-step">Normal vector is (3,4) - coefficients of x and y</div>
+            <div class="calculation-step">Any scalar multiple like (6,8) or (-3,-4) is also normal</div>
+          </div>
+        `;
+        break;
+      case 3:
+        content = `
+          <h4>Detailed Example 3 - Point on perpendicular line</h4>
+          <div class="calculation-steps">
+            <div class="calculation-step">Line through (1,2) perpendicular to (2,3)</div>
+            <div class="calculation-step">Check point (5,1): \((2,3) \cdot ((5,1) - (1,2)) = ?\)</div>
+            <div class="calculation-step">\((2,3) \cdot (4,-1) = 8 - 3 = 5 ≠ 0\)</div>
+            <div class="calculation-step">Point does not lie on the line</div>
+          </div>
+        `;
+        break;
+    }
+
+    detail.innerHTML = content;
+    detail.style.display = 'block';
+    MathJax.typesetPromise();
+   }
+
+   function toggleSolution(problemNumber) {
+    const solution = document.getElementById('solution' + problemNumber);
+    if (solution.style.display === 'none' || solution.style.display === '') {
+      solution.style.display = 'block';
+    } else {
+      solution.style.display = 'none';
+    }
+   }
+
+   function resetDemo() {
+    document.getElementById('ax').value = '2';
+    document.getElementById('ay').value = '1';
+    document.getElementById('nx').value = '1';
+    document.getElementById('ny').value = '2';
+    document.getElementById('lineEq').textContent = 'Not calculated';
+    document.getElementById('pointCheck').textContent = 'No point selected';
+    document.getElementById('errorMessage').style.display = 'none';
+    generatePerpendicularLine();
+   }
+
+   // Initialize with default values
+   document.addEventListener('DOMContentLoaded', function() {
+    generatePerpendicularLine();
+   });
+  </script>
+ </body>
+</html>

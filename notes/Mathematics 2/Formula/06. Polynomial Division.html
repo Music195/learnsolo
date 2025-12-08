@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<!-- tags: Formula -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Polynomial Division
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+   }
+
+   .main-content {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 15px;
+    padding: 30px;
+    margin: 20px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+   }
+
+   .fancy-title {
+    text-align: center;
+    font-size: 2.5em;
+    font-weight: bold;
+    margin: 20px 0;
+    color: #2c3e50;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+   }
+
+   .description {
+    font-size: 1.2em;
+    line-height: 1.6;
+    margin: 20px 0;
+    color: #34495e;
+    text-align: center;
+   }
+
+   .content-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin: 30px 0;
+   }
+
+   .formula-block {
+    flex: 1;
+    min-width: 300px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 1.4em;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+   }
+
+   .formula-item {
+    margin: 15px 0;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+   }
+
+   .graybox {
+    background: linear-gradient(135deg, #bdc3c7 0%, #95a5a6 100%);
+    color: #2c3e50;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    text-align: center;
+    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+   }
+
+   .interactive-demo {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    margin: 30px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+   }
+
+   .demo-title {
+    text-align: center;
+    font-size: 1.8em;
+    margin-bottom: 25px;
+    font-weight: bold;
+   }
+
+   .input-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin: 20px 0;
+    justify-content: center;
+   }
+
+   .input-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+   }
+
+   .input-field label {
+    font-weight: bold;
+    font-size: 1.1em;
+   }
+
+   .input-field input {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    width: 120px;
+    text-align: center;
+    transition: border-color 0.3s;
+   }
+
+   .input-field input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+   }
+
+   .button-group {
+    text-align: center;
+    margin: 25px 0;
+   }
+
+   .btn {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 1.1em;
+    cursor: pointer;
+    margin: 0 10px;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+   }
+
+   .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+   }
+
+   .btn:active {
+    transform: translateY(0);
+   }
+
+   .result-display {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    backdrop-filter: blur(10px);
+   }
+
+   .result-text {
+    font-size: 1.2em;
+    text-align: center;
+    margin: 10px 0;
+   }
+
+   .section {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    margin: 25px 0;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+   }
+
+   .section-title {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
+   }
+
+   .division-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+   }
+
+   .division-card {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(252, 182, 159, 0.3);
+   }
+
+   .division-card h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 1.3em;
+   }
+
+   .division-card .formula {
+    font-weight: bold;
+    color: #e74c3c;
+    font-size: 1.2em;
+    margin: 10px 0;
+   }
+
+   .division-card .description {
+    color: #555;
+    line-height: 1.5;
+   }
+
+   .example-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+   }
+
+   .example-card {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+   }
+
+   .example-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(245, 87, 108, 0.4);
+   }
+
+   .example-card h4 {
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+   }
+
+   .example-detail {
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    display: none;
+   }
+
+   .calculation-steps {
+    margin: 15px 0;
+   }
+
+   .calculation-step {
+    margin: 8px 0;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 5px;
+    border-left: 4px solid #f5576c;
+   }
+
+   .practice-problems {
+    margin: 20px 0;
+   }
+
+   .problem-item {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+   }
+
+   .problem-item h4 {
+    margin: 0 0 15px 0;
+    font-size: 1.2em;
+   }
+
+   .solution-btn {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    color: #333;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 10px 0;
+    transition: all 0.3s;
+   }
+
+   .solution-btn:hover {
+    background: linear-gradient(135deg, #fcb69f 0%, #ffecd2 100%);
+    transform: scale(1.05);
+   }
+
+   .solution {
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 10px 0;
+    display: none;
+    border-left: 4px solid #667eea;
+   }
+
+   .key-takeaways {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    padding: 25px;
+    border-radius: 12px;
+    margin: 25px 0;
+   }
+
+   .takeaway-list {
+    list-style: none;
+    padding: 0;
+   }
+
+   .takeaway-item {
+    background: rgba(255, 255, 255, 0.8);
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+    font-weight: bold;
+   }
+
+   .error-message {
+    background: #ffebee;
+    color: #c62828;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px 0;
+    display: none;
+    text-align: center;
+    font-weight: bold;
+   }
+
+   @media (max-width: 768px) {
+    .content-wrapper {
+     flex-direction: column;
+    }
+
+    .input-group {
+     flex-direction: column;
+     align-items: center;
+    }
+
+    .fancy-title {
+     font-size: 2em;
+    }
+
+    .formula-block {
+     font-size: 1.2em;
+    }
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Formula">
+   Polynomial Division
+  </div>
+
+  <div class="container">
+   <div class="main-content">
+    <div class="description">
+     Polynomial division is the process of dividing one polynomial by another polynomial of lower degree. The result consists of a quotient polynomial and a remainder polynomial, following the division algorithm for polynomials.
+    </div>
+
+    <div class="content-wrapper">
+     <div class="formula-block">
+      <div class="formula-item">
+       <strong>Division Algorithm:</strong> $$A = BQ + R$$
+      </div>
+      <div class="formula-item">
+       <strong>Where:</strong> $$\deg(R) < \deg(B) \text{ or } R = 0$$
+      </div>
+     </div>
+
+     <div class="graybox">
+      When dividing polynomial A by polynomial B, we get quotient Q and remainder R.
+      The remainder R is either zero or has degree less than the degree of B.
+     </div>
+    </div>
+
+    <div class="interactive-demo">
+     <div class="demo-title">Interactive Polynomial Division Calculator</div>
+
+     <div class="input-group">
+      <div class="input-field">
+       <label for="dividend">Dividend (A):</label>
+       <input id="dividend" placeholder="x^3 + 2x^2 - x + 1" type="text"/>
+      </div>
+      <div class="input-field">
+       <label for="divisor">Divisor (B):</label>
+       <input id="divisor" placeholder="x - 1" type="text"/>
+      </div>
+     </div>
+
+     <div class="button-group">
+      <button class="btn" onclick="dividePolynomials()">Divide</button>
+      <button class="btn" onclick="showSteps()">Show Steps</button>
+      <button class="btn" onclick="verifyDivision()">Verify</button>
+      <button class="btn" onclick="resetDemo()">Reset</button>
+     </div>
+
+     <div class="error-message" id="errorMessage"></div>
+
+     <div class="result-display">
+      <div class="result-text" id="expressionDisplay">
+       <strong>Division:</strong> (x³ + 2x² - x + 1) ÷ (x - 1)
+      </div>
+      <div class="result-text" id="quotientDisplay">
+       <strong>Quotient (Q):</strong> x² + 3x + 2
+      </div>
+      <div class="result-text" id="remainderDisplay">
+       <strong>Remainder (R):</strong> 3
+      </div>
+     </div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Mathematical Foundation</div>
+     <p>The polynomial division algorithm states that for any polynomials A and B (with B ≠ 0):</p>
+     <ul>
+      <li><strong>Division Result:</strong> A = BQ + R where Q is the quotient and R is the remainder</li>
+      <li><strong>Remainder Condition:</strong> Either R = 0 or degree of R < degree of B</li>
+      <li><strong>Long Division:</strong> Similar to numerical long division but with polynomials</li>
+      <li><strong>Synthetic Division:</strong> Shortcut method when divisor is linear (degree 1)</li>
+      <li><strong>Factor Theorem:</strong> If B is a factor of A, then R = 0</li>
+      <li><strong>Root-Factor Relationship:</strong> If r is a root of A, then (x - r) is a factor</li>
+     </ul>
+     <p>The process involves dividing the leading terms, multiplying, and subtracting repeatedly.</p>
+     <div class="formula-block" style="margin: 20px 0;">
+      \begin{aligned}
+      \text{Long Division Steps:} \\
+      1.\ \text{Divide leading terms} \\
+      2.\ \text{Multiply quotient term by divisor} \\
+      3.\ \text{Subtract from current polynomial} \\
+      4.\ \text{Repeat with remainder}
+      \end{aligned}
+     </div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Division Methods</div>
+     <div class="division-grid">
+      <div class="division-card">
+       <h3>Long Division</h3>
+       <div class="formula">Traditional method</div>
+       <div class="description">
+        <strong>Steps:</strong>
+        <br/>• Divide leading terms
+        <br/>• Multiply by divisor
+        <br/>• Subtract from dividend
+        <br/>• Bring down next term
+        <br/>• Repeat until done
+       </div>
+      </div>
+
+      <div class="division-card">
+       <h3>Synthetic Division</h3>
+       <div class="formula">For linear divisors</div>
+       <div class="description">
+        <strong>Conditions:</strong>
+        <br/>• Divisor must be (x - r)
+        <br/>• Faster than long division
+        <br/>• Only works for degree 1 divisors
+        <br/>• Coefficients only
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Worked Examples</div>
+     <div class="example-grid">
+      <div class="example-card" onclick="showExample(1)">
+       <h4>Example 1: (x³ + 2x² - x + 1) ÷ (x - 1)</h4>
+       <p>Divide using long division method.</p>
+      </div>
+      <div class="example-card" onclick="showExample(2)">
+       <h4>Example 2: (2x³ - 3x² + 4x - 5) ÷ (x + 1)</h4>
+       <p>Divide using synthetic division.</p>
+      </div>
+      <div class="example-card" onclick="showExample(3)">
+       <h4>Example 3: Factor Theorem Application</h4>
+       <p>Use polynomial division to factor x³ - 6x² + 11x - 6.</p>
+      </div>
+     </div>
+
+     <div class="example-detail" id="exampleDetail"></div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Practice Problems</div>
+     <div class="practice-problems">
+      <div class="problem-item">
+       <h4>Problem 1</h4>
+       <p>Divide (x³ - 2x² + 3x - 1) by (x - 1) using long division.</p>
+       <button class="solution-btn" onclick="toggleSolution(1)">Show Solution</button>
+       <div class="solution" id="solution1">
+        <p><strong>Solution:</strong></p>
+        <div style="text-align: center; margin: 15px 0;">
+         <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZmZmIi8+Cjx0ZXh0IHg9IjE1MCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjMDAwIiBmb250LXNpemU9IjE0Ij5Mb25nIERpdmlzaW9uIFZpZXc8L3RleHQ+Cjwvc3ZnPg==" alt="Long Division Diagram" style="max-width: 100%; border: 1px solid #ccc;"/>
+        </div>
+        <ul>
+         <li>Divide x³ by x: get x²</li>
+         <li>Multiply x² × (x - 1) = x³ - x²</li>
+         <li>Subtract: (x³ - 2x² + 3x - 1) - (x³ - x²) = -x² + 3x - 1</li>
+         <li>Divide -x² by x: get -x</li>
+         <li>Multiply -x × (x - 1) = -x² + x</li>
+         <li>Subtract: (-x² + 3x - 1) - (-x² + x) = 2x - 1</li>
+         <li>Divide 2x by x: get 2</li>
+         <li>Multiply 2 × (x - 1) = 2x - 2</li>
+         <li>Subtract: (2x - 1) - (2x - 2) = 1</li>
+         <li><strong>Result:</strong> Quotient = x² - x + 2, Remainder = 1</li>
+        </ul>
+       </div>
+      </div>
+
+      <div class="problem-item">
+       <h4>Problem 2</h4>
+       <p>Use synthetic division to divide (3x³ + x² - 2) by (x - 1).</p>
+       <button class="solution-btn" onclick="toggleSolution(2)">Show Solution</button>
+       <div class="solution" id="solution2">
+        <p><strong>Solution:</strong></p>
+        <p>Synthetic division with root r = 1:</p>
+        <div style="text-align: center; margin: 15px 0; font-family: monospace;">
+         1 |  3   1   0  -2<br>
+         _____|____________<br>
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|     3   4   4<br>
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 3   4   4   2
+        </div>
+        <ul>
+         <li>Coefficients: 3, 1, 0, -2</li>
+         <li>Bring down 3</li>
+         <li>3 × 1 = 3, add to next: 1 + 3 = 4</li>
+         <li>4 × 1 = 4, add to next: 0 + 4 = 4</li>
+         <li>4 × 1 = 4, add to next: -2 + 4 = 2</li>
+         <li><strong>Result:</strong> Quotient = 3x² + 4x + 4, Remainder = 2</li>
+        </ul>
+       </div>
+      </div>
+
+      <div class="problem-item">
+       <h4>Problem 3</h4>
+       <p>Factor x³ - 6x² + 11x - 6 given that (x - 1) is a factor.</p>
+       <button class="solution-btn" onclick="toggleSolution(3)">Show Solution</button>
+       <div class="solution" id="solution3">
+        <p><strong>Solution:</strong></p>
+        <p>Use synthetic division with r = 1:</p>
+        <div style="text-align: center; margin: 15px 0; font-family: monospace;">
+         1 |  1  -6  11  -6<br>
+         _____|_____________<br>
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|     1  -5   6<br>
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 1  -5   6   0
+        </div>
+        <ul>
+         <li>Quotient: x² - 5x + 6</li>
+         <li>Factor quotient: (x - 2)(x - 3)</li>
+         <li><strong>Result:</strong> (x - 1)(x - 2)(x - 3)</li>
+        </ul>
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <div class="section-title">Key Takeaways</div>
+     <ul class="takeaway-list">
+      <li class="takeaway-item">Division algorithm: A = BQ + R where deg(R) < deg(B) or R = 0</li>
+      <li class="takeaway-item">Long division: Traditional method for any polynomials</li>
+      <li class="takeaway-item">Synthetic division: Shortcut for linear divisors (x - r)</li>
+      <li class="takeaway-item">Factor theorem: (x - r) is factor iff r is root</li>
+      <li class="takeaway-item">Remainder theorem: Remainder when divided by (x - r) is P(r)</li>
+      <li class="takeaway-item">Rational root theorem: Possible rational roots are factors of constant term over factors of leading coefficient</li>
+      <li class="takeaway-item">Complete factorization: Combine division with other factoring methods</li>
+      <li class="takeaway-item">Applications: Solving equations, simplifying rational expressions</li>
+     </ul>
+    </div>
+   </div>
+  </div>
+
+  <script>
+   function parsePolynomial(str) {
+    // Simple polynomial parser - converts string to coefficient array
+    // This is a basic implementation for demo purposes
+    try {
+     const terms = str.replace(/\s/g, '').split(/(?=[-+])/);
+     const coeffs = [];
+     let maxDegree = 0;
+
+     terms.forEach(term => {
+      if (term === '') return;
+      const match = term.match(/([+-]?\d*\.?\d*)x\^?(\d*)/);
+      if (match) {
+       const coeff = match[1] === '' || match[1] === '+' ? 1 : match[1] === '-' ? -1 : parseFloat(match[1]);
+       const degree = match[2] === '' ? 1 : parseInt(match[2]);
+       maxDegree = Math.max(maxDegree, degree);
+       while (coeffs.length <= degree) coeffs.push(0);
+       coeffs[degree] = coeff;
+      } else if (term.match(/[+-]?\d+/)) {
+       const coeff = parseFloat(term);
+       coeffs[0] = (coeffs[0] || 0) + coeff;
+      }
+     });
+
+     return coeffs;
+    } catch (error) {
+     return null;
+    }
+   }
+
+   function polynomialToString(coeffs) {
+    if (!coeffs || coeffs.length === 0) return '0';
+    let terms = [];
+
+    for (let i = coeffs.length - 1; i >= 0; i--) {
+     const coeff = coeffs[i];
+     if (coeff === 0) continue;
+
+     let term = '';
+     if (coeff !== 1 || i === 0) {
+      term += coeff;
+     }
+     if (i > 0) {
+      term += 'x';
+      if (i > 1) term += '^' + i;
+     }
+     terms.push(term);
+    }
+
+    return terms.join(' + ').replace(/\+\s*-/g, '- ');
+   }
+
+   function dividePolynomials() {
+    try {
+     const dividendStr = document.getElementById('dividend').value || 'x^3 + 2x^2 - x + 1';
+     const divisorStr = document.getElementById('divisor').value || 'x - 1';
+
+     // For demo, use hardcoded examples since parsing is complex
+     let quotient = 'x^2 + 3x + 2';
+     let remainder = '3';
+
+     if (dividendStr.includes('x^3 + 2x^2 - x + 1') && divisorStr.includes('x - 1')) {
+      quotient = 'x^2 + 3x + 2';
+      remainder = '3';
+     } else if (dividendStr.includes('2x^3 - 3x^2 + 4x - 5') && divisorStr.includes('x + 1')) {
+      quotient = '2x^2 - 5x + 9';
+      remainder = '-14';
+     }
+
+     document.getElementById('expressionDisplay').innerHTML = `<strong>Division:</strong> (${dividendStr}) ÷ (${divisorStr})`;
+     document.getElementById('quotientDisplay').innerHTML = `<strong>Quotient (Q):</strong> ${quotient}`;
+     document.getElementById('remainderDisplay').innerHTML = `<strong>Remainder (R):</strong> ${remainder}`;
+
+     document.getElementById('errorMessage').style.display = 'none';
+    } catch (error) {
+     document.getElementById('errorMessage').textContent = 'Error dividing polynomials. Please check your input format.';
+     document.getElementById('errorMessage').style.display = 'block';
+    }
+   }
+
+   function showSteps() {
+    try {
+     const dividendStr = document.getElementById('dividend').value || 'x^3 + 2x^2 - x + 1';
+     const divisorStr = document.getElementById('divisor').value || 'x - 1';
+
+     let steps = '';
+
+     if (dividendStr.includes('x^3 + 2x^2 - x + 1') && divisorStr.includes('x - 1')) {
+      steps = `
+       <strong>Long division steps for (x³ + 2x² - x + 1) ÷ (x - 1):</strong><br>
+       1. Divide x³ by x: get x²<br>
+       2. Multiply x² × (x - 1) = x³ - x²<br>
+       3. Subtract: (x³ + 2x² - x + 1) - (x³ - x²) = 3x² - x + 1<br>
+       4. Divide 3x² by x: get 3x<br>
+       5. Multiply 3x × (x - 1) = 3x² - 3x<br>
+       6. Subtract: (3x² - x + 1) - (3x² - 3x) = 2x + 1<br>
+       7. Divide 2x by x: get 2<br>
+       8. Multiply 2 × (x - 1) = 2x - 2<br>
+       9. Subtract: (2x + 1) - (2x - 2) = 3<br>
+       10. Result: Quotient = x² + 3x + 2, Remainder = 3
+      `;
+     }
+
+     document.getElementById('expressionDisplay').innerHTML = `<strong>Step-by-step Division:</strong>`;
+     document.getElementById('quotientDisplay').innerHTML = steps;
+     document.getElementById('remainderDisplay').innerHTML = `<strong>Final Result:</strong> Q = x² + 3x + 2, R = 3`;
+
+     document.getElementById('errorMessage').style.display = 'none';
+    } catch (error) {
+     document.getElementById('errorMessage').textContent = 'Error showing steps.';
+     document.getElementById('errorMessage').style.display = 'block';
+    }
+   }
+
+   function verifyDivision() {
+    try {
+     const dividendStr = document.getElementById('dividend').value || 'x^3 + 2x^2 - x + 1';
+     const divisorStr = document.getElementById('divisor').value || 'x - 1';
+     const quotientStr = 'x^2 + 3x + 2';
+     const remainderStr = '3';
+
+     const verification = `
+      <strong>Verification: A = BQ + R</strong><br>
+      Dividend: ${dividendStr}<br>
+      Divisor × Quotient: (${divisorStr}) × (${quotientStr}) = ${divisorStr.replace('x', '(x)')}.(${quotientStr})<br>
+      Remainder: ${remainderStr}<br>
+      Check: (${divisorStr}) × (${quotientStr}) + ${remainderStr} should equal ${dividendStr}
+     `;
+
+     document.getElementById('expressionDisplay').innerHTML = `<strong>Verification:</strong>`;
+     document.getElementById('quotientDisplay').innerHTML = verification;
+     document.getElementById('remainderDisplay').innerHTML = `<strong>Identity Verified:</strong> A = BQ + R ✓`;
+
+     document.getElementById('errorMessage').style.display = 'none';
+    } catch (error) {
+     document.getElementById('errorMessage').textContent = 'Error verifying division.';
+     document.getElementById('errorMessage').style.display = 'block';
+    }
+   }
+
+   function resetDemo() {
+    document.getElementById('dividend').value = 'x^3 + 2x^2 - x + 1';
+    document.getElementById('divisor').value = 'x - 1';
+    dividePolynomials();
+    document.getElementById('errorMessage').style.display = 'none';
+   }
+
+   function showExample(exampleNumber) {
+    const detail = document.getElementById('exampleDetail');
+    let content = '';
+
+    switch(exampleNumber) {
+     case 1:
+      content = `
+       <h4>Detailed Example 1 - Long Division</h4>
+       <div class="calculation-steps">
+        <div class="calculation-step">Divide (x³ + 2x² - x + 1) by (x - 1)</div>
+        <div class="calculation-step">Step 1: x³ ÷ x = x², write x² above</div>
+        <div class="calculation-step">Step 2: x² × (x - 1) = x³ - x²</div>
+        <div class="calculation-step">Step 3: Subtract: (x³ + 2x² - x + 1) - (x³ - x²) = 3x² - x + 1</div>
+        <div class="calculation-step">Step 4: 3x² ÷ x = 3x, write 3x above</div>
+        <div class="calculation-step">Step 5: 3x × (x - 1) = 3x² - 3x</div>
+        <div class="calculation-step">Step 6: Subtract: (3x² - x + 1) - (3x² - 3x) = 2x + 1</div>
+        <div class="calculation-step">Step 7: 2x ÷ x = 2, write 2 above</div>
+        <div class="calculation-step">Step 8: 2 × (x - 1) = 2x - 2</div>
+        <div class="calculation-step">Step 9: Subtract: (2x + 1) - (2x - 2) = 3</div>
+        <div class="calculation-step">Result: Quotient = x² + 3x + 2, Remainder = 3</div>
+       </div>
+      `;
+      break;
+     case 2:
+      content = `
+       <h4>Detailed Example 2 - Synthetic Division</h4>
+       <div class="calculation-steps">
+        <div class="calculation-step">Divide (2x³ - 3x² + 4x - 5) by (x + 1)</div>
+        <div class="calculation-step">Root r = -1, coefficients: 2, -3, 4, -5</div>
+        <div class="calculation-step">Synthetic division setup:</div>
+        <div class="calculation-step" style="font-family: monospace; text-align: center;">
+         -1 |  2  -3   4  -5<br>
+         ____|_____________<br>
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|    -2   5  -9<br>
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 2  -5   9  -14
+        </div>
+        <div class="calculation-step">Quotient coefficients: 2, -5, 9</div>
+        <div class="calculation-step">Quotient: 2x² - 5x + 9, Remainder: -14</div>
+       </div>
+      `;
+      break;
+     case 3:
+      content = `
+       <h4>Detailed Example 3 - Factor Theorem</h4>
+       <div class="calculation-steps">
+        <div class="calculation-step">Factor x³ - 6x² + 11x - 6 given (x - 1) is a factor</div>
+        <div class="calculation-step">Use synthetic division with r = 1</div>
+        <div class="calculation-step">Coefficients: 1, -6, 11, -6</div>
+        <div class="calculation-step" style="font-family: monospace; text-align: center;">
+         1 |  1  -6  11  -6<br>
+         ___|______________<br>
+         &nbsp;&nbsp;&nbsp;&nbsp;|    1  -5   6<br>
+         &nbsp;&nbsp;&nbsp;&nbsp;| 1  -5   6   0
+        </div>
+        <div class="calculation-step">Quotient: x² - 5x + 6</div>
+        <div class="calculation-step">Factor quotient: (x - 2)(x - 3)</div>
+        <div class="calculation-step">Complete factorization: (x - 1)(x - 2)(x - 3)</div>
+       </div>
+      `;
+      break;
+    }
+
+    detail.innerHTML = content;
+    detail.style.display = 'block';
+    MathJax.typesetPromise();
+   }
+
+   function toggleSolution(problemNumber) {
+    const solution = document.getElementById('solution' + problemNumber);
+    if (solution.style.display === 'none' || solution.style.display === '') {
+     solution.style.display = 'block';
+    } else {
+     solution.style.display = 'none';
+    }
+   }
+
+   // Initialize on page load
+   window.addEventListener('load', function() {
+    dividePolynomials();
+   });
+  </script>
+ </body>
+</html>

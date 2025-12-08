@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<!-- tags: Limit -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Limit of sin(x)/x
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Limit">
+   Limit of sin(x)/x
+  </div>
+  <div class="container">
+   <div class="main-content">
+    <style>
+      .main-content {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        overflow: auto;
+        max-width: 100%;
+      }
+      
+      .section {
+        margin-bottom: 30px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #007acc;
+      }
+      
+      .section h2 {
+        color: #007acc;
+        margin-top: 0;
+        margin-bottom: 15px;
+        font-size: 1.4em;
+      }
+      
+      .highlight-box {
+        background: #e3f2fd;
+        border: 2px solid #2196f3;
+        border-radius: 6px;
+        padding: 15px;
+        margin: 15px 0;
+        font-weight: bold;
+        color: #1565c0;
+        text-align: center;
+        font-size: 1.2em;
+      }
+      
+      .geometric-proof {
+        background: #f3e5f5;
+        border: 2px solid #9c27b0;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+      }
+      
+      .geometric-proof h3 {
+        color: #7b1fa2;
+        margin-top: 0;
+      }
+      
+      .proof-step {
+        background: white;
+        border-radius: 6px;
+        padding: 15px;
+        margin: 10px 0;
+        border-left: 3px solid #9c27b0;
+      }
+      
+      .squeeze-proof {
+        background: #e8f5e8;
+        border: 2px solid #4caf50;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+      }
+      
+      .squeeze-proof h3 {
+        color: #2e7d32;
+        margin-top: 0;
+      }
+      
+      .inequality-chain {
+        background: #fff9c4;
+        border: 1px solid #ffeb3b;
+        border-radius: 6px;
+        padding: 15px;
+        margin: 15px 0;
+        font-family: monospace;
+        text-align: center;
+        font-size: 1.1em;
+      }
+      
+      .problem-item {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 15px;
+        margin: 10px 0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      }
+      
+      .solution-btn {
+        background: #007acc;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        margin: 10px 0;
+        transition: background 0.3s;
+      }
+      
+      .solution-btn:hover {
+        background: #005999;
+      }
+      
+      .solution {
+        display: none;
+        background: #f0f8ff;
+        border: 1px solid #007acc;
+        border-radius: 4px;
+        padding: 15px;
+        margin-top: 10px;
+      }
+      
+      .key-takeaways {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 30px;
+      }
+      
+      .key-takeaways h3 {
+        margin-top: 0;
+        color: white;
+      }
+      
+      .key-takeaways ul {
+        margin: 0;
+        padding-left: 20px;
+      }
+      
+      .key-takeaways li {
+        margin: 8px 0;
+      }
+      
+      #sinCanvas {
+        border: 2px solid #007acc;
+        border-radius: 8px;
+        background: white;
+        margin: 20px 0;
+        max-width: 100%;
+        height: auto;
+      }
+      
+      .visual-guide {
+        text-align: center;
+        margin: 20px 0;
+      }
+      
+      .visual-guide p {
+        font-style: italic;
+        color: #666;
+        margin-bottom: 20px;
+      }
+      
+      .important-result {
+        background: #fff3e0;
+        border: 2px solid #ff9800;
+        border-radius: 6px;
+        padding: 20px;
+        margin: 20px 0;
+        text-align: center;
+        font-size: 1.3em;
+        font-weight: bold;
+        color: #e65100;
+      }
+    </style>
+    <div class="important-result">
+      $\lim_{x \to 0} \dfrac{\sin x}{x} = 1$
+    </div>
+
+    <div class="section">
+      <h2>📚 Core Concept</h2>
+      <p>The limit of sin(x)/x as x approaches 0 is one of the most important limits in calculus. This result is fundamental to the derivative of the sine function and appears in many trigonometric limits and integrals.</p>
+      
+      <div class="highlight-box">
+        This limit is crucial because:
+        <br>• It enables differentiation of sin(x) and cos(x)
+        <br>• It appears in many integration techniques
+        <br>• It helps evaluate limits of indeterminate forms
+        <br>• It's the basis for small angle approximations
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>📐 Geometric Proof (Squeeze Theorem)</h2>
+      <div class="geometric-proof">
+        <h3>Unit Circle Geometry</h3>
+        <p>The most elegant proof uses the unit circle and the squeeze theorem. Consider an angle θ in the unit circle:</p>
+        
+        <div class="proof-step">
+          <strong>Step 1:</strong> In the unit circle, we have a sector of angle θ and an isosceles triangle with two sides of length 1.
+          <br><br>
+          Area of sector: $\dfrac{1}{2} \theta$ (for small θ)
+          <br>
+          Area of triangle: $\dfrac{1}{2} \sin \theta \cdot 1 = \dfrac{1}{2} \sin \theta$
+          <br>
+          Area of segment: $\dfrac{1}{2} \tan \theta$ (approximately, for small θ)
+        </div>
+        
+        <div class="proof-step">
+          <strong>Step 2:</strong> For θ between 0 and π/2, we have the inequality:
+          <br><br>
+          Area of triangle ≤ Area of sector ≤ Area of segment
+          <br><br>
+          $\dfrac{1}{2} \sin \theta \leq \dfrac{1}{2} \theta \leq \dfrac{1}{2} \tan \theta$
+        </div>
+        
+        <div class="proof-step">
+          <strong>Step 3:</strong> Dividing by 1/2 and sin θ (which is positive):
+          <br><br>
+          $1 \leq \dfrac{\theta}{\sin \theta} \leq \dfrac{1}{\cos \theta}$
+          <br><br>
+          Taking reciprocals (reversing inequalities): $\cos \theta \leq \dfrac{\sin \theta}{\theta} \leq 1$
+        </div>
+        
+        <div class="proof-step">
+          <strong>Step 4:</strong> As θ → 0, cos θ → 1, so by the squeeze theorem:
+          <br><br>
+          $\lim_{\theta \to 0} \dfrac{\sin \theta}{\theta} = 1$
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>🔍 Squeeze Theorem Proof</h2>
+      <div class="squeeze-proof">
+        <h3>Direct Squeeze Theorem Application</h3>
+        <p>Using the inequalities derived from geometry:</p>
+        
+        <div class="inequality-chain">
+          For 0 < θ < π/2: &nbsp;&nbsp; cos θ ≤ sin θ / θ ≤ 1
+        </div>
+        
+        <p>As θ approaches 0:</p>
+        <ul>
+          <li>The left side approaches 1</li>
+          <li>The right side approaches 1</li>
+          <li>Therefore, the middle expression is "squeezed" to approach 1</li>
+        </ul>
+        
+        <p>This works for θ approaching 0 from either side due to the even function property of sin(x)/x.</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>🔍 Visual Guide</h2>
+      <div class="visual-guide">
+        <p>Interactive visualization showing sin(x)/x approaching 1 as x approaches 0:</p>
+        <canvas id="sinCanvas" width="800" height="500"></canvas>
+      </div>
+      
+      <div class="highlight-box">
+        The visualization shows:
+        <br>• How sin(x)/x behaves near x = 0
+        <br>• The geometric interpretation with unit circle areas
+        <br>• How the squeeze theorem bounds converge to 1
+        <br>• The limit behavior from both sides
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>💡 Applications</h2>
+      <ul>
+        <li><strong>Derivative of sin(x):</strong> $\dfrac{d}{dx} \sin x = \cos x$</li>
+        <li><strong>Small angle approximation:</strong> sin θ ≈ θ for small θ (in radians)</li>
+        <li><strong>Trigonometric limits:</strong> Many limits involving sin x reduce to this form</li>
+        <li><strong>Integration:</strong> Used in trigonometric substitution and integration by parts</li>
+        <li><strong>Physics:</strong> Small oscillations, wave equations, harmonic motion</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>📝 Practice Problems</h2>
+      
+      <div class="problem-item">
+        <strong>Problem 1:</strong> Evaluate $\lim_{x \to 0} \dfrac{\sin 3x}{x}$.
+        <br><br>
+        <button class="solution-btn" onclick="toggleSolution('prob1')">Show Solution</button>
+        <div id="prob1" class="solution">
+          Let u = 3x, so as x→0, u→0. Then: $\lim_{x \to 0} \dfrac{\sin 3x}{x} = \lim_{u \to 0} \dfrac{\sin u}{u/3} = 3 \lim_{u \to 0} \dfrac{\sin u}{u} = 3 \cdot 1 = 3$.
+        </div>
+      </div>
+      
+      <div class="problem-item">
+        <strong>Problem 2:</strong> Find $\lim_{x \to 0} \dfrac{1 - \cos x}{x^2}$.
+        <br><br>
+        <button class="solution-btn" onclick="toggleSolution('prob2')">Show Solution</button>
+        <div id="prob2" class="solution">
+          Multiply numerator and denominator by (1 + cos x): $\lim_{x \to 0} \dfrac{1 - \cos^2 x}{x^2(1 + \cos x)} = \lim_{x \to 0} \dfrac{\sin^2 x}{x^2(1 + \cos x)} = \lim_{x \to 0} \dfrac{\sin x}{x} \cdot \dfrac{\sin x}{x} \cdot \dfrac{1}{1 + \cos x} = 1 \cdot 1 \cdot \dfrac{1}{2} = \dfrac{1}{2}$.
+        </div>
+      </div>
+      
+      <div class="problem-item">
+        <strong>Problem 3:</strong> Evaluate $\lim_{x \to 0} \dfrac{\tan x}{x}$.
+        <br><br>
+        <button class="solution-btn" onclick="toggleSolution('prob3')">Show Solution</button>
+        <div id="prob3" class="solution">
+          $\dfrac{\tan x}{x} = \dfrac{\sin x}{\cos x \cdot x} = \dfrac{\sin x}{x} \cdot \dfrac{1}{\cos x}$. As x→0, this becomes 1 × 1/1 = 1.
+        </div>
+      </div>
+      
+      <div class="problem-item">
+        <strong>Problem 4:</strong> Find $\lim_{x \to 0} \dfrac{\sin 5x}{\sin 2x}$.
+        <br><br>
+        <button class="solution-btn" onclick="toggleSolution('prob4')">Show Solution</button>
+        <div id="prob4" class="solution">
+          $\dfrac{\sin 5x}{\sin 2x} = \dfrac{\sin 5x}{5x} \cdot \dfrac{2x}{\sin 2x} \cdot \dfrac{5x}{2x} = \dfrac{5}{2} \cdot \dfrac{\sin 5x}{5x} \cdot \dfrac{2x}{\sin 2x}$. As x→0, this becomes (5/2) × 1 × 1 = 5/2.
+        </div>
+      </div>
+    </div>
+
+    <div class="key-takeaways">
+      <h3>🎯 Key Takeaways</h3>
+      <ul>
+        <li>$\lim_{x \to 0} \dfrac{\sin x}{x} = 1$ is a fundamental result</li>
+        <li>Geometric proof uses unit circle areas and squeeze theorem</li>
+        <li>Essential for derivatives of trigonometric functions</li>
+        <li>Enables small angle approximations in physics</li>
+        <li>Used to evaluate many indeterminate forms</li>
+        <li>Works for limits approaching 0 from any direction</li>
+        <li>Basis for trigonometric integration techniques</li>
+      </ul>
+    </div>
+   </div>
+  </div>
+  <script>
+    function toggleSolution(id) {
+      const solution = document.getElementById(id);
+      const button = solution.previousElementSibling;
+      
+      if (solution.style.display === 'none' || solution.style.display === '') {
+        solution.style.display = 'block';
+        button.textContent = 'Hide Solution';
+      } else {
+        solution.style.display = 'none';
+        button.textContent = 'Show Solution';
+      }
+    }
+
+    function drawSinVisualization() {
+      const canvas = document.getElementById('sinCanvas');
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+      
+      // Clear canvas
+      ctx.clearRect(0, 0, width, height);
+      
+      // Set up coordinate system
+      const margin = 60;
+      const plotWidth = width - 2 * margin;
+      const plotHeight = height - 2 * margin;
+      
+      // Draw axes
+      ctx.strokeStyle = '#333';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(margin, margin);
+      ctx.lineTo(margin, height - margin);
+      ctx.lineTo(width - margin, height - margin);
+      ctx.stroke();
+      
+      // Labels
+      ctx.fillStyle = '#333';
+      ctx.font = '14px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('x (radians)', width - margin, height - margin + 40);
+      ctx.save();
+      ctx.translate(margin - 40, height/2);
+      ctx.rotate(-Math.PI/2);
+      ctx.fillText('sin(x)/x', 0, 0);
+      ctx.restore();
+      
+      // Scale factors
+      const xMin = -Math.PI/2, xMax = Math.PI/2;
+      const yMin = 0.5, yMax = 1.5;
+      const xScale = plotWidth / (xMax - xMin);
+      const yScale = plotHeight / (yMax - yMin);
+      
+      // Function to convert to canvas coordinates
+      const toCanvasX = (x) => margin + (x - xMin) * xScale;
+      const toCanvasY = (y) => height - margin - (y - yMin) * yScale;
+      
+      // Draw grid
+      ctx.strokeStyle = '#eee';
+      ctx.lineWidth = 1;
+      for (let x = xMin; x <= xMax; x += Math.PI/8) {
+        const cx = toCanvasX(x);
+        ctx.beginPath();
+        ctx.moveTo(cx, margin);
+        ctx.lineTo(cx, height - margin);
+        ctx.stroke();
+      }
+      for (let y = yMin; y <= yMax; y += 0.1) {
+        const cy = toCanvasY(y);
+        ctx.beginPath();
+        ctx.moveTo(margin, cy);
+        ctx.lineTo(width - margin, cy);
+        ctx.stroke();
+      }
+      
+      // Plot sin(x)/x
+      ctx.strokeStyle = '#e74c3c';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      
+      for (let x = xMin; x <= xMax; x += 0.01) {
+        let y;
+        if (Math.abs(x) < 0.001) {
+          y = 1; // Handle x=0 case
+        } else {
+          y = Math.sin(x) / x;
+        }
+        
+        const cx = toCanvasX(x);
+        const cy = toCanvasY(y);
+        
+        if (x === xMin) ctx.moveTo(cx, cy);
+        else ctx.lineTo(cx, cy);
+      }
+      ctx.stroke();
+      
+      // Plot cos(x) (lower bound)
+      ctx.strokeStyle = '#27ae60';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      
+      for (let x = xMin; x <= xMax; x += 0.01) {
+        if (Math.abs(x) < Math.PI/2) {
+          const y = Math.cos(x);
+          const cx = toCanvasX(x);
+          const cy = toCanvasY(y);
+          
+          if (x === xMin) ctx.moveTo(cx, cy);
+          else ctx.lineTo(cx, cy);
+        }
+      }
+      ctx.stroke();
+      
+      // Plot constant 1 (upper bound)
+      ctx.strokeStyle = '#3498db';
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.moveTo(toCanvasX(xMin), toCanvasY(1));
+      ctx.lineTo(toCanvasX(xMax), toCanvasY(1));
+      ctx.stroke();
+      
+      ctx.setLineDash([]);
+      
+      // Draw limit point at x=0
+      ctx.fillStyle = '#e74c3c';
+      ctx.beginPath();
+      ctx.arc(toCanvasX(0), toCanvasY(1), 6, 0, 2 * Math.PI);
+      ctx.fill();
+      
+      // Add annotations
+      ctx.fillStyle = '#333';
+      ctx.font = '12px Arial';
+      ctx.textAlign = 'left';
+      
+      // Function labels
+      ctx.fillText('sin(x)/x → 1', toCanvasX(0) + 10, toCanvasY(1) - 10);
+      ctx.fillText('cos(x) ≤ sin(x)/x ≤ 1', margin + 10, margin + 20);
+      
+      // Legend
+      const legendX = width - margin - 150;
+      let legendY = margin + 20;
+      
+      ctx.strokeStyle = '#e74c3c';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(legendX, legendY);
+      ctx.lineTo(legendX + 30, legendY);
+      ctx.stroke();
+      ctx.fillStyle = '#333';
+      ctx.fillText('sin(x)/x', legendX + 40, legendY + 4);
+      legendY += 20;
+      
+      ctx.strokeStyle = '#27ae60';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.moveTo(legendX, legendY);
+      ctx.lineTo(legendX + 30, legendY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillText('Lower bound: cos(x)', legendX + 40, legendY + 4);
+      legendY += 20;
+      
+      ctx.strokeStyle = '#3498db';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.moveTo(legendX, legendY);
+      ctx.lineTo(legendX + 30, legendY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillText('Upper bound: 1', legendX + 40, legendY + 4);
+      
+      // Geometric interpretation (unit circle)
+      const centerX = margin + 100;
+      const centerY = height - margin - 100;
+      const radius = 60;
+      
+      // Draw unit circle
+      ctx.strokeStyle = '#666';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+      ctx.stroke();
+      
+      // Draw angle (small)
+      const angle = Math.PI/6; // 30 degrees
+      ctx.strokeStyle = '#f39c12';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY);
+      ctx.lineTo(centerX + radius * Math.cos(angle), centerY - radius * Math.sin(angle));
+      ctx.stroke();
+      
+      // Draw triangle
+      ctx.strokeStyle = '#9c27b0';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY);
+      ctx.lineTo(centerX + radius, centerY);
+      ctx.lineTo(centerX + radius * Math.cos(angle), centerY - radius * Math.sin(angle));
+      ctx.closePath();
+      ctx.stroke();
+      
+      // Labels
+      ctx.fillStyle = '#666';
+      ctx.font = '10px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('Unit Circle', centerX, centerY + radius + 20);
+      ctx.fillText('θ', centerX + 20, centerY - 20);
+      ctx.fillText('Triangle area = (1/2)sinθ', centerX, centerY + radius + 40);
+      ctx.fillText('Sector area ≈ (1/2)θ', centerX, centerY + radius + 55);
+    }
+
+    // Initialize visualization when page loads
+    window.onload = function() {
+      drawSinVisualization();
+    };
+  </script>
+ </body>
+</html>

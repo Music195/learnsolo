@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<!-- tags: Vector -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Vector Components and Magnitude
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+    /* Enhanced text containment and readability */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      hyphens: auto;
+    }
+
+    .main-content {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      border-radius: 15px;
+      padding: 30px;
+      margin: 20px 0;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .section {
+      margin-bottom: 40px;
+      background: rgba(255,255,255,0.9);
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .section h2 {
+      color: #2c3e50;
+      border-bottom: 3px solid #3498db;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+      font-size: 1.8em;
+      font-weight: 600;
+    }
+
+    .section h3 {
+      color: #34495e;
+      margin-bottom: 15px;
+      font-size: 1.4em;
+      font-weight: 500;
+    }
+
+    /* Law blocks with gradient backgrounds */
+    .law-block {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      color: white;
+      box-shadow: 0 4px 15px rgba(102,126,234,0.3);
+    }
+
+    .law-eq {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin-bottom: 15px;
+      text-align: center;
+      border-bottom: 2px solid rgba(255,255,255,0.3);
+      padding-bottom: 10px;
+    }
+
+    .law-block .math {
+      margin: 8px 0;
+      font-size: 1.1em;
+      line-height: 1.6;
+    }
+
+    /* Operation blocks */
+    .operation-block {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      color: white;
+      box-shadow: 0 4px 15px rgba(245,87,108,0.3);
+    }
+
+    .operation-block .formula {
+      background: rgba(255,255,255,0.9);
+      color: #333;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      text-align: center;
+      font-size: 1.3em;
+      font-weight: bold;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    /* Hint blocks */
+    .hint-block {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      color: white;
+      box-shadow: 0 4px 15px rgba(79,172,254,0.3);
+    }
+
+    .hint-block strong {
+      font-size: 1.2em;
+      display: block;
+      margin-bottom: 15px;
+      text-align: center;
+      border-bottom: 2px solid rgba(255,255,255,0.3);
+      padding-bottom: 10px;
+    }
+
+    /* Interactive demo styling */
+    .interactive-demo {
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      border-radius: 12px;
+      padding: 25px;
+      margin: 25px 0;
+      box-shadow: 0 4px 15px rgba(168,237,234,0.3);
+    }
+
+    .interactive-demo h3 {
+      color: #2c3e50;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 1.5em;
+    }
+
+    .demo-input {
+      width: 80px;
+      padding: 8px 12px;
+      border: 2px solid #3498db;
+      border-radius: 6px;
+      font-size: 1em;
+      margin: 0 5px;
+      background: rgba(255,255,255,0.9);
+      color: #333;
+    }
+
+    .demo-input:focus {
+      outline: none;
+      border-color: #2980b9;
+      box-shadow: 0 0 5px rgba(52,152,219,0.5);
+    }
+
+    .demo-button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1em;
+      margin: 5px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 10px rgba(102,126,234,0.3);
+    }
+
+    .demo-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(102,126,234,0.4);
+    }
+
+    .demo-result {
+      background: rgba(255,255,255,0.9);
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 15px;
+      font-family: 'Courier New', monospace;
+      font-size: 1em;
+      color: #333;
+      white-space: pre-line;
+      border: 1px solid #ddd;
+      min-height: 40px;
+    }
+
+    /* Problem items */
+    .problem-item {
+      background: rgba(255,255,255,0.95);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 15px 0;
+      border-left: 5px solid #3498db;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .problem-number {
+      display: inline-block;
+      background: #3498db;
+      color: white;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 30px;
+      font-weight: bold;
+      margin-right: 15px;
+      vertical-align: top;
+    }
+
+    .problem-content {
+      display: inline-block;
+      width: calc(100% - 50px);
+      vertical-align: top;
+    }
+
+    .solution-button {
+      background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+      color: #333;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9em;
+      margin: 10px 0;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(255,154,158,0.3);
+    }
+
+    .solution-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 3px 12px rgba(255,154,158,0.4);
+    }
+
+    .solution-content {
+      display: none;
+      margin-top: 15px;
+      padding: 15px;
+      background: rgba(240,240,240,0.8);
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+
+    .calculation-steps {
+      margin: 10px 0;
+    }
+
+    .calculation-step {
+      margin: 8px 0;
+      padding: 8px 12px;
+      background: rgba(255,255,255,0.7);
+      border-radius: 6px;
+      border-left: 3px solid #3498db;
+    }
+
+    /* Key takeaways */
+    .key-takeaways {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 12px;
+      padding: 25px;
+      margin: 25px 0;
+      color: white;
+      box-shadow: 0 4px 15px rgba(102,126,234,0.3);
+    }
+
+    .key-takeaways h3 {
+      text-align: center;
+      font-size: 1.5em;
+      margin-bottom: 20px;
+      border-bottom: 2px solid rgba(255,255,255,0.3);
+      padding-bottom: 10px;
+    }
+
+    .key-takeaways ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .key-takeaways li {
+      margin: 10px 0;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .key-takeaways li:last-child {
+      border-bottom: none;
+    }
+
+    /* Enhanced canvas styling */
+    .vector-canvas {
+      display: block;
+      margin: 20px auto;
+      border: 2px solid #3498db;
+      border-radius: 8px;
+      background: white;
+      box-shadow: 0 4px 15px rgba(52,152,219,0.2);
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 10px;
+      }
+
+      .main-content {
+        padding: 20px;
+      }
+
+      .section {
+        padding: 15px;
+      }
+
+      .interactive-demo {
+        padding: 15px;
+      }
+
+      .demo-input {
+        width: 60px;
+        margin: 5px;
+      }
+
+      .demo-button {
+        display: block;
+        width: 100%;
+        margin: 5px 0;
+      }
+
+      .problem-content {
+        width: calc(100% - 40px);
+      }
+    }
+
+    /* MathJax styling */
+    .mjx-chtml {
+      font-size: 1.1em !important;
+    }
+
+    /* Formula boxes */
+    .formula-box {
+      background: rgba(255,255,255,0.9);
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      text-align: center;
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #333;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    /* Property lists */
+    .property-list {
+      background: rgba(255,255,255,0.9);
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      color: #333;
+    }
+
+    .property-list li {
+      margin: 8px 0;
+      padding: 5px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .property-list li:last-child {
+      border-bottom: none;
+    }
+
+    /* Vector law styling */
+    .vector-law {
+      background: rgba(255,255,255,0.9);
+      border-radius: 8px;
+      padding: 15px;
+      margin: 10px 0;
+      border-left: 4px solid #3498db;
+      color: #333;
+    }
+
+    .law-name {
+      font-weight: bold;
+      color: #3498db;
+      margin-bottom: 5px;
+    }
+
+    .law-formula {
+      font-size: 1.2em;
+      margin: 8px 0;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .law-description {
+      font-style: italic;
+      color: #666;
+    }
+
+    /* Magnitude controls */
+    .magnitude-controls {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .control-label {
+      font-size: 0.9em;
+      font-weight: bold;
+      color: #333;
+    }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Vector Magnitude, Vector Components, Linear Algebra">
+   Vector Components and Magnitude
+  </div>
+  <div class="container">
+   <div class="main-content">
+
+    <!-- Mathematical Foundation -->
+    <div class="section">
+     <h2>Mathematical Foundation</h2>
+
+     <div class="hint-block">
+      <strong>Vector Components and Magnitude</strong>
+      <p>A vector can be represented by its components in a coordinate system. The magnitude (length) of a vector is the distance from its initial point to its terminal point. This fundamental concept connects geometry with algebra and has applications throughout mathematics and physics.</p>
+     </div>
+
+     <div class="law-block">
+      <div class="law-eq">Vector Magnitude Formula</div>
+
+      <div class="vector-law">
+       <div class="law-name">2D Vector Magnitude</div>
+       <div class="law-formula">\(|\vec{a}| = \sqrt{a_1^2 + a_2^2}\)</div>
+       <div class="law-description">For vector \(\vec{a} = (a_1, a_2)\), magnitude is the square root of the sum of squared components</div>
+      </div>
+
+      <div class="vector-law">
+       <div class="law-name">3D Vector Magnitude</div>
+       <div class="law-formula">\(|\vec{a}| = \sqrt{a_1^2 + a_2^2 + a_3^2}\)</div>
+       <div class="law-description">For vector \(\vec{a} = (a_1, a_2, a_3)\), includes the z-component</div>
+      </div>
+
+      <div class="vector-law">
+       <div class="law-name">General nD Magnitude</div>
+       <div class="law-formula">\(|\vec{a}| = \sqrt{\sum_{i=1}^{n} a_i^2}\)</div>
+       <div class="law-description">In n-dimensional space, magnitude is the square root of the sum of all squared components</div>
+      </div>
+     </div>
+
+     <div class="operation-block">
+      <div class="formula">
+       Distance Formula Connection
+      </div>
+      <p style="color: white; margin: 15px 0;">Vector magnitude is the distance between two points:</p>
+      <ul style="color: white; margin: 15px 0;">
+       <li><strong>Distance:</strong> \(d = \sqrt{(x_2 - x_1)^2 + (y_2 - y_1)^2}\) = |\(\vec{b} - \vec{a}\)|</li>
+       <li><strong>Position Vector:</strong> If \(\vec{a}\) starts at origin, |\(\vec{a}\)| is distance from origin</li>
+       <li><strong>Pythagorean Theorem:</strong> Magnitude formula is 2D Pythagorean theorem</li>
+       <li><strong>Unit Vector:</strong> \(\hat{a} = \dfrac{\vec{a}}{|\vec{a}|}\) has magnitude 1</li>
+      </ul>
+     </div>
+    </div>
+
+    <!-- Interactive Magnitude Visualizer -->
+    <div class="section">
+     <h2>Interactive Vector Magnitude</h2>
+
+     <div class="interactive-demo">
+      <h3>Vector Components and Magnitude Calculator</h3>
+      <p>Explore how vector components determine magnitude:</p>
+
+      <div class="magnitude-controls">
+       <div class="control-group">
+        <label class="control-label">Vector A (x, y)</label>
+        <input type="number" id="vecAx" class="demo-input" value="3" step="0.5">
+        <input type="number" id="vecAy" class="demo-input" value="4" step="0.5">
+       </div>
+
+       <div class="control-group">
+        <label class="control-label">Show Components</label>
+        <input type="checkbox" id="show-components" checked>
+       </div>
+
+       <div class="control-group">
+        <label class="control-label">Show Magnitude</label>
+        <input type="checkbox" id="show-magnitude" checked>
+       </div>
+      </div>
+
+      <div style="text-align: center; margin: 20px 0;">
+       <button class="demo-button" onclick="updateMagnitude()">Update</button>
+       <button class="demo-button" onclick="resetMagnitudeDemo()">Reset</button>
+      </div>
+
+      <canvas id="magnitude-canvas" width="600" height="400" class="vector-canvas"></canvas>
+
+      <div class="demo-result" id="magnitude-result">
+       Vector A: (3, 4)<br>
+       Components: x = 3, y = 4<br>
+       Magnitude: √(3² + 4²) = √(9 + 16) = √25 = 5.00<br>
+       Direction: 53.13° from positive x-axis
+      </div>
+     </div>
+    </div>
+
+    <!-- Vector Direction and Unit Vectors -->
+    <div class="section">
+     <h2>Direction and Unit Vectors</h2>
+
+     <div class="formula-box">
+      Direction Angle: \(\theta = \tan^{-1}\left(\dfrac{y}{x}\right)\)
+     </div>
+
+     <div class="law-block">
+      <div class="law-eq">Direction and Unit Vector Formulas</div>
+
+      <div class="vector-law">
+       <div class="law-name">Direction Angle</div>
+       <div class="law-formula">\(\theta = \tan^{-1}\left(\dfrac{a_2}{a_1}\right)\)</div>
+       <div class="law-description">Angle that the vector makes with the positive x-axis</div>
+      </div>
+
+      <div class="vector-law">
+       <div class="law-name">Unit Vector</div>
+       <div class="law-formula">\(\hat{a} = \dfrac{\vec{a}}{|\vec{a}|} = \left(\dfrac{a_1}{|\vec{a}|}, \dfrac{a_2}{|\vec{a}|}\right)\)</div>
+       <div class="law-description">Vector with same direction as \(\vec{a}\) but magnitude 1</div>
+      </div>
+
+      <div class="vector-law">
+       <div class="law-name">Component Form</div>
+       <div class="law-formula">\(\vec{a} = |\vec{a}|(\cos\theta, \sin\theta)\)</div>
+       <div class="law-description">Vector expressed in terms of magnitude and direction angle</div>
+      </div>
+     </div>
+    </div>
+
+    <!-- Worked Examples -->
+    <div class="section">
+     <h2>Worked Examples</h2>
+
+     <div class="problem-item">
+      <div class="problem-number">1</div>
+      <div class="problem-content">
+       <strong>Problem:</strong> Find the magnitude of \(\vec{a} = (3, 4)\).
+       <br><br>
+       <button class="solution-button" onclick="toggleSolution('sol1')">Show Solution</button>
+       <div class="solution-content" id="sol1">
+        <div class="calculation-steps">
+         <div class="calculation-step">
+          <strong>Step 1:</strong> Apply magnitude formula
+          <br>|\(\vec{a}\)| = √(3² + 4²) = √(9 + 16) = √25
+         </div>
+         <div class="calculation-step">
+          <strong>Step 2:</strong> Calculate square root
+          <br>√25 = 5
+         </div>
+         <div class="calculation-step">
+          <strong>Step 3:</strong> Verify with Pythagorean theorem
+          <br>3-4-5 right triangle, hypotenuse = 5
+         </div>
+         <div class="calculation-step">
+          <strong>Answer:</strong> |\(\vec{a}\)| = 5
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+
+     <div class="problem-item">
+      <div class="problem-number">2</div>
+      <div class="problem-content">
+       <strong>Problem:</strong> Find the unit vector in the direction of \(\vec{v} = (5, 12)\).
+       <br><br>
+       <button class="solution-button" onclick="toggleSolution('sol2')">Show Solution</button>
+       <div class="solution-content" id="sol2">
+        <div class="calculation-steps">
+         <div class="calculation-step">
+          <strong>Step 1:</strong> Find magnitude
+          <br>|\(\vec{v}\)| = √(5² + 12²) = √(25 + 144) = √169 = 13
+         </div>
+         <div class="calculation-step">
+          <strong>Step 2:</strong> Divide by magnitude
+          <br>\(\hat{v} = \dfrac{\vec{v}}{|\vec{v}|} = \dfrac{(5, 12)}{13} = \left(\dfrac{5}{13}, \dfrac{12}{13}\right)\)
+         </div>
+         <div class="calculation-step">
+          <strong>Step 3:</strong> Verify unit vector
+          <br>|\(\hat{v}\)| = √((5/13)² + (12/13)²) = √((25 + 144)/169) = √(169/169) = 1
+         </div>
+         <div class="calculation-step">
+          <strong>Answer:</strong> Unit vector \(\hat{v} = \left(\dfrac{5}{13}, \dfrac{12}{13}\right)\)
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+
+     <div class="problem-item">
+      <div class="problem-number">3</div>
+      <div class="problem-content">
+       <strong>Problem:</strong> Find the direction angle of \(\vec{a} = (-3, 4)\).
+       <br><br>
+       <button class="solution-button" onclick="toggleSolution('sol3')">Show Solution</button>
+       <div class="solution-content" id="sol3">
+        <div class="calculation-steps">
+         <div class="calculation-step">
+          <strong>Step 1:</strong> Use arctangent formula
+          <br>\(\theta = \tan^{-1}\left(\dfrac{4}{-3}\right) = \tan^{-1}\left(-\dfrac{4}{3}\right)\)
+         </div>
+         <div class="calculation-step">
+          <strong>Step 2:</strong> Calculate angle
+          <br>\(\tan^{-1}(-1.333) ≈ -53.13^\circ\)
+         </div>
+         <div class="calculation-step">
+          <strong>Step 3:</strong> Adjust for quadrant (second quadrant)
+          <br>Since x < 0 and y > 0, θ = 180° - 53.13° = 126.87°
+         </div>
+         <div class="calculation-step">
+          <strong>Answer:</strong> Direction angle θ ≈ 126.87°
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <!-- Applications -->
+    <div class="section">
+     <h2>Applications</h2>
+
+     <h3>Physics and Engineering</h3>
+     <div class="property-list">
+      <li><strong>Displacement:</strong> Distance traveled in a straight line</li>
+      <li><strong>Velocity:</strong> Speed is the magnitude of velocity vector</li>
+      <li><strong>Force:</strong> Magnitude determines force strength</li>
+      <li><strong>Work:</strong> W = F × d × cosθ (force magnitude times distance)</li>
+     </div>
+
+     <h3>Computer Graphics and Games</h3>
+     <div class="property-list">
+      <li><strong>Object Positioning:</strong> Distance calculations for collision detection</li>
+      <li><strong>Lighting:</strong> Distance attenuation for realistic lighting</li>
+      <li><strong>AI Pathfinding:</strong> Distance heuristics for navigation</li>
+      <li><strong>Animation:</strong> Vector interpolation and scaling</li>
+     </div>
+
+     <div class="hint-block">
+      <strong>Real-World Connection:</strong>
+      <p>GPS systems use vector magnitude to calculate distances between coordinates. The distance formula is essential for navigation apps to determine travel distances and estimated arrival times.</p>
+     </div>
+    </div>
+
+    <!-- Practice Problems -->
+    <div class="section">
+     <h2>Practice Problems</h2>
+
+     <div class="problem-item">
+      <div class="problem-number">1</div>
+      <div class="problem-content">
+       Find |\(\vec{a}\)| where \(\vec{a} = (6, 8)\).
+       <br><br>
+       <button class="solution-button" onclick="toggleSolution('prac1')">Show Solution</button>
+       <div class="solution-content" id="prac1">
+        <div class="calculation-steps">
+         <div class="calculation-step">
+          |\(\vec{a}\)| = √(6² + 8²) = √(36 + 64) = √100 = 10
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+
+     <div class="problem-item">
+      <div class="problem-number">2</div>
+      <div class="problem-content">
+       Find the unit vector of \(\vec{v} = (8, 15)\).
+       <br><br>
+       <button class="solution-button" onclick="toggleSolution('prac2')">Show Solution</button>
+       <div class="solution-content" id="prac2">
+        <div class="calculation-steps">
+         <div class="calculation-step">
+          |\(\vec{v}\)| = √(8² + 15²) = √(64 + 225) = √289 = 17
+         </div>
+         <div class="calculation-step">
+          Unit vector: (8/17, 15/17)
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+
+     <div class="problem-item">
+      <div class="problem-number">3</div>
+      <div class="problem-content">
+       Find the direction angle of \(\vec{a} = (5, -12)\).
+       <br><br>
+       <button class="solution-button" onclick="toggleSolution('prac3')">Show Solution</button>
+       <div class="solution-content" id="prac3">
+        <div class="calculation-steps">
+         <div class="calculation-step">
+          θ = tan⁻¹(-12/5) = tan⁻¹(-2.4) ≈ -67.38°
+         </div>
+         <div class="calculation-step">
+          Fourth quadrant: θ = 360° - 67.38° = 292.62°
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <!-- Key Takeaways -->
+    <div class="key-takeaways">
+     <h3>Key Takeaways</h3>
+     <ul>
+      <li><strong>Magnitude Formula:</strong> \(|\vec{a}| = \sqrt{a_1^2 + a_2^2}\) for 2D vectors</li>
+      <li><strong>Distance Connection:</strong> Vector magnitude equals distance between points</li>
+      <li><strong>Pythagorean Theorem:</strong> Magnitude formula is generalized Pythagorean theorem</li>
+      <li><strong>Unit Vectors:</strong> \(\hat{a} = \vec{a}/|\vec{a}|\) has magnitude 1, same direction</li>
+      <li><strong>Direction Angle:</strong> \(\theta = \tan^{-1}(a_2/a_1)\) from positive x-axis</li>
+      <li><strong>Component Form:</strong> \(\vec{a} = |\vec{a}|(\cos\theta, \sin\theta)\)</li>
+      <li><strong>Zero Vector:</strong> |\(\vec{0}\)| = 0</li>
+      <li>Applications in physics, navigation, graphics, and engineering</li>
+     </ul>
+    </div>
+
+   </div>
+  </div>
+
+  <script>
+   // Interactive Vector Magnitude Visualizer
+   let vectorA = { x: 3, y: 4 };
+   let showComponents = true;
+   let showMagnitude = true;
+
+   const canvas = document.getElementById('magnitude-canvas');
+   const ctx = canvas.getContext('2d');
+   const width = canvas.width;
+   const height = canvas.height;
+   const centerX = width / 2;
+   const centerY = height / 2;
+   const scale = 15; // pixels per unit
+
+   function drawVector(startX, startY, endX, endY, color, label, labelOffsetX = 0, labelOffsetY = 0) {
+     // Draw the vector line
+     ctx.strokeStyle = color;
+     ctx.lineWidth = 3;
+     ctx.beginPath();
+     ctx.moveTo(startX, startY);
+     ctx.lineTo(endX, endY);
+     ctx.stroke();
+
+     // Draw arrowhead
+     const angle = Math.atan2(endY - startY, endX - startX);
+     const arrowLength = 12;
+     ctx.beginPath();
+     ctx.moveTo(endX, endY);
+     ctx.lineTo(endX - arrowLength * Math.cos(angle - Math.PI / 6), endY - arrowLength * Math.sin(angle - Math.PI / 6));
+     ctx.lineTo(endX - arrowLength * Math.cos(angle + Math.PI / 6), endY - arrowLength * Math.sin(angle + Math.PI / 6));
+     ctx.closePath();
+     ctx.fillStyle = color;
+     ctx.fill();
+
+     // Draw label
+     if (label) {
+       ctx.fillStyle = '#333';
+       ctx.font = 'bold 14px Arial';
+       const midX = (startX + endX) / 2 + labelOffsetX;
+       const midY = (startY + endY) / 2 + labelOffsetY;
+       ctx.fillText(label, midX, midY);
+     }
+   }
+
+   function drawPoint(x, y, label, color = '#333') {
+     ctx.fillStyle = color;
+     ctx.beginPath();
+     ctx.arc(x, y, 4, 0, 2 * Math.PI);
+     ctx.fill();
+
+     if (label) {
+       ctx.fillStyle = '#333';
+       ctx.font = '12px Arial';
+       ctx.fillText(label, x + 8, y - 8);
+     }
+   }
+
+   function drawMagnitudeVisualization() {
+     ctx.clearRect(0, 0, width, height);
+
+     // Draw coordinate system
+     ctx.strokeStyle = '#ddd';
+     ctx.lineWidth = 1;
+     for (let i = -15; i <= 15; i++) {
+       // Vertical grid lines
+       ctx.beginPath();
+       ctx.moveTo(centerX + i * scale, 0);
+       ctx.lineTo(centerX + i * scale, height);
+       ctx.stroke();
+
+       // Horizontal grid lines
+       ctx.beginPath();
+       ctx.moveTo(0, centerY + i * scale);
+       ctx.lineTo(width, centerY + i * scale);
+       ctx.stroke();
+     }
+
+     // Draw axes
+     ctx.strokeStyle = '#333';
+     ctx.lineWidth = 2;
+     ctx.beginPath();
+     ctx.moveTo(0, centerY);
+     ctx.lineTo(width, centerY);
+     ctx.moveTo(centerX, 0);
+     ctx.lineTo(centerX, height);
+     ctx.stroke();
+
+     const startX = centerX;
+     const startY = centerY;
+     const endX = startX + vectorA.x * scale;
+     const endY = startY - vectorA.y * scale;
+
+     // Draw the vector
+     drawVector(startX, startY, endX, endY, '#3498db', 'A');
+
+     if (showComponents) {
+       // Draw component lines
+       ctx.strokeStyle = '#e74c3c';
+       ctx.lineWidth = 2;
+       ctx.setLineDash([5, 5]);
+       // Horizontal component
+       ctx.beginPath();
+       ctx.moveTo(startX, startY);
+       ctx.lineTo(endX, startY);
+       ctx.stroke();
+       // Vertical component
+       ctx.beginPath();
+       ctx.moveTo(endX, startY);
+       ctx.lineTo(endX, endY);
+       ctx.stroke();
+       ctx.setLineDash([]);
+
+       // Label components
+       ctx.fillStyle = '#e74c3c';
+       ctx.font = '12px Arial';
+       ctx.fillText(`x = ${vectorA.x}`, (startX + endX) / 2, startY - 5);
+       ctx.fillText(`y = ${vectorA.y}`, endX + 5, (startY + endY) / 2);
+     }
+
+     if (showMagnitude) {
+       // Draw magnitude arc
+       const radius = Math.sqrt(vectorA.x * vectorA.x + vectorA.y * vectorA.y) * scale / 2;
+       const arcCenterX = startX + vectorA.x * scale / 2;
+       const arcCenterY = startY - vectorA.y * scale / 2;
+
+       ctx.strokeStyle = '#27ae60';
+       ctx.lineWidth = 2;
+       ctx.beginPath();
+       ctx.arc(arcCenterX, arcCenterY, radius, 0, Math.PI * 2);
+       ctx.stroke();
+
+       // Label magnitude
+       ctx.fillStyle = '#27ae60';
+       ctx.font = 'bold 14px Arial';
+       const mag = Math.sqrt(vectorA.x * vectorA.x + vectorA.y * vectorA.y);
+       ctx.fillText(`|A| = ${mag.toFixed(2)}`, arcCenterX, arcCenterY - radius - 10);
+     }
+
+     drawPoint(startX, startY, 'O');
+     drawPoint(endX, endY, 'P');
+   }
+
+   function updateMagnitude() {
+     vectorA.x = parseFloat(document.getElementById('vecAx').value);
+     vectorA.y = parseFloat(document.getElementById('vecAy').value);
+     showComponents = document.getElementById('show-components').checked;
+     showMagnitude = document.getElementById('show-magnitude').checked;
+
+     updateMagnitudeDisplay();
+     drawMagnitudeVisualization();
+   }
+
+   function resetMagnitudeDemo() {
+     document.getElementById('vecAx').value = 3;
+     document.getElementById('vecAy').value = 4;
+     document.getElementById('show-components').checked = true;
+     document.getElementById('show-magnitude').checked = true;
+     updateMagnitude();
+   }
+
+   function updateMagnitudeDisplay() {
+     const mag = Math.sqrt(vectorA.x * vectorA.x + vectorA.y * vectorA.y);
+     const angle = Math.atan2(vectorA.y, vectorA.x) * 180 / Math.PI;
+     const normalizedAngle = angle < 0 ? angle + 360 : angle;
+
+     const resultDiv = document.getElementById('magnitude-result');
+     resultDiv.innerHTML = `Vector A: (${vectorA.x}, ${vectorA.y})<br>` +
+                          `Components: x = ${vectorA.x}, y = ${vectorA.y}<br>` +
+                          `Magnitude: √(${vectorA.x}² + ${vectorA.y}²) = √(${vectorA.x * vectorA.x} + ${vectorA.y * vectorA.y}) = √${(vectorA.x * vectorA.x + vectorA.y * vectorA.y).toFixed(0)} = ${mag.toFixed(2)}<br>` +
+                          `Direction: ${normalizedAngle.toFixed(2)}° from positive x-axis`;
+   }
+
+   // Solution toggle function
+   function toggleSolution(id) {
+     const element = document.getElementById(id);
+     const button = element.previousElementSibling;
+     if (element.style.display === 'none' || element.style.display === '') {
+       element.style.display = 'block';
+       button.textContent = 'Hide Solution';
+     } else {
+       element.style.display = 'none';
+       button.textContent = 'Show Solution';
+     }
+   }
+
+   // Initialize
+   document.addEventListener('DOMContentLoaded', function() {
+     updateMagnitudeDisplay();
+     drawMagnitudeVisualization();
+
+     // MathJax rendering
+     if (typeof renderMathInElement !== 'undefined') {
+       renderMathInElement(document.body, {
+         delimiters: [
+           {left: "$$", right: "$$", display: true},
+           {left: "\\(", right: "\\)", display: false},
+           {left: "\\[", right: "\\]", display: true}
+         ],
+         throwOnError: false
+       });
+     }
+   });
+  </script>
+ </body>
+</html>

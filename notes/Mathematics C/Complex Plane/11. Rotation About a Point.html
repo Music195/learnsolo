@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<!-- tags: Complex Plane -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Rotation About a Point
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+    /* Enhanced text containment and readability */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      hyphens: auto;
+    }
+
+    .main-content {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      border-radius: 15px;
+      padding: 30px;
+      margin: 20px 0;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .section {
+      margin-bottom: 40px;
+      background: rgba(255,255,255,0.9);
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .section h2 {
+      color: #2c3e50;
+      border-bottom: 3px solid #3498db;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+      font-size: 1.8em;
+      font-weight: 600;
+    }
+
+    .section h3 {
+      color: #34495e;
+      margin-bottom: 15px;
+      font-size: 1.4em;
+      font-weight: 500;
+    }
+
+    /* Law blocks with gradient backgrounds */
+    .law-block {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      color: white;
+      box-shadow: 0 4px 15px rgba(102,126,234,0.3);
+    }
+
+    .law-eq {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin-bottom: 15px;
+      text-align: center;
+      border-bottom: 2px solid rgba(255,255,255,0.3);
+      padding-bottom: 10px;
+    }
+
+    .law-block .math {
+      margin: 8px 0;
+      font-size: 1.1em;
+      line-height: 1.6;
+    }
+
+    /* Operation blocks */
+    .operation-block {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      color: white;
+      box-shadow: 0 4px 15px rgba(245,87,108,0.3);
+    }
+
+    .operation-block .theorem {
+      background: rgba(255,255,255,0.9);
+      color: #333;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      text-align: center;
+      font-size: 1.3em;
+      font-weight: bold;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    /* Hint blocks */
+    .hint-block {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      color: white;
+      box-shadow: 0 4px 15px rgba(79,172,254,0.3);
+    }
+
+    .hint-block strong {
+      font-size: 1.2em;
+      display: block;
+      margin-bottom: 15px;
+      text-align: center;
+      border-bottom: 2px solid rgba(255,255,255,0.3);
+      padding-bottom: 10px;
+    }
+
+    /* Interactive demo styling */
+    .interactive-demo {
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      border-radius: 12px;
+      padding: 25px;
+      margin: 25px 0;
+      box-shadow: 0 4px 15px rgba(168,237,234,0.3);
+    }
+
+    .interactive-demo h3 {
+      color: #2c3e50;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 1.5em;
+    }
+
+    .demo-input {
+      width: 80px;
+      padding: 8px 12px;
+      border: 2px solid #3498db;
+      border-radius: 6px;
+      font-size: 1em;
+      margin: 0 5px;
+      background: rgba(255,255,255,0.9);
+      color: #333;
+    }
+
+    .demo-input:focus {
+      outline: none;
+      border-color: #2980b9;
+      box-shadow: 0 0 5px rgba(52,152,219,0.5);
+    }
+
+    .demo-button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1em;
+      margin: 5px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 10px rgba(102,126,234,0.3);
+    }
+
+    .demo-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(102,126,234,0.4);
+    }
+
+    .demo-result {
+      background: rgba(255,255,255,0.9);
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 15px;
+      font-family: 'Courier New', monospace;
+      font-size: 1em;
+      color: #333;
+      white-space: pre-line;
+      border: 1px solid #ddd;
+      min-height: 40px;
+    }
+
+    /* Problem items */
+    .problem-item {
+      background: rgba(255,255,255,0.95);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 15px 0;
+      border-left: 5px solid #3498db;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .problem-number {
+      display: inline-block;
+      background: #3498db;
+      color: white;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 30px;
+      font-weight: bold;
+      margin-right: 15px;
+      vertical-align: top;
+    }
+
+    .problem-content {
+      display: inline-block;
+      width: calc(100% - 50px);
+      vertical-align: top;
+    }
+
+    .solution-button {
+      background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+      color: #333;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9em;
+      margin: 10px 0;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(255,154,158,0.3);
+    }
+
+    .solution-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 3px 12px rgba(255,154,158,0.4);
+    }
+
+    .solution-content {
+      display: none;
+      margin-top: 15px;
+      padding: 15px;
+      background: rgba(240,240,240,0.8);
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+
+    .calculation-steps {
+      margin: 10px 0;
+    }
+
+    .calculation-step {
+      margin: 8px 0;
+      padding: 8px 12px;
+      background: rgba(255,255,255,0.7);
+      border-radius: 6px;
+      border-left: 3px solid #3498db;
+    }
+
+    /* Key takeaways */
+    .key-takeaways {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 12px;
+      padding: 25px;
+      margin: 25px 0;
+      color: white;
+      box-shadow: 0 4px 15px rgba(102,126,234,0.3);
+    }
+
+    .key-takeaways h3 {
+      text-align: center;
+      font-size: 1.5em;
+      margin-bottom: 20px;
+      border-bottom: 2px solid rgba(255,255,255,0.3);
+      padding-bottom: 10px;
+    }
+
+    .key-takeaways ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .key-takeaways li {
+      margin: 10px 0;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .key-takeaways li:last-child {
+      border-bottom: none;
+    }
+
+    /* Enhanced canvas styling */
+    .rotation-img {
+      display: block;
+      margin: 20px auto;
+      border: 2px solid #3498db;
+      border-radius: 8px;
+      background: white;
+      box-shadow: 0 4px 15px rgba(52,152,219,0.2);
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 10px;
+      }
+
+      .main-content {
+        padding: 20px;
+      }
+
+      .section {
+        padding: 15px;
+      }
+
+      .interactive-demo {
+        padding: 15px;
+      }
+
+      .demo-input {
+        width: 60px;
+        margin: 5px;
+      }
+
+      .demo-button {
+        display: block;
+        width: 100%;
+        margin: 5px 0;
+      }
+
+      .problem-content {
+        width: calc(100% - 40px);
+      }
+    }
+
+    /* MathJax styling */
+    .mjx-chtml {
+      font-size: 1.1em !important;
+    }
+
+    /* Formula boxes */
+    .formula-box {
+      background: rgba(255,255,255,0.9);
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      text-align: center;
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #333;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    /* Property lists */
+    .property-list {
+      background: rgba(255,255,255,0.9);
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      color: #333;
+    }
+
+    .property-list li {
+      margin: 8px 0;
+      padding: 5px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .property-list li:last-child {
+      border-bottom: none;
+    }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Complex Plane">
+   Rotation About a Point
+  </div>
+  <div class="container">
+   <div class="main-content">
+    <div class="section">
+     <h2>Core Concept: Rotation About a Point</h2>
+     <p>Rotation about a point in the complex plane is a fundamental geometric transformation. When we rotate a point around a fixed center by an angle θ, we can express this transformation using complex numbers in a elegant way.</p>
+     
+     <div class="operation-block">
+      <p>
+       If point β is rotated about point α by angle θ to get point γ, then:
+      </p>
+      <div class="theorem">
+       $$
+        \gamma - \alpha = (\cos\theta + i\sin\theta)(\beta - \alpha)
+       $$
+       <br><br>
+       $$
+        \gamma = \alpha + (\cos\theta + i\sin\theta)(\beta - \alpha)
+       $$
+      </div>
+     </div>
+     
+     <div class="hint-block">
+      <strong>
+       Key Properties:
+      </strong>
+      <ul>
+       <li><strong>Vector approach:</strong> Subtract center, rotate, add back center</li>
+       <li><strong>Angle preservation:</strong> Rotates by fixed angle θ around center α</li>
+       <li><strong>Distance preservation:</strong> Distance from center remains constant</li>
+       <li><strong>Origin rotation:</strong> When α = 0, reduces to γ = e^(iθ)β</li>
+       <li><strong>Composition:</strong> Multiple rotations combine additively</li>
+       <li><strong>Fixed points:</strong> Center α is invariant under rotation</li>
+      </ul>
+     </div>
+    </div>
+
+    <div class="interactive-demo">
+      <h3>Interactive Rotation Calculator</h3>
+      <div style="margin: 20px 0;">
+        <div style="margin-bottom: 15px;">
+          <strong>Center of rotation α:</strong> <input type="text" id="centerPoint" value="1+2i" class="demo-input" placeholder="a+bi">
+        </div>
+        <div style="margin-bottom: 15px;">
+          <strong>Point to rotate β:</strong> <input type="text" id="rotatePoint" value="3-1i" class="demo-input" placeholder="a+bi">
+        </div>
+        <div style="margin-bottom: 15px;">
+          <strong>Rotation angle θ:</strong> <input type="number" id="rotationAngle" value="90" step="15" class="demo-input">°
+        </div>
+      </div>
+      <button onclick="calculateRotation()" class="demo-button">Calculate Rotation</button>
+      <button onclick="animateRotation()" class="demo-button">Animate Rotation</button>
+      <button onclick="showSteps()" class="demo-button">Show Step-by-Step</button>
+      <button onclick="drawRotation()" class="demo-button">Visualize on Plane</button>
+      <div class="demo-result" id="rotationResult"></div>
+      <canvas id="rotationCanvas" width="500" height="500" class="rotation-img"></canvas>
+    </div>
+
+    <div class="section">
+     <h2>Mathematical Foundation</h2>
+     
+     <div class="law-block">
+      <div class="law-eq">Derivation of Rotation Formula</div>
+      <div class="math">Consider point β rotated about α by angle θ to get γ</div>
+      <div class="math">Vector from α to β: β - α</div>
+      <div class="math">Rotation of this vector: e^(iθ)(β - α)</div>
+      <div class="math">New position: α + e^(iθ)(β - α)</div>
+      <div class="math">Therefore: γ = α + (cosθ + i sinθ)(β - α)</div>
+      <div class="math">This preserves distance: |γ - α| = |β - α|</div>
+     </div>
+     
+     <div class="law-block">
+      <div class="law-eq">Special Cases and Properties</div>
+      <ul style="color: white;">
+        <li><strong>Rotation about origin:</strong> γ = e^(iθ)β when α = 0</li>
+        <li><strong>180° rotation:</strong> γ = 2α - β (reflection over α)</li>
+        <div class="math">γ - α = -(β - α) ⇒ γ = 2α - β</div>
+        <li><strong>90° rotation:</strong> γ - α = i(β - α)</li>
+        <div class="math">γ = α + i(β - α) = α + iβ - iα = (1-i)α + iβ</div>
+        <li><strong>Fixed point:</strong> α remains unchanged</li>
+        <li><strong>Composition:</strong> Two rotations combine: θ₁ + θ₂</li>
+        <li><strong>Inverse rotation:</strong> Use angle -θ</li>
+      </ul>
+     </div>
+    </div>
+
+    <div class="section">
+      <h2>Worked Examples</h2>
+      <div class="problem-item">
+        <div class="problem-number">1</div>
+        <div class="problem-content">
+          <p>Rotate point 3+2i about the point 1+i by 90° counterclockwise.</p>
+          <button class="solution-button" onclick="toggleSolution(1)">Show Solution</button>
+          <div class="solution-content" id="solution1">
+            <div class="calculation-steps">
+              <div class="calculation-step">α = 1+i, β = 3+2i, θ = 90°</div>
+              <div class="calculation-step">Vector from α to β: β - α = (3+2i) - (1+i) = 2+i</div>
+              <div class="calculation-step">Rotate vector by 90°: i(2+i) = 2i + i² = 2i - 1 = -1 + 2i</div>
+              <div class="calculation-step">New position: α + rotated vector = (1+i) + (-1 + 2i) = 0 + 3i</div>
+              <div class="calculation-step">The rotated point is 3i</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="problem-item">
+        <div class="problem-number">2</div>
+        <div class="problem-content">
+          <p>Find the image of point -1+3i under rotation about 2-2i by 180°.</p>
+          <button class="solution-button" onclick="toggleSolution(2)">Show Solution</button>
+          <div class="solution-content" id="solution2">
+            <div class="calculation-steps">
+              <div class="calculation-step">α = 2-2i, β = -1+3i, θ = 180°</div>
+              <div class="calculation-step">cos180° + i sin180° = -1 + i×0 = -1</div>
+              <div class="calculation-step">γ = α + (-1)(β - α)</div>
+              <div class="calculation-step">β - α = (-1+3i) - (2-2i) = -3 + 5i</div>
+              <div class="calculation-step">γ = (2-2i) + (-1)(-3 + 5i) = 2-2i + 3 - 5i = 5 - 7i</div>
+              <div class="calculation-step">Using formula: γ = 2α - β = 2(2-2i) - (-1+3i) = 4-4i +1 -3i = 5 - 7i</div>
+              <div class="calculation-step">The rotated point is 5 - 7i</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="problem-item">
+        <div class="problem-number">3</div>
+        <div class="problem-content">
+          <p>Rotate triangle with vertices A(1,1), B(3,1), C(2,3) about point (2,2) by 90°.</p>
+          <button class="solution-button" onclick="toggleSolution(3)">Show Solution</button>
+          <div class="solution-content" id="solution3">
+            <div class="calculation-steps">
+              <div class="calculation-step">α = 2+2i, θ = 90° (counterclockwise)</div>
+              <div class="calculation-step">A: (1+1i) - (2+2i) = -1-i, rotate: i(-1-i) = -i + i² = -i -1 = -1-i</div>
+              <div class="calculation-step">A': (2+2i) + (-1-i) = 1+i</div>
+              <div class="calculation-step">B: (3+1i) - (2+2i) = 1-i, rotate: i(1-i) = i - i² = i +1 = 1+i</div>
+              <div class="calculation-step">B': (2+2i) + (1+i) = 3+3i</div>
+              <div class="calculation-step">C: (2+3i) - (2+2i) = 0+i = i, rotate: i(i) = i² = -1</div>
+              <div class="calculation-step">C': (2+2i) + (-1) = 1+2i</div>
+              <div class="calculation-step">New triangle: A'(1+i), B'(3+3i), C'(1+2i)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+     <h2>Applications and Importance</h2>
+     <div class="law-block">
+      <div class="law-eq">Geometric Applications</div>
+      <ul style="color: white;">
+        <li><strong>Computer graphics:</strong> 2D transformations and rotations</li>
+        <li><strong>Robotics:</strong> Coordinate transformations</li>
+        <li><strong>Navigation:</strong> Position calculations with rotations</li>
+        <li><strong>Fractal geometry:</strong> Self-similar transformations</li>
+        <li><strong>Physics:</strong> Rotational motion and symmetry</li>
+        <li><strong>Signal processing:</strong> Phase rotations in complex signals</li>
+      </ul>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+      <h3>Key Takeaways</h3>
+      <ul>
+        <li>γ - α = e^(iθ)(β - α) rotates β about α by angle θ</li>
+        <li>Subtract center, rotate vector, add center back</li>
+        <li>Distance from center is preserved under rotation</li>
+        <li>180° rotation gives γ = 2α - β</li>
+        <li>90° rotation gives γ = α + i(β - α)</li>
+        <li>Fixed point α remains unchanged</li>
+        <li>Multiple rotations compose by angle addition</li>
+      </ul>
+    </div>
+   </div>
+  </div>
+
+  <script>
+    let canvas = document.getElementById('rotationCanvas');
+    let ctx = canvas.getContext('2d');
+    let currentPoints = {alpha: null, beta: null, gamma: null};
+    let animationId = null;
+
+    function parseComplex(str) {
+      str = str.replace(/\s/g, '');
+      let real = 0, imag = 0;
+      
+      if (!isNaN(str)) {
+        real = parseFloat(str);
+      } else if (str.endsWith('i')) {
+        if (str === 'i') imag = 1;
+        else if (str === '-i') imag = -1;
+        else imag = parseFloat(str.slice(0, -1));
+      } else {
+        const parts = str.split('i');
+        if (parts.length === 2) {
+          const realPart = parts[0];
+          if (realPart.includes('+')) {
+            const realSplit = realPart.split('+');
+            real = parseFloat(realSplit[0]);
+            imag = parseFloat(parts[1] || '1');
+          } else if (realPart.includes('-')) {
+            const realSplit = realPart.split('-');
+            if (realSplit[0] === '') {
+              real = -parseFloat(realSplit[1]);
+            } else {
+              real = parseFloat(realSplit[0]);
+            }
+            imag = parseFloat(parts[1] || '1');
+          } else {
+            real = parseFloat(realPart);
+            imag = parseFloat(parts[1] || '1');
+          }
+        }
+      }
+      
+      return {real, imag};
+    }
+
+    function formatComplex(c) {
+      if (c.imag === 0) return c.real.toString();
+      if (c.real === 0) {
+        if (c.imag === 1) return 'i';
+        if (c.imag === -1) return '-i';
+        return c.imag + 'i';
+      }
+      const sign = c.imag >= 0 ? '+' : '';
+      const imagStr = c.imag === 1 ? 'i' : c.imag === -1 ? '-i' : c.imag + 'i';
+      return c.real + sign + imagStr;
+    }
+
+    function calculateRotation() {
+      try {
+        const alpha = parseComplex(document.getElementById('centerPoint').value);
+        const beta = parseComplex(document.getElementById('rotatePoint').value);
+        const theta = parseFloat(document.getElementById('rotationAngle').value) || 0;
+        
+        const thetaRad = theta * Math.PI / 180;
+        const cosTheta = Math.cos(thetaRad);
+        const sinTheta = Math.sin(thetaRad);
+        
+        // γ = α + (cosθ + i sinθ)(β - α)
+        const vectorX = beta.real - alpha.real;
+        const vectorY = beta.imag - alpha.imag;
+        
+        const rotatedX = vectorX * cosTheta - vectorY * sinTheta;
+        const rotatedY = vectorX * sinTheta + vectorY * cosTheta;
+        
+        const gamma = {
+          real: alpha.real + rotatedX,
+          imag: alpha.imag + rotatedY
+        };
+        
+        currentPoints = {alpha, beta, gamma};
+        
+        document.getElementById('rotationResult').textContent = 
+          `Rotation of ${formatComplex(beta)} about ${formatComplex(alpha)} by ${theta}°:\n` +
+          `Vector from center: ${formatComplex(beta)} - ${formatComplex(alpha)} = ${formatComplex({real: vectorX, imag: vectorY})}\n` +
+          `Rotated vector: (${cosTheta.toFixed(3)} + i${sinTheta.toFixed(3)}) × ${formatComplex({real: vectorX, imag: vectorY})}\n` +
+          `Result: ${formatComplex(gamma)}`;
+        
+        drawRotation();
+      } catch (e) {
+        document.getElementById('rotationResult').textContent = 'Error: Please check input format';
+      }
+    }
+
+    function animateRotation() {
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+      }
+      
+      const alpha = parseComplex(document.getElementById('centerPoint').value);
+      const beta = parseComplex(document.getElementById('rotatePoint').value);
+      const targetTheta = parseFloat(document.getElementById('rotationAngle').value) || 0;
+      
+      let currentTheta = 0;
+      const step = targetTheta > 0 ? 2 : -2;
+      const duration = Math.abs(targetTheta) / 2; // degrees per frame
+      
+      function animate() {
+        if ((step > 0 && currentTheta >= targetTheta) || (step < 0 && currentTheta <= targetTheta)) {
+          currentTheta = targetTheta;
+          calculateRotation();
+          return;
+        }
+        
+        currentTheta += step;
+        document.getElementById('rotationAngle').value = currentTheta;
+        calculateRotation();
+        
+        animationId = requestAnimationFrame(animate);
+      }
+      
+      animate();
+    }
+
+    function showSteps() {
+      try {
+        const alpha = parseComplex(document.getElementById('centerPoint').value);
+        const beta = parseComplex(document.getElementById('rotatePoint').value);
+        const theta = parseFloat(document.getElementById('rotationAngle').value) || 0;
+        
+        const thetaRad = theta * Math.PI / 180;
+        const cosTheta = Math.cos(thetaRad);
+        const sinTheta = Math.sin(thetaRad);
+        
+        let result = `Step-by-step rotation calculation:\n\n`;
+        result += `1. Center α = ${formatComplex(alpha)}\n`;
+        result += `2. Point β = ${formatComplex(beta)}\n`;
+        result += `3. Angle θ = ${theta}°\n`;
+        result += `4. cosθ = ${cosTheta.toFixed(3)}, sinθ = ${sinTheta.toFixed(3)}\n`;
+        result += `5. Vector β - α = ${formatComplex({real: beta.real - alpha.real, imag: beta.imag - alpha.imag})}\n`;
+        result += `6. Rotation factor = cosθ + i sinθ = ${cosTheta.toFixed(3)} + i${sinTheta.toFixed(3)}\n`;
+        result += `7. Rotated vector = (cosθ + i sinθ)(β - α)\n`;
+        result += `8. Final position γ = α + rotated vector\n`;
+        
+        document.getElementById('rotationResult').textContent = result;
+      } catch (e) {
+        document.getElementById('rotationResult').textContent = 'Error: Please check input format';
+      }
+    }
+
+    function drawRotation() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      const scale = 30;
+      
+      // Draw axes
+      ctx.strokeStyle = '#ccc';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(0, centerY);
+      ctx.lineTo(canvas.width, centerY);
+      ctx.moveTo(centerX, 0);
+      ctx.lineTo(centerX, canvas.height);
+      ctx.stroke();
+      
+      // Draw grid
+      ctx.strokeStyle = '#f0f0f0';
+      ctx.lineWidth = 0.5;
+      for (let i = -10; i <= 10; i++) {
+        const x = centerX + i * scale;
+        const y = centerY + i * scale;
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+      }
+      
+      if (currentPoints.alpha) {
+        drawPoint(currentPoints.alpha, 'α', '#e74c3c');
+      }
+      if (currentPoints.beta) {
+        drawPoint(currentPoints.beta, 'β', '#3498db');
+      }
+      if (currentPoints.gamma) {
+        drawPoint(currentPoints.gamma, 'γ', '#27ae60');
+        
+        // Draw rotation arc
+        if (currentPoints.alpha && currentPoints.beta) {
+          const alphaX = centerX + currentPoints.alpha.real * scale;
+          const alphaY = centerY - currentPoints.alpha.imag * scale;
+          const betaX = centerX + currentPoints.beta.real * scale;
+          const betaY = centerY - currentPoints.beta.imag * scale;
+          const gammaX = centerX + currentPoints.gamma.real * scale;
+          const gammaY = centerY - currentPoints.gamma.imag * scale;
+          
+          const radius = Math.sqrt((betaX - alphaX)**2 + (betaY - alphaY)**2);
+          
+          // Calculate angles
+          const angle1 = Math.atan2(betaY - alphaY, betaX - alphaX);
+          const angle2 = Math.atan2(gammaY - alphaY, gammaX - alphaX);
+          
+          ctx.beginPath();
+          ctx.arc(alphaX, alphaY, radius, angle1, angle2, false);
+          ctx.strokeStyle = '#9b59b6';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          
+          // Draw arrow
+          const arrowAngle = angle2;
+          const arrowX = alphaX + radius * Math.cos(arrowAngle);
+          const arrowY = alphaY + radius * Math.sin(arrowAngle);
+          ctx.beginPath();
+          ctx.moveTo(arrowX, arrowY);
+          ctx.lineTo(arrowX - 8 * Math.cos(arrowAngle - Math.PI/6), arrowY - 8 * Math.sin(arrowAngle - Math.PI/6));
+          ctx.lineTo(arrowX - 8 * Math.cos(arrowAngle + Math.PI/6), arrowY - 8 * Math.sin(arrowAngle + Math.PI/6));
+          ctx.closePath();
+          ctx.fillStyle = '#9b59b6';
+          ctx.fill();
+        }
+      }
+    }
+
+    function drawPoint(point, label, color) {
+      const x = canvas.width / 2 + point.real * 30;
+      const y = canvas.height / 2 - point.imag * 30;
+      
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(x, y, 6, 0, 2 * Math.PI);
+      ctx.fill();
+      
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 12px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText(label, x, y + 4);
+    }
+
+    function toggleSolution(problemNumber) {
+      const solution = document.getElementById(`solution${problemNumber}`);
+      if (solution.style.display === 'block') {
+        solution.style.display = 'none';
+      } else {
+        solution.style.display = 'block';
+      }
+    }
+
+    // Initialize
+    calculateRotation();
+
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [
+                {left: "$$", right: "$$", display: true},
+                {left: "\\(", right: "\\)", display: false},
+                {left: "\\[", right: "\\]", display: true}
+            ],
+            throwOnError: false
+        });
+    });
+  </script>
+ </body>
+</html>

@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<!-- tags: Geometry -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Platonic Solids
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      hyphens: auto;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #7f8c8d;
+      font-size: 1.2em;
+      margin-bottom: 40px;
+      font-style: italic;
+    }
+
+    .theorem-statement {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 25px;
+      border-radius: 15px;
+      margin: 30px 0;
+      text-align: center;
+      font-size: 1.3em;
+      font-weight: bold;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .interactive-demo {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      padding: 25px;
+      margin: 30px 0;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .demo-title {
+      text-align: center;
+      color: #2c3e50;
+      font-size: 1.8em;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .control-button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.2s;
+    }
+
+    .control-button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .control-button.active {
+      background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    }
+
+    .checkbox {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    .canvas-instructions {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 0.9em;
+      color: #666;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 8px;
+      border-radius: 5px;
+    }
+
+    .solid-selector {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .selector-title {
+      font-weight: bold;
+      color: #2c3e50;
+      margin-bottom: 15px;
+    }
+
+    .solid-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .solid-btn {
+      background: rgba(255, 255, 255, 0.8);
+      border: 2px solid #667eea;
+      color: #667eea;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.2s;
+    }
+
+    .solid-btn:hover {
+      background: #667eea;
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .solid-btn.active {
+      background: #667eea;
+      color: white;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .canvas-container {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    canvas {
+      border: 3px solid #667eea;
+      border-radius: 10px;
+      background: #f8f9fa;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .properties-display {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin: 20px 0;
+    }
+
+    .property-card {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .property-value {
+      font-size: 2em;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+
+    .section {
+      margin: 40px 0;
+    }
+
+    .section-title {
+      color: #2c3e50;
+      font-size: 1.8em;
+      margin-bottom: 20px;
+      border-bottom: 3px solid #667eea;
+      padding-bottom: 10px;
+    }
+
+    .proof-steps {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+
+    .proof-step {
+      margin: 15px 0;
+      padding: 15px;
+      background: #f8f9fa;
+      border-left: 4px solid #667eea;
+      border-radius: 5px;
+    }
+
+    .step-number {
+      font-weight: bold;
+      color: #667eea;
+      margin-right: 10px;
+    }
+
+    .examples {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin: 20px 0;
+    }
+
+    .example-card {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .example-title {
+      color: #2c3e50;
+      font-weight: bold;
+      margin-bottom: 15px;
+      font-size: 1.2em;
+    }
+
+    .applications {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: white;
+      padding: 25px;
+      border-radius: 15px;
+      margin: 30px 0;
+    }
+
+    .app-item {
+      margin: 15px 0;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      backdrop-filter: blur(5px);
+    }
+
+    .practice-problems {
+      margin: 40px 0;
+    }
+
+    .problem {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .problem-title {
+      color: #2c3e50;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .solution-toggle {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      margin: 10px 0;
+      transition: transform 0.2s;
+    }
+
+    .solution-toggle:hover {
+      transform: scale(1.05);
+    }
+
+    .solution {
+      background: #f8f9fa;
+      border-radius: 5px;
+      padding: 15px;
+      margin: 10px 0;
+      border-left: 4px solid #28a745;
+      display: none;
+    }
+
+    .key-takeaways {
+      background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+      padding: 25px;
+      border-radius: 15px;
+      margin: 30px 0;
+    }
+
+    .takeaway-item {
+      margin: 10px 0;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+    .solid-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin: 20px 0;
+    }
+
+    .solid {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s;
+    }
+
+    .solid:hover {
+      transform: translateY(-5px);
+    }
+
+    .solid-label {
+      margin-top: 10px;
+      font-weight: bold;
+      font-size: 1.1em;
+    }
+
+    .label-red {
+      color: #e74c3c;
+    }
+
+    .label-blue {
+      color: #3498db;
+    }
+
+    .label-green {
+      color: #27ae60;
+    }
+
+    .label-purple {
+      color: #9b59b6;
+    }
+
+    .label-orange {
+      color: #e67e22;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+
+      .container {
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 2em;
+      }
+
+      .controls {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .slider {
+        width: 150px;
+      }
+
+      .properties-display {
+        grid-template-columns: 1fr;
+      }
+
+      .examples {
+        grid-template-columns: 1fr;
+      }
+
+      .solid-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      }
+    }
+
+    .math {
+      font-family: 'Computer Modern', 'Latin Modern Roman', serif;
+    }
+
+    .highlight {
+      background: #fff3cd;
+      padding: 2px 4px;
+      border-radius: 3px;
+    }
+
+    .formula-box {
+      background: #f8f9fa;
+      border: 2px solid #667eea;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      text-align: center;
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+  </style>
+ <body>
+  <div class="fancy-title" data-topic="Geometry">
+   Platonic Solids
+  </div>
+  <div class="container">
+   <div class="subtitle">The Five Perfect Polyhedra</div>
+
+   <div class="theorem-statement">
+    A <span class="highlight">Platonic solid</span> is a convex polyhedron that is regular, meaning all faces are congruent regular polygons and all vertices are congruent.
+   </div>
+
+   <div class="interactive-demo">
+    <div class="demo-title">Interactive Platonic Solids Explorer</div>
+    <div class="controls">
+     <div class="control-group">
+      <label class="control-label">Auto Rotate:</label>
+      <button class="control-button" id="autoRotateBtn">Start</button>
+     </div>
+     <div class="control-group">
+      <label class="control-label">Reset View:</label>
+      <button class="control-button" id="resetBtn">Reset</button>
+     </div>
+     <div class="control-group">
+      <label class="control-label">Wireframe:</label>
+      <input class="checkbox" id="wireframeToggle" type="checkbox"/>
+     </div>
+     <div class="control-group">
+      <label class="control-label">Face Labels:</label>
+      <input class="checkbox" id="labelsToggle" type="checkbox"/>
+     </div>
+    </div>
+    <div class="canvas-container">
+     <canvas height="500" id="platonicCanvas" width="500"></canvas>
+     <div class="canvas-instructions">
+      <p>🖱️ Drag to rotate • 🔄 Auto-rotate • 📏 Scroll to zoom</p>
+     </div>
+    </div>
+    <div class="properties-display">
+     <div class="property-card">
+      <div>Faces</div>
+      <div class="property-value" id="facesCount">-</div>
+     </div>
+     <div class="property-card">
+      <div>Edges</div>
+      <div class="property-value" id="edgesCount">-</div>
+     </div>
+     <div class="property-card">
+      <div>Vertices</div>
+      <div class="property-value" id="verticesCount">-</div>
+     </div>
+     <div class="property-card">
+      <div>Solid Type</div>
+      <div class="property-value" id="solidType">-</div>
+     </div>
+    </div>
+    <div class="solid-selector">
+     <div class="selector-title">Select a Platonic Solid:</div>
+     <div class="solid-buttons">
+      <button class="solid-btn active" data-solid="tetrahedron">Tetrahedron</button>
+      <button class="solid-btn" data-solid="cube">Cube</button>
+      <button class="solid-btn" data-solid="octahedron">Octahedron</button>
+      <button class="solid-btn" data-solid="dodecahedron">Dodecahedron</button>
+      <button class="solid-btn" data-solid="icosahedron">Icosahedron</button>
+     </div>
+    </div>
+   </div>
+
+   <div class="section">
+    <div class="section-title">Mathematical Properties</div>
+    <div class="formula-box">
+     For any Platonic solid: $V - E + F = 2$ (Euler's Formula)
+    </div>
+    <div class="proof-steps">
+     <div class="proof-step">
+      <span class="step-number">1.</span> Each face has the same number of edges ($p$) and vertices ($p$)
+     </div>
+     <div class="proof-step">
+      <span class="step-number">2.</span> Each vertex has the same number of faces meeting ($q$)
+     </div>
+     <div class="proof-step">
+      <span class="step-number">3.</span> Total edges: $E = \frac{F \cdot p}{2} = \frac{V \cdot q}{2}$
+     </div>
+     <div class="proof-step">
+      <span class="step-number">4.</span> Euler's formula: $V - E + F = 2$
+     </div>
+     <div class="proof-step">
+      <span class="step-number">5.</span> Substituting: $V - \frac{V \cdot q}{2} + F = 2$
+     </div>
+     <div class="proof-step">
+      <span class="step-number">6.</span> Only solutions where $p ≥ 3$, $q ≥ 3$, and $\frac{1}{p} + \frac{1}{q} < \frac{1}{2}$ are possible
+     </div>
+    </div>
+   </div>
+
+   <div class="section">
+    <div class="section-title">The Five Platonic Solids</div>
+    <div class="solid-grid">
+     <div class="solid">
+      <div class="solid-3d" data-solid="tetrahedron">
+       <div class="face face-1"></div>
+       <div class="face face-2"></div>
+       <div class="face face-3"></div>
+       <div class="face face-4"></div>
+      </div>
+      <div class="solid-label label-red">Tetrahedron</div>
+      <div class="solid-properties">
+       <div>4 Faces (Triangles)</div>
+       <div>6 Edges</div>
+       <div>4 Vertices</div>
+      </div>
+     </div>
+     <div class="solid">
+      <div class="solid-3d" data-solid="cube">
+       <div class="face face-1"></div>
+       <div class="face face-2"></div>
+       <div class="face face-3"></div>
+       <div class="face face-4"></div>
+       <div class="face face-5"></div>
+       <div class="face face-6"></div>
+      </div>
+      <div class="solid-label label-blue">Cube (Hexahedron)</div>
+      <div class="solid-properties">
+       <div>6 Faces (Squares)</div>
+       <div>12 Edges</div>
+       <div>8 Vertices</div>
+      </div>
+     </div>
+     <div class="solid">
+      <div class="solid-3d" data-solid="octahedron">
+       <div class="face face-1"></div>
+       <div class="face face-2"></div>
+       <div class="face face-3"></div>
+       <div class="face face-4"></div>
+       <div class="face face-5"></div>
+       <div class="face face-6"></div>
+       <div class="face face-7"></div>
+       <div class="face face-8"></div>
+      </div>
+      <div class="solid-label label-green">Octahedron</div>
+      <div class="solid-properties">
+       <div>8 Faces (Triangles)</div>
+       <div>12 Edges</div>
+       <div>6 Vertices</div>
+      </div>
+     </div>
+     <div class="solid">
+      <div class="solid-3d" data-solid="dodecahedron">
+       <div class="face face-1"></div>
+       <div class="face face-2"></div>
+       <div class="face face-3"></div>
+       <div class="face face-4"></div>
+       <div class="face face-5"></div>
+       <div class="face face-6"></div>
+       <div class="face face-7"></div>
+       <div class="face face-8"></div>
+       <div class="face face-9"></div>
+       <div class="face face-10"></div>
+       <div class="face face-11"></div>
+       <div class="face face-12"></div>
+      </div>
+      <div class="solid-label label-purple">Dodecahedron</div>
+      <div class="solid-properties">
+       <div>12 Faces (Pentagons)</div>
+       <div>30 Edges</div>
+       <div>20 Vertices</div>
+      </div>
+     </div>
+     <div class="solid">
+      <div class="solid-3d" data-solid="icosahedron">
+       <div class="face face-1"></div>
+       <div class="face face-2"></div>
+       <div class="face face-3"></div>
+       <div class="face face-4"></div>
+       <div class="face face-5"></div>
+       <div class="face face-6"></div>
+       <div class="face face-7"></div>
+       <div class="face face-8"></div>
+       <div class="face face-9"></div>
+       <div class="face face-10"></div>
+       <div class="face face-11"></div>
+       <div class="face face-12"></div>
+       <div class="face face-13"></div>
+       <div class="face face-14"></div>
+       <div class="face face-15"></div>
+       <div class="face face-16"></div>
+       <div class="face face-17"></div>
+       <div class="face face-18"></div>
+       <div class="face face-19"></div>
+       <div class="face face-20"></div>
+      </div>
+      <div class="solid-label label-orange">Icosahedron</div>
+      <div class="solid-properties">
+       <div>20 Faces (Triangles)</div>
+       <div>30 Edges</div>
+       <div>12 Vertices</div>
+      </div>
+     </div>
+    </div>
+   </div>
+
+   <div class="section">
+    <div class="section-title">Detailed Examples</div>
+    <div class="examples">
+     <div class="example-card">
+      <div class="example-title">Tetrahedron Analysis</div>
+      <div class="math">
+       \[
+       \begin{aligned}
+       F &= 4 \quad (p=3) \\
+       V &= 4 \quad (q=3) \\
+       E &= \frac{4 \times 3}{2} = 6 \\
+       V - E + F &= 4 - 6 + 4 = 2 ✓
+       \end{aligned}
+       \]
+      </div>
+      <p>Each face is an equilateral triangle. Three faces meet at each vertex.</p>
+     </div>
+     <div class="example-card">
+      <div class="example-title">Cube Analysis</div>
+      <div class="math">
+       \[
+       \begin{aligned}
+       F &= 6 \quad (p=4) \\
+       V &= 8 \quad (q=3) \\
+       E &= \frac{6 \times 4}{2} = 12 \\
+       V - E + F &= 8 - 12 + 6 = 2 ✓
+       \end{aligned}
+       \]
+      </div>
+      <p>Each face is a square. Three faces meet at each vertex.</p>
+     </div>
+     <div class="example-card">
+      <div class="example-title">Dodecahedron Analysis</div>
+      <div class="math">
+       \[
+       \begin{aligned}
+       F &= 12 \quad (p=5) \\
+       V &= 20 \quad (q=3) \\
+       E &= \frac{12 \times 5}{2} = 30 \\
+       V - E + F &= 20 - 30 + 12 = 2 ✓
+       \end{aligned}
+       \]
+      </div>
+      <p>Each face is a regular pentagon. Three faces meet at each vertex.</p>
+     </div>
+    </div>
+   </div>
+
+   <div class="applications">
+    <div class="section-title" style="color: white; border-color: white;">Applications of Platonic Solids</div>
+    <div class="app-item">
+     <strong>Crystallography:</strong> Platonic solids appear in crystal structures and mineral formations.
+    </div>
+    <div class="app-item">
+     <strong>Architecture:</strong> Used in building design and geodesic domes (truncated icosahedron).
+    </div>
+    <div class="app-item">
+     <strong>Game Design:</strong> Dice are based on Platonic solids (d4=tetrahedron, d6=cube, d8=octahedron, d12=dodecahedron, d20=icosahedron).
+    </div>
+    <div class="app-item">
+     <strong>Molecular Chemistry:</strong> Some molecules form Platonic solid structures (e.g., methane has tetrahedral geometry).
+    </div>
+    <div class="app-item">
+     <strong>Art and Design:</strong> Used in sculpture, jewelry, and computer graphics for their aesthetic properties.
+    </div>
+   </div>
+
+   <div class="practice-problems">
+    <div class="section-title">Practice Problems</div>
+
+    <div class="problem">
+     <div class="problem-title">Problem 1: Tetrahedron Properties</div>
+     <p>A regular tetrahedron has edge length 2 cm. Calculate its surface area and volume.</p>
+     <button class="solution-toggle" onclick="toggleSolution(1)">Show Solution</button>
+     <div class="solution" id="solution1">
+      <p><strong>Surface Area:</strong> $A = 4 \times \frac{\sqrt{3}}{4} \times a^2 = \sqrt{3} \times a^2 = \sqrt{3} \times 4 = 4\sqrt{3}$ cm²</p>
+      <p><strong>Volume:</strong> $V = \frac{\sqrt{2}}{12} \times a^3 = \frac{\sqrt{2}}{12} \times 8 = \frac{8\sqrt{2}}{12} = \frac{2\sqrt{2}}{3}$ cm³</p>
+     </div>
+    </div>
+
+    <div class="problem">
+     <div class="problem-title">Problem 2: Cube Dual</div>
+     <p>What is the dual polyhedron of a cube? How many faces, edges, and vertices does it have?</p>
+     <button class="solution-toggle" onclick="toggleSolution(2)">Show Solution</button>
+     <div class="solution" id="solution2">
+      <p>The dual of a cube is an octahedron.</p>
+      <p><strong>Octahedron:</strong> 8 faces (triangles), 12 edges, 6 vertices</p>
+      <p>The dual operation swaps faces and vertices while preserving edges.</p>
+     </div>
+    </div>
+
+    <div class="problem">
+     <div class="problem-title">Problem 3: Euler's Formula Verification</div>
+     <p>Verify Euler's formula for a dodecahedron.</p>
+     <button class="solution-toggle" onclick="toggleSolution(3)">Show Solution</button>
+     <div class="solution" id="solution3">
+      <p>Dodecahedron: V = 20, E = 30, F = 12</p>
+      <p>Euler's formula: V - E + F = 20 - 30 + 12 = 2 ✓</p>
+     </div>
+    </div>
+
+    <div class="problem">
+     <div class="problem-title">Problem 4: Impossible Platonic Solid</div>
+     <p>Why can't there be a Platonic solid with triangular faces where 7 triangles meet at each vertex?</p>
+     <button class="solution-toggle" onclick="toggleSolution(4)">Show Solution</button>
+     <div class="solution" id="solution4">
+      <p>For triangular faces (p=3), q=7: $\frac{1}{p} + \frac{1}{q} = \frac{1}{3} + \frac{1}{7} = \frac{10}{21} \approx 0.476$</p>
+      <p>This is greater than $\frac{1}{2} = 0.5$, so it violates the inequality $\frac{1}{p} + \frac{1}{q} < \frac{1}{2}$</p>
+      <p>The angle at each vertex would be too large to tile the sphere.</p>
+     </div>
+    </div>
+   </div>
+
+   <div class="key-takeaways">
+    <div class="section-title" style="color: #2c3e50; border-color: #667eea;">Key Takeaways</div>
+    <div class="takeaway-item">
+     ✓ There are exactly five Platonic solids: tetrahedron, cube, octahedron, dodecahedron, and icosahedron
+    </div>
+    <div class="takeaway-item">
+     ✓ All Platonic solids satisfy Euler's formula: V - E + F = 2
+    </div>
+    <div class="takeaway-item">
+     ✓ Each Platonic solid is characterized by two numbers: (p, q) where p is the number of sides per face and q is the number of faces meeting at each vertex
+    </div>
+    <div class="takeaway-item">
+     ✓ The five solids are the only regular polyhedra that can exist in 3D space
+    </div>
+    <div class="takeaway-item">
+     ✓ Platonic solids have important applications in mathematics, science, architecture, and game design
+    </div>
+   </div>
+  </div>
+
+  <script>
+   // Enhanced Interactive Platonic Solids Explorer
+   const canvas = document.getElementById('platonicCanvas');
+   const ctx = canvas.getContext('2d');
+
+   // Control elements
+   const autoRotateBtn = document.getElementById('autoRotateBtn');
+   const resetBtn = document.getElementById('resetBtn');
+   const wireframeToggle = document.getElementById('wireframeToggle');
+   const labelsToggle = document.getElementById('labelsToggle');
+
+   // State variables
+   let currentSolid = 'tetrahedron';
+   let isAutoRotating = false;
+   let isWireframe = false;
+   let showLabels = false;
+   let isDragging = false;
+   let lastMouseX = 0;
+   let lastMouseY = 0;
+   let rotationX = 30;
+   let rotationY = 45;
+   let scale = 1;
+   let autoRotateSpeed = 0.5;
+
+   // Animation frame
+   let animationId;
+
+   // Platonic solids data with enhanced properties
+   const platonicSolids = {
+    tetrahedron: {
+     name: 'Tetrahedron',
+     vertices: [
+      [1, 1, 1], [-1, -1, 1], [-1, 1, -1], [1, -1, -1]
+     ],
+     faces: [[0, 1, 2], [0, 2, 3], [0, 3, 1], [1, 3, 2]],
+     faceNames: ['ABC', 'ACD', 'ADB', 'BCD'],
+     color: '#e74c3c',
+     edgeColor: '#c0392b'
+    },
+    cube: {
+     name: 'Cube',
+     vertices: [
+      [-1, -1, -1], [1, -1, -1], [1, 1, -1], [-1, 1, -1],
+      [-1, -1, 1], [1, -1, 1], [1, 1, 1], [-1, 1, 1]
+     ],
+     faces: [
+      [0, 1, 2, 3], [4, 5, 6, 7], [0, 1, 5, 4],
+      [1, 2, 6, 5], [2, 3, 7, 6], [3, 0, 4, 7]
+     ],
+     faceNames: ['ABCD', 'EFGH', 'AEFB', 'BFGC', 'CGHD', 'DHEA'],
+     color: '#3498db',
+     edgeColor: '#2980b9'
+    },
+    octahedron: {
+     name: 'Octahedron',
+     vertices: [
+      [1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]
+     ],
+     faces: [
+      [0, 2, 4], [0, 4, 3], [0, 3, 5], [0, 5, 2],
+      [1, 2, 4], [1, 4, 3], [1, 3, 5], [1, 5, 2]
+     ],
+     faceNames: ['ACF', 'AFE', 'AED', 'ADC', 'BCF', 'BFE', 'BED', 'BDC'],
+     color: '#27ae60',
+     edgeColor: '#229954'
+    },
+    dodecahedron: {
+     name: 'Dodecahedron',
+     vertices: (() => {
+      const phi = (1 + Math.sqrt(5)) / 2;
+      return [
+       [1, 1, 1], [1, 1, -1], [1, -1, 1], [1, -1, -1],
+       [-1, 1, 1], [-1, 1, -1], [-1, -1, 1], [-1, -1, -1],
+       [0, phi, 1/phi], [0, phi, -1/phi], [0, -phi, 1/phi], [0, -phi, -1/phi],
+       [1/phi, 0, phi], [1/phi, 0, -phi], [-1/phi, 0, phi], [-1/phi, 0, -phi],
+       [phi, 1/phi, 0], [phi, -1/phi, 0], [-phi, 1/phi, 0], [-phi, -1/phi, 0]
+      ];
+     })(),
+     faces: [
+      [0, 8, 4, 14, 12], [0, 12, 2, 10, 8], [0, 8, 10, 16, 18],
+      [0, 18, 16, 6, 4], [1, 9, 5, 15, 13], [1, 13, 3, 11, 9],
+      [1, 9, 11, 17, 19], [1, 19, 17, 7, 5], [2, 12, 14, 19, 11],
+      [2, 11, 3, 13, 12], [3, 13, 15, 7, 11], [4, 6, 16, 10, 14]
+     ],
+     faceNames: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'],
+     color: '#9b59b6',
+     edgeColor: '#8e44ad'
+    },
+    icosahedron: {
+     name: 'Icosahedron',
+     vertices: (() => {
+      const phi = (1 + Math.sqrt(5)) / 2;
+      return [
+       [0, 1, phi], [0, 1, -phi], [0, -1, phi], [0, -1, -phi],
+       [1, phi, 0], [1, -phi, 0], [-1, phi, 0], [-1, -phi, 0],
+       [phi, 0, 1], [phi, 0, -1], [-phi, 0, 1], [-phi, 0, -1]
+      ];
+     })(),
+     faces: [
+      [0, 2, 8], [0, 8, 4], [0, 4, 6], [0, 6, 10], [0, 10, 2],
+      [1, 3, 11], [1, 11, 7], [1, 7, 5], [1, 5, 9], [1, 9, 3],
+      [2, 3, 9], [2, 9, 8], [3, 2, 10], [3, 10, 11], [4, 5, 7],
+      [4, 7, 6], [5, 4, 8], [5, 8, 9], [6, 7, 11], [6, 11, 10]
+     ],
+     faceNames: Array.from({length: 20}, (_, i) => String.fromCharCode(65 + i)),
+     color: '#e67e22',
+     edgeColor: '#d35400'
+    }
+   };
+
+   function project3D(point, rotateX, rotateY, scale) {
+    const cosX = Math.cos(rotateX * Math.PI / 180);
+    const sinX = Math.sin(rotateX * Math.PI / 180);
+    const cosY = Math.cos(rotateY * Math.PI / 180);
+    const sinY = Math.sin(rotateY * Math.PI / 180);
+
+    let [x, y, z] = point;
+
+    // Rotate around X axis
+    let tempY = y * cosX - z * sinX;
+    z = y * sinX + z * cosX;
+    y = tempY;
+
+    // Rotate around Y axis
+    let tempX = x * cosY + z * sinY;
+    z = -x * sinY + z * cosY;
+    x = tempX;
+
+    // Scale and project
+    const focalLength = 300;
+    const projectedX = (x * scale * focalLength) / (focalLength + z) + canvas.width / 2;
+    const projectedY = (y * scale * focalLength) / (focalLength + z) + canvas.height / 2;
+
+    return [projectedX, projectedY, z];
+   }
+
+   function drawSolid() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const solid = platonicSolids[currentSolid];
+
+    // Project vertices
+    const projectedVertices = solid.vertices.map(vertex =>
+     project3D(vertex, rotationX, rotationY, scale)
+    );
+
+    // Sort faces by depth (painter's algorithm)
+    const faceDepths = solid.faces.map((face, index) => {
+     const avgZ = face.reduce((sum, vertexIndex) =>
+      sum + projectedVertices[vertexIndex][2], 0) / face.length;
+     return { face, index, depth: avgZ };
+    }).sort((a, b) => b.depth - a.depth);
+
+    // Draw faces
+    faceDepths.forEach(({ face, index }) => {
+     ctx.beginPath();
+     ctx.moveTo(projectedVertices[face[0]][0], projectedVertices[face[0]][1]);
+
+     for (let i = 1; i < face.length; i++) {
+      ctx.lineTo(projectedVertices[face[i]][0], projectedVertices[face[i]][1]);
+     }
+
+     ctx.closePath();
+
+     if (!isWireframe) {
+      // Fill with transparency
+      ctx.fillStyle = solid.color + '60';
+      ctx.fill();
+     }
+
+     // Draw edges
+     ctx.strokeStyle = solid.edgeColor;
+     ctx.lineWidth = isWireframe ? 3 : 2;
+     ctx.stroke();
+
+     // Draw face labels if enabled
+     if (showLabels) {
+      const centerX = face.reduce((sum, vertexIndex) =>
+       sum + projectedVertices[vertexIndex][0], 0) / face.length;
+      const centerY = face.reduce((sum, vertexIndex) =>
+       sum + projectedVertices[vertexIndex][1], 0) / face.length;
+
+      ctx.fillStyle = '#fff';
+      ctx.strokeStyle = '#000';
+      ctx.lineWidth = 1;
+      ctx.font = '14px Arial';
+      ctx.textAlign = 'center';
+      ctx.strokeText(solid.faceNames[index], centerX, centerY);
+      ctx.fillText(solid.faceNames[index], centerX, centerY);
+     }
+    });
+
+    // Update properties display
+    document.getElementById('facesCount').textContent = solid.faces.length;
+    document.getElementById('edgesCount').textContent = solid.faces.length * (solid.faces[0].length) / 2;
+    document.getElementById('verticesCount').textContent = solid.vertices.length;
+    document.getElementById('solidType').textContent = solid.name;
+   }
+
+   function animate() {
+    if (isAutoRotating) {
+     rotationY += autoRotateSpeed;
+     if (rotationY >= 360) rotationY -= 360;
+    }
+
+    drawSolid();
+    animationId = requestAnimationFrame(animate);
+   }
+
+   // Mouse event handlers
+   canvas.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    lastMouseX = e.clientX;
+    lastMouseY = e.clientY;
+    canvas.style.cursor = 'grabbing';
+   });
+
+   canvas.addEventListener('mousemove', (e) => {
+    if (isDragging) {
+     const deltaX = e.clientX - lastMouseX;
+     const deltaY = e.clientY - lastMouseY;
+
+     rotationY += deltaX * 0.5;
+     rotationX += deltaY * 0.5;
+
+     // Clamp rotationX to prevent flipping
+     rotationX = Math.max(-90, Math.min(90, rotationX));
+
+     lastMouseX = e.clientX;
+     lastMouseY = e.clientY;
+    }
+   });
+
+   canvas.addEventListener('mouseup', () => {
+    isDragging = false;
+    canvas.style.cursor = 'grab';
+   });
+
+   canvas.addEventListener('mouseleave', () => {
+    isDragging = false;
+    canvas.style.cursor = 'default';
+   });
+
+   // Touch event handlers for mobile
+   canvas.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    isDragging = true;
+    lastMouseX = e.touches[0].clientX;
+    lastMouseY = e.touches[0].clientY;
+   });
+
+   canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    if (isDragging) {
+     const deltaX = e.touches[0].clientX - lastMouseX;
+     const deltaY = e.touches[0].clientY - lastMouseY;
+
+     rotationY += deltaX * 0.5;
+     rotationX += deltaY * 0.5;
+     rotationX = Math.max(-90, Math.min(90, rotationX));
+
+     lastMouseX = e.touches[0].clientX;
+     lastMouseY = e.touches[0].clientY;
+    }
+   });
+
+   canvas.addEventListener('touchend', () => {
+    isDragging = false;
+   });
+
+   // Mouse wheel for zooming
+   canvas.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    scale += e.deltaY * -0.001;
+    scale = Math.max(0.3, Math.min(3, scale));
+   });
+
+   // Control event listeners
+   autoRotateBtn.addEventListener('click', () => {
+    isAutoRotating = !isAutoRotating;
+    autoRotateBtn.textContent = isAutoRotating ? 'Stop' : 'Start';
+    autoRotateBtn.classList.toggle('active');
+   });
+
+   resetBtn.addEventListener('click', () => {
+    rotationX = 30;
+    rotationY = 45;
+    scale = 1;
+    isAutoRotating = false;
+    autoRotateBtn.textContent = 'Start';
+    autoRotateBtn.classList.remove('active');
+   });
+
+   wireframeToggle.addEventListener('change', () => {
+    isWireframe = wireframeToggle.checked;
+   });
+
+   labelsToggle.addEventListener('change', () => {
+    showLabels = labelsToggle.checked;
+   });
+
+   // Solid selection buttons
+   document.querySelectorAll('.solid-btn').forEach(button => {
+    button.addEventListener('click', () => {
+     document.querySelectorAll('.solid-btn').forEach(btn => btn.classList.remove('active'));
+     button.classList.add('active');
+     currentSolid = button.dataset.solid;
+    });
+   });
+
+   // Set initial cursor
+   canvas.style.cursor = 'grab';
+
+   // Start animation loop
+   animate();
+
+   // Solution toggle function
+   function toggleSolution(problemNumber) {
+    const solution = document.getElementById(`solution${problemNumber}`);
+    const button = solution.previousElementSibling;
+
+    if (solution.style.display === 'none' || solution.style.display === '') {
+     solution.style.display = 'block';
+     button.textContent = 'Hide Solution';
+    } else {
+     solution.style.display = 'none';
+     button.textContent = 'Show Solution';
+    }
+   }
+  </script>
+ </body>
+</html>

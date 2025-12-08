@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<!-- tags: Others -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Number of Divisors
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+    /* Enhanced text containment and scrolling */
+    .main-content {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      overflow: auto;
+      max-height: none;
+    }
+    
+    .exp, .graybox, .section {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      overflow: auto;
+    }
+    
+    /* Rule cards styling */
+    .rule-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 15px 0;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+    
+    .rule-card h3 {
+      margin-top: 0;
+      font-size: 1.3em;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    }
+    
+    .rule-card .formula {
+      font-size: 1.4em;
+      font-weight: bold;
+      background: rgba(255,255,255,0.2);
+      padding: 10px;
+      border-radius: 8px;
+      margin: 10px 0;
+      text-align: center;
+    }
+    
+    /* Interactive demo styling */
+    .interactive-demo {
+      background: #f8f9fa;
+      border: 2px solid #007acc;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+      text-align: center;
+    }
+    
+    .demo-input {
+      padding: 10px;
+      font-size: 16px;
+      border: 2px solid #007acc;
+      border-radius: 6px;
+      margin: 10px;
+      width: 200px;
+    }
+    
+    .demo-button {
+      background: #007acc;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px;
+      transition: background 0.3s;
+    }
+    
+    .demo-button:hover {
+      background: #0056b3;
+    }
+    
+    .demo-result {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 15px 0;
+      min-height: 30px;
+    }
+    
+    /* Problem items styling */
+    .problem-item {
+      background: #fff3cd;
+      border: 2px solid #ffc107;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      position: relative;
+    }
+    
+    .problem-item .problem-number {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: #ffc107;
+      color: #000;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: bold;
+      font-size: 0.9em;
+    }
+    
+    .problem-item .problem-content {
+      margin-left: 60px;
+    }
+    
+    /* Solution button styling */
+    .solution-button {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      margin: 10px 0;
+      transition: background 0.3s;
+    }
+    
+    .solution-button:hover {
+      background: #218838;
+    }
+    
+    .solution-content {
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      border-radius: 6px;
+      padding: 15px;
+      margin: 10px 0;
+      display: none;
+    }
+    
+    /* Key takeaways styling */
+    .key-takeaways {
+      background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+      color: #333;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 20px 0;
+      border: 2px solid rgba(255,255,255,0.3);
+    }
+    
+    .key-takeaways h3 {
+      margin-top: 0;
+      text-align: center;
+      font-size: 1.4em;
+      text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
+    }
+    
+    .key-takeaways ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+    
+    .key-takeaways li {
+      margin: 8px 0;
+      font-weight: bold;
+    }
+    
+    /* Canvas visualization styling */
+    .visualization-container {
+      text-align: center;
+      margin: 20px 0;
+    }
+    
+    #divisorsCanvas {
+      border: 2px solid #007acc;
+      border-radius: 8px;
+      background: white;
+      max-width: 100%;
+      height: auto;
+    }
+    
+    /* Section styling */
+    .section {
+      margin: 30px 0;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border-left: 4px solid #007acc;
+    }
+    
+    .section h2 {
+      color: #007acc;
+      margin-top: 0;
+      font-size: 1.5em;
+    }
+    
+    /* Enhanced math styling */
+    .math {
+      font-family: 'Times New Roman', serif;
+    }
+    
+    .highlight {
+      background: #fff3cd;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    
+    .orange { color: #fd7e14; }
+    .blue { color: #007bff; }
+    .green { color: #28a745; }
+    .red { color: #dc3545; }
+    
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .rule-card, .interactive-demo, .section {
+        padding: 15px;
+      }
+      
+      .demo-input {
+        width: 150px;
+      }
+      
+      .problem-item .problem-content {
+        margin-left: 50px;
+      }
+    }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Others">
+   Number of Divisors
+  </div>
+  <div class="container">
+   <div class="main-content">
+    <div class="section">
+     <h2>Core Concept</h2>
+     <p>The number of divisors (also called the divisor function) tells us how many positive divisors a number has. For any natural number with prime factorization:</p>
+     <div class="math" style="font-size: 1.3em; text-align: center; margin: 20px 0;">
+      $N = p_1^{a_1} \times p_2^{a_2} \times \cdots \times p_k^{a_k}$
+     </div>
+     <p>The number of positive divisors $d(N)$ is given by:</p>
+     <div class="rule-card">
+      <h3>Number of Divisors Formula</h3>
+      <div class="formula">
+       $d(N) = (a_1 + 1)(a_2 + 1) \cdots (a_k + 1)$
+      </div>
+     </div>
+     <p>This formula works because each prime factor can contribute different powers (from 0 to the maximum exponent) to form divisors.</p>
+    </div>
+
+    <div class="section">
+     <h2>Detailed Examples</h2>
+     
+     <h3>Example 1: Simple Prime Number</h3>
+     <p>For a prime number like 7:</p>
+     <div class="math" style="margin: 10px 0;">
+      $7 = 7^1$
+     </div>
+     <p>Number of divisors: $(1 + 1) = 2$</p>
+     <p>The divisors are: 1 and 7</p>
+     
+     <h3>Example 2: Prime Power</h3>
+     <p>For $2^4 = 16$:</p>
+     <div class="math" style="margin: 10px 0;">
+      $16 = 2^4$
+     </div>
+     <p>Number of divisors: $(4 + 1) = 5$</p>
+     <p>The divisors are: $2^0, 2^1, 2^2, 2^3, 2^4 = 1, 2, 4, 8, 16$</p>
+     
+     <h3>Example 3: Multiple Prime Factors</h3>
+     <p>For $60 = 2^2 \times 3^1 \times 5^1$:</p>
+     <div class="math" style="margin: 10px 0;">
+      $60 = 2^2 \times 3^1 \times 5^1$
+     </div>
+     <p>Number of divisors: $(2 + 1)(1 + 1)(1 + 1) = 3 \times 2 \times 2 = 12$</p>
+     <p>The divisors are: 1, 2, 3, 4, 5, 6, 10, 12, 15, 20, 30, 60</p>
+    </div>
+
+    <div class="section">
+     <h2>Visual Guide</h2>
+     <div class="visualization-container">
+      <canvas id="divisorsCanvas" width="800" height="500"></canvas>
+     </div>
+     <p>The visualization above shows how the prime factorization determines the number of divisors through the exponent combinations.</p>
+    </div>
+
+    <div class="section">
+     <h2>Interactive Demo</h2>
+     <div class="interactive-demo">
+      <h3>Test Number of Divisors Calculator</h3>
+      <p>Enter a number to see its prime factorization and divisor count:</p>
+      <input type="number" id="testNumber" class="demo-input" placeholder="Enter a number" min="1" value="60">
+      <br>
+      <button onclick="calculateDivisors()" class="demo-button">Calculate Divisors</button>
+      <div id="demoResult" class="demo-result"></div>
+      <div id="factorizationResult"></div>
+      <div id="divisorsList"></div>
+     </div>
+    </div>
+
+    <div class="section">
+     <h2>Applications</h2>
+     <ul>
+      <li><strong>Number Theory:</strong> Used in studying perfect numbers, abundant numbers, and deficient numbers</li>
+      <li><strong>Cryptography:</strong> Important in RSA algorithm for finding numbers with specific divisor properties</li>
+      <li><strong>Computer Science:</strong> Used in algorithms for finding factors and optimizing computations</li>
+      <li><strong>Mathematics Competitions:</strong> Common in problems involving highly composite numbers</li>
+     </ul>
+    </div>
+
+    <div class="section">
+     <h2>Practice Problems</h2>
+     
+     <div class="problem-item">
+      <div class="problem-number">1</div>
+      <div class="problem-content">
+       <p>Find the number of positive divisors of 72.</p>
+       <button class="solution-button" onclick="toggleSolution('sol1')">Show Solution</button>
+       <div id="sol1" class="solution-content">
+        <p>First, factorize 72: $72 = 2^3 \times 3^2$</p>
+        <p>Number of divisors: $(3+1)(2+1) = 4 \times 3 = 12$</p>
+        <p>The divisors are: 1, 2, 3, 4, 6, 8, 9, 12, 18, 24, 36, 72</p>
+       </div>
+      </div>
+     </div>
+     
+     <div class="problem-item">
+      <div class="problem-number">2</div>
+      <div class="problem-content">
+       <p>How many positive divisors does 100 have?</p>
+       <button class="solution-button" onclick="toggleSolution('sol2')">Show Solution</button>
+       <div id="sol2" class="solution-content">
+        <p>Factorize 100: $100 = 2^2 \times 5^2$</p>
+        <p>Number of divisors: $(2+1)(2+1) = 3 \times 3 = 9$</p>
+        <p>The divisors are: 1, 2, 4, 5, 10, 20, 25, 50, 100</p>
+       </div>
+      </div>
+     </div>
+     
+     <div class="problem-item">
+      <div class="problem-number">3</div>
+      <div class="problem-content">
+       <p>Find the number of divisors of 210.</p>
+       <button class="solution-button" onclick="toggleSolution('sol3')">Show Solution</button>
+       <div id="sol3" class="solution-content">
+        <p>Factorize 210: $210 = 2^1 \times 3^1 \times 5^1 \times 7^1$</p>
+        <p>Number of divisors: $(1+1)(1+1)(1+1)(1+1) = 2 \times 2 \times 2 \times 2 = 16$</p>
+        <p>The divisors are: 1, 2, 3, 5, 6, 7, 10, 14, 15, 21, 30, 35, 42, 70, 105, 210</p>
+       </div>
+      </div>
+     </div>
+     
+     <div class="problem-item">
+      <div class="problem-number">4</div>
+      <div class="problem-content">
+       <p>If a number has exactly 12 positive divisors, what could its prime factorization be?</p>
+       <button class="solution-button" onclick="toggleSolution('sol4')">Show Solution</button>
+       <div id="sol4" class="solution-content">
+        <p>Possible factorizations where $(a+1)(b+1)\cdots = 12$:</p>
+        <ul>
+         <li>$12 = 12 \times 1$: Not possible (would be $p^{11}$)</li>
+         <li>$12 = 6 \times 2$: $p^5 \times q^1$</li>
+         <li>$12 = 4 \times 3$: $p^3 \times q^2$</li>
+         <li>$12 = 3 \times 2 \times 2$: $p^2 \times q^1 \times r^1$</li>
+        </ul>
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <h3>Key Takeaways</h3>
+     <ul>
+      <li>The number of divisors depends only on the exponents in the prime factorization</li>
+      <li>Each prime factor contributes (exponent + 1) to the total divisor count</li>
+      <li>Numbers with many small prime factors tend to have more divisors</li>
+      <li>The formula works for any natural number greater than 1</li>
+      <li>Prime numbers have exactly 2 divisors: 1 and themselves</li>
+     </ul>
+    </div>
+   </div>
+  </div>
+  <script>
+    function toggleSolution(id) {
+      const solution = document.getElementById(id);
+      const button = solution.previousElementSibling;
+      
+      if (solution.style.display === 'none' || solution.style.display === '') {
+        solution.style.display = 'block';
+        button.textContent = 'Hide Solution';
+      } else {
+        solution.style.display = 'none';
+        button.textContent = 'Show Solution';
+      }
+    }
+
+    function drawDivisorsVisualization() {
+      const canvas = document.getElementById('divisorsCanvas');
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+      
+      // Clear canvas
+      ctx.clearRect(0, 0, width, height);
+      
+      // Set up coordinate system
+      const margin = 60;
+      const plotWidth = width - 2 * margin;
+      const plotHeight = height - 2 * margin;
+      
+      // Draw background
+      ctx.fillStyle = '#f8f9fa';
+      ctx.fillRect(0, 0, width, height);
+      
+      // Title
+      ctx.fillStyle = '#333';
+      ctx.font = '16px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('Divisor Combinations for 2³ × 3²', width/2, 30);
+      
+      // Draw the grid for 2³ (4 possibilities: 2^0, 2^1, 2^2, 2^3)
+      const cellWidth = plotWidth / 6;
+      const cellHeight = plotHeight / 4;
+      
+      ctx.strokeStyle = '#007acc';
+      ctx.lineWidth = 2;
+      
+      // Draw grid
+      for (let i = 0; i <= 4; i++) {
+        const y = margin + i * cellHeight;
+        ctx.beginPath();
+        ctx.moveTo(margin, y);
+        ctx.lineTo(width - margin, y);
+        ctx.stroke();
+      }
+      
+      for (let i = 0; i <= 6; i++) {
+        const x = margin + i * cellWidth;
+        ctx.beginPath();
+        ctx.moveTo(x, margin);
+        ctx.lineTo(x, height - margin);
+        ctx.stroke();
+      }
+      
+      // Label axes
+      ctx.fillStyle = '#333';
+      ctx.font = '14px Arial';
+      ctx.textAlign = 'center';
+      
+      // 2^x labels
+      for (let i = 0; i < 4; i++) {
+        const y = margin + i * cellHeight + cellHeight/2;
+        ctx.fillText(`2^${i}`, margin - 30, y + 5);
+      }
+      
+      // 3^y labels
+      for (let j = 0; j < 3; j++) {
+        const x = margin + j * cellWidth + cellWidth/2;
+        ctx.fillText(`3^${j}`, x, height - margin + 20);
+      }
+      
+      // Fill cells with divisor values
+      ctx.font = '16px Arial';
+      for (let i = 0; i < 4; i++) {
+        for (let j = 0; j < 3; j++) {
+          const x = margin + j * cellWidth + cellWidth/2;
+          const y = margin + i * cellHeight + cellHeight/2;
+          
+          const divisor = Math.pow(2, i) * Math.pow(3, j);
+          
+          // Color based on value
+          const intensity = Math.min(divisor / 24, 1);
+          const color = `hsl(${240 - intensity * 60}, 70%, ${90 - intensity * 30}%)`;
+          
+          ctx.fillStyle = color;
+          ctx.fillRect(x - cellWidth/2 + 2, y - cellHeight/2 + 2, cellWidth - 4, cellHeight - 4);
+          
+          ctx.fillStyle = '#333';
+          ctx.fillText(divisor.toString(), x, y + 5);
+        }
+      }
+      
+      // Draw legend
+      ctx.fillStyle = '#333';
+      ctx.font = '12px Arial';
+      ctx.textAlign = 'left';
+      ctx.fillText('Each cell represents 2^x × 3^y', margin, height - 10);
+      ctx.fillText('Total divisors: (3+1) × (2+1) = 12', margin + 250, height - 10);
+    }
+
+    function getPrimeFactors(n) {
+      const factors = {};
+      let divisor = 2;
+      
+      while (n >= 2) {
+        if (n % divisor === 0) {
+          factors[divisor] = (factors[divisor] || 0) + 1;
+          n = n / divisor;
+        } else {
+          divisor++;
+        }
+      }
+      
+      return factors;
+    }
+
+    function calculateDivisors() {
+      const input = document.getElementById('testNumber');
+      const result = document.getElementById('demoResult');
+      const factorization = document.getElementById('factorizationResult');
+      const divisorsList = document.getElementById('divisorsList');
+      
+      const number = parseInt(input.value);
+      
+      if (isNaN(number) || number < 1) {
+        result.textContent = 'Please enter a positive integer';
+        result.style.color = '#f44336';
+        factorization.textContent = '';
+        divisorsList.textContent = '';
+        return;
+      }
+      
+      if (number === 1) {
+        result.textContent = '1 has exactly 1 positive divisor: 1';
+        result.style.color = '#4caf50';
+        factorization.textContent = '1 has no prime factors';
+        divisorsList.textContent = 'Divisors: 1';
+        return;
+      }
+      
+      const factors = getPrimeFactors(number);
+      
+      // Calculate number of divisors
+      let divisorCount = 1;
+      for (const exponent of Object.values(factors)) {
+        divisorCount *= (exponent + 1);
+      }
+      
+      // Display results
+      result.textContent = `${number} has ${divisorCount} positive divisors`;
+      result.style.color = '#4caf50';
+      
+      // Display factorization
+      const factorizationText = Object.entries(factors)
+        .map(([prime, exp]) => `${prime}${exp > 1 ? `^${exp}` : ''}`)
+        .join(' × ');
+      factorization.innerHTML = `<strong>Prime factorization:</strong> ${number} = ${factorizationText}`;
+      
+      // Generate all divisors
+      const divisors = generateDivisors(factors);
+      divisorsList.innerHTML = `<strong>Divisors:</strong> ${divisors.sort((a,b) => a-b).join(', ')}`;
+    }
+
+    function generateDivisors(factors) {
+      const primes = Object.keys(factors).map(Number);
+      const exponents = Object.values(factors);
+      const divisors = [];
+      
+      function generate(current, index) {
+        if (index === primes.length) {
+          divisors.push(current);
+          return;
+        }
+        
+        const prime = primes[index];
+        const maxExp = exponents[index];
+        
+        for (let exp = 0; exp <= maxExp; exp++) {
+          generate(current * Math.pow(prime, exp), index + 1);
+        }
+      }
+      
+      generate(1, 0);
+      return divisors;
+    }
+
+    // Initialize visualization when page loads
+    window.onload = function() {
+      drawDivisorsVisualization();
+      
+      // Set up interactive demo
+      const input = document.getElementById('testNumber');
+      input.addEventListener('input', calculateDivisors);
+      calculateDivisors(); // Initial calculation
+    };
+  </script>
+ </body>
+</html>

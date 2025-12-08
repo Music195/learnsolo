@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<!-- tags: Mathematics -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Necessary Condition for Local Extrema
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   .interactive-demo {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    border: 2px solid #e1e8ed;
+   }
+   .demo-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 15px;
+   }
+   .demo-input-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 200px;
+   }
+   .demo-input-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #2c3e50;
+   }
+   .demo-input {
+    padding: 8px;
+    border: 2px solid #bdc3c7;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+   }
+   .demo-input:focus {
+    outline: none;
+    border-color: #3498db;
+   }
+   .demo-button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: transform 0.2s;
+   }
+   .demo-button:hover {
+    transform: translateY(-2px);
+   }
+   .demo-result {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+    border-left: 4px solid #3498db;
+   }
+   .math-foundation {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .worked-example {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .practice-problem {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .solution-toggle {
+    background: #2c3e50;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+   }
+   .solution-toggle:hover {
+    background: #34495e;
+   }
+   .solution-content {
+    display: none;
+    background: rgba(255, 255, 255, 0.9);
+    color: #2c3e50;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+   }
+   .key-takeaways {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .key-takeaways h3 {
+    color: #2c3e50;
+    margin-top: 0;
+   }
+   .key-takeaways ul {
+    color: #2c3e50;
+   }
+   .extrema-concepts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+   }
+   .concept-card {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #e67e22;
+   }
+   .concept-card h4 {
+    margin-top: 0;
+    color: #2c3e50;
+   }
+   .math-orange {
+    color: #e67e22;
+    font-weight: bold;
+   }
+   .visualization-section {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+    border: 2px solid #ecf0f1;
+    text-align: center;
+   }
+   canvas {
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin: 10px 0;
+   }
+   .theorem-box {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+    border-left: 5px solid #3498db;
+   }
+   .fermat-theorem {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Mathematics">
+   Necessary Condition for Local Extrema
+  </div>
+  <div class="container">
+   <div class="main-content">
+    <div class="section-title">
+     Necessary Condition for Local Extrema
+    </div>
+
+    <div class="theorem-box">
+     <h3>Fermat's Theorem (Necessary Condition)</h3>
+     <p>If $f(x)$ is differentiable at $x = a$ and $f$ has a local maximum or local minimum at $x = a$, then:</p>
+     <div style="text-align: center; margin: 15px 0; font-size: 18px;">
+      $$f'(a) = 0$$
+     </div>
+     <p><strong>In words:</strong> At a local extremum of a differentiable function, the derivative must be zero (horizontal tangent line).</p>
+    </div>
+
+    <div class="math-foundation">
+     <h3>Mathematical Foundations</h3>
+     <p>Fermat's theorem establishes that local extrema occur only at critical points where the derivative is zero or undefined. This is a necessary but not sufficient condition for local extrema.</p>
+
+     <div class="extrema-concepts">
+      <div class="concept-card">
+       <h4>Local Maximum</h4>
+       <p>Highest point in neighborhood</p>
+       <p>$f(x) \leq f(a)$ for nearby x</p>
+       <p>Derivative changes from + to -</p>
+       <p>Concave down at the point</p>
+      </div>
+
+      <div class="concept-card">
+       <h4>Local Minimum</h4>
+       <p>Lowest point in neighborhood</p>
+       <p>$f(x) \geq f(a)$ for nearby x</p>
+       <p>Derivative changes from - to +</p>
+       <p>Concave up at the point</p>
+      </div>
+
+      <div class="concept-card">
+       <h4>Critical Points</h4>
+       <p>Where f'(x) = 0 or undefined</p>
+       <p>Candidates for local extrema</p>
+       <p>Horizontal tangent lines</p>
+       <p>Stationary points</p>
+      </div>
+
+      <div class="concept-card">
+       <h4>Necessary vs Sufficient</h4>
+       <p>Necessary: f'(a) = 0 for extrema</p>
+       <p>Not sufficient: critical points may not be extrema</p>
+       <p>Second derivative test needed</p>
+       <p>First derivative test alternative</p>
+      </div>
+     </div>
+    </div>
+
+    <div class="interactive-demo">
+     <h3>Interactive Critical Points Finder</h3>
+     <p>Enter a function to find its critical points and analyze potential local extrema.</p>
+
+     <div class="demo-controls">
+      <div class="demo-input-group">
+       <label for="function-input">Function f(x):</label>
+       <input type="text" id="function-input" class="demo-input" value="x^3 - 3x^2 + 1" placeholder="e.g., x^3 - 3x^2 + 1, x^4 - 2x^2, sin(x)">
+      </div>
+      <div class="demo-input-group">
+       <label for="analysis-interval">Analysis Interval:</label>
+       <input type="text" id="analysis-interval" class="demo-input" value="-2, 4" placeholder="e.g., -2, 4 or -1, 3">
+      </div>
+      <button onclick="findCriticalPoints()" class="demo-button">Find Critical Points</button>
+     </div>
+
+     <div class="demo-result">
+      <h4>Critical Points Analysis:</h4>
+      <p><strong>Function:</strong> <span id="function-display">f(x) = x³ - 3x² + 1</span></p>
+      <p><strong>Derivative:</strong> <span id="derivative-display">f'(x) = 3x² - 6x</span></p>
+      <p><strong>Critical Points:</strong> <span id="critical-points">x = 0, x = 2</span></p>
+      <p><strong>Function Values:</strong> <span id="function-values">f(0) = 1, f(2) = -3</span></p>
+      <p><strong>Extrema Classification:</strong> <span id="extrema-type">Local maximum at x = 0, Local minimum at x = 2</span></p>
+     </div>
+
+     <div class="visualization-section">
+      <h4>Function and Critical Points:</h4>
+      <canvas id="criticalPointsCanvas" width="600" height="400"></canvas>
+      <p><em>Red dots mark critical points. Blue curve shows the function, orange lines show tangent lines at critical points.</em></p>
+     </div>
+    </div>
+
+    <div class="fermat-theorem">
+     <h3>Understanding Fermat's Theorem</h3>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Why the Derivative Must Be Zero</h4>
+      <p>Consider a function with a local maximum at x = a:</p>
+      <ul>
+       <li>For x slightly less than a: f(x) < f(a), so f'(a) ≥ 0</li>
+       <li>For x slightly greater than a: f(x) < f(a), so f'(a) ≤ 0</li>
+       <li>Therefore: f'(a) = 0</li>
+      </ul>
+      <p>The same logic applies to local minima.</p>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Geometric Interpretation</h4>
+      <p>At a local extremum, the function changes direction. The tangent line must be horizontal because:</p>
+      <ul>
+       <li>The function stops increasing/decreasing momentarily</li>
+       <li>The instantaneous rate of change is zero</li>
+       <li>The slope of the tangent line is zero</li>
+      </ul>
+     </div>
+    </div>
+
+    <div class="worked-example">
+     <h3>Worked Examples</h3>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Example 1: Cubic Function</h4>
+      <p>Find critical points of $f(x) = x^3 - 3x^2 + 1$.</p>
+      <p><strong>Step 1:</strong> f'(x) = 3x² - 6x = 3x(x - 2)</p>
+      <p><strong>Step 2:</strong> Critical points: 3x(x - 2) = 0 ⇒ x = 0, x = 2</p>
+      <p><strong>Step 3:</strong> f(0) = 1, f(2) = 8 - 12 + 1 = -3</p>
+      <p><strong>Step 4:</strong> Local maximum at x = 0 (f(0) = 1), Local minimum at x = 2 (f(2) = -3)</p>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Example 2: Quartic Function</h4>
+      <p>Find critical points of $f(x) = x^4 - 2x^2$.</p>
+      <p><strong>Step 1:</strong> f'(x) = 4x³ - 4x = 4x(x² - 1) = 4x(x - 1)(x + 1)</p>
+      <p><strong>Step 2:</strong> Critical points: x = -1, x = 0, x = 1</p>
+      <p><strong>Step 3:</strong> f(-1) = 1 - 2 = -1, f(0) = 0, f(1) = 1 - 2 = -1</p>
+      <p><strong>Step 4:</strong> Local maximum at x = 0 (f(0) = 0), Local minima at x = ±1 (f(±1) = -1)</p>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Example 3: Trigonometric Function</h4>
+      <p>Find critical points of $f(x) = \sin(x)$ on [0, 2π].</p>
+      <p><strong>Step 1:</strong> f'(x) = cos(x)</p>
+      <p><strong>Step 2:</strong> Critical points: cos(x) = 0 ⇒ x = π/2, 3π/2</p>
+      <p><strong>Step 3:</strong> f(π/2) = 1, f(3π/2) = -1</p>
+      <p><strong>Step 4:</strong> Local maximum at x = π/2, Local minimum at x = 3π/2</p>
+     </div>
+    </div>
+
+    <div class="practice-problem">
+     <h3>Practice Problems</h3>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Problem 1</h4>
+      <p>Find all critical points of $f(x) = x^3 - 6x^2 + 9x + 1$.</p>
+      <button onclick="toggleSolution('sol1')" class="solution-toggle">Show Solution</button>
+      <div id="sol1" class="solution-content">
+       <p><strong>Step 1:</strong> f'(x) = 3x² - 12x + 9 = 3(x² - 4x + 3) = 3(x - 1)(x - 3)</p>
+       <p><strong>Step 2:</strong> Critical points: x = 1, x = 3</p>
+       <p><strong>Step 3:</strong> f(1) = 1 - 6 + 9 + 1 = 5, f(3) = 27 - 54 + 27 + 1 = 1</p>
+       <p><strong>Step 4:</strong> Local maximum at x = 1 (f(1) = 5), Local minimum at x = 3 (f(3) = 1)</p>
+      </div>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Problem 2</h4>
+      <p>Find critical points of $f(x) = e^x - x$.</p>
+      <button onclick="toggleSolution('sol2')" class="solution-toggle">Show Solution</button>
+      <div id="sol2" class="solution-content">
+       <p><strong>Step 1:</strong> f'(x) = e^x - 1</p>
+       <p><strong>Step 2:</strong> Critical point: e^x - 1 = 0 ⇒ x = 0</p>
+       <p><strong>Step 3:</strong> f(0) = 1 - 0 = 1</p>
+       <p><strong>Step 4:</strong> Local minimum at x = 0 (f(0) = 1)</p>
+      </div>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Problem 3</h4>
+      <p>Find critical points of $f(x) = x^2 + \frac{1}{x}$ for x > 0.</p>
+      <button onclick="toggleSolution('sol3')" class="solution-toggle">Show Solution</button>
+      <div id="sol3" class="solution-content">
+       <p><strong>Step 1:</strong> f'(x) = 2x - 1/x = (2x² - 1)/x</p>
+       <p><strong>Step 2:</strong> Critical point: 2x² - 1 = 0 ⇒ x = 1/√2 ≈ 0.707</p>
+       <p><strong>Step 3:</strong> f(1/√2) = (1/2) + √2 ≈ 0.5 + 1.414 = 1.914</p>
+       <p><strong>Step 4:</strong> Local minimum at x = 1/√2</p>
+      </div>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Problem 4</h4>
+      <p>Find critical points of $f(x) = \cos(x) + x$ on [-π, π].</p>
+      <button onclick="toggleSolution('sol4')" class="solution-toggle">Show Solution</button>
+      <div id="sol4" class="solution-content">
+       <p><strong>Step 1:</strong> f'(x) = -sin(x) + 1</p>
+       <p><strong>Step 2:</strong> Critical points: -sin(x) + 1 = 0 ⇒ sin(x) = 1 ⇒ x = π/2</p>
+       <p><strong>Step 3:</strong> f(π/2) = 0 + π/2 ≈ 1.571</p>
+       <p><strong>Step 4:</strong> Local maximum at x = π/2</p>
+      </div>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <h3>Key Takeaways</h3>
+     <ul>
+      <li><strong>Fermat's theorem:</strong> f'(a) = 0 is necessary for local extrema</li>
+      <li><strong>Critical points:</strong> Where derivative is zero or undefined</li>
+      <li><strong>Horizontal tangent:</strong> Geometric interpretation of f'(a) = 0</li>
+      <li><strong>Not sufficient:</strong> Critical points may not be local extrema</li>
+      <li><strong>Stationary points:</strong> Critical points where f'(x) = 0</li>
+      <li><strong>Candidates only:</strong> All extrema occur at critical points, but not vice versa</li>
+      <li><strong>Testing required:</strong> Use second derivative or first derivative test</li>
+      <li><strong>Geometric meaning:</strong> Function stops increasing/decreasing momentarily</li>
+     </ul>
+    </div>
+
+    <div class="formula-list">
+     <div class="formula-row">
+      <span class="number">
+       1
+      </span>
+      <span class="formula">
+       $f'(a) = 0$
+       <span class="math-orange">
+        (Fermat's Theorem)
+       </span>
+      </span>
+     </div>
+     <div class="formula-row">
+      <span class="number">
+       2
+      </span>
+      <span class="formula">
+       $f(x) \leq f(a)$
+       <span class="math-orange">
+        (Local Maximum)
+       </span>
+      </span>
+     </div>
+     <div class="formula-row">
+      <span class="number">
+       3
+      </span>
+      <span class="formula">
+       $f(x) \geq f(a)$
+       <span class="math-orange">
+        (Local Minimum)
+       </span>
+      </span>
+     </div>
+    </div>
+
+    <div class="visualization-section">
+     <h4>Fermat's Theorem Visualization</h4>
+     <p>Interactive demonstration showing why derivatives must be zero at local extrema:</p>
+     <canvas id="fermatCanvas" width="600" height="400"></canvas>
+     <p><em>The horizontal tangent lines at the local maximum and minimum demonstrate Fermat's theorem</em></p>
+    </div>
+   </div>
+  </div>
+
+  <script>
+   function evaluateFunction(func, x) {
+    const expr = func.toLowerCase().replace(/\s/g, '');
+    if (expr === 'x^3-3x^2+1') return x*x*x - 3*x*x + 1;
+    if (expr === 'x^4-2x^2') return x*x*x*x - 2*x*x;
+    if (expr === 'sin(x)') return Math.sin(x);
+    if (expr === 'cos(x)') return Math.cos(x);
+    if (expr === 'e^x') return Math.exp(x);
+    if (expr.includes('x^3-6x^2+9x+1')) return x*x*x - 6*x*x + 9*x + 1;
+    if (expr.includes('e^x-x')) return Math.exp(x) - x;
+    if (expr.includes('x^2+1/x')) return x*x + 1/x;
+    if (expr.includes('cos(x)+x')) return Math.cos(x) + x;
+    return x*x*x - 3*x*x + 1; // default
+   }
+
+   function evaluateDerivative(func, x) {
+    const expr = func.toLowerCase().replace(/\s/g, '');
+    if (expr === 'x^3-3x^2+1') return 3*x*x - 6*x;
+    if (expr === 'x^4-2x^2') return 4*x*x*x - 4*x;
+    if (expr === 'sin(x)') return Math.cos(x);
+    if (expr === 'cos(x)') return -Math.sin(x);
+    if (expr === 'e^x') return Math.exp(x);
+    if (expr.includes('x^3-6x^2+9x+1')) return 3*x*x - 12*x + 9;
+    if (expr.includes('e^x-x')) return Math.exp(x) - 1;
+    if (expr.includes('x^2+1/x')) return 2*x - 1/x;
+    if (expr.includes('cos(x)+x')) return -Math.sin(x) + 1;
+    return 3*x*x - 6*x; // default
+   }
+
+   function findCriticalPoints() {
+    const funcInput = document.getElementById('function-input').value;
+    const intervalInput = document.getElementById('analysis-interval').value;
+    const [start, end] = intervalInput.split(',').map(x => parseFloat(x.trim()));
+
+    if (!funcInput || isNaN(start) || isNaN(end)) {
+     alert('Please enter valid function and interval');
+     return;
+    }
+
+    // For demo purposes, return known critical points for specific functions
+    const expr = funcInput.toLowerCase().replace(/\s/g, '');
+    let criticalPoints = [];
+    let extremaType = '';
+
+    if (expr === 'x^3-3x^2+1') {
+     criticalPoints = [0, 2];
+     extremaType = 'Local maximum at x = 0, Local minimum at x = 2';
+    } else if (expr === 'x^4-2x^2') {
+     criticalPoints = [-1, 0, 1];
+     extremaType = 'Local maximum at x = 0, Local minima at x = ±1';
+    } else if (expr === 'sin(x)') {
+     criticalPoints = [Math.PI/2, 3*Math.PI/2].filter(x => x >= start && x <= end);
+     extremaType = 'Local maximum at x = π/2, Local minimum at x = 3π/2';
+    } else {
+     criticalPoints = [0, 2]; // default
+     extremaType = 'Check second derivative test for classification';
+    }
+
+    const filteredPoints = criticalPoints.filter(x => x >= start && x <= end);
+    const functionValues = filteredPoints.map(x => `f(${x.toFixed(2)}) = ${evaluateFunction(funcInput, x).toFixed(3)}`).join(', ');
+
+    document.getElementById('function-display').textContent = `f(x) = ${funcInput}`;
+    document.getElementById('derivative-display').textContent = `f'(x) = ${getDerivativeString(funcInput)}`;
+    document.getElementById('critical-points').textContent = filteredPoints.length > 0 ?
+     filteredPoints.map(x => `x = ${x.toFixed(2)}`).join(', ') : 'None in interval';
+    document.getElementById('function-values').textContent = functionValues || 'None';
+    document.getElementById('extrema-type').textContent = extremaType;
+
+    drawCriticalPointsVisualization(funcInput, start, end, filteredPoints);
+   }
+
+   function getDerivativeString(func) {
+    const expr = func.toLowerCase().replace(/\s/g, '');
+    if (expr === 'x^3-3x^2+1') return '3x² - 6x';
+    if (expr === 'x^4-2x^2') return '4x³ - 4x';
+    if (expr === 'sin(x)') return 'cos(x)';
+    if (expr === 'cos(x)') return '-sin(x)';
+    if (expr === 'e^x') return 'e^x';
+    if (expr.includes('x^3-6x^2+9x+1')) return '3x² - 12x + 9';
+    if (expr.includes('e^x-x')) return 'e^x - 1';
+    if (expr.includes('x^2+1/x')) return '2x - 1/x';
+    if (expr.includes('cos(x)+x')) return '-sin(x) + 1';
+    return '3x² - 6x'; // default
+   }
+
+   function drawCriticalPointsVisualization(func, start, end, criticalPoints) {
+    const canvas = document.getElementById('criticalPointsCanvas');
+    const ctx = canvas.getContext('2d');
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const width = canvas.width;
+    const height = canvas.height;
+    const scale = 40;
+    const originX = width / 2;
+    const originY = height / 2;
+
+    function toCanvasX(x) { return originX + x * scale; }
+    function toCanvasY(y) { return originY - y * scale; }
+
+    // Draw axes
+    ctx.strokeStyle = '#ddd';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(0, originY);
+    ctx.lineTo(width, originY);
+    ctx.moveTo(originX, 0);
+    ctx.lineTo(originX, height);
+    ctx.stroke();
+
+    // Draw function curve
+    ctx.strokeStyle = '#2196F3';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let x = start; x <= end; x += 0.1) {
+     const y = evaluateFunction(func, x);
+     const canvasX = toCanvasX(x);
+     const canvasY = toCanvasY(y);
+     if (x === start) ctx.moveTo(canvasX, canvasY);
+     else ctx.lineTo(canvasX, canvasY);
+    }
+    ctx.stroke();
+
+    // Draw tangent lines at critical points
+    ctx.strokeStyle = '#e67e22';
+    ctx.lineWidth = 2;
+    criticalPoints.forEach(x => {
+     const y = evaluateFunction(func, x);
+     const slope = evaluateDerivative(func, x); // Should be 0
+
+     // Draw horizontal tangent line
+     ctx.beginPath();
+     ctx.moveTo(toCanvasX(x - 1), toCanvasY(y));
+     ctx.lineTo(toCanvasX(x + 1), toCanvasY(y));
+     ctx.stroke();
+    });
+
+    // Draw critical points
+    ctx.fillStyle = '#e74c3c';
+    criticalPoints.forEach(x => {
+     const y = evaluateFunction(func, x);
+     ctx.beginPath();
+     ctx.arc(toCanvasX(x), toCanvasY(y), 6, 0, 2 * Math.PI);
+     ctx.fill();
+    });
+   }
+
+   function toggleSolution(id) {
+    const element = document.getElementById(id);
+    element.style.display = element.style.display === 'none' ? 'block' : 'none';
+   }
+
+   // Initialize
+   findCriticalPoints();
+  </script>
+ </body>
+</html>

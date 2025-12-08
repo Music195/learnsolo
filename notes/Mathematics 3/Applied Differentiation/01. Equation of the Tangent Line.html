@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<!-- tags: Mathematics -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Equation of the Tangent Line
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   .interactive-demo {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    border: 2px solid #e1e8ed;
+   }
+   .demo-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 15px;
+   }
+   .demo-input-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 200px;
+   }
+   .demo-input-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #2c3e50;
+   }
+   .demo-input {
+    padding: 8px;
+    border: 2px solid #bdc3c7;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+   }
+   .demo-input:focus {
+    outline: none;
+    border-color: #3498db;
+   }
+   .demo-button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: transform 0.2s;
+   }
+   .demo-button:hover {
+    transform: translateY(-2px);
+   }
+   .demo-result {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+    border-left: 4px solid #3498db;
+   }
+   .math-foundation {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .worked-example {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .practice-problem {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .solution-toggle {
+    background: #2c3e50;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+   }
+   .solution-toggle:hover {
+    background: #34495e;
+   }
+   .solution-content {
+    display: none;
+    background: rgba(255, 255, 255, 0.9);
+    color: #2c3e50;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+   }
+   .key-takeaways {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .key-takeaways h3 {
+    color: #2c3e50;
+    margin-top: 0;
+   }
+   .key-takeaways ul {
+    color: #2c3e50;
+   }
+   .tangent-concepts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+   }
+   .concept-card {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #e67e22;
+   }
+   .concept-card h4 {
+    margin-top: 0;
+    color: #2c3e50;
+   }
+   .math-orange {
+    color: #e67e22;
+    font-weight: bold;
+   }
+   .visualization-section {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+    border: 2px solid #ecf0f1;
+    text-align: center;
+   }
+   canvas {
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin: 10px 0;
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Mathematics">
+   Equation of the Tangent Line
+  </div>
+  <div class="container">
+   <div class="main-content">
+    <div class="section-title">
+     Equation of the Tangent Line
+    </div>
+
+    <div class="math-foundation">
+     <h3>Mathematical Foundations</h3>
+     <p>The tangent line to a curve at a point is a straight line that touches the curve at exactly one point and has the same slope as the curve at that point. This concept is fundamental to differential calculus and has numerous applications in physics, engineering, and geometry.</p>
+
+     <div class="tangent-concepts">
+      <div class="concept-card">
+       <h4>Tangent Line Definition</h4>
+       <p>A tangent line touches a curve at exactly one point</p>
+       <p>Slope equals the derivative at that point</p>
+       <p>Represents instantaneous rate of change</p>
+       <p>Fundamental to differential calculus</p>
+      </div>
+
+      <div class="concept-card">
+       <h4>Point-Slope Form</h4>
+       <p>$y - y_1 = m(x - x_1)$</p>
+       <p>$m = f'(a)$ is the slope</p>
+       <p>$(x_1, y_1) = (a, f(a))$ is the point</p>
+       <p>Most useful form for tangent lines</p>
+      </div>
+
+      <div class="concept-card">
+       <h4>Slope-Intercept Form</h4>
+       <p>$y = mx + b$</p>
+       <p>$m = f'(a)$, $b = f(a) - f'(a)a$</p>
+       <p>Easier for graphing</p>
+       <p>Requires calculating y-intercept</p>
+      </div>
+
+      <div class="concept-card">
+       <h4>Normal Line</h4>
+       <p>Perpendicular to tangent line</p>
+       <p>Slope is negative reciprocal</p>
+       <p>$m_{normal} = -\frac{1}{f'(a)}$</p>
+       <p>Important in optimization problems</p>
+      </div>
+     </div>
+    </div>
+
+    <div class="interactive-demo">
+     <h3>Interactive Tangent Line Calculator</h3>
+     <p>Enter a function and a point to see the tangent line equation and visualization.</p>
+
+     <div class="demo-controls">
+      <div class="demo-input-group">
+       <label for="function-input">Function f(x):</label>
+       <input type="text" id="function-input" class="demo-input" value="x^2" placeholder="e.g., x^2, sin(x), e^x">
+      </div>
+      <div class="demo-input-group">
+       <label for="point-input">Point of tangency (a):</label>
+       <input type="number" id="point-input" class="demo-input" value="1" step="0.1" placeholder="e.g., 1, 2.5, -1">
+      </div>
+      <button onclick="calculateTangent()" class="demo-button">Calculate Tangent Line</button>
+     </div>
+
+     <div class="demo-result">
+      <h4>Tangent Line Results:</h4>
+      <p><strong>Function:</strong> <span id="function-display">f(x) = x²</span></p>
+      <p><strong>Point of tangency:</strong> <span id="point-display">(1, f(1)) = (1, 1)</span></p>
+      <p><strong>Derivative:</strong> <span id="derivative-display">f'(x) = 2x</span></p>
+      <p><strong>Slope at x = 1:</strong> <span id="slope-display">f'(1) = 2</span></p>
+      <p><strong>Tangent line equation:</strong> <span id="tangent-equation">y - 1 = 2(x - 1)</span></p>
+      <p><strong>Slope-intercept form:</strong> <span id="slope-intercept">y = 2x - 1</span></p>
+      <p><strong>Normal line equation:</strong> <span id="normal-equation">y - 1 = -1/2(x - 1)</span></p>
+     </div>
+
+     <div class="visualization-section">
+      <h4>Visual Representation:</h4>
+      <canvas id="interactiveCanvas" width="600" height="400"></canvas>
+      <p><em>The red line shows the tangent line touching the curve at the specified point</em></p>
+     </div>
+    </div>
+
+    <div class="worked-example">
+     <h3>Worked Examples</h3>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Example 1: Quadratic Function</h4>
+      <p>Find the equation of the tangent line to $f(x) = x^2$ at x = 2.</p>
+      <p><strong>Step 1:</strong> Find f(2) = (2)² = 4. Point is (2, 4)</p>
+      <p><strong>Step 2:</strong> Find f'(x) = 2x. Slope f'(2) = 2×2 = 4</p>
+      <p><strong>Step 3:</strong> Tangent line: y - 4 = 4(x - 2)</p>
+      <p><strong>Step 4:</strong> Simplify: y = 4x - 8 + 4 = 4x - 4</p>
+      <p><strong>Normal line:</strong> Slope = -1/4, so y - 4 = (-1/4)(x - 2)</p>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Example 2: Trigonometric Function</h4>
+      <p>Find the tangent line to $f(x) = \sin(x)$ at x = π/4.</p>
+      <p><strong>Step 1:</strong> f(π/4) = sin(π/4) = √2/2 ≈ 0.707. Point is (π/4, √2/2)</p>
+      <p><strong>Step 2:</strong> f'(x) = cos(x). Slope f'(π/4) = cos(π/4) = √2/2 ≈ 0.707</p>
+      <p><strong>Step 3:</strong> Tangent line: y - √2/2 = (√2/2)(x - π/4)</p>
+      <p><strong>Step 4:</strong> This is the equation in point-slope form</p>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Example 3: Exponential Function</h4>
+      <p>Find the tangent line to $f(x) = e^x$ at x = 0.</p>
+      <p><strong>Step 1:</strong> f(0) = e⁰ = 1. Point is (0, 1)</p>
+      <p><strong>Step 2:</strong> f'(x) = e^x. Slope f'(0) = e⁰ = 1</p>
+      <p><strong>Step 3:</strong> Tangent line: y - 1 = 1(x - 0) = x</p>
+      <p><strong>Step 4:</strong> y = x + 1</p>
+      <p><strong>Note:</strong> At x = 0, the tangent line to e^x is y = x + 1</p>
+     </div>
+    </div>
+
+    <div class="practice-problem">
+     <h3>Practice Problems</h3>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Problem 1</h4>
+      <p>Find the equation of the tangent line to $f(x) = x^3 - 2x + 1$ at x = 1.</p>
+      <button onclick="toggleSolution('sol1')" class="solution-toggle">Show Solution</button>
+      <div id="sol1" class="solution-content">
+       <p><strong>Step 1:</strong> f(1) = (1)³ - 2(1) + 1 = 1 - 2 + 1 = 0. Point: (1, 0)</p>
+       <p><strong>Step 2:</strong> f'(x) = 3x² - 2. Slope f'(1) = 3(1)² - 2 = 1</p>
+       <p><strong>Step 3:</strong> Tangent line: y - 0 = 1(x - 1) ⇒ y = x - 1</p>
+       <p><strong>Normal line:</strong> Slope = -1, so y - 0 = -1(x - 1) ⇒ y = -x + 1</p>
+      </div>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Problem 2</h4>
+      <p>Find the tangent line to $f(x) = \sqrt{x}$ at x = 4.</p>
+      <button onclick="toggleSolution('sol2')" class="solution-toggle">Show Solution</button>
+      <div id="sol2" class="solution-content">
+       <p><strong>Step 1:</strong> f(4) = √4 = 2. Point: (4, 2)</p>
+       <p><strong>Step 2:</strong> f'(x) = 1/(2√x). Slope f'(4) = 1/(2√4) = 1/(2×2) = 1/4</p>
+       <p><strong>Step 3:</strong> Tangent line: y - 2 = (1/4)(x - 4)</p>
+       <p><strong>Step 4:</strong> y = (1/4)x - 1 + 2 = (1/4)x + 1</p>
+      </div>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Problem 3</h4>
+      <p>Find both tangent and normal lines to $f(x) = x^2 + 3x - 1$ at x = -1.</p>
+      <button onclick="toggleSolution('sol3')" class="solution-toggle">Show Solution</button>
+      <div id="sol3" class="solution-content">
+       <p><strong>Step 1:</strong> f(-1) = (-1)² + 3(-1) - 1 = 1 - 3 - 1 = -3. Point: (-1, -3)</p>
+       <p><strong>Step 2:</strong> f'(x) = 2x + 3. Slope f'(-1) = 2(-1) + 3 = 1</p>
+       <p><strong>Step 3:</strong> Tangent line: y - (-3) = 1(x - (-1)) ⇒ y + 3 = x + 1 ⇒ y = x - 2</p>
+       <p><strong>Step 4:</strong> Normal line slope = -1/1 = -1. y + 3 = -1(x + 1) ⇒ y = -x - 4</p>
+      </div>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Problem 4</h4>
+      <p>Find the tangent line to $f(x) = \ln(x)$ at x = 1.</p>
+      <button onclick="toggleSolution('sol4')" class="solution-toggle">Show Solution</button>
+      <div id="sol4" class="solution-content">
+       <p><strong>Step 1:</strong> f(1) = ln(1) = 0. Point: (1, 0)</p>
+       <p><strong>Step 2:</strong> f'(x) = 1/x. Slope f'(1) = 1/1 = 1</p>
+       <p><strong>Step 3:</strong> Tangent line: y - 0 = 1(x - 1) ⇒ y = x - 1</p>
+       <p><strong>Note:</strong> The tangent line to ln(x) at x = 1 is y = x - 1</p>
+      </div>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <h3>Key Takeaways</h3>
+     <ul>
+      <li><strong>Tangent line formula:</strong> $y - f(a) = f'(a)(x - a)$</li>
+      <li><strong>Slope equals derivative:</strong> The slope of the tangent line is $f'(a)$</li>
+      <li><strong>Point of tangency:</strong> The line passes through $(a, f(a))$</li>
+      <li><strong>Normal line:</strong> Perpendicular to tangent, slope is $-1/f'(a)$</li>
+      <li><strong>Geometric interpretation:</strong> Instantaneous rate of change</li>
+      <li><strong>Applications:</strong> Physics (velocity), optimization, curve sketching</li>
+      <li><strong>Horizontal tangent:</strong> When $f'(a) = 0$, tangent is horizontal</li>
+      <li><strong>Vertical tangent:</strong> When $f'(a)$ is undefined, tangent is vertical</li>
+     </ul>
+    </div>
+
+    <div class="formula-list">
+     <div class="formula-row">
+      <span class="number">
+       1
+      </span>
+      <span class="formula">
+       $y - f(a) = f'(a)(x - a)$
+       <span class="math-orange">
+        (Point-Slope Form)
+       </span>
+      </span>
+     </div>
+     <div class="formula-row">
+      <span class="number">
+       2
+      </span>
+      <span class="formula">
+       $y = f'(a)x + [f(a) - f'(a)a]$
+       <span class="math-orange">
+        (Slope-Intercept Form)
+       </span>
+      </span>
+     </div>
+     <div class="formula-row">
+      <span class="number">
+       3
+      </span>
+      <span class="formula">
+       $y - f(a) = -\frac{1}{f'(a)}(x - a)$
+       <span class="math-orange">
+        (Normal Line)
+       </span>
+      </span>
+     </div>
+    </div>
+
+    <div class="visualization-section">
+     <h4>Understanding Through Visualization</h4>
+     <p>The derivative as the limit of secant lines approaching the tangent line:</p>
+     <canvas id="derivativeCanvas" width="600" height="400"></canvas>
+     <p><em>As h approaches 0, the secant line becomes the tangent line</em></p>
+    </div>
+   </div>
+  </div>
+
+  <script>
+   function evaluateFunction(func, x) {
+    // Simple function evaluator for common functions
+    const expr = func.toLowerCase().replace(/\s/g, '');
+    if (expr === 'x^2' || expr === 'x*x') return x * x;
+    if (expr === 'x^3') return x * x * x;
+    if (expr === 'sin(x)') return Math.sin(x);
+    if (expr === 'cos(x)') return Math.cos(x);
+    if (expr === 'e^x' || expr === 'exp(x)') return Math.exp(x);
+    if (expr === 'ln(x)' || expr === 'log(x)') return Math.log(x);
+    if (expr === 'sqrt(x)' || expr === 'x^(1/2)') return Math.sqrt(x);
+    if (expr.includes('x^2+3x-1')) return x*x + 3*x - 1;
+    if (expr.includes('x^3-2x+1')) return x*x*x - 2*x + 1;
+    return x * x; // default to x^2
+   }
+
+   function evaluateDerivative(func, x) {
+    // Simple derivative evaluator
+    const expr = func.toLowerCase().replace(/\s/g, '');
+    if (expr === 'x^2' || expr === 'x*x') return 2 * x;
+    if (expr === 'x^3') return 3 * x * x;
+    if (expr === 'sin(x)') return Math.cos(x);
+    if (expr === 'cos(x)') return -Math.sin(x);
+    if (expr === 'e^x' || expr === 'exp(x)') return Math.exp(x);
+    if (expr === 'ln(x)' || expr === 'log(x)') return 1/x;
+    if (expr === 'sqrt(x)' || expr === 'x^(1/2)') return 1/(2*Math.sqrt(x));
+    if (expr.includes('x^2+3x-1')) return 2*x + 3;
+    if (expr.includes('x^3-2x+1')) return 3*x*x - 2;
+    return 2 * x; // default derivative of x^2
+   }
+
+   function calculateTangent() {
+    const funcInput = document.getElementById('function-input').value;
+    const pointInput = parseFloat(document.getElementById('point-input').value);
+
+    if (!funcInput || isNaN(pointInput)) {
+     alert('Please enter valid function and point');
+     return;
+    }
+
+    const f_a = evaluateFunction(funcInput, pointInput);
+    const f_prime_a = evaluateDerivative(funcInput, pointInput);
+
+    // Update displays
+    document.getElementById('function-display').textContent = `f(x) = ${funcInput}`;
+    document.getElementById('point-display').textContent = `(a, f(a)) = (${pointInput}, ${f_a.toFixed(3)})`;
+    document.getElementById('derivative-display').textContent = `f'(x) = ${getDerivativeString(funcInput)}`;
+    document.getElementById('slope-display').textContent = `f'(${pointInput}) = ${f_prime_a.toFixed(3)}`;
+    document.getElementById('tangent-equation').textContent = `y - ${f_a.toFixed(3)} = ${f_prime_a.toFixed(3)}(x - ${pointInput})`;
+    document.getElementById('slope-intercept').textContent = `y = ${f_prime_a.toFixed(3)}x + ${(f_a - f_prime_a * pointInput).toFixed(3)}`;
+    document.getElementById('normal-equation').textContent = `y - ${f_a.toFixed(3)} = ${(-1/f_prime_a).toFixed(3)}(x - ${pointInput})`;
+
+    drawInteractiveTangent(funcInput, pointInput);
+   }
+
+   function getDerivativeString(func) {
+    const expr = func.toLowerCase().replace(/\s/g, '');
+    if (expr === 'x^2') return '2x';
+    if (expr === 'x^3') return '3x²';
+    if (expr === 'sin(x)') return 'cos(x)';
+    if (expr === 'cos(x)') return '-sin(x)';
+    if (expr === 'e^x') return 'e^x';
+    if (expr === 'ln(x)') return '1/x';
+    if (expr === 'sqrt(x)') return '1/(2√x)';
+    if (expr.includes('x^2+3x-1')) return '2x + 3';
+    if (expr.includes('x^3-2x+1')) return '3x² - 2';
+    return '2x'; // default
+   }
+
+   function drawInteractiveTangent(func, a) {
+    const canvas = document.getElementById('interactiveCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Set up coordinate system
+    const width = canvas.width;
+    const height = canvas.height;
+    const scale = 40;
+    const originX = width / 2;
+    const originY = height / 2;
+
+    function toCanvasX(x) { return originX + x * scale; }
+    function toCanvasY(y) { return originY - y * scale; }
+
+    // Draw axes
+    ctx.strokeStyle = '#ddd';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(0, originY);
+    ctx.lineTo(width, originY);
+    ctx.moveTo(originX, 0);
+    ctx.lineTo(originX, height);
+    ctx.stroke();
+
+    // Draw grid
+    ctx.strokeStyle = '#f0f0f0';
+    ctx.lineWidth = 0.5;
+    for (let x = -10; x <= 10; x++) {
+     ctx.beginPath();
+     ctx.moveTo(toCanvasX(x), 0);
+     ctx.lineTo(toCanvasX(x), height);
+     ctx.stroke();
+    }
+    for (let y = -10; y <= 10; y++) {
+     ctx.beginPath();
+     ctx.moveTo(0, toCanvasY(y));
+     ctx.lineTo(width, toCanvasY(y));
+     ctx.stroke();
+    }
+
+    // Draw function curve
+    ctx.strokeStyle = '#2196F3';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let x = -8; x <= 8; x += 0.1) {
+     const y = evaluateFunction(func, x);
+     const canvasX = toCanvasX(x);
+     const canvasY = toCanvasY(y);
+     if (x === -8) ctx.moveTo(canvasX, canvasY);
+     else ctx.lineTo(canvasX, canvasY);
+    }
+    ctx.stroke();
+
+    // Calculate tangent line
+    const fa = evaluateFunction(func, a);
+    const fpa = evaluateDerivative(func, a);
+
+    // Draw tangent line
+    ctx.strokeStyle = '#e74c3c';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    const x1 = a - 2;
+    const y1 = fa + fpa * (x1 - a);
+    const x2 = a + 2;
+    const y2 = fa + fpa * (x2 - a);
+    ctx.moveTo(toCanvasX(x1), toCanvasY(y1));
+    ctx.lineTo(toCanvasX(x2), toCanvasY(y2));
+    ctx.stroke();
+
+    // Draw point of tangency
+    ctx.fillStyle = '#e74c3c';
+    ctx.beginPath();
+    ctx.arc(toCanvasX(a), toCanvasY(fa), 6, 0, 2 * Math.PI);
+    ctx.fill();
+
+    // Labels
+    ctx.fillStyle = '#333';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(`(${a}, ${fa.toFixed(2)})`, toCanvasX(a), toCanvasY(fa) - 15);
+    ctx.fillText('Tangent Line', toCanvasX(a + 1.5), toCanvasY(fa + fpa * 1.5) - 5);
+   }
+
+   function toggleSolution(id) {
+    const element = document.getElementById(id);
+    element.style.display = element.style.display === 'none' ? 'block' : 'none';
+   }
+
+   // Initialize with default values
+   calculateTangent();
+  </script>
+ </body>
+</html>

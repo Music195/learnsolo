@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<!-- tags: Probability -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Counting Elements in Unions and Complements
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+    /* Enhanced text containment and scrolling */
+    .main-content {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      overflow: auto;
+      max-height: none;
+    }
+    
+    .law-row, .graybox, .section {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      overflow: auto;
+    }
+    
+    /* Law blocks styling */
+    .law-block {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      border: 2px solid rgba(255,255,255,0.2);
+      text-align: center;
+    }
+    
+    .law-eq {
+      font-size: 1.4em;
+      font-weight: bold;
+      margin-bottom: 15px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    }
+    
+    .venn-label {
+      font-size: 1.2em;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+    
+    /* Interactive demo styling */
+    .interactive-demo {
+      background: #f8f9fa;
+      border: 2px solid #007acc;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+      text-align: center;
+    }
+    
+    .demo-input {
+      padding: 10px;
+      font-size: 16px;
+      border: 2px solid #007acc;
+      border-radius: 6px;
+      margin: 10px;
+      width: 120px;
+    }
+    
+    .demo-button {
+      background: #007acc;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px;
+      transition: background 0.3s;
+    }
+    
+    .demo-button:hover {
+      background: #0056b3;
+    }
+    
+    .demo-result {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 15px 0;
+      min-height: 30px;
+    }
+    
+    /* Problem items styling */
+    .problem-item {
+      background: #fff3cd;
+      border: 2px solid #ffc107;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      position: relative;
+    }
+    
+    .problem-item .problem-number {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: #ffc107;
+      color: #000;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: bold;
+      font-size: 0.9em;
+    }
+    
+    .problem-item .problem-content {
+      margin-left: 60px;
+    }
+    
+    /* Solution button styling */
+    .solution-button {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      margin: 10px 0;
+      transition: background 0.3s;
+    }
+    
+    .solution-button:hover {
+      background: #218838;
+    }
+    
+    .solution-content {
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      border-radius: 6px;
+      padding: 15px;
+      margin: 10px 0;
+      display: none;
+    }
+    
+    /* Key takeaways styling */
+    .key-takeaways {
+      background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+      color: #333;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 20px 0;
+      border: 2px solid rgba(255,255,255,0.3);
+    }
+    
+    .key-takeaways h3 {
+      margin-top: 0;
+      text-align: center;
+      font-size: 1.4em;
+      text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
+    }
+    
+    .key-takeaways ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+    
+    .key-takeaways li {
+      margin: 8px 0;
+      font-weight: bold;
+    }
+    
+    /* Canvas visualization styling */
+    .visualization-container {
+      text-align: center;
+      margin: 20px 0;
+    }
+    
+    #unionComplementCanvas {
+      border: 2px solid #007acc;
+      border-radius: 8px;
+      background: white;
+      max-width: 100%;
+      height: auto;
+    }
+    
+    /* Section styling */
+    .section {
+      margin: 30px 0;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border-left: 4px solid #007acc;
+    }
+    
+    .section h2 {
+      color: #007acc;
+      margin-top: 0;
+      font-size: 1.5em;
+    }
+    
+    /* Enhanced math styling */
+    .math {
+      font-family: 'Times New Roman', serif;
+    }
+    
+    .highlight {
+      background: #fff3cd;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    
+    .green { color: #28a745; }
+    .blue { color: #007bff; }
+    .purple { color: #6f42c1; }
+    
+    /* Union complement specific */
+    .formula-box {
+      background: #e9ecef;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      text-align: center;
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+    
+    .calculation-steps {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: monospace;
+      font-size: 16px;
+    }
+    
+    .calculation-step {
+      margin: 8px 0;
+      padding: 5px;
+      background: white;
+      border-radius: 4px;
+      border-left: 3px solid #007acc;
+    }
+    
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .law-block {
+        margin: 10px 0;
+        padding: 15px;
+      }
+      
+      .law-row {
+        flex-direction: column;
+      }
+      
+      .demo-input {
+        width: 100px;
+      }
+      
+      .problem-item .problem-content {
+        margin-left: 50px;
+      }
+    }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Probability">
+   Counting Elements in Unions and Complements
+  </div>
+  <div class="container">
+   <div class="main-content">
+    <div class="section">
+     <h2>Core Concept: Inclusion-Exclusion Principle</h2>
+     <p>The Inclusion-Exclusion Principle is a fundamental counting technique used to calculate the size of the union of sets or the complement of a set. It accounts for elements that belong to multiple sets to avoid double-counting.</p>
+     
+     <div class="formula-box">
+      <h3>Union of Two Sets</h3>
+      <div class="math" style="font-size: 1.4em;">
+       $n(A \cup B) = n(A) + n(B) - n(A \cap B)$
+      </div>
+     </div>
+     
+     <div class="formula-box">
+      <h3>Complement of a Set</h3>
+      <div class="math" style="font-size: 1.4em;">
+       $n(A^c) = n(U) - n(A)$
+      </div>
+      <p>Where U is the universal set</p>
+     </div>
+     
+     <p>These formulas are essential for counting problems in probability, combinatorics, and set theory.</p>
+    </div>
+
+    <div class="section">
+     <h2>Detailed Examples</h2>
+     
+     <h3>Example 1: Union of Two Sets</h3>
+     <p>In a class of 30 students, 18 play soccer, 12 play basketball, and 5 play both. How many students play at least one sport?</p>
+     <div class="calculation-steps">
+      <div class="calculation-step">n(Soccer ∪ Basketball) = n(Soccer) + n(Basketball) - n(Soccer ∩ Basketball)</div>
+      <div class="calculation-step">n(Soccer ∪ Basketball) = 18 + 12 - 5 = 25</div>
+      <div class="calculation-step">25 students play at least one sport</div>
+     </div>
+     
+     <h3>Example 2: Complement</h3>
+     <p>In a group of 50 people, 28 like chocolate ice cream. How many don't like chocolate ice cream?</p>
+     <div class="calculation-steps">
+      <div class="calculation-step">n(Don't like chocolate) = n(Total) - n(Like chocolate)</div>
+      <div class="calculation-step">n(Don't like chocolate) = 50 - 28 = 22</div>
+      <div class="calculation-step">22 people don't like chocolate ice cream</div>
+     </div>
+     
+     <h3>Example 3: Multiple Applications</h3>
+     <p>A survey of 100 students found that 60 like math, 45 like science, and 20 like both. How many like neither subject?</p>
+     <div class="calculation-steps">
+      <div class="calculation-step">n(Math ∪ Science) = 60 + 45 - 20 = 85</div>
+      <div class="calculation-step">n(Neither) = n(Total) - n(Math ∪ Science) = 100 - 85 = 15</div>
+      <div class="calculation-step">15 students like neither math nor science</div>
+     </div>
+    </div>
+
+    <div class="section">
+     <h2>Visual Guide</h2>
+     <div class="visualization-container">
+      <canvas id="unionComplementCanvas" width="800" height="500"></canvas>
+     </div>
+     <p>The visualization above demonstrates the Inclusion-Exclusion Principle with interactive Venn diagrams showing how union and complement calculations work.</p>
+    </div>
+
+    <div class="section">
+     <h2>Interactive Demo</h2>
+     <div class="interactive-demo">
+      <h3>Inclusion-Exclusion Calculator</h3>
+      <p>Calculate union sizes and complements:</p>
+      <input type="number" id="setA" class="demo-input" placeholder="n(A)" min="0" value="18">
+      <input type="number" id="setB" class="demo-input" placeholder="n(B)" min="0" value="12">
+      <input type="number" id="intersection" class="demo-input" placeholder="n(A∩B)" min="0" value="5">
+      <input type="number" id="universal" class="demo-input" placeholder="n(U)" min="1" value="30">
+      <br>
+      <button onclick="calculateUnionComplement()" class="demo-button">Calculate</button>
+      <div id="demoResult" class="demo-result"></div>
+      <div id="calculationSteps"></div>
+     </div>
+    </div>
+
+    <div class="section">
+     <h2>Applications</h2>
+     <ul>
+      <li><strong>Probability:</strong> Calculating probabilities of unions and complements of events</li>
+      <li><strong>Database Design:</strong> Query optimization and set operations</li>
+      <li><strong>Survey Analysis:</strong> Analyzing overlapping responses and demographics</li>
+      <li><strong>Computer Science:</strong> Algorithm analysis and complexity calculations</li>
+      <li><strong>Business Analytics:</strong> Market segmentation and customer analysis</li>
+     </ul>
+    </div>
+
+    <div class="section">
+     <h2>Practice Problems</h2>
+     
+     <div class="problem-item">
+      <div class="problem-number">1</div>
+      <div class="problem-content">
+       <p>In a class of 40 students, 25 study math, 20 study physics, and 10 study both. How many students study at least one subject?</p>
+       <button class="solution-button" onclick="toggleSolution('sol1')">Show Solution</button>
+       <div id="sol1" class="solution-content">
+        <div class="calculation-steps">
+         <div class="calculation-step">n(Math ∪ Physics) = n(Math) + n(Physics) - n(Math ∩ Physics)</div>
+         <div class="calculation-step">n(Math ∪ Physics) = 25 + 20 - 10 = 35</div>
+         <div class="calculation-step">35 students study at least one subject</div>
+        </div>
+       </div>
+      </div>
+     </div>
+     
+     <div class="problem-item">
+      <div class="problem-number">2</div>
+      <div class="problem-content">
+       <p>Out of 100 people surveyed, 60 like pizza, 45 like burgers, and 25 like both. How many like neither?</p>
+       <button class="solution-button" onclick="toggleSolution('sol2')">Show Solution</button>
+       <div id="sol2" class="solution-content">
+        <div class="calculation-steps">
+         <div class="calculation-step">n(Pizza ∪ Burgers) = 60 + 45 - 25 = 80</div>
+         <div class="calculation-step">n(Neither) = 100 - 80 = 20</div>
+         <div class="calculation-step">20 people like neither pizza nor burgers</div>
+        </div>
+       </div>
+      </div>
+     </div>
+     
+     <div class="problem-item">
+      <div class="problem-number">3</div>
+      <div class="problem-content">
+       <p>In a group of 50 employees, 30 have health insurance, 20 have dental insurance, and 15 have both. How many have at least one type of insurance?</p>
+       <button class="solution-button" onclick="toggleSolution('sol3')">Show Solution</button>
+       <div id="sol3" class="solution-content">
+        <div class="calculation-steps">
+         <div class="calculation-step">n(Health ∪ Dental) = 30 + 20 - 15 = 35</div>
+         <div class="calculation-step">35 employees have at least one type of insurance</div>
+        </div>
+       </div>
+      </div>
+     </div>
+     
+     <div class="problem-item">
+      <div class="problem-number">4</div>
+      <div class="problem-content">
+       <p>A library has 200 books. 120 are fiction, 80 are hardcover, and 40 are both fiction and hardcover. How many books are neither fiction nor hardcover?</p>
+       <button class="solution-button" onclick="toggleSolution('sol4')">Show Solution</button>
+       <div id="sol4" class="solution-content">
+        <div class="calculation-steps">
+         <div class="calculation-step">n(Fiction ∪ Hardcover) = 120 + 80 - 40 = 160</div>
+         <div class="calculation-step">n(Neither) = 200 - 160 = 40</div>
+         <div class="calculation-step">40 books are neither fiction nor hardcover</div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <h3>Key Takeaways</h3>
+     <ul>
+      <li>The Inclusion-Exclusion Principle prevents double-counting elements in multiple sets</li>
+      <li>Union size = sum of individual sizes - size of intersection</li>
+      <li>Complement size = universal set size - set size</li>
+      <li>These principles are fundamental to probability and combinatorics</li>
+      <li>Always account for overlapping elements when counting</li>
+     </ul>
+    </div>
+   </div>
+  </div>
+  <script>
+    function toggleSolution(id) {
+      const solution = document.getElementById(id);
+      const button = solution.previousElementSibling;
+      
+      if (solution.style.display === 'none' || solution.style.display === '') {
+        solution.style.display = 'block';
+        button.textContent = 'Hide Solution';
+      } else {
+        solution.style.display = 'none';
+        button.textContent = 'Show Solution';
+      }
+    }
+
+    function drawUnionComplementVisualization() {
+      const canvas = document.getElementById('unionComplementCanvas');
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+      
+      // Clear canvas
+      ctx.clearRect(0, 0, width, height);
+      
+      // Set up coordinate system
+      const margin = 60;
+      const centerX = width / 2;
+      const centerY = height / 2;
+      const radius = 80;
+      
+      // Draw background
+      ctx.fillStyle = '#f8f9fa';
+      ctx.fillRect(0, 0, width, height);
+      
+      // Title
+      ctx.fillStyle = '#333';
+      ctx.font = '18px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('Inclusion-Exclusion Principle Visualization', centerX, 30);
+      
+      // Draw universal set (rectangle)
+      ctx.strokeStyle = '#388e3c';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(margin, margin, width - 2*margin, height - 2*margin);
+      ctx.fillStyle = '#e8f5e9';
+      ctx.fillRect(margin, margin, width - 2*margin, height - 2*margin);
+      
+      // Draw set A (left circle)
+      const aX = centerX - radius;
+      ctx.fillStyle = '#e3f2fd';
+      ctx.strokeStyle = '#1976d2';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(aX, centerY, radius, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.stroke();
+      
+      // Draw set B (right circle)
+      const bX = centerX + radius;
+      ctx.fillStyle = '#f3e5f5';
+      ctx.strokeStyle = '#8e24aa';
+      ctx.beginPath();
+      ctx.arc(bX, centerY, radius, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.stroke();
+      
+      // Draw intersection area
+      ctx.fillStyle = '#ffe0b2';
+      ctx.beginPath();
+      ctx.arc(aX, centerY, radius, 0, 2 * Math.PI);
+      ctx.arc(bX, centerY, radius, 0, 2 * Math.PI);
+      ctx.fill('evenodd');
+      
+      // Add labels
+      ctx.fillStyle = '#1976d2';
+      ctx.font = '24px Arial';
+      ctx.fillText('A', aX, centerY + 8);
+      
+      ctx.fillStyle = '#8e24aa';
+      ctx.font = '24px Arial';
+      ctx.fillText('B', bX, centerY + 8);
+      
+      ctx.fillStyle = '#388e3c';
+      ctx.font = '20px Arial';
+      ctx.fillText('U', margin + 20, margin + 30);
+      
+      // Add size labels
+      ctx.fillStyle = '#333';
+      ctx.font = '16px Arial';
+      ctx.fillText('n(A) = 18', aX - 30, centerY - radius - 10);
+      ctx.fillText('n(B) = 12', bX + 10, centerY - radius - 10);
+      ctx.fillText('n(A∩B) = 5', centerX - 25, centerY + 10);
+      
+      // Add calculation
+      ctx.fillStyle = '#333';
+      ctx.font = '14px Arial';
+      ctx.fillText('n(A∪B) = 18 + 12 - 5 = 25', centerX, height - margin + 20);
+      ctx.fillText('n(Aᶜ) = 30 - 18 = 12', centerX, height - margin + 40);
+      
+      // Draw arrows and explanations
+      ctx.strokeStyle = '#007acc';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(centerX - 50, centerY + radius + 20);
+      ctx.lineTo(centerX + 50, centerY + radius + 20);
+      ctx.stroke();
+      
+      // Arrow head
+      ctx.beginPath();
+      ctx.moveTo(centerX + 50, centerY + radius + 20);
+      ctx.lineTo(centerX + 45, centerY + radius + 15);
+      ctx.lineTo(centerX + 45, centerY + radius + 25);
+      ctx.closePath();
+      ctx.fillStyle = '#007acc';
+      ctx.fill();
+      
+      ctx.fillStyle = '#007acc';
+      ctx.font = '12px Arial';
+      ctx.fillText('Union: Add and subtract intersection', centerX, centerY + radius + 35);
+    }
+
+    function calculateUnionComplement() {
+      const setAInput = document.getElementById('setA');
+      const setBInput = document.getElementById('setB');
+      const intersectionInput = document.getElementById('intersection');
+      const universalInput = document.getElementById('universal');
+      const result = document.getElementById('demoResult');
+      const steps = document.getElementById('calculationSteps');
+      
+      const nA = parseInt(setAInput.value);
+      const nB = parseInt(setBInput.value);
+      const nAB = parseInt(intersectionInput.value);
+      const nU = parseInt(universalInput.value);
+      
+      if (isNaN(nA) || isNaN(nB) || isNaN(nAB) || isNaN(nU) || nA < 0 || nB < 0 || nAB < 0 || nU <= 0) {
+        result.textContent = 'Please enter valid non-negative numbers';
+        result.style.color = '#f44336';
+        steps.innerHTML = '';
+        return;
+      }
+      
+      if (nAB > Math.min(nA, nB)) {
+        result.textContent = 'Intersection cannot be larger than individual sets';
+        result.style.color = '#f44336';
+        steps.innerHTML = '';
+        return;
+      }
+      
+      const union = nA + nB - nAB;
+      const complementA = nU - nA;
+      
+      // Display results
+      result.innerHTML = `<strong>n(A∪B) = ${union}, n(Aᶜ) = ${complementA}</strong>`;
+      result.style.color = '#4caf50';
+      
+      // Display calculation steps
+      steps.innerHTML = `
+        <div style="background: #e9ecef; padding: 15px; border-radius: 8px; margin-top: 10px;">
+          <h4>Calculation Steps:</h4>
+          <div style="font-family: monospace; font-size: 14px; line-height: 1.5;">
+            <div>• n(A ∪ B) = n(A) + n(B) - n(A ∩ B)</div>
+            <div>• n(A ∪ B) = ${nA} + ${nB} - ${nAB} = ${union}</div>
+            <div>• n(Aᶜ) = n(U) - n(A) = ${nU} - ${nA} = ${complementA}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Initialize visualization when page loads
+    window.onload = function() {
+      drawUnionComplementVisualization();
+      
+      // Set up interactive demo
+      const setAInput = document.getElementById('setA');
+      const setBInput = document.getElementById('setB');
+      const intersectionInput = document.getElementById('intersection');
+      const universalInput = document.getElementById('universal');
+      
+      setAInput.addEventListener('input', calculateUnionComplement);
+      setBInput.addEventListener('input', calculateUnionComplement);
+      intersectionInput.addEventListener('input', calculateUnionComplement);
+      universalInput.addEventListener('input', calculateUnionComplement);
+      calculateUnionComplement(); // Initial calculation
+    };
+  </script>
+ </body>
+</html>

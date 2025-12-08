@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<!-- tags: Complex Number and Equation -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Remainder Theorem
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+   }
+
+   .main-content {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 15px;
+    padding: 30px;
+    margin: 20px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+   }
+
+   .fancy-title {
+    text-align: center;
+    font-size: 2.5em;
+    font-weight: bold;
+    margin: 20px 0;
+    color: #2c3e50;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+   }
+
+   .description {
+    font-size: 1.2em;
+    line-height: 1.6;
+    margin: 20px 0;
+    color: #34495e;
+    text-align: center;
+   }
+
+   .content-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin: 30px 0;
+   }
+
+   .formula-block {
+    flex: 1;
+    min-width: 300px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 1.4em;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+   }
+
+   .formula-item {
+    margin: 15px 0;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+   }
+
+   .diagram-block {
+    flex: 1;
+    min-width: 300px;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+   }
+
+   .interactive-demo {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    margin: 30px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+   }
+
+   .demo-title {
+    text-align: center;
+    font-size: 1.8em;
+    margin-bottom: 25px;
+    font-weight: bold;
+   }
+
+   .input-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin: 20px 0;
+    justify-content: center;
+   }
+
+   .input-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+   }
+
+   .input-field label {
+    font-weight: bold;
+    font-size: 1.1em;
+   }
+
+   .input-field input {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    width: 120px;
+    text-align: center;
+    transition: border-color 0.3s;
+   }
+
+   .input-field input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+   }
+
+   .button-group {
+    text-align: center;
+    margin: 25px 0;
+   }
+
+   .btn {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 1.1em;
+    cursor: pointer;
+    margin: 0 10px;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+   }
+
+   .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+   }
+
+   .btn:active {
+    transform: translateY(0);
+   }
+
+   .result-display {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    backdrop-filter: blur(10px);
+   }
+
+   .result-text {
+    font-size: 1.2em;
+    text-align: center;
+    margin: 10px 0;
+   }
+
+   .canvas-container {
+    text-align: center;
+    margin: 20px 0;
+   }
+
+   .remainder-canvas {
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+   }
+
+   .section {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    margin: 25px 0;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+   }
+
+   .section-title {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
+   }
+
+   .theorem-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+   }
+
+   .theorem-card {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(252, 182, 159, 0.3);
+   }
+
+   .theorem-card h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 1.3em;
+   }
+
+   .theorem-card .formula {
+    font-weight: bold;
+    color: #e74c3c;
+    font-size: 1.2em;
+    margin: 10px 0;
+   }
+
+   .theorem-card .description {
+    color: #555;
+    line-height: 1.5;
+   }
+
+   .example-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+   }
+
+   .example-card {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+   }
+
+   .example-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(245, 87, 108, 0.4);
+   }
+
+   .example-card h4 {
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+   }
+
+   .example-detail {
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    display: none;
+   }
+
+   .calculation-steps {
+    margin: 15px 0;
+   }
+
+   .calculation-step {
+    margin: 8px 0;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 5px;
+    border-left: 4px solid #f5576c;
+   }
+
+   .practice-problems {
+    margin: 20px 0;
+   }
+
+   .problem-item {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+   }
+
+   .problem-item h4 {
+    margin: 0 0 15px 0;
+    font-size: 1.2em;
+   }
+
+   .solution-btn {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    color: #333;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 10px 0;
+    transition: all 0.3s;
+   }
+
+   .solution-btn:hover {
+    background: linear-gradient(135deg, #fcb69f 0%, #ffecd2 100%);
+    transform: scale(1.05);
+   }
+
+   .solution {
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 10px 0;
+    display: none;
+    border-left: 4px solid #667eea;
+   }
+
+   .key-takeaways {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    padding: 25px;
+    border-radius: 12px;
+    margin: 25px 0;
+   }
+
+   .takeaway-list {
+    list-style: none;
+    padding: 0;
+   }
+
+   .takeaway-item {
+    background: rgba(255, 255, 255, 0.8);
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+    font-weight: bold;
+   }
+
+   .error-message {
+    background: #ffebee;
+    color: #c62828;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px 0;
+    display: none;
+    text-align: center;
+    font-weight: bold;
+   }
+
+   @media (max-width: 768px) {
+    .content-wrapper {
+     flex-direction: column;
+    }
+
+    .input-group {
+     flex-direction: column;
+     align-items: center;
+    }
+
+    .fancy-title {
+     font-size: 2em;
+    }
+
+    .formula-block {
+     font-size: 1.2em;
+    }
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Complex Number and Equation">
+   Remainder Theorem
+  </div>
+
+  <div class="container">
+   <div class="main-content">
+    <div class="description">
+     The Remainder Theorem provides a powerful shortcut for finding remainders when polynomials are divided by linear factors.
+    </div>
+
+    <div class="content-wrapper">
+     <div class="formula-block">
+      <div class="formula-item">
+       <strong>Remainder Theorem:</strong> $$P(x) \div (x - k) \implies \text{Remainder} = P(k)$$
+      </div>
+      <div class="formula-item">
+       <strong>Factor Theorem:</strong> $$P(k) = 0 \implies (x - k) \text{ is a factor of } P(x)$$
+      </div>
+      <div class="formula-item">
+       <strong>Division Algorithm:</strong> $$P(x) = (x - k)Q(x) + R$$
+      </div>
+     </div>
+
+     <div class="diagram-block">
+      <svg viewbox="0 0 250 200" xmlns="http://www.w3.org/2000/svg">
+       <!-- Division visualization -->
+       <text fill="#333" font-size="14" x="125" y="20" text-anchor="middle">P(x) ÷ (x - k)</text>
+       <!-- Arrow down -->
+       <line marker-end="url(#arrowhead)" stroke="#666" stroke-width="2" x1="125" x2="125" y1="30" y2="70"></line>
+       <!-- Quotient and remainder -->
+       <text fill="#e74c3c" font-size="12" x="125" y="90" text-anchor="middle">Quotient Q(x)</text>
+       <text fill="#27ae60" font-size="12" x="125" y="110" text-anchor="middle">Remainder R</text>
+       <!-- Connection to evaluation -->
+       <line marker-end="url(#arrowhead)" stroke="#f39c12" stroke-width="2" x1="125" x2="80" y1="120" y2="150"></line>
+       <text fill="#f39c12" font-size="12" x="40" y="155">R = P(k)</text>
+       <!-- Arrow markers -->
+       <defs>
+        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+         <polygon fill="#666" points="0 0, 10 3.5, 0 7"></polygon>
+        </marker>
+       </defs>
+      </svg>
+     </div>
+    </div>
+
+    <div class="theorem-grid">
+     <div class="theorem-card">
+      <h3>Remainder Theorem</h3>
+      <div class="formula">P(x) = (x - k)Q(x) + R</div>
+      <div class="description">
+       When dividing P(x) by (x - k), the remainder R equals P(k).
+       <br><br>
+       This works because P(k) = (k - k)Q(k) + R = R
+      </div>
+     </div>
+
+     <div class="theorem-card">
+      <h3>Factor Theorem</h3>
+      <div class="formula">P(k) = 0 ⇒ (x - k) divides P(x)</div>
+      <div class="description">
+       If k is a root of P(x), then (x - k) is a factor of P(x).
+       <br><br>
+       Conversely, if (x - k) divides P(x), then k is a root.
+      </div>
+     </div>
+
+     <div class="theorem-card">
+      <h3>Multiple Roots</h3>
+      <div class="formula">P(k) = P'(k) = 0 ⇒ (x - k)² divides P(x)</div>
+      <div class="description">
+       If k is a repeated root, then (x - k) appears multiple times as a factor.
+       <br><br>
+       The multiplicity equals the number of times (x - k) divides P(x).
+      </div>
+     </div>
+    </div>
+
+    <div class="interactive-demo">
+     <div class="demo-title">Interactive Remainder Calculator</div>
+
+     <div class="input-group">
+      <div class="input-field">
+       <label for="polynomial">P(x) coefficients (comma-separated):</label>
+       <input id="polynomial" placeholder="1, -5, 6" type="text" value="1, -5, 6"/>
+      </div>
+      <div class="input-field">
+       <label for="divisor">k (divisor root):</label>
+       <input id="divisor" step="any" type="number" value="2"/>
+      </div>
+     </div>
+
+     <div class="button-group">
+      <button class="btn" onclick="calculateRemainder()">Calculate Remainder</button>
+      <button class="btn" onclick="checkFactor()">Check if Factor</button>
+      <button class="btn" onclick="resetDemo()">Reset</button>
+     </div>
+
+     <div class="error-message" id="errorMessage"></div>
+
+     <div class="result-display">
+      <div class="result-text" id="polynomialDisplay">
+       Polynomial: <strong id="polynomialText">x² - 5x + 6</strong>
+      </div>
+      <div class="result-text" id="remainderDisplay">
+       Remainder when divided by (x - 2): <strong id="remainderText">Not calculated</strong>
+      </div>
+      <div class="result-text" id="factorDisplay">
+       Is (x - 2) a factor?: <strong id="factorText">Not checked</strong>
+      </div>
+     </div>
+
+     <div class="canvas-container">
+      <canvas class="remainder-canvas" height="400" id="remainderCanvas" width="500"></canvas>
+     </div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Mathematical Foundation</div>
+     <p>The Remainder Theorem follows directly from the Division Algorithm for polynomials:</p>
+     <div class="formula-block" style="margin: 20px 0;">
+      $$\text{If } P(x) = (x - k)Q(x) + R, \text{ where } R \text{ is a constant}$$
+     </div>
+     <p>Substituting x = k into both sides:</p>
+     <div class="formula-block" style="margin: 20px 0;">
+      $$\begin{align}
+      P(k) &= (k - k)Q(k) + R \\
+      P(k) &= 0 \cdot Q(k) + R \\
+      P(k) &= R
+      \end{align}$$
+     </div>
+     <p>Therefore, the remainder when P(x) is divided by (x - k) is simply P(k).</p>
+     <p>The Factor Theorem is a direct consequence: if P(k) = 0, then R = 0, so (x - k) divides P(x) exactly.</p>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Worked Examples</div>
+     <div class="example-grid">
+      <div class="example-card" onclick="showExample(1)">
+       <h4>Example 1: Finding remainder</h4>
+       <p>Find remainder of x³ - 2x² + 3x - 1 divided by x - 1</p>
+      </div>
+      <div class="example-card" onclick="showExample(2)">
+       <h4>Example 2: Checking factors</h4>
+       <p>Check if x - 2 is a factor of x³ - 6x² + 11x - 6</p>
+      </div>
+      <div class="example-card" onclick="showExample(3)">
+       <h4>Example 3: Complex roots</h4>
+       <p>Find remainder of x³ + x² + x + 1 divided by x + i</p>
+      </div>
+     </div>
+
+     <div class="example-detail" id="exampleDetail"></div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Applications</div>
+     <ul>
+      <li><strong>Polynomial Evaluation:</strong> Quick way to evaluate polynomials at specific points</li>
+      <li><strong>Factor Finding:</strong> Test potential rational roots of polynomial equations</li>
+      <li><strong>Rational Root Theorem:</strong> Find possible rational roots to test</li>
+      <li><strong>Polynomial Division:</strong> Avoid long division by using synthetic division</li>
+      <li><strong>Root Multiplicity:</strong> Determine how many times a root appears</li>
+     </ul>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Practice Problems</div>
+     <div class="practice-problems">
+      <div class="problem-item">
+       <h4>Problem 1</h4>
+       <p>Find the remainder when x³ - 3x² + 4x - 2 is divided by x - 1.</p>
+       <button class="solution-btn" onclick="toggleSolution(1)">Show Solution</button>
+       <div class="solution" id="solution1">
+        <p><strong>Solution:</strong></p>
+        <p>By Remainder Theorem, remainder = P(1)</p>
+        <p>P(1) = 1³ - 3(1)² + 4(1) - 2 = 1 - 3 + 4 - 2 = 0</p>
+        <p>Remainder = 0</p>
+       </div>
+      </div>
+
+      <div class="problem-item">
+       <h4>Problem 2</h4>
+       <p>Determine if x + 1 is a factor of x³ + 2x² - x - 2.</p>
+       <button class="solution-btn" onclick="toggleSolution(2)">Show Solution</button>
+       <div class="solution" id="solution2">
+        <p><strong>Solution:</strong></p>
+        <p>Check P(-1): (-1)³ + 2(-1)² - (-1) - 2 = -1 + 2 + 1 - 2 = 0</p>
+        <p>Since P(-1) = 0, x + 1 is a factor.</p>
+       </div>
+      </div>
+
+      <div class="problem-item">
+       <h4>Problem 3</h4>
+       <p>Find the value of k such that x - 2 is a factor of x³ - kx² + 3x - 6.</p>
+       <button class="solution-btn" onclick="toggleSolution(3)">Show Solution</button>
+       <div class="solution" id="solution3">
+        <p><strong>Solution:</strong></p>
+        <p>Since x - 2 is a factor, P(2) = 0</p>
+        <p>2³ - k(2)² + 3(2) - 6 = 0</p>
+        <p>8 - 4k + 6 - 6 = 0</p>
+        <p>8 - 4k = 0 ⇒ k = 2</p>
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <div class="section-title">Key Takeaways</div>
+     <ul class="takeaway-list">
+      <li class="takeaway-item">Remainder when P(x) ÷ (x - k) equals P(k)</li>
+      <li class="takeaway-item">If P(k) = 0, then (x - k) is a factor of P(x)</li>
+      <li class="takeaway-item">Works for any polynomial and any complex number k</li>
+      <li class="takeaway-item">Much faster than polynomial long division</li>
+      <li class="takeaway-item">Essential for finding rational roots of polynomial equations</li>
+      <li class="takeaway-item">Foundation for synthetic division and polynomial factorization</li>
+     </ul>
+    </div>
+   </div>
+  </div>
+
+  <script>
+   function parsePolynomial(coeffsStr) {
+    return coeffsStr.split(',').map(x => parseFloat(x.trim())).filter(x => !isNaN(x));
+   }
+
+   function evaluatePolynomial(coeffs, x) {
+    let result = 0;
+    for (let i = 0; i < coeffs.length; i++) {
+     result += coeffs[i] * Math.pow(x, coeffs.length - 1 - i);
+    }
+    return result;
+   }
+
+   function formatPolynomial(coeffs) {
+    if (coeffs.length === 0) return '0';
+
+    let terms = [];
+    for (let i = 0; i < coeffs.length; i++) {
+     const power = coeffs.length - 1 - i;
+     const coeff = coeffs[i];
+
+     if (coeff === 0) continue;
+
+     let term = '';
+     if (power === 0) {
+      term = coeff.toString();
+     } else if (power === 1) {
+      term = coeff === 1 ? 'x' : coeff === -1 ? '-x' : coeff + 'x';
+     } else {
+      term = coeff === 1 ? `x^${power}` : coeff === -1 ? `-x^${power}` : coeff + `x^${power}`;
+     }
+
+     terms.push(term);
+    }
+
+    return terms.join(' + ').replace(/\+\s*-/g, '- ');
+   }
+
+   function calculateRemainder() {
+    try {
+     const coeffsStr = document.getElementById('polynomial').value;
+     const k = parseFloat(document.getElementById('divisor').value);
+
+     if (!coeffsStr.trim()) {
+      document.getElementById('errorMessage').textContent = 'Please enter polynomial coefficients.';
+      document.getElementById('errorMessage').style.display = 'block';
+      return;
+     }
+
+     const coeffs = parsePolynomial(coeffsStr);
+     if (coeffs.length === 0) {
+      document.getElementById('errorMessage').textContent = 'Invalid polynomial coefficients.';
+      document.getElementById('errorMessage').style.display = 'block';
+      return;
+     }
+
+     const remainder = evaluatePolynomial(coeffs, k);
+     const polyStr = formatPolynomial(coeffs);
+
+     document.getElementById('polynomialText').textContent = polyStr;
+     document.getElementById('remainderText').textContent = remainder;
+     document.getElementById('errorMessage').style.display = 'none';
+
+     drawRemainderVisualization(coeffs, k, remainder);
+    } catch (error) {
+     document.getElementById('errorMessage').textContent = 'Error calculating remainder. Please check your input.';
+     document.getElementById('errorMessage').style.display = 'block';
+    }
+   }
+
+   function checkFactor() {
+    try {
+     const coeffsStr = document.getElementById('polynomial').value;
+     const k = parseFloat(document.getElementById('divisor').value);
+
+     const coeffs = parsePolynomial(coeffsStr);
+     const remainder = evaluatePolynomial(coeffs, k);
+
+     const isFactor = Math.abs(remainder) < 1e-10; // Account for floating point precision
+     document.getElementById('factorText').textContent = isFactor ? 'Yes' : 'No';
+     document.getElementById('errorMessage').style.display = 'none';
+    } catch (error) {
+     document.getElementById('errorMessage').textContent = 'Error checking factor.';
+     document.getElementById('errorMessage').style.display = 'block';
+    }
+   }
+
+   function drawRemainderVisualization(coeffs, k, remainder) {
+    const canvas = document.getElementById('remainderCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Calculate some points around k
+    const points = [];
+    const range = 4;
+    const step = 0.5;
+
+    for (let x = k - range; x <= k + range; x += step) {
+     points.push({x: x, y: evaluatePolynomial(coeffs, x)});
+    }
+
+    // Find bounds
+    const ys = points.map(p => p.y);
+    const minY = Math.min(...ys);
+    const maxY = Math.max(...ys);
+
+    // Scale factors
+    const scaleX = canvas.width / (2 * range);
+    const scaleY = canvas.height / (maxY - minY + 4);
+    const offsetX = canvas.width / 2 - k * scaleX;
+    const offsetY = canvas.height / 2 - (minY + maxY) / 2 * scaleY;
+
+    // Draw axes
+    ctx.strokeStyle = '#ddd';
+    ctx.lineWidth = 1;
+
+    // X-axis
+    ctx.beginPath();
+    ctx.moveTo(0, offsetY);
+    ctx.lineTo(canvas.width, offsetY);
+    ctx.stroke();
+
+    // Y-axis
+    ctx.beginPath();
+    ctx.moveTo(offsetX, 0);
+    ctx.lineTo(offsetX, canvas.height);
+    ctx.stroke();
+
+    // Draw polynomial curve
+    ctx.strokeStyle = '#667eea';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+
+    points.forEach((point, index) => {
+     const canvasX = point.x * scaleX + offsetX;
+     const canvasY = -point.y * scaleY + offsetY;
+
+     if (index === 0) {
+      ctx.moveTo(canvasX, canvasY);
+     } else {
+      ctx.lineTo(canvasX, canvasY);
+     }
+    });
+
+    ctx.stroke();
+
+    // Draw the point (k, P(k))
+    const pointX = k * scaleX + offsetX;
+    const pointY = -remainder * scaleY + offsetY;
+
+    ctx.fillStyle = '#e74c3c';
+    ctx.beginPath();
+    ctx.arc(pointX, pointY, 5, 0, 2 * Math.PI);
+    ctx.fill();
+
+    // Draw vertical line at x = k
+    ctx.strokeStyle = '#f39c12';
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath();
+    ctx.moveTo(pointX, 0);
+    ctx.lineTo(pointX, canvas.height);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Labels
+    ctx.fillStyle = '#333';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(`(${k}, ${remainder.toFixed(2)})`, pointX, pointY - 10);
+    ctx.fillText(`x = ${k}`, pointX, canvas.height - 10);
+
+    // Legend
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.fillRect(10, 10, 140, 80);
+    ctx.strokeStyle = '#333';
+    ctx.strokeRect(10, 10, 140, 80);
+
+    ctx.fillStyle = '#333';
+    ctx.font = '10px Arial';
+    ctx.textAlign = 'left';
+    ctx.fillText('Legend:', 15, 25);
+    ctx.fillText('● P(k) = remainder', 15, 40);
+    ctx.fillText('--- x = k', 15, 55);
+    ctx.fillText('Curve: P(x)', 15, 70);
+   }
+
+   function showExample(exampleNumber) {
+    const detail = document.getElementById('exampleDetail');
+    let content = '';
+
+    switch(exampleNumber) {
+     case 1:
+      content = `
+       <h4>Detailed Example 1 - Finding Remainder</h4>
+       <div class="calculation-steps">
+        <div class="calculation-step">P(x) = x³ - 2x² + 3x - 1, divisor = x - 1</div>
+        <div class="calculation-step">By Remainder Theorem: Remainder = P(1)</div>
+        <div class="calculation-step">P(1) = 1³ - 2(1)² + 3(1) - 1 = 1 - 2 + 3 - 1 = 1</div>
+        <div class="calculation-step">Remainder = 1</div>
+        <div class="calculation-step">Verification: (x³ - 2x² + 3x - 1) ÷ (x - 1) = x² - x + 2 with remainder 1</div>
+       </div>
+      `;
+      break;
+     case 2:
+      content = `
+       <h4>Detailed Example 2 - Checking Factors</h4>
+       <div class="calculation-steps">
+        <div class="calculation-step">P(x) = x³ - 6x² + 11x - 6, check if x - 2 is a factor</div>
+        <div class="calculation-step">By Factor Theorem: Check if P(2) = 0</div>
+        <div class="calculation-step">P(2) = 2³ - 6(2)² + 11(2) - 6 = 8 - 24 + 22 - 6 = 0</div>
+        <div class="calculation-step">Since P(2) = 0, x - 2 is a factor</div>
+        <div class="calculation-step">Factorization: (x - 2)(x² - 4x + 3) = (x - 2)(x - 1)(x - 3)</div>
+       </div>
+      `;
+      break;
+     case 3:
+      content = `
+       <h4>Detailed Example 3 - Complex Roots</h4>
+       <div class="calculation-steps">
+        <div class="calculation-step">P(x) = x³ + x² + x + 1, divisor = x + i</div>
+        <div class="calculation-step">Remainder = P(-i)</div>
+        <div class="calculation-step">P(-i) = (-i)³ + (-i)² + (-i) + 1 = -i³ - i² - i + 1</div>
+        <div class="calculation-step">= i - ( -1) - i + 1 = i + 1 - i + 1 = 2</div>
+        <div class="calculation-step">Remainder = 2</div>
+       </div>
+      `;
+      break;
+    }
+
+    detail.innerHTML = content;
+    detail.style.display = 'block';
+    MathJax.typesetPromise();
+   }
+
+   function toggleSolution(problemNumber) {
+    const solution = document.getElementById('solution' + problemNumber);
+    if (solution.style.display === 'none' || solution.style.display === '') {
+     solution.style.display = 'block';
+    } else {
+     solution.style.display = 'none';
+    }
+   }
+
+   function resetDemo() {
+    document.getElementById('polynomial').value = '1, -5, 6';
+    document.getElementById('divisor').value = '2';
+    document.getElementById('polynomialText').textContent = 'x² - 5x + 6';
+    document.getElementById('remainderText').textContent = 'Not calculated';
+    document.getElementById('factorText').textContent = 'Not checked';
+    document.getElementById('errorMessage').style.display = 'none';
+    calculateRemainder();
+   }
+
+   // Initialize with default values
+   document.addEventListener('DOMContentLoaded', function() {
+    calculateRemainder();
+   });
+  </script>
+ </body>
+</html>

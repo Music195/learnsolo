@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<!-- tags: Set and Elements -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Set and Elements
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: white;
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      hyphens: auto;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #7f8c8d;
+      font-size: 1.2em;
+      margin-bottom: 40px;
+      font-style: italic;
+    }
+
+    .theorem-statement {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 25px;
+      border-radius: 15px;
+      margin: 30px 0;
+      text-align: center;
+      font-size: 1.3em;
+      font-weight: bold;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .interactive-demo {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      padding: 25px;
+      margin: 30px 0;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .demo-title {
+      text-align: center;
+      color: #2c3e50;
+      font-size: 1.8em;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+
+    .canvas-container {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    canvas {
+      border: 3px solid #667eea;
+      border-radius: 10px;
+      background: #f8f9fa;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .set-notation {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin: 20px 0;
+    }
+
+    .notation-card {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .notation-symbol {
+      font-size: 3em;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+
+    .section {
+      margin: 40px 0;
+    }
+
+    .section-title {
+      color: #2c3e50;
+      font-size: 1.8em;
+      margin-bottom: 20px;
+      border-bottom: 3px solid #667eea;
+      padding-bottom: 10px;
+    }
+
+    .examples {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin: 20px 0;
+    }
+
+    .example-card {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .example-title {
+      color: #2c3e50;
+      font-weight: bold;
+      margin-bottom: 15px;
+      font-size: 1.2em;
+    }
+
+    .set-display {
+      background: #f8f9fa;
+      border: 2px solid #667eea;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      text-align: center;
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+
+    .practice-problems {
+      margin: 40px 0;
+    }
+
+    .problem {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .problem-title {
+      color: #2c3e50;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .solution-toggle {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      margin: 10px 0;
+      transition: transform 0.2s;
+    }
+
+    .solution-toggle:hover {
+      transform: scale(1.05);
+    }
+
+    .solution {
+      background: #f8f9fa;
+      border-radius: 5px;
+      padding: 15px;
+      margin: 10px 0;
+      border-left: 4px solid #28a745;
+      display: none;
+    }
+
+    .key-takeaways {
+      background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+      padding: 25px;
+      border-radius: 15px;
+      margin: 30px 0;
+    }
+
+    .takeaway-item {
+      margin: 10px 0;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+    .math {
+      font-family: 'Computer Modern', 'Latin Modern Roman', serif;
+    }
+
+    .highlight {
+      background: #fff3cd;
+      padding: 2px 4px;
+      border-radius: 3px;
+    }
+
+    .set {
+      background: #e3f2fd;
+      color: #1565c0;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .set-blue {
+      background: #e8eaf6;
+      color: #283593;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .venn-diagram {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    .venn-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: rgba(102, 126, 234, 0.3);
+      border: 3px solid #667eea;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #667eea;
+      margin: 0 10px;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+
+      .container {
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 2em;
+      }
+
+      .set-notation {
+        grid-template-columns: 1fr;
+      }
+
+      .examples {
+        grid-template-columns: 1fr;
+      }
+
+      .venn-circle {
+        width: 80px;
+        height: 80px;
+        font-size: 0.8em;
+      }
+    }
+  </style>
+ <body>
+  <div class="fancy-title" data-topic="Set and Elements">
+   Set and Elements
+  </div>
+  <div class="container">
+   <h1>Sets and Elements</h1>
+   <div class="subtitle">The Foundation of Set Theory</div>
+
+   <div class="theorem-statement">
+    A <span class="highlight">set</span> is a well-defined collection of distinct objects, called <span class="highlight">elements</span> or <span class="highlight">members</span>.
+   </div>
+
+   <div class="interactive-demo">
+    <div class="demo-title">Interactive Set Visualization</div>
+    <div class="venn-diagram">
+     <div class="venn-circle">Set A<br/>{1, 2, 3}</div>
+     <div class="venn-circle">Set B<br/>{2, 3, 4}</div>
+    </div>
+    <div class="canvas-container">
+     <canvas height="300" id="setCanvas" width="500"></canvas>
+    </div>
+   </div>
+
+   <div class="section">
+    <div class="section-title">Set Notation</div>
+    <div class="set-notation">
+     <div class="notation-card">
+      <div>Membership</div>
+      <div class="notation-symbol">∈</div>
+      <div>x ∈ A means "x is an element of set A"</div>
+     </div>
+     <div class="notation-card">
+      <div>Non-membership</div>
+      <div class="notation-symbol">∉</div>
+      <div>x ∉ A means "x is not an element of set A"</div>
+     </div>
+     <div class="notation-card">
+      <div>Subset</div>
+      <div class="notation-symbol">⊂</div>
+      <div>A ⊂ B means "A is a subset of B"</div>
+     </div>
+     <div class="notation-card">
+      <div>Empty Set</div>
+      <div class="notation-symbol">∅</div>
+      <div>The set with no elements</div>
+     </div>
+    </div>
+   </div>
+
+   <div class="section">
+    <div class="section-title">Set Representation Methods</div>
+    <div class="examples">
+     <div class="example-card">
+      <div class="example-title">Roster Method (Listing Elements)</div>
+      <div class="set-display">
+       A = {1, 2, 3, 4, 5}
+      </div>
+      <p>The set A contains the elements 1, 2, 3, 4, and 5.</p>
+     </div>
+     <div class="example-card">
+      <div class="example-title">Set-Builder Notation (Describing Properties)</div>
+      <div class="set-display">
+       B = {x | x is a positive divisor of 15}
+      </div>
+      <p>The set B contains all x such that x is a positive divisor of 15.</p>
+      <div class="set-display">
+       B = {1, 3, 5, 15}
+      </div>
+     </div>
+     <div class="example-card">
+      <div class="example-title">Interval Notation</div>
+      <div class="set-display">
+       C = [2, 7] = {x ∈ ℝ | 2 ≤ x ≤ 7}
+      </div>
+      <p>The set C contains all real numbers x where 2 ≤ x ≤ 7.</p>
+     </div>
+    </div>
+   </div>
+
+   <div class="section">
+    <div class="section-title">Important Concepts</div>
+    <div class="examples">
+     <div class="example-card">
+      <div class="example-title">Equal Sets</div>
+      <p>Two sets A and B are equal if they contain exactly the same elements.</p>
+      <div class="set-display">
+       {1, 2, 3} = {3, 2, 1} = {2, 1, 3, 2}
+      </div>
+      <p>Order and repetition don't matter in sets.</p>
+     </div>
+     <div class="example-card">
+      <div class="example-title">Universal Set</div>
+      <p>The universal set U contains all elements under consideration.</p>
+      <div class="set-display">
+       U = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+      </div>
+      <p>All other sets are subsets of the universal set.</p>
+     </div>
+     <div class="example-card">
+      <div class="example-title">Singleton Set</div>
+      <p>A set with exactly one element.</p>
+      <div class="set-display">
+       {5} or {apple}
+      </div>
+      <p>Note: {5} ≠ 5 (the set vs. the element)</p>
+     </div>
+    </div>
+   </div>
+
+   <div class="practice-problems">
+    <div class="section-title">Practice Problems</div>
+
+    <div class="problem">
+     <div class="problem-title">Problem 1: Set Membership</div>
+     <p>Given the set A = {1, 3, 5, 7, 9}, determine whether each statement is true or false:</p>
+     <p>a) 5 ∈ A</p>
+     <p>b) 6 ∈ A</p>
+     <p>c) 10 ∉ A</p>
+     <button class="solution-toggle" onclick="toggleSolution(1)">Show Solution</button>
+     <div class="solution" id="solution1">
+      <p><strong>a) 5 ∈ A:</strong> True (5 is an element of set A)</p>
+      <p><strong>b) 6 ∈ A:</strong> False (6 is not an element of set A)</p>
+      <p><strong>c) 10 ∉ A:</strong> True (10 is not an element of set A)</p>
+     </div>
+    </div>
+
+    <div class="problem">
+     <div class="problem-title">Problem 2: Set-Builder to Roster</div>
+     <p>Write the set {x | x is a vowel in the English alphabet} in roster form.</p>
+     <button class="solution-toggle" onclick="toggleSolution(2)">Show Solution</button>
+     <div class="solution" id="solution2">
+      <p><strong>Solution:</strong> {a, e, i, o, u}</p>
+      <p>The set contains all vowels: a, e, i, o, and u.</p>
+     </div>
+    </div>
+
+    <div class="problem">
+     <div class="problem-title">Problem 3: Equal Sets</div>
+     <p>Determine whether the sets A = {2, 4, 6} and B = {6, 4, 2, 4} are equal.</p>
+     <button class="solution-toggle" onclick="toggleSolution(3)">Show Solution</button>
+     <div class="solution" id="solution3">
+      <p><strong>Solution:</strong> Yes, A = B</p>
+      <p>Both sets contain exactly the same elements: 2, 4, and 6. Repetition doesn't matter in sets.</p>
+     </div>
+    </div>
+
+    <div class="problem">
+     <div class="problem-title">Problem 4: Universal Set Context</div>
+     <p>If the universal set U = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10} and A = {2, 4, 6}, what elements are in the complement of A?</p>
+     <button class="solution-toggle" onclick="toggleSolution(4)">Show Solution</button>
+     <div class="solution" id="solution4">
+      <p><strong>Solution:</strong> A' = {1, 3, 5, 7, 8, 9, 10}</p>
+      <p>The complement of A contains all elements in U that are not in A.</p>
+     </div>
+    </div>
+   </div>
+
+   <div class="key-takeaways">
+    <div class="section-title" style="color: #2c3e50; border-color: #667eea;">Key Takeaways</div>
+    <div class="takeaway-item">
+     ✓ A set is a collection of distinct objects called elements
+    </div>
+    <div class="takeaway-item">
+     ✓ x ∈ A means "x is an element of set A"
+    </div>
+    <div class="takeaway-item">
+     ✓ x ∉ A means "x is not an element of set A"
+    </div>
+    <div class="takeaway-item">
+     ✓ Sets can be represented using roster notation {1, 2, 3} or set-builder notation {x | condition}
+    </div>
+    <div class="takeaway-item">
+     ✓ Order and repetition don't matter in sets
+    </div>
+    <div class="takeaway-item">
+     ✓ Two sets are equal if they contain exactly the same elements
+    </div>
+   </div>
+  </div>
+
+  <script>
+   // Interactive Set Visualization
+   const canvas = document.getElementById('setCanvas');
+   const ctx = canvas.getContext('2d');
+
+   // Set data
+   const setA = { name: 'A', elements: [1, 2, 3], color: '#667eea', x: 150, y: 150 };
+   const setB = { name: 'B', elements: [2, 3, 4], color: '#764ba2', x: 350, y: 150 };
+
+   function drawSetVisualization() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw set circles
+    drawSet(setA);
+    drawSet(setB);
+
+    // Draw intersection area
+    drawIntersection();
+
+    // Draw elements
+    drawElements();
+
+    // Draw labels
+    drawLabels();
+   }
+
+   function drawSet(set) {
+    ctx.beginPath();
+    ctx.arc(set.x, set.y, 80, 0, 2 * Math.PI);
+    ctx.strokeStyle = set.color;
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // Fill with transparency
+    ctx.fillStyle = set.color + '20';
+    ctx.fill();
+   }
+
+   function drawIntersection() {
+    // Draw intersection area
+    ctx.beginPath();
+    ctx.arc(setA.x, setA.y, 80, Math.PI * 0.3, Math.PI * 1.7);
+    ctx.arc(setB.x, setB.y, 80, Math.PI * 1.3, Math.PI * 0.7, true);
+    ctx.closePath();
+    ctx.fillStyle = '#667eea40';
+    ctx.fill();
+    ctx.strokeStyle = '#667eea';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+   }
+
+   function drawElements() {
+    // Draw elements in sets
+    const elementPositions = [
+     { x: setA.x - 30, y: setA.y - 20, element: 1, set: 'A' },
+     { x: setA.x + 30, y: setA.y - 20, element: 2, set: 'A∩B' },
+     { x: setA.x, y: setA.y + 30, element: 3, set: 'A∩B' },
+     { x: setB.x - 30, y: setB.y + 20, element: 4, set: 'B' }
+    ];
+
+    elementPositions.forEach(pos => {
+     // Draw element circle
+     ctx.beginPath();
+     ctx.arc(pos.x, pos.y, 15, 0, 2 * Math.PI);
+     ctx.fillStyle = '#fff';
+     ctx.strokeStyle = '#333';
+     ctx.lineWidth = 2;
+     ctx.fill();
+     ctx.stroke();
+
+     // Draw element number
+     ctx.fillStyle = '#333';
+     ctx.font = '14px Arial';
+     ctx.textAlign = 'center';
+     ctx.fillText(pos.element.toString(), pos.x, pos.y + 5);
+    });
+   }
+
+   function drawLabels() {
+    // Draw set labels
+    ctx.fillStyle = setA.color;
+    ctx.font = 'bold 16px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('Set A', setA.x, setA.y - 100);
+
+    ctx.fillStyle = setB.color;
+    ctx.fillText('Set B', setB.x, setB.y - 100);
+
+    // Draw intersection label
+    ctx.fillStyle = '#667eea';
+    ctx.font = '14px Arial';
+    ctx.fillText('A ∩ B', (setA.x + setB.x) / 2, setA.y + 10);
+   }
+
+   // Solution toggle function
+   function toggleSolution(problemNumber) {
+    const solution = document.getElementById(`solution${problemNumber}`);
+    const button = solution.previousElementSibling;
+
+    if (solution.style.display === 'none' || solution.style.display === '') {
+     solution.style.display = 'block';
+     button.textContent = 'Hide Solution';
+    } else {
+     solution.style.display = 'none';
+     button.textContent = 'Show Solution';
+    }
+   }
+
+   // Initialize visualization
+   drawSetVisualization();
+  </script>
+ </body>
+</html>

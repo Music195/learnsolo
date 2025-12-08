@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<!-- tags: Geometry -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Centroid Coordinates
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+   }
+
+   .main-content {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 15px;
+    padding: 30px;
+    margin: 20px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+   }
+
+   .fancy-title {
+    text-align: center;
+    font-size: 2.5em;
+    font-weight: bold;
+    margin: 20px 0;
+    color: #2c3e50;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+   }
+
+   .description {
+    font-size: 1.2em;
+    line-height: 1.6;
+    margin: 20px 0;
+    color: #34495e;
+    text-align: center;
+   }
+
+   .content-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin: 30px 0;
+   }
+
+   .formula-block {
+    flex: 1;
+    min-width: 300px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 1.4em;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+   }
+
+   .formula-item {
+    margin: 15px 0;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+   }
+
+   .graybox {
+    background: linear-gradient(135deg, #bdc3c7 0%, #95a5a6 100%);
+    color: #2c3e50;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    text-align: center;
+    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+   }
+
+   .interactive-demo {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    margin: 30px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+   }
+
+   .demo-title {
+    text-align: center;
+    font-size: 1.8em;
+    margin-bottom: 25px;
+    font-weight: bold;
+   }
+
+   .input-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin: 20px 0;
+    justify-content: center;
+   }
+
+   .input-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+   }
+
+   .input-field label {
+    font-weight: bold;
+    font-size: 1.1em;
+   }
+
+   .input-field input {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    width: 120px;
+    text-align: center;
+    transition: border-color 0.3s;
+   }
+
+   .input-field input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+   }
+
+   .button-group {
+    text-align: center;
+    margin: 25px 0;
+   }
+
+   .btn {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 1.1em;
+    cursor: pointer;
+    margin: 0 10px;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+   }
+
+   .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+   }
+
+   .btn:active {
+    transform: translateY(0);
+   }
+
+   .result-display {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    backdrop-filter: blur(10px);
+   }
+
+   .result-text {
+    font-size: 1.2em;
+    text-align: center;
+    margin: 10px 0;
+   }
+
+   .section {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    margin: 25px 0;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+   }
+
+   .section-title {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
+   }
+
+   .canvas-container {
+    text-align: center;
+    margin: 20px 0;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+   }
+
+   .canvas-title {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #2c3e50;
+   }
+
+   .formula-display {
+    text-align: center;
+    margin: 15px 0;
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #e74c3c;
+   }
+
+   .properties-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+   }
+
+   .property-card {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(252, 182, 159, 0.3);
+   }
+
+   .property-card h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 1.3em;
+   }
+
+   .property-card .formula {
+    font-weight: bold;
+    color: #e74c3c;
+    font-size: 1.2em;
+    margin: 10px 0;
+   }
+
+   .property-card .description {
+    color: #555;
+    line-height: 1.5;
+   }
+
+   .example-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+   }
+
+   .example-card {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+   }
+
+   .example-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(245, 87, 108, 0.4);
+   }
+
+   .example-card h4 {
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+   }
+
+   .example-detail {
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    display: none;
+   }
+
+   .calculation-steps {
+    margin: 15px 0;
+   }
+
+   .calculation-step {
+    margin: 8px 0;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 5px;
+    border-left: 4px solid #f5576c;
+   }
+
+   .practice-problems {
+    margin: 20px 0;
+   }
+
+   .problem-item {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+   }
+
+   .problem-item h4 {
+    margin: 0 0 15px 0;
+    font-size: 1.2em;
+   }
+
+   .solution-btn {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    color: #333;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 10px 0;
+    transition: all 0.3s;
+   }
+
+   .solution-btn:hover {
+    background: linear-gradient(135deg, #fcb69f 0%, #ffecd2 100%);
+    transform: scale(1.05);
+   }
+
+   .solution {
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 10px 0;
+    display: none;
+    border-left: 4px solid #667eea;
+   }
+
+   .key-takeaways {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    padding: 25px;
+    border-radius: 12px;
+    margin: 25px 0;
+   }
+
+   .takeaway-list {
+    list-style: none;
+    padding: 0;
+   }
+
+   .takeaway-item {
+    background: rgba(255, 255, 255, 0.8);
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+    font-weight: bold;
+   }
+
+   .error-message {
+    background: #ffebee;
+    color: #c62828;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px 0;
+    display: none;
+    text-align: center;
+    font-weight: bold;
+   }
+
+   @media (max-width: 768px) {
+    .content-wrapper {
+     flex-direction: column;
+    }
+
+    .input-group {
+     flex-direction: column;
+     align-items: center;
+    }
+
+    .fancy-title {
+     font-size: 2em;
+    }
+
+    .formula-block {
+     font-size: 1.2em;
+    }
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Geometry">
+   Centroid Coordinates
+  </div>
+
+  <div class="container">
+   <div class="main-content">
+    <div class="description">
+     The centroid is the point where the three medians of a triangle intersect. It divides each median in the ratio 2:1 and is located at the average of the three vertices' coordinates.
+    </div>
+
+    <div class="content-wrapper">
+     <div class="formula-block">
+      <div class="formula-item">
+       <strong>Centroid Formula:</strong> $$G\left(\frac{x_1 + x_2 + x_3}{3}, \frac{y_1 + y_2 + y_3}{3}\right)$$<br/>
+       $$\text{Where A(x₁,y₁), B(x₂,y₂), C(x₃,y₃) are vertices}$$
+      </div>
+      <div class="formula-item">
+       <strong>Median Property:</strong> $$\text{G divides each median in ratio 2:1}$$<br/>
+       $$\text{AG:GM = 2:1 (vertex to midpoint)}$$
+      </div>
+      <div class="formula-item">
+       <strong>Center of Mass:</strong> $$\text{Centroid is the balance point of triangle}$$<br/>
+       $$\text{All medians concur at G}$$
+      </div>
+     </div>
+
+     <div class="graybox">
+      The centroid G is the intersection point of the three medians. It divides each median in the ratio 2:1, with the longer segment being from vertex to centroid. The centroid is also the center of mass of the triangle.
+     </div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Visual Properties of Centroid</div>
+     <div class="properties-grid">
+      <div class="property-card">
+       <h3>Median Intersection</h3>
+       <div class="canvas-container">
+        <div class="canvas-title">Three medians intersect at centroid G</div>
+        <canvas id="medianCanvas" width="400" height="350"></canvas>
+       </div>
+       <div class="formula">$$\text{AG:GM = 2:1}$$</div>
+       <div class="description">
+        <strong>Key Points:</strong>
+        <br/>• Three medians always intersect at one point
+        <br/>• G divides each median in ratio 2:1
+        <br/>• Longer segment is from vertex to centroid
+        <br/>• Concurrency property of medians
+       </div>
+      </div>
+
+      <div class="property-card">
+       <h3>Center of Mass</h3>
+       <div class="canvas-container">
+        <div class="canvas-title">Centroid as balance point</div>
+        <canvas id="massCanvas" width="400" height="350"></canvas>
+       </div>
+       <div class="formula">$$G = \frac{A + B + C}{3}$$</div>
+       <div class="description">
+        <strong>Key Points:</strong>
+        <br/>• Centroid is the center of mass
+        <br/>• Triangle balances at G
+        <br/>• Average of vertex coordinates
+        <br/>• Physical center of triangle
+       </div>
+      </div>
+
+      <div class="property-card">
+       <h3>Coordinate Geometry</h3>
+       <div class="canvas-container">
+        <div class="canvas-title">Centroid coordinates calculation</div>
+        <canvas id="coordinateCanvas" width="400" height="350"></canvas>
+       </div>
+       <div class="formula">$$G\left(\frac{x_1 + x_2 + x_3}{3}, \frac{y_1 + y_2 + y_3}{3}\right)$$</div>
+       <div class="description">
+        <strong>Key Points:</strong>
+        <br/>• Simple average of x-coordinates
+        <br/>• Simple average of y-coordinates
+        <br/>• Independent calculation for each coordinate
+        <br/>• Works for any triangle position
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="interactive-demo">
+     <div class="demo-title">Centroid Calculator</div>
+
+     <div class="input-group">
+      <div class="input-field">
+       <label for="ax">Vertex A (x₁, y₁):</label>
+       <input id="ax" placeholder="2" type="number" value="2"/>
+       <input id="ay" placeholder="2" type="number" value="2"/>
+      </div>
+      <div class="input-field">
+       <label for="bx">Vertex B (x₂, y₂):</label>
+       <input id="bx" placeholder="8" type="number" value="8"/>
+       <input id="by" placeholder="3" type="number" value="3"/>
+      </div>
+      <div class="input-field">
+       <label for="cx">Vertex C (x₃, y₃):</label>
+       <input id="cx" placeholder="5" type="number" value="5"/>
+       <input id="cy" placeholder="7" type="number" value="7"/>
+      </div>
+     </div>
+
+     <div class="button-group">
+      <button class="btn" onclick="calculateCentroid()">Calculate Centroid</button>
+      <button class="btn" onclick="resetDemo()">Reset</button>
+     </div>
+
+     <div class="error-message" id="errorMessage"></div>
+
+     <div class="result-display">
+      <div class="result-text" id="verticesDisplay">
+       <strong>Vertices:</strong> A(2,2), B(8,3), C(5,7)
+      </div>
+      <div class="result-text" id="centroidDisplay">
+       <strong>Centroid:</strong> G((2+8+5)/3, (2+3+7)/3) = (15/3, 12/3) = (5, 4)
+      </div>
+      <div class="result-text" id="medianDisplay">
+       <strong>Median Property:</strong> AG:GM = 2:1 for each median
+      </div>
+     </div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Mathematical Foundation</div>
+     <p>The centroid has several important mathematical properties:</p>
+     <ul>
+      <li><strong>Median Concurrency:</strong> The three medians of any triangle intersect at a single point called the centroid</li>
+      <li><strong>Division Ratio:</strong> The centroid divides each median in the ratio 2:1, with the longer segment from vertex to centroid</li>
+      <li><strong>Coordinate Formula:</strong> The centroid coordinates are the average of the three vertex coordinates</li>
+      <li><strong>Center of Mass:</strong> The centroid is the balance point of the triangle</li>
+      <li><strong>Area Properties:</strong> The centroid divides the triangle into six smaller triangles of equal area</li>
+      <li><strong>Vector Properties:</strong> In vector geometry, the centroid is (A + B + C)/3</li>
+     </ul>
+     <div class="formula-block" style="margin: 20px 0;">
+      \begin{aligned}
+      \text{Derivation:} \\
+      \text{Let G divide median from A to midpoint M of BC in ratio AG:GM = 2:1} \\
+      \text{Using section formula:} \\
+      G = \left( \frac{2 \cdot M_x + 1 \cdot A_x}{2 + 1}, \frac{2 \cdot M_y + 1 \cdot A_y}{2 + 1} \right) \\
+      \text{Where M is midpoint of BC:} \\
+      M = \left( \frac{B_x + C_x}{2}, \frac{B_y + C_y}{2} \right) \\
+      \text{Substituting gives centroid formula}
+      \end{aligned}
+     </div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Worked Examples</div>
+     <div class="example-grid">
+      <div class="example-card" onclick="showExample(1)">
+       <h4>Example 1: Basic Triangle</h4>
+       <p>Find centroid of triangle with vertices A(1,2), B(4,6), C(7,2).</p>
+      </div>
+      <div class="example-card" onclick="showExample(2)">
+       <h4>Example 2: Right Triangle</h4>
+       <p>Find centroid of right triangle with vertices A(0,0), B(6,0), C(0,8).</p>
+      </div>
+      <div class="example-card" onclick="showExample(3)">
+       <h4>Example 3: Median Verification</h4>
+       <p>Verify that centroid divides median in ratio 2:1 for triangle A(2,3), B(6,7), C(8,1).</p>
+      </div>
+     </div>
+
+     <div class="example-detail" id="exampleDetail"></div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Practice Problems</div>
+     <div class="practice-problems">
+      <div class="problem-item">
+       <h4>Problem 1</h4>
+       <p>Find the coordinates of the centroid of a triangle with vertices A(3,4), B(7,6), and C(5,9).</p>
+       <button class="solution-btn" onclick="toggleSolution(1)">Show Solution</button>
+       <div class="solution" id="solution1">
+        <p><strong>Solution:</strong></p>
+        <p>Using centroid formula:</p>
+        <p>x = (3 + 7 + 5)/3 = 15/3 = 5</p>
+        <p>y = (4 + 6 + 9)/3 = 19/3 ≈ 6.333</p>
+        <p><strong>Result:</strong> (5, 19/3)</p>
+       </div>
+      </div>
+
+      <div class="problem-item">
+       <h4>Problem 2</h4>
+       <p>Find the centroid of triangle ABC where A(1,1), B(5,2), C(3,7).</p>
+       <button class="solution-btn" onclick="toggleSolution(2)">Show Solution</button>
+       <div class="solution" id="solution2">
+        <p><strong>Solution:</strong></p>
+        <p>Centroid coordinates:</p>
+        <p>x = (1 + 5 + 3)/3 = 9/3 = 3</p>
+        <p>y = (1 + 2 + 7)/3 = 10/3 ≈ 3.333</p>
+        <p><strong>Result:</strong> (3, 10/3)</p>
+       </div>
+      </div>
+
+      <div class="problem-item">
+       <h4>Problem 3</h4>
+       <p>The centroid of triangle ABC is at (4,5). If A(2,3) and B(6,7), find coordinates of C.</p>
+       <button class="solution-btn" onclick="toggleSolution(3)">Show Solution</button>
+       <div class="solution" id="solution3">
+        <p><strong>Solution:</strong></p>
+        <p>Let C be (x,y). Centroid G(4,5):</p>
+        <p>(2 + 6 + x)/3 = 4 ⇒ 8 + x = 12 ⇒ x = 4</p>
+        <p>(3 + 7 + y)/3 = 5 ⇒ 10 + y = 15 ⇒ y = 5</p>
+        <p><strong>Result:</strong> C(4, 5)</p>
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <div class="section-title">Key Takeaways</div>
+     <ul class="takeaway-list">
+      <li class="takeaway-item">Centroid is the intersection point of the three medians of a triangle</li>
+      <li class="takeaway-item">Centroid divides each median in the ratio 2:1, with longer segment from vertex to centroid</li>
+      <li class="takeaway-item">Centroid coordinates are the average of the three vertex coordinates</li>
+      <li class="takeaway-item">Centroid is the center of mass and balance point of the triangle</li>
+      <li class="takeaway-item">Formula works independently for x and y coordinates</li>
+      <li class="takeaway-item">Centroid exists for every triangle regardless of its shape or position</li>
+      <li class="takeaway-item">Used to find centers of triangles in coordinate geometry problems</li>
+      <li class="takeaway-item">Centroid divides triangle into six smaller triangles of equal area</li>
+     </ul>
+    </div>
+   </div>
+  </div>
+
+  <script>
+   function calculateCentroid() {
+    try {
+     const ax = parseFloat(document.getElementById('ax').value);
+     const ay = parseFloat(document.getElementById('ay').value);
+     const bx = parseFloat(document.getElementById('bx').value);
+     const by = parseFloat(document.getElementById('by').value);
+     const cx = parseFloat(document.getElementById('cx').value);
+     const cy = parseFloat(document.getElementById('cy').value);
+
+     if (isNaN(ax) || isNaN(ay) || isNaN(bx) || isNaN(by) || isNaN(cx) || isNaN(cy)) {
+      throw new Error('All coordinate values must be valid numbers');
+     }
+
+     const gx = (ax + bx + cx) / 3;
+     const gy = (ay + by + cy) / 3;
+
+     document.getElementById('verticesDisplay').innerHTML = `<strong>Vertices:</strong> A(${ax},${ay}), B(${bx},${by}), C(${cx},${cy})`;
+     document.getElementById('centroidDisplay').innerHTML = `<strong>Centroid:</strong> G((${ax}+${bx}+${cx})/3, (${ay}+${by}+${cy})/3) = (${gx.toFixed(2)}, ${gy.toFixed(2)})`;
+     document.getElementById('medianDisplay').innerHTML = `<strong>Median Property:</strong> AG:GM = 2:1 for each median`;
+
+     document.getElementById('errorMessage').style.display = 'none';
+    } catch (error) {
+     document.getElementById('errorMessage').textContent = error.message;
+     document.getElementById('errorMessage').style.display = 'block';
+    }
+   }
+
+   function resetDemo() {
+    document.getElementById('ax').value = '2';
+    document.getElementById('ay').value = '2';
+    document.getElementById('bx').value = '8';
+    document.getElementById('by').value = '3';
+    document.getElementById('cx').value = '5';
+    document.getElementById('cy').value = '7';
+    calculateCentroid();
+    document.getElementById('errorMessage').style.display = 'none';
+   }
+
+   function showExample(exampleNumber) {
+    const detail = document.getElementById('exampleDetail');
+    let content = '';
+
+    switch(exampleNumber) {
+     case 1:
+      content = `
+       <h4>Detailed Example 1 - Basic Triangle</h4>
+       <div class="calculation-steps">
+        <div class="calculation-step">Find centroid of triangle with vertices A(1,2), B(4,6), C(7,2)</div>
+        <div class="calculation-step">x-coordinate: (1 + 4 + 7)/3 = 12/3 = 4</div>
+        <div class="calculation-step">y-coordinate: (2 + 6 + 2)/3 = 10/3 ≈ 3.333</div>
+        <div class="calculation-step">Centroid G(4, 10/3) is the intersection of medians</div>
+        <div class="calculation-step">G divides each median in ratio 2:1 from vertex to midpoint</div>
+       </div>
+      `;
+      break;
+     case 2:
+      content = `
+       <h4>Detailed Example 2 - Right Triangle</h4>
+       <div class="calculation-steps">
+        <div class="calculation-step">Find centroid of right triangle A(0,0), B(6,0), C(0,8)</div>
+        <div class="calculation-step">x-coordinate: (0 + 6 + 0)/3 = 6/3 = 2</div>
+        <div class="calculation-step">y-coordinate: (0 + 0 + 8)/3 = 8/3 ≈ 2.667</div>
+        <div class="calculation-step">Centroid G(2, 8/3) lies inside the triangle</div>
+        <div class="calculation-step">For right triangle, centroid is closer to right angle vertex</div>
+       </div>
+      `;
+      break;
+     case 3:
+      content = `
+       <h4>Detailed Example 3 - Median Verification</h4>
+       <div class="calculation-steps">
+        <div class="calculation-step">Verify centroid divides median in ratio 2:1 for A(2,3), B(6,7), C(8,1)</div>
+        <div class="calculation-step">First find centroid: x = (2+6+8)/3 = 16/3, y = (3+7+1)/3 = 11/3</div>
+        <div class="calculation-step">Take median from A to midpoint M of BC</div>
+        <div class="calculation-step">M of BC: ((6+8)/2, (7+1)/2) = (7, 4)</div>
+        <div class="calculation-step">AG:GM should be 2:1. Distance AG vs GM should be 2:1</div>
+        <div class="calculation-step">This property holds for all medians of any triangle</div>
+       </div>
+      `;
+      break;
+    }
+
+    detail.innerHTML = content;
+    detail.style.display = 'block';
+    MathJax.typesetPromise();
+   }
+
+   function toggleSolution(problemNumber) {
+    const solution = document.getElementById('solution' + problemNumber);
+    if (solution.style.display === 'none' || solution.style.display === '') {
+     solution.style.display = 'block';
+    } else {
+     solution.style.display = 'none';
+    }
+   }
+
+   // Initialize canvas visualizations
+   window.addEventListener('load', function() {
+    // Median Intersection
+    const canvas1 = document.getElementById('medianCanvas');
+    const ctx1 = canvas1.getContext('2d');
+    const w1 = canvas1.width;
+    const h1 = canvas1.height;
+
+    const x0_1 = 50, y0_1 = h1 - 40;
+    const scale1 = 35;
+
+    // Grid
+    ctx1.strokeStyle = '#e8e8e8';
+    ctx1.lineWidth = 0.8;
+    for (let i = -1; i <= 10; i++) {
+     ctx1.beginPath();
+     ctx1.moveTo(x0_1 + i * scale1, 20);
+     ctx1.lineTo(x0_1 + i * scale1, h1 - 20);
+     ctx1.stroke();
+
+     ctx1.beginPath();
+     ctx1.moveTo(30, y0_1 - i * scale1);
+     ctx1.lineTo(w1 - 20, y0_1 - i * scale1);
+     ctx1.stroke();
+    }
+
+    // Axes
+    ctx1.strokeStyle = '#000';
+    ctx1.lineWidth = 2;
+    ctx1.beginPath();
+    ctx1.moveTo(x0_1, 20);
+    ctx1.lineTo(x0_1, h1 - 20);
+    ctx1.stroke();
+
+    ctx1.beginPath();
+    ctx1.moveTo(30, y0_1);
+    ctx1.lineTo(w1 - 20, y0_1);
+    ctx1.stroke();
+
+    // Arrow tips
+    ctx1.fillStyle = '#000';
+    ctx1.beginPath();
+    ctx1.moveTo(w1 - 20, y0_1);
+    ctx1.lineTo(w1 - 27, y0_1 - 4);
+    ctx1.lineTo(w1 - 27, y0_1 + 4);
+    ctx1.fill();
+
+    ctx1.beginPath();
+    ctx1.moveTo(x0_1, 20);
+    ctx1.lineTo(x0_1 - 4, 27);
+    ctx1.lineTo(x0_1 + 4, 27);
+    ctx1.fill();
+
+    // Axis labels
+    ctx1.font = '14px Arial';
+    ctx1.fillStyle = '#000';
+    ctx1.textAlign = 'center';
+    ctx1.fillText('x', w1 - 10, y0_1 + 20);
+    ctx1.fillText('y', x0_1 - 20, 15);
+    ctx1.fillText('O', x0_1 - 15, y0_1 + 15);
+
+    // Triangle vertices
+    const ax1 = 2, ay1 = 2;
+    const bx1 = 8, by1 = 3;
+    const cx1 = 5, cy1 = 7;
+
+    const pax1 = x0_1 + ax1 * scale1;
+    const pay1 = y0_1 - ay1 * scale1;
+    const pbx1 = x0_1 + bx1 * scale1;
+    const pby1 = y0_1 - by1 * scale1;
+    const pcx1 = x0_1 + cx1 * scale1;
+    const pcy1 = y0_1 - cy1 * scale1;
+
+    // Centroid
+    const gx1 = (ax1 + bx1 + cx1) / 3;
+    const gy1 = (ay1 + by1 + cy1) / 3;
+    const pgx1 = x0_1 + gx1 * scale1;
+    const pgy1 = y0_1 - gy1 * scale1;
+
+    // Midpoints of sides
+    const mABx1 = (ax1 + bx1) / 2, mABy1 = (ay1 + by1) / 2;
+    const mBCx1 = (bx1 + cx1) / 2, mBCy1 = (by1 + cy1) / 2;
+    const mCAx1 = (cx1 + ax1) / 2, mCAy1 = (cy1 + ay1) / 2;
+
+    const pmABx1 = x0_1 + mABx1 * scale1, pmABy1 = y0_1 - mABy1 * scale1;
+    const pmBCx1 = x0_1 + mBCx1 * scale1, pmBCy1 = y0_1 - mBCy1 * scale1;
+    const pmCAx1 = x0_1 + mCAx1 * scale1, pmCAy1 = y0_1 - mCAy1 * scale1;
+
+    // Draw triangle
+    ctx1.strokeStyle = '#3498db';
+    ctx1.lineWidth = 2.5;
+    ctx1.beginPath();
+    ctx1.moveTo(pax1, pay1);
+    ctx1.lineTo(pbx1, pby1);
+    ctx1.lineTo(pcx1, pcy1);
+    ctx1.closePath();
+    ctx1.stroke();
+
+    // Draw medians
+    ctx1.strokeStyle = '#e74c3c';
+    ctx1.lineWidth = 1.5;
+    ctx1.setLineDash([5, 5]);
+
+    ctx1.beginPath();
+    ctx1.moveTo(pax1, pay1);
+    ctx1.lineTo(pmBCx1, pmBCy1);
+    ctx1.stroke();
+
+    ctx1.beginPath();
+    ctx1.moveTo(pbx1, pby1);
+    ctx1.lineTo(pmCAx1, pmCAy1);
+    ctx1.stroke();
+
+    ctx1.beginPath();
+    ctx1.moveTo(pcx1, pcy1);
+    ctx1.lineTo(pmABx1, pmABy1);
+    ctx1.stroke();
+
+    ctx1.setLineDash([]);
+
+    // Draw midpoints (small dots)
+    ctx1.fillStyle = '#95a5a6';
+    ctx1.beginPath();
+    ctx1.arc(pmABx1, pmABy1, 3, 0, 2*Math.PI);
+    ctx1.fill();
+
+    ctx1.beginPath();
+    ctx1.arc(pmBCx1, pmBCy1, 3, 0, 2*Math.PI);
+    ctx1.fill();
+
+    ctx1.beginPath();
+    ctx1.arc(pmCAx1, pmCAy1, 3, 0, 2*Math.PI);
+    ctx1.fill();
+
+    // Draw vertices
+    ctx1.fillStyle = '#3498db';
+    ctx1.beginPath();
+    ctx1.arc(pax1, pay1, 5, 0, 2*Math.PI);
+    ctx1.fill();
+
+    ctx1.beginPath();
+    ctx1.arc(pbx1, pby1, 5, 0, 2*Math.PI);
+    ctx1.fill();
+
+    ctx1.beginPath();
+    ctx1.arc(pcx1, pcy1, 5, 0, 2*Math.PI);
+    ctx1.fill();
+
+    // Draw centroid
+    ctx1.fillStyle = '#f39c12';
+    ctx1.beginPath();
+    ctx1.arc(pgx1, pgy1, 6, 0, 2*Math.PI);
+    ctx1.fill();
+
+    // Labels
+    ctx1.font = 'italic 15px Georgia';
+    ctx1.fillStyle = '#000';
+    ctx1.textAlign = 'center';
+    ctx1.fillText('A(x₁, y₁)', pax1 - 30, pay1 + 5);
+    ctx1.fillText('B(x₂, y₂)', pbx1 + 35, pby1 + 5);
+    ctx1.fillText('C(x₃, y₃)', pcx1, pcy1 - 15);
+    ctx1.fillText('G', pgx1 + 20, pgy1);
+
+    // Ratio labels on one median
+    ctx1.font = '13px Arial';
+    ctx1.fillStyle = '#e74c3c';
+    const midCG1 = {x: (pcx1 + pgx1)/2, y: (pcy1 + pgy1)/2};
+    const midGM1 = {x: (pgx1 + pmABx1)/2, y: (pgy1 + pmABy1)/2};
+    ctx1.fillText('2', midCG1.x - 15, midCG1.y);
+    ctx1.fillText('1', midGM1.x + 15, midGM1.y);
+
+    // Center of Mass
+    const canvas2 = document.getElementById('massCanvas');
+    const ctx2 = canvas2.getContext('2d');
+    const w2 = canvas2.width;
+    const h2 = canvas2.height;
+
+    const x0_2 = 50, y0_2 = h2 - 40;
+    const scale2 = 35;
+
+    // Grid
+    ctx2.strokeStyle = '#e8e8e8';
+    ctx2.lineWidth = 0.8;
+    for (let i = -1; i <= 10; i++) {
+     ctx2.beginPath();
+     ctx2.moveTo(x0_2 + i * scale2, 20);
+     ctx2.lineTo(x0_2 + i * scale2, h2 - 20);
+     ctx2.stroke();
+
+     ctx2.beginPath();
+     ctx2.moveTo(30, y0_2 - i * scale2);
+     ctx2.lineTo(w2 - 20, y0_2 - i * scale2);
+     ctx2.stroke();
+    }
+
+    // Axes
+    ctx2.strokeStyle = '#000';
+    ctx2.lineWidth = 2;
+    ctx2.beginPath();
+    ctx2.moveTo(x0_2, 20);
+    ctx2.lineTo(x0_2, h2 - 20);
+    ctx2.stroke();
+
+    ctx2.beginPath();
+    ctx2.moveTo(30, y0_2);
+    ctx2.lineTo(w2 - 20, y0_2);
+    ctx2.stroke();
+
+    // Arrow tips
+    ctx2.fillStyle = '#000';
+    ctx2.beginPath();
+    ctx2.moveTo(w2 - 20, y0_2);
+    ctx2.lineTo(w2 - 27, y0_2 - 4);
+    ctx2.lineTo(w2 - 27, y0_2 + 4);
+    ctx2.fill();
+
+    ctx2.beginPath();
+    ctx2.moveTo(x0_2, 20);
+    ctx2.lineTo(x0_2 - 4, 27);
+    ctx2.lineTo(x0_2 + 4, 27);
+    ctx2.fill();
+
+    // Axis labels
+    ctx2.font = '14px Arial';
+    ctx2.fillStyle = '#000';
+    ctx2.textAlign = 'center';
+    ctx2.fillText('x', w2 - 10, y0_2 + 20);
+    ctx2.fillText('y', x0_2 - 20, 15);
+    ctx2.fillText('O', x0_2 - 15, y0_2 + 15);
+
+    // Triangle vertices
+    const ax2 = 3, ay2 = 2;
+    const bx2 = 7, by2 = 2;
+    const cx2 = 5, cy2 = 6;
+
+    const pax2 = x0_2 + ax2 * scale2;
+    const pay2 = y0_2 - ay2 * scale2;
+    const pbx2 = x0_2 + bx2 * scale2;
+    const pby2 = y0_2 - by2 * scale2;
+    const pcx2 = x0_2 + cx2 * scale2;
+    const pcy2 = y0_2 - cy2 * scale2;
+
+    // Centroid
+    const gx2 = (ax2 + bx2 + cx2) / 3;
+    const gy2 = (ay2 + by2 + cy2) / 3;
+    const pgx2 = x0_2 + gx2 * scale2;
+    const pgy2 = y0_2 - gy2 * scale2;
+
+    // Draw triangle
+    ctx2.strokeStyle = '#3498db';
+    ctx2.lineWidth = 2.5;
+    ctx2.beginPath();
+    ctx2.moveTo(pax2, pay2);
+    ctx2.lineTo(pbx2, pby2);
+    ctx2.lineTo(pcx2, pcy2);
+    ctx2.closePath();
+    ctx2.stroke();
+
+    // Draw centroid
+    ctx2.fillStyle = '#f39c12';
+    ctx2.beginPath();
+    ctx2.arc(pgx2, pgy2, 8, 0, 2*Math.PI);
+    ctx2.fill();
+
+    // Draw balance lines
+    ctx2.strokeStyle = '#e74c3c';
+    ctx2.lineWidth = 1;
+    ctx2.setLineDash([3, 3]);
+
+    // Horizontal balance line
+    ctx2.beginPath();
+    ctx2.moveTo(30, pgy2);
+    ctx2.lineTo(w2 - 20, pgy2);
+    ctx2.stroke();
+
+    // Vertical balance line
+    ctx2.beginPath();
+    ctx2.moveTo(pgx2, 20);
+    ctx2.lineTo(pgx2, h2 - 20);
+    ctx2.stroke();
+
+    ctx2.setLineDash([]);
+
+    // Labels
+    ctx2.font = 'italic 15px Georgia';
+    ctx2.fillStyle = '#000';
+    ctx2.textAlign = 'center';
+    ctx2.fillText('A', pax2, pay2 - 15);
+    ctx2.fillText('B', pbx2, pby2 - 15);
+    ctx2.fillText('C', pcx2 + 15, pcy2);
+    ctx2.fillText('G', pgx2 + 20, pgy2);
+
+    // Coordinate Geometry
+    const canvas3 = document.getElementById('coordinateCanvas');
+    const ctx3 = canvas3.getContext('2d');
+    const w3 = canvas3.width;
+    const h3 = canvas3.height;
+
+    const x0_3 = 50, y0_3 = h3 - 40;
+    const scale3 = 35;
+
+    // Grid
+    ctx3.strokeStyle = '#e8e8e8';
+    ctx3.lineWidth = 0.8;
+    for (let i = -1; i <= 10; i++) {
+     ctx3.beginPath();
+     ctx3.moveTo(x0_3 + i * scale3, 20);
+     ctx3.lineTo(x0_3 + i * scale3, h3 - 20);
+     ctx3.stroke();
+
+     ctx3.beginPath();
+     ctx3.moveTo(30, y0_3 - i * scale3);
+     ctx3.lineTo(w3 - 20, y0_3 - i * scale3);
+     ctx3.stroke();
+    }
+
+    // Axes
+    ctx3.strokeStyle = '#000';
+    ctx3.lineWidth = 2;
+    ctx3.beginPath();
+    ctx3.moveTo(x0_3, 20);
+    ctx3.lineTo(x0_3, h3 - 20);
+    ctx3.stroke();
+
+    ctx3.beginPath();
+    ctx3.moveTo(30, y0_3);
+    ctx3.lineTo(w3 - 20, y0_3);
+    ctx3.stroke();
+
+    // Arrow tips
+    ctx3.fillStyle = '#000';
+    ctx3.beginPath();
+    ctx3.moveTo(w3 - 20, y0_3);
+    ctx3.lineTo(w3 - 27, y0_3 - 4);
+    ctx3.lineTo(w3 - 27, y0_3 + 4);
+    ctx3.fill();
+
+    ctx3.beginPath();
+    ctx3.moveTo(x0_3, 20);
+    ctx3.lineTo(x0_3 - 4, 27);
+    ctx3.lineTo(x0_3 + 4, 27);
+    ctx3.fill();
+
+    // Axis labels
+    ctx3.font = '14px Arial';
+    ctx3.fillStyle = '#000';
+    ctx3.textAlign = 'center';
+    ctx3.fillText('x', w3 - 10, y0_3 + 20);
+    ctx3.fillText('y', x0_3 - 20, 15);
+    ctx3.fillText('O', x0_3 - 15, y0_3 + 15);
+
+    // Triangle vertices
+    const ax3 = 1, ay3 = 1;
+    const bx3 = 6, by3 = 2;
+    const cx3 = 4, cy3 = 5;
+
+    const pax3 = x0_3 + ax3 * scale3;
+    const pay3 = y0_3 - ay3 * scale3;
+    const pbx3 = x0_3 + bx3 * scale3;
+    const pby3 = y0_3 - by3 * scale3;
+    const pcx3 = x0_3 + cx3 * scale3;
+    const pcy3 = y0_3 - cy3 * scale3;
+
+    // Centroid
+    const gx3 = (ax3 + bx3 + cx3) / 3;
+    const gy3 = (ay3 + by3 + cy3) / 3;
+    const pgx3 = x0_3 + gx3 * scale3;
+    const pgy3 = y0_3 - gy3 * scale3;
+
+    // Draw triangle
+    ctx3.strokeStyle = '#3498db';
+    ctx3.lineWidth = 2.5;
+    ctx3.beginPath();
+    ctx3.moveTo(pax3, pay3);
+    ctx3.lineTo(pbx3, pby3);
+    ctx3.lineTo(pcx3, pcy3);
+    ctx3.closePath();
+    ctx3.stroke();
+
+    // Draw vertices
+    ctx3.fillStyle = '#3498db';
+    ctx3.beginPath();
+    ctx3.arc(pax3, pay3, 5, 0, 2*Math.PI);
+    ctx3.fill();
+
+    ctx3.beginPath();
+    ctx3.arc(pbx3, pby3, 5, 0, 2*Math.PI);
+    ctx3.fill();
+
+    ctx3.beginPath();
+    ctx3.arc(pcx3, pcy3, 5, 0, 2*Math.PI);
+    ctx3.fill();
+
+    // Draw centroid
+    ctx3.fillStyle = '#f39c12';
+    ctx3.beginPath();
+    ctx3.arc(pgx3, pgy3, 6, 0, 2*Math.PI);
+    ctx3.fill();
+
+    // Draw coordinate calculation lines
+    ctx3.strokeStyle = '#e74c3c';
+    ctx3.lineWidth = 1;
+    ctx3.setLineDash([2, 2]);
+
+    // x-coordinate line
+    ctx3.beginPath();
+    ctx3.moveTo(x0_3 + ax3 * scale3, y0_3 - ay3 * scale3);
+    ctx3.lineTo(x0_3 + gx3 * scale3, y0_3 - ay3 * scale3);
+    ctx3.stroke();
+
+    ctx3.beginPath();
+    ctx3.moveTo(x0_3 + bx3 * scale3, y0_3 - by3 * scale3);
+    ctx3.lineTo(x0_3 + gx3 * scale3, y0_3 - by3 * scale3);
+    ctx3.stroke();
+
+    ctx3.beginPath();
+    ctx3.moveTo(x0_3 + cx3 * scale3, y0_3 - cy3 * scale3);
+    ctx3.lineTo(x0_3 + gx3 * scale3, y0_3 - cy3 * scale3);
+    ctx3.stroke();
+
+    // y-coordinate line
+    ctx3.beginPath();
+    ctx3.moveTo(x0_3 + ax3 * scale3, y0_3 - ay3 * scale3);
+    ctx3.lineTo(x0_3 + ax3 * scale3, y0_3 - gy3 * scale3);
+    ctx3.stroke();
+
+    ctx3.beginPath();
+    ctx3.moveTo(x0_3 + bx3 * scale3, y0_3 - by3 * scale3);
+    ctx3.lineTo(x0_3 + bx3 * scale3, y0_3 - gy3 * scale3);
+    ctx3.stroke();
+
+    ctx3.beginPath();
+    ctx3.moveTo(x0_3 + cx3 * scale3, y0_3 - cy3 * scale3);
+    ctx3.lineTo(x0_3 + cx3 * scale3, y0_3 - gy3 * scale3);
+    ctx3.stroke();
+
+    ctx3.setLineDash([]);
+
+    // Labels
+    ctx3.font = 'italic 15px Georgia';
+    ctx3.fillStyle = '#000';
+    ctx3.textAlign = 'center';
+    ctx3.fillText('A(x₁, y₁)', pax3 - 30, pay3 + 5);
+    ctx3.fillText('B(x₂, y₂)', pbx3 + 35, pby3 + 5);
+    ctx3.fillText('C(x₃, y₃)', pcx3, pcy3 - 15);
+    ctx3.fillText('G', pgx3 + 20, pgy3);
+
+    // Coordinate labels
+    ctx3.font = '12px Arial';
+    ctx3.fillStyle = '#e74c3c';
+    ctx3.fillText('x₁', x0_3 + (ax3 + gx3)/2 * scale3, y0_3 - ay3 * scale3 - 10);
+    ctx3.fillText('x₂', x0_3 + (bx3 + gx3)/2 * scale3, y0_3 - by3 * scale3 - 10);
+    ctx3.fillText('x₃', x0_3 + (cx3 + gx3)/2 * scale3, y0_3 - cy3 * scale3 - 10);
+    ctx3.fillText('y₁', x0_3 + ax3 * scale3 + 15, y0_3 - (ay3 + gy3)/2 * scale3);
+    ctx3.fillText('y₂', x0_3 + bx3 * scale3 + 15, y0_3 - (by3 + gy3)/2 * scale3);
+    ctx3.fillText('y₃', x0_3 + cx3 * scale3 + 15, y0_3 - (cy3 + gy3)/2 * scale3);
+
+    // Initialize calculator
+    calculateCentroid();
+   });
+  </script>
+ </body>
+</html>

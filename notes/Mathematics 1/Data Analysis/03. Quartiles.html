@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<!-- tags: Data Analysis -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Quartiles (四分位数)
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   .interactive-demo {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border: 2px solid #3498db;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+   }
+   .demo-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 20px;
+   }
+   .control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+   }
+   .control-group label {
+    font-weight: bold;
+    color: #2c3e50;
+   }
+   .control-group input, .control-group textarea {
+    padding: 8px;
+    border: 1px solid #bdc3c7;
+    border-radius: 5px;
+    font-size: 14px;
+   }
+   .control-group textarea {
+    min-height: 60px;
+    resize: vertical;
+   }
+   .demo-output {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+    border: 1px solid #ecf0f1;
+   }
+   .formula-block {
+    background: #ecf0f1;
+    border-left: 4px solid #3498db;
+    padding: 15px;
+    margin: 15px 0;
+    font-family: 'Times New Roman', serif;
+   }
+   .practice-problem {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+   }
+   .solution {
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px 0;
+    display: none;
+   }
+   .solution-button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+   }
+   .solution-button:hover {
+    background: #0056b3;
+   }
+   .key-takeaways {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+   }
+   .key-takeaways h3 {
+    margin-top: 0;
+    color: white;
+   }
+   .key-takeaways ul {
+    margin: 10px 0 0 0;
+    padding-left: 20px;
+   }
+   .key-takeaways li {
+    margin: 8px 0;
+   }
+   .worked-example {
+    background: #e8f4f8;
+    border: 1px solid #bee5eb;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+   }
+   .worked-example h4 {
+    margin-top: 0;
+    color: #0c5460;
+   }
+   .math-foundation {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+   }
+   .math-foundation h3 {
+    margin-top: 0;
+    color: #2c3e50;
+   }
+   .canvas-container {
+    text-align: center;
+    margin: 20px 0;
+    position: relative;
+   }
+   .data-visualization {
+    background: white;
+    border: 1px solid #ecf0f1;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+   }
+   .quartile-row {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+    flex-wrap: wrap;
+   }
+   .quartile-diagram {
+    background: white;
+    border: 1px solid #ecf0f1;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px;
+    text-align: center;
+    min-width: 250px;
+   }
+   .quartile-title {
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #2c3e50;
+   }
+   .quartile-numbers {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin: 15px 0;
+    flex-wrap: wrap;
+   }
+   .qbox {
+    background: #3498db;
+    color: white;
+    padding: 8px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    min-width: 30px;
+    text-align: center;
+   }
+   .qbox.q1 {
+    background: #e74c3c;
+   }
+   .qbox.q2 {
+    background: #27ae60;
+   }
+   .qbox.q3 {
+    background: #f39c12;
+   }
+   .q-label {
+    font-weight: bold;
+    font-size: 14px;
+    margin-top: 5px;
+   }
+   .q-label.q1 {
+    color: #e74c3c;
+   }
+   .q-label.q2 {
+    color: #27ae60;
+   }
+   .q-label.q3 {
+    color: #f39c12;
+   }
+   .sorted-data {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 20px 0;
+   }
+   .data-value {
+    background: #3498db;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    position: relative;
+   }
+   .quartile-highlight {
+    transform: scale(1.1);
+   }
+   .quartile-highlight.q1 {
+    background: #e74c3c !important;
+   }
+   .quartile-highlight.q2 {
+    background: #27ae60 !important;
+   }
+   .quartile-highlight.q3 {
+    background: #f39c12 !important;
+   }
+   .quartile-arrow {
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-weight: bold;
+    font-size: 11px;
+    padding: 2px 4px;
+    border-radius: 3px;
+   }
+   .quartile-arrow.q1 {
+    background: #e74c3c;
+   }
+   .quartile-arrow.q2 {
+    background: #27ae60;
+   }
+   .quartile-arrow.q3 {
+    background: #f39c12;
+   }
+   .quartile-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+    margin-top: 15px;
+   }
+   .quartile-stat {
+    background: #f8f9fa;
+    padding: 8px;
+    border-radius: 5px;
+    text-align: center;
+   }
+   .quartile-stat .value {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #3498db;
+   }
+   .quartile-stat .label {
+    font-size: 0.9em;
+    color: #666;
+   }
+   @media (max-width: 768px) {
+    .demo-controls {
+     flex-direction: column;
+     align-items: stretch;
+    }
+    .control-group {
+     width: 100%;
+    }
+    .quartile-row {
+     flex-direction: column;
+    }
+    .quartile-numbers {
+     gap: 3px;
+    }
+    .qbox {
+     padding: 6px 8px;
+     min-width: 25px;
+    }
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Data Analysis">
+   Quartiles (四分位数)
+  </div>
+  <div class="container">
+   <div class="main-content">
+
+    <div class="math-foundation">
+     <h3>Mathematical Foundation</h3>
+     <p>Quartiles are statistical measures that divide an ordered dataset into four equal parts, providing insights into the distribution and spread of data. They extend the concept of the median by identifying the boundaries that separate the lowest 25%, middle 50%, and highest 25% of the data. Quartiles are essential for understanding data distribution, detecting outliers, and creating box plots.</p>
+
+     <div class="formula-block">
+      <strong>Quartile Definitions:</strong>
+      <ul>
+       <li><strong>First Quartile (Q₁):</strong> 25th percentile - separates lowest 25% from upper 75%</li>
+       <li><strong>Second Quartile (Q₂):</strong> 50th percentile - same as the median</li>
+       <li><strong>Third Quartile (Q₃):</strong> 75th percentile - separates lowest 75% from upper 25%</li>
+      </ul>
+      <strong>Calculation Methods:</strong>
+      <ul>
+       <li><strong>Position Formula:</strong> Q_k position = k(n+1)/4 where k = 1, 2, 3</li>
+       <li><strong>Inclusive Method:</strong> Q₁ at position (n+1)/4, Q₃ at position 3(n+1)/4</li>
+       <li><strong>Exclusive Method:</strong> Q₁ at position (n+3)/4, Q₃ at position (3n+1)/4</li>
+      </ul>
+     </div>
+    </div>
+
+    <div class="quartile-row">
+     <div class="quartile-diagram">
+      <div class="quartile-title">
+       When data size is 9
+      </div>
+      <div class="quartile-numbers">
+       <span class="qbox">2</span>
+       <span class="qbox">6</span>
+       <span class="qbox">8</span>
+       <span class="qbox q1">9</span>
+       <span class="qbox">13</span>
+       <span class="qbox q2">16</span>
+       <span class="qbox">19</span>
+       <span class="qbox q3">21</span>
+       <span class="qbox">29</span>
+      </div>
+      <div style="display:flex; justify-content:center; gap:38px; margin-top:4px;">
+       <div>
+        <div class="q-label q1">Q₁=9</div>
+       </div>
+       <div>
+        <div class="q-label q2">Q₂=16</div>
+       </div>
+       <div>
+        <div class="q-label q3">Q₃=21</div>
+       </div>
+      </div>
+     </div>
+     <div class="quartile-diagram">
+      <div class="quartile-title">
+       When data size is 8
+      </div>
+      <div class="quartile-numbers">
+       <span class="qbox">2</span>
+       <span class="qbox">6</span>
+       <span class="qbox">8</span>
+       <span class="qbox q1">9</span>
+       <span class="qbox">13</span>
+       <span class="qbox q2">16</span>
+       <span class="qbox q3">19</span>
+       <span class="qbox">21</span>
+      </div>
+      <div style="display:flex; justify-content:center; gap:38px; margin-top:4px;">
+       <div>
+        <div class="q-label q1">Q₁=9</div>
+       </div>
+       <div>
+        <div class="q-label q2">Q₂=14.5</div>
+       </div>
+       <div>
+        <div class="q-label q3">Q₃=19</div>
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="interactive-demo">
+     <h3>Interactive Quartiles Calculator</h3>
+     <div class="demo-controls">
+      <div class="control-group">
+       <label for="data-input">Data Values (comma-separated):</label>
+       <textarea id="data-input" placeholder="e.g., 2, 6, 8, 9, 13, 16, 19, 21, 29">2, 6, 8, 9, 13, 16, 19, 21, 29</textarea>
+      </div>
+      <button onclick="calculateQuartiles()" style="padding: 8px 16px; background: #27ae60; color: white; border: none; border-radius: 5px; cursor: pointer; align-self: flex-end;">Calculate Quartiles</button>
+     </div>
+
+     <div class="data-visualization" id="data-viz">
+      <h4>Data Visualization</h4>
+      <div id="sorted-data" class="sorted-data"></div>
+     </div>
+
+     <div class="demo-output" id="demo-output">
+      <strong>Current Data:</strong> [2, 6, 8, 9, 13, 16, 19, 21, 29]<br>
+      <strong>Sorted Data:</strong> [2, 6, 8, 9, 13, 16, 19, 21, 29]<br>
+      <strong>Q₁ (25th percentile):</strong> 8<br>
+      <strong>Q₂ (50th percentile, Median):</strong> 16<br>
+      <strong>Q₃ (75th percentile):</strong> 21<br>
+      <div class="quartile-summary">
+       <div class="quartile-stat">
+        <div class="value">8</div>
+        <div class="label">Q₁</div>
+       </div>
+       <div class="quartile-stat">
+        <div class="value">16</div>
+        <div class="label">Q₂ (Median)</div>
+       </div>
+       <div class="quartile-stat">
+        <div class="value">21</div>
+        <div class="label">Q₃</div>
+       </div>
+       <div class="quartile-stat">
+        <div class="value">13</div>
+        <div class="label">IQR</div>
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="worked-example">
+     <h4>Worked Example 1: Quartiles for Odd Number of Values</h4>
+     <p>Find the quartiles of: 12, 7, 15, 9, 21, 18, 13</p>
+     <p><strong>Solution:</strong></p>
+     <p>Step 1: Sort the data: 7, 9, 12, 13, 15, 18, 21</p>
+     <p>Step 2: n = 7, positions: Q₁ at (7+1)/4 = 2nd position, Q₃ at 3(7+1)/4 = 6th position</p>
+     <p>Step 3: Q₁ = 9, Q₂ = 13, Q₃ = 18</p>
+    </div>
+
+    <div class="worked-example">
+     <h4>Worked Example 2: Quartiles for Even Number of Values</h4>
+     <p>Find the quartiles of: 4, 7, 2, 9, 5, 8, 10, 6</p>
+     <p><strong>Solution:</strong></p>
+     <p>Step 1: Sort the data: 2, 4, 5, 6, 7, 8, 9, 10</p>
+     <p>Step 2: n = 8, positions: Q₁ at (8+1)/4 = 2.25th → average of 2nd and 3rd, Q₃ at 3(8+1)/4 = 6.75th → average of 6th and 7th</p>
+     <p>Step 3: Q₁ = (4 + 5)/2 = 4.5, Q₂ = (6 + 7)/2 = 6.5, Q₃ = (8 + 9)/2 = 8.5</p>
+    </div>
+
+    <div class="worked-example">
+     <h4>Worked Example 3: Interquartile Range (IQR)</h4>
+     <p>For the data: 3, 7, 8, 12, 15, 18, 22, 25, find Q₁, Q₃, and IQR.</p>
+     <p><strong>Solution:</strong></p>
+     <p>Sorted: 3, 7, 8, 12, 15, 18, 22, 25</p>
+     <p>Q₁ = (7 + 8)/2 = 7.5, Q₃ = (18 + 22)/2 = 20</p>
+     <p>IQR = Q₃ - Q₁ = 20 - 7.5 = 12.5</p>
+    </div>
+
+    <div style="margin: 30px 0;">
+     <strong>Interquartile Range (IQR)</strong>
+     <p>The IQR measures the spread of the middle 50% of the data:</p>
+     <div class="formula-highlight" style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 5px; padding: 10px; margin: 10px 0; font-weight: bold;">
+      IQR = Q₃ - Q₁
+     </div>
+     <p>The IQR is used to detect outliers and is more robust than the range since it excludes extreme values.</p>
+    </div>
+
+    <div style="margin: 30px 0;">
+     <strong>Quartile Deviation</strong>
+     <p>The quartile deviation (or semi-interquartile range) is half of the IQR:</p>
+     <div class="formula-highlight" style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 5px; padding: 10px; margin: 10px 0; font-weight: bold;">
+      Quartile Deviation = IQR / 2 = (Q₃ - Q₁) / 2
+     </div>
+     <p>This measures the average spread around the median.</p>
+    </div>
+
+    <div style="margin: 30px 0;">
+     <strong>Box Plot Construction</strong>
+     <p>Quartiles are used to construct box plots:</p>
+     <ul>
+      <li><strong>Minimum:</strong> Smallest value (or Q₁ - 1.5×IQR for outliers)</li>
+      <li><strong>Q₁:</strong> Bottom of box (25th percentile)</li>
+      <li><strong>Q₂ (Median):</strong> Line inside box (50th percentile)</li>
+      <li><strong>Q₃:</strong> Top of box (75th percentile)</li>
+      <li><strong>Maximum:</strong> Largest value (or Q₃ + 1.5×IQR for outliers)</li>
+     </ul>
+    </div>
+
+    <h3>Practice Problems</h3>
+
+    <div class="practice-problem">
+     <strong>Problem 1:</strong> Find the quartiles of: 5, 8, 12, 15, 18, 20, 22
+     <br><button class="solution-button" onclick="toggleSolution(1)">Show Solution</button>
+     <div class="solution" id="solution1">
+      <strong>Solution:</strong><br>
+      Sorted: 5, 8, 12, 15, 18, 20, 22<br>
+      Q₁ position = (7+1)/4 = 2nd value = 8<br>
+      Q₂ = 15<br>
+      Q₃ position = 3(7+1)/4 = 6th value = 20
+     </div>
+    </div>
+
+    <div class="practice-problem">
+     <strong>Problem 2:</strong> Find the quartiles of: 3, 7, 9, 12, 15, 18
+     <br><button class="solution-button" onclick="toggleSolution(2)">Show Solution</button>
+     <div class="solution" id="solution2">
+      <strong>Solution:</strong><br>
+      Sorted: 3, 7, 9, 12, 15, 18<br>
+      Q₁ position = (6+1)/4 = 1.75th → average of 1st and 2nd = (3+7)/2 = 5<br>
+      Q₂ = (9+12)/2 = 10.5<br>
+      Q₃ position = 3(6+1)/4 = 5.25th → average of 5th and 6th = (15+18)/2 = 16.5
+     </div>
+    </div>
+
+    <div class="practice-problem">
+     <strong>Problem 3:</strong> For the data: 2, 5, 7, 8, 10, 12, 15, 18, find IQR and quartile deviation.
+     <br><button class="solution-button" onclick="toggleSolution(3)">Show Solution</button>
+     <div class="solution" id="solution3">
+      <strong>Solution:</strong><br>
+      Sorted: 2, 5, 7, 8, 10, 12, 15, 18<br>
+      Q₁ = (5+7)/2 = 6, Q₃ = (12+15)/2 = 13.5<br>
+      IQR = 13.5 - 6 = 7.5<br>
+      Quartile deviation = 7.5 / 2 = 3.75
+     </div>
+    </div>
+
+    <div class="practice-problem">
+     <strong>Problem 4:</strong> The quartiles of a dataset are Q₁ = 25, Q₃ = 75. Find the IQR.
+     <br><button class="solution-button" onclick="toggleSolution(4)">Show Solution</button>
+     <div class="solution" id="solution4">
+      <strong>Solution:</strong><br>
+      IQR = Q₃ - Q₁ = 75 - 25 = 50
+     </div>
+    </div>
+
+    <div class="practice-problem">
+     <strong>Problem 5:</strong> Find the quartiles of: 1, 3, 5, 7, 9, 11, 13, 15, 17
+     <br><button class="solution-button" onclick="toggleSolution(5)">Show Solution</button>
+     <div class="solution" id="solution5">
+      <strong>Solution:</strong><br>
+      Sorted: 1, 3, 5, 7, 9, 11, 13, 15, 17<br>
+      Q₁ position = (9+1)/4 = 2.5th → average of 2nd and 3rd = (3+5)/2 = 4<br>
+      Q₂ = 9<br>
+      Q₃ position = 3(9+1)/4 = 7.5th → average of 7th and 8th = (13+15)/2 = 14
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <h3>Key Takeaways</h3>
+     <ul>
+      <li><strong>Definition:</strong> Quartiles divide ordered data into four equal parts: Q₁ (25th percentile), Q₂ (50th percentile, median), Q₃ (75th percentile).</li>
+      <li><strong>Calculation:</strong> Position formulas: Q_k at k(n+1)/4 where k=1,2,3; for non-integer positions, interpolate between values.</li>
+      <li><strong>IQR:</strong> Interquartile range (Q₃ - Q₁) measures the spread of the middle 50% of data and is robust against outliers.</li>
+      <li><strong>Applications:</strong> Used in box plots, outlier detection, comparing data spread, and understanding data distribution.</li>
+      <li><strong>Robustness:</strong> Quartiles are less affected by extreme values than the mean and range, making them suitable for skewed data.</li>
+      <li><strong>Box Plot:</strong> Visual representation using quartiles: min, Q₁, median, Q₃, max (with whiskers for outliers).</li>
+      <li><strong>Quartile Deviation:</strong> Half of IQR, measuring average spread around the median.</li>
+     </ul>
+    </div>
+
+    <script>
+     function calculateQuartiles() {
+      const input = document.getElementById('data-input').value;
+      const values = input.split(',').map(x => parseFloat(x.trim())).filter(x => !isNaN(x));
+
+      if (values.length < 4) {
+       alert('Please enter at least 4 values to calculate quartiles.');
+       return;
+      }
+
+      // Sort the values
+      const sorted = [...values].sort((a, b) => a - b);
+      const n = sorted.length;
+
+      // Calculate quartile positions
+      const q1Pos = (n + 1) / 4;
+      const q3Pos = 3 * (n + 1) / 4;
+
+      // Calculate quartiles
+      let q1, q2, q3;
+
+      if (n % 2 === 1) {
+       // Odd number of values
+       q2 = sorted[Math.floor(n / 2)];
+       q1 = getQuartileValue(sorted, q1Pos);
+       q3 = getQuartileValue(sorted, q3Pos);
+      } else {
+       // Even number of values
+       q2 = (sorted[n / 2 - 1] + sorted[n / 2]) / 2;
+       q1 = getQuartileValue(sorted, q1Pos);
+       q3 = getQuartileValue(sorted, q3Pos);
+      }
+
+      const iqr = q3 - q1;
+
+      // Update visualization
+      updateVisualization(sorted, q1, q2, q3);
+
+      // Update output
+      const output = document.getElementById('demo-output');
+      output.innerHTML = `<strong>Current Data:</strong> [${values.join(', ')}]<br>
+      <strong>Sorted Data:</strong> [${sorted.join(', ')}]<br>
+      <strong>Q₁ (25th percentile):</strong> ${q1}<br>
+      <strong>Q₂ (50th percentile, Median):</strong> ${q2}<br>
+      <strong>Q₃ (75th percentile):</strong> ${q3}<br>
+      <strong>IQR (Q₃ - Q₁):</strong> ${iqr}<br>
+      <div class="quartile-summary">
+       <div class="quartile-stat">
+        <div class="value">${q1}</div>
+        <div class="label">Q₁</div>
+       </div>
+       <div class="quartile-stat">
+        <div class="value">${q2}</div>
+        <div class="label">Q₂ (Median)</div>
+       </div>
+       <div class="quartile-stat">
+        <div class="value">${q3}</div>
+        <div class="label">Q₃</div>
+       </div>
+       <div class="quartile-stat">
+        <div class="value">${iqr.toFixed(1)}</div>
+        <div class="label">IQR</div>
+       </div>
+      </div>`;
+
+      // Re-render MathJax
+      if (window.MathJax) {
+       MathJax.typesetPromise([output]).catch(function(err) {
+        console.log('MathJax re-render error:', err);
+       });
+      }
+     }
+
+     function getQuartileValue(sorted, position) {
+      const n = sorted.length;
+      const lowerIndex = Math.floor(position) - 1; // Convert to 0-based index
+      const upperIndex = Math.ceil(position) - 1; // Convert to 0-based index
+
+      if (lowerIndex === upperIndex) {
+       return sorted[lowerIndex];
+      } else {
+       const lowerValue = sorted[lowerIndex];
+       const upperValue = sorted[upperIndex];
+       const fraction = position - Math.floor(position);
+       return lowerValue + fraction * (upperValue - lowerValue);
+      }
+     }
+
+     function updateVisualization(sorted, q1, q2, q3) {
+      const container = document.getElementById('sorted-data');
+
+      // Clear previous content
+      container.innerHTML = '';
+
+      // Create data value elements
+      sorted.forEach((value, index) => {
+       const valueElement = document.createElement('div');
+       valueElement.className = 'data-value';
+       valueElement.textContent = value;
+
+       // Highlight quartile values
+       if (Math.abs(value - q1) < 0.001) {
+        valueElement.classList.add('quartile-highlight', 'q1');
+        const arrow = document.createElement('div');
+        arrow.className = 'quartile-arrow q1';
+        arrow.textContent = 'Q₁';
+        valueElement.appendChild(arrow);
+       } else if (Math.abs(value - q2) < 0.001) {
+        valueElement.classList.add('quartile-highlight', 'q2');
+        const arrow = document.createElement('div');
+        arrow.className = 'quartile-arrow q2';
+        arrow.textContent = 'Q₂';
+        valueElement.appendChild(arrow);
+       } else if (Math.abs(value - q3) < 0.001) {
+        valueElement.classList.add('quartile-highlight', 'q3');
+        const arrow = document.createElement('div');
+        arrow.className = 'quartile-arrow q3';
+        arrow.textContent = 'Q₃';
+        valueElement.appendChild(arrow);
+       }
+
+       container.appendChild(valueElement);
+      });
+     }
+
+     function toggleSolution(num) {
+      const solution = document.getElementById('solution' + num);
+      if (solution.style.display === 'none' || solution.style.display === '') {
+       solution.style.display = 'block';
+      } else {
+       solution.style.display = 'none';
+      }
+     }
+
+     // Initialize with default data
+     calculateQuartiles();
+    </script>
+   </div>
+  </div>
+ </body>
+</html>

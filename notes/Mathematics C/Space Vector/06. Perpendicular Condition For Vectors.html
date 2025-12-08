@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<!-- tags: Space Vector -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Perpendicular Condition for Vectors
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   .interactive-demo {
+     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+     border: 2px solid #4a90e2;
+     border-radius: 15px;
+     padding: 25px;
+     margin: 20px 0;
+     box-shadow: 0 8px 25px rgba(74, 144, 226, 0.2);
+     color: white;
+   }
+   .demo-controls {
+     display: flex;
+     flex-wrap: wrap;
+     gap: 15px;
+     margin-bottom: 20px;
+     align-items: center;
+   }
+   .control-group {
+     display: flex;
+     flex-direction: column;
+     gap: 5px;
+   }
+   .control-group label {
+     font-weight: bold;
+     color: #e8f4f8;
+     font-size: 14px;
+   }
+   .control-group input {
+     padding: 8px 12px;
+     border: 2px solid #bdc3c7;
+     border-radius: 8px;
+     font-size: 14px;
+     transition: border-color 0.3s;
+     width: 100px;
+   }
+   .control-group input:focus {
+     outline: none;
+     border-color: #4a90e2;
+     box-shadow: 0 0 5px rgba(74, 144, 226, 0.3);
+   }
+   .demo-button {
+     background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+     color: #2c3e50;
+     border: none;
+     padding: 12px 25px;
+     border-radius: 8px;
+     cursor: pointer;
+     font-weight: bold;
+     transition: transform 0.2s, box-shadow 0.2s;
+     align-self: flex-end;
+   }
+   .demo-button:hover {
+     transform: translateY(-2px);
+     box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
+   }
+   .demo-result {
+     background: white;
+     border-radius: 10px;
+     padding: 20px;
+     margin-top: 20px;
+     border-left: 5px solid #4a90e2;
+     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+   }
+   .result-highlight {
+     background: #ecf0f1;
+     padding: 10px;
+     border-radius: 5px;
+     margin: 10px 0;
+     font-family: 'Courier New', monospace;
+   }
+   .practice-problem {
+     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+     color: white;
+     border: none;
+     padding: 15px 25px;
+     border-radius: 10px;
+     cursor: pointer;
+     font-weight: bold;
+     margin: 10px 0;
+     width: 100%;
+     transition: all 0.3s;
+   }
+   .practice-problem:hover {
+     background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+     transform: translateY(-2px);
+   }
+   .solution {
+     background: #f8f9fa;
+     border: 2px solid #28a745;
+     border-radius: 10px;
+     padding: 20px;
+     margin-top: 15px;
+     display: none;
+     border-left: 5px solid #28a745;
+   }
+   .solution.show {
+     display: block;
+   }
+   .key-takeaways {
+     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+     color: white;
+     padding: 25px;
+     border-radius: 15px;
+     margin: 30px 0;
+     box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+   }
+   .key-takeaways h3 {
+     margin-top: 0;
+     color: white;
+     text-align: center;
+     font-size: 1.4em;
+   }
+   .key-takeaways ul {
+     line-height: 2.2;
+     margin: 0;
+   }
+   .key-takeaways li {
+     margin: 10px 0;
+     padding-left: 20px;
+     position: relative;
+   }
+   .key-takeaways li:before {
+     content: "✓";
+     position: absolute;
+     left: 0;
+     color: #ffd700;
+     font-weight: bold;
+   }
+   .operation-block {
+     background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+     color: white;
+     padding: 20px;
+     border-radius: 12px;
+     margin: 20px 0;
+     box-shadow: 0 6px 20px rgba(245, 87, 108, 0.3);
+   }
+   .operation-block h3 {
+     margin-top: 0;
+     color: white;
+     text-align: center;
+   }
+   .enhanced-diagram {
+     background: white;
+     border-radius: 15px;
+     padding: 20px;
+     margin: 20px 0;
+     box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+     text-align: center;
+   }
+   .perpendicular-result {
+     background: #d4edda;
+     border: 2px solid #28a745;
+     border-radius: 10px;
+     padding: 15px;
+     margin: 15px 0;
+     text-align: center;
+     color: #155724;
+   }
+   .not-perpendicular-result {
+     background: #f8d7da;
+     border: 2px solid #dc3545;
+     border-radius: 10px;
+     padding: 15px;
+     margin: 15px 0;
+     text-align: center;
+     color: #721c24;
+   }
+   .right-angle {
+     position: absolute;
+     width: 20px;
+     height: 20px;
+     border: 2px solid #27ae60;
+     border-top: none;
+     border-left: none;
+     background: white;
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Space Vector">
+   Perpendicular Condition for Vectors
+  </div>
+  <div class="container">
+   <div class="main-content">
+
+    <!-- Interactive Perpendicularity Checker -->
+    <div class="interactive-demo">
+     <h3 style="color: #e8f4f8; margin-top: 0; text-align: center;">🧮 Interactive Perpendicularity Checker</h3>
+     <p style="text-align: center; color: #e8f4f8; margin-bottom: 20px;">Check if two vectors are perpendicular using the dot product!</p>
+
+     <div class="demo-controls">
+      <div class="control-group">
+       <label for="vec-a1">Vector A (x,y,z):</label>
+       <input type="number" id="vec-a1" step="0.1" value="3" placeholder="x">
+       <input type="number" id="vec-a2" step="0.1" value="4" placeholder="y">
+       <input type="number" id="vec-a3" step="0.1" value="0" placeholder="z">
+      </div>
+      <div class="control-group">
+       <label for="vec-b1">Vector B (x,y,z):</label>
+       <input type="number" id="vec-b1" step="0.1" value="-4" placeholder="x">
+       <input type="number" id="vec-b2" step="0.1" value="3" placeholder="y">
+       <input type="number" id="vec-b3" step="0.1" value="0" placeholder="z">
+      </div>
+      <button class="demo-button" onclick="checkPerpendicularity()">Check Perpendicularity</button>
+     </div>
+
+     <div id="demo-result" class="demo-result" style="display: none;">
+      <h4 style="color: #2c3e50; margin-top: 0;">Perpendicularity Results:</h4>
+      <div id="calculation-steps"></div>
+      <div id="perpendicular-canvas" style="text-align: center; margin-top: 20px;">
+       <canvas id="interactiveCanvas" width="600" height="400"></canvas>
+      </div>
+     </div>
+    </div>
+
+    <div class="enhanced-diagram">
+     <h3 style="color: #667eea; margin-top: 0;">Perpendicular Vectors Visualization</h3>
+     <svg viewbox="0 40 200 160" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+       <marker id="arrowhead" markerheight="4" markerwidth="6" orient="auto" refx="3" refy="2">
+        <polygon fill="#333" points="0 0, 3 2, 0 4"></polygon>
+       </marker>
+       <marker id="arrowhead-vec" markerheight="5" markerwidth="7" orient="auto" refx="3.5" refy="2.5">
+        <polygon fill="#e74c3c" points="0 0, 3.5 2.5, 0 5"></polygon>
+       </marker>
+       <marker id="arrowhead-vec-b" markerheight="5" markerwidth="7" orient="auto" refx="3.5" refy="2.5">
+        <polygon fill="#3498db" points="0 0, 3.5 2.5, 0 5"></polygon>
+       </marker>
+      </defs>
+      <!-- Axes -->
+      <line marker-end="url(#arrowhead)" stroke="#333" stroke-width="1" x1="90" x2="20" y1="150" y2="174.5"></line>
+      <text font-size="10" x="15" y="178">x</text>
+      <line marker-end="url(#arrowhead)" stroke="#333" stroke-width="1" x1="90" x2="145" y1="150" y2="171"></line>
+      <text font-size="10" x="150" y="174">y</text>
+      <line marker-end="url(#arrowhead)" stroke="#333" stroke-width="1" x1="90" x2="90" y1="150" y2="70"></line>
+      <text font-size="10" x="95" y="70">z</text>
+      <!-- Origin O -->
+      <circle cx="90" cy="150" fill="#000" r="2"></circle>
+      <text font-size="10" x="80" y="155">O</text>
+      <!-- Vector A (horizontal) -->
+      <line marker-end="url(#arrowhead-vec)" stroke="#e74c3c" stroke-width="3" x1="90" x2="130" y1="150" y2="150"></line>
+      <text fill="#e74c3c" font-size="12" font-weight="bold" x="125" y="145">$\vec{a}$</text>
+      <!-- Vector B (vertical) -->
+      <line marker-end="url(#arrowhead-vec-b)" stroke="#3498db" stroke-width="3" x1="90" x2="90" y1="150" y2="110"></line>
+      <text fill="#3498db" font-size="12" font-weight="bold" x="95" y="115">$\vec{b}$</text>
+      <!-- Right angle symbol -->
+      <path d="M 125 150 L 125 145 L 130 145" fill="none" stroke="#27ae60" stroke-width="2"></path>
+      <text fill="#27ae60" font-size="14" font-weight="bold" x="135" y="135">90°</text>
+     </svg>
+     <p style="margin-top: 15px; color: #666;"><em>Perpendicular vectors form a 90° angle. Their dot product equals zero.</em></p>
+    </div>
+
+    <div class="operation-block">
+     <h3>Condition for Perpendicularity (Orthogonality)</h3>
+     <ol style="margin-left: 1.2em;">
+      <li style="margin-bottom: 0.7em;">
+       $\vec{a} \perp \vec{b} \iff \vec{a} \cdot \vec{b} = \color{#e65100}{0}$
+      </li>
+      <li>
+       $\vec{a} \perp \vec{b} \iff a_1 b_1 + a_2 b_2 + a_3 b_3 = \color{#e65100}{0}$
+      </li>
+     </ol>
+     <div class="example">
+      <strong>Example:</strong> Check if $(3, 4, 0)$ and $(-4, 3, 0)$ are perpendicular.
+      <br>
+      Dot product: $3×(-4) + 4×3 + 0×0 = -12 + 12 + 0 = 0$
+      <br>
+      Yes, they are perpendicular!
+     </div>
+    </div>
+
+    <div class="hint-block">
+     💡
+     <strong>Key Properties:</strong>
+     <ul>
+      <li>Two nonzero vectors are perpendicular (orthogonal) if and only if their dot product is zero.</li>
+      <li>The zero vector is perpendicular to every vector (but this is a degenerate case).</li>
+      <li>This is a fundamental property used in geometry, physics, and engineering.</li>
+      <li>The condition works in any dimension, not just 3D.</li>
+      <li>In 2D: $(a,b) \perp (c,d) \iff ac + bd = 0$</li>
+      <li>In nD: $\vec{a} \perp \vec{b} \iff \sum_{i=1}^n a_i b_i = 0$</li>
+     </ul>
+    </div>
+
+    <h2>Worked Examples</h2>
+
+    <div class="example">
+     <h4>Example 1: Perpendicular Vectors in 2D</h4>
+     <p>Determine if vectors $\vec{u} = (2, 3)$ and $\vec{v} = (-3, 2)$ are perpendicular.</p>
+     <p><strong>Solution:</strong></p>
+     <p>$\vec{u} \cdot \vec{v} = 2×(-3) + 3×2 = -6 + 6 = 0$</p>
+     <p>The vectors are perpendicular.</p>
+    </div>
+
+    <div class="example">
+     <h4>Example 2: Perpendicular Vectors in 3D</h4>
+     <p>Determine if vectors $\vec{a} = (1, 2, 3)$ and $\vec{b} = (2, -1, 0)$ are perpendicular.</p>
+     <p><strong>Solution:</strong></p>
+     <p>$\vec{a} \cdot \vec{b} = 1×2 + 2×(-1) + 3×0 = 2 - 2 + 0 = 0$</p>
+     <p>The vectors are perpendicular.</p>
+    </div>
+
+    <div class="example">
+     <h4>Example 3: Finding Perpendicular Vectors</h4>
+     <p>Find a vector perpendicular to $\vec{v} = (3, 4, 5)$.</p>
+     <p><strong>Solution:</strong></p>
+     <p>Let $\vec{w} = (a, b, c)$ be perpendicular to $\vec{v}$. Then:</p>
+     <p>$3a + 4b + 5c = 0$</p>
+     <p>One solution: $a = -4, b = 3, c = 1$ (since $3×(-4) + 4×3 + 5×1 = -12 + 12 + 5 = 5 ≠ 0$ - wait, that's wrong)</p>
+     <p>Correct: $3a + 4b + 5c = 0$</p>
+     <p>Let $a = 4, b = 3, c = -3$ (since $3×4 + 4×3 + 5×(-3) = 12 + 12 - 15 = 9 ≠ 0$ - still wrong)</p>
+     <p>Let $a = 4, b = 5, c = -4$ (since $3×4 + 4×5 + 5×(-4) = 12 + 20 - 20 = 12 ≠ 0$ - still wrong)</p>
+     <p>Let $a = 4, b = -5, c = 4$ (since $3×4 + 4×(-5) + 5×4 = 12 - 20 + 20 = 12 ≠ 0$ - still wrong)</p>
+     <p>Let $a = 4, b = 5, c = -4$ (wait, let's solve properly)</p>
+     <p>$3a + 4b + 5c = 0$</p>
+     <p>Let $a = 4, b = 5$, then $5c = -3×4 - 4×5 = -12 - 20 = -32$, so $c = -32/5 = -6.4$</p>
+     <p>So $\vec{w} = (4, 5, -6.4)$ is perpendicular to $\vec{v} = (3, 4, 5)$</p>
+     <p>Check: $3×4 + 4×5 + 5×(-6.4) = 12 + 20 - 32 = 0$ ✓</p>
+    </div>
+
+    <div class="example">
+     <h4>Example 4: Coordinate Planes</h4>
+     <p>Show that the vectors $\vec{i} = (1, 0, 0)$, $\vec{j} = (0, 1, 0)$, and $\vec{k} = (0, 0, 1)$ are mutually perpendicular.</p>
+     <p><strong>Solution:</strong></p>
+     <p>$\vec{i} \cdot \vec{j} = 1×0 + 0×1 + 0×0 = 0$</p>
+     <p>$\vec{i} \cdot \vec{k} = 1×0 + 0×0 + 0×1 = 0$</p>
+     <p>$\vec{j} \cdot \vec{k} = 0×0 + 1×0 + 0×1 = 0$</p>
+     <p>All dot products are zero, so they are mutually perpendicular.</p>
+    </div>
+
+    <h2>Practice Problems</h2>
+
+    <div class="graybox">
+     <strong>Problem 1:</strong> Determine if vectors $\vec{a} = (2, 5, 3)$ and $\vec{b} = (4, -2, 1)$ are perpendicular.
+     <br><br>
+     <button class="practice-problem" onclick="toggleSolution('sol1')">Show Solution</button>
+     <div id="sol1" class="solution">
+      <strong>Solution:</strong>
+      <br><br>
+      $\vec{a} \cdot \vec{b} = 2×4 + 5×(-2) + 3×1 = 8 - 10 + 3 = 1 ≠ 0$
+      <br>
+      The vectors are not perpendicular.
+     </div>
+    </div>
+
+    <div class="graybox" style="margin-top: 15px;">
+     <strong>Problem 2:</strong> Find a vector perpendicular to $\vec{v} = (1, 2, 3)$.
+     <br><br>
+     <button class="practice-problem" onclick="toggleSolution('sol2')">Show Solution</button>
+     <div id="sol2" class="solution">
+      <strong>Solution:</strong>
+      <br><br>
+      Let $\vec{w} = (a, b, c)$ such that $1a + 2b + 3c = 0$
+      <br>
+      One solution: $a = 2, b = -1, c = 0$ (since $1×2 + 2×(-1) + 3×0 = 2 - 2 + 0 = 0$)
+      <br>
+      So $\vec{w} = (2, -1, 0)$ is perpendicular to $\vec{v}$.
+     </div>
+    </div>
+
+    <div class="graybox" style="margin-top: 15px;">
+     <strong>Problem 3:</strong> Are the vectors $\vec{u} = (3, 0, 4)$ and $\vec{v} = (0, 4, -3)$ perpendicular?
+     <br><br>
+     <button class="practice-problem" onclick="toggleSolution('sol3')">Show Solution</button>
+     <div id="sol3" class="solution">
+      <strong>Solution:</strong>
+      <br><br>
+      $\vec{u} \cdot \vec{v} = 3×0 + 0×4 + 4×(-3) = 0 + 0 - 12 = -12 ≠ 0$
+      <br>
+      The vectors are not perpendicular.
+     </div>
+    </div>
+
+    <div class="graybox" style="margin-top: 15px;">
+     <strong>Problem 4:</strong> Find two nonzero vectors that are perpendicular to both $\vec{a} = (1, 1, 0)$ and $\vec{b} = (0, 1, 1)$.
+     <br><br>
+     <button class="practice-problem" onclick="toggleSolution('sol4')">Show Solution</button>
+     <div id="sol4" class="solution">
+      <strong>Solution:</strong>
+      <br><br>
+      A vector perpendicular to both $\vec{a}$ and $\vec{b}$ is their cross product:
+      <br>
+      $\vec{a} × \vec{b} = (1×1 - 0×1, 0×0 - 1×1, 1×1 - 1×0) = (1, -1, 1)$
+      <br>
+      So $\vec{c} = (1, -1, 1)$ is perpendicular to both $\vec{a}$ and $\vec{b}$.
+      <br>
+      Any scalar multiple, like $2\vec{c} = (2, -2, 2)$, also works.
+     </div>
+    </div>
+
+    <div class="graybox" style="margin-top: 15px;">
+     <strong>Problem 5:</strong> In 4D space, determine if $\vec{p} = (1, 2, 3, 4)$ and $\vec{q} = (4, 3, 2, 1)$ are perpendicular.
+     <br><br>
+     <button class="practice-problem" onclick="toggleSolution('sol5')">Show Solution</button>
+     <div id="sol5" class="solution">
+      <strong>Solution:</strong>
+      <br><br>
+      $\vec{p} \cdot \vec{q} = 1×4 + 2×3 + 3×2 + 4×1 = 4 + 6 + 6 + 4 = 20 ≠ 0$
+      <br>
+      The vectors are not perpendicular.
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <h3>🎯 Key Takeaways</h3>
+     <ul>
+      <li>Perpendicular condition: $\vec{a} \perp \vec{b} \iff \vec{a} \cdot \vec{b} = 0$</li>
+      <li>Component form: $a_1 b_1 + a_2 b_2 + a_3 b_3 = 0$</li>
+      <li>Works in any dimension: $\sum a_i b_i = 0$</li>
+      <li>Zero vector is perpendicular to all vectors</li>
+      <li>Interactive checker verifies perpendicularity instantly</li>
+      <li>Practice problems with toggle-able solutions reinforce understanding</li>
+      <li>Fundamental for coordinate geometry and vector spaces</li>
+     </ul>
+    </div>
+
+    <script>
+     function checkPerpendicularity() {
+       const a1 = parseFloat(document.getElementById('vec-a1').value);
+       const a2 = parseFloat(document.getElementById('vec-a2').value);
+       const a3 = parseFloat(document.getElementById('vec-a3').value);
+       const b1 = parseFloat(document.getElementById('vec-b1').value);
+       const b2 = parseFloat(document.getElementById('vec-b2').value);
+       const b3 = parseFloat(document.getElementById('vec-b3').value);
+
+       if (isNaN(a1) || isNaN(a2) || isNaN(a3) || isNaN(b1) || isNaN(b2) || isNaN(b3)) {
+         alert('Please enter valid numbers for all vector components.');
+         return;
+       }
+
+       const dotProduct = a1*b1 + a2*b2 + a3*b3;
+       const isPerpendicular = Math.abs(dotProduct) < 0.0001;
+       const magA = Math.sqrt(a1*a1 + a2*a2 + a3*a3);
+       const magB = Math.sqrt(b1*b1 + b2*b2 + b3*b3);
+
+       const resultDiv = document.getElementById('demo-result');
+       const stepsDiv = document.getElementById('calculation-steps');
+
+       stepsDiv.innerHTML = `
+         <div class="result-highlight">
+           <strong>Vectors:</strong> $\\vec{a} = (${a1}, ${a2}, ${a3})$ and $\\vec{b} = (${b1}, ${b2}, ${b3})$<br>
+           <strong>Perpendicular Condition:</strong> $\\vec{a} \\cdot \\vec{b} = 0$
+         </div>
+         <br>
+         <strong>Dot Product Calculation:</strong><br>
+         $a_1 b_1 = ${a1} \\times ${b1} = ${a1*b1}$<br>
+         $a_2 b_2 = ${a2} \\times ${b2} = ${a2*b2}$<br>
+         $a_3 b_3 = ${a3} \\times ${b3} = ${a3*b3}$<br>
+         <strong>Sum:</strong> $\\vec{a} \\cdot \\vec{b} = ${dotProduct}$<br>
+         <br>
+         <div class="${isPerpendicular ? 'perpendicular-result' : 'not-perpendicular-result'}">
+           <strong>Result:</strong> ${isPerpendicular ?
+             'The vectors are perpendicular (orthogonal) ✓' :
+             'The vectors are NOT perpendicular ✗'}
+         </div>
+         <br>
+         <strong>Magnitudes:</strong> $|\\vec{a}| = ${magA.toFixed(4)}, |\\vec{b}| = ${magB.toFixed(4)}$
+       `;
+
+       resultDiv.style.display = 'block';
+
+       // Draw the perpendicularity visualization
+       drawPerpendicularityVisualization(a1, a2, a3, b1, b2, b3, isPerpendicular);
+     }
+
+     function drawPerpendicularityVisualization(a1, a2, a3, b1, b2, b3, isPerpendicular) {
+       const canvas = document.getElementById('interactiveCanvas');
+       const ctx = canvas.getContext('2d');
+       const w = canvas.width;
+       const h = canvas.height;
+       const scale = 20;
+       const originX = w / 2;
+       const originY = h / 2;
+
+       // Clear canvas
+       ctx.clearRect(0, 0, w, h);
+
+       // Set up coordinate system
+       function toCanvasX(x) { return originX + x * scale; }
+       function toCanvasY(y) { return originY - y * scale; }
+
+       // Draw axes
+       ctx.strokeStyle = '#333';
+       ctx.lineWidth = 2;
+       ctx.beginPath();
+       ctx.moveTo(toCanvasX(-12), toCanvasY(0));
+       ctx.lineTo(toCanvasX(12), toCanvasY(0));
+       ctx.moveTo(toCanvasX(0), toCanvasY(-10));
+       ctx.lineTo(toCanvasX(0), toCanvasY(10));
+       ctx.stroke();
+
+       // Draw grid
+       ctx.strokeStyle = '#e0e0e0';
+       ctx.lineWidth = 0.5;
+       for (let x = -12; x <= 12; x++) {
+         ctx.beginPath();
+         ctx.moveTo(toCanvasX(x), toCanvasY(-10));
+         ctx.lineTo(toCanvasX(x), toCanvasY(10));
+         ctx.stroke();
+       }
+       for (let y = -10; y <= 10; y++) {
+         ctx.beginPath();
+         ctx.moveTo(toCanvasX(-12), toCanvasY(y));
+         ctx.lineTo(toCanvasX(12), toCanvasY(y));
+         ctx.stroke();
+       }
+
+       // Draw origin
+       ctx.fillStyle = '#000';
+       ctx.beginPath();
+       ctx.arc(toCanvasX(0), toCanvasY(0), 4, 0, 2 * Math.PI);
+       ctx.fill();
+
+       // Normalize vectors for display (scale to reasonable size)
+       const magA = Math.sqrt(a1*a1 + a2*a2 + a3*a3);
+       const magB = Math.sqrt(b1*b1 + b2*b2 + b3*b3);
+       const displayScale = 6;
+
+       const displayA1 = magA > 0 ? (a1 / magA) * displayScale : 0;
+       const displayA2 = magA > 0 ? (a2 / magA) * displayScale : 0;
+       const displayB1 = magB > 0 ? (b1 / magB) * displayScale : 0;
+       const displayB2 = magB > 0 ? (b2 / magB) * displayScale : 0;
+
+       // Draw vector A (red)
+       drawVector(ctx, 0, 0, displayA1, displayA2, '#e74c3c', scale, originX, originY, 'A');
+
+       // Draw vector B (blue)
+       drawVector(ctx, 0, 0, displayB1, displayB2, '#3498db', scale, originX, originY, 'B');
+
+       // Draw right angle symbol if perpendicular
+       if (isPerpendicular && magA > 0 && magB > 0) {
+         const endAX = toCanvasX(displayA1);
+         const endAY = toCanvasY(displayA2);
+         const endBX = toCanvasX(displayB1);
+         const endBY = toCanvasY(displayB2);
+
+         // Find intersection point (origin for simplicity)
+         const intersectX = toCanvasX(0);
+         const intersectY = toCanvasY(0);
+
+         // Draw right angle symbol
+         ctx.strokeStyle = '#27ae60';
+         ctx.lineWidth = 3;
+         ctx.beginPath();
+         ctx.moveTo(endAX, endAY);
+         ctx.lineTo(endAX - 15, endAY);
+         ctx.moveTo(endAX, endAY);
+         ctx.lineTo(endAX, endAY - 15);
+         ctx.stroke();
+
+         ctx.fillStyle = '#27ae60';
+         ctx.font = 'bold 16px Arial';
+         ctx.fillText('⊥', endAX + 5, endAY - 20);
+       }
+
+       // Labels
+       ctx.fillStyle = '#000';
+       ctx.font = '14px Arial';
+       ctx.textAlign = 'center';
+       ctx.fillText('Perpendicularity Visualization', w/2, 30);
+       ctx.fillText(`Dot Product: ${(a1*b1 + a2*b2 + a3*b3).toFixed(2)}`, w/2, 50);
+       ctx.fillText(isPerpendicular ? 'Vectors are perpendicular' : 'Vectors are not perpendicular', w/2, 70);
+     }
+
+     function drawVector(ctx, startX, startY, endX, endY, color, scale, originX, originY, label) {
+       const canvasStartX = originX + startX * scale;
+       const canvasStartY = originY - startY * scale;
+       const canvasEndX = canvasStartX + endX * scale;
+       const canvasEndY = canvasStartY - endY * scale;
+
+       // Draw vector line
+       ctx.strokeStyle = color;
+       ctx.lineWidth = 4;
+       ctx.beginPath();
+       ctx.moveTo(canvasStartX, canvasStartY);
+       ctx.lineTo(canvasEndX, canvasEndY);
+       ctx.stroke();
+
+       // Draw arrowhead
+       const angle = Math.atan2(canvasEndY - canvasStartY, canvasEndX - canvasStartX);
+       const arrowLength = 12;
+       ctx.beginPath();
+       ctx.moveTo(canvasEndX, canvasEndY);
+       ctx.lineTo(
+         canvasEndX - arrowLength * Math.cos(angle - Math.PI/6),
+         canvasEndY - arrowLength * Math.sin(angle - Math.PI/6)
+       );
+       ctx.moveTo(canvasEndX, canvasEndY);
+       ctx.lineTo(
+         canvasEndX - arrowLength * Math.cos(angle + Math.PI/6),
+         canvasEndY - arrowLength * Math.sin(angle + Math.PI/6)
+       );
+       ctx.stroke();
+
+       // Label
+       ctx.fillStyle = color;
+       ctx.font = 'bold 14px Arial';
+       const midX = (canvasStartX + canvasEndX) / 2;
+       const midY = (canvasStartY + canvasEndY) / 2;
+       ctx.fillText(label, midX, midY - 10);
+     }
+
+     // Toggle solution visibility
+     function toggleSolution(id) {
+       const solution = document.getElementById(id);
+       solution.classList.toggle('show');
+       const button = solution.previousElementSibling;
+       button.textContent = solution.classList.contains('show') ? 'Hide Solution' : 'Show Solution';
+     }
+
+     // Initialize with default values
+     checkPerpendicularity();
+    </script>
+   </div>
+  </div>
+ </body>
+</html>

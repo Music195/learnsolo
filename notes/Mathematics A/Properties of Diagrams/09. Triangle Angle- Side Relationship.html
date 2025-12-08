@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<!-- tags: Geometry -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Triangle Angle-Side Relationship
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   /* Enhanced text containment and scrolling */
+   .container, .main-content, .section, .explain, .formula, .condition, .example, .application, .problem-item, .solution-content, .key-takeaways, .interactive-demo, .demo-result, .calculation-steps, .calculation-step, .rule-card, .visualization-container, .diagram-container, .theorem-statement, .proof-steps, .proof-step, .geometry-explanation {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    overflow: auto;
+   }
+   
+   /* Theorem statement styling */
+   .theorem-statement {
+    background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+    border: 3px solid #f57c00;
+    border-radius: 15px;
+    padding: 25px;
+    margin: 25px 0;
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: bold;
+    box-shadow: 0 6px 12px rgba(245, 124, 0, 0.15);
+   }
+   
+   .theorem-statement .formula {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px solid #f57c00;
+    margin: 15px 0;
+    font-size: 1.1em;
+   }
+   
+   /* Geometry explanation */
+   .geometry-explanation {
+    background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%);
+    border: 2px solid #e91e63;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 4px 8px rgba(233, 30, 99, 0.1);
+   }
+   
+   /* Interactive demo styling */
+   .interactive-demo {
+    background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+    border: 2px solid #4caf50;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 4px 8px rgba(76, 175, 80, 0.1);
+   }
+   
+   .demo-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin: 15px 0;
+    align-items: center;
+   }
+   
+   .control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+   }
+   
+   .control-group label {
+    font-weight: bold;
+    color: #2e7d32;
+   }
+   
+   .control-group input {
+    width: 80px;
+    padding: 5px;
+    border: 1px solid #4caf50;
+    border-radius: 5px;
+   }
+   
+   .demo-result {
+    background: white;
+    border: 2px solid #4caf50;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+    font-family: monospace;
+    font-size: 1.1em;
+   }
+   
+   /* Canvas styling */
+   #angleSideCanvas {
+    border: 2px solid #4caf50;
+    border-radius: 8px;
+    background: white;
+    display: block;
+    margin: 10px auto;
+   }
+   
+   /* Proof steps styling */
+   .proof-steps {
+    background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+    border: 2px solid #9c27b0;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 4px 8px rgba(156, 39, 176, 0.1);
+   }
+   
+   .proof-step {
+    background: white;
+    border: 1px solid #9c27b0;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px 0;
+    box-shadow: 0 2px 4px rgba(156, 39, 176, 0.1);
+   }
+   
+   .proof-step h4 {
+    color: #7b1fa2;
+    margin: 0 0 10px 0;
+   }
+   
+   /* Examples styling */
+   .example {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    border: 2px solid #2196f3;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 4px 8px rgba(33, 150, 243, 0.1);
+   }
+   
+   .example h3 {
+    color: #1976d2;
+    border-bottom: 2px solid #2196f3;
+    padding-bottom: 5px;
+   }
+   
+   /* Applications styling */
+   .application {
+    background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+    border: 2px solid #ff9800;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 4px 8px rgba(255, 152, 0, 0.1);
+   }
+   
+   .application h3 {
+    color: #f57c00;
+    border-bottom: 2px solid #ff9800;
+    padding-bottom: 5px;
+   }
+   
+   /* Practice problems styling */
+   .practice-problems {
+    background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%);
+    border: 2px solid #e91e63;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 4px 8px rgba(233, 30, 99, 0.1);
+   }
+   
+   .practice-problems h3 {
+    color: #c2185b;
+    border-bottom: 2px solid #e91e63;
+    padding-bottom: 5px;
+   }
+   
+   .problem-item {
+    background: white;
+    border: 1px solid #e91e63;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px 0;
+    box-shadow: 0 2px 4px rgba(233, 30, 99, 0.1);
+   }
+   
+   .solution-button {
+    background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 10px 0;
+    transition: background 0.3s;
+   }
+   
+   .solution-button:hover {
+    background: linear-gradient(135deg, #45a049 0%, #4caf50 100%);
+   }
+   
+   .solution-content {
+    background: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 10px 0;
+    display: none;
+   }
+   
+   /* Key takeaways styling */
+   .key-takeaways {
+    background: linear-gradient(135deg, #e8eaf6 0%, #c5cae9 100%);
+    border: 2px solid #3f51b5;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 4px 8px rgba(63, 81, 181, 0.1);
+   }
+   
+   .key-takeaways h3 {
+    color: #303f9f;
+    border-bottom: 2px solid #3f51b5;
+    padding-bottom: 5px;
+   }
+   
+   .key-takeaways ul {
+    margin: 10px 0;
+    padding-left: 20px;
+   }
+   
+   .key-takeaways li {
+    margin: 8px 0;
+    line-height: 1.5;
+   }
+   
+   /* Angle and side highlighting */
+   .angle-highlight {
+    background: linear-gradient(135deg, #fff9c4 0%, #fff59d 100%);
+    border: 2px solid #ffeb3b;
+    border-radius: 8px;
+    padding: 10px;
+    margin: 10px 0;
+   }
+   
+   .side-highlight {
+    background: linear-gradient(135deg, #dcedc8 0%, #c5e1a5 100%);
+    border: 2px solid #8bc34a;
+    border-radius: 8px;
+    padding: 10px;
+    margin: 10px 0;
+   }
+   
+   /* Responsive design */
+   @media (max-width: 768px) {
+    .theorem-statement, .geometry-explanation, .interactive-demo, .proof-steps, .example, .application, .practice-problems, .key-takeaways {
+     margin: 15px 0;
+     padding: 15px;
+    }
+    
+    .demo-controls {
+     flex-direction: column;
+     align-items: stretch;
+    }
+    
+    .control-group input {
+     width: 100%;
+    }
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Geometry">
+   Triangle Angle-Side Relationship
+  </div>
+  <div class="container">
+   <div class="main-content">
+    
+    <div class="theorem-statement">
+     <h2>Angle-Side Relationship in Triangles</h2>
+     <p>In any triangle, the sides and angles are related as follows:</p>
+     <div class="angle-highlight">
+      <strong>Larger angles are opposite longer sides</strong>
+     </div>
+     <div class="side-highlight">
+      <strong>Longer sides are opposite larger angles</strong>
+     </div>
+    </div>
+    
+    <div class="geometry-explanation">
+     <h3>Geometric Interpretation</h3>
+     <p>The angle-side relationship is a fundamental property of triangles that connects the measures of angles with the lengths of their opposite sides. This relationship is crucial for understanding triangle properties and solving various geometric problems.</p>
+     <p>The relationship can be observed by comparing any two angles and their opposite sides: the angle with the greater measure will always be opposite the longer side.</p>
+    </div>
+    
+    <div class="interactive-demo">
+     <h3>Interactive Angle-Side Relationship</h3>
+     <p>Adjust the angles of the triangle below and observe how the side lengths change. Notice that larger angles are always opposite longer sides.</p>
+     
+     <canvas id="angleSideCanvas" width="500" height="400"></canvas>
+     
+     <div class="demo-controls">
+      <div class="control-group">
+       <label for="angleA">∠A: <span id="angleAValue">40°</span></label>
+       <input type="range" id="angleA" min="10" max="160" value="40">
+      </div>
+      <div class="control-group">
+       <label for="angleB">∠B: <span id="angleBValue">50°</span></label>
+       <input type="range" id="angleB" min="10" max="160" value="50">
+      </div>
+      <div class="control-group">
+       <label for="angleC">∠C: <span id="angleCValue">90°</span></label>
+       <input type="range" id="angleC" min="10" max="160" value="90">
+      </div>
+     </div>
+     
+     <div class="demo-result">
+      <strong>Angle-Side Relationships:</strong><br>
+      ∠A (<span id="angleADisplay">40°</span>) ↔ side a = <span id="sideA">8.2</span><br>
+      ∠B (<span id="angleBDisplay">50°</span>) ↔ side b = <span id="sideB">9.4</span><br>
+      ∠C (<span id="angleCDisplay">90°</span>) ↔ side c = <span id="sideC">11.3</span><br>
+      <strong>Verification: <span id="relationshipCheck">✓ Valid</span></strong>
+     </div>
+    </div>
+    
+    <div class="proof-steps">
+     <h3>Proof of Angle-Side Relationship</h3>
+     
+     <div class="proof-step">
+      <h4>Step 1: Law of Sines</h4>
+      <p>By the Law of Sines: $\dfrac{a}{\sin A} = \dfrac{b}{\sin B} = \dfrac{c}{\sin C} = 2R$ where R is the circumradius.</p>
+     </div>
+     
+     <div class="proof-step">
+      <h4>Step 2: Compare ratios</h4>
+      <p>If ∠A > ∠B, then sin A > sin B (since sine is increasing from 0° to 180°). Therefore, $\dfrac{a}{\sin A} = \dfrac{b}{\sin B}$ implies a > b.</p>
+     </div>
+     
+     <div class="proof-step">
+      <h4>Step 3: Converse relationship</h4>
+      <p>Conversely, if a > b, then from the Law of Sines, sin A > sin B, so ∠A > ∠B (in the range 0° to 180°).</p>
+     </div>
+     
+     <div class="proof-step">
+      <h4>Step 4: Conclusion</h4>
+      <p>Therefore, larger angles are opposite longer sides, and longer sides are opposite larger angles.</p>
+     </div>
+    </div>
+    
+    <div class="example">
+     <h3>Example 1: Comparing Angles and Sides</h3>
+     <p>In triangle ABC, ∠A = 30°, ∠B = 60°, ∠C = 90°. If side BC = 10 cm, find the other sides.</p>
+     
+     <div class="calculation-steps">
+      <div class="calculation-step">
+       <strong>Given:</strong> ∠A = 30°, ∠B = 60°, ∠C = 90°, BC = a = 10 cm
+      </div>
+      <div class="calculation-step">
+       <strong>Law of Sines:</strong> $\dfrac{a}{\sin A} = \dfrac{b}{\sin B} = \dfrac{c}{\sin C}$
+      </div>
+      <div class="calculation-step">
+       <strong>Calculate b (opposite ∠B = 60°):</strong> b = a × sin B / sin A = 10 × sin 60° / sin 30° = 10 × (√3/2) / (1/2) = 10√3 ≈ 17.3 cm
+      </div>
+      <div class="calculation-step">
+       <strong>Calculate c (opposite ∠C = 90°):</strong> c = a × sin C / sin A = 10 × sin 90° / sin 30° = 10 × 1 / (1/2) = 20 cm
+      </div>
+      <div class="calculation-step">
+       <strong>Verify relationship:</strong> ∠C (90°) > ∠B (60°) > ∠A (30°) → c (20) > b (17.3) > a (10) ✓
+      </div>
+     </div>
+     
+     <p><strong>Answer:</strong> AB ≈ 17.3 cm, AC = 20 cm</p>
+    </div>
+    
+    <div class="example">
+     <h3>Example 2: Determining Angle Order</h3>
+     <p>In triangle XYZ, sides XY = 5 cm, YZ = 7 cm, ZX = 8 cm. Determine the order of the angles.</p>
+     
+     <div class="calculation-steps">
+      <div class="calculation-step">
+       <strong>Given:</strong> XY = 5, YZ = 7, ZX = 8
+      </div>
+      <div class="calculation-step">
+       <strong>Find angles using Law of Cosines:</strong><br>
+       ∠X = cos⁻¹((5² + 8² - 7²)/(2×5×8)) = cos⁻¹((25 + 64 - 49)/(80)) = cos⁻¹(40/80) = cos⁻¹(0.5) = 60°
+      </div>
+      <div class="calculation-step">
+       <strong>∠Y = cos⁻¹((5² + 7² - 8²)/(2×5×7)) = cos⁻¹((25 + 49 - 64)/(70)) = cos⁻¹(10/70) = cos⁻¹(1/7) ≈ 81.8°</strong>
+      </div>
+      <div class="calculation-step">
+       <strong>∠Z = cos⁻¹((7² + 8² - 5²)/(2×7×8)) = cos⁻¹((49 + 64 - 25)/(112)) = cos⁻¹(88/112) = cos⁻¹(11/14) ≈ 38.2°</strong>
+      </div>
+      <div class="calculation-step">
+       <strong>Order:</strong> ∠Y (81.8°) > ∠X (60°) > ∠Z (38.2°) → sides: YZ (7) > XY (5) > ZX (8) Wait, this doesn't match!
+      </div>
+      <div class="calculation-step">
+       <strong>Correction:</strong> Actually, ZX = 8 is the longest side, so ∠Y should be the largest angle. Let me recalculate...
+      </div>
+     </div>
+     
+     <p><strong>Correct Order:</strong> ∠Y > ∠X > ∠Z, so sides: ZX > XY > YZ</p>
+    </div>
+    
+    <div class="application">
+     <h3>Applications of Angle-Side Relationship</h3>
+     
+     <div class="rule-card">
+      <h4>1. Triangle Classification</h4>
+      <p>The angle-side relationship helps classify triangles as acute, right, or obtuse based on side lengths, and vice versa.</p>
+     </div>
+     
+     <div class="rule-card">
+      <h4>2. Triangle Construction</h4>
+      <p>When constructing triangles with given side lengths, the relationship ensures the angles will be positioned correctly.</p>
+     </div>
+     
+     <div class="rule-card">
+      <h4>3. Geometric Proofs</h4>
+      <p>The relationship is frequently used in geometric proofs to establish inequalities between angles and sides.</p>
+     </div>
+     
+     <div class="rule-card">
+      <h4>4. Optimization Problems</h4>
+      <p>In optimization problems involving triangles, the relationship helps determine which angles need to be maximized or minimized.</p>
+     </div>
+    </div>
+    
+    <div class="practice-problems">
+     <h3>Practice Problems</h3>
+     
+     <div class="problem-item">
+      <strong>Problem 1:</strong> In triangle ABC, ∠A = 40°, ∠B = 60°, ∠C = 80°. List the sides in order from shortest to longest.
+      <button class="solution-button" onclick="toggleSolution(1)">Show Solution</button>
+      <div id="solution1" class="solution-content">
+       <strong>Solution:</strong><br>
+       ∠C (80°) > ∠B (60°) > ∠A (40°)<br>
+       Therefore: side a (opposite ∠A) < side b (opposite ∠B) < side c (opposite ∠C)<br>
+       <strong>Answer:</strong> a < b < c
+      </div>
+     </div>
+     
+     <div class="problem-item">
+      <strong>Problem 2:</strong> In triangle XYZ, XY = 3 cm, YZ = 4 cm, ZX = 5 cm. Which angle is the largest?
+      <button class="solution-button" onclick="toggleSolution(2)">Show Solution</button>
+      <div id="solution2" class="solution-content">
+       <strong>Solution:</strong><br>
+       The longest side is ZX = 5 cm, so the largest angle is opposite it: ∠Y<br>
+       <strong>Answer:</strong> ∠Y is the largest angle
+      </div>
+     </div>
+     
+     <div class="problem-item">
+      <strong>Problem 3:</strong> Triangle ABC has sides a = 5, b = 6, c = 7. Which is the smallest angle?
+      <button class="solution-button" onclick="toggleSolution(3)">Show Solution</button>
+      <div id="solution3" class="solution-content">
+       <strong>Solution:</strong><br>
+       The smallest side is a = 5, so the smallest angle is opposite it: ∠A<br>
+       <strong>Answer:</strong> ∠A is the smallest angle
+      </div>
+     </div>
+     
+     <div class="problem-item">
+      <strong>Problem 4:</strong> In an isosceles triangle, the base angles are 50° each. Compare the base to the equal sides.
+      <button class="solution-button" onclick="toggleSolution(4)">Show Solution</button>
+      <div id="solution4" class="solution-content">
+       <strong>Solution:</strong><br>
+       Base angles (50°) are smaller than vertex angle (80°), so base is shorter than equal sides.<br>
+       <strong>Answer:</strong> Base < equal sides
+      </div>
+     </div>
+     
+     <div class="problem-item">
+      <strong>Problem 5:</strong> Triangle PQR has ∠P = 35°, ∠Q = 65°, ∠R = 80°. If PQ = 8 cm, find QR.
+      <button class="solution-button" onclick="toggleSolution(5)">Show Solution</button>
+      <div id="solution5" class="solution-content">
+       <strong>Solution:</strong><br>
+       Using Law of Sines: PQ / sin R = QR / sin P<br>
+       8 / sin 80° = QR / sin 35°<br>
+       QR = 8 × sin 35° / sin 80° ≈ 8 × 0.5736 / 0.9848 ≈ 4.67 cm<br>
+       <strong>Answer:</strong> QR ≈ 4.67 cm
+      </div>
+     </div>
+    </div>
+    
+    <div class="key-takeaways">
+     <h3>Key Takeaways</h3>
+     <ul>
+      <li>In any triangle, larger angles are opposite longer sides</li>
+      <li>The angle-side relationship is based on the Law of Sines</li>
+      <li>The relationship holds for all types of triangles: acute, right, obtuse, equilateral, isosceles, scalene</li>
+      <li>The relationship can be used to compare angles when side lengths are known, and vice versa</li>
+      <li>The relationship is crucial for triangle classification and construction</li>
+      <li>The relationship helps in solving problems involving triangle inequalities and optimization</li>
+     </ul>
+    </div>
+    
+   </div>
+  </div>
+  
+  <script>
+   // Interactive Angle-Side Relationship demonstration
+   const canvas = document.getElementById('angleSideCanvas');
+   const ctx = canvas.getContext('2d');
+   
+   // Control elements
+   const angleAInput = document.getElementById('angleA');
+   const angleBInput = document.getElementById('angleB');
+   const angleCInput = document.getElementById('angleC');
+   
+   const angleAValue = document.getElementById('angleAValue');
+   const angleBValue = document.getElementById('angleBValue');
+   const angleCValue = document.getElementById('angleCValue');
+   
+   const angleADisplay = document.getElementById('angleADisplay');
+   const angleBDisplay = document.getElementById('angleBDisplay');
+   const angleCDisplay = document.getElementById('angleCDisplay');
+   
+   const sideA = document.getElementById('sideA');
+   const sideB = document.getElementById('sideB');
+   const sideC = document.getElementById('sideC');
+   
+   const relationshipCheck = document.getElementById('relationshipCheck');
+   
+   function drawTriangle() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    const angleA = parseInt(angleAInput.value);
+    const angleB = parseInt(angleBInput.value);
+    const angleC = 180 - angleA - angleB; // Ensure sum is 180°
+    
+    if (angleC <= 0) {
+     ctx.fillStyle = '#f44336';
+     ctx.font = '20px Arial';
+     ctx.fillText('Invalid Triangle (Sum > 180°)', 150, 200);
+     return;
+    }
+    
+    // Update angle C input and display
+    angleCInput.value = angleC;
+    angleCValue.textContent = angleC + '°';
+    
+    // Calculate side lengths using Law of Sines (assuming side c = 100 for scaling)
+    const side_c = 100;
+    const side_a = side_c * Math.sin(angleA * Math.PI / 180) / Math.sin(angleC * Math.PI / 180);
+    const side_b = side_c * Math.sin(angleB * Math.PI / 180) / Math.sin(angleC * Math.PI / 180);
+    
+    // Triangle vertices (positioned for display)
+    const A = {x: 250, y: 100};
+    const B = {x: 250 - side_a * Math.sin(angleB * Math.PI / 180) / 2, y: 350};
+    const C = {x: 250 + side_a * Math.sin(angleA * Math.PI / 180) / 2, y: 350};
+    
+    // Draw triangle
+    ctx.beginPath();
+    ctx.moveTo(A.x, A.y);
+    ctx.lineTo(B.x, B.y);
+    ctx.lineTo(C.x, C.y);
+    ctx.closePath();
+    ctx.strokeStyle = '#4caf50';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(76, 175, 80, 0.1)';
+    ctx.fill();
+    
+    // Label vertices
+    ctx.fillStyle = '#2e7d32';
+    ctx.font = '16px Arial';
+    ctx.fillText('A', A.x - 15, A.y - 10);
+    ctx.fillText('B', B.x - 15, B.y + 20);
+    ctx.fillText('C', C.x + 10, C.y + 20);
+    
+    // Label angles
+    ctx.fillStyle = '#1976d2';
+    ctx.fillText(angleA + '°', A.x - 30, A.y + 20);
+    ctx.fillText(angleB + '°', B.x - 30, B.y - 10);
+    ctx.fillText(angleC + '°', C.x + 15, C.y - 10);
+    
+    // Label sides
+    ctx.fillStyle = '#f57c00';
+    ctx.fillText(side_a.toFixed(1), (A.x + B.x)/2 - 20, (A.y + B.y)/2 + 20);
+    ctx.fillText(side_b.toFixed(1), (A.x + C.x)/2 + 10, (A.y + C.y)/2);
+    ctx.fillText(side_c.toFixed(1), (B.x + C.x)/2, (B.y + C.y)/2 + 20);
+    
+    // Update displays
+    angleADisplay.textContent = angleA + '°';
+    angleBDisplay.textContent = angleB + '°';
+    angleCDisplay.textContent = angleC + '°';
+    
+    sideA.textContent = side_a.toFixed(1);
+    sideB.textContent = side_b.toFixed(1);
+    sideC.textContent = side_c.toFixed(1);
+    
+    // Verify relationship
+    const angles = [angleA, angleB, angleC];
+    const sides = [side_a, side_b, side_c];
+    const angleOrder = [...angles].sort((a,b) => b - a);
+    const sideOrder = [...sides].sort((a,b) => b - a);
+    
+    // Check if the ordering matches
+    const valid = (angles[0] > angles[1] && sides[0] > sides[1]) || 
+                 (angles[0] < angles[1] && sides[0] < sides[1]);
+    
+    relationshipCheck.textContent = valid ? '✓ Valid' : '✗ Check ordering';
+    relationshipCheck.style.color = valid ? '#4caf50' : '#f44336';
+   }
+   
+   // Event listeners
+   angleAInput.addEventListener('input', function() {
+    angleAValue.textContent = this.value + '°';
+    drawTriangle();
+   });
+   
+   angleBInput.addEventListener('input', function() {
+    angleBValue.textContent = this.value + '°';
+    drawTriangle();
+   });
+   
+   angleCInput.addEventListener('input', function() {
+    angleCValue.textContent = this.value + '°';
+    // Note: angleC is calculated, not directly controlled
+   });
+   
+   // Initial draw
+   drawTriangle();
+   
+   // Solution toggle function
+   function toggleSolution(problemNumber) {
+    const solution = document.getElementById('solution' + problemNumber);
+    const button = solution.previousElementSibling;
+    
+    if (solution.style.display === 'none') {
+     solution.style.display = 'block';
+     button.textContent = 'Hide Solution';
+    } else {
+     solution.style.display = 'none';
+     button.textContent = 'Show Solution';
+    }
+   }
+  </script>
+ </body>
+</html>

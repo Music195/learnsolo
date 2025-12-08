@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<!-- tags: Set and Elements -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Subsets and the Empty Set
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   .interactive-demo {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    border: 2px solid #e1e8ed;
+   }
+   .demo-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 15px;
+   }
+   .demo-input-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 150px;
+   }
+   .demo-input-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #2c3e50;
+   }
+   .demo-input {
+    padding: 8px;
+    border: 2px solid #bdc3c7;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+   }
+   .demo-input:focus {
+    outline: none;
+    border-color: #3498db;
+   }
+   .demo-button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: transform 0.2s;
+   }
+   .demo-button:hover {
+    transform: translateY(-2px);
+   }
+   .demo-result {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+    border-left: 4px solid #3498db;
+   }
+   .math-foundation {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .worked-example {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .practice-problem {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .solution-toggle {
+    background: #2c3e50;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+   }
+   .solution-toggle:hover {
+    background: #34495e;
+   }
+   .solution-content {
+    display: none;
+    background: rgba(255, 255, 255, 0.9);
+    color: #2c3e50;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+   }
+   .key-takeaways {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .key-takeaways h3 {
+    color: #2c3e50;
+    margin-top: 0;
+   }
+   .key-takeaways ul {
+    color: #2c3e50;
+   }
+   .subset-concepts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+   }
+   .concept-card {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #e67e22;
+   }
+   .concept-card h4 {
+    margin-top: 0;
+    color: #2c3e50;
+   }
+   .venn-interactive {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+    border: 2px solid #ecf0f1;
+    text-align: center;
+   }
+   .subset-checker {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    margin: 15px 0;
+   }
+   .subset-item {
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+    border: 2px solid #dee2e6;
+    cursor: pointer;
+    transition: all 0.3s;
+   }
+   .subset-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+   }
+   .subset-yes {
+    background: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+   }
+   .subset-no {
+    background: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+   }
+   .math-blue {
+    color: #3498db;
+    font-weight: bold;
+   }
+   .math-empty {
+    color: #e74c3c;
+    font-weight: bold;
+   }
+   .gray-box {
+    background: #f8f9fa;
+    border-left: 4px solid #6c757d;
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 4px;
+   }
+   .icon {
+    font-size: 20px;
+    margin-right: 10px;
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Set and Elements">
+   Subsets and the Empty Set
+  </div>
+  <div class="container">
+   <div class="main-content">
+    <div class="section-title">
+     Subsets and the Empty Set
+    </div>
+
+    <div class="math-foundation">
+     <h3>Mathematical Foundations</h3>
+     <p>A subset is a set relationship where every element of one set is also an element of another set. The empty set is a special subset that contains no elements but is considered a subset of every set.</p>
+
+     <div class="subset-concepts">
+      <div class="concept-card">
+       <h4>Subset Definition</h4>
+       <p>For sets A and B:</p>
+       <p class="math-blue">A ⊂ B</p>
+       <p>means every element of A is also in B</p>
+       <p>This is read as "A is a subset of B"</p>
+      </div>
+
+      <div class="concept-card">
+       <h4>Empty Set</h4>
+       <p>The set with no elements:</p>
+       <p class="math-empty">∅ or {}</p>
+       <p>Unique set containing nothing</p>
+       <p>Subset of every set</p>
+      </div>
+
+      <div class="concept-card">
+       <h4>Important Properties</h4>
+       <p>Every set is a subset of itself</p>
+       <p>Empty set ⊂ every set</p>
+       <p>Subset relation is transitive</p>
+       <p>Proper subsets exclude the set itself</p>
+      </div>
+     </div>
+    </div>
+
+    <div class="interactive-demo">
+     <h3>Interactive Subset Checker</h3>
+     <p>Select a universal set and check which subsets are valid.</p>
+
+     <div class="demo-controls">
+      <div class="demo-input-group">
+       <label for="universal-set">Universal Set:</label>
+       <select id="universal-set" class="demo-input" onchange="updateSubsets()">
+        <option value="numbers">Numbers {1, 2, 3, 4, 5}</option>
+        <option value="letters">Letters {a, b, c, d, e}</option>
+        <option value="primes">Primes {2, 3, 5, 7, 11}</option>
+       </select>
+      </div>
+      <button onclick="checkAllSubsets()" class="demo-button">Check All Subsets</button>
+     </div>
+
+     <div class="venn-interactive">
+      <h4>Universal Set and Subsets:</h4>
+      <p id="universal-display">U = {1, 2, 3, 4, 5}</p>
+      <svg id="venn-diagram" width="400" height="200" style="display: block; margin: 0 auto;">
+       <!-- Will be populated by JavaScript -->
+      </svg>
+     </div>
+
+     <div class="subset-checker">
+      <h4 style="grid-column: 1 / -1; margin: 0 0 10px 0; color: #2c3e50;">Check if subset of U:</h4>
+      <div class="subset-item" id="check-empty" onclick="checkSubset('empty')">∅ (Empty set)</div>
+      <div class="subset-item" id="check-single" onclick="checkSubset('single')">{1}</div>
+      <div class="subset-item" id="check-pair" onclick="checkSubset('pair')">{1, 2}</div>
+      <div class="subset-item" id="check-invalid" onclick="checkSubset('invalid')">{1, 6}</div>
+      <div class="subset-item" id="check-full" onclick="checkSubset('full')">U itself</div>
+      <div class="subset-item" id="check-outside" onclick="checkSubset('outside')">{6, 7}</div>
+     </div>
+    </div>
+
+    <div class="worked-example">
+     <h3>Worked Examples</h3>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Example 1: Basic Subset</h4>
+      <p>Let A = {1, 2, 3} and B = {1, 2, 3, 4, 5}</p>
+      <p>Every element of A is in B: 1 ∈ B, 2 ∈ B, 3 ∈ B</p>
+      <p>Therefore, A ⊂ B ✓</p>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Example 2: Empty Set</h4>
+      <p>Let ∅ be the empty set and C = {x, y, z}</p>
+      <p>The empty set has no elements, so vacuously every element of ∅ is in C</p>
+      <p>Therefore, ∅ ⊂ C ✓</p>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Example 3: Not a Subset</h4>
+      <p>Let D = {2, 4, 6} and E = {1, 3, 5}</p>
+      <p>Check if 2 ∈ E? No, 2 ∉ E</p>
+      <p>Therefore, D ⊄ E ✗</p>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Example 4: Set is Subset of Itself</h4>
+      <p>Let F = {a, b, c}</p>
+      <p>Every element of F is in F (trivially true)</p>
+      <p>Therefore, F ⊂ F ✓</p>
+     </div>
+    </div>
+
+    <div class="practice-problem">
+     <h3>Practice Problems</h3>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Problem 1</h4>
+      <p>Determine which of the following are subsets of {1, 2, 3, 4, 5}:</p>
+      <p>a) {1, 3, 5} &nbsp;&nbsp;&nbsp; b) {2, 6} &nbsp;&nbsp;&nbsp; c) ∅ &nbsp;&nbsp;&nbsp; d) {1, 2, 3, 4, 5}</p>
+      <button onclick="toggleSolution('sol1')" class="solution-toggle">Show Solution</button>
+      <div id="sol1" class="solution-content">
+       <p>a) {1, 3, 5} ⊂ {1, 2, 3, 4, 5} ✓</p>
+       <p>b) {2, 6} ⊄ {1, 2, 3, 4, 5} (6 ∉ {1, 2, 3, 4, 5}) ✗</p>
+       <p>c) ∅ ⊂ {1, 2, 3, 4, 5} ✓</p>
+       <p>d) {1, 2, 3, 4, 5} ⊂ {1, 2, 3, 4, 5} ✓</p>
+      </div>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Problem 2</h4>
+      <p>Is {a, e, i} a subset of {a, b, c, d, e, f, g, h, i, j}?</p>
+      <button onclick="toggleSolution('sol2')" class="solution-toggle">Show Solution</button>
+      <div id="sol2" class="solution-content">
+       <p>Yes, {a, e, i} ⊂ {a, b, c, d, e, f, g, h, i, j}</p>
+       <p>All elements a, e, i are in the larger set.</p>
+      </div>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Problem 3</h4>
+      <p>Which of these statements are true?</p>
+      <p>a) ∅ ⊂ {1, 2, 3} &nbsp;&nbsp;&nbsp; b) {1, 2, 3} ⊂ ∅ &nbsp;&nbsp;&nbsp; c) ∅ ⊂ ∅</p>
+      <button onclick="toggleSolution('sol3')" class="solution-toggle">Show Solution</button>
+      <div id="sol3" class="solution-content">
+       <p>a) ∅ ⊂ {1, 2, 3} ✓ (Empty set is subset of every set)</p>
+       <p>b) {1, 2, 3} ⊂ ∅ ✗ (Non-empty set cannot be subset of empty set)</p>
+       <p>c) ∅ ⊂ ∅ ✓ (Set is subset of itself)</p>
+      </div>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <h3>Key Takeaways</h3>
+     <ul>
+      <li>A ⊂ B means every element of A is also an element of B</li>
+      <li>The empty set ∅ is a subset of every set</li>
+      <li>Every set is a subset of itself</li>
+      <li>If A ⊂ B and B ⊂ C, then A ⊂ C (transitivity)</li>
+      <li>To check if A ⊂ B, verify that every element of A is in B</li>
+      <li>The symbol ⊂ means "is a subset of"</li>
+      <li>The symbol ⊄ means "is not a subset of"</li>
+      <li>Proper subsets exclude the set itself (A ⊂ B but A ≠ B)</li>
+      <li>The empty set is the only set that is a subset of itself and every other set</li>
+     </ul>
+    </div>
+
+    <div class="explanation">
+     For two sets $A$ and $B$, if every element of $A$ is also an element of $B$, then $A$ is called a
+     <strong>
+      subset
+     </strong>
+     of $B$, written as
+     <span class="math-blue">
+      $A \subset B$
+     </span>
+     .
+     <svg class="venn" height="100" width="100">
+      <circle cx="62" cy="50" fill="none" r="35" stroke="#222" stroke-width="2">
+      </circle>
+      <circle cx="55" cy="50" fill="none" r="25" stroke="#222" stroke-width="2">
+      </circle>
+      <text fill="#222" font-family="Times New Roman" font-size="16" x="55" y="54">
+       A
+      </text>
+      <text fill="#222" font-family="Times New Roman" font-size="16" x="83" y="54">
+       B
+      </text>
+     </svg>
+    </div>
+    <div class="explanation">
+     Also, a set with no element is called the
+     <strong>
+      empty set
+     </strong>
+     and is written as
+     <span class="math-empty">
+      $ \varnothing $
+     </span>
+     .
+    </div>
+    <div class="gray-box">
+     <span class="icon">
+      💡
+     </span>
+     <div class="content">
+      The empty set $ \varnothing $ is considered a subset of every set.
+     </div>
+    </div>
+   </div>
+  </div>
+
+  <script>
+   let currentUniversalSet = [];
+   let currentSetName = '';
+
+   function updateSubsets() {
+    const select = document.getElementById('universal-set');
+    const value = select.value;
+
+    switch (value) {
+     case 'numbers':
+      currentUniversalSet = [1, 2, 3, 4, 5];
+      currentSetName = '{1, 2, 3, 4, 5}';
+      break;
+     case 'letters':
+      currentUniversalSet = ['a', 'b', 'c', 'd', 'e'];
+      currentSetName = '{a, b, c, d, e}';
+      break;
+     case 'primes':
+      currentUniversalSet = [2, 3, 5, 7, 11];
+      currentSetName = '{2, 3, 5, 7, 11}';
+      break;
+    }
+
+    document.getElementById('universal-display').textContent = `U = ${currentSetName}`;
+
+    // Reset all subset checks
+    const items = document.querySelectorAll('.subset-item');
+    items.forEach(item => {
+     item.className = 'subset-item';
+    });
+
+    drawVennDiagram();
+   }
+
+   function drawVennDiagram() {
+    const svg = document.getElementById('venn-diagram');
+    svg.innerHTML = '';
+
+    // Draw universal set circle
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', '200');
+    circle.setAttribute('cy', '100');
+    circle.setAttribute('r', '80');
+    circle.setAttribute('fill', 'none');
+    circle.setAttribute('stroke', '#3498db');
+    circle.setAttribute('stroke-width', '3');
+    svg.appendChild(circle);
+
+    // Add label
+    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    text.setAttribute('x', '200');
+    text.setAttribute('y', '105');
+    text.setAttribute('text-anchor', 'middle');
+    text.setAttribute('fill', '#2c3e50');
+    text.setAttribute('font-size', '16');
+    text.setAttribute('font-weight', 'bold');
+    text.textContent = 'U';
+    svg.appendChild(text);
+   }
+
+   function checkSubset(type) {
+    const element = document.getElementById(`check-${type}`);
+    let isSubset = false;
+    let explanation = '';
+
+    switch (type) {
+     case 'empty':
+      isSubset = true;
+      explanation = 'Empty set is subset of every set';
+      break;
+     case 'single':
+      isSubset = currentUniversalSet.includes(1);
+      explanation = isSubset ? '1 is in the universal set' : '1 is not in the universal set';
+      break;
+     case 'pair':
+      isSubset = currentUniversalSet.includes(1) && currentUniversalSet.includes(2);
+      explanation = isSubset ? 'Both 1 and 2 are in the universal set' : 'Not all elements are in the universal set';
+      break;
+     case 'invalid':
+      isSubset = false;
+      explanation = '6 is not in the universal set';
+      break;
+     case 'full':
+      isSubset = true;
+      explanation = 'Any set is a subset of itself';
+      break;
+     case 'outside':
+      isSubset = false;
+      explanation = 'Neither 6 nor 7 are in the universal set';
+      break;
+    }
+
+    if (isSubset) {
+     element.className = 'subset-item subset-yes';
+     element.textContent = `${element.textContent.split(' (')[0]} ⊂ U ✓`;
+    } else {
+     element.className = 'subset-item subset-no';
+     element.textContent = `${element.textContent.split(' (')[0]} ⊄ U ✗`;
+    }
+   }
+
+   function checkAllSubsets() {
+    ['empty', 'single', 'pair', 'invalid', 'full', 'outside'].forEach(checkSubset);
+   }
+
+   function toggleSolution(id) {
+    const element = document.getElementById(id);
+    element.style.display = element.style.display === 'none' ? 'block' : 'none';
+   }
+
+   // Initialize
+   updateSubsets();
+  </script>
+ </body>
+</html>

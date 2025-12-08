@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<!-- tags: Formula -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Equality of Complex Numbers
+  </title>
+  <script>
+   MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                macros: {
+                    blue: ['{\\color{blue}{#1}}', 1],
+                    red: ['{\\color{red}{#1}}', 1]
+                }
+            },
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+   }
+
+   .main-content {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 15px;
+    padding: 30px;
+    margin: 20px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+   }
+
+   .fancy-title {
+    text-align: center;
+    font-size: 2.5em;
+    font-weight: bold;
+    margin: 20px 0;
+    color: #2c3e50;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+   }
+
+   .description {
+    font-size: 1.2em;
+    line-height: 1.6;
+    margin: 20px 0;
+    color: #34495e;
+    text-align: center;
+   }
+
+   .content-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin: 30px 0;
+   }
+
+   .formula-block {
+    flex: 1;
+    min-width: 300px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 1.4em;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+   }
+
+   .formula-item {
+    margin: 15px 0;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+   }
+
+   .diagram-block {
+    flex: 1;
+    min-width: 300px;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+   }
+
+   .interactive-demo {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    margin: 30px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+   }
+
+   .demo-title {
+    text-align: center;
+    font-size: 1.8em;
+    margin-bottom: 25px;
+    font-weight: bold;
+   }
+
+   .input-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin: 20px 0;
+    justify-content: center;
+   }
+
+   .complex-input {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+   }
+
+   .complex-input label {
+    font-weight: bold;
+    font-size: 1.1em;
+   }
+
+   .complex-number {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+   }
+
+   .complex-input input {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    width: 80px;
+    text-align: center;
+    transition: border-color 0.3s;
+   }
+
+   .complex-input input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+   }
+
+   .button-group {
+    text-align: center;
+    margin: 25px 0;
+   }
+
+   .btn {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 1.1em;
+    cursor: pointer;
+    margin: 0 10px;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+   }
+
+   .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+   }
+
+   .btn:active {
+    transform: translateY(0);
+   }
+
+   .result-display {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    backdrop-filter: blur(10px);
+   }
+
+   .result-text {
+    font-size: 1.2em;
+    text-align: center;
+    margin: 10px 0;
+   }
+
+   .canvas-container {
+    text-align: center;
+    margin: 20px 0;
+   }
+
+   .complex-canvas {
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+   }
+
+   .section {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    margin: 25px 0;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+   }
+
+   .section-title {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
+   }
+
+   .example-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+   }
+
+   .example-card {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+   }
+
+   .example-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(245, 87, 108, 0.4);
+   }
+
+   .example-card h4 {
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+   }
+
+   .example-detail {
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    display: none;
+   }
+
+   .calculation-steps {
+    margin: 15px 0;
+   }
+
+   .calculation-step {
+    margin: 8px 0;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 5px;
+    border-left: 4px solid #f5576c;
+   }
+
+   .practice-problems {
+    margin: 20px 0;
+   }
+
+   .problem-item {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+   }
+
+   .problem-item h4 {
+    margin: 0 0 15px 0;
+    font-size: 1.2em;
+   }
+
+   .solution-btn {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    color: #333;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 10px 0;
+    transition: all 0.3s;
+   }
+
+   .solution-btn:hover {
+    background: linear-gradient(135deg, #fcb69f 0%, #ffecd2 100%);
+    transform: scale(1.05);
+   }
+
+   .solution {
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 10px 0;
+    display: none;
+    border-left: 4px solid #667eea;
+   }
+
+   .key-takeaways {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    padding: 25px;
+    border-radius: 12px;
+    margin: 25px 0;
+   }
+
+   .takeaway-list {
+    list-style: none;
+    padding: 0;
+   }
+
+   .takeaway-item {
+    background: rgba(255, 255, 255, 0.8);
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+    font-weight: bold;
+   }
+
+   .error-message {
+    background: #ffebee;
+    color: #c62828;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px 0;
+    display: none;
+    text-align: center;
+    font-weight: bold;
+   }
+
+   .complex-plane-info {
+    background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+   }
+
+   .complex-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin: 15px 0;
+   }
+
+   .complex-item {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+   }
+
+   @media (max-width: 768px) {
+    .content-wrapper {
+     flex-direction: column;
+    }
+
+    .input-group {
+     flex-direction: column;
+     align-items: center;
+    }
+
+    .fancy-title {
+     font-size: 2em;
+    }
+
+    .formula-block {
+     font-size: 1.2em;
+    }
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Formula">
+   Equality of Complex Numbers
+  </div>
+
+  <div class="container">
+   <div class="main-content">
+    <div class="description">
+     Two complex numbers are equal if and only if their real parts are equal and their imaginary parts are equal. This fundamental property allows us to solve equations involving complex numbers.
+    </div>
+
+    <div class="content-wrapper">
+     <div class="formula-block">
+      <div class="formula-item">
+       <strong>Complex Equality:</strong> $$a + bi = c + di \iff a = c \text{ and } b = d$$
+      </div>
+      <div class="formula-item">
+       <strong>Zero Complex Number:</strong> $$a + bi = 0 \iff a = 0 \text{ and } b = 0$$
+      </div>
+      <div class="formula-item">
+       <strong>Conjugate Equality:</strong> $$z = \bar{z} \iff \Im(z) = 0$$
+      </div>
+     </div>
+
+     <div class="diagram-block">
+      <svg viewbox="0 0 250 200" xmlns="http://www.w3.org/2000/svg">
+       <!-- Coordinate axes -->
+       <line stroke="#ccc" stroke-width="1" x1="20" x2="220" y1="150" y2="150"></line>
+       <line stroke="#ccc" stroke-width="1" x1="120" x2="120" y1="30" y2="170"></line>
+       <!-- Real axis label -->
+       <text fill="#666" font-size="12" x="215" y="165">Re</text>
+       <!-- Imaginary axis label -->
+       <text fill="#666" font-size="12" x="125" y="35">Im</text>
+       <!-- Point z1 = 2 + 3i -->
+       <circle cx="160" cy="90" fill="#e74c3c" r="4"></circle>
+       <text fill="#e74c3c" font-size="12" x="165" y="85">z₁ = 2 + 3i</text>
+       <!-- Point z2 = 2 + 3i (same point) -->
+       <circle cx="160" cy="90" fill="#27ae60" r="4" stroke="#27ae60" stroke-width="2"></circle>
+       <text fill="#27ae60" font-size="12" x="165" y="105">z₂ = 2 + 3i</text>
+       <!-- Point z3 = 1 + 4i (different point) -->
+       <circle cx="140" cy="70" fill="#f39c12" r="4"></circle>
+       <text fill="#f39c12" font-size="12" x="145" y="65">z₃ = 1 + 4i</text>
+       <!-- Grid lines -->
+       <line opacity="0.3" stroke="#ddd" stroke-width="1" x1="80" x2="80" y1="30" y2="170"></line>
+       <line opacity="0.3" stroke="#ddd" stroke-width="1" x1="160" x2="160" y1="30" y2="170"></line>
+       <line opacity="0.3" stroke="#ddd" stroke-width="1" x1="20" x2="220" y1="110" y2="110"></line>
+       <line opacity="0.3" stroke="#ddd" stroke-width="1" x1="20" x2="220" y1="70" y2="70"></line>
+      </svg>
+     </div>
+    </div>
+
+    <div class="complex-plane-info">
+     <div class="section-title">Complex Number Representation</div>
+     <div class="complex-grid">
+      <div class="complex-item">
+       <strong>Rectangular Form</strong>
+       <br>z = a + bi
+       <br>a: real part, b: imaginary part
+      </div>
+      <div class="complex-item">
+       <strong>Polar Form</strong>
+       <br>z = r(cos θ + i sin θ)
+       <br>r: magnitude, θ: argument
+      </div>
+      <div class="complex-item">
+       <strong>Equality Condition</strong>
+       <br>z₁ = z₂ ⇔ Re(z₁) = Re(z₂) ∧ Im(z₁) = Im(z₂)
+      </div>
+      <div class="complex-item">
+       <strong>Zero</strong>
+       <br>0 = 0 + 0i
+       <br>Only complex number with zero magnitude
+      </div>
+     </div>
+    </div>
+
+    <div class="interactive-demo">
+     <div class="demo-title">Interactive Complex Equality Checker</div>
+
+     <div class="input-group">
+      <div class="complex-input">
+       <label for="z1real">z₁ =</label>
+       <div class="complex-number">
+        <input id="z1real" step="any" type="number" value="2"/>
+        <span>+</span>
+        <input id="z1imag" step="any" type="number" value="3"/>
+        <span>i</span>
+       </div>
+      </div>
+      <div class="complex-input">
+       <label for="z2real">z₂ =</label>
+       <div class="complex-number">
+        <input id="z2real" step="any" type="number" value="2"/>
+        <span>+</span>
+        <input id="z2imag" step="any" type="number" value="3"/>
+        <span>i</span>
+       </div>
+      </div>
+     </div>
+
+     <div class="button-group">
+      <button class="btn" onclick="checkEquality()">Check Equality</button>
+      <button class="btn" onclick="findConjugate()">Find Conjugate</button>
+      <button class="btn" onclick="resetDemo()">Reset</button>
+     </div>
+
+     <div class="error-message" id="errorMessage"></div>
+
+     <div class="result-display">
+      <div class="result-text" id="equalityResult">
+       Equality Check: <strong id="equalityStatus">Not checked</strong>
+      </div>
+      <div class="result-text" id="conjugateResult">
+       Conjugate of z₁: <strong id="conjugateValue">Not calculated</strong>
+      </div>
+     </div>
+
+     <div class="canvas-container">
+      <canvas class="complex-canvas" height="400" id="complexCanvas" width="500"></canvas>
+     </div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Mathematical Foundation</div>
+     <p>A complex number is defined as \(z = a + bi\), where \(a\) and \(b\) are real numbers, and \(i = \sqrt{-1}\).</p>
+     <div class="formula-block" style="margin: 20px 0;">
+      $$z_1 = a + bi, \quad z_2 = c + di$$
+     </div>
+     <p>Two complex numbers are equal if and only if their real parts are equal and their imaginary parts are equal:</p>
+     <div class="formula-block" style="margin: 20px 0;">
+      $$a + bi = c + di \iff a = c \text{ and } b = d$$
+     </div>
+     <p>This is because complex numbers can be represented as ordered pairs (a, b) in the complex plane, and equality of ordered pairs requires both components to be equal.</p>
+     <p>The complex number zero is unique: \(0 = 0 + 0i\), and it's the only complex number that equals its own negative.</p>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Worked Examples</div>
+     <div class="example-grid">
+      <div class="example-card" onclick="showExample(1)">
+       <h4>Example 1: Basic Equality</h4>
+       <p>Solve: (2 + 3i) + (x + yi) = (5 + 2i)</p>
+      </div>
+      <div class="example-card" onclick="showExample(2)">
+       <h4>Example 2: Finding Unknowns</h4>
+       <p>Find x, y: (x + 2i)(3 + yi) = 6 + 8i</p>
+      </div>
+      <div class="example-card" onclick="showExample(3)">
+       <h4>Example 3: Complex Conjugate</h4>
+       <p>When is z equal to its conjugate?</p>
+      </div>
+     </div>
+
+     <div class="example-detail" id="exampleDetail"></div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Applications</div>
+     <ul>
+      <li><strong>Equation Solving:</strong> Finding roots of polynomial equations</li>
+      <li><strong>Electrical Engineering:</strong> AC circuit analysis with complex impedances</li>
+      <li><strong>Physics:</strong> Quantum mechanics and wave functions</li>
+      <li><strong>Signal Processing:</strong> Fourier analysis and frequency domain</li>
+      <li><strong>Fractal Geometry:</strong> Mandelbrot set and Julia sets</li>
+     </ul>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Practice Problems</div>
+     <div class="practice-problems">
+      <div class="problem-item">
+       <h4>Problem 1</h4>
+       <p>Solve for x and y: (2x + 3) + (x + 2y)i = 7 + 5i</p>
+       <button class="solution-btn" onclick="toggleSolution(1)">Show Solution</button>
+       <div class="solution" id="solution1">
+        <p><strong>Solution:</strong></p>
+        <p>Real parts: 2x + 3 = 7 ⇒ 2x = 4 ⇒ x = 2</p>
+        <p>Imaginary parts: x + 2y = 5 ⇒ 2 + 2y = 5 ⇒ 2y = 3 ⇒ y = 3/2</p>
+        <p>Therefore: x = 2, y = 1.5</p>
+       </div>
+      </div>
+
+      <div class="problem-item">
+       <h4>Problem 2</h4>
+       <p>Find the complex number z such that z + \bar{z} = 4 + 6i and z - \bar{z} = 2 - 8i</p>
+       <button class="solution-btn" onclick="toggleSolution(2)">Show Solution</button>
+       <div class="solution" id="solution2">
+        <p><strong>Solution:</strong></p>
+        <p>Let z = a + bi, then \bar{z} = a - bi</p>
+        <p>z + \bar{z} = (a + bi) + (a - bi) = 2a = 4 + 6i ⇒ 2a = 4 ⇒ a = 2</p>
+        <p>z - \bar{z} = (a + bi) - (a - bi) = 2bi = 2 - 8i ⇒ 2b = -8 ⇒ b = -4</p>
+        <p>Therefore: z = 2 - 4i</p>
+       </div>
+      </div>
+
+      <div class="problem-item">
+       <h4>Problem 3</h4>
+       <p>Determine if the equation (z + 1)^2 = z^2 + 2z + 1 has complex solutions.</p>
+       <button class="solution-btn" onclick="toggleSolution(3)">Show Solution</button>
+       <div class="solution" id="solution3">
+        <p><strong>Solution:</strong></p>
+        <p>Expand both sides: z² + 2z + 1 = z² + 2z + 1</p>
+        <p>The equation simplifies to 0 = 0, which is always true.</p>
+        <p>Therefore, every complex number z is a solution.</p>
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <div class="section-title">Key Takeaways</div>
+     <ul class="takeaway-list">
+      <li class="takeaway-item">Two complex numbers are equal iff their real parts are equal and imaginary parts are equal</li>
+      <li class="takeaway-item">Complex numbers can be treated as ordered pairs (a, b) in the complex plane</li>
+      <li class="takeaway-item">The complex number 0 is unique: 0 + 0i</li>
+      <li class="takeaway-item">A complex number equals its conjugate iff it's purely real</li>
+      <li class="takeaway-item">Complex equality allows solving systems of equations with complex coefficients</li>
+     </ul>
+    </div>
+   </div>
+  </div>
+
+  <script>
+   function checkEquality() {
+    try {
+     const z1real = parseFloat(document.getElementById('z1real').value) || 0;
+     const z1imag = parseFloat(document.getElementById('z1imag').value) || 0;
+     const z2real = parseFloat(document.getElementById('z2real').value) || 0;
+     const z2imag = parseFloat(document.getElementById('z2imag').value) || 0;
+
+     const isEqual = (z1real === z2real) && (z1imag === z2imag);
+     document.getElementById('equalityStatus').textContent = isEqual ? 'Equal' : 'Not Equal';
+     document.getElementById('equalityStatus').style.color = isEqual ? '#27ae60' : '#e74c3c';
+     document.getElementById('errorMessage').style.display = 'none';
+
+     drawComplexPlane(z1real, z1imag, z2real, z2imag);
+    } catch (error) {
+     document.getElementById('errorMessage').textContent = 'Error checking equality. Please check your input values.';
+     document.getElementById('errorMessage').style.display = 'block';
+    }
+   }
+
+   function findConjugate() {
+    try {
+     const z1real = parseFloat(document.getElementById('z1real').value) || 0;
+     const z1imag = parseFloat(document.getElementById('z1imag').value) || 0;
+
+     const conjugateReal = z1real;
+     const conjugateImag = -z1imag;
+
+     let conjugateStr = `${conjugateReal}`;
+     if (conjugateImag >= 0) {
+      conjugateStr += ` + ${conjugateImag}i`;
+     } else {
+      conjugateStr += ` - ${Math.abs(conjugateImag)}i`;
+     }
+
+     document.getElementById('conjugateValue').textContent = conjugateStr;
+     document.getElementById('errorMessage').style.display = 'none';
+
+     drawComplexPlane(z1real, z1imag, conjugateReal, conjugateImag);
+    } catch (error) {
+     document.getElementById('errorMessage').textContent = 'Error finding conjugate. Please check your input values.';
+     document.getElementById('errorMessage').style.display = 'block';
+    }
+   }
+
+   function drawComplexPlane(z1r, z1i, z2r, z2i) {
+    const canvas = document.getElementById('complexCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Calculate bounds
+    const points = [
+     {x: z1r, y: z1i},
+     {x: z2r, y: z2i},
+     {x: 0, y: 0}
+    ];
+
+    const minX = Math.min(...points.map(p => p.x)) - 2;
+    const maxX = Math.max(...points.map(p => p.x)) + 2;
+    const minY = Math.min(...points.map(p => p.y)) - 2;
+    const maxY = Math.max(...points.map(p => p.y)) + 2;
+
+    const scaleX = (canvas.width - 80) / (maxX - minX);
+    const scaleY = (canvas.height - 80) / (maxY - minY);
+    const scale = Math.min(scaleX, scaleY);
+
+    const offsetX = 40 - minX * scale;
+    const offsetY = 40 - minY * scale;
+
+    // Transform coordinates
+    const transformX = x => offsetX + x * scale;
+    const transformY = y => canvas.height - (offsetY + y * scale);
+
+    // Draw grid
+    ctx.strokeStyle = '#e0e0e0';
+    ctx.lineWidth = 1;
+    for (let i = Math.floor(minX); i <= Math.ceil(maxX); i++) {
+     const x = transformX(i);
+     ctx.beginPath();
+     ctx.moveTo(x, 0);
+     ctx.lineTo(x, canvas.height);
+     ctx.stroke();
+    }
+    for (let i = Math.floor(minY); i <= Math.ceil(maxY); i++) {
+     const y = transformY(i);
+     ctx.beginPath();
+     ctx.moveTo(0, y);
+     ctx.lineTo(canvas.width, y);
+     ctx.stroke();
+    }
+
+    // Draw axes
+    ctx.strokeStyle = '#666';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(transformX(0), 0);
+    ctx.lineTo(transformX(0), canvas.height);
+    ctx.moveTo(0, transformY(0));
+    ctx.lineTo(canvas.width, transformY(0));
+    ctx.stroke();
+
+    // Draw origin
+    ctx.fillStyle = '#666';
+    ctx.beginPath();
+    ctx.arc(transformX(0), transformY(0), 3, 0, 2 * Math.PI);
+    ctx.fill();
+
+    // Draw z1
+    ctx.fillStyle = '#e74c3c';
+    ctx.beginPath();
+    ctx.arc(transformX(z1r), transformY(z1i), 6, 0, 2 * Math.PI);
+    ctx.fill();
+
+    // Draw z2
+    ctx.fillStyle = '#27ae60';
+    ctx.beginPath();
+    ctx.arc(transformX(z2r), transformY(z2i), 6, 0, 2 * Math.PI);
+    ctx.fill();
+
+    // Draw labels
+    ctx.fillStyle = '#333';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('z₁', transformX(z1r), transformY(z1i) - 10);
+    ctx.fillText('z₂', transformX(z2r), transformY(z2i) - 10);
+    ctx.fillText('0', transformX(0) - 10, transformY(0) + 5);
+
+    // Draw axis labels
+    ctx.fillText('Re', canvas.width - 20, transformY(0) + 15);
+    ctx.fillText('Im', transformX(0) + 15, 20);
+
+    // Draw legend
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.fillRect(10, 10, 120, 80);
+    ctx.strokeStyle = '#333';
+    ctx.strokeRect(10, 10, 120, 80);
+
+    ctx.fillStyle = '#333';
+    ctx.font = '10px Arial';
+    ctx.textAlign = 'left';
+    ctx.fillText('Legend:', 15, 25);
+    ctx.fillText('● z₁: First complex', 15, 40);
+    ctx.fillText('● z₂: Second complex', 15, 55);
+    ctx.fillText('● Origin', 15, 70);
+   }
+
+   function showExample(exampleNumber) {
+    const detail = document.getElementById('exampleDetail');
+    let content = '';
+
+    switch(exampleNumber) {
+     case 1:
+      content = `
+       <h4>Detailed Example 1 - Basic Equality</h4>
+       <div class="calculation-steps">
+        <div class="calculation-step">Equation: (2 + 3i) + (x + yi) = (5 + 2i)</div>
+        <div class="calculation-step">Left side: (2 + x) + (3 + y)i</div>
+        <div class="calculation-step">Right side: 5 + 2i</div>
+        <div class="calculation-step">Real parts equal: 2 + x = 5 ⇒ x = 3</div>
+        <div class="calculation-step">Imaginary parts equal: 3 + y = 2 ⇒ y = -1</div>
+        <div class="calculation-step">Solution: x = 3, y = -1</div>
+       </div>
+      `;
+      break;
+     case 2:
+      content = `
+       <h4>Detailed Example 2 - Finding Unknowns</h4>
+       <div class="calculation-steps">
+        <div class="calculation-step">Equation: (x + 2i)(3 + yi) = 6 + 8i</div>
+        <div class="calculation-step">Expand: 3x + 3yi + 6i + 2yi² = 6 + 8i</div>
+        <div class="calculation-step">Since i² = -1: 3x + 3yi + 6i - 2y = 6 + 8i</div>
+        <div class="calculation-step">Combine: (3x - 2y) + (3y + 6)i = 6 + 8i</div>
+        <div class="calculation-step">Real parts: 3x - 2y = 6</div>
+        <div class="calculation-step">Imaginary parts: 3y + 6 = 8 ⇒ 3y = 2 ⇒ y = 2/3</div>
+        <div class="calculation-step">Substitute: 3x - 2(2/3) = 6 ⇒ 3x - 4/3 = 6 ⇒ 3x = 22/3 ⇒ x = 22/9</div>
+       </div>
+      `;
+      break;
+     case 3:
+      content = `
+       <h4>Detailed Example 3 - Complex Conjugate</h4>
+       <div class="calculation-steps">
+        <div class="calculation-step">z = \bar{z} means z is equal to its conjugate</div>
+        <div class="calculation-step">Let z = a + bi, then \bar{z} = a - bi</div>
+        <div class="calculation-step">a + bi = a - bi ⇒ bi = -bi ⇒ 2bi = 0 ⇒ b = 0</div>
+        <div class="calculation-step">Therefore, z is purely real: z = a + 0i = a</div>
+       </div>
+      `;
+      break;
+    }
+
+    detail.innerHTML = content;
+    detail.style.display = 'block';
+    MathJax.typesetPromise();
+   }
+
+   function toggleSolution(problemNumber) {
+    const solution = document.getElementById('solution' + problemNumber);
+    if (solution.style.display === 'none' || solution.style.display === '') {
+     solution.style.display = 'block';
+    } else {
+     solution.style.display = 'none';
+    }
+   }
+
+   function resetDemo() {
+    document.getElementById('z1real').value = '2';
+    document.getElementById('z1imag').value = '3';
+    document.getElementById('z2real').value = '2';
+    document.getElementById('z2imag').value = '3';
+    document.getElementById('equalityStatus').textContent = 'Not checked';
+    document.getElementById('equalityStatus').style.color = '';
+    document.getElementById('conjugateValue').textContent = 'Not calculated';
+    document.getElementById('errorMessage').style.display = 'none';
+    checkEquality();
+   }
+
+   // Initialize with default values
+   document.addEventListener('DOMContentLoaded', function() {
+    checkEquality();
+   });
+  </script>
+ </body>
+</html>

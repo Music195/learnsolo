@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<!-- tags: Complex Plane -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   The Complex Plane
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+    /* Enhanced text containment and responsive design */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      hyphens: auto;
+    }
+
+    .main-content {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      border-radius: 15px;
+      padding: 30px;
+      margin: 20px 0;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    /* Fancy title styling */
+    .fancy-title {
+      font-size: 2.5em;
+      font-weight: bold;
+      text-align: center;
+      background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 30px 0;
+      padding: 20px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .fancy-title[data-topic]::before {
+      content: attr(data-topic) " - ";
+      font-size: 0.8em;
+      opacity: 0.8;
+    }
+
+    /* Section styling */
+    .section {
+      margin: 30px 0;
+      padding: 25px;
+      background: rgba(255,255,255,0.9);
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .section h2 {
+      color: #2c3e50;
+      border-bottom: 3px solid #3498db;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+      font-size: 1.8em;
+      word-wrap: break-word;
+    }
+
+    .section h3 {
+      color: #34495e;
+      margin-top: 25px;
+      margin-bottom: 15px;
+      font-size: 1.4em;
+      word-wrap: break-word;
+    }
+
+    /* Formula box styling */
+    .formula-box {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(102,126,234,0.3);
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .formula-box h3 {
+      margin-top: 0;
+      color: white;
+      font-size: 1.3em;
+    }
+
+    .formula-box .math {
+      font-size: 1.6em;
+      margin: 15px 0;
+      display: block;
+    }
+
+    /* Law block styling */
+    .law-block {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+      box-shadow: 0 4px 15px rgba(245,87,108,0.3);
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .law-eq {
+      font-weight: bold;
+      font-size: 1.2em;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .law-block .math {
+      font-size: 1.4em;
+      margin: 10px 0;
+      display: block;
+      text-align: center;
+    }
+
+    /* Interactive demo styling */
+    .interactive-demo {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: white;
+      padding: 25px;
+      border-radius: 12px;
+      margin: 25px 0;
+      box-shadow: 0 4px 15px rgba(79,172,254,0.3);
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .interactive-demo h3 {
+      margin-top: 0;
+      text-align: center;
+      font-size: 1.5em;
+    }
+
+    .demo-input {
+      padding: 8px 12px;
+      margin: 0 10px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1em;
+      width: 80px;
+    }
+
+    .demo-button {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: 2px solid white;
+      padding: 10px 20px;
+      border-radius: 25px;
+      cursor: pointer;
+      margin: 10px 5px;
+      font-size: 1em;
+      transition: all 0.3s ease;
+    }
+
+    .demo-button:hover {
+      background: white;
+      color: #4facfe;
+      transform: translateY(-2px);
+    }
+
+    .demo-result {
+      margin: 15px 0;
+      padding: 15px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 8px;
+      font-size: 1.2em;
+      text-align: center;
+      min-height: 20px;
+    }
+
+    /* Problem styling */
+    .problem-item {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      border-left: 5px solid #3498db;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .problem-number {
+      display: inline-block;
+      background: #3498db;
+      color: white;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 30px;
+      font-weight: bold;
+      margin-right: 15px;
+    }
+
+    .problem-content {
+      display: inline-block;
+      width: calc(100% - 50px);
+      vertical-align: top;
+    }
+
+    .solution-button {
+      background: #27ae60;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      margin: 10px 0;
+      font-size: 0.9em;
+      transition: all 0.3s ease;
+    }
+
+    .solution-button:hover {
+      background: #229954;
+      transform: translateY(-1px);
+    }
+
+    .solution-content {
+      display: none;
+      margin-top: 15px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border-left: 4px solid #27ae60;
+    }
+
+    .calculation-steps {
+      margin: 10px 0;
+    }
+
+    .calculation-step {
+      margin: 8px 0;
+      padding: 8px;
+      background: white;
+      border-radius: 5px;
+      border: 1px solid #e9ecef;
+    }
+
+    /* Note box styling */
+    .note-box {
+      background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
+      border: 2px solid #fdcb6e;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .note-box::before {
+      content: "📝 Note";
+      font-weight: bold;
+      display: block;
+      margin-bottom: 10px;
+      color: #d63031;
+    }
+
+    /* Key takeaways styling */
+    .key-takeaways {
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      padding: 25px;
+      border-radius: 12px;
+      margin: 30px 0;
+      box-shadow: 0 4px 15px rgba(168,237,234,0.3);
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .key-takeaways h3 {
+      margin-top: 0;
+      color: #2c3e50;
+      text-align: center;
+      font-size: 1.5em;
+    }
+
+    .key-takeaways ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .key-takeaways li {
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(44,62,80,0.1);
+      position: relative;
+      padding-left: 30px;
+    }
+
+    .key-takeaways li::before {
+      content: "✓";
+      color: #27ae60;
+      font-weight: bold;
+      position: absolute;
+      left: 0;
+    }
+
+    .key-takeaways li:last-child {
+      border-bottom: none;
+    }
+
+    /* Complex plane canvas styling */
+    .complex-plane-img {
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .centered {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    /* Operation block styling */
+    .operation-block {
+      background: rgba(255,255,255,0.9);
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    /* Hint block styling */
+    .hint-block {
+      background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+      border: 2px solid #ff9800;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 10px;
+      }
+
+      .main-content {
+        padding: 20px;
+      }
+
+      .fancy-title {
+        font-size: 2em;
+      }
+
+      .section {
+        padding: 15px;
+      }
+
+      .interactive-demo {
+        padding: 15px;
+      }
+
+      .demo-input {
+        width: 60px;
+        margin: 5px;
+      }
+
+      .demo-button {
+        display: block;
+        width: 100%;
+        margin: 5px 0;
+      }
+
+      .problem-content {
+        width: calc(100% - 40px);
+      }
+    }
+
+    /* Math rendering improvements */
+    .math {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    /* Enhanced scrollbar for mobile */
+    @media (max-width: 768px) {
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+      }
+    }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Complex Plane">
+   The Complex Plane
+  </div>
+  <div class="container">
+   <div class="main-content">
+    <div class="section">
+     <h2>Core Concept: Complex Numbers as Points</h2>
+     <p>The complex plane (also called the Argand plane) provides a geometric interpretation of complex numbers. Each complex number corresponds to a unique point in the plane, and conversely, each point corresponds to a unique complex number.</p>
+     
+     <div class="operation-block">
+      <p>
+       A complex number \( z = a + bi \) can be represented as a point \( (a,\, b) \) on the coordinate plane.
+       <br/>
+       This plane is called the
+       <span style="color:#e65100;font-weight:bold;">
+        complex plane
+       </span>
+       or
+       <span style="color:#e65100;font-weight:bold;">
+        Argand plane
+       </span>
+       .
+      </p>
+      <div class="centered">
+       <canvas aria-label="Complex plane" class="complex-plane-img" height="200" id="complex-plane-canvas" width="300">
+       </canvas>
+      </div>
+     </div>
+     
+     <div class="hint-block">
+      <strong>
+       Key Points:
+      </strong>
+      <ul>
+       <li>Points on the real axis (horizontal) represent real numbers</li>
+       <li>Points on the imaginary axis (vertical) represent purely imaginary numbers</li>
+       <li>The origin (0,0) represents the complex number 0</li>
+       <li>Every point (a,b) represents z = a + bi</li>
+      </ul>
+     </div>
+    </div>
+
+    <div class="interactive-demo">
+      <h3>Interactive Complex Number Plotter</h3>
+      <div style="margin: 20px 0;">
+        <label>Real part (a): <input type="number" id="realPart" value="2" step="0.5" class="demo-input"></label>
+        <label>Imaginary part (b): <input type="number" id="imagPart" value="1.5" step="0.5" class="demo-input"></label>
+      </div>
+      <button onclick="plotComplexNumber()" class="demo-button">Plot z = a + bi</button>
+      <button onclick="showProperties()" class="demo-button">Show Properties</button>
+      <div class="demo-result" id="complexResult"></div>
+      <div class="centered">
+        <canvas aria-label="Interactive complex plane" class="complex-plane-img" height="250" id="interactive-canvas" width="350">
+        </canvas>
+      </div>
+    </div>
+
+    <div class="section">
+     <h2>Components of a Complex Number</h2>
+     <div class="formula-box">
+      <h3>Complex Number Representation</h3>
+      <div class="math" style="font-size: 1.4em;">
+       z = a + bi
+      </div>
+      <p>Where:<br>
+      a = real part of z (Re(z))<br>
+      b = imaginary part of z (Im(z))<br>
+      i = imaginary unit (i² = -1)</p>
+     </div>
+     
+     <div class="law-block">
+      <div class="law-eq">Coordinate Interpretation</div>
+      <p>In the complex plane:</p>
+      <ul style="color: white;">
+        <li><strong>Real axis:</strong> Horizontal axis, represents real numbers</li>
+        <li><strong>Imaginary axis:</strong> Vertical axis, represents imaginary numbers</li>
+        <li><strong>Point (a,b):</strong> Represents complex number a + bi</li>
+        <li><strong>Origin (0,0):</strong> Represents 0 + 0i = 0</li>
+      </ul>
+     </div>
+    </div>
+
+    <div class="section">
+      <h2>Worked Examples</h2>
+      <div class="problem-item">
+        <div class="problem-number">1</div>
+        <div class="problem-content">
+          <p>Plot the complex number z = 3 + 4i on the complex plane.</p>
+          <button class="solution-button" onclick="toggleSolution(1)">Show Solution</button>
+          <div class="solution-content" id="solution1">
+            <div class="calculation-steps">
+              <div class="calculation-step">Real part a = 3, Imaginary part b = 4</div>
+              <div class="calculation-step">Plot point (3, 4) on the complex plane</div>
+              <div class="calculation-step">This point represents z = 3 + 4i</div>
+              <div class="calculation-step">Distance from origin: √(3² + 4²) = 5</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="problem-item">
+        <div class="problem-number">2</div>
+        <div class="problem-content">
+          <p>Identify the complex number represented by the point (-2, 3).</p>
+          <button class="solution-button" onclick="toggleSolution(2)">Show Solution</button>
+          <div class="solution-content" id="solution2">
+            <div class="calculation-steps">
+              <div class="calculation-step">Point coordinates: (a, b) = (-2, 3)</div>
+              <div class="calculation-step">Real part a = -2, Imaginary part b = 3</div>
+              <div class="calculation-step">Complex number: z = -2 + 3i</div>
+              <div class="calculation-step">This is in the second quadrant of the complex plane</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="problem-item">
+        <div class="problem-number">3</div>
+        <div class="problem-content">
+          <p>Which points represent real numbers? Which represent purely imaginary numbers?</p>
+          <button class="solution-button" onclick="toggleSolution(3)">Show Solution</button>
+          <div class="solution-content" id="solution3">
+            <div class="calculation-steps">
+              <div class="calculation-step">Real numbers: Points where b = 0 (on real axis)</div>
+              <div class="calculation-step">Example: (5, 0) represents 5 + 0i = 5</div>
+              <div class="calculation-step">Purely imaginary: Points where a = 0 (on imaginary axis)</div>
+              <div class="calculation-step">Example: (0, -2) represents 0 + (-2)i = -2i</div>
+              <div class="calculation-step">Origin (0,0) represents 0 (both real and imaginary)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+     <h2>Geometric Interpretation</h2>
+     <div class="note-box">
+      <strong>Visual Understanding:</strong> The complex plane transforms abstract complex numbers into concrete geometric objects. Addition becomes vector addition, multiplication becomes rotation and scaling, and the plane provides intuition for complex number operations that would otherwise be difficult to visualize.
+     </div>
+     
+     <div class="note-box">
+      <strong>Coordinate System:</strong> The real axis is horizontal (x-axis), imaginary axis is vertical (y-axis). This orientation follows the standard Cartesian coordinate system, making it intuitive for those familiar with analytic geometry.
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+      <h3>Key Takeaways</h3>
+      <ul>
+        <li>Complex numbers are points in the complex plane</li>
+        <li>z = a + bi corresponds to point (a, b)</li>
+        <li>Real axis: horizontal, represents real numbers</li>
+        <li>Imaginary axis: vertical, represents imaginary numbers</li>
+        <li>Origin represents the complex number 0</li>
+        <li>Every point represents a unique complex number</li>
+      </ul>
+    </div>
+   </div>
+  </div>
+
+  <script>
+    // Original complex plane drawing
+    (function() {
+        const canvas = document.getElementById('complex-plane-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width, h = canvas.height;
+        const cx = 55, cy = h - 40;
+        const scale = 60;
+
+        // Axes
+        ctx.strokeStyle = "#888";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + 180, cy); // Real axis
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx, cy - 120); // Imaginary axis
+        ctx.stroke();
+
+        // Axis arrows
+        ctx.beginPath();
+        ctx.moveTo(cx + 180, cy);
+        ctx.lineTo(cx + 172, cy - 5);
+        ctx.moveTo(cx + 180, cy);
+        ctx.lineTo(cx + 172, cy + 5);
+        ctx.moveTo(cx, cy - 120);
+        ctx.lineTo(cx - 5, cy - 112);
+        ctx.moveTo(cx, cy - 120);
+        ctx.lineTo(cx + 5, cy - 112);
+        ctx.stroke();
+
+        // Labels
+        ctx.font = "bold 16px Segoe UI, Arial";
+        ctx.fillStyle = "#607d8b";
+        ctx.fillText("実軸", cx + 150, cy + 22); // Real axis
+        ctx.fillText("虚軸", cx - 38, cy - 100); // Imaginary axis
+
+        // Point P(z)
+        const a = 1.5, b = 1.1;
+        const px = cx + a * scale;
+        const py = cy - b * scale;
+        ctx.beginPath();
+        ctx.arc(px, py, 4, 0, 2 * Math.PI);
+        ctx.fillStyle = "#b71c1c";
+        ctx.fill();
+
+        // Dashed lines to axes
+        ctx.setLineDash([4, 3]);
+        ctx.beginPath();
+        ctx.moveTo(px, py);
+        ctx.lineTo(px, cy);
+        ctx.moveTo(px, py);
+        ctx.lineTo(cx, py);
+        ctx.strokeStyle = "#888";
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Label P(z)
+        ctx.font = "bold 15px Segoe UI, Arial";
+        ctx.fillStyle = "#b71c1c";
+        ctx.fillText("P(z)", px + 8, py - 8);
+
+        // Label z = a + bi
+        ctx.font = "italic 15px Segoe UI, Arial";
+        ctx.fillStyle = "#1976d2";
+        ctx.fillText("z = a + bi", px + 18, py - 28);
+
+        // Label a, b
+        ctx.font = "15px Segoe UI, Arial";
+        ctx.fillStyle = "#263238";
+        ctx.fillText("a", px - 6, cy + 18);
+        ctx.fillText("b", cx - 22, py + 5);
+
+        // Origin O
+        ctx.font = "bold 15px Segoe UI, Arial";
+        ctx.fillStyle = "#263238";
+        ctx.fillText("O", cx - 18, cy + 18);
+    })();
+
+    // Interactive complex plane
+    let interactiveCtx;
+    let canvasCenterX, canvasCenterY;
+    let scale = 40;
+
+    function initInteractiveCanvas() {
+      const canvas = document.getElementById('interactive-canvas');
+      if (!canvas) return;
+      interactiveCtx = canvas.getContext('2d');
+      canvasCenterX = canvas.width / 2;
+      canvasCenterY = canvas.height / 2;
+      drawInteractivePlane();
+    }
+
+    function drawInteractivePlane() {
+      if (!interactiveCtx) return;
+      
+      const canvas = document.getElementById('interactive-canvas');
+      interactiveCtx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Axes
+      interactiveCtx.strokeStyle = "#888";
+      interactiveCtx.lineWidth = 1.5;
+      interactiveCtx.beginPath();
+      interactiveCtx.moveTo(0, canvasCenterY);
+      interactiveCtx.lineTo(canvas.width, canvasCenterY);
+      interactiveCtx.moveTo(canvasCenterX, 0);
+      interactiveCtx.lineTo(canvasCenterX, canvas.height);
+      interactiveCtx.stroke();
+
+      // Axis labels
+      interactiveCtx.font = "12px Arial";
+      interactiveCtx.fillStyle = "#666";
+      interactiveCtx.fillText("Re", canvas.width - 20, canvasCenterY - 5);
+      interactiveCtx.fillText("Im", canvasCenterX + 5, 15);
+    }
+
+    function plotComplexNumber() {
+      const a = parseFloat(document.getElementById('realPart').value) || 0;
+      const b = parseFloat(document.getElementById('imagPart').value) || 0;
+      
+      drawInteractivePlane();
+      
+      if (!interactiveCtx) return;
+      
+      // Plot the point
+      const x = canvasCenterX + a * scale;
+      const y = canvasCenterY - b * scale;
+      
+      interactiveCtx.beginPath();
+      interactiveCtx.arc(x, y, 5, 0, 2 * Math.PI);
+      interactiveCtx.fillStyle = "#e74c3c";
+      interactiveCtx.fill();
+      
+      // Label the point
+      interactiveCtx.font = "14px Arial";
+      interactiveCtx.fillStyle = "#e74c3c";
+      interactiveCtx.fillText(`(${a}, ${b})`, x + 8, y - 8);
+      
+      document.getElementById('complexResult').textContent = 
+        `Complex number: ${a} + ${b}i${b < 0 ? '' : ''}`;
+    }
+
+    function showProperties() {
+      const a = parseFloat(document.getElementById('realPart').value) || 0;
+      const b = parseFloat(document.getElementById('imagPart').value) || 0;
+      
+      const modulus = Math.sqrt(a * a + b * b);
+      const argument = Math.atan2(b, a) * 180 / Math.PI;
+      
+      document.getElementById('complexResult').textContent = 
+        `z = ${a} + ${b}i | Modulus: ${modulus.toFixed(2)} | Argument: ${argument.toFixed(1)}°`;
+    }
+
+    function toggleSolution(problemNumber) {
+      const solution = document.getElementById(`solution${problemNumber}`);
+      if (solution.style.display === 'block') {
+        solution.style.display = 'none';
+      } else {
+        solution.style.display = 'block';
+      }
+    }
+
+    // Initialize
+    initInteractiveCanvas();
+    plotComplexNumber();
+
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [
+                {left: "$$", right: "$$", display: true},
+                {left: "\\(", right: "\\)", display: false},
+                {left: "\\[", right: "\\]", display: true}
+            ],
+            throwOnError: false
+        });
+    });
+  </script>
+ </body>
+</html>

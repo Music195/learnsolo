@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<!-- tags: Probability -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Permutations with Identical Objects
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+    /* Enhanced text containment and scrolling */
+    .main-content {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      overflow: auto;
+      max-height: none;
+    }
+    
+    .explain, .graybox, .section {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      overflow: auto;
+    }
+    
+    /* Rule card styling */
+    .rule-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 15px 0;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+    
+    .rule-card h3 {
+      margin-top: 0;
+      font-size: 1.3em;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    }
+    
+    .rule-card .formula {
+      font-size: 1.4em;
+      font-weight: bold;
+      background: rgba(255,255,255,0.2);
+      padding: 10px;
+      border-radius: 8px;
+      margin: 10px 0;
+      text-align: center;
+    }
+    
+    /* Interactive demo styling */
+    .interactive-demo {
+      background: #f8f9fa;
+      border: 2px solid #007acc;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+      text-align: center;
+    }
+    
+    .demo-input {
+      padding: 10px;
+      font-size: 16px;
+      border: 2px solid #007acc;
+      border-radius: 6px;
+      margin: 10px;
+      width: 120px;
+    }
+    
+    .demo-button {
+      background: #007acc;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px;
+      transition: background 0.3s;
+    }
+    
+    .demo-button:hover {
+      background: #0056b3;
+    }
+    
+    .demo-result {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 15px 0;
+      min-height: 30px;
+    }
+    
+    /* Problem items styling */
+    .problem-item {
+      background: #fff3cd;
+      border: 2px solid #ffc107;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      position: relative;
+    }
+    
+    .problem-item .problem-number {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: #ffc107;
+      color: #000;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: bold;
+      font-size: 0.9em;
+    }
+    
+    .problem-item .problem-content {
+      margin-left: 60px;
+    }
+    
+    /* Solution button styling */
+    .solution-button {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      margin: 10px 0;
+      transition: background 0.3s;
+    }
+    
+    .solution-button:hover {
+      background: #218838;
+    }
+    
+    .solution-content {
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      border-radius: 6px;
+      padding: 15px;
+      margin: 10px 0;
+      display: none;
+    }
+    
+    /* Key takeaways styling */
+    .key-takeaways {
+      background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+      color: #333;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 20px 0;
+      border: 2px solid rgba(255,255,255,0.3);
+    }
+    
+    .key-takeaways h3 {
+      margin-top: 0;
+      text-align: center;
+      font-size: 1.4em;
+      text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
+    }
+    
+    .key-takeaways ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+    
+    .key-takeaways li {
+      margin: 8px 0;
+      font-weight: bold;
+    }
+    
+    /* Canvas visualization styling */
+    .visualization-container {
+      text-align: center;
+      margin: 20px 0;
+    }
+    
+    #identicalPermutationCanvas {
+      border: 2px solid #007acc;
+      border-radius: 8px;
+      background: white;
+      max-width: 100%;
+      height: auto;
+    }
+    
+    /* Section styling */
+    .section {
+      margin: 30px 0;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border-left: 4px solid #007acc;
+    }
+    
+    .section h2 {
+      color: #007acc;
+      margin-top: 0;
+      font-size: 1.5em;
+    }
+    
+    /* Enhanced math styling */
+    .math {
+      font-family: 'Times New Roman', serif;
+    }
+    
+    .highlight {
+      background: #fff3cd;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    
+    .blue { color: #007bff; }
+    .green { color: #28a745; }
+    .red { color: #dc3545; }
+    .orange { color: #fd7e14; }
+    .purple { color: #6f42c1; }
+    
+    /* Identical permutation specific */
+    .identical-types {
+      display: flex;
+      gap: 20px;
+      margin: 20px 0;
+    }
+    
+    .identical-type {
+      flex: 1;
+      background: #e9ecef;
+      padding: 15px;
+      border-radius: 8px;
+      border-left: 4px solid #007acc;
+    }
+    
+    .identical-type h4 {
+      margin-top: 0;
+      color: #007acc;
+    }
+    
+    .calculation-steps {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: monospace;
+      font-size: 16px;
+    }
+    
+    .calculation-step {
+      margin: 8px 0;
+      padding: 5px;
+      background: white;
+      border-radius: 4px;
+      border-left: 3px solid #007acc;
+    }
+    
+    .identical-explanation {
+      background: #fff3cd;
+      border: 2px solid #ffc107;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+    }
+    
+    .identical-explanation h4 {
+      margin-top: 0;
+      color: #856404;
+    }
+    
+    .object-groups {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 20px 0;
+    }
+    
+    .object-group {
+      text-align: center;
+      padding: 15px;
+      background: #e9ecef;
+      border-radius: 8px;
+      min-width: 80px;
+    }
+    
+    .object-count {
+      font-size: 24px;
+      font-weight: bold;
+      color: #007acc;
+    }
+    
+    .object-label {
+      font-size: 18px;
+      margin: 5px 0;
+    }
+    
+    .arrangement-row {
+      background: #f8f9fa;
+      border-radius: 6px;
+      padding: 10px;
+      margin: 5px 0;
+      font-family: monospace;
+      font-size: 16px;
+      text-align: center;
+    }
+    
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .identical-types {
+        flex-direction: column;
+      }
+      
+      .demo-input {
+        width: 100px;
+      }
+      
+      .problem-item .problem-content {
+        margin-left: 50px;
+      }
+      
+      .object-groups {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Probability">
+   Permutations with Identical Objects
+  </div>
+  <div class="container">
+   <div class="main-content">
+    
+    <div class="section">
+     <h2>Core Concept</h2>
+     <p><strong>Permutations with identical objects</strong> occur when arranging items where some items are indistinguishable from each other. Since identical items cannot be distinguished, many arrangements that look different are actually the same.</p>
+     
+     <div class="rule-card">
+      <h3>Formula for Identical Objects</h3>
+      <div class="formula">
+       For n objects with k groups of identical items:<br>
+       Arrangements = $\frac{n!}{n_1! \times n_2! \times \cdots \times n_k!}$
+      </div>
+      <p><em>Where n₁, n₂, ..., nₖ are the counts of identical items in each group</em></p>
+     </div>
+    </div>
+    
+    <div class="section">
+     <h2>Why Divide by Factorials?</h2>
+     <div class="identical-explanation">
+      <h4>The Overcounting Problem</h4>
+      <p>When objects are identical, regular permutation formulas count each distinct arrangement multiple times:</p>
+      <ul>
+       <li>If you have 2 identical A's, each arrangement is counted 2! = 2 times</li>
+       <li>If you have 3 identical B's, each arrangement is counted 3! = 6 times</li>
+       <li>To get the correct count, divide by the product of factorials of identical item counts</li>
+      </ul>
+     </div>
+    </div>
+    
+    <div class="section">
+     <h2>Visual Guide</h2>
+     <div class="object-groups">
+      <div class="object-group">
+       <div class="object-count">2</div>
+       <div class="object-label">A's</div>
+       <div style="color: #28a745; font-size: 20px;">● ●</div>
+      </div>
+      <div class="object-group">
+       <div class="object-count">3</div>
+       <div class="object-label">B's</div>
+       <div style="color: #dc3545; font-size: 20px;">● ● ●</div>
+      </div>
+      <div class="object-group">
+       <div class="object-count">1</div>
+       <div class="object-label">C</div>
+       <div style="color: #007acc; font-size: 20px;">●</div>
+      </div>
+     </div>
+     
+     <div class="visualization-container">
+      <canvas id="identicalPermutationCanvas" width="600" height="350"></canvas>
+      <p><em>Interactive visualization showing arrangements with identical objects</em></p>
+     </div>
+    </div>
+    
+    <div class="section">
+     <h2>Interactive Demo</h2>
+     <div class="interactive-demo">
+      <h3>Identical Objects Calculator</h3>
+      <p>Enter the counts of identical objects:</p>
+      <input type="number" id="group1Input" class="demo-input" placeholder="Group 1 count" min="1">
+      <input type="number" id="group2Input" class="demo-input" placeholder="Group 2 count" min="0">
+      <input type="number" id="group3Input" class="demo-input" placeholder="Group 3 count (optional)" min="0">
+      <br>
+      <button id="calculateBtn" class="demo-button">Calculate Arrangements</button>
+      <div id="demoResult" class="demo-result"></div>
+      <div id="calculationSteps" class="calculation-steps" style="display: none;"></div>
+     </div>
+    </div>
+    
+    <div class="section">
+     <h2>Detailed Examples</h2>
+     
+     <h3>Example 1: Word Arrangements</h3>
+     <p>How many distinct arrangements of the letters in "MISSISSIPPI"?</p>
+     <div class="calculation-steps">
+      <div class="calculation-step">Letters: M, I, S, S, I, S, S, I, P, P, I</div>
+      <div class="calculation-step">Count: I×4, S×4, P×2, M×1</div>
+      <div class="calculation-step">Total letters: n = 11</div>
+      <div class="calculation-step">Formula: $\frac{11!}{4! × 4! × 2! × 1!} = \frac{39,916,800}{24 × 24 × 2 × 1} = \frac{39,916,800}{1,152} = 34,650$</div>
+     </div>
+     
+     <h3>Example 2: Flag Arrangements</h3>
+     <p>How many ways to arrange 3 red flags, 2 blue flags, and 1 green flag on a line?</p>
+     <div class="calculation-steps">
+      <div class="calculation-step">Total flags: n = 3 + 2 + 1 = 6</div>
+      <div class="calculation-step">Identical groups: Red×3, Blue×2, Green×1</div>
+      <div class="calculation-step">Formula: $\frac{6!}{3! × 2! × 1!} = \frac{720}{6 × 2 × 1} = \frac{720}{12} = 60$</div>
+      <div class="calculation-step">Without identical objects: 6! = 720 arrangements</div>
+      <div class="calculation-step">With identical objects: divide by 3!×2!×1! = 60 arrangements</div>
+     </div>
+     
+     <h3>Example 3: Number Arrangements</h3>
+     <p>How many distinct 4-digit numbers can be formed using 2 twos, 1 three, and 1 four?</p>
+     <div class="calculation-steps">
+      <div class="calculation-step">Digits: 2, 2, 3, 4</div>
+      <div class="calculation-step">Total positions: n = 4</div>
+      <div class="calculation-step">Identical groups: Two×2, Three×1, Four×1</div>
+      <div class="calculation-step">Formula: $\frac{4!}{2! × 1! × 1!} = \frac{24}{2 × 1 × 1} = 12$</div>
+      <div class="calculation-step">Possible numbers: 2234, 2243, 2324, 2342, 2423, 2432, etc.</div>
+     </div>
+    </div>
+    
+    <div class="section">
+     <h2>Applications</h2>
+     <ul>
+      <li><strong>Word Arrangements:</strong> Counting distinct arrangements of words with repeated letters</li>
+      <li><strong>Chemistry:</strong> Isomers and molecular arrangements</li>
+      <li><strong>Flag/Signals:</strong> Arrangements of colored flags or lights</li>
+      <li><strong>Number Formation:</strong> Creating numbers with repeated digits</li>
+      <li><strong>Genetics:</strong> DNA sequence arrangements with repeated nucleotides</li>
+      <li><strong>Manufacturing:</strong> Product arrangements with identical components</li>
+     </ul>
+    </div>
+    
+    <div class="section">
+     <h2>Practice Problems</h2>
+     
+     <div class="problem-item">
+      <div class="problem-number">1</div>
+      <div class="problem-content">
+       <p>How many distinct arrangements of the letters in "BOOKKEEPER" are possible?</p>
+       <button class="solution-button" onclick="toggleSolution(1)">Show Solution</button>
+       <div class="solution-content" id="solution1">
+        <p>Letters: B, O, O, K, K, E, E, P, E, R</p>
+        <p>Count: O×2, K×2, E×3, others×1 each</p>
+        <p>Total letters: n = 10</p>
+        <p>Formula: $\frac{10!}{2! × 2! × 3! × 1! × 1! × 1! × 1!} = \frac{3,628,800}{2 × 2 × 6 × 1 × 1 × 1 × 1} = \frac{3,628,800}{24} = 151,200$</p>
+       </div>
+      </div>
+     </div>
+     
+     <div class="problem-item">
+      <div class="problem-number">2</div>
+      <div class="problem-content">
+       <p>How many ways can you arrange 4 identical red balls and 3 identical blue balls in a row?</p>
+       <button class="solution-button" onclick="toggleSolution(2)">Show Solution</button>
+       <div class="solution-content" id="solution2">
+        <p>Total balls: n = 4 + 3 = 7</p>
+        <p>Identical groups: Red×4, Blue×3</p>
+        <p>Formula: $\frac{7!}{4! × 3!} = \frac{5040}{24 × 6} = \frac{5040}{144} = 35$</p>
+        <p>This is the number of ways to choose positions for the red balls (or blue balls).</p>
+       </div>
+      </div>
+     </div>
+     
+     <div class="problem-item">
+      <div class="problem-number">3</div>
+      <div class="problem-content">
+       <p>How many distinct 5-digit numbers can be formed using two 1's, one 2, one 3, and one 4?</p>
+       <button class="solution-button" onclick="toggleSolution(3)">Show Solution</button>
+       <div class="solution-content" id="solution3">
+        <p>Digits: 1, 1, 2, 3, 4</p>
+        <p>Total positions: n = 5</p>
+        <p>Identical groups: One×2, others×1 each</p>
+        <p>Formula: $\frac{5!}{2! × 1! × 1! × 1!} = \frac{120}{2 × 1 × 1 × 1} = 60$</p>
+        <p>Note: Numbers cannot start with 0, but none of these digits are 0.</p>
+       </div>
+      </div>
+     </div>
+     
+     <div class="problem-item">
+      <div class="problem-number">4</div>
+      <div class="problem-content">
+       <p>In how many ways can the letters of "MATHEMATICS" be arranged?</p>
+       <button class="solution-button" onclick="toggleSolution(4)">Show Solution</button>
+       <div class="solution-content" id="solution4">
+        <p>Letters: M, A, T, H, E, M, A, T, I, C, S</p>
+        <p>Count: M×2, A×2, T×2, others×1 each</p>
+        <p>Total letters: n = 11</p>
+        <p>Formula: $\frac{11!}{2! × 2! × 2! × 1! × 1! × 1! × 1! × 1! × 1!} = \frac{39,916,800}{2 × 2 × 2} = \frac{39,916,800}{8} = 4,989,600$</p>
+       </div>
+      </div>
+     </div>
+    </div>
+    
+    <div class="key-takeaways">
+     <h3>Key Takeaways</h3>
+     <ul>
+      <li><strong>Identical objects</strong> require dividing by factorials to avoid overcounting</li>
+      <li>The formula is $\frac{n!}{n_1! × n_2! × \cdots × n_k!}$ where nᵢ are counts of identical items</li>
+      <li>Each group of identical items contributes a factorial in the denominator</li>
+      <li>Items that appear only once (nᵢ = 1) contribute 1! = 1, which doesn't change the result</li>
+      <li>This is essential for counting arrangements of words with repeated letters</li>
+      <li>The more identical items, the fewer distinct arrangements</li>
+     </ul>
+    </div>
+    
+   </div>
+  </div>
+  
+  <script>
+   // Interactive canvas visualization
+   const canvas = document.getElementById('identicalPermutationCanvas');
+   const ctx = canvas.getContext('2d');
+   
+   function drawIdenticalPermutationVisualization() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw arrangement slots
+    const slots = 6;
+    const slotWidth = 60;
+    const slotHeight = 40;
+    const startX = 50;
+    const startY = 150;
+    
+    ctx.font = '14px Arial';
+    ctx.textAlign = 'center';
+    
+    for (let i = 0; i < slots; i++) {
+     const x = startX + i * (slotWidth + 10);
+     
+     // Slot background
+     ctx.fillStyle = '#f8f9fa';
+     ctx.fillRect(x, startY, slotWidth, slotHeight);
+     ctx.strokeStyle = '#007acc';
+     ctx.lineWidth = 2;
+     ctx.strokeRect(x, startY, slotWidth, slotHeight);
+     
+     // Slot label
+     ctx.fillStyle = '#000';
+     ctx.fillText(`Position ${i+1}`, x + slotWidth/2, startY - 10);
+    }
+    
+    // Show identical objects
+    ctx.fillStyle = '#000';
+    ctx.font = '16px Arial';
+    ctx.fillText('Objects: 2 A\'s, 2 B\'s, 2 C\'s', 300, 50);
+    
+    // Show one possible arrangement
+    const arrangement = ['A', 'A', 'B', 'B', 'C', 'C'];
+    const colors = {'A': '#28a745', 'B': '#dc3545', 'C': '#007acc'};
+    
+    ctx.font = 'bold 20px Arial';
+    for (let i = 0; i < slots; i++) {
+     const x = startX + i * (slotWidth + 10) + slotWidth/2;
+     const y = startY + slotHeight/2 + 7;
+     
+     ctx.fillStyle = colors[arrangement[i]];
+     ctx.fillText(arrangement[i], x, y);
+    }
+    
+    // Show indistinguishable arrangements
+    ctx.fillStyle = '#000';
+    ctx.font = '14px Arial';
+    ctx.fillText('This arrangement is the same as:', 300, 230);
+    
+    const similarArrangements = [
+     'A A B C B C',
+     'A B A B C C',
+     'A B C A B C'
+    ];
+    
+    similarArrangements.forEach((arr, index) => {
+     ctx.fillText(arr, 300, 250 + index * 20);
+    });
+    
+    ctx.fillText('All count as 1 distinct arrangement!', 300, 320);
+   }
+   
+   // Interactive calculator
+   document.getElementById('calculateBtn').addEventListener('click', function() {
+    const g1 = parseInt(document.getElementById('group1Input').value) || 0;
+    const g2 = parseInt(document.getElementById('group2Input').value) || 0;
+    const g3 = parseInt(document.getElementById('group3Input').value) || 0;
+    
+    const total = g1 + g2 + g3;
+    if (total === 0) {
+     document.getElementById('demoResult').innerHTML = '<span style="color: red;">Please enter at least one object</span>';
+     return;
+    }
+    
+    function factorial(n) {
+     if (n <= 1) return 1;
+     return n * factorial(n - 1);
+    }
+    
+    const numerator = factorial(total);
+    const denominator = factorial(g1) * factorial(g2) * factorial(g3);
+    const result = numerator / denominator;
+    
+    const resultDiv = document.getElementById('demoResult');
+    const stepsDiv = document.getElementById('calculationSteps');
+    
+    resultDiv.innerHTML = `<span class="highlight">${result} distinct arrangements</span>`;
+    
+    stepsDiv.style.display = 'block';
+    let denomText = '';
+    if (g1 > 0) denomText += `${g1}!`;
+    if (g2 > 0) denomText += (denomText ? ' × ' : '') + `${g2}!`;
+    if (g3 > 0) denomText += (denomText ? ' × ' : '') + `${g3}!`;
+    
+    stepsDiv.innerHTML = `
+     <div class="calculation-step">Group 1: ${g1} identical objects</div>
+     <div class="calculation-step">Group 2: ${g2} identical objects</div>
+     <div class="calculation-step">Group 3: ${g3} identical objects</div>
+     <div class="calculation-step">Total objects: n = ${total}</div>
+     <div class="calculation-step">Formula: \\frac{${total}!}{${denomText}} = \\frac{${numerator}}{${denominator}} = ${result}</div>
+     <div class="calculation-step">Without identical objects: ${total}! = ${factorial(total)} arrangements</div>
+     <div class="calculation-step">With identical objects: divide by ${denomText} = ${result} arrangements</div>
+    `;
+   });
+   
+   // Solution toggle function
+   function toggleSolution(problemNumber) {
+    const solution = document.getElementById('solution' + problemNumber);
+    const button = solution.previousElementSibling;
+    
+    if (solution.style.display === 'none' || solution.style.display === '') {
+     solution.style.display = 'block';
+     button.textContent = 'Hide Solution';
+    } else {
+     solution.style.display = 'none';
+     button.textContent = 'Show Solution';
+    }
+   }
+   
+   // Initialize visualization
+   drawIdenticalPermutationVisualization();
+  </script>
+ </body>
+</html>

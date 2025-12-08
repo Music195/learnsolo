@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<!-- tags: Complex Number and Equation -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Quadratic Factorization
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+   }
+
+   .main-content {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 15px;
+    padding: 30px;
+    margin: 20px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+   }
+
+   .fancy-title {
+    text-align: center;
+    font-size: 2.5em;
+    font-weight: bold;
+    margin: 20px 0;
+    color: #2c3e50;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+   }
+
+   .description {
+    font-size: 1.2em;
+    line-height: 1.6;
+    margin: 20px 0;
+    color: #34495e;
+    text-align: center;
+   }
+
+   .content-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin: 30px 0;
+   }
+
+   .formula-block {
+    flex: 1;
+    min-width: 300px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 1.4em;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+   }
+
+   .formula-item {
+    margin: 15px 0;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+   }
+
+   .diagram-block {
+    flex: 1;
+    min-width: 300px;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+   }
+
+   .interactive-demo {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    margin: 30px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+   }
+
+   .demo-title {
+    text-align: center;
+    font-size: 1.8em;
+    margin-bottom: 25px;
+    font-weight: bold;
+   }
+
+   .input-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin: 20px 0;
+    justify-content: center;
+   }
+
+   .input-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+   }
+
+   .input-field label {
+    font-weight: bold;
+    font-size: 1.1em;
+   }
+
+   .input-field input {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    width: 100px;
+    text-align: center;
+    transition: border-color 0.3s;
+   }
+
+   .input-field input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+   }
+
+   .button-group {
+    text-align: center;
+    margin: 25px 0;
+   }
+
+   .btn {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 1.1em;
+    cursor: pointer;
+    margin: 0 10px;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+   }
+
+   .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+   }
+
+   .btn:active {
+    transform: translateY(0);
+   }
+
+   .result-display {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    backdrop-filter: blur(10px);
+   }
+
+   .result-text {
+    font-size: 1.2em;
+    text-align: center;
+    margin: 10px 0;
+   }
+
+   .canvas-container {
+    text-align: center;
+    margin: 20px 0;
+   }
+
+   .factorization-canvas {
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+   }
+
+   .section {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    margin: 25px 0;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+   }
+
+   .section-title {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
+   }
+
+   .factorization-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+   }
+
+   .factorization-card {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(252, 182, 159, 0.3);
+   }
+
+   .factorization-card h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 1.3em;
+   }
+
+   .factorization-card .formula {
+    font-weight: bold;
+    color: #e74c3c;
+    font-size: 1.2em;
+    margin: 10px 0;
+   }
+
+   .factorization-card .description {
+    color: #555;
+    line-height: 1.5;
+   }
+
+   .example-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+   }
+
+   .example-card {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+   }
+
+   .example-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(245, 87, 108, 0.4);
+   }
+
+   .example-card h4 {
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+   }
+
+   .example-detail {
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    display: none;
+   }
+
+   .calculation-steps {
+    margin: 15px 0;
+   }
+
+   .calculation-step {
+    margin: 8px 0;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 5px;
+    border-left: 4px solid #f5576c;
+   }
+
+   .practice-problems {
+    margin: 20px 0;
+   }
+
+   .problem-item {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+   }
+
+   .problem-item h4 {
+    margin: 0 0 15px 0;
+    font-size: 1.2em;
+   }
+
+   .solution-btn {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    color: #333;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 10px 0;
+    transition: all 0.3s;
+   }
+
+   .solution-btn:hover {
+    background: linear-gradient(135deg, #fcb69f 0%, #ffecd2 100%);
+    transform: scale(1.05);
+   }
+
+   .solution {
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 10px 0;
+    display: none;
+    border-left: 4px solid #667eea;
+   }
+
+   .key-takeaways {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    padding: 25px;
+    border-radius: 12px;
+    margin: 25px 0;
+   }
+
+   .takeaway-list {
+    list-style: none;
+    padding: 0;
+   }
+
+   .takeaway-item {
+    background: rgba(255, 255, 255, 0.8);
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+    font-weight: bold;
+   }
+
+   .error-message {
+    background: #ffebee;
+    color: #c62828;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px 0;
+    display: none;
+    text-align: center;
+    font-weight: bold;
+   }
+
+   @media (max-width: 768px) {
+    .content-wrapper {
+     flex-direction: column;
+    }
+
+    .input-group {
+     flex-direction: column;
+     align-items: center;
+    }
+
+    .fancy-title {
+     font-size: 2em;
+    }
+
+    .formula-block {
+     font-size: 1.2em;
+    }
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Complex Number and Equation">
+   Quadratic Factorization
+  </div>
+
+  <div class="container">
+   <div class="main-content">
+    <div class="description">
+     Every quadratic equation can be factored into linear factors. This factorization reveals the roots and provides insights into the equation's behavior.
+    </div>
+
+    <div class="content-wrapper">
+     <div class="formula-block">
+      <div class="formula-item">
+       <strong>General Form:</strong> $$ax^2 + bx + c = a(x - \alpha)(x - \beta)$$
+      </div>
+      <div class="formula-item">
+       <strong>Expanded Form:</strong> $$a(x^2 - (\alpha+\beta)x + \alpha\beta)$$
+      </div>
+      <div class="formula-item">
+       <strong>Root Relationships:</strong> $$\alpha + \beta = -\frac{b}{a}, \quad \alpha\beta = \frac{c}{a}$$
+      </div>
+     </div>
+
+     <div class="diagram-block">
+      <svg viewbox="0 0 250 200" xmlns="http://www.w3.org/2000/svg">
+       <!-- Factorization visualization -->
+       <text fill="#333" font-size="14" x="125" y="20" text-anchor="middle">ax² + bx + c</text>
+       <!-- Arrow down -->
+       <line marker-end="url(#arrowhead)" stroke="#666" stroke-width="2" x1="125" x2="125" y1="30" y2="70"></line>
+       <!-- Factorized form -->
+       <text fill="#e74c3c" font-size="12" x="125" y="90" text-anchor="middle">a(x - α)(x - β)</text>
+       <!-- Roots -->
+       <circle cx="80" cy="150" fill="#e74c3c" r="4"></circle>
+       <text fill="#e74c3c" font-size="12" x="75" y="135">α</text>
+       <circle cx="170" cy="150" fill="#27ae60" r="4"></circle>
+       <text fill="#27ae60" font-size="12" x="165" y="135">β</text>
+       <!-- Connection lines -->
+       <line stroke="#e74c3c" stroke-width="1" x1="80" x2="125" y1="140" y2="100"></line>
+       <line stroke="#27ae60" stroke-width="1" x1="170" x2="125" y1="140" y2="100"></line>
+       <!-- Arrow markers -->
+       <defs>
+        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+         <polygon fill="#666" points="0 0, 10 3.5, 0 7"></polygon>
+        </marker>
+       </defs>
+      </svg>
+     </div>
+    </div>
+
+    <div class="factorization-grid">
+     <div class="factorization-card">
+      <h3>Standard Factorization</h3>
+      <div class="formula">ax² + bx + c = a(x - α)(x - β)</div>
+      <div class="description">
+       The quadratic is factored into a constant times two linear factors, where α and β are the roots.
+      </div>
+     </div>
+
+     <div class="factorization-card">
+      <h3>Monic Factorization</h3>
+      <div class="formula">x² + px + q = (x - α)(x - β)</div>
+      <div class="description">
+       When a = 1, the factorization becomes simpler with the constant term removed from the linear factors.
+      </div>
+     </div>
+
+     <div class="factorization-card">
+      <h3>Complex Factorization</h3>
+      <div class="formula">(x - (a+bi))(x - (a-bi))</div>
+      <div class="description">
+       Complex roots always come in conjugate pairs, leading to factorizations with complex coefficients.
+      </div>
+     </div>
+    </div>
+
+    <div class="interactive-demo">
+     <div class="demo-title">Interactive Quadratic Factorizer</div>
+
+     <div class="input-group">
+      <div class="input-field">
+       <label for="coeffA">a:</label>
+       <input id="coeffA" step="any" type="number" value="1"/>
+      </div>
+      <div class="input-field">
+       <label for="coeffB">b:</label>
+       <input id="coeffB" step="any" type="number" value="-5"/>
+      </div>
+      <div class="input-field">
+       <label for="coeffC">c:</label>
+       <input id="coeffC" step="any" type="number" value="6"/>
+      </div>
+     </div>
+
+     <div class="button-group">
+      <button class="btn" onclick="factorizeQuadratic()">Factorize</button>
+      <button class="btn" onclick="expandFactors()">Expand</button>
+      <button class="btn" onclick="resetDemo()">Reset</button>
+     </div>
+
+     <div class="error-message" id="errorMessage"></div>
+
+     <div class="result-display">
+      <div class="result-text" id="equationDisplay">
+       Equation: <strong id="equationText">x² - 5x + 6 = 0</strong>
+      </div>
+      <div class="result-text" id="factorizationDisplay">
+       Factorization: <strong id="factorizationText">Not calculated</strong>
+      </div>
+      <div class="result-text" id="rootsDisplay">
+       Roots: <strong id="rootsText">Not calculated</strong>
+      </div>
+     </div>
+
+     <div class="canvas-container">
+      <canvas class="factorization-canvas" height="400" id="factorizationCanvas" width="500"></canvas>
+     </div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Mathematical Foundation</div>
+     <p>The factorization of a quadratic equation is based on the fundamental theorem of algebra and the relationship between roots and coefficients:</p>
+     <div class="formula-block" style="margin: 20px 0;">
+      $$ax^2 + bx + c = a(x - \alpha)(x - \beta)$$
+     </div>
+     <p>Expanding the right side:</p>
+     <div class="formula-block" style="margin: 20px 0;">
+      $$\begin{align}
+      a(x - \alpha)(x - \beta) &= a[x^2 - (\alpha + \beta)x + \alpha\beta] \\
+      &= ax^2 - a(\alpha + \beta)x + a\alpha\beta
+      \end{align}$$
+     </div>
+     <p>Comparing with ax² + bx + c:</p>
+     <div class="formula-block" style="margin: 20px 0;">
+      $$\begin{cases}
+      -a(\alpha + \beta) = b \implies \alpha + \beta = -\frac{b}{a} \\
+      a\alpha\beta = c \implies \alpha\beta = \frac{c}{a}
+      \end{cases}$$
+     </div>
+     <p>This shows that factorization and root-finding are essentially the same process.</p>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Worked Examples</div>
+     <div class="example-grid">
+      <div class="example-card" onclick="showExample(1)">
+       <h4>Example 1: Simple factorization</h4>
+       <p>Factorize x² - 5x + 6 = 0</p>
+      </div>
+      <div class="example-card" onclick="showExample(2)">
+       <h4>Example 2: With leading coefficient</h4>
+       <p>Factorize 2x² + 7x + 3 = 0</p>
+      </div>
+      <div class="example-card" onclick="showExample(3)">
+       <h4>Example 3: Complex roots</h4>
+       <p>Factorize x² + 4x + 5 = 0</p>
+      </div>
+     </div>
+
+     <div class="example-detail" id="exampleDetail"></div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Applications</div>
+     <ul>
+      <li><strong>Root Finding:</strong> Factorization reveals the roots of the equation</li>
+      <li><strong>Graph Analysis:</strong> x-intercepts of the parabola are the roots</li>
+      <li><strong>Polynomial Division:</strong> Used in long division of polynomials</li>
+      <li><strong>Equation Solving:</strong> Setting factors to zero gives solutions</li>
+      <li><strong>Function Decomposition:</strong> Breaking down complex functions into simpler parts</li>
+     </ul>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Practice Problems</div>
+     <div class="practice-problems">
+      <div class="problem-item">
+       <h4>Problem 1</h4>
+       <p>Factorize the quadratic equation x² - 7x + 12 = 0.</p>
+       <button class="solution-btn" onclick="toggleSolution(1)">Show Solution</button>
+       <div class="solution" id="solution1">
+        <p><strong>Solution:</strong></p>
+        <p>Find factors of 12 that sum to 7: 3 and 4</p>
+        <p>x² - 7x + 12 = (x - 3)(x - 4)</p>
+        <p>Roots: x = 3, x = 4</p>
+       </div>
+      </div>
+
+      <div class="problem-item">
+       <h4>Problem 2</h4>
+       <p>Factorize 3x² - 10x + 8 = 0.</p>
+       <button class="solution-btn" onclick="toggleSolution(2)">Show Solution</button>
+       <div class="solution" id="solution2">
+        <p><strong>Solution:</strong></p>
+        <p>Find factors of 24 that sum to 10: 4 and 6</p>
+        <p>3x² - 10x + 8 = 3(x² - 10/3x + 8/3)</p>
+        <p>= 3[(x - 2)(x - 4/3)] = 3(x - 2)(x - 4/3)</p>
+       </div>
+      </div>
+
+      <div class="problem-item">
+       <h4>Problem 3</h4>
+       <p>Write the factorization of x² + 6x + 10 = 0.</p>
+       <button class="solution-btn" onclick="toggleSolution(3)">Show Solution</button>
+       <div class="solution" id="solution3">
+        <p><strong>Solution:</strong></p>
+        <p>Discriminant: 36 - 40 = -4 < 0</p>
+        <p>Roots: -3 ± i</p>
+        <p>Factorization: (x + 3 - i)(x + 3 + i)</p>
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <div class="section-title">Key Takeaways</div>
+     <ul class="takeaway-list">
+      <li class="takeaway-item">Every quadratic can be factored as a(x - α)(x - β) where α, β are roots</li>
+      <li class="takeaway-item">The constant 'a' is factored out, leaving monic quadratic in the parentheses</li>
+      <li class="takeaway-item">Complex roots come in conjugate pairs</li>
+      <li class="takeaway-item">Factorization and root-finding are equivalent processes</li>
+      <li class="takeaway-item">The factored form reveals x-intercepts of the quadratic graph</li>
+      <li class="takeaway-item">Useful for polynomial division and function decomposition</li>
+     </ul>
+    </div>
+   </div>
+  </div>
+
+  <script>
+   function factorizeQuadratic() {
+    try {
+     const a = parseFloat(document.getElementById('coeffA').value) || 0;
+     const b = parseFloat(document.getElementById('coeffB').value) || 0;
+     const c = parseFloat(document.getElementById('coeffC').value) || 0;
+
+     if (a === 0) {
+      document.getElementById('errorMessage').textContent = 'Coefficient a cannot be zero.';
+      document.getElementById('errorMessage').style.display = 'block';
+      return;
+     }
+
+     // Calculate discriminant
+     const discriminant = b * b - 4 * a * c;
+
+     // Calculate roots
+     let root1, root2;
+     if (discriminant >= 0) {
+      root1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+      root2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+     } else {
+      const realPart = -b / (2 * a);
+      const imagPart = Math.sqrt(-discriminant) / (2 * a);
+      root1 = `${realPart.toFixed(2)} + ${imagPart.toFixed(2)}i`;
+      root2 = `${realPart.toFixed(2)} - ${imagPart.toFixed(2)}i`;
+     }
+
+     // Create factorization string
+     let factorizationStr;
+     if (typeof root1 === 'string') {
+      // Complex roots
+      factorizationStr = `${a}(x - (${root1}))(x - (${root2}))`;
+     } else {
+      // Real roots
+      const r1 = root1.toFixed(2);
+      const r2 = root2.toFixed(2);
+      factorizationStr = `${a}(x - ${r1})(x - ${r2})`;
+     }
+
+     // Update display
+     document.getElementById('equationText').textContent = `${a}x² + ${b}x + ${c} = 0`;
+     document.getElementById('factorizationText').textContent = factorizationStr;
+     document.getElementById('rootsText').textContent = `${root1}, ${root2}`;
+     document.getElementById('errorMessage').style.display = 'none';
+
+     drawFactorizationVisualization(a, b, c, root1, root2);
+    } catch (error) {
+     document.getElementById('errorMessage').textContent = 'Error in factorization. Please check your input values.';
+     document.getElementById('errorMessage').style.display = 'block';
+    }
+   }
+
+   function expandFactors() {
+    try {
+     const a = parseFloat(document.getElementById('coeffA').value) || 0;
+     const b = parseFloat(document.getElementById('coeffB').value) || 0;
+     const c = parseFloat(document.getElementById('coeffC').value) || 0;
+
+     // Expand (x - r1)(x - r2) = x² - (r1+r2)x + r1*r2
+     // Then multiply by a: a[x² - (r1+r2)x + r1*r2] = ax² - a(r1+r2)x + a(r1*r2)
+
+     // From relationships: r1 + r2 = -b/a, r1*r2 = c/a
+     const sumRoots = -b / a;
+     const productRoots = c / a;
+
+     const expanded = `${a}x² + ${-a * sumRoots}x + ${a * productRoots}`;
+
+     document.getElementById('factorizationText').textContent = `Expanded: ${expanded}`;
+     document.getElementById('errorMessage').style.display = 'none';
+    } catch (error) {
+     document.getElementById('errorMessage').textContent = 'Error expanding factors.';
+     document.getElementById('errorMessage').style.display = 'block';
+    }
+   }
+
+   function drawFactorizationVisualization(a, b, c, root1, root2) {
+    const canvas = document.getElementById('factorizationCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Calculate bounds
+    let points = [];
+    if (typeof root1 === 'string') {
+     // Complex roots - show real parts
+     const real1 = parseFloat(root1.split(' ')[0]);
+     const real2 = parseFloat(root2.split(' ')[0]);
+     points = [real1, real2, 0];
+    } else {
+     points = [root1, root2, 0];
+    }
+
+    const minX = Math.min(...points) - 2;
+    const maxX = Math.max(...points) + 2;
+    const centerY = canvas.height / 2;
+
+    const scaleX = canvas.width / (maxX - minX);
+
+    // Transform function
+    const transformX = x => (x - minX) * scaleX;
+
+    // Draw number line
+    ctx.strokeStyle = '#666';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, centerY);
+    ctx.lineTo(canvas.width, centerY);
+    ctx.stroke();
+
+    // Draw tick marks
+    ctx.strokeStyle = '#ccc';
+    ctx.lineWidth = 1;
+    for (let i = Math.floor(minX); i <= Math.ceil(maxX); i++) {
+     const x = transformX(i);
+     ctx.beginPath();
+     ctx.moveTo(x, centerY - 5);
+     ctx.lineTo(x, centerY + 5);
+     ctx.stroke();
+    }
+
+    // Draw roots
+    if (typeof root1 === 'string') {
+     // Complex roots - show on real axis
+     const real1 = parseFloat(root1.split(' ')[0]);
+     const real2 = parseFloat(root2.split(' ')[0]);
+
+     ctx.fillStyle = '#e74c3c';
+     ctx.beginPath();
+     ctx.arc(transformX(real1), centerY, 6, 0, 2 * Math.PI);
+     ctx.fill();
+
+     ctx.fillStyle = '#27ae60';
+     ctx.beginPath();
+     ctx.arc(transformX(real2), centerY, 6, 0, 2 * Math.PI);
+     ctx.fill();
+
+     ctx.fillStyle = '#333';
+     ctx.font = '10px Arial';
+     ctx.textAlign = 'center';
+     ctx.fillText(`Re(${root1})`, transformX(real1), centerY - 15);
+     ctx.fillText(`Re(${root2})`, transformX(real2), centerY - 15);
+    } else {
+     // Real roots
+     ctx.fillStyle = '#e74c3c';
+     ctx.beginPath();
+     ctx.arc(transformX(root1), centerY, 6, 0, 2 * Math.PI);
+     ctx.fill();
+
+     ctx.fillStyle = '#27ae60';
+     ctx.beginPath();
+     ctx.arc(transformX(root2), centerY, 6, 0, 2 * Math.PI);
+     ctx.fill();
+
+     ctx.fillStyle = '#333';
+     ctx.font = '10px Arial';
+     ctx.textAlign = 'center';
+     ctx.fillText(root1.toFixed(1), transformX(root1), centerY - 15);
+     ctx.fillText(root2.toFixed(1), transformX(root2), centerY - 15);
+    }
+
+    // Draw origin
+    ctx.fillStyle = '#666';
+    ctx.beginPath();
+    ctx.arc(transformX(0), centerY, 3, 0, 2 * Math.PI);
+    ctx.fill();
+
+    // Labels
+    ctx.fillText('0', transformX(0) - 10, centerY + 20);
+
+    // Equation display
+    ctx.fillStyle = '#333';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(`${a}x² + ${b}x + ${c} = 0`, canvas.width / 2, centerY + 40);
+
+    // Legend
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.fillRect(10, 10, 120, 60);
+    ctx.strokeStyle = '#333';
+    ctx.strokeRect(10, 10, 120, 60);
+
+    ctx.fillStyle = '#333';
+    ctx.font = '10px Arial';
+    ctx.textAlign = 'left';
+    ctx.fillText('Legend:', 15, 25);
+    ctx.fillText('● Root 1', 15, 40);
+    ctx.fillText('● Root 2', 15, 55);
+   }
+
+   function showExample(exampleNumber) {
+    const detail = document.getElementById('exampleDetail');
+    let content = '';
+
+    switch(exampleNumber) {
+     case 1:
+      content = `
+       <h4>Detailed Example 1 - Simple Factorization</h4>
+       <div class="calculation-steps">
+        <div class="calculation-step">Equation: x² - 5x + 6 = 0</div>
+        <div class="calculation-step">Find factors of 6 that sum to 5: 2 and 3</div>
+        <div class="calculation-step">Check: 2 + 3 = 5, 2 × 3 = 6 ✓</div>
+        <div class="calculation-step">Factorization: (x - 2)(x - 3)</div>
+        <div class="calculation-step">Expand: (x - 2)(x - 3) = x² - 3x - 2x + 6 = x² - 5x + 6 ✓</div>
+        <div class="calculation-step">Roots: x = 2, x = 3</div>
+       </div>
+      `;
+      break;
+     case 2:
+      content = `
+       <h4>Detailed Example 2 - With Leading Coefficient</h4>
+       <div class="calculation-steps">
+        <div class="calculation-step">Equation: 2x² + 7x + 3 = 0</div>
+        <div class="calculation-step">Find factors of 6 that sum to 7: 1 and 6</div>
+        <div class="calculation-step">Factorization: 2(x² + (7/2)x + 3/2)</div>
+        <div class="calculation-step">= 2[(x + 1/2)(x + 3)] = 2(x + 0.5)(x + 3)</div>
+        <div class="calculation-step">Roots: x = -0.5, x = -3</div>
+       </div>
+      `;
+      break;
+     case 3:
+      content = `
+       <h4>Detailed Example 3 - Complex Roots</h4>
+       <div class="calculation-steps">
+        <div class="calculation-step">Equation: x² + 4x + 5 = 0</div>
+        <div class="calculation-step">Discriminant: 16 - 20 = -4 < 0</div>
+        <div class="calculation-step">Roots: -2 ± √(-4)/2 = -2 ± i</div>
+        <div class="calculation-step">Factorization: (x - (-2 + i))(x - (-2 - i))</div>
+        <div class="calculation-step">= (x + 2 - i)(x + 2 + i)</div>
+       </div>
+      `;
+      break;
+    }
+
+    detail.innerHTML = content;
+    detail.style.display = 'block';
+    MathJax.typesetPromise();
+   }
+
+   function toggleSolution(problemNumber) {
+    const solution = document.getElementById('solution' + problemNumber);
+    if (solution.style.display === 'none' || solution.style.display === '') {
+     solution.style.display = 'block';
+    } else {
+     solution.style.display = 'none';
+    }
+   }
+
+   function resetDemo() {
+    document.getElementById('coeffA').value = '1';
+    document.getElementById('coeffB').value = '-5';
+    document.getElementById('coeffC').value = '6';
+    document.getElementById('equationText').textContent = 'x² - 5x + 6 = 0';
+    document.getElementById('factorizationText').textContent = 'Not calculated';
+    document.getElementById('rootsText').textContent = 'Not calculated';
+    document.getElementById('errorMessage').style.display = 'none';
+    factorizeQuadratic();
+   }
+
+   // Initialize with default values
+   document.addEventListener('DOMContentLoaded', function() {
+    factorizeQuadratic();
+   });
+  </script>
+ </body>
+</html>

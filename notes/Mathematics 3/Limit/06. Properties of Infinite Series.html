@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<!-- tags: Limit -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Properties of Infinite Series
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Limit">
+   Properties of Infinite Series
+  </div>
+  <div class="container">
+   <div class="main-content">
+    <style>
+      .main-content {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        overflow: auto;
+        max-width: 100%;
+      }
+      
+      .section {
+        margin-bottom: 30px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #007acc;
+      }
+      
+      .section h2 {
+        color: #007acc;
+        margin-top: 0;
+        margin-bottom: 15px;
+        font-size: 1.4em;
+      }
+      
+      .highlight-box {
+        background: #e3f2fd;
+        border: 2px solid #2196f3;
+        border-radius: 6px;
+        padding: 15px;
+        margin: 15px 0;
+        font-weight: bold;
+        color: #1565c0;
+      }
+      
+      .properties-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 20px;
+        margin: 20px 0;
+      }
+      
+      .property-card {
+        background: white;
+        border: 2px solid #007acc;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      
+      .property-card h3 {
+        color: #007acc;
+        margin-top: 0;
+        margin-bottom: 10px;
+        font-size: 1.2em;
+      }
+      
+      .property-card .formula {
+        background: #f8f9fa;
+        padding: 10px;
+        border-radius: 4px;
+        margin: 10px 0;
+        font-family: 'Times New Roman', serif;
+        font-size: 1.1em;
+      }
+      
+      .convergence-note {
+        background: #fff3e0;
+        border: 1px solid #ff9800;
+        border-radius: 6px;
+        padding: 15px;
+        margin: 15px 0;
+        color: #e65100;
+      }
+      
+      .problem-item {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 15px;
+        margin: 10px 0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      }
+      
+      .solution-btn {
+        background: #007acc;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        margin: 10px 0;
+        transition: background 0.3s;
+      }
+      
+      .solution-btn:hover {
+        background: #005999;
+      }
+      
+      .solution {
+        display: none;
+        background: #f0f8ff;
+        border: 1px solid #007acc;
+        border-radius: 4px;
+        padding: 15px;
+        margin-top: 10px;
+      }
+      
+      .key-takeaways {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 30px;
+      }
+      
+      .key-takeaways h3 {
+        margin-top: 0;
+        color: white;
+      }
+      
+      .key-takeaways ul {
+        margin: 0;
+        padding-left: 20px;
+      }
+      
+      .key-takeaways li {
+        margin: 8px 0;
+      }
+      
+      #seriesCanvas {
+        border: 2px solid #007acc;
+        border-radius: 8px;
+        background: white;
+        margin: 20px 0;
+        max-width: 100%;
+        height: auto;
+      }
+      
+      .visual-guide {
+        text-align: center;
+        margin: 20px 0;
+      }
+      
+      .visual-guide p {
+        font-style: italic;
+        color: #666;
+        margin-bottom: 20px;
+      }
+      
+      .important-note {
+        background: #ffebee;
+        border: 1px solid #f44336;
+        border-radius: 6px;
+        padding: 15px;
+        margin: 15px 0;
+        color: #c62828;
+      }
+    </style>
+    <div class="section">
+      <h2>📚 Core Concepts</h2>
+      <p>Infinite series are sums of infinitely many terms. When we work with convergent series, we can manipulate them algebraically much like finite sums, but with important caveats about convergence.</p>
+      
+      <div class="highlight-box">
+        For infinite series $\sum_{n=1}^{\infty} a_n$ and $\sum_{n=1}^{\infty} b_n$ that both converge to sums S and T respectively, the following properties hold:
+      </div>
+      
+      <div class="important-note">
+        <strong>Important:</strong> These properties only apply when both series converge. If either series diverges, the properties generally do not hold.
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>📊 Fundamental Properties</h2>
+      <div class="properties-grid">
+        <div class="property-card">
+          <h3>1. Scalar Multiplication</h3>
+          <div class="formula">
+            $\sum_{n=1}^{\infty} k a_n = k \sum_{n=1}^{\infty} a_n = kS$
+          </div>
+          <p>Multiplying each term by a constant k multiplies the sum by k.</p>
+          <div class="convergence-note">
+            Requires: $\sum a_n$ converges
+          </div>
+        </div>
+        
+        <div class="property-card">
+          <h3>2. Addition & Subtraction</h3>
+          <div class="formula">
+            $\sum_{n=1}^{\infty} (a_n + b_n) = S + T$
+            <br>
+            $\sum_{n=1}^{\infty} (a_n - b_n) = S - T$
+          </div>
+          <p>Can add or subtract corresponding terms of convergent series.</p>
+          <div class="convergence-note">
+            Requires: Both series converge
+          </div>
+        </div>
+        
+        <div class="property-card">
+          <h3>3. Term-by-Term Operations</h3>
+          <div class="formula">
+            $\sum_{n=1}^{\infty} c a_n = cS$ (c constant)
+            <br>
+            $\sum_{n=1}^{\infty} (c a_n + d b_n) = cS + dT$
+          </div>
+          <p>Linear combinations of convergent series converge to the same linear combination of their sums.</p>
+          <div class="convergence-note">
+            Requires: All series converge
+          </div>
+        </div>
+        
+        <div class="property-card">
+          <h3>4. Partial Sums</h3>
+          <div class="formula">
+            If $\sum a_n = S$, then $S_n → S$
+            <br>
+            where $S_n = \sum_{k=1}^{n} a_k$
+          </div>
+          <p>The sequence of partial sums converges to the series sum.</p>
+          <div class="convergence-note">
+            This is the definition of convergence
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>🔍 Visual Guide</h2>
+      <div class="visual-guide">
+        <p>Interactive visualization showing how series properties work with partial sums:</p>
+        <canvas id="seriesCanvas" width="800" height="500"></canvas>
+      </div>
+      
+      <div class="highlight-box">
+        The visualization shows two convergent series and demonstrates:
+        <br>• How their sum behaves (S + T)
+        <br>• How scalar multiplication works (2S)
+        <br>• How the properties preserve convergence
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>⚠️ Important Caveats</h2>
+      <ul>
+        <li><strong>Convergence Required:</strong> These properties only work for convergent series. Divergent series don't behave predictably under algebraic operations.</li>
+        <li><strong>Term-by-Term Limits:</strong> You cannot always take limits term by term: $\lim_{n\to\infty} \sum_{k=1}^{n} a_k \neq \sum_{k=1}^{\infty} \lim_{n\to\infty} a_k$ in general.</li>
+        <li><strong>Absolute Convergence:</strong> Absolutely convergent series can be rearranged arbitrarily, but conditionally convergent series cannot.</li>
+        <li><strong>Multiplication:</strong> The Cauchy product of two series may converge even if the original series diverge.</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>💡 Examples</h2>
+      <div class="problem-item">
+        <strong>Example 1:</strong> Given $\sum_{n=1}^{\infty} \dfrac{1}{2^n} = 1$ and $\sum_{n=1}^{\infty} \dfrac{1}{4^n} = \dfrac{1}{3}$, find $\sum_{n=1}^{\infty} \left(2 \cdot \dfrac{1}{2^n} + 3 \cdot \dfrac{1}{4^n}\right)$.
+        <br><br>
+        Using properties: $2 \cdot 1 + 3 \cdot \dfrac{1}{3} = 2 + 1 = 3$.
+      </div>
+      
+      <div class="problem-item">
+        <strong>Example 2:</strong> If $\sum a_n = 2$ and $\sum b_n = 3$, what is $\sum (a_n - b_n)$?
+        <br><br>
+        Using subtraction property: $2 - 3 = -1$.
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>🔬 Applications</h2>
+      <ul>
+        <li><strong>Power Series:</strong> Manipulating Taylor series expansions</li>
+        <li><strong>Fourier Series:</strong> Combining trigonometric series</li>
+        <li><strong>Generating Functions:</strong> Solving recurrence relations</li>
+        <li><strong>Probability:</strong> Working with infinite probability distributions</li>
+        <li><strong>Physics:</strong> Series solutions to differential equations</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>📝 Practice Problems</h2>
+      
+      <div class="problem-item">
+        <strong>Problem 1:</strong> Given $\sum_{n=1}^{\infty} \dfrac{1}{3^n} = \dfrac{1}{2}$ and $\sum_{n=1}^{\infty} \dfrac{1}{5^n} = \dfrac{1}{4}$, find $\sum_{n=1}^{\infty} \left(\dfrac{1}{3^n} + \dfrac{1}{5^n}\right)$.
+        <br><br>
+        <button class="solution-btn" onclick="toggleSolution('prob1')">Show Solution</button>
+        <div id="prob1" class="solution">
+          Using addition property: $\dfrac{1}{2} + \dfrac{1}{4} = \dfrac{3}{4}$.
+        </div>
+      </div>
+      
+      <div class="problem-item">
+        <strong>Problem 2:</strong> If $\sum a_n = 5$, find $\sum 3a_n$.
+        <br><br>
+        <button class="solution-btn" onclick="toggleSolution('prob2')">Show Solution</button>
+        <div id="prob2" class="solution">
+          Using scalar multiplication: $3 \times 5 = 15$.
+        </div>
+      </div>
+      
+      <div class="problem-item">
+        <strong>Problem 3:</strong> Given $\sum p_n = 7$ and $\sum q_n = 4$, find $\sum (2p_n - q_n)$.
+        <br><br>
+        <button class="solution-btn" onclick="toggleSolution('prob3')">Show Solution</button>
+        <div id="prob3" class="solution">
+          Using properties: $2 \times 7 - 4 = 14 - 4 = 10$.
+        </div>
+      </div>
+      
+      <div class="problem-item">
+        <strong>Problem 4:</strong> Explain why $\sum_{n=1}^{\infty} n$ diverges, so we cannot apply these properties to it.
+        <br><br>
+        <button class="solution-btn" onclick="toggleSolution('prob4')">Show Solution</button>
+        <div id="prob4" class="solution">
+          The harmonic series $\sum \dfrac{1}{n}$ diverges, and $\sum n$ grows even faster, so it definitely diverges. These properties only apply to convergent series.
+        </div>
+      </div>
+    </div>
+
+    <div class="key-takeaways">
+      <h3>🎯 Key Takeaways</h3>
+      <ul>
+        <li>Series properties only apply to convergent series</li>
+        <li>Scalar multiplication: multiply sum by constant</li>
+        <li>Addition/subtraction: combine sums of convergent series</li>
+        <li>Linear combinations preserve convergence</li>
+        <li>Divergent series don't follow these rules</li>
+        <li>Absolute convergence allows rearrangement</li>
+        <li>Properties are essential for series manipulation</li>
+      </ul>
+    </div>
+   </div>
+  </div>
+  <script>
+    function toggleSolution(id) {
+      const solution = document.getElementById(id);
+      const button = solution.previousElementSibling;
+      
+      if (solution.style.display === 'none' || solution.style.display === '') {
+        solution.style.display = 'block';
+        button.textContent = 'Hide Solution';
+      } else {
+        solution.style.display = 'none';
+        button.textContent = 'Show Solution';
+      }
+    }
+
+    function drawSeriesVisualization() {
+      const canvas = document.getElementById('seriesCanvas');
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+      
+      // Clear canvas
+      ctx.clearRect(0, 0, width, height);
+      
+      // Set up coordinate system
+      const margin = 60;
+      const plotWidth = width - 2 * margin;
+      const plotHeight = height - 2 * margin;
+      
+      // Draw axes
+      ctx.strokeStyle = '#333';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(margin, margin);
+      ctx.lineTo(margin, height - margin);
+      ctx.lineTo(width - margin, height - margin);
+      ctx.stroke();
+      
+      // Labels
+      ctx.fillStyle = '#333';
+      ctx.font = '14px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('Number of terms (n)', width - margin, height - margin + 40);
+      ctx.save();
+      ctx.translate(margin - 40, height/2);
+      ctx.rotate(-Math.PI/2);
+      ctx.fillText('Partial sum Sₙ', 0, 0);
+      ctx.restore();
+      
+      // Scale factors
+      const nMin = 0, nMax = 15;
+      const sMin = 0, sMax = 8;
+      const nScale = plotWidth / (nMax - nMin);
+      const sScale = plotHeight / (sMax - sMin);
+      
+      // Function to convert to canvas coordinates
+      const toCanvasX = (n) => margin + (n - nMin) * nScale;
+      const toCanvasY = (s) => height - margin - (s - sMin) * sScale;
+      
+      // Draw grid
+      ctx.strokeStyle = '#eee';
+      ctx.lineWidth = 1;
+      for (let n = nMin; n <= nMax; n += 2) {
+        const cx = toCanvasX(n);
+        ctx.beginPath();
+        ctx.moveTo(cx, margin);
+        ctx.lineTo(cx, height - margin);
+        ctx.stroke();
+      }
+      for (let s = sMin; s <= sMax; s += 1) {
+        const cy = toCanvasY(s);
+        ctx.beginPath();
+        ctx.moveTo(margin, cy);
+        ctx.lineTo(width - margin, cy);
+        ctx.stroke();
+      }
+      
+      // Define two convergent series
+      const seriesA = { name: 'Series A: 1/2ⁿ', color: '#27ae60', terms: [] };
+      const seriesB = { name: 'Series B: 1/4ⁿ', color: '#3498db', terms: [] };
+      const sumAB = { name: 'A + B', color: '#e74c3c', terms: [] };
+      const scalarA = { name: '2 × A', color: '#f39c12', terms: [] };
+      
+      // Calculate partial sums
+      for (let n = 0; n <= nMax; n++) {
+        if (n === 0) {
+          seriesA.terms.push(0);
+          seriesB.terms.push(0);
+          sumAB.terms.push(0);
+          scalarA.terms.push(0);
+        } else {
+          // Series A: sum of 1/2^k for k=1 to n
+          const termA = 1 / Math.pow(2, n);
+          seriesA.terms.push(seriesA.terms[n-1] + termA);
+          
+          // Series B: sum of 1/4^k for k=1 to n
+          const termB = 1 / Math.pow(4, n);
+          seriesB.terms.push(seriesB.terms[n-1] + termB);
+          
+          // A + B
+          sumAB.terms.push(seriesA.terms[n] + seriesB.terms[n]);
+          
+          // 2 × A
+          scalarA.terms.push(2 * seriesA.terms[n]);
+        }
+      }
+      
+      // Plot all series
+      const allSeries = [seriesA, seriesB, sumAB, scalarA];
+      
+      allSeries.forEach(ser => {
+        ctx.strokeStyle = ser.color;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        
+        for (let n = 0; n <= nMax; n++) {
+          const cx = toCanvasX(n);
+          const cy = toCanvasY(ser.terms[n]);
+          
+          if (n === 0) ctx.moveTo(cx, cy);
+          else ctx.lineTo(cx, cy);
+          
+          // Draw point
+          ctx.fillStyle = ser.color;
+          ctx.beginPath();
+          ctx.arc(cx, cy, 3, 0, 2 * Math.PI);
+          ctx.fill();
+        }
+        ctx.stroke();
+      });
+      
+      // Draw convergence lines
+      ctx.strokeStyle = '#666';
+      ctx.setLineDash([5, 5]);
+      ctx.lineWidth = 2;
+      
+      const limits = [
+        { value: 1, label: 'A → 1', color: '#27ae60' },
+        { value: 1/3, label: 'B → 1/3', color: '#3498db' },
+        { value: 1 + 1/3, label: 'A+B → 4/3', color: '#e74c3c' },
+        { value: 2, label: '2A → 2', color: '#f39c12' }
+      ];
+      
+      limits.forEach(limit => {
+        ctx.strokeStyle = limit.color;
+        ctx.beginPath();
+        ctx.moveTo(margin, toCanvasY(limit.value));
+        ctx.lineTo(width - margin, toCanvasY(limit.value));
+        ctx.stroke();
+      });
+      
+      ctx.setLineDash([]);
+      
+      // Legend
+      const legendX = margin + 10;
+      let legendY = margin + 20;
+      
+      allSeries.forEach(ser => {
+        ctx.strokeStyle = ser.color;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(legendX, legendY);
+        ctx.lineTo(legendX + 30, legendY);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#333';
+        ctx.font = '11px Arial';
+        ctx.textAlign = 'left';
+        ctx.fillText(ser.name, legendX + 40, legendY + 4);
+        
+        legendY += 18;
+      });
+      
+      // Convergence indicators
+      ctx.fillStyle = '#27ae60';
+      ctx.font = '10px Arial';
+      ctx.fillText('→ 1', width - margin - 20, toCanvasY(1) - 5);
+      
+      ctx.fillStyle = '#3498db';
+      ctx.fillText('→ 1/3', width - margin - 30, toCanvasY(1/3) - 5);
+      
+      ctx.fillStyle = '#e74c3c';
+      ctx.fillText('→ 4/3', width - margin - 30, toCanvasY(4/3) - 5);
+      
+      ctx.fillStyle = '#f39c12';
+      ctx.fillText('→ 2', width - margin - 20, toCanvasY(2) - 5);
+    }
+
+    // Initialize visualization when page loads
+    window.onload = function() {
+      drawSeriesVisualization();
+    };
+  </script>
+ </body>
+</html>

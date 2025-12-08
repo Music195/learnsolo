@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<!-- tags: Geometry -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Circumcenter and Circumcircle of a Triangle
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   /* Enhanced text containment and scrolling */
+   .container, .main-content, .section, .explain, .formula, .condition, .example, .application, .problem-item, .solution-content, .key-takeaways, .interactive-demo, .demo-result, .calculation-steps, .calculation-step, .rule-card, .visualization-container, .diagram-container, .theorem-statement, .proof-steps, .proof-step, .geometry-explanation {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    overflow: auto;
+   }
+   
+   /* Theorem statement styling */
+   .theorem-statement {
+    background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+    border: 3px solid #f57c00;
+    border-radius: 15px;
+    padding: 25px;
+    margin: 25px 0;
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: bold;
+    box-shadow: 0 6px 12px rgba(245, 124, 0, 0.15);
+   }
+   
+   .theorem-statement .formula {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px solid #f57c00;
+    margin: 15px 0;
+    font-size: 1.1em;
+   }
+   
+   /* Geometry explanation */
+   .geometry-explanation {
+    background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%);
+    border: 2px solid #e91e63;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 4px 8px rgba(233, 30, 99, 0.1);
+   }
+   
+   .geometry-explanation h3 {
+    color: #c2185b;
+    margin-top: 0;
+    font-size: 1.1em;
+   }
+   
+   /* Interactive demo container */
+   .interactive-demo {
+    background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+    border: 2px solid #4caf50;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 4px 8px rgba(76, 175, 80, 0.1);
+   }
+   
+   .interactive-demo h3 {
+    color: #2e7d32;
+    margin-top: 0;
+    font-size: 1.1em;
+   }
+   
+   /* Canvas styling */
+   #circumcenterCanvas {
+    border: 2px solid #2196f3;
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0 2px 8px rgba(33, 150, 243, 0.2);
+   }
+   
+   /* Control panel */
+   .control-panel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin: 15px 0;
+    padding: 15px;
+    background: #f5f5f5;
+    border-radius: 8px;
+   }
+   
+   .control-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 120px;
+   }
+   
+   .control-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+   }
+   
+   .control-group input[type="range"] {
+    width: 100%;
+   }
+   
+   .control-group .value-display {
+    text-align: center;
+    font-weight: bold;
+    color: #2196f3;
+    margin-top: 5px;
+   }
+   
+   /* Proof steps */
+   .proof-steps {
+    background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+    border: 2px solid #9c27b0;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 4px 8px rgba(156, 39, 176, 0.1);
+   }
+   
+   .proof-step {
+    background: white;
+    border: 1px solid #9c27b0;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px 0;
+    box-shadow: 0 2px 4px rgba(156, 39, 176, 0.1);
+   }
+   
+   .proof-step h4 {
+    color: #7b1fa2;
+    margin: 0 0 10px 0;
+    font-size: 1em;
+   }
+   
+   /* Examples and applications */
+   .example, .application {
+    background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+    border: 2px solid #ff9800;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 4px 8px rgba(255, 152, 0, 0.1);
+   }
+   
+   .example h3, .application h3 {
+    color: #e65100;
+    margin-top: 0;
+    font-size: 1.1em;
+   }
+   
+   /* Practice problems */
+   .practice-problems {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    border: 2px solid #2196f3;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 4px 8px rgba(33, 150, 243, 0.1);
+   }
+   
+   .practice-problems h3 {
+    color: #0d47a1;
+    margin-top: 0;
+    font-size: 1.1em;
+   }
+   
+   .problem-item {
+    background: white;
+    border: 1px solid #2196f3;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px 0;
+    box-shadow: 0 2px 4px rgba(33, 150, 243, 0.1);
+   }
+   
+   .problem-item .problem-text {
+    font-weight: bold;
+    margin-bottom: 10px;
+   }
+   
+   .solution-toggle {
+    background: #2196f3;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+   }
+   
+   .solution-toggle:hover {
+    background: #1976d2;
+   }
+   
+   .solution-content {
+    margin-top: 15px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 5px;
+    border-left: 4px solid #2196f3;
+   }
+   
+   /* Key takeaways */
+   .key-takeaways {
+    background: linear-gradient(135deg, #f1f8e9 0%, #dcedc8 100%);
+    border: 2px solid #689f38;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 4px 8px rgba(104, 159, 56, 0.1);
+   }
+   
+   .key-takeaways h3 {
+    color: #33691e;
+    margin-top: 0;
+    font-size: 1.1em;
+   }
+   
+   .key-takeaways ul {
+    margin: 0;
+    padding-left: 20px;
+   }
+   
+   .key-takeaways li {
+    margin: 8px 0;
+    line-height: 1.5;
+   }
+   
+   /* Responsive design */
+   @media (max-width: 768px) {
+    .control-panel {
+     flex-direction: column;
+    }
+    
+    .control-group {
+     min-width: auto;
+    }
+    
+    .theorem-statement {
+     font-size: 1.1em;
+     padding: 20px;
+    }
+    
+    .interactive-demo, .proof-steps, .example, .application, .practice-problems, .key-takeaways {
+     padding: 15px;
+    }
+   }
+  </style>
+ <body>
+  <div class="fancy-title" data-topic="Geometry">
+   Circumcenter and Circumcircle of a Triangle
+  </div>
+  <div class="container">
+   <div class="main-content">
+    <header style="display: flex; align-items: center; gap: 20px; margin-bottom: 38px; background: linear-gradient(90deg, #e3f2fd 60%, #fff 100%); border-radius: 14px 14px 0 0; box-shadow: 0 2px 12px #1976d222; padding: 18px 28px;">
+     <svg height="38" style="flex-shrink:0;" viewbox="0 0 38 38" width="38">
+      <circle cx="19" cy="19" fill="#fff3e0" r="18" stroke="#e65100" stroke-width="2">
+      </circle>
+      <path d="M10 28 L19 8 L28 28 Z" fill="#e65100" opacity="0.7">
+      </path>
+      <circle cx="19" cy="8" fill="#1976d2" r="2.2">
+      </circle>
+      <circle cx="10" cy="28" fill="#1976d2" r="2.2">
+      </circle>
+      <circle cx="28" cy="28" fill="#558b2f" r="2.2">
+      </circle>
+     </svg>
+     <div>
+      <h1 style="font-family: 'Noto Sans JP', 'Segoe UI', serif; font-size: 2.2em; color: #1976d2; margin: 0 0 2px 0; letter-spacing: 1px; text-shadow: 0 2px 8px #90caf9aa;">
+       Circumcenter and Circumcircle
+      </h1>
+      <div style="color: #607d8b; font-size: 1.08em; font-weight: 500; margin-top: 2px;">
+       Geometry • Triangle Properties
+      </div>
+     </div>
+    </header>
+
+    <div class="theorem-statement">
+     <h2>Circumcenter Theorem</h2>
+     <p>The three perpendicular bisectors of the sides of a triangle intersect at a single point called the <strong>circumcenter</strong>. This point is equidistant from all three vertices of the triangle.</p>
+     <div class="formula">
+      If $O$ is the circumcenter of $\triangle ABC$, then:<br>
+      $OA = OB = OC = R$<br>
+      where $R$ is the circumradius.
+     </div>
+    </div>
+
+    <div class="geometry-explanation">
+     <h3>Understanding the Circumcenter</h3>
+     <p>The circumcenter is the center of the circle that passes through all three vertices of the triangle. This circle is called the <strong>circumcircle</strong> or <strong>circumscribed circle</strong>.</p>
+     <p>The circumcenter has different positions depending on the type of triangle:</p>
+     <ul>
+      <li><strong>Acute triangle:</strong> Circumcenter lies inside the triangle</li>
+      <li><strong>Right triangle:</strong> Circumcenter lies on the hypotenuse (midpoint)</li>
+      <li><strong>Obtuse triangle:</strong> Circumcenter lies outside the triangle</li>
+     </ul>
+    </div>
+
+    <div class="interactive-demo">
+     <h3>Interactive Circumcenter Demonstration</h3>
+     <p>Move the sliders to adjust the triangle and observe how the circumcenter changes:</p>
+     
+     <div class="control-panel">
+      <div class="control-group">
+       <label for="angleA">Angle A: <span id="angleAValue">60°</span></label>
+       <input type="range" id="angleA" min="30" max="120" value="60" step="5">
+      </div>
+      <div class="control-group">
+       <label for="angleB">Angle B: <span id="angleBValue">50°</span></label>
+       <input type="range" id="angleB" min="30" max="120" value="50" step="5">
+      </div>
+      <div class="control-group">
+       <label for="sideC">Side c: <span id="sideCValue">100</span></label>
+       <input type="range" id="sideC" min="50" max="150" value="100" step="5">
+      </div>
+     </div>
+     
+     <canvas id="circumcenterCanvas" width="500" height="400"></canvas>
+     
+     <div class="demo-result">
+      <p><strong>Circumradius:</strong> <span id="circumradius">0.00</span></p>
+      <p><strong>Circumcenter coordinates:</strong> (<span id="centerX">0.00</span>, <span id="centerY">0.00</span>)</p>
+      <p><strong>Triangle type:</strong> <span id="triangleType">Acute</span></p>
+     </div>
+    </div>
+
+    <div class="proof-steps">
+     <h3>Proof: Existence of Circumcenter</h3>
+     
+     <div class="proof-step">
+      <h4>Step 1: Perpendicular Bisectors</h4>
+      <p>Consider $\triangle ABC$. Draw the perpendicular bisectors of sides $AB$, $BC$, and $CA$. Each perpendicular bisector passes through the midpoint of its side and is perpendicular to it.</p>
+     </div>
+     
+     <div class="proof-step">
+      <h4>Step 2: Intersection Point</h4>
+      <p>The perpendicular bisector of $AB$ intersects the perpendicular bisector of $BC$ at point $O$. We need to show that $O$ also lies on the perpendicular bisector of $AC$.</p>
+     </div>
+     
+     <div class="proof-step">
+      <h4>Step 3: Distance Equality</h4>
+      <p>Since $O$ lies on the perpendicular bisector of $AB$, $OA = OB$.<br>
+      Since $O$ lies on the perpendicular bisector of $BC$, $OB = OC$.<br>
+      Therefore, $OA = OB = OC$, so $O$ is equidistant from all three vertices.</p>
+     </div>
+     
+     <div class="proof-step">
+      <h4>Step 4: Circumcircle Construction</h4>
+      <p>The circle with center $O$ and radius $OA$ (or $OB$ or $OC$) will pass through all three vertices $A$, $B$, and $C$, forming the circumcircle.</p>
+     </div>
+    </div>
+
+    <div class="example">
+     <h3>Example 1: Finding Circumcenter Coordinates</h3>
+     <p>Find the circumcenter of $\triangle ABC$ with vertices $A(1,1)$, $B(4,5)$, and $C(7,2)$.</p>
+     
+     <h4>Solution:</h4>
+     <p><strong>Step 1:</strong> Find midpoints of the sides:</p>
+     <ul>
+      <li>Midpoint of $AB$: $((1+4)/2, (1+5)/2) = (2.5, 3)$</li>
+      <li>Midpoint of $BC$: $((4+7)/2, (5+2)/2) = (5.5, 3.5)$</li>
+      <li>Midpoint of $AC$: $((1+7)/2, (1+2)/2) = (4, 1.5)$</li>
+     </ul>
+     
+     <p><strong>Step 2:</strong> Find equations of perpendicular bisectors:</p>
+     <ul>
+      <li>Perp. bisector of $AB$: slope of $AB$ is $(5-1)/(4-1) = 4/3$, so slope of perp. bisector is $-3/4$.<br>
+      Equation: $y - 3 = -\frac{3}{4}(x - 2.5) \Rightarrow y = -\frac{3}{4}x + \frac{15}{4} + 3 = -\frac{3}{4}x + \frac{27}{4}$</li>
+      <li>Perp. bisector of $BC$: slope of $BC$ is $(2-5)/(7-4) = (-3)/3 = -1$, so slope of perp. bisector is $1$.<br>
+      Equation: $y - 3.5 = 1(x - 5.5) \Rightarrow y = x - 5.5 + 3.5 = x - 2$</li>
+     </ul>
+     
+     <p><strong>Step 3:</strong> Solve the system:<br>
+     $-\frac{3}{4}x + \frac{27}{4} = x - 2$<br>
+     $\frac{27}{4} + 2 = x + \frac{3}{4}x$<br>
+     $\frac{35}{4} = \frac{7}{4}x$<br>
+     $x = 5$<br>
+     $y = 5 - 2 = 3$</p>
+     
+     <p><strong>Circumcenter:</strong> $O(5, 3)$</p>
+     <p><strong>Circumradius:</strong> $R = \sqrt{(5-1)^2 + (3-1)^2} = \sqrt{16 + 4} = \sqrt{20} = 2\sqrt{5} \approx 4.47$</p>
+    </div>
+
+    <div class="example">
+     <h3>Example 2: Circumcenter in Right Triangle</h3>
+     <p>Find the circumcenter of right triangle $ABC$ with right angle at $C(0,0)$, $A(3,0)$, and $B(0,4)$.</p>
+     
+     <h4>Solution:</h4>
+     <p>Since it's a right triangle, the circumcenter lies at the midpoint of the hypotenuse $AB$.</p>
+     <p>Midpoint of $AB$: $((3+0)/2, (0+4)/2) = (1.5, 2)$</p>
+     <p><strong>Circumcenter:</strong> $O(1.5, 2)$</p>
+     <p><strong>Circumradius:</strong> $R = \sqrt{(1.5-0)^2 + (2-0)^2} = \sqrt{2.25 + 4} = \sqrt{6.25} = 2.5$</p>
+    </div>
+
+    <div class="application">
+     <h3>Applications of Circumcenter</h3>
+     
+     <h4>Navigation and GPS</h4>
+     <p>The circumcenter concept is used in trilateration, a method used by GPS systems to determine location by measuring distances to multiple satellites.</p>
+     
+     <h4>Circle Construction</h4>
+     <p>The circumcircle is the smallest circle that can contain the triangle. This is useful in computer graphics for bounding boxes and collision detection.</p>
+     
+     <h4>Engineering Applications</h4>
+     <p>In structural engineering, the circumcenter helps determine the center of mass and balance points for triangular frameworks.</p>
+    </div>
+
+    <div class="practice-problems">
+     <h3>Practice Problems</h3>
+     
+     <div class="problem-item">
+      <div class="problem-text">
+       1. Find the circumcenter of $\triangle ABC$ with vertices $A(2,3)$, $B(5,7)$, and $C(8,4)$.
+      </div>
+      <button class="solution-toggle" onclick="toggleSolution(1)">Show Solution</button>
+      <div class="solution-content" id="solution1" style="display: none;">
+       <p><strong>Midpoints:</strong></p>
+       <ul>
+        <li>$AB$: $(3.5, 5)$</li>
+        <li>$BC$: $(6.5, 5.5)$</li>
+        <li>$AC$: $(5, 3.5)$</li>
+       </ul>
+       <p><strong>Perp. bisector of AB:</strong> slope of AB is 2, so perp. slope is -1/2.<br>
+       Equation: $y - 5 = -\frac{1}{2}(x - 3.5) \Rightarrow y = -\frac{1}{2}x + \frac{3.5}{2} + 5 = -\frac{1}{2}x + 6.75$</p>
+       <p><strong>Perp. bisector of BC:</strong> slope of BC is 3/3=1, so perp. slope is -1.<br>
+       Equation: $y - 5.5 = -1(x - 6.5) \Rightarrow y = -x + 6.5 + 5.5 = -x + 12$</p>
+       <p><strong>Intersection:</strong> Solve: $6.75 - \frac{1}{2}x = 12 - x$<br>
+       $\frac{1}{2}x = 5.25 \Rightarrow x = 10.5$<br>
+       $y = 12 - 10.5 = 1.5$</p>
+       <p><strong>Circumcenter:</strong> $O(10.5, 1.5)$</p>
+      </div>
+     </div>
+     
+     <div class="problem-item">
+      <div class="problem-text">
+       2. In $\triangle ABC$, the circumcenter is at $(3,4)$ and vertex $A$ is at $(1,2)$. Find the distance from circumcenter to vertex $B$.
+      </div>
+      <button class="solution-toggle" onclick="toggleSolution(2)">Show Solution</button>
+      <div class="solution-content" id="solution2" style="display: none;">
+       <p>The distance from circumcenter to any vertex is the circumradius $R$.<br>
+       $R = \sqrt{(3-1)^2 + (4-2)^2} = \sqrt{4 + 4} = \sqrt{8} = 2\sqrt{2} \approx 2.828$</p>
+       <p>Therefore, the distance from circumcenter to vertex $B$ is $2\sqrt{2}$ units.</p>
+      </div>
+     </div>
+     
+     <div class="problem-item">
+      <div class="problem-text">
+       3. Determine the type of triangle where the circumcenter lies outside the triangle.
+      </div>
+      <button class="solution-toggle" onclick="toggleSolution(3)">Show Solution</button>
+      <div class="solution-content" id="solution3" style="display: none;">
+       <p>The circumcenter lies outside the triangle in an <strong>obtuse triangle</strong> (a triangle with one obtuse angle greater than 90°).</p>
+       <ul>
+        <li>Acute triangle: circumcenter inside</li>
+        <li>Right triangle: circumcenter on hypotenuse</li>
+        <li>Obtuse triangle: circumcenter outside</li>
+       </ul>
+      </div>
+     </div>
+     
+     <div class="problem-item">
+      <div class="problem-text">
+       4. Find the equation of the circumcircle of $\triangle ABC$ with vertices $A(0,0)$, $B(4,0)$, and $C(2,3)$.
+      </div>
+      <button class="solution-toggle" onclick="toggleSolution(4)">Show Solution</button>
+      <div class="solution-content" id="solution4" style="display: none;">
+       <p><strong>Circumcenter:</strong> Intersection of perpendicular bisectors.</p>
+       <p>Midpoint of $AB$: $(2, 0)$<br>
+       Midpoint of $AC$: $(1, 1.5)$</p>
+       <p>Perp. bisector of $AB$ (horizontal): $y = 0$<br>
+       Perp. bisector of $AC$: slope of $AC$ is $3/2$, so perp. slope is $-2/3$.<br>
+       Equation: $y - 1.5 = -\frac{2}{3}(x - 1) \Rightarrow y = -\frac{2}{3}x + \frac{2}{3} + 1.5 = -\frac{2}{3}x + \frac{7}{3}$</p>
+       <p>Intersection: $0 = -\frac{2}{3}x + \frac{7}{3} \Rightarrow x = \frac{7}{2} = 3.5$<br>
+       Circumcenter: $O(3.5, 0)$</p>
+       <p><strong>Radius:</strong> $R = \sqrt{(3.5-0)^2 + (0-0)^2} = 3.5$</p>
+       <p><strong>Equation:</strong> $(x - 3.5)^2 + (y - 0)^2 = (3.5)^2$<br>
+       $(x - 3.5)^2 + y^2 = 12.25$</p>
+      </div>
+     </div>
+     
+     <div class="problem-item">
+      <div class="problem-text">
+       5. In $\triangle ABC$, if the circumcenter coincides with the centroid, what can you conclude about the triangle?
+      </div>
+      <button class="solution-toggle" onclick="toggleSolution(5)">Show Solution</button>
+      <div class="solution-content" id="solution5" style="display: none;">
+       <p>If the circumcenter coincides with the centroid, the triangle must be <strong>equilateral</strong>. In an equilateral triangle, all four centers (circumcenter, centroid, orthocenter, and incenter) coincide at the same point.</p>
+      </div>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <h3>Key Takeaways</h3>
+     <ul>
+      <li>The circumcenter is the intersection point of the three perpendicular bisectors of a triangle's sides.</li>
+      <li>The circumcenter is equidistant from all three vertices of the triangle.</li>
+      <li>The circumcircle passes through all three vertices with the circumcenter as its center.</li>
+      <li>The position of the circumcenter depends on the triangle type: inside (acute), on hypotenuse (right), or outside (obtuse).</li>
+      <li>The circumradius $R$ can be calculated using formulas: $R = \frac{abc}{4K}$ where $K$ is the area.</li>
+      <li>The circumcenter has important applications in navigation, computer graphics, and engineering.</li>
+      <li>In an equilateral triangle, the circumcenter coincides with the centroid and orthocenter.</li>
+     </ul>
+    </div>
+   </div>
+  </div>
+
+  <script>
+   // Interactive circumcenter demonstration
+   const canvas = document.getElementById('circumcenterCanvas');
+   const ctx = canvas.getContext('2d');
+   const angleAInput = document.getElementById('angleA');
+   const angleBInput = document.getElementById('angleB');
+   const sideCInput = document.getElementById('sideC');
+   const angleAValue = document.getElementById('angleAValue');
+   const angleBValue = document.getElementById('angleBValue');
+   const sideCValue = document.getElementById('sideCValue');
+   const circumradiusDisplay = document.getElementById('circumradius');
+   const centerXDisplay = document.getElementById('centerX');
+   const centerYDisplay = document.getElementById('centerY');
+   const triangleTypeDisplay = document.getElementById('triangleType');
+
+   function drawTriangle() {
+    const angleA = parseInt(angleAInput.value) * Math.PI / 180;
+    const angleB = parseInt(angleBInput.value) * Math.PI / 180;
+    const sideC = parseInt(sideCInput.value);
+    
+    // Calculate angle C
+    const angleC = Math.PI - angleA - angleB;
+    
+    // Triangle vertices
+    const A = { x: 100, y: 300 };
+    const B = { x: A.x + sideC, y: A.y };
+    const C = {
+     x: A.x + sideC * Math.cos(angleB),
+     y: A.y - sideC * Math.sin(angleB)
+    };
+    
+    // Calculate circumcenter
+    const D = ((A.x - B.x) * (A.x + B.x) + (A.y - B.y) * (A.y + B.y)) / (2 * (A.x - B.x));
+    const E = ((C.x - B.x) * (C.x + B.x) + (C.y - B.y) * (C.y + B.y)) / (2 * (C.x - B.x));
+    
+    const circumcenter = {
+     x: (D * (A.y - B.y) - E * (A.y - B.y) + (A.x + B.x) * (A.y - B.y) - (C.x + B.x) * (A.y - B.y)) / (2 * ((A.x - B.x) * (A.y - B.y) - (C.x - B.x) * (A.y - B.y))),
+     y: (D * (A.x - B.x) - E * (C.x - B.x) + (A.x + B.x) * (A.x - B.x) - (C.x + B.x) * (C.x - B.x)) / (2 * ((A.x - B.x) * (C.y - B.y) - (C.x - B.x) * (A.y - B.y)))
+    };
+    
+    // Calculate circumradius
+    const circumradius = Math.sqrt(Math.pow(circumcenter.x - A.x, 2) + Math.pow(circumcenter.y - A.y, 2));
+    
+    // Determine triangle type
+    let triangleType = "Acute";
+    if (angleA > Math.PI/2 || angleB > Math.PI/2 || angleC > Math.PI/2) {
+     triangleType = "Obtuse";
+    } else if (angleA === Math.PI/2 || angleB === Math.PI/2 || angleC === Math.PI/2) {
+     triangleType = "Right";
+    }
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw circumcircle
+    ctx.beginPath();
+    ctx.arc(circumcenter.x, circumcenter.y, circumradius, 0, 2 * Math.PI);
+    ctx.strokeStyle = '#90caf9';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    // Draw triangle
+    ctx.beginPath();
+    ctx.moveTo(A.x, A.y);
+    ctx.lineTo(B.x, B.y);
+    ctx.lineTo(C.x, C.y);
+    ctx.closePath();
+    ctx.strokeStyle = '#222';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    // Draw perpendicular bisectors
+    const midAB = { x: (A.x + B.x) / 2, y: (A.y + B.y) / 2 };
+    const midBC = { x: (B.x + C.x) / 2, y: (B.y + C.y) / 2 };
+    const midAC = { x: (A.x + C.x) / 2, y: (A.y + C.y) / 2 };
+    
+    ctx.beginPath();
+    ctx.moveTo(midAB.x, midAB.y);
+    ctx.lineTo(circumcenter.x, circumcenter.y);
+    ctx.strokeStyle = '#e65100';
+    ctx.setLineDash([5, 4]);
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.moveTo(midBC.x, midBC.y);
+    ctx.lineTo(circumcenter.x, circumcenter.y);
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.moveTo(midAC.x, midAC.y);
+    ctx.lineTo(circumcenter.x, circumcenter.y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    
+    // Draw circumcenter
+    ctx.beginPath();
+    ctx.arc(circumcenter.x, circumcenter.y, 4, 0, 2 * Math.PI);
+    ctx.fillStyle = '#fff';
+    ctx.fill();
+    ctx.strokeStyle = '#222';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    // Label points
+    ctx.fillStyle = '#1976d2';
+    ctx.font = '16px Arial';
+    ctx.fillText('A', A.x - 15, A.y + 5);
+    ctx.fillText('B', B.x + 5, B.y + 5);
+    ctx.fillText('C', C.x - 5, C.y - 5);
+    ctx.fillText('O', circumcenter.x + 5, circumcenter.y - 5);
+    
+    // Update displays
+    circumradiusDisplay.textContent = circumradius.toFixed(2);
+    centerXDisplay.textContent = circumcenter.x.toFixed(2);
+    centerYDisplay.textContent = circumcenter.y.toFixed(2);
+    triangleTypeDisplay.textContent = triangleType;
+   }
+   
+   // Event listeners
+   angleAInput.addEventListener('input', function() {
+    angleAValue.textContent = this.value + '°';
+    drawTriangle();
+   });
+   
+   angleBInput.addEventListener('input', function() {
+    angleBValue.textContent = this.value + '°';
+    drawTriangle();
+   });
+   
+   sideCInput.addEventListener('input', function() {
+    sideCValue.textContent = this.value;
+    drawTriangle();
+   });
+   
+   // Initial draw
+   drawTriangle();
+   
+   // Solution toggle function
+   function toggleSolution(problemNumber) {
+    const solution = document.getElementById('solution' + problemNumber);
+    const button = solution.previousElementSibling;
+    
+    if (solution.style.display === 'none') {
+     solution.style.display = 'block';
+     button.textContent = 'Hide Solution';
+    } else {
+     solution.style.display = 'none';
+     button.textContent = 'Show Solution';
+    }
+   }
+  </script>
+ </body>
+</html>

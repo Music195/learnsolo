@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equation of a Sphere - Interactive Learning</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            color: #4a5568;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .formula-block {
+            background: #f8f9fa;
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .centered {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .operation-block {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .operation-block h3 {
+            color: #4a5568;
+            margin-bottom: 15px;
+        }
+
+        .sphere-img {
+            display: block;
+            margin: 20px auto;
+            border: 2px solid #e3f2fd;
+            border-radius: 10px;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .calculator-section {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            color: white;
+        }
+
+        .calculator-title {
+            text-align: center;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .calculator-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 5px;
+        }
+
+        .tab-button {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .tab-button.active {
+            background: white;
+            color: #f5576c;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .calculator-content {
+            display: none;
+        }
+
+        .calculator-content.active {
+            display: block;
+        }
+
+        .input-group {
+            margin: 15px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .input-field {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+            background: rgba(255,255,255,0.9);
+            color: #333;
+            font-size: 14px;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: white;
+            box-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        .calculate-btn {
+            background: white;
+            color: #f5576c;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .result-display {
+            background: rgba(255,255,255,0.9);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            color: #333;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .result-title {
+            font-weight: bold;
+            color: #f5576c;
+            margin-bottom: 10px;
+        }
+
+        .canvas-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .visualization-canvas {
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 10px;
+            background: rgba(255,255,255,0.9);
+            max-width: 100%;
+            height: auto;
+        }
+
+        .practice-section {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            color: white;
+        }
+
+        .practice-title {
+            text-align: center;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .problem-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .problem-text {
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .solution-toggle {
+            background: white;
+            color: #4facfe;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .solution-toggle:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+
+        .solution {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .solution.show {
+            display: block;
+        }
+
+        .key-takeaways {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            border-radius: 15px;
+            padding: 30px;
+            color: white;
+            margin-top: 30px;
+        }
+
+        .key-takeaways h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .takeaway-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+
+        .takeaway-item {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .takeaway-item strong {
+            color: #fff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .hint-block {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .hint-block strong {
+            color: #1976d2;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .input-row {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .takeaway-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Equation of a Sphere</h1>
+            <p>Interactive Learning with 3D Visualizations</p>
+        </div>
+
+        <div class="content-card">
+            <h2 class="section-title">1. Sphere with Center (a, b, c) and Radius r</h2>
+            <p>The equation of a sphere with center (a, b, c) and radius r is:</p>
+            <div class="formula-block">
+                <div class="centered">
+                    $$(x - a)^2 + (y - b)^2 + (z - c)^2 = r^2$$
+                </div>
+            </div>
+            <p>This represents all points (x, y, z) that are at a distance r from the center (a, b, c).</p>
+        </div>
+
+        <div class="content-card">
+            <h2 class="section-title">2. Sphere with Center at the Origin</h2>
+            <p>When the center is at the origin (0, 0, 0), the equation simplifies to:</p>
+            <div class="formula-block">
+                <div class="centered">
+                    $$x^2 + y^2 + z^2 = r^2$$
+                </div>
+            </div>
+            <p>This is the equation of a sphere centered at the origin with radius r.</p>
+        </div>
+
+        <div class="content-card">
+            <h2 class="section-title">3. Sphere Diagram</h2>
+            <canvas aria-label="Sphere diagram" class="sphere-img" height="200" id="sphere-canvas" width="260"></canvas>
+        </div>
+
+        <div class="calculator-section">
+            <h2 class="calculator-title">Interactive Sphere Calculator</h2>
+            <div class="calculator-tabs">
+                <button class="tab-button active" onclick="showCalculator('general')">General Sphere</button>
+                <button class="tab-button" onclick="showCalculator('origin')">Sphere at Origin</button>
+                <button class="tab-button" onclick="showCalculator('from-points')">From Two Points</button>
+            </div>
+
+            <div id="general-calculator" class="calculator-content active">
+                <h3>General Sphere Equation</h3>
+                <div class="input-group">
+                    <label>Center coordinates (a, b, c):</label>
+                    <div class="input-row">
+                        <input type="number" id="center-x" class="input-field" placeholder="a" step="any">
+                        <input type="number" id="center-y" class="input-field" placeholder="b" step="any">
+                        <input type="number" id="center-z" class="input-field" placeholder="c" step="any">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Radius (r):</label>
+                    <input type="number" id="radius" class="input-field" placeholder="r" min="0" step="any">
+                </div>
+                <button class="calculate-btn" onclick="generateSphereEquation()">Generate Equation</button>
+                <div id="general-result" class="result-display" style="display: none;"></div>
+            </div>
+
+            <div id="origin-calculator" class="calculator-content">
+                <h3>Sphere at Origin</h3>
+                <div class="input-group">
+                    <label>Radius (r):</label>
+                    <input type="number" id="origin-radius" class="input-field" placeholder="r" min="0" step="any">
+                </div>
+                <button class="calculate-btn" onclick="generateOriginSphere()">Generate Equation</button>
+                <div id="origin-result" class="result-display" style="display: none;"></div>
+            </div>
+
+            <div id="from-points-calculator" class="calculator-content">
+                <h3>Sphere from Center and Point on Surface</h3>
+                <div class="input-group">
+                    <label>Center coordinates (a, b, c):</label>
+                    <div class="input-row">
+                        <input type="number" id="fp-center-x" class="input-field" placeholder="a" step="any">
+                        <input type="number" id="fp-center-y" class="input-field" placeholder="b" step="any">
+                        <input type="number" id="fp-center-z" class="input-field" placeholder="c" step="any">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Point on sphere (x₀, y₀, z₀):</label>
+                    <div class="input-row">
+                        <input type="number" id="fp-point-x" class="input-field" placeholder="x₀" step="any">
+                        <input type="number" id="fp-point-y" class="input-field" placeholder="y₀" step="any">
+                        <input type="number" id="fp-point-z" class="input-field" placeholder="z₀" step="any">
+                    </div>
+                </div>
+                <button class="calculate-btn" onclick="generateSphereFromPoints()">Generate Equation</button>
+                <div id="from-points-result" class="result-display" style="display: none;"></div>
+            </div>
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="visualization-canvas" width="600" height="400" class="visualization-canvas"></canvas>
+        </div>
+
+        <div class="practice-section">
+            <h2 class="practice-title">Practice Problems</h2>
+
+            <div class="problem-card">
+                <div class="problem-text">
+                    <strong>Problem 1:</strong> Find the equation of the sphere with center (2, 3, 4) and radius 5.
+                </div>
+                <button class="solution-toggle" onclick="toggleSolution('sol1')">Show Solution</button>
+                <div id="sol1" class="solution">
+                    <p>Using the general formula: $(x - a)^2 + (y - b)^2 + (z - c)^2 = r^2$</p>
+                    <p>Substitute a=2, b=3, c=4, r=5:</p>
+                    <p>$(x - 2)^2 + (y - 3)^2 + (z - 4)^2 = 25$</p>
+                    <p>Final answer: $(x - 2)^2 + (y - 3)^2 + (z - 4)^2 = 25$</p>
+                </div>
+            </div>
+
+            <div class="problem-card">
+                <div class="problem-text">
+                    <strong>Problem 2:</strong> Find the center and radius of the sphere $x^2 + y^2 + z^2 - 6x + 4y - 2z = 11$.
+                </div>
+                <button class="solution-toggle" onclick="toggleSolution('sol2')">Show Solution</button>
+                <div id="sol2" class="solution">
+                    <p>Complete the square for each variable:</p>
+                    <p>$(x^2 - 6x) + (y^2 + 4y) + (z^2 - 2z) = 11$</p>
+                    <p>$(x - 3)^2 - 9 + (y + 2)^2 - 4 + (z - 1)^2 - 1 = 11$</p>
+                    <p>$(x - 3)^2 + (y + 2)^2 + (z - 1)^2 = 25$</p>
+                    <p>Center: (3, -2, 1), Radius: 5</p>
+                </div>
+            </div>
+
+            <div class="problem-card">
+                <div class="problem-text">
+                    <strong>Problem 3:</strong> Find the equation of the sphere that passes through the origin and has center (1, 2, 3).
+                </div>
+                <button class="solution-toggle" onclick="toggleSolution('sol3')">Show Solution</button>
+                <div id="sol3" class="solution">
+                    <p>The origin (0,0,0) lies on the sphere, so the distance from center to origin equals radius.</p>
+                    <p>Distance = $\sqrt{(1-0)^2 + (2-0)^2 + (3-0)^2} = \sqrt{1 + 4 + 9} = \sqrt{14}$</p>
+                    <p>Equation: $(x - 1)^2 + (y - 2)^2 + (z - 3)^2 = 14$</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <div class="hint-block">
+                <strong>Important Notes:</strong>
+                <ul>
+                    <li>The equation represents all points (x, y, z) at a distance r from the center (a, b, c).</li>
+                    <li>For the origin as center, the formula simplifies to $x^2 + y^2 + z^2 = r^2$.</li>
+                    <li>This is the standard form for the equation of a sphere in 3D space.</li>
+                    <li>To expand the equation: $(x - a)^2 + (y - b)^2 + (z - c)^2 = x^2 + y^2 + z^2 - 2ax - 2by - 2cz + (a^2 + b^2 + c^2 - r^2)$</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="key-takeaways">
+            <h3>Key Takeaways</h3>
+            <div class="takeaway-list">
+                <div class="takeaway-item">
+                    <strong>Standard Form:</strong> $(x - a)^2 + (y - b)^2 + (z - c)^2 = r^2$ represents a sphere centered at (a,b,c) with radius r.
+                </div>
+                <div class="takeaway-item">
+                    <strong>Origin Center:</strong> When center is (0,0,0), equation simplifies to $x^2 + y^2 + z^2 = r^2$.
+                </div>
+                <div class="takeaway-item">
+                    <strong>Geometric Meaning:</strong> Set of all points equidistant from a fixed center point.
+                </div>
+                <div class="takeaway-item">
+                    <strong>Completing Square:</strong> Used to convert general quadratic equation to standard sphere form.
+                </div>
+                <div class="takeaway-item">
+                    <strong>Applications:</strong> Physics (atoms, planets), computer graphics, GPS, and 3D modeling.
+                </div>
+                <div class="takeaway-item">
+                    <strong>Surface Area:</strong> $4\pi r^2$, Volume: $\frac{4}{3}\pi r^3$ for a sphere of radius r.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Original sphere diagram
+        (function() {
+            const canvas = document.getElementById('sphere-canvas');
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width, h = canvas.height;
+
+            // Sphere parameters
+            const cx = w/2, cy = h/2 + 10, r = 65;
+
+            // Draw sphere outline
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+            ctx.strokeStyle = "#1e88e5";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Draw equator (ellipse)
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.scale(1, 0.45);
+            ctx.beginPath();
+            ctx.arc(0, 0, r, 0, 2 * Math.PI);
+            ctx.strokeStyle = "#90caf9";
+            ctx.lineWidth = 1.2;
+            ctx.setLineDash([4,3]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.restore();
+
+            // Draw center point O
+            ctx.beginPath();
+            ctx.arc(cx, cy, 4, 0, 2 * Math.PI);
+            ctx.fillStyle = "#b71c1c";
+            ctx.fill();
+
+            // Draw radius line
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            // Point P on surface (top right)
+            const angle = -Math.PI/4;
+            const px = cx + r * Math.cos(angle);
+            const py = cy + r * Math.sin(angle);
+            ctx.lineTo(px, py);
+            ctx.strokeStyle = "#f57f17";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Draw point P
+            ctx.beginPath();
+            ctx.arc(px, py, 4, 0, 2 * Math.PI);
+            ctx.fillStyle = "#388e3c";
+            ctx.fill();
+
+            // Label O (origin)
+            ctx.font = "bold 15px Segoe UI, Arial";
+            ctx.fillStyle = "#b71c1c";
+            ctx.fillText("O (0,0,0)", cx - 54, cy + 18);
+
+            // Label P
+            ctx.font = "bold 15px Segoe UI, Arial";
+            ctx.fillStyle = "#388e3c";
+            ctx.fillText("P(x, y, z)", px + 8, py - 8);
+
+            // Label r
+            ctx.font = "italic 15px Segoe UI, Arial";
+            ctx.fillStyle = "#f57f17";
+            ctx.fillText("r", (cx + px)/2 + 6, (cy + py)/2 - 6);
+        })();
+
+        function showCalculator(type) {
+            // Hide all calculator contents
+            const contents = document.querySelectorAll('.calculator-content');
+            contents.forEach(content => content.classList.remove('active'));
+
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(button => button.classList.remove('active'));
+
+            // Show selected calculator
+            document.getElementById(type + '-calculator').classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function generateSphereEquation() {
+            const a = parseFloat(document.getElementById('center-x').value) || 0;
+            const b = parseFloat(document.getElementById('center-y').value) || 0;
+            const c = parseFloat(document.getElementById('center-z').value) || 0;
+            const r = parseFloat(document.getElementById('radius').value) || 0;
+
+            const resultDiv = document.getElementById('general-result');
+            resultDiv.innerHTML = `
+                <div class="result-title">Sphere Equation:</div>
+                <div>$$(x - ${a})^2 + (y - ${b})^2 + (z - ${c})^2 = ${r}^2$$</div>
+                <div><strong>Center:</strong> (${a}, ${b}, ${c})</div>
+                <div><strong>Radius:</strong> ${r}</div>
+                <div><strong>Expanded form:</strong> $$x^2 + y^2 + z^2 ${a !== 0 ? `- ${2*a}x` : ''} ${b !== 0 ? `${b < 0 ? '+ ' : '- '}${Math.abs(2*b)}y` : ''} ${c !== 0 ? `${c < 0 ? '+ ' : '- '}${Math.abs(2*c)}z` : ''} = ${r*r - a*a - b*b - c*c}$$</div>
+            `;
+            resultDiv.style.display = 'block';
+
+            // Trigger MathJax re-render
+            if (window.MathJax) {
+                MathJax.typesetPromise([resultDiv]).catch(console.error);
+            }
+
+            drawSphere(a, b, c, r);
+        }
+
+        function generateOriginSphere() {
+            const r = parseFloat(document.getElementById('origin-radius').value) || 0;
+
+            const resultDiv = document.getElementById('origin-result');
+            resultDiv.innerHTML = `
+                <div class="result-title">Sphere Equation:</div>
+                <div>$$x^2 + y^2 + z^2 = ${r}^2$$</div>
+                <div><strong>Center:</strong> (0, 0, 0)</div>
+                <div><strong>Radius:</strong> ${r}</div>
+                <div><strong>Surface Area:</strong> $4\\pi r^2 = ${4 * Math.PI * r * r}$</div>
+                <div><strong>Volume:</strong> $\\frac{4}{3}\\pi r^3 = ${4/3 * Math.PI * r * r * r}$</div>
+            `;
+            resultDiv.style.display = 'block';
+
+            // Trigger MathJax re-render
+            if (window.MathJax) {
+                MathJax.typesetPromise([resultDiv]).catch(console.error);
+            }
+
+            drawSphere(0, 0, 0, r);
+        }
+
+        function generateSphereFromPoints() {
+            const a = parseFloat(document.getElementById('fp-center-x').value) || 0;
+            const b = parseFloat(document.getElementById('fp-center-y').value) || 0;
+            const c = parseFloat(document.getElementById('fp-center-z').value) || 0;
+            const px = parseFloat(document.getElementById('fp-point-x').value) || 0;
+            const py = parseFloat(document.getElementById('fp-point-y').value) || 0;
+            const pz = parseFloat(document.getElementById('fp-point-z').value) || 0;
+
+            const r = Math.sqrt((px - a)*(px - a) + (py - b)*(py - b) + (pz - c)*(pz - c));
+
+            const resultDiv = document.getElementById('from-points-result');
+            resultDiv.innerHTML = `
+                <div class="result-title">Sphere Equation:</div>
+                <div>$$(x - ${a})^2 + (y - ${b})^2 + (z - ${c})^2 = ${r.toFixed(3)}^2$$</div>
+                <div><strong>Center:</strong> (${a}, ${b}, ${c})</div>
+                <div><strong>Point on sphere:</strong> (${px}, ${py}, ${pz})</div>
+                <div><strong>Radius:</strong> ${r.toFixed(3)}</div>
+                <div><strong>Verification:</strong> Distance from center to point = $\\sqrt{(${px}-${a})^2 + (${py}-${b})^2 + (${pz}-${c})^2} = ${r.toFixed(3)}$</div>
+            `;
+            resultDiv.style.display = 'block';
+
+            // Trigger MathJax re-render
+            if (window.MathJax) {
+                MathJax.typesetPromise([resultDiv]).catch(console.error);
+            }
+
+            drawSphere(a, b, c, r);
+        }
+
+        function drawSphere(a, b, c, r) {
+            const canvas = document.getElementById('visualization-canvas');
+            const ctx = canvas.getContext('2d');
+
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Set up coordinate system (simple isometric projection)
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const scale = 20;
+
+            // Project 3D to 2D (simple isometric)
+            function project(x, y, z) {
+                return {
+                    x: centerX + (x - y) * scale * 0.7,
+                    y: centerY + (x + y) * scale * 0.4 - z * scale * 0.6
+                };
+            }
+
+            // Draw coordinate axes
+            ctx.strokeStyle = '#666';
+            ctx.lineWidth = 2;
+
+            // X-axis
+            ctx.beginPath();
+            ctx.moveTo(centerX - 150, centerY);
+            ctx.lineTo(centerX + 150, centerY);
+            ctx.stroke();
+            ctx.fillStyle = '#333';
+            ctx.font = '12px Arial';
+            ctx.fillText('X', centerX + 155, centerY + 5);
+
+            // Y-axis
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY - 100);
+            ctx.lineTo(centerX, centerY + 100);
+            ctx.stroke();
+            ctx.fillText('Y', centerX - 15, centerY - 105);
+
+            // Z-axis
+            const zStart = project(0, 0, -5);
+            const zEnd = project(0, 0, 5);
+            ctx.beginPath();
+            ctx.moveTo(zStart.x, zStart.y);
+            ctx.lineTo(zEnd.x, zEnd.y);
+            ctx.stroke();
+            ctx.fillText('Z', zEnd.x + 5, zEnd.y - 5);
+
+            // Draw sphere as a circle (2D representation)
+            const centerProj = project(a, b, c);
+            const radiusProj = r * scale * 0.7; // Approximate projected radius
+
+            // Draw sphere outline
+            ctx.strokeStyle = '#e74c3c';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(centerProj.x, centerProj.y, radiusProj, 0, 2 * Math.PI);
+            ctx.stroke();
+
+            // Fill with gradient
+            const gradient = ctx.createRadialGradient(centerProj.x, centerProj.y, 0, centerProj.x, centerProj.y, radiusProj);
+            gradient.addColorStop(0, 'rgba(231, 76, 60, 0.3)');
+            gradient.addColorStop(1, 'rgba(231, 76, 60, 0.1)');
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(centerProj.x, centerProj.y, radiusProj, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // Draw center point
+            ctx.fillStyle = '#e74c3c';
+            ctx.beginPath();
+            ctx.arc(centerProj.x, centerProj.y, 4, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // Label center
+            ctx.fillStyle = '#333';
+            ctx.font = '12px Arial';
+            ctx.fillText(`C(${a},${b},${c})`, centerProj.x + 10, centerProj.y - 10);
+
+            // Draw radius line to a point on the sphere
+            const angle = Math.PI / 4;
+            const surfaceX = a + r * Math.cos(angle);
+            const surfaceY = b + r * Math.sin(angle);
+            const surfaceZ = c;
+            const surfaceProj = project(surfaceX, surfaceY, surfaceZ);
+
+            ctx.strokeStyle = '#f39c12';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(centerProj.x, centerProj.y);
+            ctx.lineTo(surfaceProj.x, surfaceProj.y);
+            ctx.stroke();
+
+            // Label radius
+            const midX = (centerProj.x + surfaceProj.x) / 2;
+            const midY = (centerProj.y + surfaceProj.y) / 2;
+            ctx.fillStyle = '#f39c12';
+            ctx.fillText('r', midX + 5, midY - 5);
+        }
+
+        function toggleSolution(id) {
+            const solution = document.getElementById(id);
+            solution.classList.toggle('show');
+        }
+
+        // Initialize MathJax
+        document.addEventListener("DOMContentLoaded", function() {
+            if (window.MathJax) {
+                MathJax.typesetPromise().catch(console.error);
+            }
+        });
+    </script>
+</body>
+</html>

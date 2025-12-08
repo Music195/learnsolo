@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<!-- tags: Mathematics -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Integration by Substitution
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   .solution-btn {
+     background-color: #4CAF50;
+     color: white;
+     border: none;
+     padding: 8px 16px;
+     text-align: center;
+     text-decoration: none;
+     display: inline-block;
+     font-size: 14px;
+     margin: 10px 0;
+     cursor: pointer;
+     border-radius: 4px;
+     transition: background-color 0.3s;
+   }
+   
+   .solution-btn:hover {
+     background-color: #45a049;
+   }
+   
+   .solution {
+     background-color: #f9f9f9;
+     border-left: 4px solid #4CAF50;
+     padding: 15px;
+     margin: 10px 0;
+     border-radius: 0 4px 4px 0;
+   }
+   
+   .problem-item {
+     margin-bottom: 20px;
+     padding: 15px;
+     border: 1px solid #ddd;
+     border-radius: 8px;
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Integration">
+    Integration by Substitution
+  </div>
+   <div class="container">
+    <div class="main-content">
+     <div class="section">
+      <h2>What is Integration by Substitution?</h2>
+      <p>Integration by substitution (also called u-substitution) is a technique that transforms a complicated integral into a simpler one by changing the variable of integration. It's the reverse of the chain rule for differentiation.</p>
+      
+      <div class="highlight-box">
+       <strong>The Basic Idea:</strong>
+       <p>If you have \( \int f(g(x)) \cdot g'(x) \, dx \), you can substitute \( u = g(x) \) to get \( \int f(u) \, du \), which is often easier to integrate.</p>
+      </div>
+     </div>
+
+     <div class="section">
+      <h2>When to Use Substitution</h2>
+      <p>Look for integrals that contain:</p>
+      <ul>
+       <li>The derivative of an inner function: \( \int f(g(x)) \cdot g'(x) \, dx \)</li>
+       <li>Composite functions where the outer function is integrable</li>
+       <li>Expressions like \( \int \frac{f'(x)}{f(x)} \, dx \) (which gives \( \ln|f(x)| + C \))</li>
+       <li>Complex expressions that can be simplified by a clever substitution</li>
+      </ul>
+     </div>
+
+     <div class="section">
+      <h2>The Substitution Process</h2>
+      <div class="highlight-box">
+       <strong>Step-by-Step Method:</strong>
+       <ol>
+        <li>Identify the inner function \( u = g(x) \) whose derivative appears in the integral</li>
+        <li>Compute \( du = g'(x) \, dx \)</li>
+        <li>Rewrite the integral in terms of u</li>
+        <li>Integrate with respect to u</li>
+        <li>Substitute back to the original variable</li>
+        <li>Don't forget the +C!</li>
+       </ol>
+      </div>
+     </div>
+
+     <div class="section">
+      <h2>Visual Guide</h2>
+      <p>The substitution method transforms the integral by changing variables, often making complex expressions simpler.</p>
+      <canvas id="substitutionCanvas" width="600" height="400" style="border: 1px solid #ccc; margin: 20px auto; display: block;"></canvas>
+     </div>
+
+     <div class="section">
+      <h2>Examples</h2>
+      
+      <div class="example">
+       <h3>Example 1: Basic Substitution</h3>
+       <p>Find \( \int 2x \cos(x^2) \, dx \)</p>
+       <div class="steps">
+        <p>Notice that the derivative of \( x^2 \) is \( 2x \), and it's multiplied by \( \cos(x^2) \)</p>
+        <p>Let \( u = x^2 \), then \( du = 2x \, dx \)</p>
+        <p>Rewrite: \( \int 2x \cos(x^2) \, dx = \int \cos(u) \, du \)</p>
+        <p>Integrate: \( \int \cos(u) \, du = \sin(u) + C \)</p>
+        <p>Substitute back: \( \sin(x^2) + C \)</p>
+       </div>
+      </div>
+
+      <div class="example">
+       <h3>Example 2: Exponential Substitution</h3>
+       <p>Find \( \int x e^{x^2} \, dx \)</p>
+       <div class="steps">
+        <p>Let \( u = x^2 \), then \( du = 2x \, dx \), so \( x \, dx = \frac{1}{2} du \)</p>
+        <p>Rewrite: \( \int x e^{x^2} \, dx = \int e^u \cdot \frac{1}{2} \, du = \frac{1}{2} \int e^u \, du \)</p>
+        <p>Integrate: \( \frac{1}{2} e^u + C = \frac{1}{2} e^{x^2} + C \)</p>
+       </div>
+      </div>
+
+      <div class="example">
+       <h3>Example 3: Trigonometric Substitution</h3>
+       <p>Find \( \int \sin(3x) \, dx \)</p>
+       <div class="steps">
+        <p>Let \( u = 3x \), then \( du = 3 \, dx \), so \( dx = \frac{1}{3} du \)</p>
+        <p>Rewrite: \( \int \sin(3x) \, dx = \int \sin(u) \cdot \frac{1}{3} \, du = \frac{1}{3} \int \sin(u) \, du \)</p>
+        <p>Integrate: \( \frac{1}{3} (-\cos(u)) + C = -\frac{1}{3} \cos(3x) + C \)</p>
+       </div>
+      </div>
+
+      <div class="example">
+       <h3>Example 4: Rational Function</h3>
+       <p>Find \( \int \frac{2x}{x^2 + 1} \, dx \)</p>
+       <div class="steps">
+        <p>Let \( u = x^2 + 1 \), then \( du = 2x \, dx \)</p>
+        <p>Rewrite: \( \int \frac{2x}{x^2 + 1} \, dx = \int \frac{1}{u} \, du \)</p>
+        <p>Integrate: \( \ln|u| + C = \ln|x^2 + 1| + C \)</p>
+       </div>
+      </div>
+
+      <div class="example">
+       <h3>Example 5: Definite Integral</h3>
+       <p>Find \( \int_0^1 x \sqrt{x^2 + 1} \, dx \)</p>
+       <div class="steps">
+        <p>Let \( u = x^2 + 1 \), then \( du = 2x \, dx \), so \( x \, dx = \frac{1}{2} du \)</p>
+        <p>When x=0: u=1; when x=1: u=2</p>
+        <p>Rewrite: \( \int_0^1 x \sqrt{x^2 + 1} \, dx = \int_1^2 \sqrt{u} \cdot \frac{1}{2} \, du = \frac{1}{2} \int_1^2 u^{1/2} \, du \)</p>
+        <p>Integrate: \( \frac{1}{2} \cdot \frac{2}{3} u^{3/2} \big|_1^2 = \frac{1}{3} (2^{3/2} - 1^{3/2}) = \frac{1}{3} (2\sqrt{2} - 1) \)</p>
+       </div>
+      </div>
+     </div>
+
+     <div class="section">
+      <h2>Common Substitution Patterns</h2>
+      <div class="highlight-box">
+       <strong>Pattern Recognition:</strong>
+       <ul>
+        <li>\( \int f(g(x)) \cdot g'(x) \, dx \) → Let u = g(x)</li>
+        <li>\( \int \frac{f'(x)}{f(x)} \, dx \) → Let u = f(x)</li>
+        <li>\( \int f(ax + b) \, dx \) → Let u = ax + b</li>
+        <li>\( \int x^n f(x^{n+1}) \, dx \) → Let u = x^{n+1}</li>
+        <li>\( \int \cos^n(x) \sin(x) \, dx \) → Let u = cos(x)</li>
+        <li>\( \int \sin^n(x) \cos(x) \, dx \) → Let u = sin(x)</li>
+       </ul>
+      </div>
+     </div>
+
+     <div class="section">
+      <h2>Applications</h2>
+      <ul>
+       <li><strong>Physics:</strong> Work, energy, velocity problems</li>
+       <li><strong>Economics:</strong> Marginal cost and revenue calculations</li>
+       <li><strong>Biology:</strong> Population growth models</li>
+       <li><strong>Engineering:</strong> Circuit analysis, fluid dynamics</li>
+       <li><strong>Probability:</strong> Distribution function calculations</li>
+      </ul>
+     </div>
+
+     <div class="section">
+      <h2>Practice Problems</h2>
+      <div class="practice-problem">
+       <div class="problem-item">
+        <p><strong>1.</strong> Find \( \int x \cos(x^2 + 1) \, dx \)</p>
+        <button class="solution-btn" onclick="toggleSolution(1)">Show Solution</button>
+        <div id="solution-1" class="solution" style="display: none;">
+         <p><strong>Solution:</strong></p>
+         <p>Let \( u = x^2 + 1 \), then \( du = 2x \, dx \), so \( x \, dx = \frac{1}{2} du \)</p>
+         <p>\( \int x \cos(x^2 + 1) \, dx = \int \cos(u) \cdot \frac{1}{2} \, du = \frac{1}{2} \sin(u) + C = \frac{1}{2} \sin(x^2 + 1) + C \)</p>
+        </div>
+       </div>
+
+       <div class="problem-item">
+        <p><strong>2.</strong> Find \( \int \frac{x}{x^2 + 4} \, dx \)</p>
+        <button class="solution-btn" onclick="toggleSolution(2)">Show Solution</button>
+        <div id="solution-2" class="solution" style="display: none;">
+         <p><strong>Solution:</strong></p>
+         <p>Let \( u = x^2 + 4 \), then \( du = 2x \, dx \), so \( x \, dx = \frac{1}{2} du \)</p>
+         <p>\( \int \frac{x}{x^2 + 4} \, dx = \int \frac{1}{u} \cdot \frac{1}{2} \, du = \frac{1}{2} \ln|u| + C = \frac{1}{2} \ln|x^2 + 4| + C \)</p>
+        </div>
+       </div>
+
+       <div class="problem-item">
+        <p><strong>3.</strong> Find \( \int e^{2x} \, dx \)</p>
+        <button class="solution-btn" onclick="toggleSolution(3)">Show Solution</button>
+        <div id="solution-3" class="solution" style="display: none;">
+         <p><strong>Solution:</strong></p>
+         <p>Let \( u = 2x \), then \( du = 2 \, dx \), so \( dx = \frac{1}{2} du \)</p>
+         <p>\( \int e^{2x} \, dx = \int e^u \cdot \frac{1}{2} \, du = \frac{1}{2} e^u + C = \frac{1}{2} e^{2x} + C \)</p>
+        </div>
+       </div>
+
+       <div class="problem-item">
+        <p><strong>4.</strong> Find \( \int \sin(5x) \, dx \)</p>
+        <button class="solution-btn" onclick="toggleSolution(4)">Show Solution</button>
+        <div id="solution-4" class="solution" style="display: none;">
+         <p><strong>Solution:</strong></p>
+         <p>Let \( u = 5x \), then \( du = 5 \, dx \), so \( dx = \frac{1}{5} du \)</p>
+         <p>\( \int \sin(5x) \, dx = \int \sin(u) \cdot \frac{1}{5} \, du = \frac{1}{5} (-\cos(u)) + C = -\frac{1}{5} \cos(5x) + C \)</p>
+        </div>
+       </div>
+
+       <div class="problem-item">
+        <p><strong>5.</strong> Find \( \int_1^2 \frac{x^2}{x^3 + 1} \, dx \)</p>
+        <button class="solution-btn" onclick="toggleSolution(5)">Show Solution</button>
+        <div id="solution-5" class="solution" style="display: none;">
+         <p><strong>Solution:</strong></p>
+         <p>Let \( u = x^3 + 1 \), then \( du = 3x^2 \, dx \), so \( x^2 \, dx = \frac{1}{3} du \)</p>
+         <p>\( \int_1^2 \frac{x^2}{x^3 + 1} \, dx = \int_2^9 \frac{1}{u} \cdot \frac{1}{3} \, du = \frac{1}{3} \int_2^9 \frac{1}{u} \, du = \frac{1}{3} [\ln|u|]_2^9 = \frac{1}{3} (\ln 9 - \ln 2) = \frac{1}{3} \ln \frac{9}{2} \)</p>
+        </div>
+       </div>
+
+       <div class="problem-item">
+        <p><strong>6.</strong> Find \( \int \tan(x) \, dx \)</p>
+        <button class="solution-btn" onclick="toggleSolution(6)">Show Solution</button>
+        <div id="solution-6" class="solution" style="display: none;">
+         <p><strong>Solution:</strong></p>
+         <p>\( \tan(x) = \frac{\sin(x)}{\cos(x)} \), so let \( u = \cos(x) \), then \( du = -\sin(x) \, dx \), so \( \sin(x) \, dx = -du \)</p>
+         <p>\( \int \tan(x) \, dx = \int \frac{\sin(x)}{\cos(x)} \, dx = \int \frac{1}{u} (-du) = -\ln|u| + C = -\ln|\cos(x)| + C = \ln|\sec(x)| + C \)</p>
+        </div>
+       </div>
+      </div>
+     </div>
+
+     <div class="section">
+      <h2>Key Takeaways</h2>
+      <div class="key-takeaways">
+       <ul>
+        <li>Integration by substitution is the reverse of the chain rule</li>
+        <li>Look for expressions where the derivative of an inner function appears</li>
+        <li>Choose u to be the inner function, then compute du</li>
+        <li>Rewrite the entire integral in terms of u</li>
+        <li>Integrate with respect to u, then substitute back</li>
+        <li>Always check your answer by differentiating</li>
+        <li>Practice pattern recognition to identify substitution opportunities</li>
+       </ul>
+      </div>
+     </div>
+    </div>
+   </div>
+  <script>
+   // Canvas visualization for integration by substitution
+   const canvas = document.getElementById('substitutionCanvas');
+   const ctx = canvas.getContext('2d');
+   
+   // Set up coordinate system
+   const width = canvas.width;
+   const height = canvas.height;
+   const centerX = width / 2;
+   const centerY = height / 2;
+   
+   // Scale factors
+   const scaleX = 50;
+   const scaleY = 50;
+   
+   function drawGrid() {
+    ctx.strokeStyle = '#e0e0e0';
+    ctx.lineWidth = 1;
+    
+    // Vertical lines
+    for (let x = centerX; x < width; x += scaleX) {
+     ctx.beginPath();
+     ctx.moveTo(x, 0);
+     ctx.lineTo(x, height);
+     ctx.stroke();
+    }
+    for (let x = centerX; x > 0; x -= scaleX) {
+     ctx.beginPath();
+     ctx.moveTo(x, 0);
+     ctx.lineTo(x, height);
+     ctx.stroke();
+    }
+    
+    // Horizontal lines
+    for (let y = centerY; y < height; y += scaleY) {
+     ctx.beginPath();
+     ctx.moveTo(0, y);
+     ctx.lineTo(width, y);
+     ctx.stroke();
+    }
+    for (let y = centerY; y > 0; y -= scaleY) {
+     ctx.beginPath();
+     ctx.moveTo(0, y);
+     ctx.lineTo(width, y);
+     ctx.stroke();
+    }
+   }
+   
+   function drawAxes() {
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 2;
+    
+    // X-axis
+    ctx.beginPath();
+    ctx.moveTo(0, centerY);
+    ctx.lineTo(width, centerY);
+    ctx.stroke();
+    
+    // Y-axis
+    ctx.beginPath();
+    ctx.moveTo(centerX, 0);
+    ctx.lineTo(centerX, height);
+    ctx.stroke();
+    
+    // Axis labels
+    ctx.fillStyle = '#000';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+    
+    // X-axis labels
+    for (let i = -4; i <= 4; i++) {
+     if (i !== 0) {
+      const x = centerX + i * scaleX;
+      ctx.fillText(i.toString(), x, centerY + 15);
+     }
+    }
+    
+    // Y-axis labels
+    for (let i = -3; i <= 3; i++) {
+     if (i !== 0) {
+      const y = centerY - i * scaleY;
+      ctx.fillText(i.toString(), centerX - 15, y + 4);
+     }
+    }
+   }
+   
+   function plotFunction(func, color, label, offsetX = 0, offsetY = 0) {
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    
+    let firstPoint = true;
+    for (let x = -4; x <= 4; x += 0.1) {
+     const y = func(x);
+     const canvasX = centerX + (x + offsetX) * scaleX;
+     const canvasY = centerY - (y + offsetY) * scaleY;
+     
+     if (firstPoint) {
+      ctx.moveTo(canvasX, canvasY);
+      firstPoint = false;
+     } else {
+      ctx.lineTo(canvasX, canvasY);
+     }
+    }
+    ctx.stroke();
+    
+    // Add label
+    ctx.fillStyle = color;
+    ctx.font = '14px Arial';
+    ctx.textAlign = 'left';
+    ctx.fillText(label, 10, 30 + (color === '#ff6b6b' ? 0 : color === '#4ecdc4' ? 20 : 40));
+   }
+   
+   function drawSubstitutionDemo() {
+    // Clear canvas
+    ctx.clearRect(0, 0, width, height);
+    
+    // Draw grid and axes
+    drawGrid();
+    drawAxes();
+    
+    // Plot original function: x * cos(x^2)
+    plotFunction(x => x * Math.cos(x * x), '#ff6b6b', 'Original: x·cos(x²)');
+    
+    // Plot after substitution: cos(u) where u = x^2
+    // This shows how the substitution simplifies the function
+    plotFunction(x => Math.cos(x), '#4ecdc4', 'After substitution: cos(u)', 0, 0);
+    
+    // Add explanatory text
+    ctx.fillStyle = '#000';
+    ctx.font = '16px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('Integration by Substitution Example', centerX, 20);
+    
+    ctx.font = '12px Arial';
+    ctx.fillText('u = x² transforms the integral', centerX, height - 30);
+   }
+   
+   // Solution toggle functionality
+   function toggleSolution(problemNumber) {
+    const solution = document.getElementById(`solution-${problemNumber}`);
+    const button = solution.previousElementSibling;
+    
+    if (solution.style.display === 'none') {
+     solution.style.display = 'block';
+     button.textContent = 'Hide Solution';
+    } else {
+     solution.style.display = 'none';
+     button.textContent = 'Show Solution';
+    }
+   }
+   
+   // Initialize visualization when page loads
+   window.addEventListener('load', drawSubstitutionDemo);
+  </script>
+ </body>
+</html>

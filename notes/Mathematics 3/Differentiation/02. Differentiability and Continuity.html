@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<!-- tags: Mathematics -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Differentiability and Continuity
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Mathematics">
+   Differentiability and Continuity
+  </div>
+  <div class="container">
+   <div class="main-content">
+    <div class="title">Differentiability and Continuity</div>
+    
+    <div class="formula-block">
+     <div style="font-size: 1.15em; color: #333; text-align: center; margin-bottom: 10px;">
+        Key Relationship:
+     </div>
+     <div class="formula-math">
+        $$\text{Differentiable at } x = a \implies \text{Continuous at } x = a$$
+     </div>
+     <div style="text-align: center; margin-top: 10px; font-style: italic;">
+        But the converse is NOT true!
+     </div>
+    </div>
+
+    <div style="margin: 30px 0;">
+     <strong>1. Definitions</strong>
+     <div class="graybox">
+        <strong>Continuity at $x = a$:</strong> $\lim_{x \to a} f(x) = f(a)$
+     </div>
+     <div class="graybox" style="margin-top: 15px;">
+        <strong>Differentiability at $x = a$:</strong> $\lim_{h \to 0} \frac{f(a+h) - f(a)}{h}$ exists
+     </div>
+    </div>
+
+    <div style="margin: 30px 0;">
+     <strong>2. Visual Understanding</strong>
+     <div style="text-align: center; margin: 15px 0;">
+        <canvas id="continuityCanvas" width="700" height="400"></canvas>
+     </div>
+     <p style="text-align: center; font-style: italic;">Left: Continuous and differentiable function, Right: Continuous but not differentiable</p>
+    </div>
+
+    <div style="margin: 30px 0;">
+     <strong>3. Examples</strong>
+     
+     <div class="graybox">
+        <strong>Example 1: Differentiable Function</strong><br>
+        $f(x) = x^2$ is differentiable (and thus continuous) at $x = 0$
+     </div>
+
+     <div class="graybox" style="margin-top: 15px;">
+        <strong>Example 2: Continuous but Not Differentiable</strong><br>
+        $f(x) = |x|$ is continuous at $x = 0$ but not differentiable there
+     </div>
+
+     <div class="graybox" style="margin-top: 15px;">
+        <strong>Example 3: Discontinuous Function</strong><br>
+        $f(x) = \begin{cases} x & x \geq 0 \\ x+1 & x < 0 \end{cases}$ is discontinuous at $x = 0$
+     </div>
+    </div>
+
+    <div style="margin: 30px 0;">
+     <strong>4. Why Differentiability Implies Continuity</strong>
+     <div class="graybox">
+        If $f'(a)$ exists, then:<br>
+        $\lim_{h \to 0} \frac{f(a+h) - f(a)}{h} = f'(a)$<br>
+        $\therefore \lim_{h \to 0} [f(a+h) - f(a)] = 0$<br>
+        $\therefore \lim_{h \to 0} f(a+h) = f(a)$<br>
+        So $f$ is continuous at $x = a$
+     </div>
+    </div>
+
+    <div style="margin: 30px 0;">
+     <strong>5. Common Points of Non-Differentiability</strong>
+     <div class="graybox">
+        <ul style="line-height: 1.8;">
+         <li><strong>Cusps:</strong> Sharp points like $f(x) = |x|$ at $x = 0$</li>
+         <li><strong>Vertical tangents:</strong> Infinite slope like $f(x) = x^{1/3}$ at $x = 0$</li>
+         <li><strong>Discontinuities:</strong> Jumps or holes in the function</li>
+         <li><strong>Corners:</strong> Abrupt changes in direction</li>
+        </ul>
+     </div>
+    </div>
+
+    <div style="margin: 30px 0;">
+     <strong>6. Applications</strong>
+     <div class="graybox">
+        <strong>Physics:</strong> Velocity exists only if position is continuous
+     </div>
+     <div class="graybox" style="margin-top: 15px;">
+        <strong>Economics:</strong> Marginal functions require continuity
+     </div>
+     <div class="graybox" style="margin-top: 15px;">
+        <strong>Engineering:</strong> Material stress analysis
+     </div>
+    </div>
+
+    <div style="margin: 30px 0;">
+     <strong>7. Practice Problems</strong>
+     <div class="graybox">
+        <strong>Problem 1:</strong> Determine if $f(x) = x^3$ is differentiable at $x = 0$.
+     </div>
+     <div class="graybox" style="margin-top: 15px;">
+        <strong>Problem 2:</strong> Is $f(x) = |x - 1|$ differentiable at $x = 1$?
+     </div>
+     <div class="graybox" style="margin-top: 15px;">
+        <strong>Problem 3:</strong> Where is $f(x) = \sqrt[3]{x}$ not differentiable?
+     </div>
+    </div>
+
+    <div style="margin: 30px 0;">
+     <strong>8. Key Takeaways</strong>
+     <div class="graybox">
+        <ul style="line-height: 2;">
+         <li>Differentiability is a stronger condition than continuity</li>
+         <li>All differentiable functions are continuous</li>
+         <li>Not all continuous functions are differentiable</li>
+         <li>Look for cusps, corners, and discontinuities</li>
+         <li>Vertical tangents indicate infinite derivatives</li>
+        </ul>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+   window.addEventListener('load', function() {
+      const canvas = document.getElementById('continuityCanvas');
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+      const padding = 60;
+      const graphW = (w - 3 * padding) / 2; // Split canvas into two halves
+      const graphH = h - 2 * padding;
+      const xMin = -2;
+      const xMax = 2;
+      const yMin = -1;
+      const yMax = 4;
+
+      // Clear canvas with white background
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0, 0, w, h);
+
+      function toCanvasX(x, isRight = false) {
+         const offset = isRight ? w/2 + padding/2 : padding;
+         return offset + ((x - xMin) / (xMax - xMin)) * graphW;
+      }
+
+      function toCanvasY(y) {
+         return h - padding - ((y - yMin) / (yMax - yMin)) * graphH;
+      }
+
+      // Draw background grids
+      ctx.save();
+      ctx.strokeStyle = '#f0f0f0';
+      ctx.lineWidth = 0.5;
+      
+      // Left graph grid
+      for (let x = -2; x <= 2; x += 0.5) {
+         ctx.beginPath();
+         ctx.moveTo(toCanvasX(x, false), padding);
+         ctx.lineTo(toCanvasX(x, false), h - padding);
+         ctx.stroke();
+      }
+      for (let y = -1; y <= 4; y += 0.5) {
+         ctx.beginPath();
+         ctx.moveTo(padding, toCanvasY(y));
+         ctx.lineTo(padding + graphW, toCanvasY(y));
+         ctx.stroke();
+      }
+      
+      // Right graph grid
+      for (let x = -2; x <= 2; x += 0.5) {
+         ctx.beginPath();
+         ctx.moveTo(toCanvasX(x, true), padding);
+         ctx.lineTo(toCanvasX(x, true), h - padding);
+         ctx.stroke();
+      }
+      for (let y = -1; y <= 4; y += 0.5) {
+         ctx.beginPath();
+         ctx.moveTo(w/2 + padding/2, toCanvasY(y));
+         ctx.lineTo(w/2 + padding/2 + graphW, toCanvasY(y));
+         ctx.stroke();
+      }
+      ctx.restore();
+
+      // Draw axes
+      ctx.save();
+      ctx.strokeStyle = '#333';
+      ctx.lineWidth = 2;
+      
+      // Left axes
+      ctx.beginPath();
+      ctx.moveTo(toCanvasX(0, false), toCanvasY(yMin));
+      ctx.lineTo(toCanvasX(0, false), toCanvasY(yMax));
+      ctx.moveTo(toCanvasX(xMin, false), toCanvasY(0));
+      ctx.lineTo(toCanvasX(xMax, false), toCanvasY(0));
+      ctx.stroke();
+      
+      // Right axes
+      ctx.beginPath();
+      ctx.moveTo(toCanvasX(0, true), toCanvasY(yMin));
+      ctx.lineTo(toCanvasX(0, true), toCanvasY(yMax));
+      ctx.moveTo(toCanvasX(xMin, true), toCanvasY(0));
+      ctx.lineTo(toCanvasX(xMax, true), toCanvasY(0));
+      ctx.stroke();
+      ctx.restore();
+
+      // Left graph: f(x) = x^2 (differentiable)
+      ctx.save();
+      ctx.strokeStyle = '#4caf50';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      for (let x = -2; x <= 2; x += 0.02) {
+         const y = x * x;
+         if (x === -2) ctx.moveTo(toCanvasX(x, false), toCanvasY(y));
+         else ctx.lineTo(toCanvasX(x, false), toCanvasY(y));
+      }
+      ctx.stroke();
+      
+      // Tangent line at x=0 for left graph
+      ctx.strokeStyle = '#ff9800';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([8, 4]);
+      ctx.beginPath();
+      ctx.moveTo(toCanvasX(-1, false), toCanvasY(1));
+      ctx.lineTo(toCanvasX(1, false), toCanvasY(1));
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+
+      // Right graph: f(x) = |x| (continuous but not differentiable at x=0)
+      ctx.save();
+      ctx.strokeStyle = '#f44336';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      for (let x = -2; x <= 2; x += 0.02) {
+         const y = Math.abs(x);
+         if (x === -2) ctx.moveTo(toCanvasX(x, true), toCanvasY(y));
+         else ctx.lineTo(toCanvasX(x, true), toCanvasY(y));
+      }
+      ctx.stroke();
+      
+      // Highlight the cusp at x=0
+      ctx.fillStyle = '#f44336';
+      ctx.beginPath();
+      ctx.arc(toCanvasX(0, true), toCanvasY(0), 6, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.restore();
+
+      // Labels
+      ctx.save();
+      ctx.font = 'bold 16px Arial';
+      ctx.fillStyle = '#333';
+      
+      // Left graph labels
+      ctx.fillText('f(x) = x²', padding + 20, padding - 10);
+      ctx.fillText('(Differentiable)', padding + 20, padding + 15);
+      
+      // Right graph labels
+      ctx.fillText('f(x) = |x|', w/2 + padding/2 + 20, padding - 10);
+      ctx.fillText('(Continuous, not differentiable)', w/2 + padding/2 + 20, padding + 15);
+      
+      // Axis labels
+      ctx.font = '14px Arial';
+      ctx.fillText('x', toCanvasX(xMax, false) + 5, toCanvasY(0) + 5);
+      ctx.fillText('y', toCanvasX(0, false) - 15, toCanvasY(yMax) - 5);
+      ctx.fillText('x', toCanvasX(xMax, true) + 5, toCanvasY(0) + 5);
+      ctx.fillText('y', toCanvasX(0, true) - 15, toCanvasY(yMax) - 5);
+      
+      ctx.restore();
+
+      // Legend
+      ctx.save();
+      ctx.font = '14px Arial';
+      ctx.fillStyle = '#4caf50';
+      ctx.fillText('— Smooth curve', padding, h - 30);
+      ctx.fillStyle = '#f44336';
+      ctx.fillText('— Curve with cusp', padding, h - 10);
+      ctx.fillStyle = '#ff9800';
+      ctx.fillText('--- Tangent line', w/2 + 50, h - 30);
+      ctx.restore();
+   });
+  </script>
+ </body>
+</html>

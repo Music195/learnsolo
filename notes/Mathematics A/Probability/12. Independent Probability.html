@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<!-- tags: Probability -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Probability of Independent Trials
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   /* Enhanced text containment and scrolling */
+   .container, .main-content, .section, .explain, .formula, .condition, .example, .application, .problem-item, .solution-content, .key-takeaways, .interactive-demo, .demo-result, .calculation-steps, .calculation-step, .rule-card, .visualization-container, .object-groups, .object-group, .identical-explanation, .independence-explanation, .tree-diagram {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    overflow: auto;
+   }
+   
+   /* Rule cards for formulas and concepts */
+   .rule-card {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: 2px solid #007acc;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 4px 8px rgba(0, 122, 204, 0.1);
+   }
+   
+   .rule-card h3 {
+    color: #007acc;
+    margin-top: 0;
+    font-size: 1.3em;
+   }
+   
+   .rule-card .formula {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    margin: 10px 0;
+    font-size: 1.1em;
+    text-align: center;
+   }
+   
+   /* Independence explanation */
+   .independence-explanation {
+    background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+    border: 2px solid #28a745;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+   }
+   
+   .independence-explanation h4 {
+    color: #1b5e20;
+    margin-top: 0;
+   }
+   
+   /* Tree diagram */
+   .tree-diagram {
+    background: white;
+    border: 2px solid #007acc;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    text-align: center;
+   }
+   
+   /* Interactive demo styling */
+   .interactive-demo {
+    background: #f8f9fa;
+    border: 2px solid #28a745;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+   }
+   
+   .interactive-demo h3 {
+    color: #28a745;
+    margin-top: 0;
+   }
+   
+   .demo-input {
+    padding: 8px 12px;
+    margin: 5px;
+    border: 2px solid #28a745;
+    border-radius: 6px;
+    font-size: 16px;
+    width: 120px;
+   }
+   
+   .demo-button {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 10px 0;
+   }
+   
+   .demo-button:hover {
+    background: #218838;
+   }
+   
+   .demo-result {
+    margin-top: 15px;
+    padding: 10px;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+   }
+   
+   .highlight {
+    color: #dc3545;
+    font-size: 1.2em;
+   }
+   
+   /* Problem items */
+   .problem-item {
+    background: white;
+    border: 2px solid #ffc107;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 15px 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+   }
+   
+   .problem-number {
+    background: #ffc107;
+    color: #000;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-right: 15px;
+   }
+   
+   .problem-content {
+    display: inline-block;
+    width: calc(100% - 50px);
+    vertical-align: top;
+   }
+   
+   .solution-button {
+    background: #007acc;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin: 10px 0;
+   }
+   
+   .solution-button:hover {
+    background: #0056b3;
+   }
+   
+   .solution-content {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 15px;
+    margin-top: 10px;
+   }
+   
+   /* Key takeaways */
+   .key-takeaways {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    border: 2px solid #2196f3;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+   }
+   
+   .key-takeaways h3 {
+    color: #1976d2;
+    margin-top: 0;
+   }
+   
+   .key-takeaways ul {
+    margin: 0;
+   }
+   
+   .key-takeaways li {
+    margin: 8px 0;
+   }
+   
+   /* Calculation steps */
+   .calculation-steps {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px 0;
+   }
+   
+   .calculation-step {
+    margin: 8px 0;
+    padding: 5px 0;
+    border-left: 3px solid #007acc;
+    padding-left: 15px;
+   }
+   
+   /* Visualization container */
+   .visualization-container {
+    text-align: center;
+    margin: 20px 0;
+   }
+   
+   .visualization-container canvas {
+    border: 2px solid #007acc;
+    border-radius: 8px;
+    background: white;
+   }
+   
+   /* Responsive design */
+   @media (max-width: 768px) {
+    .problem-content {
+     width: calc(100% - 50px);
+    }
+    
+    .demo-input {
+     width: 100px;
+    }
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Probability">
+   Probability of Independent Trials
+  </div>
+  <div class="container">
+   <div class="main-content">
+    
+    <div class="section">
+     <h2>Core Concept</h2>
+     <p><strong>Independent events</strong> are events where the occurrence of one event does not affect the probability of the other event occurring. When events are independent, we can multiply their probabilities to find the probability that both occur.</p>
+     
+     <div class="rule-card">
+      <h3>Multiplication Rule for Independent Events</h3>
+      <div class="formula">
+       P(A ∩ B) = P(A) × P(B)
+      </div>
+      <p><em>For two independent events A and B</em></p>
+     </div>
+     
+     <div class="rule-card">
+      <h3>General Multiplication Rule</h3>
+      <div class="formula">
+       P(A₁ ∩ A₂ ∩ ... ∩ Aₙ) = P(A₁) × P(A₂) × ... × P(Aₙ)
+      </div>
+      <p><em>For n independent events A₁ through Aₙ</em></p>
+     </div>
+    </div>
+    
+    <div class="section">
+     <h2>What is Independence?</h2>
+     <div class="independence-explanation">
+      <h4>Definition of Independent Events</h4>
+      <p>Two events A and B are independent if:</p>
+      <ul>
+       <li>The occurrence of A does not affect the probability of B</li>
+       <li>The occurrence of B does not affect the probability of A</li>
+       <li>P(A|B) = P(A) and P(B|A) = P(B)</li>
+       <li>Knowledge of one event gives no information about the other</li>
+      </ul>
+      
+      <h4>Examples of Independent Events</h4>
+      <ul>
+       <li>Coin tosses: Each toss is independent of previous tosses</li>
+       <li>Die rolls: Each roll is independent of previous rolls</li>
+       <li>Card draws with replacement: Each draw is independent</li>
+       <li>Weather: Today's weather is independent of yesterday's</li>
+      </ul>
+      
+      <h4>Examples of Dependent Events</h4>
+      <ul>
+       <li>Card draws without replacement: Second draw depends on first</li>
+       <li>Weather sequences: Tomorrow's weather may depend on today's</li>
+       <li>Manufacturing defects: One defect may indicate quality issues</li>
+      </ul>
+     </div>
+    </div>
+    
+    <div class="section">
+     <h2>Visual Guide</h2>
+     <div class="tree-diagram">
+      <h4>Tree Diagram for Independent Events</h4>
+      <div style="display: flex; justify-content: center; align-items: center; margin: 20px 0;">
+       <div style="text-align: center;">
+        <div style="width: 80px; height: 40px; background: #28a745; color: white; border-radius: 6px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">First Coin</div>
+        <div style="display: flex; gap: 20px;">
+         <div style="text-align: center;">
+          <div style="width: 60px; height: 30px; background: #007acc; color: white; border-radius: 4px; display: flex; align-items: center; justify-content: center; margin-bottom: 5px;">H (0.5)</div>
+          <div style="width: 40px; height: 20px; background: #dc3545; color: white; border-radius: 3px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">HH (0.25)</div>
+          <div style="width: 40px; height: 20px; background: #dc3545; color: white; border-radius: 3px; display: flex; align-items: center; justify-content: center;">HT (0.25)</div>
+         </div>
+         <div style="text-align: center;">
+          <div style="width: 60px; height: 30px; background: #6c757d; color: white; border-radius: 4px; display: flex; align-items: center; justify-content: center; margin-bottom: 5px;">T (0.5)</div>
+          <div style="width: 40px; height: 20px; background: #dc3545; color: white; border-radius: 3px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">TH (0.25)</div>
+          <div style="width: 40px; height: 20px; background: #dc3545; color: white; border-radius: 3px; display: flex; align-items: center; justify-content: center;">TT (0.25)</div>
+         </div>
+        </div>
+       </div>
+       <div style="margin-left: 40px; text-align: center;">
+        <div style="width: 80px; height: 40px; background: #28a745; color: white; border-radius: 6px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">Second Coin</div>
+        <div style="display: flex; flex-direction: column; gap: 5px;">
+         <div style="width: 60px; height: 30px; background: #007acc; color: white; border-radius: 4px; display: flex; align-items: center; justify-content: center;">H (0.5)</div>
+         <div style="width: 60px; height: 30px; background: #6c757d; color: white; border-radius: 4px; display: flex; align-items: center; justify-content: center;">T (0.5)</div>
+        </div>
+       </div>
+      </div>
+      <p><em>Tree diagram showing independent coin tosses. Each path has probability 0.25.</em></p>
+     </div>
+     
+     <div class="visualization-container">
+      <canvas id="independenceCanvas" width="600" height="300"></canvas>
+      <p><em>Interactive visualization of independent vs dependent events</em></p>
+     </div>
+    </div>
+    
+    <div class="section">
+     <h2>Interactive Demo</h2>
+     <div class="interactive-demo">
+      <h3>Independent Events Calculator</h3>
+      <p>Calculate probabilities for independent events:</p>
+      <input type="number" id="probA" class="demo-input" placeholder="P(A)" min="0" max="1" step="0.01">
+      <input type="number" id="probB" class="demo-input" placeholder="P(B)" min="0" max="1" step="0.01">
+      <input type="number" id="probC" class="demo-input" placeholder="P(C) (optional)" min="0" max="1" step="0.01">
+      <br>
+      <button id="calculateIndBtn" class="demo-button">Calculate Joint Probability</button>
+      <div id="indResult" class="demo-result"></div>
+      <div id="indSteps" class="calculation-steps" style="display: none;"></div>
+     </div>
+    </div>
+    
+    <div class="section">
+     <h2>Detailed Examples</h2>
+     
+     <h3>Example 1: Two Coin Tosses</h3>
+     <p>What is the probability of getting two heads when tossing two fair coins?</p>
+     <div class="calculation-steps">
+      <div class="calculation-step">P(Heads on first coin) = 1/2</div>
+      <div class="calculation-step">P(Heads on second coin) = 1/2</div>
+      <div class="calculation-step">Events are independent (one coin doesn't affect the other)</div>
+      <div class="calculation-step">Formula: P(HH) = P(H₁) × P(H₂) = (1/2) × (1/2) = 1/4 = 0.25</div>
+      <div class="calculation-step">Total possible outcomes: HH, HT, TH, TT (4 equally likely outcomes)</div>
+      <div class="calculation-step">Only 1 favorable outcome: HH</div>
+     </div>
+     
+     <h3>Example 2: Multiple Die Rolls</h3>
+     <p>What is the probability of rolling a 6 on three consecutive rolls of a fair die?</p>
+     <div class="calculation-steps">
+      <div class="calculation-step">P(6 on one die) = 1/6</div>
+      <div class="calculation-step">Three independent rolls</div>
+      <div class="calculation-step">Formula: P(6,6,6) = P(6) × P(6) × P(6) = (1/6)³ = 1/216 ≈ 0.00463</div>
+      <div class="calculation-step">Very unlikely: only 1 chance in 216</div>
+     </div>
+     
+     <h3>Example 3: Card Draws with Replacement</h3>
+     <p>A card is drawn, replaced, and drawn again. What is the probability of drawing two hearts?</p>
+     <div class="calculation-steps">
+      <div class="calculation-step">P(Heart on first draw) = 13/52 = 1/4</div>
+      <div class="calculation-step">Card is replaced, so second draw is independent</div>
+      <div class="calculation-step">P(Heart on second draw) = 13/52 = 1/4</div>
+      <div class="calculation-step">Formula: P(H,H) = P(H₁) × P(H₂) = (1/4) × (1/4) = 1/16 = 0.0625</div>
+      <div class="calculation-step">With replacement: events are independent</div>
+     </div>
+     
+     <h3>Example 4: Quality Control</h3>
+     <p>A factory produces items with a 2% defect rate. What is the probability that 3 items in a row are defective?</p>
+     <div class="calculation-steps">
+      <div class="calculation-step">P(Defective) = 0.02</div>
+      <div class="calculation-step">Assuming independent production</div>
+      <div class="calculation-step">Formula: P(D,D,D) = P(D) × P(D) × P(D) = 0.02³ = 0.000008</div>
+      <div class="calculation-step">Very rare: 8 in 1,000,000 items</div>
+     </div>
+    </div>
+    
+    <div class="section">
+     <h2>Applications</h2>
+     <ul>
+      <li><strong>Gambling:</strong> Multiple coin tosses, dice rolls, or card games</li>
+      <li><strong>Quality Control:</strong> Multiple product inspections</li>
+      <li><strong>Computer Science:</strong> Independent system failures or successes</li>
+      <li><strong>Medicine:</strong> Multiple independent tests or trials</li>
+      <li><strong>Weather:</strong> Independent daily weather events</li>
+      <li><strong>Sports:</strong> Independent game outcomes or player performances</li>
+      <li><strong>Finance:</strong> Independent investment returns</li>
+     </ul>
+    </div>
+    
+    <div class="section">
+     <h2>Practice Problems</h2>
+     
+     <div class="problem-item">
+      <div class="problem-number">1</div>
+      <div class="problem-content">
+       <p>What is the probability of flipping three heads in a row with a fair coin?</p>
+       <button class="solution-button" onclick="toggleSolution(1)">Show Solution</button>
+       <div class="solution-content" id="solution1">
+        <p>P(Heads) = 1/2 for each flip</p>
+        <p>Three independent flips</p>
+        <p>P(HHH) = (1/2) × (1/2) × (1/2) = 1/8 = 0.125</p>
+       </div>
+      </div>
+     </div>
+     
+     <div class="problem-item">
+      <div class="problem-number">2</div>
+      <div class="problem-content">
+       <p>A die is rolled twice. What is the probability of getting a 4 both times?</p>
+       <button class="solution-button" onclick="toggleSolution(2)">Show Solution</button>
+       <div class="solution-content" id="solution2">
+        <p>P(4 on one roll) = 1/6</p>
+        <p>Two independent rolls</p>
+        <p>P(4,4) = (1/6) × (1/6) = 1/36 ≈ 0.0278</p>
+       </div>
+      </div>
+     </div>
+     
+     <div class="problem-item">
+      <div class="problem-number">3</div>
+      <div class="problem-content">
+       <p>The probability of rain each day is 0.3. What is the probability of rain for 2 consecutive days?</p>
+       <button class="solution-button" onclick="toggleSolution(3)">Show Solution</button>
+       <div class="solution-content" id="solution3">
+        <p>P(Rain each day) = 0.3</p>
+        <p>Assuming independent days</p>
+        <p>P(Rain 2 days) = 0.3 × 0.3 = 0.09</p>
+       </div>
+      </div>
+     </div>
+     
+     <div class="problem-item">
+      <div class="problem-number">4</div>
+      <div class="problem-content">
+       <p>A multiple choice test has 4 questions, each with 5 options. A student guesses randomly. What is the probability of getting all 4 correct?</p>
+       <button class="solution-button" onclick="toggleSolution(4)">Show Solution</button>
+       <div class="solution-content" id="solution4">
+        <p>P(Correct guess per question) = 1/5 = 0.2</p>
+        <p>Four independent guesses</p>
+        <p>P(All correct) = (1/5)⁴ = 1/625 = 0.0016</p>
+       </div>
+      </div>
+     </div>
+    </div>
+    
+    <div class="key-takeaways">
+     <h3>Key Takeaways</h3>
+     <ul>
+      <li><strong>Independence:</strong> P(A|B) = P(A) and P(B|A) = P(B)</li>
+      <li><strong>Multiplication Rule:</strong> P(A ∩ B) = P(A) × P(B) for independent events</li>
+      <li><strong>Multiple Events:</strong> P(A₁ ∩ A₂ ∩ ... ∩ Aₙ) = P(A₁) × P(A₂) × ... × P(Aₙ)</li>
+      <li><strong>Common Examples:</strong> Coin tosses, die rolls, card draws with replacement</li>
+      <li><strong>Not Independent:</strong> Card draws without replacement, dependent sequences</li>
+      <li><strong>Tree Diagrams:</strong> Useful for visualizing independent event probabilities</li>
+      <li><strong>Counterintuitive:</strong> Multiple independent rare events can be extremely unlikely</li>
+     </ul>
+    </div>
+    
+   </div>
+  </div>
+  
+  <script>
+   // Interactive canvas visualization
+   const canvas = document.getElementById('independenceCanvas');
+   const ctx = canvas.getContext('2d');
+   
+   function drawIndependenceVisualization() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw independent events example
+    ctx.fillStyle = '#000';
+    ctx.font = '16px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('Independent Events: Two Coin Tosses', 300, 30);
+    
+    // Draw first coin outcomes
+    ctx.fillText('First Coin', 150, 70);
+    ctx.fillStyle = '#28a745';
+    ctx.fillRect(120, 80, 60, 40);
+    ctx.fillStyle = '#000';
+    ctx.fillText('H: 0.5', 150, 105);
+    
+    ctx.fillStyle = '#dc3545';
+    ctx.fillRect(120, 130, 60, 40);
+    ctx.fillStyle = '#000';
+    ctx.fillText('T: 0.5', 150, 155);
+    
+    // Draw arrows
+    ctx.strokeStyle = '#007acc';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(180, 100);
+    ctx.lineTo(220, 100);
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.moveTo(180, 150);
+    ctx.lineTo(220, 150);
+    ctx.stroke();
+    
+    // Draw second coin outcomes
+    ctx.fillText('Second Coin', 350, 70);
+    ctx.fillStyle = '#28a745';
+    ctx.fillRect(320, 80, 60, 40);
+    ctx.fillStyle = '#000';
+    ctx.fillText('H: 0.5', 350, 105);
+    
+    ctx.fillStyle = '#dc3545';
+    ctx.fillRect(320, 130, 60, 40);
+    ctx.fillStyle = '#000';
+    ctx.fillText('T: 0.5', 350, 155);
+    
+    // Draw joint probabilities
+    ctx.fillText('Joint Probabilities:', 300, 200);
+    ctx.fillText('P(HH) = 0.5 × 0.5 = 0.25', 300, 225);
+    ctx.fillText('P(HT) = 0.5 × 0.5 = 0.25', 300, 245);
+    ctx.fillText('P(TH) = 0.5 × 0.5 = 0.25', 300, 265);
+    ctx.fillText('P(TT) = 0.5 × 0.5 = 0.25', 300, 285);
+   }
+   
+   // Interactive independence calculator
+   document.getElementById('calculateIndBtn').addEventListener('click', function() {
+    const probA = parseFloat(document.getElementById('probA').value);
+    const probB = parseFloat(document.getElementById('probB').value);
+    const probC = parseFloat(document.getElementById('probC').value);
+    
+    if (isNaN(probA) || isNaN(probB) || probA < 0 || probA > 1 || probB < 0 || probB > 1) {
+     document.getElementById('indResult').innerHTML = '<span style="color: red;">Please enter valid probabilities (0-1) for A and B</span>';
+     return;
+    }
+    
+    let result = probA * probB;
+    let formula = `P(A ∩ B) = ${probA} × ${probB} = ${result.toFixed(4)}`;
+    
+    if (!isNaN(probC) && probC >= 0 && probC <= 1) {
+     result *= probC;
+     formula = `P(A ∩ B ∩ C) = ${probA} × ${probB} × ${probC} = ${result.toFixed(6)}`;
+    }
+    
+    const resultDiv = document.getElementById('indResult');
+    const stepsDiv = document.getElementById('indSteps');
+    
+    resultDiv.innerHTML = `<span class="highlight">${formula}</span>`;
+    
+    stepsDiv.style.display = 'block';
+    let stepsHtml = `
+     <div class="calculation-step">Given probabilities are independent</div>
+     <div class="calculation-step">P(A) = ${probA}</div>
+     <div class="calculation-step">P(B) = ${probB}</div>
+    `;
+    
+    if (!isNaN(probC) && probC >= 0 && probC <= 1) {
+     stepsHtml += `<div class="calculation-step">P(C) = ${probC}</div>`;
+    }
+    
+    stepsHtml += `
+     <div class="calculation-step">Multiplication rule: P(A ∩ B${!isNaN(probC) && probC >= 0 && probC <= 1 ? ' ∩ C' : ''}) = P(A) × P(B)${!isNaN(probC) && probC >= 0 && probC <= 1 ? ' × P(C)' : ''}</div>
+     <div class="calculation-step">Calculation: ${probA} × ${probB}${!isNaN(probC) && probC >= 0 && probC <= 1 ? ` × ${probC}` : ''} = ${result.toFixed(6)}</div>
+    `;
+    
+    stepsDiv.innerHTML = stepsHtml;
+   });
+   
+   // Solution toggle function
+   function toggleSolution(problemNumber) {
+    const solution = document.getElementById('solution' + problemNumber);
+    const button = solution.previousElementSibling;
+    
+    if (solution.style.display === 'none' || solution.style.display === '') {
+     solution.style.display = 'block';
+     button.textContent = 'Hide Solution';
+    } else {
+     solution.style.display = 'none';
+     button.textContent = 'Show Solution';
+    }
+   }
+   
+   // Initialize visualization
+   drawIndependenceVisualization();
+  </script>
+ </body>
+</html>

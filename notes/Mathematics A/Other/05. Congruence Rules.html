@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<!-- tags: Others -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Congruence Rules
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+    /* Enhanced text containment and scrolling */
+    .main-content {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      overflow: auto;
+      max-height: none;
+    }
+    
+    .graybox, .section {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      overflow: auto;
+    }
+    
+    /* Congruence rules styling */
+    .congruence-rules {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 15px 0;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+    
+    .congruence-rules h3 {
+      margin-top: 0;
+      font-size: 1.3em;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    }
+    
+    .rule-list {
+      list-style: none;
+      padding: 0;
+      margin: 15px 0;
+    }
+    
+    .rule-list li {
+      background: rgba(255,255,255,0.1);
+      margin: 8px 0;
+      padding: 12px;
+      border-radius: 8px;
+      border-left: 4px solid #fff;
+      display: flex;
+      align-items: center;
+    }
+    
+    .rule-num {
+      background: #fff;
+      color: #667eea;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      margin-right: 15px;
+      flex-shrink: 0;
+    }
+    
+    /* Interactive demo styling */
+    .interactive-demo {
+      background: #f8f9fa;
+      border: 2px solid #007acc;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+      text-align: center;
+    }
+    
+    .demo-input {
+      padding: 10px;
+      font-size: 16px;
+      border: 2px solid #007acc;
+      border-radius: 6px;
+      margin: 10px;
+      width: 120px;
+    }
+    
+    .demo-button {
+      background: #007acc;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px;
+      transition: background 0.3s;
+    }
+    
+    .demo-button:hover {
+      background: #0056b3;
+    }
+    
+    .demo-result {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 15px 0;
+      min-height: 30px;
+    }
+    
+    /* Problem items styling */
+    .problem-item {
+      background: #fff3cd;
+      border: 2px solid #ffc107;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      position: relative;
+    }
+    
+    .problem-item .problem-number {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: #ffc107;
+      color: #000;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: bold;
+      font-size: 0.9em;
+    }
+    
+    .problem-item .problem-content {
+      margin-left: 60px;
+    }
+    
+    /* Solution button styling */
+    .solution-button {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      margin: 10px 0;
+      transition: background 0.3s;
+    }
+    
+    .solution-button:hover {
+      background: #218838;
+    }
+    
+    .solution-content {
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      border-radius: 6px;
+      padding: 15px;
+      margin: 10px 0;
+      display: none;
+    }
+    
+    /* Key takeaways styling */
+    .key-takeaways {
+      background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+      color: #333;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 20px 0;
+      border: 2px solid rgba(255,255,255,0.3);
+    }
+    
+    .key-takeaways h3 {
+      margin-top: 0;
+      text-align: center;
+      font-size: 1.4em;
+      text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
+    }
+    
+    .key-takeaways ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+    
+    .key-takeaways li {
+      margin: 8px 0;
+      font-weight: bold;
+    }
+    
+    /* Canvas visualization styling */
+    .visualization-container {
+      text-align: center;
+      margin: 20px 0;
+    }
+    
+    #congruenceCanvas {
+      border: 2px solid #007acc;
+      border-radius: 8px;
+      background: white;
+      max-width: 100%;
+      height: auto;
+    }
+    
+    /* Section styling */
+    .section {
+      margin: 30px 0;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border-left: 4px solid #007acc;
+    }
+    
+    .section h2 {
+      color: #007acc;
+      margin-top: 0;
+      font-size: 1.5em;
+    }
+    
+    /* Enhanced math styling */
+    .math {
+      font-family: 'Times New Roman', serif;
+    }
+    
+    .highlight {
+      background: #fff3cd;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    
+    .orange { color: #fd7e14; }
+    .blue { color: #007bff; }
+    .green { color: #28a745; }
+    .red { color: #dc3545; }
+    
+    /* Congruence specific */
+    .congruence-example {
+      background: #e9ecef;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: monospace;
+      font-size: 16px;
+    }
+    
+    .congruence-step {
+      margin: 8px 0;
+      padding: 5px;
+      background: white;
+      border-radius: 4px;
+    }
+    
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .congruence-rules, .interactive-demo, .section {
+        padding: 15px;
+      }
+      
+      .demo-input {
+        width: 100px;
+      }
+      
+      .problem-item .problem-content {
+        margin-left: 50px;
+      }
+      
+      .rule-list li {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .rule-num {
+        margin-bottom: 10px;
+      }
+    }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Others">
+   Congruence Rules
+  </div>
+  <div class="container">
+   <div class="main-content">
+    <div class="section">
+     <h2>Core Concept: Congruence Relations</h2>
+     <p>Two integers <strong>a</strong> and <strong>b</strong> are congruent modulo <strong>m</strong> if they have the same remainder when divided by <strong>m</strong>. This is written as:</p>
+     <div class="math" style="font-size: 1.3em; text-align: center; margin: 20px 0;">
+      $a \equiv b \pmod{m}$
+     </div>
+     <p>This means that <strong>m</strong> divides <strong>a - b</strong>, or equivalently: $a - b = km$ for some integer <strong>k</strong>.</p>
+     
+     <div class="congruence-rules">
+      <h3>Basic Properties of Congruence</h3>
+      <p>If $a \equiv c \pmod{m}$ and $b \equiv d \pmod{m}$, then:</p>
+      <ol class="rule-list">
+       <li>
+        <span class="rule-num">1</span>
+        <span class="math">$a + b \equiv c + d \pmod{m}$</span>
+       </li>
+       <li>
+        <span class="rule-num">2</span>
+        <span class="math">$a - b \equiv c - d \pmod{m}$</span>
+       </li>
+       <li>
+        <span class="rule-num">3</span>
+        <span class="math">$ab \equiv cd \pmod{m}$</span>
+       </li>
+       <li>
+        <span class="rule-num">4</span>
+        <span class="math">$a^k \equiv c^k \pmod{m}$</span>
+       </li>
+      </ol>
+     </div>
+    </div>
+
+    <div class="section">
+     <h2>Detailed Examples</h2>
+     
+     <h3>Example 1: Basic Congruence</h3>
+     <p>Check if 17 ≡ 5 mod 6:</p>
+     <div class="congruence-example">
+      <div class="congruence-step">17 ÷ 6 = 2 with remainder 5</div>
+      <div class="congruence-step">5 ÷ 6 = 0 with remainder 5</div>
+      <div class="congruence-step">Since both have remainder 5: 17 ≡ 5 mod 6 ✓</div>
+     </div>
+     
+     <h3>Example 2: Using Congruence Properties</h3>
+     <p>If 7 ≡ 1 mod 3 and 4 ≡ 1 mod 3, find 7 × 4 mod 3:</p>
+     <div class="congruence-example">
+      <div class="congruence-step">7 ≡ 1 mod 3</div>
+      <div class="congruence-step">4 ≡ 1 mod 3</div>
+      <div class="congruence-step">7 × 4 ≡ 1 × 1 ≡ 1 mod 3</div>
+      <div class="congruence-step">Check: 28 ÷ 3 = 9 with remainder 1 ✓</div>
+     </div>
+     
+     <h3>Example 3: Powers and Congruence</h3>
+     <p>If 2 ≡ 5 mod 3, find 2³ mod 3:</p>
+     <div class="congruence-example">
+      <div class="congruence-step">2 ≡ 5 mod 3</div>
+      <div class="congruence-step">2³ ≡ 5³ mod 3</div>
+      <div class="congruence-step">8 ≡ 125 mod 3</div>
+      <div class="congruence-step">8 ÷ 3 = 2 with remainder 2</div>
+      <div class="congruence-step">125 ÷ 3 = 41 with remainder 2</div>
+      <div class="congruence-step">So 2³ ≡ 2 mod 3 ✓</div>
+     </div>
+    </div>
+
+    <div class="section">
+     <h2>Visual Guide</h2>
+     <div class="visualization-container">
+      <canvas id="congruenceCanvas" width="800" height="500"></canvas>
+     </div>
+     <p>The visualization above shows congruence classes modulo 5, demonstrating how numbers are grouped by their remainders when divided by 5.</p>
+    </div>
+
+    <div class="section">
+     <h2>Interactive Demo</h2>
+     <div class="interactive-demo">
+      <h3>Congruence Calculator</h3>
+      <p>Check if two numbers are congruent modulo m:</p>
+      <input type="number" id="numA" class="demo-input" placeholder="a" value="17">
+      <input type="number" id="numB" class="demo-input" placeholder="b" value="5">
+      <input type="number" id="modulus" class="demo-input" placeholder="m" min="1" value="6">
+      <br>
+      <button onclick="checkCongruence()" class="demo-button">Check Congruence</button>
+      <div id="demoResult" class="demo-result"></div>
+      <div id="congruenceSteps"></div>
+     </div>
+    </div>
+
+    <div class="section">
+     <h2>Applications</h2>
+     <ul>
+      <li><strong>Cryptography:</strong> Foundation of RSA and other public-key cryptosystems</li>
+      <li><strong>Computer Science:</strong> Hash functions and data structures</li>
+      <li><strong>Number Theory:</strong> Solving linear congruences and systems of congruences</li>
+      <li><strong>Calendar Calculations:</strong> Determining days of the week and leap years</li>
+      <li><strong>Digital Signal Processing:</strong> Fast Fourier transforms and cyclic codes</li>
+     </ul>
+    </div>
+
+    <div class="section">
+     <h2>Practice Problems</h2>
+     
+     <div class="problem-item">
+      <div class="problem-number">1</div>
+      <div class="problem-content">
+       <p>Determine if 23 ≡ 8 mod 5.</p>
+       <button class="solution-button" onclick="toggleSolution('sol1')">Show Solution</button>
+       <div id="sol1" class="solution-content">
+        <div class="congruence-example">
+         <div class="congruence-step">23 ÷ 5 = 4 with remainder 3</div>
+         <div class="congruence-step">8 ÷ 5 = 1 with remainder 3</div>
+         <div class="congruence-step">Since both have remainder 3: 23 ≡ 8 mod 5 ✓</div>
+        </div>
+       </div>
+      </div>
+     </div>
+     
+     <div class="problem-item">
+      <div class="problem-number">2</div>
+      <div class="problem-content">
+       <p>If 3 ≡ 7 mod 4 and 2 ≡ 6 mod 4, find 3 × 2 mod 4.</p>
+       <button class="solution-button" onclick="toggleSolution('sol2')">Show Solution</button>
+       <div id="sol2" class="solution-content">
+        <div class="congruence-example">
+         <div class="congruence-step">3 ≡ 7 mod 4</div>
+         <div class="congruence-step">2 ≡ 6 mod 4</div>
+         <div class="congruence-step">3 × 2 ≡ 7 × 6 mod 4</div>
+         <div class="congruence-step">42 ÷ 4 = 10 with remainder 2</div>
+         <div class="congruence-step">So 3 × 2 ≡ 2 mod 4</div>
+        </div>
+       </div>
+      </div>
+     </div>
+     
+     <div class="problem-item">
+      <div class="problem-number">3</div>
+      <div class="problem-content">
+       <p>Find x such that x ≡ 3 mod 7 and x ≡ 4 mod 5.</p>
+       <button class="solution-button" onclick="toggleSolution('sol3')">Show Solution</button>
+       <div id="sol3" class="solution-content">
+        <p>This is a system of linear congruences. Using the Chinese Remainder Theorem:</p>
+        <div class="congruence-example">
+         <div class="congruence-step">Find x = 5k + 4 where k = 0, 1, 2, ...</div>
+         <div class="congruence-step">5k + 4 ≡ 3 mod 7</div>
+         <div class="congruence-step">5k ≡ -1 mod 7</div>
+         <div class="congruence-step">5k ≡ 6 mod 7</div>
+         <div class="congruence-step">Multiply both sides by 3: 15k ≡ 18 mod 7</div>
+         <div class="congruence-step">k ≡ 4 mod 7</div>
+         <div class="congruence-step">x = 5(4) + 4 = 24</div>
+         <div class="congruence-step">Check: 24 ÷ 7 = 3 with remainder 3 ✓</div>
+         <div class="congruence-step">24 ÷ 5 = 4 with remainder 4 ✓</div>
+        </div>
+       </div>
+      </div>
+     </div>
+     
+     <div class="problem-item">
+      <div class="problem-number">4</div>
+      <div class="problem-content">
+       <p>If 5 ≡ 2 mod 3, find 5² mod 3.</p>
+       <button class="solution-button" onclick="toggleSolution('sol4')">Show Solution</button>
+       <div id="sol4" class="solution-content">
+        <div class="congruence-example">
+         <div class="congruence-step">5 ≡ 2 mod 3</div>
+         <div class="congruence-step">5² ≡ 2² mod 3</div>
+         <div class="congruence-step">25 ≡ 4 mod 3</div>
+         <div class="congruence-step">4 ÷ 3 = 1 with remainder 1</div>
+         <div class="congruence-step">So 5² ≡ 1 mod 3</div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <h3>Key Takeaways</h3>
+     <ul>
+      <li>Congruence is an equivalence relation that preserves addition, subtraction, multiplication, and exponentiation</li>
+      <li>$a \equiv b \pmod{m}$ means m divides (a - b)</li>
+      <li>Congruence classes partition the integers into m distinct residue classes</li>
+      <li>The properties allow us to perform arithmetic operations on representatives of congruence classes</li>
+      <li>Congruence is fundamental to modular arithmetic and many cryptographic systems</li>
+     </ul>
+    </div>
+   </div>
+  </div>
+  <script>
+    function toggleSolution(id) {
+      const solution = document.getElementById(id);
+      const button = solution.previousElementSibling;
+      
+      if (solution.style.display === 'none' || solution.style.display === '') {
+        solution.style.display = 'block';
+        button.textContent = 'Hide Solution';
+      } else {
+        solution.style.display = 'none';
+        button.textContent = 'Show Solution';
+      }
+    }
+
+    function drawCongruenceVisualization() {
+      const canvas = document.getElementById('congruenceCanvas');
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+      
+      // Clear canvas
+      ctx.clearRect(0, 0, width, height);
+      
+      // Set up coordinate system
+      const margin = 60;
+      const plotWidth = width - 2 * margin;
+      const plotHeight = height - 2 * margin;
+      
+      // Draw background
+      ctx.fillStyle = '#f8f9fa';
+      ctx.fillRect(0, 0, width, height);
+      
+      // Title
+      ctx.fillStyle = '#333';
+      ctx.font = '16px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('Congruence Classes Modulo 5', width/2, 30);
+      
+      // Draw number line
+      ctx.strokeStyle = '#333';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(margin, height/2);
+      ctx.lineTo(width - margin, height/2);
+      ctx.stroke();
+      
+      // Draw tick marks and numbers
+      ctx.font = '12px Arial';
+      ctx.textAlign = 'center';
+      for (let i = -2; i <= 12; i++) {
+        const x = margin + ((i + 2) / 14) * plotWidth;
+        ctx.beginPath();
+        ctx.moveTo(x, height/2 - 5);
+        ctx.lineTo(x, height/2 + 5);
+        ctx.stroke();
+        ctx.fillText(i.toString(), x, height/2 + 20);
+      }
+      
+      // Colors for different residue classes
+      const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7'];
+      
+      // Draw congruence classes
+      for (let residue = 0; residue < 5; residue++) {
+        ctx.fillStyle = colors[residue];
+        ctx.strokeStyle = colors[residue];
+        ctx.lineWidth = 3;
+        
+        // Draw points for this residue class
+        for (let i = -2; i <= 12; i++) {
+          if (i % 5 === residue) {
+            const x = margin + ((i + 2) / 14) * plotWidth;
+            ctx.beginPath();
+            ctx.arc(x, height/2, 6, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Label the first few
+            if (i >= 0 && i <= 4) {
+              ctx.fillStyle = '#333';
+              ctx.font = '10px Arial';
+              ctx.fillText(`${i}`, x, height/2 - 15);
+              ctx.fillStyle = colors[residue];
+            }
+          }
+        }
+        
+        // Draw connecting line for this class
+        ctx.beginPath();
+        let first = true;
+        for (let i = -2; i <= 12; i++) {
+          if (i % 5 === residue) {
+            const x = margin + ((i + 2) / 14) * plotWidth;
+            if (first) {
+              ctx.moveTo(x, height/2);
+              first = false;
+            } else {
+              ctx.lineTo(x, height/2);
+            }
+          }
+        }
+        ctx.stroke();
+      }
+      
+      // Legend
+      ctx.fillStyle = '#333';
+      ctx.font = '12px Arial';
+      ctx.textAlign = 'left';
+      let legendY = height - 80;
+      
+      ctx.fillText('Residue Classes:', margin, legendY);
+      for (let i = 0; i < 5; i++) {
+        ctx.fillStyle = colors[i];
+        ctx.fillRect(margin + 10, legendY + 5 + i * 15, 15, 10);
+        ctx.fillStyle = '#333';
+        ctx.fillText(`≡ ${i} mod 5`, margin + 30, legendY + 15 + i * 15);
+      }
+      
+      // Explanation
+      ctx.fillText('Each color represents numbers congruent to the same value modulo 5', margin, height - 10);
+    }
+
+    function checkCongruence() {
+      const numAInput = document.getElementById('numA');
+      const numBInput = document.getElementById('numB');
+      const modulusInput = document.getElementById('modulus');
+      const result = document.getElementById('demoResult');
+      const steps = document.getElementById('congruenceSteps');
+      
+      const a = parseInt(numAInput.value);
+      const b = parseInt(numBInput.value);
+      const m = parseInt(modulusInput.value);
+      
+      if (isNaN(a) || isNaN(b) || isNaN(m) || m <= 0) {
+        result.textContent = 'Please enter valid numbers (modulus must be positive)';
+        result.style.color = '#f44336';
+        steps.innerHTML = '';
+        return;
+      }
+      
+      const remainderA = ((a % m) + m) % m; // Handle negative numbers
+      const remainderB = ((b % m) + m) % m;
+      const isCongruent = remainderA === remainderB;
+      
+      // Display result
+      if (isCongruent) {
+        result.innerHTML = `<strong>${a} ≡ ${b} mod ${m}</strong> ✓`;
+        result.style.color = '#4caf50';
+      } else {
+        result.innerHTML = `<strong>${a} ≢ ${b} mod ${m}</strong> ✗`;
+        result.style.color = '#f44336';
+      }
+      
+      // Display steps
+      steps.innerHTML = `
+        <div style="background: #e9ecef; padding: 15px; border-radius: 8px; margin-top: 10px;">
+          <h4>Congruence Check:</h4>
+          <div style="font-family: monospace; font-size: 14px; line-height: 1.5;">
+            <div>• ${a} ÷ ${m} = ${Math.floor(a/m)} with remainder ${remainderA}</div>
+            <div>• ${b} ÷ ${m} = ${Math.floor(b/m)} with remainder ${remainderB}</div>
+            <div>• Since ${remainderA} ${remainderA === remainderB ? '=' : '≠'} ${remainderB}, the numbers are ${isCongruent ? 'congruent' : 'not congruent'}</div>
+            <div>• ${a} - ${b} = ${a - b}, which is ${isCongruent ? '' : 'not '}divisible by ${m}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Initialize visualization when page loads
+    window.onload = function() {
+      drawCongruenceVisualization();
+      
+      // Set up interactive demo
+      const numAInput = document.getElementById('numA');
+      const numBInput = document.getElementById('numB');
+      const modulusInput = document.getElementById('modulus');
+      
+      numAInput.addEventListener('input', checkCongruence);
+      numBInput.addEventListener('input', checkCongruence);
+      modulusInput.addEventListener('input', checkCongruence);
+      checkCongruence(); // Initial check
+    };
+  </script>
+ </body>
+</html>

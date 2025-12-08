@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<!-- tags: Complex Plane -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   De Moivre's Theorem
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+    /* Enhanced text containment and responsive design */
+    .main-content {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      hyphens: auto;
+      max-width: 100%;
+    }
+    
+    .main-content * {
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+    
+    .math {
+      overflow-x: auto;
+      white-space: nowrap;
+      margin: 10px 0;
+    }
+    
+    /* Enhanced law blocks with gradient backgrounds */
+    .law-block {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+      color: white;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+    
+    .law-eq {
+      font-size: 1.4em;
+      font-weight: bold;
+      margin-bottom: 15px;
+      text-align: center;
+      background: rgba(255,255,255,0.1);
+      padding: 10px;
+      border-radius: 8px;
+    }
+    
+    /* Interactive demo styling */
+    .interactive-demo {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      border-radius: 15px;
+      padding: 25px;
+      margin: 25px 0;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      border: 2px solid rgba(255,255,255,0.3);
+    }
+    
+    .interactive-demo h3 {
+      color: white;
+      margin-top: 0;
+      text-align: center;
+      font-size: 1.6em;
+    }
+    
+    .demo-input {
+      padding: 8px 12px;
+      margin: 0 10px;
+      border: 2px solid rgba(255,255,255,0.5);
+      border-radius: 6px;
+      background: rgba(255,255,255,0.9);
+      font-size: 1em;
+      width: 60px;
+    }
+    
+    .demo-button {
+      background: rgba(255,255,255,0.9);
+      color: #333;
+      border: none;
+      padding: 10px 20px;
+      margin: 5px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+    
+    .demo-button:hover {
+      background: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    
+    .demo-result {
+      background: rgba(255,255,255,0.95);
+      padding: 15px;
+      margin-top: 15px;
+      border-radius: 8px;
+      font-weight: bold;
+      text-align: center;
+      font-size: 1.1em;
+      color: #333;
+    }
+    
+    /* Problem items and solutions */
+    .problem-item {
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 15px 0;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      border: 2px solid rgba(255,255,255,0.3);
+    }
+    
+    .problem-number {
+      background: #667eea;
+      color: white;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      margin-right: 15px;
+    }
+    
+    .problem-content {
+      display: inline-block;
+      vertical-align: top;
+      width: calc(100% - 50px);
+    }
+    
+    .solution-button {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      margin: 10px 0;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+    
+    .solution-button:hover {
+      background: #5a6fd8;
+      transform: translateY(-1px);
+    }
+    
+    .solution-content {
+      background: rgba(255,255,255,0.9);
+      padding: 15px;
+      margin-top: 10px;
+      border-radius: 8px;
+      display: none;
+    }
+    
+    .calculation-steps {
+      margin: 10px 0;
+    }
+    
+    .calculation-step {
+      margin: 8px 0;
+      padding: 8px;
+      background: rgba(102, 126, 234, 0.1);
+      border-left: 4px solid #667eea;
+      padding-left: 15px;
+    }
+    
+    /* Note boxes */
+    .note-box {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 20px 0;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+    
+    .note-box strong {
+      font-size: 1.2em;
+      display: block;
+      margin-bottom: 10px;
+    }
+    
+    /* Key takeaways */
+    .key-takeaways {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 25px;
+      border-radius: 15px;
+      margin: 25px 0;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      border: 2px solid rgba(255,255,255,0.3);
+    }
+    
+    .key-takeaways h3 {
+      margin-top: 0;
+      text-align: center;
+      font-size: 1.6em;
+    }
+    
+    .key-takeaways ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    
+    .key-takeaways li {
+      margin: 10px 0;
+      padding: 10px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    
+    /* Section styling */
+    .section {
+      margin: 30px 0;
+    }
+    
+    .section h2 {
+      color: #333;
+      border-bottom: 3px solid #667eea;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+    
+    /* Operation blocks */
+    .operation-block {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 20px 0;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+    
+    .operation-block p {
+      margin: 10px 0;
+      font-size: 1.1em;
+    }
+    
+    /* Theorem styling */
+    .theorem {
+      background: rgba(255,255,255,0.1);
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+      border: 2px solid rgba(255,255,255,0.3);
+    }
+    
+    /* Hint blocks */
+    .hint-block {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 20px 0;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+    
+    .hint-block strong {
+      font-size: 1.2em;
+      display: block;
+      margin-bottom: 10px;
+    }
+    
+    .hint-block ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+    
+    .hint-block li {
+      margin: 8px 0;
+    }
+    
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .interactive-demo, .law-block, .problem-item, .note-box, .key-takeaways {
+        padding: 15px;
+        margin: 15px 0;
+      }
+      
+      .demo-input {
+        width: 50px;
+        margin: 0 5px;
+      }
+      
+      .demo-button {
+        padding: 8px 16px;
+        margin: 3px;
+        font-size: 0.9em;
+      }
+      
+      .problem-content {
+        width: calc(100% - 40px);
+      }
+    }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Complex Plane">
+   De Moivre's Theorem
+  </div>
+  <div class="container">
+   <div class="main-content">
+    <div class="section">
+     <h2>Core Concept: De Moivre's Theorem</h2>
+     <p>De Moivre's theorem is one of the most important results in complex analysis. It provides a simple way to compute powers of complex numbers in polar form and is fundamental to finding roots of complex numbers.</p>
+     
+     <div class="operation-block">
+      <p>
+       For any real number θ and integer n:
+      </p>
+      <div class="theorem">
+       $$
+        \left( \cos\theta + i\sin\theta \right)^n = \cos n\theta + i\sin n\theta
+       $$
+      </div>
+     </div>
+     
+     <div class="hint-block">
+      <strong>
+       Key Properties:
+      </strong>
+      <ul>
+       <li><strong>Power rule:</strong> Raising to nth power multiplies the angle by n</li>
+       <li><strong>Integer powers:</strong> Works for positive, negative, and zero powers</li>
+       <li><strong>Trigonometric identities:</strong> Generates multiple angle formulas</li>
+       <li><strong>Complex roots:</strong> Essential for finding nth roots of complex numbers</li>
+       <li><strong>Euler's formula:</strong> Connects to e^(iθ) representation</li>
+      </ul>
+     </div>
+    </div>
+
+    <div class="interactive-demo">
+      <h3>Interactive De Moivre Calculator</h3>
+      <div style="margin: 20px 0;">
+        <div style="margin-bottom: 15px;">
+          <strong>Base:</strong> cos(<input type="number" id="baseAngle" value="30" step="15" class="demo-input">°) + i sin(θ)
+        </div>
+        <div style="margin-bottom: 15px;">
+          <strong>Power:</strong> n = <input type="number" id="power" value="3" step="1" class="demo-input">
+        </div>
+      </div>
+      <button onclick="calculateDeMoivre()" class="demo-button">Compute (cos θ + i sin θ)ⁿ</button>
+      <button onclick="showTrigonometric()" class="demo-button">Show Trigonometric Identity</button>
+      <button onclick="findRoots()" class="demo-button">Find Complex Roots</button>
+      <div class="demo-result" id="demoivreResult"></div>
+    </div>
+
+    <div class="section">
+     <h2>Mathematical Foundation</h2>
+     
+     <div class="law-block">
+      <div class="law-eq">Proof by Induction</div>
+      <div class="math">Base case (n=1): (cos θ + i sin θ)¹ = cos θ + i sin θ ✓</div>
+      <div class="math">Inductive step: Assume true for n, prove for n+1</div>
+      <div class="math">(cos θ + i sin θ)^{n+1} = (cos θ + i sin θ)^n (cos θ + i sin θ)</div>
+      <div class="math">= (cos nθ + i sin nθ)(cos θ + i sin θ)</div>
+      <div class="math">= cos nθ cos θ - sin nθ sin θ + i(cos nθ sin θ + sin nθ cos θ)</div>
+      <div class="math">= cos((n+1)θ) + i sin((n+1)θ)</div>
+     </div>
+     
+     <div class="law-block">
+      <div class="law-eq">Extensions</div>
+      <ul style="color: white;">
+        <li><strong>Negative powers:</strong> (cos θ + i sin θ)^{-n} = cos(-nθ) + i sin(-nθ) = cos nθ - i sin nθ</li>
+        <li><strong>Rational powers:</strong> For non-integer powers, defines branches of complex logarithm</li>
+        <li><strong>Euler form:</strong> [e^(iθ)]^n = e^(inθ) = cos nθ + i sin nθ</li>
+        <li><strong>Real powers:</strong> Generalizes to complex exponents via analytic continuation</li>
+      </ul>
+     </div>
+    </div>
+
+    <div class="section">
+      <h2>Worked Examples</h2>
+      <div class="problem-item">
+        <div class="problem-number">1</div>
+        <div class="problem-content">
+          <p>Compute (cos 30° + i sin 30°)³.</p>
+          <button class="solution-button" onclick="toggleSolution(1)">Show Solution</button>
+          <div class="solution-content" id="solution1">
+            <div class="calculation-steps">
+              <div class="calculation-step">Using De Moivre's theorem: (cos θ + i sin θ)ⁿ = cos nθ + i sin nθ</div>
+              <div class="calculation-step">Here θ = 30°, n = 3</div>
+              <div class="calculation-step">cos(3×30°) + i sin(3×30°) = cos 90° + i sin 90°</div>
+              <div class="calculation-step">= 0 + i × 1 = i</div>
+              <div class="calculation-step">Verification: (cos 30° + i sin 30°)³ = (√3/2 + i/2)³</div>
+              <div class="calculation-step">But De Moivre gives the result directly!</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="problem-item">
+        <div class="problem-number">2</div>
+        <div class="problem-content">
+          <p>Find cos 3θ in terms of cos θ.</p>
+          <button class="solution-button" onclick="toggleSolution(2)">Show Solution</button>
+          <div class="solution-content" id="solution2">
+            <div class="calculation-steps">
+              <div class="calculation-step">cos 3θ = Re[(cos θ + i sin θ)³]</div>
+              <div class="calculation-step">(cos θ + i sin θ)³ = cos 3θ + i sin 3θ</div>
+              <div class="calculation-step">Expand: cos³θ + 3i cos²θ sin θ - 3 cos θ sin²θ - i sin³θ</div>
+              <div class="calculation-step">Real part: cos³θ - 3 cos θ sin²θ</div>
+              <div class="calculation-step">= cos³θ - 3 cos θ (1 - cos²θ)</div>
+              <div class="calculation-step">= cos³θ - 3 cos θ + 3 cos³θ</div>
+              <div class="calculation-step">= 4 cos³θ - 3 cos θ</div>
+              <div class="calculation-step">Therefore: cos 3θ = 4 cos³θ - 3 cos θ</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="problem-item">
+        <div class="problem-number">3</div>
+        <div class="problem-content">
+          <p>Find the three cube roots of 1.</p>
+          <button class="solution-button" onclick="toggleSolution(3)">Show Solution</button>
+          <div class="solution-content" id="solution3">
+            <div class="calculation-steps">
+              <div class="calculation-step">Solve z³ = 1, so z = 1^(1/3)</div>
+              <div class="calculation-step">1 = cos 0° + i sin 0°</div>
+              <div class="calculation-step">Roots: cos(0°/3 + 360°k/3) + i sin(0°/3 + 360°k/3) for k=0,1,2</div>
+              <div class="calculation-step">k=0: cos 0° + i sin 0° = 1</div>
+              <div class="calculation-step">k=1: cos 120° + i sin 120° = -1/2 + i √3/2</div>
+              <div class="calculation-step">k=2: cos 240° + i sin 240° = -1/2 - i √3/2</div>
+              <div class="calculation-step">These are the three cube roots of unity</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+     <h2>Applications and Importance</h2>
+     <div class="law-block">
+      <div class="law-eq">Fundamental Applications</div>
+      <ul style="color: white;">
+        <li><strong>Trigonometric identities:</strong> Multiple angle formulas (cos nθ, sin nθ)</li>
+        <li><strong>Complex roots:</strong> Finding nth roots of any complex number</li>
+        <li><strong>Polynomial equations:</strong> Solving equations with complex coefficients</li>
+        <li><strong>Fourier analysis:</strong> Signal processing and frequency analysis</li>
+        <li><strong>Fractal geometry:</strong> Complex dynamics and Julia sets</li>
+        <li><strong>Quantum mechanics:</strong> Angular momentum and spin states</li>
+      </ul>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+      <h3>Key Takeaways</h3>
+      <ul>
+        <li>(cos θ + i sin θ)ⁿ = cos nθ + i sin nθ for integer n</li>
+        <li>Multiplies angles by n, preserves unit circle</li>
+        <li>Generates trigonometric identities for multiple angles</li>
+        <li>Essential for finding complex roots and solving equations</li>
+        <li>Foundation for complex analysis and many applications</li>
+        <li>Extends to negative and fractional powers</li>
+      </ul>
+    </div>
+   </div>
+  </div>
+
+  <script>
+    function calculateDeMoivre() {
+      const theta = parseFloat(document.getElementById('baseAngle').value) || 0;
+      const n = parseFloat(document.getElementById('power').value) || 1;
+      
+      const nTheta = n * theta;
+      const cosNTheta = Math.cos(nTheta * Math.PI / 180);
+      const sinNTheta = Math.sin(nTheta * Math.PI / 180);
+      
+      document.getElementById('demoivreResult').textContent = 
+        `(cos ${theta}° + i sin ${theta}°)⁵ = cos(${n}×${theta}°) + i sin(${n}×${theta}°) = cos ${nTheta}° + i sin ${nTheta}° ≈ ${cosNTheta.toFixed(3)} + i ${sinNTheta.toFixed(3)}`;
+    }
+
+    function showTrigonometric() {
+      const theta = parseFloat(document.getElementById('baseAngle').value) || 0;
+      const n = parseFloat(document.getElementById('power').value) || 1;
+      
+      if (n === 2) {
+        document.getElementById('demoivreResult').textContent = 
+          `cos 2θ = cos²θ - sin²θ = 2cos²θ - 1 = 1 - 2sin²θ | sin 2θ = 2sinθ cosθ`;
+      } else if (n === 3) {
+        document.getElementById('demoivreResult').textContent = 
+          `cos 3θ = 4cos³θ - 3cosθ | sin 3θ = 3sinθ - 4sin³θ`;
+      } else {
+        document.getElementById('demoivreResult').textContent = 
+          `De Moivre generates the general formulas for cos nθ and sin nθ`;
+      }
+    }
+
+    function findRoots() {
+      const theta = parseFloat(document.getElementById('baseAngle').value) || 0;
+      const n = parseFloat(document.getElementById('power').value) || 1;
+      
+      if (n <= 0 || n !== Math.floor(n)) {
+        document.getElementById('demoivreResult').textContent = "Please enter a positive integer for n to find roots";
+        return;
+      }
+      
+      let result = `The ${n} ${n === 1 ? 'root' : 'roots'} of cos ${theta}° + i sin ${theta}° are:\n`;
+      for (let k = 0; k < n; k++) {
+        const angle = (theta + 360 * k) / n;
+        result += `zₖ = cos(${angle.toFixed(1)}°) + i sin(${angle.toFixed(1)}°) for k=${k}\n`;
+      }
+      
+      document.getElementById('demoivreResult').textContent = result;
+    }
+
+    function toggleSolution(problemNumber) {
+      const solution = document.getElementById(`solution${problemNumber}`);
+      if (solution.style.display === 'block') {
+        solution.style.display = 'none';
+      } else {
+        solution.style.display = 'block';
+      }
+    }
+
+    // Initialize with default values
+    calculateDeMoivre();
+
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [
+                {left: "$$", right: "$$", display: true},
+                {left: "\\(", right: "\\)", display: false},
+                {left: "\\[", right: "\\]", display: true}
+            ],
+            throwOnError: false
+        });
+    });
+  </script>
+ </body>
+</html>

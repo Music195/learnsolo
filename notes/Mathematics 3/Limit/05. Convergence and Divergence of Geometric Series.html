@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<!-- tags: Limit -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Convergence and Divergence of Geometric Series
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Limit">
+   Convergence and Divergence of Geometric Series
+  </div>
+  <div class="container">
+   <div class="main-content">
+    <style>
+      .main-content {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        overflow: auto;
+        max-width: 100%;
+      }
+      
+      .section {
+        margin-bottom: 30px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #007acc;
+      }
+      
+      .section h2 {
+        color: #007acc;
+        margin-top: 0;
+        margin-bottom: 15px;
+        font-size: 1.4em;
+      }
+      
+      .highlight-box {
+        background: #e3f2fd;
+        border: 2px solid #2196f3;
+        border-radius: 6px;
+        padding: 15px;
+        margin: 15px 0;
+        font-weight: bold;
+        color: #1565c0;
+      }
+      
+      .series-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        background: white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      
+      .series-table th, .series-table td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: center;
+      }
+      
+      .series-table th {
+        background: #007acc;
+        color: white;
+        font-weight: bold;
+      }
+      
+      .case {
+        background: #f0f8ff;
+        font-weight: bold;
+        color: #2e7d32;
+      }
+      
+      .result {
+        background: #fff3e0;
+        font-weight: bold;
+        color: #f57c00;
+      }
+      
+      .zero {
+        background: #e8f5e8;
+        font-weight: bold;
+        color: #388e3c;
+      }
+      
+      .convergence-examples {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin: 20px 0;
+      }
+      
+      .example-card {
+        padding: 15px;
+        border-radius: 8px;
+        border: 2px solid;
+        background: white;
+      }
+      
+      .converges { border-color: #4caf50; background: #e8f5e8; }
+      .diverges { border-color: #f44336; background: #ffebee; }
+      
+      .example-card h3 {
+        margin-top: 0;
+        color: inherit;
+      }
+      
+      .partial-sums {
+        background: #f5f5f5;
+        padding: 15px;
+        border-radius: 6px;
+        margin: 10px 0;
+        font-family: monospace;
+      }
+      
+      .problem-item {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 15px;
+        margin: 10px 0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      }
+      
+      .solution-btn {
+        background: #007acc;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        margin: 10px 0;
+        transition: background 0.3s;
+      }
+      
+      .solution-btn:hover {
+        background: #005999;
+      }
+      
+      .solution {
+        display: none;
+        background: #f0f8ff;
+        border: 1px solid #007acc;
+        border-radius: 4px;
+        padding: 15px;
+        margin-top: 10px;
+      }
+      
+      .key-takeaways {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 30px;
+      }
+      
+      .key-takeaways h3 {
+        margin-top: 0;
+        color: white;
+      }
+      
+      .key-takeaways ul {
+        margin: 0;
+        padding-left: 20px;
+      }
+      
+      .key-takeaways li {
+        margin: 8px 0;
+      }
+      
+      #geometricCanvas {
+        border: 2px solid #007acc;
+        border-radius: 8px;
+        background: white;
+        margin: 20px 0;
+        max-width: 100%;
+        height: auto;
+      }
+      
+      .visual-guide {
+        text-align: center;
+        margin: 20px 0;
+      }
+      
+      .visual-guide p {
+        font-style: italic;
+        color: #666;
+        margin-bottom: 20px;
+      }
+      
+      .ratio-explanation {
+        background: #fff9c4;
+        border: 1px solid #ffeb3b;
+        border-radius: 6px;
+        padding: 15px;
+        margin: 15px 0;
+      }
+    </style>
+    <div class="section">
+      <h2>📚 Core Concepts</h2>
+      <p>A geometric series is an infinite sum of terms where each term is obtained by multiplying the previous term by a constant ratio $r$. The general form is:</p>
+      
+      <div class="highlight-box">
+        $a + ar + ar^2 + ar^3 + \cdots + ar^{n-1} + \cdots = \sum_{n=0}^{\infty} ar^n$
+        <br><br>
+        where $a$ is the first term and $r$ is the common ratio.
+      </div>
+      
+      <div class="ratio-explanation">
+        <strong>The Common Ratio $r$:</strong> This is the factor by which each term is multiplied to get the next term. For example, in the series $3 + 6 + 12 + 24 + \cdots$, the common ratio is $r = 2$.
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>📊 Convergence Conditions</h2>
+      <table class="series-table">
+        <tr>
+          <th>Condition</th>
+          <th>Behavior</th>
+          <th>Sum of Series</th>
+        </tr>
+        <tr>
+          <td class="case">$|r| < 1$</td>
+          <td class="result">Converges</td>
+          <td class="result">$\sum_{n=0}^{\infty} ar^n = \dfrac{a}{1-r}$</td>
+        </tr>
+        <tr>
+          <td class="case">$|r| \geq 1$</td>
+          <td class="result">Diverges</td>
+          <td class="result">No finite sum</td>
+        </tr>
+        <tr>
+          <td class="case">$a = 0$</td>
+          <td class="zero">Always Converges</td>
+          <td class="zero">$0$</td>
+        </tr>
+      </table>
+      
+      <div class="highlight-box">
+        Key Insight: The convergence of a geometric series depends only on the absolute value of the common ratio |r|. If |r| ≥ 1, the series diverges. If |r| < 1, it converges to a/(1-r).
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>🔍 Visual Guide</h2>
+      <div class="visual-guide">
+        <p>Interactive visualization showing partial sums of geometric series for different values of r:</p>
+        <canvas id="geometricCanvas" width="800" height="500"></canvas>
+      </div>
+      
+      <div class="convergence-examples">
+        <div class="example-card converges">
+          <h3>Convergent Series: r = 0.5</h3>
+          <p>Series: $1 + 0.5 + 0.25 + 0.125 + \cdots$</p>
+          <div class="partial-sums">
+            Partial sums: 1, 1.5, 1.75, 1.875, ... → 2
+          </div>
+          <p>Sum = 1/(1-0.5) = 2</p>
+        </div>
+        
+        <div class="example-card diverges">
+          <h3>Divergent Series: r = 1.2</h3>
+          <p>Series: $1 + 1.2 + 1.44 + 1.728 + \cdots$</p>
+          <div class="partial-sums">
+            Partial sums: 1, 2.2, 3.64, 5.368, ... → ∞
+          </div>
+          <p>Terms grow without bound</p>
+        </div>
+        
+        <div class="example-card converges">
+          <h3>Convergent Series: r = -0.5</h3>
+          <p>Series: $1 - 0.5 + 0.25 - 0.125 + \cdots$</p>
+          <div class="partial-sums">
+            Partial sums: 1, 0.5, 0.75, 0.625, ... → 2/3
+          </div>
+          <p>Sum = 1/(1-(-0.5)) = 2/3</p>
+        </div>
+        
+        <div class="example-card diverges">
+          <h3>Divergent Series: r = -1</h3>
+          <p>Series: $1 - 1 + 1 - 1 + \cdots$</p>
+          <div class="partial-sums">
+            Partial sums: 1, 0, 1, 0, ... (oscillates)
+          </div>
+          <p>Never settles to a single value</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>💡 Examples</h2>
+      <div class="problem-item">
+        <strong>Example 1:</strong> Does $\sum_{n=0}^{\infty} 3 \cdot \left(\dfrac{1}{2}\right)^n$ converge?
+        <br><br>
+        Here $a = 3$, $r = \dfrac{1}{2}$. Since $|r| = \dfrac{1}{2} < 1$, the series converges to $\dfrac{3}{1 - \dfrac{1}{2}} = 6$.
+      </div>
+      
+      <div class="problem-item">
+        <strong>Example 2:</strong> Does $\sum_{n=0}^{\infty} 2 \cdot (-1.5)^n$ converge?
+        <br><br>
+        Here $a = 2$, $r = -1.5$. Since $|r| = 1.5 > 1$, the series diverges.
+      </div>
+      
+      <div class="problem-item">
+        <strong>Example 3:</strong> Find the sum of $\sum_{n=1}^{\infty} \dfrac{1}{3^n}$.
+        <br><br>
+        This is a geometric series with $a = \dfrac{1}{3}$, $r = \dfrac{1}{3}$. Sum = $\dfrac{\dfrac{1}{3}}{1 - \dfrac{1}{3}} = \dfrac{1}{2}$.
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>🔬 Applications</h2>
+      <ul>
+        <li><strong>Finance:</strong> Present value calculations for annuities and perpetuities</li>
+        <li><strong>Physics:</strong> Modeling repeated reflections in optics and acoustics</li>
+        <li><strong>Computer Science:</strong> Analysis of algorithms and data structures</li>
+        <li><strong>Probability:</strong> Expected values in infinite state Markov chains</li>
+        <li><strong>Engineering:</strong> Signal processing and control systems analysis</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>📝 Practice Problems</h2>
+      
+      <div class="problem-item">
+        <strong>Problem 1:</strong> Determine whether $\sum_{n=0}^{\infty} 4 \cdot \left(\dfrac{2}{3}\right)^n$ converges or diverges. If it converges, find the sum.
+        <br><br>
+        <button class="solution-btn" onclick="toggleSolution('prob1')">Show Solution</button>
+        <div id="prob1" class="solution">
+          Since $|2/3| = 2/3 < 1$, the series converges to $\dfrac{4}{1 - 2/3} = \dfrac{4}{1/3} = 12$.
+        </div>
+      </div>
+      
+      <div class="problem-item">
+        <strong>Problem 2:</strong> Does $\sum_{n=0}^{\infty} \dfrac{1}{2^n}$ converge? Find the sum if it does.
+        <br><br>
+        <button class="solution-btn" onclick="toggleSolution('prob2')">Show Solution</button>
+        <div id="prob2" class="solution">
+          Yes, it converges. Here a = 1, r = 1/2. Sum = $\dfrac{1}{1 - 1/2} = 2$.
+        </div>
+      </div>
+      
+      <div class="problem-item">
+        <strong>Problem 3:</strong> Determine the convergence of $\sum_{n=0}^{\infty} 5 \cdot (-2)^n$.
+        <br><br>
+        <button class="solution-btn" onclick="toggleSolution('prob3')">Show Solution</button>
+        <div id="prob3" class="solution">
+          Since |-2| = 2 > 1, the series diverges.
+        </div>
+      </div>
+      
+      <div class="problem-item">
+        <strong>Problem 4:</strong> Find the sum of $\sum_{n=1}^{\infty} \dfrac{3}{4^n}$.
+        <br><br>
+        <button class="solution-btn" onclick="toggleSolution('prob4')">Show Solution</button>
+        <div id="prob4" class="solution">
+          This is a geometric series with a = 3/4, r = 1/4. Sum = $\dfrac{3/4}{1 - 1/4} = \dfrac{3/4}{3/4} = 1$.
+        </div>
+      </div>
+    </div>
+
+    <div class="key-takeaways">
+      <h3>🎯 Key Takeaways</h3>
+      <ul>
+        <li>Geometric series converge if and only if |r| < 1</li>
+        <li>The sum of a convergent geometric series is a/(1-r)</li>
+        <li>If |r| ≥ 1, the series diverges (terms don't approach zero)</li>
+        <li>The ratio test for series convergence is based on geometric series</li>
+        <li>Geometric series have numerous applications in mathematics and science</li>
+        <li>Partial sums can help visualize the convergence behavior</li>
+      </ul>
+    </div>
+   </div>
+  </div>
+  <script>
+    function toggleSolution(id) {
+      const solution = document.getElementById(id);
+      const button = solution.previousElementSibling;
+      
+      if (solution.style.display === 'none' || solution.style.display === '') {
+        solution.style.display = 'block';
+        button.textContent = 'Hide Solution';
+      } else {
+        solution.style.display = 'none';
+        button.textContent = 'Show Solution';
+      }
+    }
+
+    function drawGeometricVisualization() {
+      const canvas = document.getElementById('geometricCanvas');
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+      
+      // Clear canvas
+      ctx.clearRect(0, 0, width, height);
+      
+      // Set up coordinate system
+      const margin = 60;
+      const plotWidth = width - 2 * margin;
+      const plotHeight = height - 2 * margin;
+      
+      // Draw axes
+      ctx.strokeStyle = '#333';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(margin, margin);
+      ctx.lineTo(margin, height - margin);
+      ctx.lineTo(width - margin, height - margin);
+      ctx.stroke();
+      
+      // Labels
+      ctx.fillStyle = '#333';
+      ctx.font = '14px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('Number of terms (n)', width - margin, height - margin + 40);
+      ctx.save();
+      ctx.translate(margin - 40, height/2);
+      ctx.rotate(-Math.PI/2);
+      ctx.fillText('Partial sum Sₙ', 0, 0);
+      ctx.restore();
+      
+      // Scale factors
+      const nMin = 0, nMax = 20;
+      const sMin = -5, sMax = 15;
+      const nScale = plotWidth / (nMax - nMin);
+      const sScale = plotHeight / (sMax - sMin);
+      
+      // Function to convert to canvas coordinates
+      const toCanvasX = (n) => margin + (n - nMin) * nScale;
+      const toCanvasY = (s) => height - margin - (s - sMin) * sScale;
+      
+      // Draw grid
+      ctx.strokeStyle = '#eee';
+      ctx.lineWidth = 1;
+      for (let n = nMin; n <= nMax; n += 2) {
+        const cx = toCanvasX(n);
+        ctx.beginPath();
+        ctx.moveTo(cx, margin);
+        ctx.lineTo(cx, height - margin);
+        ctx.stroke();
+      }
+      for (let s = sMin; s <= sMax; s += 2) {
+        const cy = toCanvasY(s);
+        ctx.beginPath();
+        ctx.moveTo(margin, cy);
+        ctx.lineTo(width - margin, cy);
+        ctx.stroke();
+      }
+      
+      // Plot partial sums for different geometric series
+      const series = [
+        { a: 1, r: 0.5, color: '#27ae60', label: 'a=1, r=0.5 (converges to 2)' },
+        { a: 1, r: 1.2, color: '#e74c3c', label: 'a=1, r=1.2 (diverges)' },
+        { a: 1, r: -0.5, color: '#3498db', label: 'a=1, r=-0.5 (converges to 2/3)' },
+        { a: 1, r: -1, color: '#f39c12', label: 'a=1, r=-1 (oscillates)' }
+      ];
+      
+      series.forEach(ser => {
+        ctx.strokeStyle = ser.color;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        
+        let partialSum = 0;
+        for (let n = 0; n <= nMax; n++) {
+          if (n > 0) {
+            partialSum += ser.a * Math.pow(ser.r, n-1);
+          }
+          
+          const cx = toCanvasX(n);
+          const cy = toCanvasY(partialSum);
+          
+          if (n === 0) ctx.moveTo(cx, cy);
+          else ctx.lineTo(cx, cy);
+          
+          // Draw point
+          ctx.fillStyle = ser.color;
+          ctx.beginPath();
+          ctx.arc(cx, cy, 3, 0, 2 * Math.PI);
+          ctx.fill();
+        }
+        ctx.stroke();
+      });
+      
+      // Draw convergence lines
+      ctx.strokeStyle = '#666';
+      ctx.setLineDash([5, 5]);
+      ctx.lineWidth = 2;
+      
+      // Convergent series limits
+      const limits = [
+        { value: 2, label: '2', color: '#27ae60' },
+        { value: 2/3, label: '2/3', color: '#3498db' }
+      ];
+      
+      limits.forEach(limit => {
+        ctx.strokeStyle = limit.color;
+        ctx.beginPath();
+        ctx.moveTo(margin, toCanvasY(limit.value));
+        ctx.lineTo(width - margin, toCanvasY(limit.value));
+        ctx.stroke();
+      });
+      
+      ctx.setLineDash([]);
+      
+      // Legend
+      const legendX = margin + 10;
+      let legendY = margin + 20;
+      
+      series.forEach(ser => {
+        ctx.strokeStyle = ser.color;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(legendX, legendY);
+        ctx.lineTo(legendX + 30, legendY);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#333';
+        ctx.font = '11px Arial';
+        ctx.textAlign = 'left';
+        ctx.fillText(ser.label, legendX + 40, legendY + 4);
+        
+        legendY += 18;
+      });
+      
+      // Convergence indicators
+      ctx.fillStyle = '#27ae60';
+      ctx.font = '10px Arial';
+      ctx.fillText('→ 2', width - margin - 20, toCanvasY(2) - 5);
+      
+      ctx.fillStyle = '#3498db';
+      ctx.fillText('→ 2/3', width - margin - 30, toCanvasY(2/3) - 5);
+      
+      ctx.fillStyle = '#e74c3c';
+      ctx.fillText('→ ∞', width - margin - 25, margin + 15);
+      
+      ctx.fillStyle = '#f39c12';
+      ctx.fillText('oscillates', width - margin - 50, height/2);
+    }
+
+    // Initialize visualization when page loads
+    window.onload = function() {
+      drawGeometricVisualization();
+    };
+  </script>
+ </body>
+</html>

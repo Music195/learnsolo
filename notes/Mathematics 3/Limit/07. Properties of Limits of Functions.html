@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<!-- tags: Limit -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Properties of Limits of Functions
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Limit">
+   Properties of Limits of Functions
+  </div>
+  <div class="container">
+   <div class="main-content">
+    <style>
+      .main-content {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        overflow: auto;
+        max-width: 100%;
+      }
+      
+      .section {
+        margin-bottom: 30px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #007acc;
+      }
+      
+      .section h2 {
+        color: #007acc;
+        margin-top: 0;
+        margin-bottom: 15px;
+        font-size: 1.4em;
+      }
+      
+      .highlight-box {
+        background: #e3f2fd;
+        border: 2px solid #2196f3;
+        border-radius: 6px;
+        padding: 15px;
+        margin: 15px 0;
+        font-weight: bold;
+        color: #1565c0;
+      }
+      
+      .properties-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 20px;
+        margin: 20px 0;
+      }
+      
+      .property-card {
+        background: white;
+        border: 2px solid #007acc;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      
+      .property-card h3 {
+        color: #007acc;
+        margin-top: 0;
+        margin-bottom: 10px;
+        font-size: 1.2em;
+      }
+      
+      .property-card .formula {
+        background: #f8f9fa;
+        padding: 10px;
+        border-radius: 4px;
+        margin: 10px 0;
+        font-family: 'Times New Roman', serif;
+        font-size: 1.1em;
+      }
+      
+      .squeeze-theorem {
+        background: linear-gradient(135deg, #e1f5fe 0%, #b3e5fc 100%);
+        border: 2px solid #0277bd;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+      }
+      
+      .squeeze-theorem h3 {
+        color: #01579b;
+        margin-top: 0;
+      }
+      
+      .problem-item {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 15px;
+        margin: 10px 0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      }
+      
+      .solution-btn {
+        background: #007acc;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        margin: 10px 0;
+        transition: background 0.3s;
+      }
+      
+      .solution-btn:hover {
+        background: #005999;
+      }
+      
+      .solution {
+        display: none;
+        background: #f0f8ff;
+        border: 1px solid #007acc;
+        border-radius: 4px;
+        padding: 15px;
+        margin-top: 10px;
+      }
+      
+      .key-takeaways {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 30px;
+      }
+      
+      .key-takeaways h3 {
+        margin-top: 0;
+        color: white;
+      }
+      
+      .key-takeaways ul {
+        margin: 0;
+        padding-left: 20px;
+      }
+      
+      .key-takeaways li {
+        margin: 8px 0;
+      }
+      
+      #functionCanvas {
+        border: 2px solid #007acc;
+        border-radius: 8px;
+        background: white;
+        margin: 20px 0;
+        max-width: 100%;
+        height: auto;
+      }
+      
+      .visual-guide {
+        text-align: center;
+        margin: 20px 0;
+      }
+      
+      .visual-guide p {
+        font-style: italic;
+        color: #666;
+        margin-bottom: 20px;
+      }
+      
+      .important-note {
+        background: #fff3e0;
+        border: 1px solid #ff9800;
+        border-radius: 6px;
+        padding: 15px;
+        margin: 15px 0;
+        color: #e65100;
+      }
+    </style>
+    <div class="section">
+      <h2>📚 Core Concepts</h2>
+      <p>Function limits have algebraic properties that allow us to evaluate complex limits by breaking them down into simpler parts. These properties are analogous to the properties of limits of sequences.</p>
+      
+      <div class="highlight-box">
+        If $\lim_{x \to a} f(x) = \alpha$ and $\lim_{x \to a} g(x) = \beta$ (both finite), then:
+        <br>• Constants and scalars work as expected
+        <br>• Sums and products behave predictably  
+        <br>• Quotients work when the denominator limit isn't zero
+        <br>• Order is preserved in inequalities
+        <br>• The squeeze theorem allows us to find limits of bounded functions
+      </div>
+      
+      <div class="important-note">
+        <strong>Important:</strong> These properties assume the individual limits exist and are finite. Special care is needed when dealing with infinite limits or indeterminate forms.
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>📊 Algebraic Properties</h2>
+      <div class="properties-grid">
+        <div class="property-card">
+          <h3>1. Constant Multiple</h3>
+          <div class="formula">
+            $\lim_{x \to a} k f(x) = k \lim_{x \to a} f(x) = k\alpha$
+          </div>
+          <p>Constants can be factored out of limits.</p>
+        </div>
+        
+        <div class="property-card">
+          <h3>2. Sum & Difference</h3>
+          <div class="formula">
+            $\lim_{x \to a} [f(x) + g(x)] = \alpha + \beta$
+            <br>
+            $\lim_{x \to a} [f(x) - g(x)] = \alpha - \beta$
+          </div>
+          <p>Limits of sums are sums of limits.</p>
+        </div>
+        
+        <div class="property-card">
+          <h3>3. Product</h3>
+          <div class="formula">
+            $\lim_{x \to a} f(x)g(x) = \alpha \cdot \beta$
+          </div>
+          <p>Limits of products are products of limits.</p>
+        </div>
+        
+        <div class="property-card">
+          <h3>4. Quotient</h3>
+          <div class="formula">
+            $\lim_{x \to a} \dfrac{f(x)}{g(x)} = \dfrac{\alpha}{\beta}$
+          </div>
+          <p>Provided $\beta \neq 0$ and $g(x) \neq 0$ near a.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>🔍 Order Properties & Squeeze Theorem</h2>
+      <div class="properties-grid">
+        <div class="property-card">
+          <h3>5. Order Preservation</h3>
+          <div class="formula">
+            If $f(x) \leq g(x)$ near a, then $\alpha \leq \beta$
+          </div>
+          <p>Inequality relations are preserved in limits.</p>
+        </div>
+        
+        <div class="property-card">
+          <h3>6. Squeeze Theorem</h3>
+          <div class="formula">
+            If $f(x) \leq h(x) \leq g(x)$ near a
+            <br>and $\lim_{x \to a} f(x) = \lim_{x \to a} g(x) = L$
+            <br>then $\lim_{x \to a} h(x) = L$
+          </div>
+          <p>Sandwich bounded functions to find their limits.</p>
+        </div>
+      </div>
+      
+      <div class="squeeze-theorem">
+        <h3>🎯 The Squeeze Theorem in Action</h3>
+        <p>The squeeze theorem is one of the most powerful tools for evaluating limits. It allows you to find the limit of a function that is "squeezed" between two other functions that have the same limit.</p>
+        <p><strong>Classic Example:</strong> $\lim_{x \to 0} x^2 \sin(1/x)$</p>
+        <p>We know $-1 \leq \sin(1/x) \leq 1$, so $-x^2 \leq x^2 \sin(1/x) \leq x^2$. As $x \to 0$, both bounds approach 0, so the limit is 0.</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>🔍 Visual Guide</h2>
+      <div class="visual-guide">
+        <p>Interactive visualization showing function limit properties:</p>
+        <canvas id="functionCanvas" width="800" height="500"></canvas>
+      </div>
+      
+      <div class="highlight-box">
+        The visualization demonstrates:
+        <br>• How sum of functions behaves (f + g)
+        <br>• How product works (f × g)  
+        <br>• The squeeze theorem with bounding functions
+        <br>• Order preservation in limits
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>💡 Examples</h2>
+      <div class="problem-item">
+        <strong>Example 1:</strong> Evaluate $\lim_{x \to 2} (3x + 5)$.
+        <br><br>
+        Using properties: $\lim_{x \to 2} 3x + \lim_{x \to 2} 5 = 3 \cdot 2 + 5 = 11$.
+      </div>
+      
+      <div class="problem-item">
+        <strong>Example 2:</strong> Find $\lim_{x \to 1} \dfrac{x^2 - 1}{x - 1}$.
+        <br><br>
+        Direct substitution gives 0/0. Using properties: $\lim_{x \to 1} (x+1) = 2$.
+      </div>
+      
+      <div class="problem-item">
+        <strong>Example 3 (Squeeze Theorem):</strong> Evaluate $\lim_{x \to 0} x \sin(1/x)$.
+        <br><br>
+        We know $-|x| \leq x \sin(1/x) \leq |x|$, and both bounds → 0, so limit = 0.
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>🔬 Applications</h2>
+      <ul>
+        <li><strong>Calculus:</strong> Evaluating derivatives using limit properties</li>
+        <li><strong>Continuity:</strong> Proving functions are continuous</li>
+        <li><strong>Asymptotes:</strong> Finding horizontal and vertical asymptotes</li>
+        <li><strong>Indeterminate Forms:</strong> Resolving 0/0 and ∞/∞ forms</li>
+        <li><strong>Physics:</strong> Instantaneous velocity and acceleration</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>📝 Practice Problems</h2>
+      
+      <div class="problem-item">
+        <strong>Problem 1:</strong> Evaluate $\lim_{x \to 3} (2x^2 - 5x + 1)$.
+        <br><br>
+        <button class="solution-btn" onclick="toggleSolution('prob1')">Show Solution</button>
+        <div id="prob1" class="solution">
+          Using properties: $2(3)^2 - 5(3) + 1 = 2(9) - 15 + 1 = 18 - 15 + 1 = 4$.
+        </div>
+      </div>
+      
+      <div class="problem-item">
+        <strong>Problem 2:</strong> Find $\lim_{x \to 4} \dfrac{x-4}{x^2-16}$.
+        <br><br>
+        <button class="solution-btn" onclick="toggleSolution('prob2')">Show Solution</button>
+        <div id="prob2" class="solution">
+          Direct substitution gives 0/0. Factor: $\dfrac{x-4}{(x-4)(x+4)} = \dfrac{1}{x+4}$. Limit as x→4 is 1/8.
+        </div>
+      </div>
+      
+      <div class="problem-item">
+        <strong>Problem 3:</strong> Use the squeeze theorem to evaluate $\lim_{x \to 0} x^3 \cos(1/x)$.
+        <br><br>
+        <button class="solution-btn" onclick="toggleSolution('prob3')">Show Solution</button>
+        <div id="prob3" class="solution">
+          We know $-x^3 \leq x^3 \cos(1/x) \leq x^3$. Both bounds → 0 as x→0, so limit = 0.
+        </div>
+      </div>
+      
+      <div class="problem-item">
+        <strong>Problem 4:</strong> Given $\lim_{x \to 2} f(x) = 3$ and $\lim_{x \to 2} g(x) = 5$, find $\lim_{x \to 2} [2f(x) + g(x)]$.
+        <br><br>
+        <button class="solution-btn" onclick="toggleSolution('prob4')">Show Solution</button>
+        <div id="prob4" class="solution">
+          Using properties: $2 \cdot 3 + 5 = 6 + 5 = 11$.
+        </div>
+      </div>
+    </div>
+
+    <div class="key-takeaways">
+      <h3>🎯 Key Takeaways</h3>
+      <ul>
+        <li>Limits obey algebraic rules for convergent functions</li>
+        <li>Constants factor out, sums become sums of limits</li>
+        <li>Products and quotients work with finite non-zero denominators</li>
+        <li>Order is preserved in inequalities</li>
+        <li>Squeeze theorem is powerful for bounded oscillating functions</li>
+        <li>Properties extend to infinite limits with modifications</li>
+        <li>Essential for evaluating complex limits and derivatives</li>
+      </ul>
+    </div>
+   </div>
+  </div>
+  <script>
+    function toggleSolution(id) {
+      const solution = document.getElementById(id);
+      const button = solution.previousElementSibling;
+      
+      if (solution.style.display === 'none' || solution.style.display === '') {
+        solution.style.display = 'block';
+        button.textContent = 'Hide Solution';
+      } else {
+        solution.style.display = 'none';
+        button.textContent = 'Show Solution';
+      }
+    }
+
+    function drawFunctionVisualization() {
+      const canvas = document.getElementById('functionCanvas');
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+      
+      // Clear canvas
+      ctx.clearRect(0, 0, width, height);
+      
+      // Set up coordinate system
+      const margin = 60;
+      const plotWidth = width - 2 * margin;
+      const plotHeight = height - 2 * margin;
+      
+      // Draw axes
+      ctx.strokeStyle = '#333';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(margin, margin);
+      ctx.lineTo(margin, height - margin);
+      ctx.lineTo(width - margin, height - margin);
+      ctx.stroke();
+      
+      // Labels
+      ctx.fillStyle = '#333';
+      ctx.font = '14px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('x', width - margin, height - margin + 40);
+      ctx.save();
+      ctx.translate(margin - 40, height/2);
+      ctx.rotate(-Math.PI/2);
+      ctx.fillText('f(x)', 0, 0);
+      ctx.restore();
+      
+      // Scale factors
+      const xMin = -2, xMax = 4;
+      const yMin = -2, yMax = 8;
+      const xScale = plotWidth / (xMax - xMin);
+      const yScale = plotHeight / (yMax - yMin);
+      
+      // Function to convert to canvas coordinates
+      const toCanvasX = (x) => margin + (x - xMin) * xScale;
+      const toCanvasY = (y) => height - margin - (y - yMin) * yScale;
+      
+      // Draw grid
+      ctx.strokeStyle = '#eee';
+      ctx.lineWidth = 1;
+      for (let x = xMin; x <= xMax; x += 0.5) {
+        const cx = toCanvasX(x);
+        ctx.beginPath();
+        ctx.moveTo(cx, margin);
+        ctx.lineTo(cx, height - margin);
+        ctx.stroke();
+      }
+      for (let y = yMin; y <= yMax; y += 1) {
+        const cy = toCanvasY(y);
+        ctx.beginPath();
+        ctx.moveTo(margin, cy);
+        ctx.lineTo(width - margin, cy);
+        ctx.stroke();
+      }
+      
+      // Define functions
+      const f = (x) => x + 1; // Linear function
+      const g = (x) => x * x / 2; // Quadratic function
+      const sum = (x) => f(x) + g(x);
+      const product = (x) => f(x) * g(x);
+      
+      // Squeeze theorem functions
+      const lower = (x) => -x * x / 4;
+      const middle = (x) => x * x * Math.sin(10 * x) / 4;
+      const upper = (x) => x * x / 4;
+      
+      // Plot functions
+      const functions = [
+        { func: f, color: '#27ae60', label: 'f(x) = x + 1', limit: 3 },
+        { func: g, color: '#3498db', label: 'g(x) = x²/2', limit: 2 },
+        { func: sum, color: '#e74c3c', label: 'f(x) + g(x)', limit: 5 },
+        { func: product, color: '#f39c12', label: 'f(x) × g(x)', limit: 6 }
+      ];
+      
+      // Plot squeeze theorem
+      const squeezeFuncs = [
+        { func: lower, color: '#9c27b0', label: 'Lower bound: -x²/4' },
+        { func: middle, color: '#607d8b', label: 'Middle: (x²/4)sin(10x)' },
+        { func: upper, color: '#ff5722', label: 'Upper bound: x²/4' }
+      ];
+      
+      // Plot regular functions
+      functions.forEach(fn => {
+        ctx.strokeStyle = fn.color;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        
+        for (let x = xMin; x <= xMax; x += 0.05) {
+          const y = fn.func(x);
+          const cx = toCanvasX(x);
+          const cy = toCanvasY(y);
+          
+          if (x === xMin) ctx.moveTo(cx, cy);
+          else ctx.lineTo(cx, cy);
+        }
+        ctx.stroke();
+      });
+      
+      // Plot squeeze theorem functions (near x=0)
+      squeezeFuncs.forEach(fn => {
+        ctx.strokeStyle = fn.color;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        
+        for (let x = -1; x <= 1; x += 0.01) {
+          const y = fn.func(x);
+          const cx = toCanvasX(x);
+          const cy = toCanvasY(y);
+          
+          if (x === -1) ctx.moveTo(cx, cy);
+          else ctx.lineTo(cx, cy);
+        }
+        ctx.stroke();
+      });
+      
+      // Draw limit points
+      ctx.fillStyle = '#333';
+      ctx.font = '12px Arial';
+      ctx.textAlign = 'left';
+      
+      // Regular function limits at x=2
+      const limitX = 2;
+      functions.forEach(fn => {
+        const cx = toCanvasX(limitX);
+        const cy = toCanvasY(fn.limit);
+        
+        ctx.fillStyle = fn.color;
+        ctx.beginPath();
+        ctx.arc(cx, cy, 4, 0, 2 * Math.PI);
+        ctx.fill();
+        
+        ctx.fillStyle = '#333';
+        ctx.fillText(`→ ${fn.limit}`, cx + 5, cy - 5);
+      });
+      
+      // Squeeze theorem limit at x=0
+      const squeezeLimitX = 0;
+      ctx.fillStyle = '#607d8b';
+      ctx.beginPath();
+      ctx.arc(toCanvasX(squeezeLimitX), toCanvasY(0), 4, 0, 2 * Math.PI);
+      ctx.fill();
+      
+      ctx.fillStyle = '#333';
+      ctx.fillText('→ 0', toCanvasX(squeezeLimitX) + 5, toCanvasY(0) - 5);
+      
+      // Legend
+      const legendX = margin + 10;
+      let legendY = margin + 20;
+      
+      [...functions, ...squeezeFuncs].forEach(fn => {
+        ctx.strokeStyle = fn.color;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(legendX, legendY);
+        ctx.lineTo(legendX + 30, legendY);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#333';
+        ctx.font = '10px Arial';
+        ctx.textAlign = 'left';
+        ctx.fillText(fn.label, legendX + 40, legendY + 4);
+        
+        legendY += 15;
+      });
+      
+      // Add annotations
+      ctx.fillStyle = '#666';
+      ctx.font = '12px Arial';
+      ctx.fillText('Limit as x → 2', margin + 10, margin - 10);
+      ctx.fillText('Squeeze Theorem near x = 0', width - 200, height - margin + 30);
+    }
+
+    // Initialize visualization when page loads
+    window.onload = function() {
+      drawFunctionVisualization();
+    };
+  </script>
+ </body>
+</html>

@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<!-- tags: Geometry -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Circle and Regions
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+   }
+
+   .main-content {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 15px;
+    padding: 30px;
+    margin: 20px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+   }
+
+   .fancy-title {
+    text-align: center;
+    font-size: 2.5em;
+    font-weight: bold;
+    margin: 20px 0;
+    color: #2c3e50;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+   }
+
+   .description {
+    font-size: 1.2em;
+    line-height: 1.6;
+    margin: 20px 0;
+    color: #34495e;
+    text-align: center;
+   }
+
+   .content-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin: 30px 0;
+   }
+
+   .formula-block {
+    flex: 1;
+    min-width: 300px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 1.4em;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+   }
+
+   .formula-item {
+    margin: 15px 0;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+   }
+
+   .graybox {
+    background: linear-gradient(135deg, #bdc3c7 0%, #95a5a6 100%);
+    color: #2c3e50;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    text-align: center;
+    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+   }
+
+   .interactive-demo {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    margin: 30px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+   }
+
+   .demo-title {
+    text-align: center;
+    font-size: 1.8em;
+    margin-bottom: 25px;
+    font-weight: bold;
+   }
+
+   .input-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin: 20px 0;
+    justify-content: center;
+   }
+
+   .input-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+   }
+
+   .input-field label {
+    font-weight: bold;
+    font-size: 1.1em;
+   }
+
+   .input-field input {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    width: 120px;
+    text-align: center;
+    transition: border-color 0.3s;
+   }
+
+   .input-field input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+   }
+
+   .select-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+   }
+
+   .select-field label {
+    font-weight: bold;
+    font-size: 1.1em;
+   }
+
+   .select-field select {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    width: 140px;
+    text-align: center;
+    transition: border-color 0.3s;
+   }
+
+   .select-field select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+   }
+
+   .button-group {
+    text-align: center;
+    margin: 25px 0;
+   }
+
+   .btn {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 1.1em;
+    cursor: pointer;
+    margin: 0 10px;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+   }
+
+   .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+   }
+
+   .btn:active {
+    transform: translateY(0);
+   }
+
+   .result-display {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    backdrop-filter: blur(10px);
+   }
+
+   .result-text {
+    font-size: 1.2em;
+    text-align: center;
+    margin: 10px 0;
+   }
+
+   .section {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    margin: 25px 0;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+   }
+
+   .section-title {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
+   }
+
+   .canvas-container {
+    text-align: center;
+    margin: 20px 0;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+   }
+
+   .canvas-title {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #2c3e50;
+   }
+
+   .formula-display {
+    text-align: center;
+    margin: 15px 0;
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #e74c3c;
+   }
+
+   .cases-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+   }
+
+   .case-card {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(252, 182, 159, 0.3);
+   }
+
+   .case-card h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 1.3em;
+   }
+
+   .case-card .formula {
+    font-weight: bold;
+    color: #e74c3c;
+    font-size: 1.2em;
+    margin: 10px 0;
+   }
+
+   .case-card .description {
+    color: #555;
+    line-height: 1.5;
+   }
+
+   .example-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+   }
+
+   .example-card {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+   }
+
+   .example-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(245, 87, 108, 0.4);
+   }
+
+   .example-card h4 {
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+   }
+
+   .example-detail {
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    display: none;
+   }
+
+   .calculation-steps {
+    margin: 15px 0;
+   }
+
+   .calculation-step {
+    margin: 8px 0;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 5px;
+    border-left: 4px solid #f5576c;
+   }
+
+   .practice-problems {
+    margin: 20px 0;
+   }
+
+   .problem-item {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+   }
+
+   .problem-item h4 {
+    margin: 0 0 15px 0;
+    font-size: 1.2em;
+   }
+
+   .solution-btn {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    color: #333;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 10px 0;
+    transition: all 0.3s;
+   }
+
+   .solution-btn:hover {
+    background: linear-gradient(135deg, #fcb69f 0%, #ffecd2 100%);
+    transform: scale(1.05);
+   }
+
+   .solution {
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 10px 0;
+    display: none;
+    border-left: 4px solid #667eea;
+   }
+
+   .key-takeaways {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    padding: 25px;
+    border-radius: 12px;
+    margin: 25px 0;
+   }
+
+   .takeaway-list {
+    list-style: none;
+    padding: 0;
+   }
+
+   .takeaway-item {
+    background: rgba(255, 255, 255, 0.8);
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+    font-weight: bold;
+   }
+
+   .error-message {
+    background: #ffebee;
+    color: #c62828;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px 0;
+    display: none;
+    text-align: center;
+    font-weight: bold;
+   }
+
+   @media (max-width: 768px) {
+    .content-wrapper {
+     flex-direction: column;
+    }
+
+    .input-group {
+     flex-direction: column;
+     align-items: center;
+    }
+
+    .fancy-title {
+     font-size: 2em;
+    }
+
+    .formula-block {
+     font-size: 1.2em;
+    }
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Geometry">
+   Circle and Regions
+  </div>
+
+  <div class="container">
+   <div class="main-content">
+    <div class="description">
+     Circle inequalities divide the coordinate plane into distinct regions. The circle boundary separates points that satisfy the inequality from those that don't, with different shading patterns indicating the solution region.
+    </div>
+
+    <div class="content-wrapper">
+     <div class="formula-block">
+      <div class="formula-item">
+       <strong>Interior Region:</strong> $x^2 + y^2 < r^2$<br/>
+       <strong>Points inside circle, boundary excluded</strong>
+      </div>
+      <div class="formula-item">
+       <strong>Exterior Region:</strong> $x^2 + y^2 > r^2$<br/>
+       <strong>Points outside circle, boundary excluded</strong>
+      </div>
+      <div class="formula-item">
+       <strong>Inclusive Region:</strong> $x^2 + y^2 \leq r^2$<br/>
+       <strong>Points inside including boundary</strong>
+      </div>
+     </div>
+
+     <div class="graybox">
+      Circle inequalities create disk regions (interior) and exterior regions. The inequality symbol determines whether the boundary circle is included in the solution set.
+     </div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Types of Circle Inequalities</div>
+     <div class="cases-grid">
+      <div class="case-card">
+       <h3>Interior Region</h3>
+       <div class="canvas-container">
+        <div class="canvas-title">Points inside the circle (excluded)</div>
+        <canvas id="interiorCanvas" width="350" height="300"></canvas>
+       </div>
+       <div class="formula">$$x^2 + y^2 < r^2$$</div>
+       <div class="description">
+        <strong>Region:</strong> All points inside the circle<br/>
+        <strong>Boundary:</strong> Dashed circle (not included)<br/>
+        <strong>Area:</strong> πr² (disk area)<br/>
+        <strong>Open region:</strong> Boundary points excluded
+       </div>
+      </div>
+
+      <div class="case-card">
+       <h3>Exterior Region</h3>
+       <div class="canvas-container">
+        <div class="canvas-title">Points outside the circle (excluded)</div>
+        <canvas id="exteriorCanvas" width="350" height="300"></canvas>
+       </div>
+       <div class="formula">$$x^2 + y^2 > r^2$$</div>
+       <div class="description">
+        <strong>Region:</strong> All points outside the circle<br/>
+        <strong>Boundary:</strong> Dashed circle (not included)<br/>
+        <strong>Area:</strong> Infinite (unbounded region)<br/>
+        <strong>Open region:</strong> Boundary points excluded
+       </div>
+      </div>
+
+      <div class="case-card">
+       <h3>Inclusive Region</h3>
+       <div class="canvas-container">
+        <div class="canvas-title">Points inside including the circle</div>
+        <canvas id="inclusiveCanvas" width="350" height="300"></canvas>
+       </div>
+       <div class="formula">$$x^2 + y^2 \leq r^2$$</div>
+       <div class="description">
+        <strong>Region:</strong> All points inside and on the circle<br/>
+        <strong>Boundary:</strong> Solid circle (included)<br/>
+        <strong>Area:</strong> πr² (closed disk)<br/>
+        <strong>Closed region:</strong> Boundary points included
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="interactive-demo">
+     <div class="demo-title">Circle Inequality Grapher</div>
+
+     <div class="input-group">
+      <div class="input-field">
+       <label for="centerX">Center X (h):</label>
+       <input id="centerX" placeholder="0" type="number" value="0"/>
+      </div>
+      <div class="input-field">
+       <label for="centerY">Center Y (k):</label>
+       <input id="centerY" placeholder="0" type="number" value="0"/>
+      </div>
+      <div class="input-field">
+       <label for="radius">Radius (r):</label>
+       <input id="radius" placeholder="3" type="number" value="3" min="0.1" step="0.1"/>
+      </div>
+      <div class="select-field">
+       <label for="inequality">Inequality:</label>
+       <select id="inequality">
+        <option value="<">x² + y² < r²</option>
+        <option value=">">x² + y² > r²</option>
+        <option value="<=">x² + y² ≤ r²</option>
+        <option value=">=">x² + y² ≥ r²</option>
+       </select>
+      </div>
+     </div>
+
+     <div class="button-group">
+      <button class="btn" onclick="graphInequality()">Graph Inequality</button>
+      <button class="btn" onclick="testPoint()">Test Point (2,1)</button>
+      <button class="btn" onclick="resetDemo()">Reset</button>
+     </div>
+
+     <div class="error-message" id="errorMessage"></div>
+
+     <div class="result-display">
+      <div class="result-text" id="circleDisplay">
+       <strong>Circle:</strong> (x - 0)² + (y - 0)² = 3²
+      </div>
+      <div class="result-text" id="inequalityDisplay">
+       <strong>Inequality:</strong> x² + y² < 9
+      </div>
+      <div class="result-text" id="testDisplay">
+       <strong>Test Point (2,1):</strong> 4 + 1 = 5 < 9? True
+      </div>
+      <div class="result-text" id="regionDisplay">
+       <strong>Region:</strong> Shade interior of circle
+      </div>
+     </div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Mathematical Foundation</div>
+     <p>Circle inequalities represent regions in the coordinate plane bounded by circles:</p>
+     <ul>
+      <li><strong>Standard form:</strong> (x - h)² + (y - k)² ≶ r² where (h,k) is center and r is radius</li>
+      <li><strong>General form:</strong> x² + y² + Dx + Ey + F ≶ 0, complete the square to find center and radius</li>
+      <li><strong>Interior region:</strong> x² + y² < r² represents open disk (boundary excluded)</li>
+      <li><strong>Exterior region:</strong> x² + y² > r² represents points outside circle (boundary excluded)</li>
+      <li><strong>Closed disk:</strong> x² + y² ≤ r² includes boundary points</li>
+      <li><strong>Distance interpretation:</strong> √(x² + y²) is distance from origin to point (x,y)</li>
+      <li><strong>Strict vs inclusive:</strong> < and > exclude boundary (open regions), ≤ and ≥ include boundary (closed regions)</li>
+      <li><strong>Area formulas:</strong> Interior disk has area πr², exterior region is unbounded</li>
+      <li><strong>Boundary behavior:</strong> Points on circle satisfy equality x² + y² = r²</li>
+      <li><strong>Applications:</strong> Used in optimization, collision detection, and geometric constraints</li>
+     </ul>
+     <div class="formula-block" style="margin: 20px 0;">
+      \begin{aligned}
+      \text{Circle inequalities:} \\
+      (x - h)^2 + (y - k)^2 &< r^2 \implies \text{Interior (open disk)} \\
+      (x - h)^2 + (y - k)^2 &> r^2 \implies \text{Exterior (unbounded)} \\
+      (x - h)^2 + (y - k)^2 &\leq r^2 \implies \text{Closed disk} \\
+      (x - h)^2 + (y - k)^2 &\geq r^2 \implies \text{Closed exterior} \\
+      \\
+      \text{Distance formula:} \\
+      d &= \sqrt{x^2 + y^2} \quad (\text{for center at origin}) \\
+      d &< r \implies \text{Interior point} \\
+      d &= r \implies \text{Boundary point} \\
+      d &> r \implies \text{Exterior point}
+      \end{aligned}
+     </div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Worked Examples</div>
+     <div class="example-grid">
+      <div class="example-card" onclick="showExample(1)">
+       <h4>Example 1: Graph x² + y² < 16</h4>
+       <p>Graph the inequality and identify the solution region.</p>
+      </div>
+      <div class="example-card" onclick="showExample(2)">
+       <h4>Example 2: Graph (x-1)² + (y+2)² ≥ 9</h4>
+       <p>Convert to standard form and graph the closed exterior region.</p>
+      </div>
+      <div class="example-card" onclick="showExample(3)">
+       <h4>Example 3: Test Point Method</h4>
+       <p>Use test point to determine region for x² + y² > 25.</p>
+      </div>
+     </div>
+
+     <div class="example-detail" id="exampleDetail"></div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Practice Problems</div>
+     <div class="practice-problems">
+      <div class="problem-item">
+       <h4>Problem 1</h4>
+       <p>Graph the inequality x² + y² ≤ 4. Describe the solution region and calculate its area.</p>
+       <button class="solution-btn" onclick="toggleSolution(1)">Show Solution</button>
+       <div class="solution" id="solution1">
+        <p><strong>Solution:</strong></p>
+        <p>Circle: center (0,0), radius r = 2</p>
+        <p>Inequality: x² + y² ≤ 4 (closed disk)</p>
+        <p>Region: All points inside and on the circle x² + y² = 4</p>
+        <p>Area: πr² = π(2)² = 4π</p>
+        <p><strong>Result:</strong> Closed disk with area 4π square units</p>
+       </div>
+      </div>
+
+      <div class="problem-item">
+       <h4>Problem 2</h4>
+       <p>Graph (x+1)² + (y-1)² > 9 using the test point method.</p>
+       <button class="solution-btn" onclick="toggleSolution(2)">Show Solution</button>
+       <div class="solution" id="solution2">
+        <p><strong>Solution:</strong></p>
+        <p>Circle: center (-1,1), radius r = 3</p>
+        <p>Inequality: (x+1)² + (y-1)² > 9 (exterior region)</p>
+        <p>Test point (0,0): (0+1)² + (0-1)² = 1 + 1 = 2 < 9? False</p>
+        <p>Since test point doesn't satisfy inequality, shade exterior region</p>
+        <p><strong>Result:</strong> Region outside circle (x+1)² + (y-1)² = 9, excluding boundary</p>
+       </div>
+      </div>
+
+      <div class="problem-item">
+       <h4>Problem 3</h4>
+       <p>Determine the region defined by x² + y² ≥ 25.</p>
+       <button class="solution-btn" onclick="toggleSolution(3)">Show Solution</button>
+       <div class="solution" id="solution3">
+        <p><strong>Solution:</strong></p>
+        <p>Circle: center (0,0), radius r = 5</p>
+        <p>Inequality: x² + y² ≥ 25 (closed exterior region)</p>
+        <p>Test point (0,0): 0 + 0 = 0 ≥ 25? False</p>
+        <p>Since test point doesn't satisfy inequality, shade exterior region</p>
+        <p><strong>Result:</strong> Region outside and on circle x² + y² = 25</p>
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <div class="section-title">Key Takeaways</div>
+     <ul class="takeaway-list">
+      <li class="takeaway-item">Circle inequalities divide the plane into interior (disk) and exterior regions</li>
+      <li class="takeaway-item">Strict inequalities (<, >) use dashed boundaries and exclude the circle</li>
+      <li class="takeaway-item">Inclusive inequalities (≤, ≥) use solid boundaries and include the circle</li>
+      <li class="takeaway-item">Interior regions (x² + y² < r²) are bounded disks with area πr²</li>
+      <li class="takeaway-item">Exterior regions (x² + y² > r²) are unbounded and extend infinitely</li>
+      <li class="takeaway-item">Test point method: substitute any point not on boundary to determine shading</li>
+      <li class="takeaway-item">Distance from origin √(x² + y²) determines whether point satisfies inequality</li>
+      <li class="takeaway-item">Essential for understanding regions, optimization, and geometric constraints</li>
+     </ul>
+    </div>
+   </div>
+  </div>
+
+  <script>
+   function graphInequality() {
+    try {
+     const h = parseFloat(document.getElementById('centerX').value);
+     const k = parseFloat(document.getElementById('centerY').value);
+     const r = parseFloat(document.getElementById('radius').value);
+     const inequality = document.getElementById('inequality').value;
+
+     if (isNaN(h) || isNaN(k) || isNaN(r)) {
+      throw new Error('Center coordinates and radius must be valid numbers');
+     }
+
+     if (r <= 0) {
+      throw new Error('Radius must be positive');
+     }
+
+     // Update display
+     const symbols = {'<': '<', '>': '>', '<=': '≤', '>=': '≥'};
+     document.getElementById('circleDisplay').innerHTML = `<strong>Circle:</strong> (x - ${h})² + (y - ${k})² = ${r}²`;
+     document.getElementById('inequalityDisplay').innerHTML = `<strong>Inequality:</strong> (x - ${h})² + (y - ${k})² ${symbols[inequality]} ${r}²`;
+
+     // Test point (2,1)
+     const testX = 2, testY = 1;
+     const testValue = (testX - h) * (testX - h) + (testY - k) * (testY - k);
+     const boundaryValue = r * r;
+     let testResult = false;
+
+     switch(inequality) {
+      case '<': testResult = testValue < boundaryValue; break;
+      case '>': testResult = testValue > boundaryValue; break;
+      case '<=': testResult = testValue <= boundaryValue; break;
+      case '>=': testResult = testValue >= boundaryValue; break;
+     }
+
+     document.getElementById('testDisplay').innerHTML = `<strong>Test Point (2,1):</strong> (${testX} - ${h})² + (${testY} - ${k})² = ${testValue} ${symbols[inequality]} ${boundaryValue}? ${testResult ? 'True' : 'False'}`;
+
+     let region = '';
+     if (inequality.includes('<')) {
+      region = testResult ? 'Shade interior of circle' : 'Shade exterior of circle';
+     } else {
+      region = testResult ? 'Shade exterior of circle' : 'Shade interior of circle';
+     }
+     document.getElementById('regionDisplay').innerHTML = `<strong>Region:</strong> ${region}`;
+
+     document.getElementById('errorMessage').style.display = 'none';
+    } catch (error) {
+     document.getElementById('errorMessage').textContent = error.message;
+     document.getElementById('errorMessage').style.display = 'block';
+    }
+   }
+
+   function testPoint() {
+    try {
+     const h = parseFloat(document.getElementById('centerX').value);
+     const k = parseFloat(document.getElementById('centerY').value);
+     const r = parseFloat(document.getElementById('radius').value);
+     const inequality = document.getElementById('inequality').value;
+
+     if (isNaN(h) || isNaN(k) || isNaN(r)) {
+      throw new Error('Center coordinates and radius must be valid numbers');
+     }
+
+     if (r <= 0) {
+      throw new Error('Radius must be positive');
+     }
+
+     // Test point (2,1)
+     const testX = 2, testY = 1;
+     const testValue = (testX - h) * (testX - h) + (testY - k) * (testY - k);
+     const boundaryValue = r * r;
+     let testResult = false;
+     let comparison = '';
+
+     switch(inequality) {
+      case '<':
+       testResult = testValue < boundaryValue;
+       comparison = `${testValue} < ${boundaryValue}`;
+       break;
+      case '>':
+       testResult = testValue > boundaryValue;
+       comparison = `${testValue} > ${boundaryValue}`;
+       break;
+      case '<=':
+       testResult = testValue <= boundaryValue;
+       comparison = `${testValue} ≤ ${boundaryValue}`;
+       break;
+      case '>=':
+       testResult = testValue >= boundaryValue;
+       comparison = `${testValue} ≥ ${boundaryValue}`;
+       break;
+     }
+
+     document.getElementById('testDisplay').innerHTML = `<strong>Test Point (2,1):</strong> ${comparison} ⇒ ${testResult ? 'True' : 'False'}`;
+
+     let region = '';
+     if (inequality.includes('<')) {
+      region = testResult ? 'Shade interior of circle' : 'Shade exterior of circle';
+     } else {
+      region = testResult ? 'Shade exterior of circle' : 'Shade interior of circle';
+     }
+     document.getElementById('regionDisplay').innerHTML = `<strong>Region:</strong> ${region}`;
+
+     document.getElementById('errorMessage').style.display = 'none';
+    } catch (error) {
+     document.getElementById('errorMessage').textContent = error.message;
+     document.getElementById('errorMessage').style.display = 'block';
+    }
+   }
+
+   function resetDemo() {
+    document.getElementById('centerX').value = '0';
+    document.getElementById('centerY').value = '0';
+    document.getElementById('radius').value = '3';
+    document.getElementById('inequality').value = '<';
+    graphInequality();
+    document.getElementById('errorMessage').style.display = 'none';
+   }
+
+   function showExample(exampleNumber) {
+    const detail = document.getElementById('exampleDetail');
+    let content = '';
+
+    switch(exampleNumber) {
+     case 1:
+      content = `
+       <h4>Detailed Example 1 - Graph x² + y² < 16</h4>
+       <div class="calculation-steps">
+        <div class="calculation-step">Circle equation: x² + y² = 16, center (0,0), r = 4</div>
+        <div class="calculation-step">Inequality: x² + y² < 16 (interior region, dashed boundary)</div>
+        <div class="calculation-step">Test point (0,0): 0 + 0 = 0 < 16? True</div>
+        <div class="calculation-step">Since test point satisfies inequality, shade interior region</div>
+        <div class="calculation-step">Region: Open disk with area π(4)² = 16π square units</div>
+       </div>
+      `;
+      break;
+     case 2:
+      content = `
+       <h4>Detailed Example 2 - Graph (x-1)² + (y+2)² ≥ 9</h4>
+       <div class="calculation-steps">
+        <div class="calculation-step">Circle: center (1,-2), radius r = 3</div>
+        <div class="calculation-step">Inequality: (x-1)² + (y+2)² ≥ 9 (closed exterior region)</div>
+        <div class="calculation-step">Test point (0,0): (0-1)² + (0+2)² = 1 + 4 = 5 ≥ 9? False</div>
+        <div class="calculation-step">Since test point doesn't satisfy inequality, shade exterior region</div>
+        <div class="calculation-step">Region: Points outside and on circle (x-1)² + (y+2)² = 9</div>
+       </div>
+      `;
+      break;
+     case 3:
+      content = `
+       <h4>Detailed Example 3 - Test Point Method</h4>
+       <div class="calculation-steps">
+        <div class="calculation-step">Inequality: x² + y² > 25</div>
+        <div class="calculation-step">Circle: x² + y² = 25, center (0,0), r = 5</div>
+        <div class="calculation-step">Test point (0,0): 0 + 0 = 0 > 25? False</div>
+        <div class="calculation-step">Since test point doesn't satisfy inequality, shade exterior region</div>
+        <div class="calculation-step">Region: All points where distance from origin > 5</div>
+       </div>
+      `;
+      break;
+    }
+
+    detail.innerHTML = content;
+    detail.style.display = 'block';
+    MathJax.typesetPromise();
+   }
+
+   function toggleSolution(problemNumber) {
+    const solution = document.getElementById('solution' + problemNumber);
+    if (solution.style.display === 'none' || solution.style.display === '') {
+     solution.style.display = 'block';
+    } else {
+     solution.style.display = 'none';
+    }
+   }
+
+   // Initialize canvas visualizations
+   window.addEventListener('load', function() {
+    // Interior Region
+    const canvas1 = document.getElementById('interiorCanvas');
+    const ctx1 = canvas1.getContext('2d');
+    const w1 = canvas1.width;
+    const h1 = canvas1.height;
+
+    const x0_1 = w1 / 2, y0_1 = h1 / 2;
+    const scale1 = 40;
+
+    // Grid
+    ctx1.strokeStyle = '#e8e8e8';
+    ctx1.lineWidth = 0.8;
+    for (let i = -6; i <= 6; i++) {
+     ctx1.beginPath();
+     ctx1.moveTo(x0_1 + i * scale1, 20);
+     ctx1.lineTo(x0_1 + i * scale1, h1 - 20);
+     ctx1.stroke();
+
+     ctx1.beginPath();
+     ctx1.moveTo(20, y0_1 - i * scale1);
+     ctx1.lineTo(w1 - 20, y0_1 - i * scale1);
+     ctx1.stroke();
+    }
+
+    // Axes
+    ctx1.strokeStyle = '#000';
+    ctx1.lineWidth = 2;
+    ctx1.beginPath();
+    ctx1.moveTo(x0_1, 20);
+    ctx1.lineTo(x0_1, h1 - 20);
+    ctx1.stroke();
+
+    ctx1.beginPath();
+    ctx1.moveTo(20, y0_1);
+    ctx1.lineTo(w1 - 20, y0_1);
+    ctx1.stroke();
+
+    // Arrow tips
+    ctx1.fillStyle = '#000';
+    ctx1.beginPath();
+    ctx1.moveTo(w1 - 20, y0_1);
+    ctx1.lineTo(w1 - 27, y0_1 - 4);
+    ctx1.lineTo(w1 - 27, y0_1 + 4);
+    ctx1.fill();
+
+    ctx1.beginPath();
+    ctx1.moveTo(x0_1, 20);
+    ctx1.lineTo(x0_1 - 4, 27);
+    ctx1.lineTo(x0_1 + 4, 27);
+    ctx1.fill();
+
+    // Axis labels
+    ctx1.font = '14px Arial';
+    ctx1.fillStyle = '#000';
+    ctx1.textAlign = 'center';
+    ctx1.fillText('x', w1 - 10, y0_1 + 20);
+    ctx1.fillText('y', x0_1 + 20, 30);
+    ctx1.fillText('O', x0_1 - 15, y0_1 + 15);
+
+    // Circle radius
+    const r1 = 4;
+
+    // Shade interior
+    ctx1.fillStyle = 'rgba(52, 152, 219, 0.2)';
+    ctx1.beginPath();
+    ctx1.arc(x0_1, y0_1, r1 * scale1, 0, 2*Math.PI);
+    ctx1.fill();
+
+    // Dashed circle boundary
+    ctx1.strokeStyle = '#3498db';
+    ctx1.lineWidth = 2.5;
+    ctx1.setLineDash([8, 5]);
+    ctx1.beginPath();
+    ctx1.arc(x0_1, y0_1, r1 * scale1, 0, 2*Math.PI);
+    ctx1.stroke();
+    ctx1.setLineDash([]);
+
+    // Center point
+    ctx1.fillStyle = '#e74c3c';
+    ctx1.beginPath();
+    ctx1.arc(x0_1, y0_1, 5, 0, 2*Math.PI);
+    ctx1.fill();
+
+    // Radius line
+    ctx1.strokeStyle = '#e74c3c';
+    ctx1.lineWidth = 1.5;
+    ctx1.setLineDash([5, 5]);
+    ctx1.beginPath();
+    ctx1.moveTo(x0_1, y0_1);
+    ctx1.lineTo(x0_1 + r1 * scale1, y0_1);
+    ctx1.stroke();
+    ctx1.setLineDash([]);
+
+    // Labels
+    ctx1.font = 'italic 16px Georgia';
+    ctx1.fillStyle = '#e74c3c';
+    ctx1.textAlign = 'right';
+
+    ctx1.fillStyle = '#e74c3c';
+    ctx1.textAlign = 'center';
+    ctx1.fillText('r', x0_1 + r1/2 * scale1, y0_1 - 10);
+
+    ctx1.font = '14px Arial';
+    ctx1.fillStyle = '#3498db';
+    ctx1.fillText('x² + y² < r²', x0_1 + 55, y0_1 - r1/2 * scale1);
+
+    // Exterior Region
+    const canvas2 = document.getElementById('exteriorCanvas');
+    const ctx2 = canvas2.getContext('2d');
+    const w2 = canvas2.width;
+    const h2 = canvas2.height;
+
+    const x0_2 = w2 / 2, y0_2 = h2 / 2;
+    const scale2 = 40;
+
+    // Grid
+    ctx2.strokeStyle = '#e8e8e8';
+    ctx2.lineWidth = 0.8;
+    for (let i = -6; i <= 6; i++) {
+     ctx2.beginPath();
+     ctx2.moveTo(x0_2 + i * scale2, 20);
+     ctx2.lineTo(x0_2 + i * scale2, h2 - 20);
+     ctx2.stroke();
+
+     ctx2.beginPath();
+     ctx2.moveTo(20, y0_2 - i * scale2);
+     ctx2.lineTo(w2 - 20, y0_2 - i * scale2);
+     ctx2.stroke();
+    }
+
+    // Axes
+    ctx2.strokeStyle = '#000';
+    ctx2.lineWidth = 2;
+    ctx2.beginPath();
+    ctx2.moveTo(x0_2, 20);
+    ctx2.lineTo(x0_2, h2 - 20);
+    ctx2.stroke();
+
+    ctx2.beginPath();
+    ctx2.moveTo(20, y0_2);
+    ctx2.lineTo(w2 - 20, y0_2);
+    ctx2.stroke();
+
+    // Arrow tips
+    ctx2.fillStyle = '#000';
+    ctx2.beginPath();
+    ctx2.moveTo(w2 - 20, y0_2);
+    ctx2.lineTo(w2 - 27, y0_2 - 4);
+    ctx2.lineTo(w2 - 27, y0_2 + 4);
+    ctx2.fill();
+
+    ctx2.beginPath();
+    ctx2.moveTo(x0_2, 20);
+    ctx2.lineTo(x0_2 - 4, 27);
+    ctx2.lineTo(x0_2 + 4, 27);
+    ctx2.fill();
+
+    // Axis labels
+    ctx2.font = '14px Arial';
+    ctx2.fillStyle = '#000';
+    ctx2.textAlign = 'center';
+    ctx2.fillText('x', w2 - 10, y0_2 + 20);
+    ctx2.fillText('y', x0_2 + 20, 30);
+    ctx2.fillText('O', x0_2 - 15, y0_2 + 15);
+
+    // Circle radius
+    const r2 = 4;
+
+    // Dashed circle boundary
+    ctx2.strokeStyle = '#e74c3c';
+    ctx2.lineWidth = 2.5;
+    ctx2.setLineDash([8, 5]);
+    ctx2.beginPath();
+    ctx2.arc(x0_2, y0_2, r2 * scale2, 0, 2*Math.PI);
+    ctx2.stroke();
+    ctx2.setLineDash([]);
+
+    // Center point
+    ctx2.fillStyle = '#e74c3c';
+    ctx2.beginPath();
+    ctx2.arc(x0_2, y0_2, 5, 0, 2*Math.PI);
+    ctx2.fill();
+
+    // Radius line
+    ctx2.strokeStyle = '#e74c3c';
+    ctx2.lineWidth = 1.5;
+    ctx2.setLineDash([5, 5]);
+    ctx2.beginPath();
+    ctx2.moveTo(x0_2, y0_2);
+    ctx2.lineTo(x0_2 + r2 * scale2, y0_2);
+    ctx2.stroke();
+    ctx2.setLineDash([]);
+
+    // Labels
+    ctx2.font = 'italic 16px Georgia';
+    ctx2.fillStyle = '#e74c3c';
+    ctx2.textAlign = 'right';
+
+    ctx2.fillStyle = '#e74c3c';
+    ctx2.textAlign = 'center';
+    ctx2.fillText('r', x0_2 + r2/2 * scale2, y0_2 - 10);
+
+    ctx2.font = '14px Arial';
+    ctx2.fillStyle = '#e74c3c';
+    ctx2.fillText('x² + y² > r²', x0_2 + 4 * scale2, y0_2 - 3 * scale2);
+
+    // Shade exterior region only (outside circle)
+    ctx2.save();
+    ctx2.fillStyle = 'rgba(231, 76, 60, 0.2)';
+
+    // Create path for exterior: outer rectangle with circle cutout
+    ctx2.beginPath();
+    ctx2.rect(20, 20, w2 - 40, h2 - 40);
+    ctx2.arc(x0_2, y0_2, r2 * scale2, 0, 2*Math.PI, true); // true = counterclockwise for cutout
+    ctx2.fill();
+    ctx2.restore();
+
+    // Inclusive Region
+    const canvas3 = document.getElementById('inclusiveCanvas');
+    const ctx3 = canvas3.getContext('2d');
+    const w3 = canvas3.width;
+    const h3 = canvas3.height;
+
+    const x0_3 = w3 / 2, y0_3 = h3 / 2;
+    const scale3 = 40;
+
+    // Grid
+    ctx3.strokeStyle = '#e8e8e8';
+    ctx3.lineWidth = 0.8;
+    for (let i = -6; i <= 6; i++) {
+     ctx3.beginPath();
+     ctx3.moveTo(x0_3 + i * scale3, 20);
+     ctx3.lineTo(x0_3 + i * scale3, h3 - 20);
+     ctx3.stroke();
+
+     ctx3.beginPath();
+     ctx3.moveTo(20, y0_3 - i * scale3);
+     ctx3.lineTo(w3 - 20, y0_3 - i * scale3);
+     ctx3.stroke();
+    }
+
+    // Axes
+    ctx3.strokeStyle = '#000';
+    ctx3.lineWidth = 2;
+    ctx3.beginPath();
+    ctx3.moveTo(x0_3, 20);
+    ctx3.lineTo(x0_3, h3 - 20);
+    ctx3.stroke();
+
+    ctx3.beginPath();
+    ctx3.moveTo(20, y0_3);
+    ctx3.lineTo(w3 - 20, y0_3);
+    ctx3.stroke();
+
+    // Arrow tips
+    ctx3.fillStyle = '#000';
+    ctx3.beginPath();
+    ctx3.moveTo(w3 - 20, y0_3);
+    ctx3.lineTo(w3 - 27, y0_3 - 4);
+    ctx3.lineTo(w3 - 27, y0_3 + 4);
+    ctx3.fill();
+
+    ctx3.beginPath();
+    ctx3.moveTo(x0_3, 20);
+    ctx3.lineTo(x0_3 - 4, 27);
+    ctx3.lineTo(x0_3 + 4, 27);
+    ctx3.fill();
+
+    // Axis labels
+    ctx3.font = '14px Arial';
+    ctx3.fillStyle = '#000';
+    ctx3.textAlign = 'center';
+    ctx3.fillText('x', w3 - 10, y0_3 + 20);
+    ctx3.fillText('y', x0_3 + 20, 30);
+    ctx3.fillText('O', x0_3 - 15, y0_3 + 15);
+
+    // Circle radius
+    const r3 = 4;
+
+    // Shade interior
+    ctx3.fillStyle = 'rgba(39, 174, 96, 0.2)';
+    ctx3.beginPath();
+    ctx3.arc(x0_3, y0_3, r3 * scale3, 0, 2*Math.PI);
+    ctx3.fill();
+
+    // Solid circle boundary (included)
+    ctx3.strokeStyle = '#27ae60';
+    ctx3.lineWidth = 2.5;
+    ctx3.beginPath();
+    ctx3.arc(x0_3, y0_3, r3 * scale3, 0, 2*Math.PI);
+    ctx3.stroke();
+
+    // Center point
+    ctx3.fillStyle = '#e74c3c';
+    ctx3.beginPath();
+    ctx3.arc(x0_3, y0_3, 5, 0, 2*Math.PI);
+    ctx3.fill();
+
+    // Radius line
+    ctx3.strokeStyle = '#e74c3c';
+    ctx3.lineWidth = 1.5;
+    ctx3.setLineDash([5, 5]);
+    ctx3.beginPath();
+    ctx3.moveTo(x0_3, y0_3);
+    ctx3.lineTo(x0_3 + r3 * scale3, y0_3);
+    ctx3.stroke();
+    ctx3.setLineDash([]);
+
+    // Labels
+    ctx3.font = 'italic 16px Georgia';
+    ctx3.fillStyle = '#e74c3c';
+    ctx3.textAlign = 'right';
+
+    ctx3.fillStyle = '#e74c3c';
+    ctx3.textAlign = 'center';
+    ctx3.fillText('r', x0_3 + r3/2 * scale3, y0_3 - 10);
+
+    ctx3.font = '14px Arial';
+    ctx3.fillStyle = '#27ae60';
+    ctx3.fillText('x² + y² ≤ r²', x0_3 + 55, y0_3 - r3/2 * scale3);
+    ctx3.fillText('(includes circle)', x0_3 + 55, y0_3 - r3/2 * scale3 + 18);
+    // Initialize calculator
+    graphInequality();
+   });
+  </script>
+ </body>
+</html>

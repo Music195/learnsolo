@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<!-- tags: Vector -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Vector Equation of a Straight Line
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+   }
+
+   .main-content {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 15px;
+    padding: 30px;
+    margin: 20px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+   }
+
+   .fancy-title {
+    text-align: center;
+    font-size: 2.5em;
+    font-weight: bold;
+    margin: 20px 0;
+    color: #2c3e50;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+   }
+
+   .description {
+    font-size: 1.2em;
+    line-height: 1.6;
+    margin: 20px 0;
+    color: #34495e;
+    text-align: center;
+   }
+
+   .content-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin: 30px 0;
+   }
+
+   .formula-block {
+    flex: 1;
+    min-width: 300px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 1.4em;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+   }
+
+   .diagram-block {
+    flex: 1;
+    min-width: 300px;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+   }
+
+   .interactive-demo {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    margin: 30px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+   }
+
+   .demo-title {
+    text-align: center;
+    font-size: 1.8em;
+    margin-bottom: 25px;
+    font-weight: bold;
+   }
+
+   .input-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin: 20px 0;
+    justify-content: center;
+   }
+
+   .input-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+   }
+
+   .input-field label {
+    font-weight: bold;
+    font-size: 1.1em;
+   }
+
+   .input-field input {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    width: 120px;
+    text-align: center;
+    transition: border-color 0.3s;
+   }
+
+   .input-field input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+   }
+
+   .button-group {
+    text-align: center;
+    margin: 25px 0;
+   }
+
+   .btn {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 1.1em;
+    cursor: pointer;
+    margin: 0 10px;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+   }
+
+   .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+   }
+
+   .btn:active {
+    transform: translateY(0);
+   }
+
+   .result-display {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    backdrop-filter: blur(10px);
+   }
+
+   .result-text {
+    font-size: 1.2em;
+    text-align: center;
+    margin: 10px 0;
+   }
+
+   .canvas-container {
+    text-align: center;
+    margin: 20px 0;
+   }
+
+   .line-canvas {
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+   }
+
+   .section {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    margin: 25px 0;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+   }
+
+   .section-title {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
+   }
+
+   .example-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+   }
+
+   .example-card {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+   }
+
+   .example-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(245, 87, 108, 0.4);
+   }
+
+   .example-card h4 {
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+   }
+
+   .example-detail {
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    display: none;
+   }
+
+   .calculation-steps {
+    margin: 15px 0;
+   }
+
+   .calculation-step {
+    margin: 8px 0;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 5px;
+    border-left: 4px solid #f5576c;
+   }
+
+   .practice-problems {
+    margin: 20px 0;
+   }
+
+   .problem-item {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+   }
+
+   .problem-item h4 {
+    margin: 0 0 15px 0;
+    font-size: 1.2em;
+   }
+
+   .solution-btn {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    color: #333;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 10px 0;
+    transition: all 0.3s;
+   }
+
+   .solution-btn:hover {
+    background: linear-gradient(135deg, #fcb69f 0%, #ffecd2 100%);
+    transform: scale(1.05);
+   }
+
+   .solution {
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 10px 0;
+    display: none;
+    border-left: 4px solid #667eea;
+   }
+
+   .key-takeaways {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    padding: 25px;
+    border-radius: 12px;
+    margin: 25px 0;
+   }
+
+   .takeaway-list {
+    list-style: none;
+    padding: 0;
+   }
+
+   .takeaway-item {
+    background: rgba(255, 255, 255, 0.8);
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+    font-weight: bold;
+   }
+
+   .error-message {
+    background: #ffebee;
+    color: #c62828;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px 0;
+    display: none;
+    text-align: center;
+    font-weight: bold;
+   }
+
+   @media (max-width: 768px) {
+    .content-wrapper {
+     flex-direction: column;
+    }
+
+    .input-group {
+     flex-direction: column;
+     align-items: center;
+    }
+
+    .fancy-title {
+     font-size: 2em;
+    }
+
+    .formula-block {
+     font-size: 1.2em;
+    }
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Vector">
+   Vector Equation of a Straight Line
+  </div>
+
+  <div class="container">
+   <div class="main-content">
+    <div class="description">
+     The vector equation of a line passing through a point A with position vector \(\vec{a}\) and parallel to a direction vector \(\vec{d}\) is given by \(\vec{r} = \vec{a} + t\vec{d}\), where t is a real parameter.
+    </div>
+
+    <div class="content-wrapper">
+     <div class="formula-block">
+      $$ \vec{r} = \vec{a} + t\vec{d} $$
+      <br>
+      <small>where t ∈ ℝ (real numbers)</small>
+     </div>
+
+     <div class="diagram-block">
+      <svg viewbox="0 0 250 180" xmlns="http://www.w3.org/2000/svg">
+       <!-- Coordinate axes -->
+       <line stroke="#ccc" stroke-width="1" x1="20" x2="220" y1="150" y2="150"></line>
+       <line stroke="#ccc" stroke-width="1" x1="20" x2="20" y1="30" y2="150"></line>
+       <!-- Line -->
+       <line stroke="#e74c3c" stroke-width="3" x1="50" x2="200" y1="120" y2="60"></line>
+       <!-- Point A -->
+       <circle cx="80" cy="100" fill="#f39c12" r="4"></circle>
+       <text fill="#f39c12" font-size="12" x="75" y="95">A(\(\vec{a}\))</text>
+       <!-- Point R (on line) -->
+       <circle cx="140" cy="80" fill="#27ae60" r="4"></circle>
+       <text fill="#27ae60" font-size="12" x="135" y="75">R(\(\vec{r}\))</text>
+       <!-- Vector a -->
+       <line marker-end="url(#arrowhead-blue)" stroke="#007bff" stroke-width="2" x1="20" x2="80" y1="150" y2="100"></line>
+       <text fill="#007bff" font-size="10" x="40" y="130">\(\vec{a}\)</text>
+       <!-- Vector td -->
+       <line marker-end="url(#arrowhead-green)" stroke="#27ae60" stroke-width="2" x1="80" x2="140" y1="100" y2="80"></line>
+       <text fill="#27ae60" font-size="10" x="105" y="85">\(t\vec{d}\)</text>
+       <!-- Vector d (direction) -->
+       <line marker-end="url(#arrowhead-purple)" stroke="#9b59b6" stroke-width="2" x1="60" x2="120" y1="40" y2="40"></line>
+       <text fill="#9b59b6" font-size="10" x="85" y="35">\(\vec{d}\)</text>
+       <!-- Arrow markers -->
+       <defs>
+        <marker id="arrowhead-blue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+         <polygon fill="#007bff" points="0 0, 10 3.5, 0 7"></polygon>
+        </marker>
+        <marker id="arrowhead-green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+         <polygon fill="#27ae60" points="0 0, 10 3.5, 0 7"></polygon>
+        </marker>
+        <marker id="arrowhead-purple" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+         <polygon fill="#9b59b6" points="0 0, 10 3.5, 0 7"></polygon>
+        </marker>
+       </defs>
+      </svg>
+     </div>
+    </div>
+
+    <div class="interactive-demo">
+     <div class="demo-title">Interactive Line Equation Generator</div>
+
+     <div class="input-group">
+      <div class="input-field">
+       <label for="ax">A<sub>x</sub>:</label>
+       <input id="ax" step="any" type="number" value="2"/>
+      </div>
+      <div class="input-field">
+       <label for="ay">A<sub>y</sub>:</label>
+       <input id="ay" step="any" type="number" value="1"/>
+      </div>
+      <div class="input-field">
+       <label for="dx">d<sub>x</sub>:</label>
+       <input id="dx" step="any" type="number" value="3"/>
+      </div>
+      <div class="input-field">
+       <label for="dy">d<sub>y</sub>:</label>
+       <input id="dy" step="any" type="number" value="2"/>
+      </div>
+      <div class="input-field">
+       <label for="t">t value:</label>
+       <input id="t" step="any" type="number" value="1"/>
+      </div>
+     </div>
+
+     <div class="button-group">
+      <button class="btn" onclick="generateLineEquation()">Generate Equation</button>
+      <button class="btn" onclick="calculatePoint()">Calculate Point</button>
+      <button class="btn" onclick="resetDemo()">Reset</button>
+     </div>
+
+     <div class="error-message" id="errorMessage"></div>
+
+     <div class="result-display">
+      <div class="result-text" id="equationResult">
+       Vector Equation: <strong id="vectorEq">( , ) + t( , )</strong>
+      </div>
+      <div class="result-text" id="pointResult">
+       Point at t: <strong id="pointCoords">( , )</strong>
+      </div>
+     </div>
+
+     <div class="canvas-container">
+      <canvas class="line-canvas" height="400" id="lineCanvas" width="500"></canvas>
+     </div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Mathematical Foundation</div>
+     <p>A straight line in vector form is defined by:</p>
+     <ul>
+      <li><strong>Point on the line:</strong> A position vector \(\vec{a}\) of a known point A on the line</li>
+      <li><strong>Direction vector:</strong> A non-zero vector \(\vec{d}\) parallel to the line</li>
+      <li><strong>Parameter:</strong> A real number t that varies to generate all points on the line</li>
+     </ul>
+     <div class="formula-block" style="margin: 20px 0;">
+      $$ \vec{r} = \vec{a} + t\vec{d}, \quad t \in \mathbb{R} $$
+     </div>
+     <p>As t varies over all real numbers, \(\vec{r}\) traces out the entire line. The direction vector \(\vec{d}\) determines the slope and direction of the line.</p>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Worked Examples</div>
+     <div class="example-grid">
+      <div class="example-card" onclick="showExample(1)">
+       <h4>Example 1: Basic Line Equation</h4>
+       <p>Find equation of line through A(1,2) parallel to vector (3,4)</p>
+      </div>
+      <div class="example-card" onclick="showExample(2)">
+       <h4>Example 2: Point on Line</h4>
+       <p>Find point on line \(\vec{r} = (2,1) + t(1,3)\) when t = 2</p>
+      </div>
+      <div class="example-card" onclick="showExample(3)">
+       <h4>Example 3: Direction Vector</h4>
+       <p>Find direction vector of line through (1,2) and (4,6)</p>
+      </div>
+     </div>
+
+     <div class="example-detail" id="exampleDetail"></div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Applications</div>
+     <ul>
+      <li><strong>Computer Graphics:</strong> Line drawing algorithms and ray tracing</li>
+      <li><strong>Physics:</strong> Trajectory calculations and motion along straight paths</li>
+      <li><strong>Engineering:</strong> Structural analysis and alignment calculations</li>
+      <li><strong>Navigation:</strong> Path planning and GPS route calculations</li>
+      <li><strong>Mathematics:</strong> Parametric representations of lines in higher dimensions</li>
+     </ul>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Practice Problems</div>
+     <div class="practice-problems">
+      <div class="problem-item">
+       <h4>Problem 1</h4>
+       <p>Find the vector equation of the line passing through the point A(2,3) and parallel to the vector \(\vec{d} = (4,5)\).</p>
+       <button class="solution-btn" onclick="toggleSolution(1)">Show Solution</button>
+       <div class="solution" id="solution1">
+        <p><strong>Solution:</strong></p>
+        <p>The vector equation is: \(\vec{r} = \vec{a} + t\vec{d}\)</p>
+        <p>\(\vec{r} = (2,3) + t(4,5)\)</p>
+        <p>Position vector form: \((x,y) = (2+4t, 3+5t)\)</p>
+       </div>
+      </div>
+
+      <div class="problem-item">
+       <h4>Problem 2</h4>
+       <p>Find the coordinates of the point on the line \(\vec{r} = (1,2) + t(3,4)\) when t = -1.</p>
+       <button class="solution-btn" onclick="toggleSolution(2)">Show Solution</button>
+       <div class="solution" id="solution2">
+        <p><strong>Solution:</strong></p>
+        <p>Substitute t = -1: \(\vec{r} = (1,2) + (-1)(3,4) = (1,2) + (-3,-4) = (-2,-2)\)</p>
+        <p>The point is (-2, -2).</p>
+       </div>
+      </div>
+
+      <div class="problem-item">
+       <h4>Problem 3</h4>
+       <p>Find the direction vector of the line passing through points A(1,2) and B(4,6).</p>
+       <button class="solution-btn" onclick="toggleSolution(3)">Show Solution</button>
+       <div class="solution" id="solution3">
+        <p><strong>Solution:</strong></p>
+        <p>Direction vector \(\vec{d} = \overrightarrow{AB} = (4-1, 6-2) = (3,4)\)</p>
+        <p>Vector equation: \(\vec{r} = (1,2) + t(3,4)\)</p>
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <div class="section-title">Key Takeaways</div>
+     <ul class="takeaway-list">
+      <li class="takeaway-item">Vector equation: \(\vec{r} = \vec{a} + t\vec{d}\) where \(\vec{a}\) is a point on the line and \(\vec{d}\) is direction vector</li>
+      <li class="takeaway-item">Parameter t varies over all real numbers to generate all points on the line</li>
+      <li class="takeaway-item">Direction vector \(\vec{d}\) is parallel to the line and non-zero</li>
+      <li class="takeaway-item">For two points A and B, direction vector is \(\overrightarrow{AB}\)</li>
+      <li class="takeaway-item">Cartesian form: x = a₁ + t d₁, y = a₂ + t d₂</li>
+      <li class="takeaway-item">Used for parametric representation of lines in any dimension</li>
+     </ul>
+    </div>
+   </div>
+  </div>
+
+  <script>
+   function generateLineEquation() {
+    try {
+      const ax = parseFloat(document.getElementById('ax').value) || 0;
+      const ay = parseFloat(document.getElementById('ay').value) || 0;
+      const dx = parseFloat(document.getElementById('dx').value) || 0;
+      const dy = parseFloat(document.getElementById('dy').value) || 0;
+
+      if (dx === 0 && dy === 0) {
+        document.getElementById('errorMessage').textContent = 'Direction vector cannot be zero vector.';
+        document.getElementById('errorMessage').style.display = 'block';
+        return;
+      }
+
+      document.getElementById('vectorEq').textContent = `(${ax}, ${ay}) + t(${dx}, ${dy})`;
+      document.getElementById('errorMessage').style.display = 'none';
+
+      drawLineVisualization(ax, ay, dx, dy, parseFloat(document.getElementById('t').value) || 0);
+    } catch (error) {
+      document.getElementById('errorMessage').textContent = 'Error generating equation. Please check your input values.';
+      document.getElementById('errorMessage').style.display = 'block';
+    }
+   }
+
+   function calculatePoint() {
+    try {
+      const ax = parseFloat(document.getElementById('ax').value) || 0;
+      const ay = parseFloat(document.getElementById('ay').value) || 0;
+      const dx = parseFloat(document.getElementById('dx').value) || 0;
+      const dy = parseFloat(document.getElementById('dy').value) || 0;
+      const t = parseFloat(document.getElementById('t').value) || 0;
+
+      const px = ax + t * dx;
+      const py = ay + t * dy;
+
+      document.getElementById('pointCoords').textContent = `(${px.toFixed(2)}, ${py.toFixed(2)})`;
+      document.getElementById('errorMessage').style.display = 'none';
+
+      drawLineVisualization(ax, ay, dx, dy, t);
+    } catch (error) {
+      document.getElementById('errorMessage').textContent = 'Error calculating point. Please check your input values.';
+      document.getElementById('errorMessage').style.display = 'block';
+    }
+   }
+
+   function drawLineVisualization(ax, ay, dx, dy, t) {
+    const canvas = document.getElementById('lineCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Calculate bounds
+    const px = ax + t * dx;
+    const py = ay + t * dy;
+    const points = [
+      {x: ax, y: ay},
+      {x: px, y: py},
+      {x: ax + dx, y: ay + dy},
+      {x: ax - dx, y: ay - dy}
+    ];
+
+    const minX = Math.min(...points.map(p => p.x)) - 2;
+    const maxX = Math.max(...points.map(p => p.x)) + 2;
+    const minY = Math.min(...points.map(p => p.y)) - 2;
+    const maxY = Math.max(...points.map(p => p.y)) + 2;
+
+    const scaleX = (canvas.width - 80) / (maxX - minX);
+    const scaleY = (canvas.height - 80) / (maxY - minY);
+    const scale = Math.min(scaleX, scaleY);
+
+    const offsetX = 40 - minX * scale;
+    const offsetY = 40 - minY * scale;
+
+    // Transform coordinates
+    const transformX = x => offsetX + x * scale;
+    const transformY = y => canvas.height - (offsetY + y * scale);
+
+    // Draw grid
+    ctx.strokeStyle = '#e0e0e0';
+    ctx.lineWidth = 1;
+    for (let i = Math.floor(minX); i <= Math.ceil(maxX); i++) {
+      const x = transformX(i);
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, canvas.height);
+      ctx.stroke();
+    }
+    for (let i = Math.floor(minY); i <= Math.ceil(maxY); i++) {
+      const y = transformY(i);
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(canvas.width, y);
+      ctx.stroke();
+    }
+
+    // Draw line (extended)
+    ctx.strokeStyle = '#e74c3c';
+    ctx.lineWidth = 3;
+    const lineStartX = ax - 3 * dx;
+    const lineStartY = ay - 3 * dy;
+    const lineEndX = ax + 3 * dx;
+    const lineEndY = ay + 3 * dy;
+
+    ctx.beginPath();
+    ctx.moveTo(transformX(lineStartX), transformY(lineStartY));
+    ctx.lineTo(transformX(lineEndX), transformY(lineEndY));
+    ctx.stroke();
+
+    // Draw point A
+    ctx.fillStyle = '#f39c12';
+    ctx.beginPath();
+    ctx.arc(transformX(ax), transformY(ay), 6, 0, 2 * Math.PI);
+    ctx.fill();
+
+    // Draw point P
+    ctx.fillStyle = '#27ae60';
+    ctx.beginPath();
+    ctx.arc(transformX(px), transformY(py), 6, 0, 2 * Math.PI);
+    ctx.fill();
+
+    // Draw direction vector
+    drawVector(ctx, transformX(ax), transformY(ay), transformX(ax + dx), transformY(ay + dy), '#9b59b6', 'd');
+
+    // Draw t*d vector
+    if (t !== 0) {
+      drawVector(ctx, transformX(ax), transformY(ay), transformX(px), transformY(py), '#e67e22', 't·d');
+    }
+
+    // Draw labels
+    ctx.fillStyle = '#333';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('A', transformX(ax), transformY(ay) - 10);
+    ctx.fillText('P', transformX(px), transformY(py) - 10);
+
+    // Draw legend
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.fillRect(10, 10, 140, 100);
+    ctx.strokeStyle = '#333';
+    ctx.strokeRect(10, 10, 140, 100);
+
+    ctx.fillStyle = '#333';
+    ctx.font = '10px Arial';
+    ctx.textAlign = 'left';
+    ctx.fillText('Legend:', 15, 25);
+    ctx.fillText('● A: Reference point', 15, 40);
+    ctx.fillText('● P: Point at t', 15, 55);
+    ctx.fillText('→ d: Direction vector', 15, 70);
+    ctx.fillText('→ t·d: Parameter vector', 15, 85);
+    ctx.fillText(`t = ${t.toFixed(2)}`, 15, 100);
+   }
+
+   function drawVector(ctx, x1, y1, x2, y2, color, label) {
+    // Draw vector line
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+
+    // Draw arrowhead
+    const angle = Math.atan2(y2 - y1, x2 - x1);
+    const arrowLength = 10;
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - arrowLength * Math.cos(angle - Math.PI/6), y2 - arrowLength * Math.sin(angle - Math.PI/6));
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - arrowLength * Math.cos(angle + Math.PI/6), y2 - arrowLength * Math.sin(angle + Math.PI/6));
+    ctx.stroke();
+
+    // Draw label
+    const midX = (x1 + x2) / 2;
+    const midY = (y1 + y2) / 2;
+    ctx.fillStyle = color;
+    ctx.font = '10px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(label, midX, midY - 5);
+   }
+
+   function showExample(exampleNumber) {
+    const detail = document.getElementById('exampleDetail');
+    let content = '';
+
+    switch(exampleNumber) {
+      case 1:
+        content = `
+          <h4>Detailed Example 1 - Basic Line Equation</h4>
+          <div class="calculation-steps">
+            <div class="calculation-step">Point A: (1,2), Direction vector d: (3,4)</div>
+            <div class="calculation-step">Vector equation: \(\vec{r} = \vec{a} + t\vec{d}\)</div>
+            <div class="calculation-step">\(\vec{r} = (1,2) + t(3,4) = (1+3t, 2+4t)\)</div>
+            <div class="calculation-step">Cartesian form: x = 1 + 3t, y = 2 + 4t</div>
+          </div>
+        `;
+        break;
+      case 2:
+        content = `
+          <h4>Detailed Example 2 - Point on Line</h4>
+          <div class="calculation-steps">
+            <div class="calculation-step">Line equation: \(\vec{r} = (2,1) + t(1,3)\)</div>
+            <div class="calculation-step">Substitute t = 2: \(\vec{r} = (2,1) + 2(1,3) = (2,1) + (2,6) = (4,7)\)</div>
+            <div class="calculation-step">Point at t = 2 is (4,7)</div>
+          </div>
+        `;
+        break;
+      case 3:
+        content = `
+          <h4>Detailed Example 3 - Direction Vector</h4>
+          <div class="calculation-steps">
+            <div class="calculation-step">Points A(1,2) and B(4,6)</div>
+            <div class="calculation-step">Direction vector: \(\overrightarrow{AB} = (4-1, 6-2) = (3,4)\)</div>
+            <div class="calculation-step">Vector equation: \(\vec{r} = (1,2) + t(3,4)\)</div>
+            <div class="calculation-step">Cartesian form: x = 1 + 3t, y = 2 + 4t</div>
+          </div>
+        `;
+        break;
+    }
+
+    detail.innerHTML = content;
+    detail.style.display = 'block';
+    MathJax.typesetPromise();
+   }
+
+   function toggleSolution(problemNumber) {
+    const solution = document.getElementById('solution' + problemNumber);
+    if (solution.style.display === 'none' || solution.style.display === '') {
+      solution.style.display = 'block';
+    } else {
+      solution.style.display = 'none';
+    }
+   }
+
+   function resetDemo() {
+    document.getElementById('ax').value = '2';
+    document.getElementById('ay').value = '1';
+    document.getElementById('dx').value = '3';
+    document.getElementById('dy').value = '2';
+    document.getElementById('t').value = '1';
+    document.getElementById('vectorEq').textContent = '( , ) + t( , )';
+    document.getElementById('pointCoords').textContent = '( , )';
+    document.getElementById('errorMessage').style.display = 'none';
+    generateLineEquation();
+   }
+
+   // Initialize with default values
+   document.addEventListener('DOMContentLoaded', function() {
+    generateLineEquation();
+   });
+  </script>
+ </body>
+</html>

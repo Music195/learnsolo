@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<!-- tags: Sequence -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Sequence Sum and General Term
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+    /* Enhanced text containment and responsive design */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      hyphens: auto;
+    }
+
+    .main-content {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      border-radius: 15px;
+      padding: 30px;
+      margin: 20px 0;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    /* Fancy title styling */
+    .fancy-title {
+      font-size: 2.5em;
+      font-weight: bold;
+      text-align: center;
+      background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 30px 0;
+      padding: 20px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .fancy-title[data-topic]::before {
+      content: attr(data-topic) " - ";
+      font-size: 0.8em;
+      opacity: 0.8;
+    }
+
+    /* Section styling */
+    .section {
+      margin: 30px 0;
+      padding: 25px;
+      background: rgba(255,255,255,0.9);
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .section h2 {
+      color: #2c3e50;
+      border-bottom: 3px solid #3498db;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+      font-size: 1.8em;
+      word-wrap: break-word;
+    }
+
+    .section h3 {
+      color: #34495e;
+      margin-top: 25px;
+      margin-bottom: 15px;
+      font-size: 1.4em;
+      word-wrap: break-word;
+    }
+
+    /* Formula box styling */
+    .formula-box {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(102,126,234,0.3);
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .formula-box h3 {
+      margin-top: 0;
+      color: white;
+      font-size: 1.3em;
+    }
+
+    .formula-box .math {
+      font-size: 1.6em;
+      margin: 15px 0;
+      display: block;
+    }
+
+    /* Law block styling */
+    .law-block {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+      box-shadow: 0 4px 15px rgba(245,87,108,0.3);
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .law-eq {
+      font-weight: bold;
+      font-size: 1.2em;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .law-block .math {
+      font-size: 1.4em;
+      margin: 10px 0;
+      display: block;
+      text-align: center;
+    }
+
+    /* Interactive demo styling */
+    .interactive-demo {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: white;
+      padding: 25px;
+      border-radius: 12px;
+      margin: 25px 0;
+      box-shadow: 0 4px 15px rgba(79,172,254,0.3);
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .interactive-demo h3 {
+      margin-top: 0;
+      text-align: center;
+      font-size: 1.5em;
+    }
+
+    .demo-input {
+      padding: 8px 12px;
+      margin: 0 10px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1em;
+      width: 80px;
+    }
+
+    .demo-button {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: 2px solid white;
+      padding: 10px 20px;
+      border-radius: 25px;
+      cursor: pointer;
+      margin: 10px 5px;
+      font-size: 1em;
+      transition: all 0.3s ease;
+    }
+
+    .demo-button:hover {
+      background: white;
+      color: #4facfe;
+      transform: translateY(-2px);
+    }
+
+    .demo-result {
+      margin: 15px 0;
+      padding: 15px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 8px;
+      font-size: 1.2em;
+      text-align: center;
+      min-height: 20px;
+    }
+
+    .sequence-display {
+      margin: 15px 0;
+      padding: 15px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 8px;
+      text-align: center;
+      min-height: 20px;
+    }
+
+    /* Problem styling */
+    .problem-item {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      border-left: 5px solid #3498db;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .problem-number {
+      display: inline-block;
+      background: #3498db;
+      color: white;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 30px;
+      font-weight: bold;
+      margin-right: 15px;
+    }
+
+    .problem-content {
+      display: inline-block;
+      width: calc(100% - 50px);
+      vertical-align: top;
+    }
+
+    .solution-button {
+      background: #27ae60;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      margin: 10px 0;
+      font-size: 0.9em;
+      transition: all 0.3s ease;
+    }
+
+    .solution-button:hover {
+      background: #229954;
+      transform: translateY(-1px);
+    }
+
+    .solution-content {
+      display: none;
+      margin-top: 15px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border-left: 4px solid #27ae60;
+    }
+
+    .calculation-steps {
+      margin: 10px 0;
+    }
+
+    .calculation-step {
+      margin: 8px 0;
+      padding: 8px;
+      background: white;
+      border-radius: 5px;
+      border: 1px solid #e9ecef;
+    }
+
+    /* Note box styling */
+    .note-box {
+      background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
+      border: 2px solid #fdcb6e;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .note-box::before {
+      content: "📝 Note";
+      font-weight: bold;
+      display: block;
+      margin-bottom: 10px;
+      color: #d63031;
+    }
+
+    /* Key takeaways styling */
+    .key-takeaways {
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      padding: 25px;
+      border-radius: 12px;
+      margin: 30px 0;
+      box-shadow: 0 4px 15px rgba(168,237,234,0.3);
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .key-takeaways h3 {
+      margin-top: 0;
+      color: #2c3e50;
+      text-align: center;
+      font-size: 1.5em;
+    }
+
+    .key-takeaways ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .key-takeaways li {
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(44,62,80,0.1);
+      position: relative;
+      padding-left: 30px;
+    }
+
+    .key-takeaways li::before {
+      content: "✓";
+      color: #27ae60;
+      font-weight: bold;
+      position: absolute;
+      left: 0;
+    }
+
+    .key-takeaways li:last-child {
+      border-bottom: none;
+    }
+
+    /* Sum table styling */
+    .sum-table {
+      margin: 20px 0;
+      border-collapse: collapse;
+      width: 100%;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .sum-table th, .sum-table td {
+      padding: 12px;
+      text-align: center;
+      border: 1px solid #e9ecef;
+    }
+
+    .sum-table th {
+      background: #3498db;
+      color: white;
+      font-weight: bold;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 10px;
+      }
+
+      .main-content {
+        padding: 20px;
+      }
+
+      .fancy-title {
+        font-size: 2em;
+      }
+
+      .section {
+        padding: 15px;
+      }
+
+      .interactive-demo {
+        padding: 15px;
+      }
+
+      .demo-input {
+        width: 60px;
+        margin: 5px;
+      }
+
+      .demo-button {
+        display: block;
+        width: 100%;
+        margin: 5px 0;
+      }
+
+      .problem-content {
+        width: calc(100% - 40px);
+      }
+    }
+
+    /* Math rendering improvements */
+    .math {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    /* Enhanced scrollbar for mobile */
+    @media (max-width: 768px) {
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+      }
+    }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Sequence">
+   Sequence Sum and General Term
+  </div>
+  <div class="container">
+   <div class="main-content">
+    <div class="section">
+     <h2>Core Concept: Partial Sums and General Terms</h2>
+     <p>Partial sums provide a powerful connection between sequences and their general terms. By understanding how partial sums relate to individual terms, we can find general terms and solve complex sequence problems.</p>
+     
+     <div class="formula-box">
+      <h3>Partial Sum Definition</h3>
+      <div class="math" style="font-size: 1.4em;">
+       $S_n = \sum_{k=1}^n a_k = a_1 + a_2 + \dots + a_n$
+      </div>
+      <p>Where:<br>
+      $S_n$ = sum of first n terms<br>
+      $a_k$ = kth term of the sequence</p>
+     </div>
+     
+     <div class="formula-box">
+      <h3>General Term from Partial Sums</h3>
+      <div class="math" style="font-size: 1.4em;">
+       $a_n = S_n - S_{n-1}$
+      </div>
+      <p>Each term is the difference between consecutive partial sums</p>
+     </div>
+    </div>
+
+    <div class="interactive-demo">
+      <h3>Interactive Partial Sum Explorer</h3>
+      <div style="margin: 20px 0;">
+        <label>Sequence type: 
+          <select id="sequenceType" class="demo-input">
+            <option value="arithmetic">Arithmetic (2n-1)</option>
+            <option value="quadratic">Quadratic (n²)</option>
+            <option value="custom">Custom terms</option>
+          </select>
+        </label>
+        <label>Number of terms: <input type="number" id="numTerms" value="5" min="2" max="8" class="demo-input"></label>
+      </div>
+      <button onclick="generateSequence()" class="demo-button">Generate Sequence</button>
+      <button onclick="calculatePartialSums()" class="demo-button">Show Partial Sums</button>
+      <div class="demo-result" id="sequenceResult"></div>
+      <div class="sequence-display" id="sumDisplay"></div>
+    </div>
+
+    <div class="section">
+     <h2>Key Relationships</h2>
+     
+     <div class="law-block">
+      <div class="law-eq">Term-Sum Relationships</div>
+      <p>The relationship between terms and partial sums:</p>
+      <div class="math">$a_1 = S_1$</div>
+      <div class="math">$a_n = S_n - S_{n-1} \quad (n \geq 2)$</div>
+      <p>This allows us to find individual terms from partial sums</p>
+     </div>
+     
+     <div class="law-block">
+      <div class="law-eq">Sum-Term Relationships</div>
+      <p>The relationship between partial sums and terms:</p>
+      <div class="math">$S_n = S_{n-1} + a_n \quad (n \geq 2)$</div>
+      <div class="math">$S_n = \sum_{k=1}^n a_k$</div>
+      <p>This allows us to find partial sums from individual terms</p>
+     </div>
+    </div>
+
+    <div class="section">
+     <h2>Worked Examples</h2>
+     
+     <div class="problem-item">
+      <div class="problem-number">1</div>
+      <div class="problem-content">
+       <p>The partial sums of a sequence are: 2, 6, 12, 20, 30, ... Find the general term.</p>
+       <button class="solution-button" onclick="toggleSolution(1)">Show Solution</button>
+       <div class="solution-content" id="solution1">
+        <div class="calculation-steps">
+         <div class="calculation-step">S₁ = 2 ⇒ a₁ = 2</div>
+         <div class="calculation-step">a₂ = S₂ - S₁ = 6 - 2 = 4</div>
+         <div class="calculation-step">a₃ = S₃ - S₂ = 12 - 6 = 6</div>
+         <div class="calculation-step">a₄ = S₄ - S₃ = 20 - 12 = 8</div>
+         <div class="calculation-step">a₅ = S₅ - S₄ = 30 - 20 = 10</div>
+         <div class="calculation-step">Sequence: 2, 4, 6, 8, 10, ... (arithmetic)</div>
+         <div class="calculation-step">aₙ = 2n</div>
+        </div>
+       </div>
+      </div>
+     </div>
+
+     <div class="problem-item">
+      <div class="problem-number">2</div>
+      <div class="problem-content">
+       <p>Find the partial sums of the sequence: 1, 3, 5, 7, 9, ...</p>
+       <button class="solution-button" onclick="toggleSolution(2)">Show Solution</button>
+       <div class="solution-content" id="solution2">
+        <div class="calculation-steps">
+         <div class="calculation-step">Sequence: aₙ = 2n - 1 (odd numbers)</div>
+         <div class="calculation-step">S₁ = 1</div>
+         <div class="calculation-step">S₂ = S₁ + a₂ = 1 + 3 = 4</div>
+         <div class="calculation-step">S₃ = S₂ + a₃ = 4 + 5 = 9</div>
+         <div class="calculation-step">S₄ = S₃ + a₄ = 9 + 7 = 16</div>
+         <div class="calculation-step">S₅ = S₄ + a₅ = 16 + 9 = 25</div>
+         <div class="calculation-step">Partial sums: 1, 4, 9, 16, 25, ... = n²</div>
+        </div>
+       </div>
+      </div>
+     </div>
+
+     <div class="problem-item">
+      <div class="problem-number">3</div>
+      <div class="problem-content">
+       <p>The partial sums form the sequence: 1, 3, 6, 10, 15, ... Find the original sequence.</p>
+       <button class="solution-button" onclick="toggleSolution(3)">Show Solution</button>
+       <div class="solution-content" id="solution3">
+        <div class="calculation-steps">
+         <div class="calculation-step">S₁ = 1 ⇒ a₁ = 1</div>
+         <div class="calculation-step">a₂ = S₂ - S₁ = 3 - 1 = 2</div>
+         <div class="calculation-step">a₃ = S₃ - S₂ = 6 - 3 = 3</div>
+         <div class="calculation-step">a₄ = S₄ - S₃ = 10 - 6 = 4</div>
+         <div class="calculation-step">a₅ = S₅ - S₄ = 15 - 10 = 5</div>
+         <div class="calculation-step">Original sequence: 1, 2, 3, 4, 5, ... (natural numbers)</div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="section">
+     <h2>Applications in Problem Solving</h2>
+     <div class="law-block">
+      <div class="law-eq">Common Problem Types</div>
+      <ul style="color: white;">
+        <li><strong>Finding terms from sums:</strong> Use aₙ = Sₙ - Sₙ₋₁</li>
+        <li><strong>Finding sums from terms:</strong> Use Sₙ = Sₙ₋₁ + aₙ</li>
+        <li><strong>Verifying sequences:</strong> Check if differences match expected pattern</li>
+        <li><strong>Pattern recognition:</strong> Identify relationships between Sₙ and n</li>
+      </ul>
+     </div>
+    </div>
+
+    <div class="section">
+     <h2>Connection to Series</h2>
+     <div class="note-box">
+      <strong>Mathematical Context:</strong> Partial sums are fundamental to the study of infinite series. The behavior of partial sums as n approaches infinity determines whether a series converges or diverges. Understanding finite partial sums builds the foundation for infinite series analysis.
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+      <h3>Key Takeaways</h3>
+      <ul>
+        <li>$a_n = S_n - S_{n-1}$ - find terms from partial sums</li>
+        <li>$S_n = S_{n-1} + a_n$ - find sums from terms</li>
+        <li>$a_1 = S_1$ - first term equals first partial sum</li>
+        <li>Partial sums reveal cumulative behavior of sequences</li>
+        <li>Essential for understanding series convergence</li>
+        <li>Foundation for infinite series and calculus</li>
+      </ul>
+    </div>
+   </div>
+  </div>
+
+  <script>
+    function generateSequence() {
+      const type = document.getElementById('sequenceType').value;
+      const n = parseInt(document.getElementById('numTerms').value);
+      
+      if (isNaN(n) || n < 2 || n > 8) {
+        document.getElementById('sequenceResult').textContent = 'Please enter number of terms between 2 and 8';
+        return;
+      }
+      
+      let sequence = [];
+      
+      if (type === 'arithmetic') {
+        for (let i = 1; i <= n; i++) {
+          sequence.push(2 * i - 1); // odd numbers
+        }
+      } else if (type === 'quadratic') {
+        for (let i = 1; i <= n; i++) {
+          sequence.push(i * i);
+        }
+      } else if (type === 'custom') {
+        // Generate custom sequence: n(n+1)/2 (triangular numbers)
+        for (let i = 1; i <= n; i++) {
+          sequence.push(i * (i + 1) / 2);
+        }
+      }
+      
+      document.getElementById('sequenceResult').textContent = 'Sequence: ' + sequence.join(', ');
+      window.currentSequence = sequence;
+    }
+
+    function calculatePartialSums() {
+      if (!window.currentSequence) {
+        document.getElementById('sumDisplay').textContent = 'Please generate a sequence first';
+        return;
+      }
+      
+      const seq = window.currentSequence;
+      let partialSums = [];
+      let sum = 0;
+      
+      for (let i = 0; i < seq.length; i++) {
+        sum += seq[i];
+        partialSums.push(sum);
+      }
+      
+      document.getElementById('sumDisplay').textContent = 
+        'Partial sums: ' + partialSums.join(', ') + '\n' +
+        'Individual terms: ' + seq.map((term, index) => 
+          index === 0 ? term : (term + ' (= ' + partialSums[index] + ' - ' + partialSums[index-1] + ')')
+        ).join(', ');
+    }
+
+    function toggleSolution(problemNumber) {
+      const solution = document.getElementById(`solution${problemNumber}`);
+      if (solution.style.display === 'block') {
+        solution.style.display = 'none';
+      } else {
+        solution.style.display = 'block';
+      }
+    }
+
+    // Initialize with default values
+    generateSequence();
+    calculatePartialSums();
+  </script>
+ </body>
+</html>

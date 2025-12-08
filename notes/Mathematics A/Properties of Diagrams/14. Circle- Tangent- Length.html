@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<!-- tags: Geometry -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Equal Tangent Lengths from a Point
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+    /* Enhanced text containment and responsive design */
+    body, .container, .main-content {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      hyphens: auto;
+    }
+
+    /* Gradient backgrounds for theorem statements */
+    .theorem-statement {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      border-left: 5px solid #ff6b6b;
+    }
+
+    .theorem-statement h2 {
+      margin: 0 0 10px 0;
+      font-size: 1.5em;
+      color: #fff;
+    }
+
+    /* Interactive demo container */
+    .interactive-demo {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      border-radius: 15px;
+      padding: 25px;
+      margin: 20px 0;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .interactive-demo::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="20" cy="20" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="80" r="1" fill="rgba(255,255,255,0.1)"/></svg>');
+      opacity: 0.1;
+    }
+
+    .demo-title {
+      color: white;
+      font-size: 1.3em;
+      font-weight: bold;
+      margin-bottom: 15px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    /* Canvas styling */
+    #tangentCanvas {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      display: block;
+      margin: 0 auto;
+    }
+
+    /* Control panel */
+    .control-panel {
+      background: rgba(255,255,255,0.9);
+      border-radius: 10px;
+      padding: 15px;
+      margin-top: 15px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .control-group label {
+      font-weight: bold;
+      color: #333;
+      font-size: 0.9em;
+    }
+
+    .control-group input[type="range"] {
+      width: 120px;
+      height: 6px;
+      border-radius: 3px;
+      background: #ddd;
+      outline: none;
+    }
+
+    .control-group input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #f5576c;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    .angle-display {
+      font-size: 1.1em;
+      font-weight: bold;
+      color: #333;
+      background: rgba(255,255,255,0.8);
+      padding: 5px 10px;
+      border-radius: 5px;
+      margin-top: 5px;
+    }
+
+    /* Length display */
+    .length-display {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.1em;
+      background: rgba(255,255,255,0.9);
+      color: #333;
+    }
+
+    .equal-lengths {
+      background: linear-gradient(135deg, #4CAF50, #45a049);
+      color: white;
+    }
+
+    /* Proof steps styling */
+    .proof-steps {
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+
+    .proof-step {
+      background: white;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 10px 0;
+      border-left: 4px solid #74b9ff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .proof-step h4 {
+      margin: 0 0 8px 0;
+      color: #2d3436;
+      font-size: 1.1em;
+    }
+
+    .proof-step .math {
+      color: #0984e3;
+      font-weight: bold;
+    }
+
+    /* Examples section */
+    .examples-section {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 25px;
+      border-radius: 15px;
+      margin: 20px 0;
+    }
+
+    .example {
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 15px 0;
+      backdrop-filter: blur(10px);
+    }
+
+    .example h4 {
+      margin: 0 0 10px 0;
+      color: #fff;
+      font-size: 1.2em;
+    }
+
+    .example .calculation {
+      background: rgba(255,255,255,0.2);
+      padding: 10px;
+      border-radius: 5px;
+      margin: 10px 0;
+      font-family: 'Courier New', monospace;
+    }
+
+    /* Applications section */
+    .applications {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+      padding: 25px;
+      border-radius: 15px;
+      margin: 20px 0;
+    }
+
+    .application {
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 15px 0;
+      backdrop-filter: blur(10px);
+    }
+
+    /* Practice problems */
+    .practice-problems {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: white;
+      padding: 25px;
+      border-radius: 15px;
+      margin: 20px 0;
+    }
+
+    .problem {
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 15px 0;
+      backdrop-filter: blur(10px);
+    }
+
+    .problem .solution {
+      background: rgba(255,255,255,0.2);
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 15px;
+      display: none;
+    }
+
+    .problem .solution.show {
+      display: block;
+    }
+
+    .solution-toggle {
+      background: #ff6b6b;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 10px;
+      transition: background 0.3s;
+    }
+
+    .solution-toggle:hover {
+      background: #ff5252;
+    }
+
+    /* Key takeaways */
+    .key-takeaways {
+      background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+      color: white;
+      padding: 25px;
+      border-radius: 15px;
+      margin: 20px 0;
+    }
+
+    .takeaway {
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 15px;
+      margin: 10px 0;
+      backdrop-filter: blur(10px);
+      border-left: 4px solid #ffeaa7;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .control-panel {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .control-group {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .control-group input[type="range"] {
+        width: 150px;
+      }
+
+      .interactive-demo, .theorem-statement, .proof-steps, .examples-section, .applications, .practice-problems, .key-takeaways {
+        padding: 15px;
+      }
+    }
+
+    /* Enhanced diagram area */
+    .diagram-area {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .diagram-label {
+      margin-top: 10px;
+      font-weight: bold;
+      color: #2d3436;
+    }
+
+    /* MathJax styling */
+    .mjx-chtml {
+      font-size: 1.1em !important;
+    }
+
+    /* Highlight important terms */
+    .highlight {
+      background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%);
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-weight: bold;
+    }
+
+    /* Equal marks styling */
+    .equal-mark {
+      stroke: #388e3c;
+      stroke-width: 2;
+      fill: none;
+    }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Geometry">
+   Equal Tangent Lengths from a Point
+  </div>
+
+  <div class="theorem-statement">
+   <h2>📏 Theorem: Equal Tangent Lengths</h2>
+   <p>If two tangents are drawn from a point outside a circle to the circle, then:</p>
+   <ul>
+    <li><strong>Lengths are Equal:</strong> The lengths of the two tangents are equal</li>
+    <li><strong>Right Angles:</strong> Each tangent is perpendicular to the radius at the point of contact</li>
+    <li><strong>Equal Segments:</strong> The line from the center to the external point bisects the angle formed by the tangents</li>
+   </ul>
+   <p><em>This fundamental property is essential for solving many circle geometry problems involving tangents.</em></p>
+  </div>
+
+  <div class="interactive-demo">
+   <div class="demo-title">🎯 Interactive Tangent Lengths Demonstration</div>
+   <canvas id="tangentCanvas" width="600" height="400"></canvas>
+
+   <div class="control-panel">
+    <div class="control-group">
+     <label for="circleCenterX">Center X:</label>
+     <input type="range" id="circleCenterX" min="200" max="400" value="300">
+     <span class="angle-display" id="circleCenterXValue">300</span>
+    </div>
+    <div class="control-group">
+     <label for="circleCenterY">Center Y:</label>
+     <input type="range" id="circleCenterY" min="150" max="250" value="200">
+     <span class="angle-display" id="circleCenterYValue">200</span>
+    </div>
+    <div class="control-group">
+     <label for="circleRadius">Radius:</label>
+     <input type="range" id="circleRadius" min="30" max="80" value="50">
+     <span class="angle-display" id="circleRadiusValue">50</span>
+    </div>
+    <div class="control-group">
+     <label for="externalPointX">Point P X:</label>
+     <input type="range" id="externalPointX" min="50" max="150" value="100">
+     <span class="angle-display" id="externalPointXValue">100</span>
+    </div>
+    <div class="control-group">
+     <label for="externalPointY">Point P Y:</label>
+     <input type="range" id="externalPointY" min="150" max="250" value="200">
+     <span class="angle-display" id="externalPointYValue">200</span>
+    </div>
+   </div>
+
+   <div class="length-display equal-lengths">
+    Tangent Length PA = <span id="tangentLengthPA">--</span> | 
+    Tangent Length PB = <span id="tangentLengthPB">--</span> | 
+    Difference: <span id="lengthDifference">--</span>
+   </div>
+  </div>
+
+  <div class="proof-steps">
+   <h3>🔍 Proof of Equal Tangent Lengths</h3>
+
+   <div class="proof-step">
+    <h4>Right Triangle Construction</h4>
+    <p>Consider point P outside circle O. Tangents PA and PB touch circle at A and B respectively.</p>
+    <p>Draw radii OA and OB. Since tangents are perpendicular to radii: ∠OAP = ∠OBP = 90°</p>
+    <div class="math">
+     ∠OAP = 90°<br>
+     ∠OBP = 90°
+    </div>
+   </div>
+
+   <div class="proof-step">
+    <h4>Common Hypotenuse</h4>
+    <p>Triangles OAP and OBP share the hypotenuse OP.</p>
+    <p>Both triangles have right angles at A and B respectively.</p>
+    <div class="math">
+     △OAP ≅ △OBP (Right triangles, hypotenuse OP, right angles)<br>
+     ∴ PA = PB (Corresponding sides of congruent triangles)
+    </div>
+   </div>
+
+   <div class="proof-step">
+    <h4>Alternative Proof: Power of a Point</h4>
+    <p>The power of point P with respect to circle O is PA² = PB².</p>
+    <p>Since both tangents come from the same point, their lengths must be equal.</p>
+    <div class="math">
+     Power of P: PA × PB = 0 (since P is outside circle)<br>
+     ∴ PA = PB
+    </div>
+   </div>
+  </div>
+
+  <div class="examples-section">
+   <h3>📚 Detailed Examples</h3>
+
+   <div class="example">
+    <h4>Example 1: Basic Tangent Lengths</h4>
+    <p>From point P, tangents PA and PB are drawn to circle O with radius 5 cm. If OP = 13 cm, find PA.</p>
+    <div class="calculation">
+     △OAP is right-angled at A<br>
+     OA² + PA² = OP²<br>
+     5² + PA² = 13²<br>
+     25 + PA² = 169<br>
+     PA² = 144<br>
+     PA = 12 cm<br>
+     ∴ PB = 12 cm (equal tangent lengths)
+    </div>
+    <p><strong>Solution:</strong> Using Pythagoras' theorem in right triangle OAP.</p>
+   </div>
+
+   <div class="example">
+    <h4>Example 2: Coordinate Geometry</h4>
+    <p>Circle: x² + y² = 25. Point P(6,8) lies outside. Find tangent lengths.</p>
+    <div class="calculation">
+     Distance from center to P: √(6² + 8²) = √(36 + 64) = √100 = 10<br>
+     Radius r = 5<br>
+     Tangent length = √(OP² - r²) = √(100 - 25) = √75 = 5√3<br>
+     PA = PB = 5√3 units
+    </div>
+    <p><strong>Solution:</strong> Formula for tangent length: √(distance² - radius²).</p>
+   </div>
+
+   <div class="example">
+    <h4>Example 3: Angle in Semicircle</h4>
+    <p>In circle O, chord AB subtends 90° at circumference. P is a point on the circle. Find ∠APB.</p>
+    <div class="calculation">
+     ∠APB is angle at circumference<br>
+     Angle at circumference = half angle at center<br>
+     ∠AOB = 2∠APB = 90°<br>
+     ∠APB = 45°
+    </div>
+    <p><strong>Solution:</strong> Angle at circumference is half the central angle.</p>
+   </div>
+  </div>
+
+  <div class="applications">
+   <h3>🚀 Real-World Applications</h3>
+
+   <div class="application">
+    <h4>Navigation and GPS</h4>
+    <p>Tangent length properties are used in GPS navigation systems to calculate distances and positions relative to circular paths.</p>
+   </div>
+
+   <div class="application">
+    <h4>Optics and Reflection</h4>
+    <p>In optics, the equal tangent lengths principle helps analyze light reflection and refraction at curved surfaces.</p>
+   </div>
+
+   <div class="application">
+    <h4>Engineering Design</h4>
+    <p>Engineers use tangent properties when designing gears, cams, and other mechanical components with circular profiles.</p>
+   </div>
+  </div>
+
+  <div class="practice-problems">
+   <h3>✏️ Practice Problems</h3>
+
+   <div class="problem">
+    <h4>Problem 1</h4>
+    <p>From point P, tangents PA and PB touch circle with radius 6 cm at A and B. If OP = 10 cm, find PA.</p>
+    <button class="solution-toggle" onclick="toggleSolution(1)">Show Solution</button>
+    <div class="solution" id="solution1">
+     <p>△OAP: OA² + PA² = OP²</p>
+     <p>6² + PA² = 10²</p>
+     <p>36 + PA² = 100</p>
+     <p>PA² = 64</p>
+     <p>PA = 8 cm, PB = 8 cm</p>
+    </div>
+   </div>
+
+   <div class="problem">
+    <h4>Problem 2</h4>
+    <p>Circle x² + y² = 16. Point P(4,6) outside circle. Find tangent lengths.</p>
+    <button class="solution-toggle" onclick="toggleSolution(2)">Show Solution</button>
+    <div class="solution" id="solution2">
+     <p>OP = √(4² + 6²) = √(16 + 36) = √52 = 2√13</p>
+     <p>r = 4</p>
+     <p>Tangent length = √(OP² - r²) = √(52 - 16) = √36 = 6</p>
+     <p>PA = PB = 6 units</p>
+    </div>
+   </div>
+
+   <div class="problem">
+    <h4>Problem 3</h4>
+    <p>Two circles intersect at A and B. P is a point on AB extended. Tangents from P to first circle are equal. Prove property.</p>
+    <button class="solution-toggle" onclick="toggleSolution(3)">Show Solution</button>
+    <div class="solution" id="solution3">
+     <p>By equal tangent lengths theorem, tangents from external point are equal.</p>
+     <p>This applies to both circles intersecting at A and B.</p>
+     <p>The common chord AB connects the intersection points.</p>
+    </div>
+   </div>
+
+   <div class="problem">
+    <h4>Problem 4</h4>
+    <p>Circle radius 8 cm. Point P is 17 cm from center. Find tangent length.</p>
+    <button class="solution-toggle" onclick="toggleSolution(4)">Show Solution</button>
+    <div class="solution" id="solution4">
+     <p>Tangent length = √(OP² - r²) = √(289 - 64) = √225 = 15 cm</p>
+     <p>Both tangents are 15 cm long.</p>
+    </div>
+   </div>
+
+   <div class="problem">
+    <h4>Problem 5</h4>
+    <p>In circle O, PA and PB are tangents from P. If PA = 9 cm and OA = 12 cm, find OP.</p>
+    <button class="solution-toggle" onclick="toggleSolution(5)">Show Solution</button>
+    <div class="solution" id="solution5">
+     <p>△OAP: OA² + PA² = OP²</p>
+     <p>12² + 9² = OP²</p>
+     <p>144 + 81 = OP²</p>
+     <p>225 = OP²</p>
+     <p>OP = 15 cm</p>
+    </div>
+   </div>
+  </div>
+
+  <div class="key-takeaways">
+   <h3>🎯 Key Takeaways</h3>
+
+   <div class="takeaway">
+    <strong>Equal Lengths:</strong> Tangents drawn from an external point to a circle are equal in length.
+   </div>
+
+   <div class="takeaway">
+    <strong>Right Angles:</strong> Each tangent is perpendicular to the radius at the point of contact.
+   </div>
+
+   <div class="takeaway">
+    <strong>Pythagoras Application:</strong> Use Pythagoras' theorem in the right triangle formed by center, tangent point, and external point.
+   </div>
+
+   <div class="takeaway">
+    <strong>Tangent Length Formula:</strong> Length = √(distance from center to point)² - radius².
+   </div>
+
+   <div class="takeaway">
+    <strong>Power of Point:</strong> The product of segments of intersecting chords equals the product of tangents from an external point.
+   </div>
+  </div>
+
+  <script>
+   // Interactive Canvas Demonstration
+   const canvas = document.getElementById('tangentCanvas');
+   const ctx = canvas.getContext('2d');
+
+   // Control elements
+   const controls = {
+    centerX: document.getElementById('circleCenterX'),
+    centerY: document.getElementById('circleCenterY'),
+    radius: document.getElementById('circleRadius'),
+    pointX: document.getElementById('externalPointX'),
+    pointY: document.getElementById('externalPointY')
+   };
+
+   // Display elements
+   const displays = {
+    centerX: document.getElementById('circleCenterXValue'),
+    centerY: document.getElementById('circleCenterYValue'),
+    radius: document.getElementById('circleRadiusValue'),
+    pointX: document.getElementById('externalPointXValue'),
+    pointY: document.getElementById('externalPointYValue'),
+    lengthPA: document.getElementById('tangentLengthPA'),
+    lengthPB: document.getElementById('tangentLengthPB'),
+    difference: document.getElementById('lengthDifference')
+   };
+
+   // Update display values
+   Object.keys(controls).forEach(key => {
+    controls[key].addEventListener('input', () => {
+     displays[key].textContent = controls[key].value;
+     drawTangents();
+    });
+   });
+
+   function calculateTangentPoints(center, radius, externalPoint) {
+    const dx = externalPoint.x - center.x;
+    const dy = externalPoint.y - center.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    if (distance <= radius) return null; // Point is inside or on circle
+
+    // Calculate tangent points using trigonometry
+    const angle = Math.atan2(dy, dx);
+    const tangentAngle = Math.asin(radius / distance);
+
+    const pointA = {
+     x: center.x + radius * Math.cos(angle - tangentAngle),
+     y: center.y + radius * Math.sin(angle - tangentAngle)
+    };
+
+    const pointB = {
+     x: center.x + radius * Math.cos(angle + tangentAngle),
+     y: center.y + radius * Math.sin(angle + tangentAngle)
+    };
+
+    return { A: pointA, B: pointB };
+   }
+
+   function calculateDistance(p1, p2) {
+    return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
+   }
+
+   function drawTangents() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const center = {
+     x: parseInt(controls.centerX.value),
+     y: parseInt(controls.centerY.value)
+    };
+
+    const radius = parseInt(controls.radius.value);
+    const externalPoint = {
+     x: parseInt(controls.pointX.value),
+     y: parseInt(controls.pointY.value)
+    };
+
+    // Draw circle
+    ctx.beginPath();
+    ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI);
+    ctx.strokeStyle = '#388e3c';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // Draw center point
+    ctx.beginPath();
+    ctx.arc(center.x, center.y, 4, 0, 2 * Math.PI);
+    ctx.fillStyle = '#388e3c';
+    ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 14px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('O', center.x, center.y - 10);
+
+    // Draw external point
+    ctx.beginPath();
+    ctx.arc(externalPoint.x, externalPoint.y, 4, 0, 2 * Math.PI);
+    ctx.fillStyle = '#ff6b6b';
+    ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 14px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('P', externalPoint.x, externalPoint.y - 10);
+
+    // Calculate tangent points
+    const tangentPoints = calculateTangentPoints(center, radius, externalPoint);
+
+    if (tangentPoints) {
+     const { A, B } = tangentPoints;
+
+     // Draw tangent lines
+     ctx.beginPath();
+     ctx.moveTo(externalPoint.x, externalPoint.y);
+     ctx.lineTo(A.x, A.y);
+     ctx.moveTo(externalPoint.x, externalPoint.y);
+     ctx.lineTo(B.x, B.y);
+     ctx.strokeStyle = '#6d4c41';
+     ctx.lineWidth = 2;
+     ctx.stroke();
+
+     // Draw tangent points
+     ctx.beginPath();
+     ctx.arc(A.x, A.y, 4, 0, 2 * Math.PI);
+     ctx.fillStyle = '#388e3c';
+     ctx.fill();
+
+     ctx.beginPath();
+     ctx.arc(B.x, B.y, 4, 0, 2 * Math.PI);
+     ctx.fillStyle = '#388e3c';
+     ctx.fill();
+
+     ctx.fillStyle = '#fff';
+     ctx.font = 'bold 14px Arial';
+     ctx.textAlign = 'center';
+     ctx.fillText('A', A.x, A.y - 10);
+     ctx.fillText('B', B.x, B.y - 10);
+
+     // Draw radii
+     ctx.beginPath();
+     ctx.moveTo(center.x, center.y);
+     ctx.lineTo(A.x, A.y);
+     ctx.moveTo(center.x, center.y);
+     ctx.lineTo(B.x, B.y);
+     ctx.strokeStyle = '#1976d2';
+     ctx.lineWidth = 2;
+     ctx.setLineDash([5, 5]);
+     ctx.stroke();
+     ctx.setLineDash([]);
+
+     // Draw right angle marks
+     drawRightAngleMark(center, A, externalPoint);
+     drawRightAngleMark(center, B, externalPoint);
+
+     // Calculate and display lengths
+     const lengthPA = calculateDistance(externalPoint, A);
+     const lengthPB = calculateDistance(externalPoint, B);
+     const difference = Math.abs(lengthPA - lengthPB);
+
+     displays.lengthPA.textContent = lengthPA.toFixed(2);
+     displays.lengthPB.textContent = lengthPB.toFixed(2);
+     displays.difference.textContent = difference.toFixed(4);
+
+     // Draw equal marks if lengths are approximately equal
+     if (difference < 0.01) {
+      drawEqualMarks(externalPoint, A, B);
+     }
+    } else {
+     displays.lengthPA.textContent = '--';
+     displays.lengthPB.textContent = '--';
+     displays.difference.textContent = '--';
+    }
+   }
+
+   function drawRightAngleMark(vertex, point1, point2) {
+    const size = 10;
+    const angle1 = Math.atan2(point1.y - vertex.y, point1.x - vertex.x);
+    const angle2 = Math.atan2(point2.y - vertex.y, point2.x - vertex.x);
+
+    const midAngle = (angle1 + angle2) / 2;
+    const perpAngle = midAngle + Math.PI / 2;
+
+    const cornerX = vertex.x + size * Math.cos(midAngle);
+    const cornerY = vertex.y + size * Math.sin(midAngle);
+
+    ctx.beginPath();
+    ctx.moveTo(cornerX, cornerY);
+    ctx.lineTo(cornerX + size * Math.cos(perpAngle), cornerY + size * Math.sin(perpAngle));
+    ctx.moveTo(cornerX, cornerY);
+    ctx.lineTo(cornerX + size * Math.cos(perpAngle + Math.PI), cornerY + size * Math.sin(perpAngle + Math.PI));
+    ctx.strokeStyle = '#ff7043';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+   }
+
+   function drawEqualMarks(externalPoint, A, B) {
+    // Draw equal marks on the tangent lines
+    const midPAx = (externalPoint.x + A.x) / 2;
+    const midPAy = (externalPoint.y + A.y) / 2;
+    const midPBx = (externalPoint.x + B.x) / 2;
+    const midPBy = (externalPoint.y + B.y) / 2;
+
+    // Calculate perpendicular direction for equal marks
+    const dirPAx = A.x - externalPoint.x;
+    const dirPAy = A.y - externalPoint.y;
+    const lengthPA = Math.sqrt(dirPAx * dirPAx + dirPAy * dirPAy);
+    const perpPAx = -dirPAy / lengthPA * 8;
+    const perpPAy = dirPAx / lengthPA * 8;
+
+    const dirPBx = B.x - externalPoint.x;
+    const dirPBy = B.y - externalPoint.y;
+    const lengthPB = Math.sqrt(dirPBx * dirPBx + dirPBy * dirPBy);
+    const perpPBx = -dirPBy / lengthPB * 8;
+    const perpPBy = dirPBx / lengthPB * 8;
+
+    // Draw equal marks
+    ctx.beginPath();
+    ctx.moveTo(midPAx - perpPAx/2, midPAy - perpPAy/2);
+    ctx.lineTo(midPAx + perpPAx/2, midPAy + perpPAy/2);
+    ctx.moveTo(midPBx - perpPBx/2, midPBy - perpPBy/2);
+    ctx.lineTo(midPBx + perpPBx/2, midPBy + perpPBy/2);
+    ctx.strokeStyle = '#388e3c';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+   }
+
+   function toggleSolution(problemNumber) {
+    const solution = document.getElementById('solution' + problemNumber);
+    solution.classList.toggle('show');
+   }
+
+   // Initial draw
+   drawTangents();
+  </script>
+ </body>
+</html>

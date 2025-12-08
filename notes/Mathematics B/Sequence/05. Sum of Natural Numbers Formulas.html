@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<!-- tags: Sequence -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Sum Formulas for Natural Numbers
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+    /* Enhanced text containment and responsive design */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      hyphens: auto;
+    }
+
+    .main-content {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      border-radius: 15px;
+      padding: 30px;
+      margin: 20px 0;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    /* Fancy title styling */
+    .fancy-title {
+      font-size: 2.5em;
+      font-weight: bold;
+      text-align: center;
+      background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 30px 0;
+      padding: 20px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .fancy-title[data-topic]::before {
+      content: attr(data-topic) " - ";
+      font-size: 0.8em;
+      opacity: 0.8;
+    }
+
+    /* Section styling */
+    .section {
+      margin: 30px 0;
+      padding: 25px;
+      background: rgba(255,255,255,0.9);
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .section h2 {
+      color: #2c3e50;
+      border-bottom: 3px solid #3498db;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+      font-size: 1.8em;
+      word-wrap: break-word;
+    }
+
+    .section h3 {
+      color: #34495e;
+      margin-top: 25px;
+      margin-bottom: 15px;
+      font-size: 1.4em;
+      word-wrap: break-word;
+    }
+
+    /* Formula box styling */
+    .formula-box {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(102,126,234,0.3);
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .formula-box h3 {
+      margin-top: 0;
+      color: white;
+      font-size: 1.3em;
+    }
+
+    .formula-box .math {
+      font-size: 1.6em;
+      margin: 15px 0;
+      display: block;
+    }
+
+    /* Law block styling */
+    .law-block {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+      box-shadow: 0 4px 15px rgba(245,87,108,0.3);
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .law-eq {
+      font-weight: bold;
+      font-size: 1.2em;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .law-block .math {
+      font-size: 1.4em;
+      margin: 10px 0;
+      display: block;
+      text-align: center;
+    }
+
+    /* Interactive demo styling */
+    .interactive-demo {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: white;
+      padding: 25px;
+      border-radius: 12px;
+      margin: 25px 0;
+      box-shadow: 0 4px 15px rgba(79,172,254,0.3);
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .interactive-demo h3 {
+      margin-top: 0;
+      text-align: center;
+      font-size: 1.5em;
+    }
+
+    .demo-input {
+      padding: 8px 12px;
+      margin: 0 10px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1em;
+      width: 80px;
+    }
+
+    .demo-button {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: 2px solid white;
+      padding: 10px 20px;
+      border-radius: 25px;
+      cursor: pointer;
+      margin: 10px 5px;
+      font-size: 1em;
+      transition: all 0.3s ease;
+    }
+
+    .demo-button:hover {
+      background: white;
+      color: #4facfe;
+      transform: translateY(-2px);
+    }
+
+    .demo-result {
+      margin: 15px 0;
+      padding: 15px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 8px;
+      font-size: 1.2em;
+      text-align: center;
+      min-height: 20px;
+    }
+
+    .sequence-display {
+      margin: 15px 0;
+      padding: 15px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 8px;
+      text-align: center;
+      min-height: 20px;
+    }
+
+    /* Problem styling */
+    .problem-item {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      border-left: 5px solid #3498db;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .problem-number {
+      display: inline-block;
+      background: #3498db;
+      color: white;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 30px;
+      font-weight: bold;
+      margin-right: 15px;
+    }
+
+    .problem-content {
+      display: inline-block;
+      width: calc(100% - 50px);
+      vertical-align: top;
+    }
+
+    .solution-button {
+      background: #27ae60;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      margin: 10px 0;
+      font-size: 0.9em;
+      transition: all 0.3s ease;
+    }
+
+    .solution-button:hover {
+      background: #229954;
+      transform: translateY(-1px);
+    }
+
+    .solution-content {
+      display: none;
+      margin-top: 15px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border-left: 4px solid #27ae60;
+    }
+
+    .calculation-steps {
+      margin: 10px 0;
+    }
+
+    .calculation-step {
+      margin: 8px 0;
+      padding: 8px;
+      background: white;
+      border-radius: 5px;
+      border: 1px solid #e9ecef;
+    }
+
+    /* Note box styling */
+    .note-box {
+      background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
+      border: 2px solid #fdcb6e;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .note-box::before {
+      content: "📝 Note";
+      font-weight: bold;
+      display: block;
+      margin-bottom: 10px;
+      color: #d63031;
+    }
+
+    /* Key takeaways styling */
+    .key-takeaways {
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      padding: 25px;
+      border-radius: 12px;
+      margin: 30px 0;
+      box-shadow: 0 4px 15px rgba(168,237,234,0.3);
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .key-takeaways h3 {
+      margin-top: 0;
+      color: #2c3e50;
+      text-align: center;
+      font-size: 1.5em;
+    }
+
+    .key-takeaways ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .key-takeaways li {
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(44,62,80,0.1);
+      position: relative;
+      padding-left: 30px;
+    }
+
+    .key-takeaways li::before {
+      content: "✓";
+      color: #27ae60;
+      font-weight: bold;
+      position: absolute;
+      left: 0;
+    }
+
+    .key-takeaways li:last-child {
+      border-bottom: none;
+    }
+
+    /* Derivation box styling */
+    .derivation-box {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+      box-shadow: 0 4px 15px rgba(102,126,234,0.3);
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .derivation-box h4 {
+      margin-top: 0;
+      color: white;
+      text-align: center;
+      font-size: 1.2em;
+    }
+
+    .derivation-step {
+      margin: 10px 0;
+      padding: 10px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 5px;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 10px;
+      }
+
+      .main-content {
+        padding: 20px;
+      }
+
+      .fancy-title {
+        font-size: 2em;
+      }
+
+      .section {
+        padding: 15px;
+      }
+
+      .interactive-demo {
+        padding: 15px;
+      }
+
+      .demo-input {
+        width: 60px;
+        margin: 5px;
+      }
+
+      .demo-button {
+        display: block;
+        width: 100%;
+        margin: 5px 0;
+      }
+
+      .problem-content {
+        width: calc(100% - 40px);
+      }
+    }
+
+    /* Math rendering improvements */
+    .math {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    /* Enhanced scrollbar for mobile */
+    @media (max-width: 768px) {
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+      }
+    }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Sequence">
+   Sum Formulas for Natural Numbers
+  </div>
+  <div class="container">
+   <div class="main-content">
+    <div class="section">
+     <h2>Core Concept: Sum of Natural Numbers</h2>
+     <p>These formulas provide efficient ways to calculate sums of powers of natural numbers without adding each term individually. They are fundamental in mathematics and have numerous applications in calculus, physics, and computer science.</p>
+     
+     <div class="formula-box">
+      <h3>Sum of Constants</h3>
+      <div class="math" style="font-size: 1.4em;">
+       $\sum_{k=1}^n c = nc$
+      </div>
+      <p>Special case: $\sum_{k=1}^n 1 = n$</p>
+     </div>
+     
+     <div class="formula-box">
+      <h3>Sum of First n Natural Numbers</h3>
+      <div class="math" style="font-size: 1.4em;">
+       $\sum_{k=1}^n k = \frac{n(n+1)}{2}$
+      </div>
+     </div>
+     
+     <div class="formula-box">
+      <h3>Sum of Squares</h3>
+      <div class="math" style="font-size: 1.4em;">
+       $\sum_{k=1}^n k^2 = \frac{n(n+1)(2n+1)}{6}$
+      </div>
+     </div>
+     
+     <div class="formula-box">
+      <h3>Sum of Cubes</h3>
+      <div class="math" style="font-size: 1.4em;">
+       $\sum_{k=1}^n k^3 = \left(\frac{n(n+1)}{2}\right)^2$
+      </div>
+     </div>
+    </div>
+
+    <div class="interactive-demo">
+      <h3>Interactive Sum Calculator</h3>
+      <div style="margin: 20px 0;">
+        <label>n: <input type="number" id="nValue" value="5" min="1" class="demo-input"></label>
+        <label>Power: 
+          <select id="powerSelect" class="demo-input">
+            <option value="1">k (sum)</option>
+            <option value="2">k² (squares)</option>
+            <option value="3">k³ (cubes)</option>
+          </select>
+        </label>
+      </div>
+      <button onclick="calculateSum()" class="demo-button">Calculate Sum</button>
+      <button onclick="showExpansion()" class="demo-button">Show Expansion</button>
+      <div class="demo-result" id="sumResult"></div>
+      <div class="sequence-display" id="expansionDisplay"></div>
+    </div>
+
+    <div class="section">
+     <h2>Derivations of the Formulas</h2>
+     
+     <div class="derivation-box">
+      <h4>Sum of First n Natural Numbers</h4>
+      <div class="derivation-step">Write the sum forwards: S = 1 + 2 + 3 + ... + n</div>
+      <div class="derivation-step">Write the sum backwards: S = n + (n-1) + (n-2) + ... + 1</div>
+      <div class="derivation-step">Add them: 2S = (n+1) + (n+1) + (n+1) + ... + (n+1) = n(n+1)</div>
+      <div class="derivation-step">Therefore: S = n(n+1)/2</div>
+     </div>
+     
+     <div class="derivation-box">
+      <h4>Sum of Squares (Telescoping Method)</h4>
+      <div class="derivation-step">k³ - (k-1)³ = 3k² - 3k + 1</div>
+      <div class="derivation-step">Sum from k=1 to n: ∑(k³ - (k-1)³) = ∑(3k² - 3k + 1)</div>
+      <div class="derivation-step">n³ - 0³ = 3∑k² - 3∑k + ∑1</div>
+      <div class="derivation-step">n³ = 3∑k² - 3(n(n+1)/2) + n</div>
+      <div class="derivation-step">Solve for ∑k²: ∑k² = [n³ + 3n(n+1)/2 - n]/3</div>
+      <div class="derivation-step">∑k² = n(n+1)(2n+1)/6</div>
+     </div>
+     
+     <div class="derivation-box">
+      <h4>Sum of Cubes</h4>
+      <div class="derivation-step">[n(n+1)/2]² = n²(n+1)²/4</div>
+      <div class="derivation-step">But we know: ∑k³ = [n(n+1)/2]²</div>
+      <div class="derivation-step">This is a known identity that can be proven by induction</div>
+     </div>
+    </div>
+
+    <div class="section">
+     <h2>Visual Representations</h2>
+     <div class="note-box">
+      <strong>Sum of Natural Numbers:</strong> Imagine arranging numbers in a triangle. The nth triangular number is the sum 1+2+...+n, which forms a triangle with n rows where the kth row has k dots.
+     </div>
+     
+     <div class="note-box">
+      <strong>Sum of Squares:</strong> Can be visualized as a pyramid where each layer represents the squares. The formula comes from the relationship between cubes and squares.
+     </div>
+    </div>
+
+    <div class="section">
+      <h2>Worked Examples</h2>
+      <div class="problem-item">
+        <div class="problem-number">1</div>
+        <div class="problem-content">
+          <p>Calculate the sum: 1 + 2 + 3 + ... + 100</p>
+          <button class="solution-button" onclick="toggleSolution(1)">Show Solution</button>
+          <div class="solution-content" id="solution1">
+            <div class="calculation-steps">
+              <div class="calculation-step">Using sum formula: ∑k from 1 to 100 = n(n+1)/2</div>
+              <div class="calculation-step">∑k = 100×101/2 = 10100/2 = 5050</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="problem-item">
+        <div class="problem-number">2</div>
+        <div class="problem-content">
+          <p>Find the sum of squares: 1² + 2² + 3² + ... + 10²</p>
+          <button class="solution-button" onclick="toggleSolution(2)">Show Solution</button>
+          <div class="solution-content" id="solution2">
+            <div class="calculation-steps">
+              <div class="calculation-step">Using sum of squares: ∑k² = n(n+1)(2n+1)/6</div>
+              <div class="calculation-step">∑k² = 10×11×21/6 = 2310/6 = 385</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="problem-item">
+        <div class="problem-number">3</div>
+        <div class="problem-content">
+          <p>Calculate 1³ + 2³ + 3³ + ... + 5³</p>
+          <button class="solution-button" onclick="toggleSolution(3)">Show Solution</button>
+          <div class="solution-content" id="solution3">
+            <div class="calculation-steps">
+              <div class="calculation-step">Using sum of cubes: ∑k³ = [n(n+1)/2]²</div>
+              <div class="calculation-step">∑k³ = [5×6/2]² = [15]² = 225</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+     <h2>Applications and Connections</h2>
+     <div class="law-block">
+      <div class="law-eq">Mathematical Applications</div>
+      <ul style="color: white;">
+        <li><strong>Calculus:</strong> Riemann sums and definite integrals</li>
+        <li><strong>Number Theory:</strong> Properties of perfect numbers and figurate numbers</li>
+        <li><strong>Combinatorics:</strong> Counting problems and generating functions</li>
+        <li><strong>Physics:</strong> Center of mass calculations and energy summations</li>
+        <li><strong>Computer Science:</strong> Algorithm analysis and loop calculations</li>
+      </ul>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+      <h3>Key Takeaways</h3>
+      <ul>
+        <li>$\sum_{k=1}^n k = \frac{n(n+1)}{2}$ - triangular numbers</li>
+        <li>$\sum_{k=1}^n k^2 = \frac{n(n+1)(2n+1)}{6}$ - pyramidal numbers</li>
+        <li>$\sum_{k=1}^n k^3 = \left(\frac{n(n+1)}{2}\right)^2$ - cubic numbers</li>
+        <li>These formulas save computation time for large n</li>
+        <li>Derivations use algebraic manipulation and telescoping series</li>
+        <li>Essential for calculus, physics, and computer science applications</li>
+      </ul>
+    </div>
+   </div>
+  </div>
+
+  <script>
+    function calculateSum() {
+      const n = parseInt(document.getElementById('nValue').value);
+      const power = parseInt(document.getElementById('powerSelect').value);
+      
+      if (isNaN(n) || n < 1) {
+        document.getElementById('sumResult').textContent = 'Please enter a valid n ≥ 1';
+        return;
+      }
+      
+      let sum;
+      let formula;
+      
+      switch(power) {
+        case 1:
+          sum = n * (n + 1) / 2;
+          formula = `∑k = ${n}(${n}+1)/2 = ${sum}`;
+          break;
+        case 2:
+          sum = n * (n + 1) * (2 * n + 1) / 6;
+          formula = `∑k² = ${n}(${n}+1)(2×${n}+1)/6 = ${sum}`;
+          break;
+        case 3:
+          sum = Math.pow(n * (n + 1) / 2, 2);
+          formula = `∑k³ = [${n}(${n}+1)/2]² = ${sum}`;
+          break;
+      }
+      
+      document.getElementById('sumResult').textContent = formula;
+    }
+
+    function showExpansion() {
+      const n = parseInt(document.getElementById('nValue').value);
+      const power = parseInt(document.getElementById('powerSelect').value);
+      
+      if (isNaN(n) || n < 1 || n > 10) {
+        document.getElementById('expansionDisplay').textContent = 'Please enter n between 1 and 10 for expansion';
+        return;
+      }
+      
+      let terms = [];
+      let sum = 0;
+      
+      for (let k = 1; k <= n; k++) {
+        let term;
+        switch(power) {
+          case 1: term = k; break;
+          case 2: term = k * k; break;
+          case 3: term = k * k * k; break;
+        }
+        terms.push(term);
+        sum += term;
+      }
+      
+      const powerSymbol = power === 1 ? '' : (power === 2 ? '²' : '³');
+      document.getElementById('expansionDisplay').textContent = 
+        `Expansion: ${terms.join(' + ')} = ${sum}`;
+    }
+
+    function toggleSolution(problemNumber) {
+      const solution = document.getElementById(`solution${problemNumber}`);
+      if (solution.style.display === 'block') {
+        solution.style.display = 'none';
+      } else {
+        solution.style.display = 'block';
+      }
+    }
+
+    // Initialize with default values
+    calculateSum();
+    showExpansion();
+  </script>
+ </body>
+</html>

@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<!-- tags: Limit -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Properties of Limits of Sequences 2
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Limit">
+   Properties of Limits of Sequences 2
+  </div>
+  <style>
+    .solution-btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 14px;
+      margin: 10px 0;
+      cursor: pointer;
+      border-radius: 25px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    .solution-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+    .solution {
+      display: none;
+      margin-top: 15px;
+      padding: 15px;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      border-left: 5px solid #667eea;
+      border-radius: 0 10px 10px 0;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      overflow: auto;
+      white-space: normal;
+    }
+    .problem-item {
+      margin: 20px 0;
+      padding: 15px;
+      border: 2px solid #e1e8ed;
+      border-radius: 10px;
+      background: #fafbfc;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      overflow: auto;
+      white-space: normal;
+    }
+    .highlight-box {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 15px 0;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      overflow: auto;
+      white-space: normal;
+    }
+    .section {
+      margin: 25px 0;
+      padding: 20px;
+      border: 1px solid #e1e8ed;
+      border-radius: 10px;
+      background: white;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      overflow: auto;
+      white-space: normal;
+    }
+    .key-takeaways {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 15px;
+      margin: 20px 0;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      overflow: auto;
+      white-space: normal;
+    }
+    .formula-block {
+      background: #f8f9fa;
+      border: 2px solid #dee2e6;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      text-align: center;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      overflow: auto;
+      white-space: normal;
+    }
+    .canvas-container {
+      text-align: center;
+      margin: 20px 0;
+      padding: 15px;
+      border: 1px solid #e1e8ed;
+      border-radius: 10px;
+      background: #fafbfc;
+    }
+    canvas {
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background: white;
+    }
+    .properties-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    .properties-table th, .properties-table td {
+      padding: 15px;
+      text-align: center;
+      border-bottom: 1px solid #e1e8ed;
+    }
+    .properties-table th {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      font-weight: bold;
+    }
+    .properties-table .property-num {
+      background: #f8f9fa;
+      font-weight: bold;
+      width: 60px;
+    }
+    .properties-table .formula {
+      font-size: 1.1em;
+      text-align: left;
+    }
+    .properties-table .result {
+      background: #d4edda;
+      color: #155724;
+      font-weight: bold;
+    }
+    .squeeze-theorem {
+      background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+      border: 2px solid #f39c12;
+      border-radius: 10px;
+      padding: 15px;
+      margin: 15px 0;
+    }
+  </style>
+  <div class="container">
+   <div class="main-content">
+    <div class="section">
+     <h2>📐 Concepts</h2>
+     <p>These additional properties help us work with inequalities and bounded sequences:</p>
+     
+     <table class="properties-table">
+      <thead>
+       <tr>
+        <th style="width: 60px;">#</th>
+        <th>Property</th>
+        <th>Result</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr>
+        <td class="property-num">5</td>
+        <td class="formula">If \( a_n \leq b_n \) for all n, then \( \lim_{n \to \infty} a_n \leq \lim_{n \to \infty} b_n \)</td>
+        <td class="result">Order Preservation</td>
+       </tr>
+       <tr>
+        <td class="property-num">6</td>
+        <td class="formula">If \( a_n \leq c_n \leq b_n \) for all n, and \( \lim a_n = \lim b_n = L \), then \( \lim c_n = L \)</td>
+        <td class="result">Squeeze Theorem</td>
+       </tr>
+      </tbody>
+     </table>
+     
+     <div class="squeeze-theorem">
+      <h3>🧀 The Squeeze Theorem (Sandwich Theorem)</h3>
+      <p>If a sequence is squeezed between two other sequences that both converge to the same limit, then the middle sequence must also converge to that limit.</p>
+      <div class="formula-block">
+       \( a_n \leq c_n \leq b_n \quad \text{and} \quad \lim_{n \to \infty} a_n = \lim_{n \to \infty} b_n = L \implies \lim_{n \to \infty} c_n = L \)
+      </div>
+     </div>
+    </div>
+
+    <div class="section">
+     <h2>🔍 Examples</h2>
+     
+     <h3>Example 1: Order Preservation</h3>
+     <p>Given that \( \frac{1}{n+1} \leq \frac{1}{\sqrt{n}} \) for n ≥ 1, and both sequences converge, what can we say about their limits?</p>
+     <div class="formula-block">
+      \( \lim_{n \to \infty} \frac{1}{n+1} = 0 \leq \lim_{n \to \infty} \frac{1}{\sqrt{n}} = 0 \)
+      <br><br>
+      Both limits are 0, which satisfies the inequality.
+     </div>
+     
+     <h3>Example 2: Squeeze Theorem</h3>
+     <p>Find \( \lim_{n \to \infty} \frac{\sin n}{n} \).</p>
+     <p>We know that \( -1 \leq \sin n \leq 1 \) for all n, so:</p>
+     <div class="formula-block">
+      \( -\frac{1}{n} \leq \frac{\sin n}{n} \leq \frac{1}{n} \)
+      <br><br>
+      As \( n \to \infty \), \( \lim_{n \to \infty} -\frac{1}{n} = 0 \) and \( \lim_{n \to \infty} \frac{1}{n} = 0 \)
+      <br><br>
+      Therefore, by the Squeeze Theorem: \( \lim_{n \to \infty} \frac{\sin n}{n} = 0 \)
+     </div>
+     
+     <h3>Example 3: Bounded Sequences</h3>
+     <p>If \( a_n \leq 5 \) for all n and \( \lim_{n \to \infty} a_n = 3 \), what can we conclude?</p>
+     <p>By order preservation, if \( a_n \leq 5 \) for all n, then \( \lim a_n \leq 5 \). Since the limit is 3, this is satisfied.</p>
+    </div>
+
+    <div class="section">
+     <h2>📊 Visual Guide</h2>
+     <p>The interactive diagram below illustrates the Squeeze Theorem and order preservation. The middle sequence is squeezed between two bounding sequences.</p>
+     
+     <div class="canvas-container">
+      <canvas id="squeezeCanvas" width="600" height="400"></canvas>
+     </div>
+    </div>
+
+    <div class="section">
+     <h2>🚀 Applications</h2>
+     <ul>
+      <li><strong>Trigonometric Limits:</strong> Evaluating limits involving sin(n)/n, cos(n)/n</li>
+      <li><strong>Inequality Proofs:</strong> Establishing relationships between limits</li>
+      <li><strong>Error Bounds:</strong> Analyzing convergence rates and approximation errors</li>
+      <li><strong>Algorithm Analysis:</strong> Bounding computational errors and convergence</li>
+      <li><strong>Physics:</strong> Analyzing oscillatory systems and wave functions</li>
+     </ul>
+    </div>
+
+    <div class="section">
+     <h2>✏️ Practice Problems</h2>
+     
+     <div class="problem-item">
+      <strong>Problem 1:</strong> Use the Squeeze Theorem to find \( \lim_{n \to \infty} \frac{\cos n}{n^2} \).
+      <br><br>
+      <button class="solution-btn" onclick="toggleSolution('sol1')">Show Solution</button>
+      <div id="sol1" class="solution">
+       <p>We know that \( -1 \leq \cos n \leq 1 \) for all n, so:</p>
+       <div class="formula-block">
+        \( -\frac{1}{n^2} \leq \frac{\cos n}{n^2} \leq \frac{1}{n^2} \)
+        <br><br>
+        As \( n \to \infty \), both bounding sequences go to 0:
+        <br><br>
+        \( \lim_{n \to \infty} -\frac{1}{n^2} = 0 \) and \( \lim_{n \to \infty} \frac{1}{n^2} = 0 \)
+        <br><br>
+        Therefore, \( \lim_{n \to \infty} \frac{\cos n}{n^2} = 0 \)
+       </div>
+      </div>
+     </div>
+
+     <div class="problem-item">
+      <strong>Problem 2:</strong> Given that \( \frac{n}{n+1} \leq a_n \leq 1 \) for all n ≥ 1, and \( \lim_{n \to \infty} \frac{n}{n+1} = 1 \), find \( \lim_{n \to \infty} a_n \).
+      <br><br>
+      <button class="solution-btn" onclick="toggleSolution('sol2')">Show Solution</button>
+      <div id="sol2" class="solution">
+       <p>We have \( \frac{n}{n+1} \leq a_n \leq 1 \), and \( \lim_{n \to \infty} \frac{n}{n+1} = 1 \).</p>
+       <p>By order preservation, \( \lim_{n \to \infty} a_n \geq 1 \).</p>
+       <p>Since a_n ≤ 1 for all n, and the sequence is bounded above by 1, if it converges, the limit must be ≤ 1.</p>
+       <p>Therefore, \( \lim_{n \to \infty} a_n = 1 \).</p>
+       <p>Note: This uses the fact that if a sequence is bounded and has a lower bound approaching the upper bound, it must converge to the upper bound.</p>
+      </div>
+     </div>
+
+     <div class="problem-item">
+      <strong>Problem 3:</strong> Show that \( \lim_{n \to \infty} \frac{(-1)^n}{n} = 0 \) using the Squeeze Theorem.
+      <br><br>
+      <button class="solution-btn" onclick="toggleSolution('sol3')">Show Solution</button>
+      <div id="sol3" class="solution">
+       <p>We know that \( -\frac{1}{n} \leq \frac{(-1)^n}{n} \leq \frac{1}{n} \).</p>
+       <p>When (-1)^n = 1: \( \frac{1}{n} \geq \frac{(-1)^n}{n} \geq -\frac{1}{n} \)</p>
+       <p>When (-1)^n = -1: \( -\frac{1}{n} \leq \frac{(-1)^n}{n} \leq \frac{1}{n} \)</p>
+       <p>So in both cases: \( -\frac{1}{n} \leq \frac{(-1)^n}{n} \leq \frac{1}{n} \)</p>
+       <div class="formula-block">
+        As \( n \to \infty \), \( \lim_{n \to \infty} -\frac{1}{n} = 0 \) and \( \lim_{n \to \infty} \frac{1}{n} = 0 \)
+        <br><br>
+        Therefore, by the Squeeze Theorem: \( \lim_{n \to \infty} \frac{(-1)^n}{n} = 0 \)
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <h3>🎯 Key Takeaways</h3>
+     <ul>
+      <li><strong>Order Preservation:</strong> Limits preserve inequalities between sequences</li>
+      <li><strong>Squeeze Theorem:</strong> If a sequence is squeezed between two sequences with the same limit, it converges to that limit</li>
+      <li>Useful for limits involving bounded functions like sin(n), cos(n)</li>
+      <li>Essential for proving convergence of oscillating sequences</li>
+      <li>Combines with other properties for complex limit calculations</li>
+      <li>Critical for understanding bounded sequences and their convergence</li>
+     </ul>
+    </div>
+   </div>
+  </div>
+  <script>
+    function toggleSolution(id) {
+      const solution = document.getElementById(id);
+      const button = solution.previousElementSibling;
+      
+      if (solution.style.display === 'none' || solution.style.display === '') {
+        solution.style.display = 'block';
+        button.textContent = 'Hide Solution';
+      } else {
+        solution.style.display = 'none';
+        button.textContent = 'Show Solution';
+      }
+    }
+
+    function drawSqueezeVisualization() {
+      const canvas = document.getElementById('squeezeCanvas');
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+      
+      // Clear canvas
+      ctx.clearRect(0, 0, width, height);
+      
+      // Set up coordinate system
+      const margin = 60;
+      const plotWidth = width - 2 * margin;
+      const plotHeight = height - 2 * margin;
+      
+      // Draw axes
+      ctx.strokeStyle = '#333';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(margin, margin);
+      ctx.lineTo(margin, height - margin);
+      ctx.lineTo(width - margin, height - margin);
+      ctx.stroke();
+      
+      // Labels
+      ctx.fillStyle = '#333';
+      ctx.font = '14px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('n (term number)', width - margin, height - margin + 40);
+      ctx.save();
+      ctx.translate(margin - 40, height/2);
+      ctx.rotate(-Math.PI/2);
+      ctx.fillText('sequence value', 0, 0);
+      ctx.restore();
+      
+      // Scale factors
+      const nMin = 0, nMax = 20;
+      const aMin = -1.5, aMax = 1.5;
+      const nScale = plotWidth / (nMax - nMin);
+      const aScale = plotHeight / (aMax - aMin);
+      
+      // Function to convert to canvas coordinates
+      const toCanvasX = (n) => margin + (n - nMin) * nScale;
+      const toCanvasY = (a) => height - margin - (a - aMin) * aScale;
+      
+      // Draw grid
+      ctx.strokeStyle = '#eee';
+      ctx.lineWidth = 1;
+      for (let n = nMin; n <= nMax; n += 2) {
+        const cx = toCanvasX(n);
+        ctx.beginPath();
+        ctx.moveTo(cx, margin);
+        ctx.lineTo(cx, height - margin);
+        ctx.stroke();
+      }
+      for (let a = aMin; a <= aMax; a += 0.5) {
+        const cy = toCanvasY(a);
+        ctx.beginPath();
+        ctx.moveTo(margin, cy);
+        ctx.lineTo(width - margin, cy);
+        ctx.stroke();
+      }
+      
+      // Upper bound: 1/n
+      ctx.strokeStyle = '#e74c3c';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      for (let n = 1; n <= nMax; n++) {
+        const a = 1/n;
+        const cx = toCanvasX(n);
+        const cy = toCanvasY(a);
+        if (n === 1) ctx.moveTo(cx, cy);
+        else ctx.lineTo(cx, cy);
+        
+        // Draw point
+        ctx.fillStyle = '#e74c3c';
+        ctx.beginPath();
+        ctx.arc(cx, cy, 3, 0, 2 * Math.PI);
+        ctx.fill();
+      }
+      ctx.stroke();
+      
+      // Lower bound: -1/n
+      ctx.strokeStyle = '#e74c3c';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      for (let n = 1; n <= nMax; n++) {
+        const a = -1/n;
+        const cx = toCanvasX(n);
+        const cy = toCanvasY(a);
+        if (n === 1) ctx.moveTo(cx, cy);
+        else ctx.lineTo(cx, cy);
+        
+        // Draw point
+        ctx.fillStyle = '#e74c3c';
+        ctx.beginPath();
+        ctx.arc(cx, cy, 3, 0, 2 * Math.PI);
+        ctx.fill();
+      }
+      ctx.stroke();
+      
+      // Middle sequence: sin(n)/n (squeezed between ±1/n)
+      ctx.strokeStyle = '#27ae60';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      for (let n = 1; n <= nMax; n++) {
+        const a = Math.sin(n) / n;
+        const cx = toCanvasX(n);
+        const cy = toCanvasY(a);
+        if (n === 1) ctx.moveTo(cx, cy);
+        else ctx.lineTo(cx, cy);
+        
+        // Draw point
+        ctx.fillStyle = '#27ae60';
+        ctx.beginPath();
+        ctx.arc(cx, cy, 4, 0, 2 * Math.PI);
+        ctx.fill();
+      }
+      ctx.stroke();
+      
+      // Draw limit line at 0
+      ctx.strokeStyle = '#666';
+      ctx.setLineDash([5, 5]);
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(margin, toCanvasY(0));
+      ctx.lineTo(width - margin, toCanvasY(0));
+      ctx.stroke();
+      ctx.setLineDash([]);
+      
+      // Legend
+      ctx.fillStyle = '#333';
+      ctx.font = '12px Arial';
+      ctx.textAlign = 'left';
+      ctx.fillText('Upper bound: 1/n → 0', margin + 10, margin + 20);
+      ctx.fillText('Lower bound: -1/n → 0', margin + 10, margin + 40);
+      ctx.fillText('Middle: sin(n)/n → 0 (squeezed)', margin + 10, margin + 60);
+      ctx.fillText('All converge to the same limit!', margin + 10, margin + 80);
+      
+      // Draw color indicators
+      ctx.strokeStyle = '#e74c3c';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(margin + 250, margin + 15);
+      ctx.lineTo(margin + 280, margin + 15);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(margin + 250, margin + 35);
+      ctx.lineTo(margin + 280, margin + 35);
+      ctx.stroke();
+      
+      ctx.strokeStyle = '#27ae60';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(margin + 250, margin + 55);
+      ctx.lineTo(margin + 280, margin + 55);
+      ctx.stroke();
+    }
+
+    // Initialize visualization when page loads
+    window.onload = function() {
+      drawSqueezeVisualization();
+    };
+  </script>
+ </body>
+</html>

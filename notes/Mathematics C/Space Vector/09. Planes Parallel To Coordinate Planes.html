@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planes Parallel to Coordinate Planes</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            color: #4a5568;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .formula-block {
+            background: #f8f9fa;
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .centered {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .operation-block {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .operation-block h3 {
+            color: #4a5568;
+            margin-bottom: 15px;
+        }
+
+        .plane-img {
+            max-width: 100%;
+            height: auto;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .calculator-section {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            color: white;
+        }
+
+        .calculator-title {
+            text-align: center;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .calculator-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 5px;
+        }
+
+        .tab-button {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .tab-button.active {
+            background: white;
+            color: #f5576c;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .calculator-content {
+            display: none;
+        }
+
+        .calculator-content.active {
+            display: block;
+        }
+
+        .input-group {
+            margin: 15px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+            background: rgba(255,255,255,0.9);
+            color: #333;
+            font-size: 14px;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: white;
+            box-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        .calculate-btn {
+            background: white;
+            color: #f5576c;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .result-display {
+            background: rgba(255,255,255,0.9);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            color: #333;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .result-title {
+            font-weight: bold;
+            color: #f5576c;
+            margin-bottom: 10px;
+        }
+
+        .canvas-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .visualization-canvas {
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 10px;
+            background: rgba(255,255,255,0.9);
+            max-width: 100%;
+            height: auto;
+        }
+
+        .practice-section {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            color: white;
+        }
+
+        .practice-title {
+            text-align: center;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .problem-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .problem-text {
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .solution-toggle {
+            background: white;
+            color: #4facfe;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .solution-toggle:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+
+        .solution {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .solution.show {
+            display: block;
+        }
+
+        .key-takeaways {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            border-radius: 15px;
+            padding: 30px;
+            color: white;
+            margin-top: 30px;
+        }
+
+        .key-takeaways h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .takeaway-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+
+        .takeaway-item {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .takeaway-item strong {
+            color: #fff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .hint-block {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .hint-block strong {
+            color: #1976d2;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .calculator-tabs {
+                flex-direction: column;
+            }
+
+            .takeaway-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Planes Parallel to Coordinate Planes</h1>
+            <p>Interactive Learning with 3D Visualizations</p>
+        </div>
+
+        <div class="content-card">
+            <h2 class="section-title">1. Plane Parallel to the yz-Plane</h2>
+            <div class="operation-block">
+                <h3>Equation: x = a</h3>
+                <p>A plane passing through point A(a, 0, 0) and parallel to the yz-plane has the equation:</p>
+                <div class="formula-block">
+                    <div class="centered">
+                        $$x = a$$
+                    </div>
+                </div>
+                <p>This plane is perpendicular to the x-axis and intersects it at (a, 0, 0).</p>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h2 class="section-title">2. Plane Parallel to the zx-Plane</h2>
+            <div class="operation-block">
+                <h3>Equation: y = b</h3>
+                <p>A plane passing through point B(0, b, 0) and parallel to the zx-plane has the equation:</p>
+                <div class="formula-block">
+                    <div class="centered">
+                        $$y = b$$
+                    </div>
+                </div>
+                <p>This plane is perpendicular to the y-axis and intersects it at (0, b, 0).</p>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h2 class="section-title">3. Plane Parallel to the xy-Plane</h2>
+            <div class="operation-block">
+                <h3>Equation: z = c</h3>
+                <p>A plane passing through point C(0, 0, c) and parallel to the xy-plane has the equation:</p>
+                <div class="formula-block">
+                    <div class="centered">
+                        $$z = c$$
+                    </div>
+                </div>
+                <p>This plane is perpendicular to the z-axis and intersects it at (0, 0, c).</p>
+            </div>
+        </div>
+
+        <div class="calculator-section">
+            <h2 class="calculator-title">Interactive Plane Equation Generator</h2>
+            <div class="calculator-tabs">
+                <button class="tab-button active" onclick="showCalculator('x-plane')">x = a Plane</button>
+                <button class="tab-button" onclick="showCalculator('y-plane')">y = b Plane</button>
+                <button class="tab-button" onclick="showCalculator('z-plane')">z = c Plane</button>
+            </div>
+
+            <div id="x-plane-calculator" class="calculator-content active">
+                <h3>Plane Parallel to yz-Plane (x = a)</h3>
+                <div class="input-group">
+                    <label>Enter the x-intercept (a):</label>
+                    <input type="number" id="x-intercept" class="input-field" placeholder="e.g., 3" step="any">
+                </div>
+                <button class="calculate-btn" onclick="generateXPlane()">Generate Plane Equation</button>
+                <div id="x-plane-result" class="result-display" style="display: none;"></div>
+            </div>
+
+            <div id="y-plane-calculator" class="calculator-content">
+                <h3>Plane Parallel to zx-Plane (y = b)</h3>
+                <div class="input-group">
+                    <label>Enter the y-intercept (b):</label>
+                    <input type="number" id="y-intercept" class="input-field" placeholder="e.g., 4" step="any">
+                </div>
+                <button class="calculate-btn" onclick="generateYPlane()">Generate Plane Equation</button>
+                <div id="y-plane-result" class="result-display" style="display: none;"></div>
+            </div>
+
+            <div id="z-plane-calculator" class="calculator-content">
+                <h3>Plane Parallel to xy-Plane (z = c)</h3>
+                <div class="input-group">
+                    <label>Enter the z-intercept (c):</label>
+                    <input type="number" id="z-intercept" class="input-field" placeholder="e.g., 5" step="any">
+                </div>
+                <button class="calculate-btn" onclick="generateZPlane()">Generate Plane Equation</button>
+                <div id="z-plane-result" class="result-display" style="display: none;"></div>
+            </div>
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="visualization-canvas" width="600" height="400" class="visualization-canvas"></canvas>
+        </div>
+
+        <div class="practice-section">
+            <h2 class="practice-title">Practice Problems</h2>
+
+            <div class="problem-card">
+                <div class="problem-text">
+                    <strong>Problem 1:</strong> Find the equation of the plane that passes through the point (3, 0, 0) and is parallel to the yz-plane.
+                </div>
+                <button class="solution-toggle" onclick="toggleSolution('sol1')">Show Solution</button>
+                <div id="sol1" class="solution">
+                    <p>The plane passes through (3, 0, 0) and is parallel to the yz-plane.</p>
+                    <p>Since it's parallel to the yz-plane, the equation will be of the form x = a.</p>
+                    <p>The x-coordinate of the given point is 3, so a = 3.</p>
+                    <p>Final answer: x = 3</p>
+                </div>
+            </div>
+
+            <div class="problem-card">
+                <div class="problem-text">
+                    <strong>Problem 2:</strong> Find the equation of the plane that passes through the point (0, -2, 0) and is parallel to the zx-plane.
+                </div>
+                <button class="solution-toggle" onclick="toggleSolution('sol2')">Show Solution</button>
+                <div id="sol2" class="solution">
+                    <p>The plane passes through (0, -2, 0) and is parallel to the zx-plane.</p>
+                    <p>Since it's parallel to the zx-plane, the equation will be of the form y = b.</p>
+                    <p>The y-coordinate of the given point is -2, so b = -2.</p>
+                    <p>Final answer: y = -2</p>
+                </div>
+            </div>
+
+            <div class="problem-card">
+                <div class="problem-text">
+                    <strong>Problem 3:</strong> Find the equation of the plane that passes through the point (0, 0, 7) and is parallel to the xy-plane.
+                </div>
+                <button class="solution-toggle" onclick="toggleSolution('sol3')">Show Solution</button>
+                <div id="sol3" class="solution">
+                    <p>The plane passes through (0, 0, 7) and is parallel to the xy-plane.</p>
+                    <p>Since it's parallel to the xy-plane, the equation will be of the form z = c.</p>
+                    <p>The z-coordinate of the given point is 7, so c = 7.</p>
+                    <p>Final answer: z = 7</p>
+                </div>
+            </div>
+
+            <div class="problem-card">
+                <div class="problem-text">
+                    <strong>Problem 4:</strong> Determine which coordinate plane the equation x = 5 represents and describe its orientation.
+                </div>
+                <button class="solution-toggle" onclick="toggleSolution('sol4')">Show Solution</button>
+                <div id="sol4" class="solution">
+                    <p>The equation x = 5 represents a plane parallel to the yz-plane.</p>
+                    <p>It is perpendicular to the x-axis and intersects the x-axis at (5, 0, 0).</p>
+                    <p>This plane contains all points where the x-coordinate is 5, regardless of y and z values.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <div class="hint-block">
+                <strong>Important Notes:</strong>
+                <ul>
+                    <li>The plane x = a is perpendicular to the x-axis and parallel to the yz-plane.</li>
+                    <li>The plane y = b is perpendicular to the y-axis and parallel to the zx-plane.</li>
+                    <li>The plane z = c is perpendicular to the z-axis and parallel to the xy-plane.</li>
+                    <li>These are the simplest forms of plane equations in 3D coordinate geometry.</li>
+                    <li>The intercept with the respective axis determines the constant in the equation.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="key-takeaways">
+            <h3>Key Takeaways</h3>
+            <div class="takeaway-list">
+                <div class="takeaway-item">
+                    <strong>x = a Plane:</strong> Parallel to yz-plane, perpendicular to x-axis, intersects x-axis at (a, 0, 0).
+                </div>
+                <div class="takeaway-item">
+                    <strong>y = b Plane:</strong> Parallel to zx-plane, perpendicular to y-axis, intersects y-axis at (0, b, 0).
+                </div>
+                <div class="takeaway-item">
+                    <strong>z = c Plane:</strong> Parallel to xy-plane, perpendicular to z-axis, intersects z-axis at (0, 0, c).
+                </div>
+                <div class="takeaway-item">
+                    <strong>Coordinate Planes:</strong> xy-plane (z=0), yz-plane (x=0), zx-plane (y=0) are special cases.
+                </div>
+                <div class="takeaway-item">
+                    <strong>Applications:</strong> Used in computer graphics, architecture, and 3D modeling.
+                </div>
+                <div class="takeaway-item">
+                    <strong>Visualization:</strong> These planes divide 3D space into regions based on coordinate values.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showCalculator(type) {
+            // Hide all calculator contents
+            const contents = document.querySelectorAll('.calculator-content');
+            contents.forEach(content => content.classList.remove('active'));
+
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(button => button.classList.remove('active'));
+
+            // Show selected calculator
+            document.getElementById(type + '-calculator').classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function generateXPlane() {
+            const a = parseFloat(document.getElementById('x-intercept').value) || 0;
+
+            const resultDiv = document.getElementById('x-plane-result');
+            resultDiv.innerHTML = `
+                <div class="result-title">Plane Equation:</div>
+                <div>$$x = ${a}$$</div>
+                <div><strong>Description:</strong> This plane is parallel to the yz-plane and passes through the point (${a}, 0, 0).</div>
+                <div><strong>Properties:</strong></div>
+                <ul>
+                    <li>Perpendicular to the x-axis</li>
+                    <li>Constant x-coordinate: ${a}</li>
+                    <li>Contains all points where x = ${a}</li>
+                </ul>
+            `;
+            resultDiv.style.display = 'block';
+
+            // Trigger MathJax re-render
+            if (window.MathJax) {
+                MathJax.typesetPromise([resultDiv]).catch(console.error);
+            }
+
+            drawVisualization('x', a);
+        }
+
+        function generateYPlane() {
+            const b = parseFloat(document.getElementById('y-intercept').value) || 0;
+
+            const resultDiv = document.getElementById('y-plane-result');
+            resultDiv.innerHTML = `
+                <div class="result-title">Plane Equation:</div>
+                <div>$$y = ${b}$$</div>
+                <div><strong>Description:</strong> This plane is parallel to the zx-plane and passes through the point (0, ${b}, 0).</div>
+                <div><strong>Properties:</strong></div>
+                <ul>
+                    <li>Perpendicular to the y-axis</li>
+                    <li>Constant y-coordinate: ${b}</li>
+                    <li>Contains all points where y = ${b}</li>
+                </ul>
+            `;
+            resultDiv.style.display = 'block';
+
+            // Trigger MathJax re-render
+            if (window.MathJax) {
+                MathJax.typesetPromise([resultDiv]).catch(console.error);
+            }
+
+            drawVisualization('y', b);
+        }
+
+        function generateZPlane() {
+            const c = parseFloat(document.getElementById('z-intercept').value) || 0;
+
+            const resultDiv = document.getElementById('z-plane-result');
+            resultDiv.innerHTML = `
+                <div class="result-title">Plane Equation:</div>
+                <div>$$z = ${c}$$</div>
+                <div><strong>Description:</strong> This plane is parallel to the xy-plane and passes through the point (0, 0, ${c}).</div>
+                <div><strong>Properties:</strong></div>
+                <ul>
+                    <li>Perpendicular to the z-axis</li>
+                    <li>Constant z-coordinate: ${c}</li>
+                    <li>Contains all points where z = ${c}</li>
+                </ul>
+            `;
+            resultDiv.style.display = 'block';
+
+            // Trigger MathJax re-render
+            if (window.MathJax) {
+                MathJax.typesetPromise([resultDiv]).catch(console.error);
+            }
+
+            drawVisualization('z', c);
+        }
+
+        function drawVisualization(type, value) {
+            const canvas = document.getElementById('visualization-canvas');
+            const ctx = canvas.getContext('2d');
+
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Set up coordinate system (simple isometric projection)
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const scale = 30;
+
+            // Project 3D to 2D (simple isometric)
+            function project(x, y, z) {
+                return {
+                    x: centerX + (x - y) * scale * 0.7,
+                    y: centerY + (x + y) * scale * 0.4 - z * scale * 0.6
+                };
+            }
+
+            // Draw axes
+            ctx.strokeStyle = '#666';
+            ctx.lineWidth = 2;
+
+            // X-axis
+            ctx.beginPath();
+            ctx.moveTo(centerX - 100, centerY);
+            ctx.lineTo(centerX + 100, centerY);
+            ctx.stroke();
+            ctx.fillStyle = '#333';
+            ctx.font = '12px Arial';
+            ctx.fillText('X', centerX + 105, centerY + 5);
+
+            // Y-axis
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY - 70);
+            ctx.lineTo(centerX, centerY + 70);
+            ctx.stroke();
+            ctx.fillText('Y', centerX - 15, centerY - 75);
+
+            // Z-axis
+            const zStart = project(0, 0, -3);
+            const zEnd = project(0, 0, 3);
+            ctx.beginPath();
+            ctx.moveTo(zStart.x, zStart.y);
+            ctx.lineTo(zEnd.x, zEnd.y);
+            ctx.stroke();
+            ctx.fillText('Z', zEnd.x + 5, zEnd.y - 5);
+
+            // Draw the plane
+            ctx.strokeStyle = '#e74c3c';
+            ctx.lineWidth = 3;
+            ctx.fillStyle = 'rgba(231, 76, 60, 0.2)';
+
+            if (type === 'x') {
+                // Draw x = constant plane
+                const points = [];
+                for (let y = -2; y <= 2; y++) {
+                    for (let z = -2; z <= 2; z++) {
+                        points.push(project(value, y, z));
+                    }
+                }
+                // Simple representation - draw a rectangle
+                ctx.beginPath();
+                const p1 = project(value, -2, -2);
+                const p2 = project(value, 2, -2);
+                const p3 = project(value, 2, 2);
+                const p4 = project(value, -2, 2);
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(p2.x, p2.y);
+                ctx.lineTo(p3.x, p3.y);
+                ctx.lineTo(p4.x, p4.y);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+
+                // Label
+                const labelPoint = project(value, 0, 0);
+                ctx.fillStyle = '#e74c3c';
+                ctx.fillText(`x = ${value}`, labelPoint.x + 10, labelPoint.y - 10);
+
+            } else if (type === 'y') {
+                // Draw y = constant plane
+                ctx.beginPath();
+                const p1 = project(-2, value, -2);
+                const p2 = project(2, value, -2);
+                const p3 = project(2, value, 2);
+                const p4 = project(-2, value, 2);
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(p2.x, p2.y);
+                ctx.lineTo(p3.x, p3.y);
+                ctx.lineTo(p4.x, p4.y);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+
+                // Label
+                const labelPoint = project(0, value, 0);
+                ctx.fillStyle = '#e74c3c';
+                ctx.fillText(`y = ${value}`, labelPoint.x + 10, labelPoint.y - 10);
+
+            } else if (type === 'z') {
+                // Draw z = constant plane
+                ctx.beginPath();
+                const p1 = project(-2, -2, value);
+                const p2 = project(2, -2, value);
+                const p3 = project(2, 2, value);
+                const p4 = project(-2, 2, value);
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(p2.x, p2.y);
+                ctx.lineTo(p3.x, p3.y);
+                ctx.lineTo(p4.x, p4.y);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+
+                // Label
+                const labelPoint = project(0, 0, value);
+                ctx.fillStyle = '#e74c3c';
+                ctx.fillText(`z = ${value}`, labelPoint.x + 10, labelPoint.y - 10);
+            }
+        }
+
+        function toggleSolution(id) {
+            const solution = document.getElementById(id);
+            solution.classList.toggle('show');
+        }
+
+        // Initialize MathJax
+        document.addEventListener("DOMContentLoaded", function() {
+            if (window.MathJax) {
+                MathJax.typesetPromise().catch(console.error);
+            }
+        });
+    </script>
+</body>
+</html>

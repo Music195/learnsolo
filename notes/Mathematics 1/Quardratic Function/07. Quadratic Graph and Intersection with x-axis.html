@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<!-- tags: Quadratic Functions -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Quadratic Graph and Intersection with x-axis
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   .interactive-demo {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    border: 2px solid #e1e8ed;
+   }
+   .demo-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 15px;
+   }
+   .demo-input-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 100px;
+   }
+   .demo-input-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #2c3e50;
+   }
+   .demo-input {
+    padding: 8px;
+    border: 2px solid #bdc3c7;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+   }
+   .demo-input:focus {
+    outline: none;
+    border-color: #3498db;
+   }
+   .demo-button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: transform 0.2s;
+   }
+   .demo-button:hover {
+    transform: translateY(-2px);
+   }
+   .demo-result {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+    border-left: 4px solid #3498db;
+   }
+   .math-foundation {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .worked-example {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .practice-problem {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .solution-toggle {
+    background: #2c3e50;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+   }
+   .solution-toggle:hover {
+    background: #34495e;
+   }
+   .solution-content {
+    display: none;
+    background: rgba(255, 255, 255, 0.9);
+    color: #2c3e50;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+   }
+   .key-takeaways {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+   }
+   .key-takeaways h3 {
+    color: #2c3e50;
+    margin-top: 0;
+   }
+   .key-takeaways ul {
+    color: #2c3e50;
+   }
+   .intersection-table {
+    margin: 20px 0;
+    border-collapse: collapse;
+    width: 100%;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+   }
+   .intersection-table th, .intersection-table td {
+    padding: 15px;
+    text-align: center;
+    border: 1px solid #e1e8ed;
+   }
+   .intersection-table th {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-weight: bold;
+   }
+   .intersection-table .discriminant-header {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+   }
+   .graph-container {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+    border: 2px solid #ecf0f1;
+   }
+   .intersection-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+   }
+   .summary-card {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #e67e22;
+    text-align: center;
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Quadratic Functions">
+   Quadratic Graph and Intersection with x-axis
+  </div>
+  <div class="container">
+   <div class="main-content">
+    <div class="section-title">
+     Quadratic Graph and Intersection with x-axis
+    </div>
+
+    <div class="math-foundation">
+     <h3>Mathematical Foundations</h3>
+     <p>The intersection points between a quadratic graph and the x-axis correspond to the real solutions of the quadratic equation. The x-axis represents y = 0, so finding intersections means solving the equation ax² + bx + c = 0. The number and nature of these intersections depend on the discriminant and the direction of the parabola.</p>
+
+     <div class="intersection-summary">
+      <div class="summary-card">
+       <h4>Two Intersections</h4>
+       <p>D > 0</p>
+       <p>Parabola crosses x-axis twice</p>
+       <p>Two distinct real solutions</p>
+      </div>
+
+      <div class="summary-card">
+       <h4>One Intersection</h4>
+       <p>D = 0</p>
+       <p>Parabola touches x-axis</p>
+       <p>One repeated real solution</p>
+      </div>
+
+      <div class="summary-card">
+       <h4>No Intersections</h4>
+       <p>D < 0</p>
+       <p>Parabola never touches x-axis</p>
+       <p>No real solutions</p>
+      </div>
+     </div>
+    </div>
+
+    <div class="interactive-demo">
+     <h3>Interactive Intersection Explorer</h3>
+     <p>Adjust the quadratic parameters to see how the graph intersects the x-axis.</p>
+
+     <div class="demo-controls">
+      <div class="demo-input-group">
+       <label for="int-a">a (direction):</label>
+       <input type="number" id="int-a" class="demo-input" value="1" step="0.5">
+      </div>
+      <div class="demo-input-group">
+       <label for="int-b">b:</label>
+       <input type="number" id="int-b" class="demo-input" value="-3" step="0.5">
+      </div>
+      <div class="demo-input-group">
+       <label for="int-c">c:</label>
+       <input type="number" id="int-c" class="demo-input" value="-4" step="0.5">
+      </div>
+      <button onclick="analyzeIntersections()" class="demo-button">Analyze</button>
+     </div>
+
+     <div class="graph-container">
+      <canvas id="intersection-graph" width="500" height="350" style="display: block; margin: 0 auto; border: 1px solid #ccc;"></canvas>
+     </div>
+
+     <div id="intersection-result" class="demo-result">
+      <h4>Equation: $x^2 - 3x - 4 = 0$</h4>
+      <p id="intersection-analysis">The parabola crosses the x-axis at two points.</p>
+      <p id="intersection-points">Intersection points: (4, 0) and (-1, 0)</p>
+      <p id="solution-connection">These correspond to the solutions x = 4 and x = -1.</p>
+     </div>
+    </div>
+
+    <div class="worked-example">
+     <h3>Worked Examples</h3>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Example 1: Two Intersection Points</h4>
+      <p>Graph: $y = x^2 - 5x + 6$</p>
+      <p>Find x-intercepts by solving: $x^2 - 5x + 6 = 0$</p>
+      <p>$(x-2)(x-3) = 0$ → x = 2 or x = 3</p>
+      <p>The parabola crosses the x-axis at (2, 0) and (3, 0).</p>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Example 2: One Intersection Point (Tangent)</h4>
+      <p>Graph: $y = x^2 - 4x + 4$</p>
+      <p>Find x-intercepts by solving: $x^2 - 4x + 4 = 0$</p>
+      <p>$(x-2)^2 = 0$ → x = 2 (repeated)</p>
+      <p>The parabola touches the x-axis at (2, 0).</p>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Example 3: No Intersection Points</h4>
+      <p>Graph: $y = x^2 + 2x + 3$</p>
+      <p>Find x-intercepts by solving: $x^2 + 2x + 3 = 0$</p>
+      <p>Discriminant: 4 - 12 = -8 < 0</p>
+      <p>The parabola never crosses the x-axis.</p>
+     </div>
+    </div>
+
+    <div class="practice-problem">
+     <h3>Practice Problems</h3>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Problem 1</h4>
+      <p>How many times does $y = x^2 - 7x + 12$ intersect the x-axis?</p>
+      <button onclick="toggleSolution('sol1')" class="solution-toggle">Show Solution</button>
+      <div id="sol1" class="solution-content">
+       <p>$D = 49 - 48 = 1 > 0$ → Two intersection points</p>
+      </div>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Problem 2</h4>
+      <p>How many times does $y = 2x^2 - 4x + 2$ intersect the x-axis?</p>
+      <button onclick="toggleSolution('sol2')" class="solution-toggle">Show Solution</button>
+      <div id="sol2" class="solution-content">
+       <p>$D = 16 - 16 = 0$ → One intersection point (tangent)</p>
+      </div>
+     </div>
+
+     <div style="margin-bottom: 20px;">
+      <h4>Problem 3</h4>
+      <p>How many times does $y = x^2 + x + 1$ intersect the x-axis?</p>
+      <button onclick="toggleSolution('sol3')" class="solution-toggle">Show Solution</button>
+      <div id="sol3" class="solution-content">
+       <p>$D = 1 - 4 = -3 < 0$ → No intersection points</p>
+      </div>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <h3>Key Takeaways</h3>
+     <ul>
+      <li>The x-intercepts of a quadratic graph are the solutions to the equation ax² + bx + c = 0</li>
+      <li>The number of x-intercepts equals the number of real solutions</li>
+      <li>Two x-intercepts when D > 0 (parabola crosses x-axis twice)</li>
+      <li>One x-intercept when D = 0 (parabola touches x-axis)</li>
+      <li>No x-intercepts when D < 0 (parabola never touches x-axis)</li>
+      <li>The sign of 'a' doesn't affect the number of intersections, only the direction</li>
+      <li>X-intercepts occur where y = 0, representing the roots of the quadratic equation</li>
+     </ul>
+    </div>
+
+    <table class="intersection-table">
+     <tr>
+      <th class="math">
+       $D = b^2 - 4ac$
+      </th>
+      <th class="math">
+       $D &gt; 0$
+      </th>
+      <th class="math">
+       $D = 0$
+      </th>
+      <th class="math">
+       $D &lt; 0$
+      </th>
+     </tr>
+     <tr>
+      <th class="math">
+       $a &lt; 0$
+      </th>
+      <td>
+       <!-- Two intersection points, upward parabola -->
+       <svg class="graph-svg" viewbox="0 0 80 60">
+        <polyline fill="none" points="5,55 40,10 75,55" stroke="#1976d2" stroke-width="2">
+        </polyline>
+        <circle cx="20" cy="35" fill="#1976d2" r="3">
+        </circle>
+        <circle cx="60" cy="35" fill="#1976d2" r="3">
+        </circle>
+        <line stroke="#888" stroke-width="1" x1="0" x2="80" y1="35" y2="35">
+        </line>
+       </svg>
+      </td>
+      <td>
+       <!-- One intersection point (tangent), upward parabola -->
+       <svg class="graph-svg" viewbox="0 0 80 60">
+        <polyline fill="none" points="5,55 40,35 75,55" stroke="#1976d2" stroke-width="2">
+        </polyline>
+        <circle cx="40" cy="35" fill="#1976d2" r="3">
+        </circle>
+        <line stroke="#888" stroke-width="1" x1="0" x2="80" y1="35" y2="35">
+        </line>
+        <text fill="#e65100" font-size="10" x="45" y="30">
+         Touch
+        </text>
+       </svg>
+      </td>
+      <td>
+       <!-- No intersection, upward parabola -->
+       <svg class="graph-svg" viewbox="0 0 80 60">
+        <polyline fill="none" points="5,55 40,45 75,55" stroke="#1976d2" stroke-width="2">
+        </polyline>
+        <line stroke="#888" stroke-width="1" x1="0" x2="80" y1="35" y2="35">
+        </line>
+       </svg>
+      </td>
+     </tr>
+     <tr>
+      <th class="math">
+       $a &gt; 0$
+      </th>
+      <td>
+       <!-- Two intersection points, downward parabola -->
+       <svg class="graph-svg" viewbox="0 0 80 60">
+        <polyline fill="none" points="5,5 40,50 75,5" stroke="#1976d2" stroke-width="2">
+        </polyline>
+        <circle cx="20" cy="25" fill="#1976d2" r="3">
+        </circle>
+        <circle cx="60" cy="25" fill="#1976d2" r="3">
+        </circle>
+        <line stroke="#888" stroke-width="1" x1="0" x2="80" y1="25" y2="25">
+        </line>
+       </svg>
+      </td>
+      <td>
+       <!-- One intersection point (tangent), downward parabola -->
+       <svg class="graph-svg" viewbox="0 0 80 60">
+        <polyline fill="none" points="5,5 40,25 75,5" stroke="#1976d2" stroke-width="2">
+        </polyline>
+        <circle cx="40" cy="25" fill="#1976d2" r="3">
+        </circle>
+        <line stroke="#888" stroke-width="1" x1="0" x2="80" y1="25" y2="25">
+        </line>
+        <text fill="#e65100" font-size="10" x="45" y="20">
+         Touch
+        </text>
+       </svg>
+      </td>
+      <td>
+       <!-- No intersection, downward parabola -->
+       <svg class="graph-svg" viewbox="0 0 80 60">
+        <polyline fill="none" points="5,5 40,15 75,5" stroke="#1976d2" stroke-width="2">
+        </polyline>
+        <line stroke="#888" stroke-width="1" x1="0" x2="80" y1="25" y2="25">
+        </line>
+       </svg>
+      </td>
+     </tr>
+     <tr>
+      <th class="discriminant-header" colspan="4">
+       Number of intersection points with the x-axis
+      </th>
+     </tr>
+     <tr>
+      <td>
+      </td>
+      <td>
+       2
+      </td>
+      <td>
+       1
+      </td>
+      <td>
+       0
+      </td>
+     </tr>
+    </table>
+    <div class="info-box">
+     The number of intersection points between the graph of $y = ax^2 + bx + c$ and the x-axis is equal to the number of real solutions of the quadratic equation $ax^2 + bx + c = 0$.
+    </div>
+   </div>
+  </div>
+
+  <script>
+   function drawIntersectionGraph(a, b, c) {
+    const canvas = document.getElementById('intersection-graph');
+    const ctx = canvas.getContext('2d');
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw axes
+    ctx.strokeStyle = '#222';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(50, 300);
+    ctx.lineTo(450, 300);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(250, 50);
+    ctx.lineTo(250, 450);
+    ctx.stroke();
+
+    // Draw x-axis (emphasized)
+    ctx.strokeStyle = '#e74c3c';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(50, 300);
+    ctx.lineTo(450, 300);
+    ctx.stroke();
+
+    // Calculate discriminant and roots
+    const discriminant = b * b - 4 * a * c;
+    let root1 = null, root2 = null;
+
+    if (discriminant >= 0) {
+     root1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+     root2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+    }
+
+    // Draw parabola
+    ctx.strokeStyle = a > 0 ? '#e65100' : '#1976d2';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    let first = true;
+    for (let x = -8; x <= 8; x += 0.1) {
+     const y = a * x * x + b * x + c;
+     const screenX = 250 + x * 20;
+     const screenY = 300 - y * 8;
+     if (screenY >= 50 && screenY <= 450) {
+      if (first) {
+       ctx.moveTo(screenX, screenY);
+       first = false;
+      } else {
+       ctx.lineTo(screenX, screenY);
+      }
+     }
+    }
+    ctx.stroke();
+
+    // Draw intersection points
+    if (discriminant > 0) {
+     const x1 = 250 + root1 * 20;
+     const x2 = 250 + root2 * 20;
+     ctx.fillStyle = '#e74c3c';
+     ctx.beginPath();
+     ctx.arc(x1, 300, 6, 0, 2 * Math.PI);
+     ctx.fill();
+     ctx.beginPath();
+     ctx.arc(x2, 300, 6, 0, 2 * Math.PI);
+     ctx.fill();
+    } else if (discriminant === 0) {
+     const x = 250 + root1 * 20;
+     ctx.fillStyle = '#e74c3c';
+     ctx.beginPath();
+     ctx.arc(x, 300, 6, 0, 2 * Math.PI);
+     ctx.fill();
+    }
+
+    // Labels
+    ctx.fillStyle = '#222';
+    ctx.font = '14px Arial';
+    ctx.fillText('x', 440, 305);
+    ctx.fillText('y', 255, 60);
+    ctx.fillText('x-axis', 400, 290);
+   }
+
+   function analyzeIntersections() {
+    const a = parseFloat(document.getElementById('int-a').value);
+    const b = parseFloat(document.getElementById('int-b').value);
+    const c = parseFloat(document.getElementById('int-c').value);
+
+    const discriminant = b * b - 4 * a * c;
+
+    // Format equation
+    let aStr = a === 1 ? '' : a === -1 ? '-' : a;
+    let bStr = b === 0 ? '' : b === 1 ? '+x' : b === -1 ? '-x' : (b > 0 ? `+${b}x` : `${b}x`);
+    let cStr = c === 0 ? '' : (c > 0 ? `+${c}` : c);
+
+    if (aStr === '') aStr = '';
+    if (bStr === '') bStr = '';
+    if (cStr === '') cStr = '';
+
+    const equation = `$${aStr}x^2 ${bStr} ${cStr} = 0$`;
+
+    let analysis, points, connection;
+
+    if (discriminant > 0) {
+     const root1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+     const root2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+     analysis = 'The parabola crosses the x-axis at two distinct points.';
+     points = `Intersection points: (${root1.toFixed(2)}, 0) and (${root2.toFixed(2)}, 0)`;
+     connection = `These correspond to the solutions x = ${root1.toFixed(2)} and x = ${root2.toFixed(2)}.`;
+    } else if (discriminant === 0) {
+     const root = -b / (2 * a);
+     analysis = 'The parabola touches the x-axis at exactly one point.';
+     points = `Intersection point: (${root.toFixed(2)}, 0)`;
+     connection = `This corresponds to the repeated solution x = ${root.toFixed(2)}.`;
+    } else {
+     analysis = 'The parabola never intersects the x-axis.';
+     points = 'No intersection points';
+     connection = 'There are no real solutions to the equation.';
+    }
+
+    document.getElementById('intersection-result').innerHTML = `
+     <h4>Equation: ${equation}</h4>
+     <p id="intersection-analysis">${analysis}</p>
+     <p id="intersection-points">${points}</p>
+     <p id="solution-connection">${connection}</p>
+    `;
+
+    drawIntersectionGraph(a, b, c);
+    MathJax.typeset();
+   }
+
+   function toggleSolution(id) {
+    const element = document.getElementById(id);
+    element.style.display = element.style.display === 'none' ? 'block' : 'none';
+   }
+
+   // Initialize
+   analyzeIntersections();
+  </script>
+ </body>
+</html>

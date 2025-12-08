@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<!-- tags: Trigonometry -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Arc Length and Sector Area
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+   }
+
+   .main-content {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 15px;
+    padding: 30px;
+    margin: 20px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+   }
+
+   .fancy-title {
+    text-align: center;
+    font-size: 2.5em;
+    font-weight: bold;
+    margin: 20px 0;
+    color: #2c3e50;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+   }
+
+   .description {
+    font-size: 1.2em;
+    line-height: 1.6;
+    margin: 20px 0;
+    color: #34495e;
+    text-align: center;
+   }
+
+   .content-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin: 30px 0;
+   }
+
+   .formula-block {
+    flex: 1;
+    min-width: 300px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 1.4em;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+   }
+
+   .formula-item {
+    margin: 15px 0;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+   }
+
+   .graybox {
+    background: linear-gradient(135deg, #bdc3c7 0%, #95a5a6 100%);
+    color: #2c3e50;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    text-align: center;
+    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+   }
+
+   .interactive-demo {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    margin: 30px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+   }
+
+   .demo-title {
+    text-align: center;
+    font-size: 1.8em;
+    margin-bottom: 25px;
+    font-weight: bold;
+   }
+
+   .input-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin: 20px 0;
+    justify-content: center;
+   }
+
+   .input-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+   }
+
+   .input-field label {
+    font-weight: bold;
+    font-size: 1.1em;
+   }
+
+   .input-field input {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    width: 120px;
+    text-align: center;
+    transition: border-color 0.3s;
+   }
+
+   .input-field input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+   }
+
+   .select-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+   }
+
+   .select-field label {
+    font-weight: bold;
+    font-size: 1.1em;
+   }
+
+   .select-field select {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    width: 140px;
+    text-align: center;
+    transition: border-color 0.3s;
+   }
+
+   .select-field select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+   }
+
+   .button-group {
+    text-align: center;
+    margin: 25px 0;
+   }
+
+   .btn {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 1.1em;
+    cursor: pointer;
+    margin: 0 10px;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+   }
+
+   .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+   }
+
+   .btn:active {
+    transform: translateY(0);
+   }
+
+   .result-display {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    backdrop-filter: blur(10px);
+   }
+
+   .result-text {
+    font-size: 1.2em;
+    text-align: center;
+    margin: 10px 0;
+   }
+
+   .section {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    margin: 25px 0;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+   }
+
+   .section-title {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
+   }
+
+   .canvas-container {
+    text-align: center;
+    margin: 20px 0;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+   }
+
+   .canvas-title {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #2c3e50;
+   }
+
+   .formula-display {
+    text-align: center;
+    margin: 15px 0;
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #e74c3c;
+   }
+
+   .conversion-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+   }
+
+   .conversion-card {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(252, 182, 159, 0.3);
+   }
+
+   .conversion-card h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 1.3em;
+   }
+
+   .conversion-card .formula {
+    font-weight: bold;
+    color: #e74c3c;
+    font-size: 1.2em;
+    margin: 10px 0;
+   }
+
+   .conversion-card .example {
+    color: #555;
+    line-height: 1.5;
+   }
+
+   .example-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+   }
+
+   .example-card {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+   }
+
+   .example-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(245, 87, 108, 0.4);
+   }
+
+   .example-card h4 {
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+   }
+
+   .example-detail {
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    display: none;
+   }
+
+   .calculation-steps {
+    margin: 15px 0;
+   }
+
+   .calculation-step {
+    margin: 8px 0;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 5px;
+    border-left: 4px solid #f5576c;
+   }
+
+   .practice-problems {
+    margin: 20px 0;
+   }
+
+   .problem-item {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+   }
+
+   .problem-item h4 {
+    margin: 0 0 15px 0;
+    font-size: 1.2em;
+   }
+
+   .solution-btn {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    color: #333;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 10px 0;
+    transition: all 0.3s;
+   }
+
+   .solution-btn:hover {
+    background: linear-gradient(135deg, #fcb69f 0%, #ffecd2 100%);
+    transform: scale(1.05);
+   }
+
+   .solution {
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 10px 0;
+    display: none;
+    border-left: 4px solid #667eea;
+   }
+
+   .key-takeaways {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    padding: 25px;
+    border-radius: 12px;
+    margin: 25px 0;
+   }
+
+   .takeaway-list {
+    list-style: none;
+    padding: 0;
+   }
+
+   .takeaway-item {
+    background: rgba(255, 255, 255, 0.8);
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+    font-weight: bold;
+   }
+
+   .error-message {
+    background: #ffebee;
+    color: #c62828;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px 0;
+    display: none;
+    text-align: center;
+    font-weight: bold;
+   }
+
+   @media (max-width: 768px) {
+    .content-wrapper {
+     flex-direction: column;
+    }
+
+    .input-group {
+     flex-direction: column;
+     align-items: center;
+    }
+
+    .fancy-title {
+     font-size: 2em;
+    }
+
+    .formula-block {
+     font-size: 1.2em;
+    }
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Trigonometry">
+   Arc Length and Sector Area
+  </div>
+
+  <div class="container">
+   <div class="main-content">
+    <div class="description">
+     Arc length and sector area are fundamental concepts in trigonometry. When working with angles in radians, we can calculate the length of an arc and the area of a sector using simple formulas that relate the angle to the circle's geometry.
+    </div>
+
+    <div class="content-wrapper">
+     <div class="formula-block">
+      <div class="formula-item">
+       <strong>Arc Length:</strong><br/>
+       l = rθ<br/>
+       <strong>(θ in radians)</strong>
+      </div>
+      <div class="formula-item">
+       <strong>Sector Area:</strong><br/>
+       S = (1/2)r²θ<br/>
+       <strong>(θ in radians)</strong>
+      </div>
+      <div class="formula-item">
+       <strong>Alternative:</strong><br/>
+       S = (1/2)lr<br/>
+       <strong>(using arc length)</strong>
+      </div>
+     </div>
+
+     <div class="graybox">
+      These formulas work only when the central angle θ is measured in radians. For degrees, convert to radians first using θ_radians = θ_degrees × (π/180).
+     </div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Visual Understanding of Arc Length and Sector Area</div>
+     <div class="canvas-container">
+      <div class="canvas-title">Circle Sector: Arc Length and Sector Area Demonstration</div>
+      <canvas id="sectorCanvas" width="500" height="400"></canvas>
+     </div>
+     <div class="formula-display">
+      Arc length l = rθ, Sector area S = (1/2)r²θ (θ in radians)
+     </div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Arc Length and Sector Area Formulas</div>
+     <div class="conversion-grid">
+      <div class="conversion-card">
+       <h3>Arc Length Formula</h3>
+       <div class="formula">$$l = r\theta$$</div>
+       <div class="example">
+        <strong>Where:</strong><br/>
+        l = arc length<br/>
+        r = radius<br/>
+        θ = central angle (in radians)<br/>
+        <strong>Example:</strong> r = 5, θ = π/2 → l = 5 × π/2 = 2.5π
+       </div>
+      </div>
+
+      <div class="conversion-card">
+       <h3>Sector Area Formula</h3>
+       <div class="formula">$$S = \frac{1}{2}r^2\theta$$</div>
+       <div class="example">
+        <strong>Where:</strong><br/>
+        S = sector area<br/>
+        r = radius<br/>
+        θ = central angle (in radians)<br/>
+        <strong>Example:</strong> r = 4, θ = π/3 → S = (1/2)×16×π/3 = 8π/3
+       </div>
+      </div>
+
+      <div class="conversion-card">
+       <h3>Alternative Sector Area</h3>
+       <div class="formula">$$S = \frac{1}{2}lr$$</div>
+       <div class="example">
+        <strong>Where:</strong><br/>
+        S = sector area<br/>
+        l = arc length<br/>
+        r = radius<br/>
+        <strong>Example:</strong> l = 10, r = 5 → S = (1/2)×10×5 = 25
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="interactive-demo">
+     <div class="demo-title">Arc Length and Sector Area Calculator</div>
+
+     <div class="input-group">
+      <div class="input-field">
+       <label for="radius">Radius (r):</label>
+       <input id="radius" placeholder="5" type="number" value="5" step="0.1"/>
+      </div>
+      <div class="input-field">
+       <label for="angle">Angle (θ):</label>
+       <input id="angle" placeholder="1.57" type="number" value="1.57" step="0.01"/>
+      </div>
+      <div class="select-field">
+       <label for="angleUnit">Angle Unit:</label>
+       <select id="angleUnit">
+        <option value="radians">Radians</option>
+        <option value="degrees">Degrees</option>
+       </select>
+      </div>
+     </div>
+
+     <div class="button-group">
+      <button class="btn" onclick="calculateArcSector()">Calculate</button>
+      <button class="btn" onclick="showExamples()">Examples</button>
+      <button class="btn" onclick="resetDemo()">Reset</button>
+     </div>
+
+     <div class="error-message" id="errorMessage"></div>
+
+     <div class="result-display">
+      <div class="result-text" id="inputDisplay">
+       <strong>Input:</strong> r = 5, θ = 1.57 radians
+      </div>
+      <div class="result-text" id="arcLengthDisplay">
+       <strong>Arc Length:</strong> 7.85 units
+      </div>
+      <div class="result-text" id="sectorAreaDisplay">
+       <strong>Sector Area:</strong> 19.63 square units
+      </div>
+      <div class="result-text" id="fractionDisplay">
+       <strong>Exact:</strong> l = 5π/2, S = 25π/4
+      </div>
+     </div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Mathematical Foundation</div>
+     <p>The arc length and sector area formulas are derived from the geometry of circles and the definition of radians:</p>
+     <ul>
+      <li><strong>Arc length derivation:</strong> Since one radian corresponds to an arc length equal to the radius, the total arc length for angle θ radians is l = rθ</li>
+      <li><strong>Sector area derivation:</strong> A sector is like a "pizza slice" of the circle. The area can be found by considering the sector as a fraction of the whole circle</li>
+      <li><strong>Whole circle relationship:</strong> Full circle has 2π radians and area πr², so sector with θ radians has area (θ/2π) × πr² = (θ/2)r²</li>
+      <li><strong>Alternative formula:</strong> S = (1/2)lr comes from the fact that the sector area equals half the product of arc length and radius</li>
+      <li><strong>Units:</strong> Arc length has the same units as radius, sector area has square units</li>
+      <li><strong>Angle conversion:</strong> Always convert degrees to radians before using these formulas</li>
+      <li><strong>Special cases:</strong> θ = 2π gives full circle, θ = π gives semicircle, θ = π/2 gives quarter circle</li>
+      <li><strong>Real-world applications:</strong> Navigation, astronomy, engineering, computer graphics, surveying</li>
+      <li><strong>Integration connection:</strong> These formulas are fundamental to integral calculus and polar coordinates</li>
+      <li><strong>Approximations:</strong> For small angles, arc length ≈ chord length, sector area ≈ triangle area</li>
+     </ul>
+     <div class="formula-block" style="margin: 20px 0;">
+      \begin{aligned}
+      \text{Arc length:} \quad l &= r\theta \quad (\theta \text{ in radians}) \\
+      \text{Sector area:} \quad S &= \frac{1}{2}r^2\theta \quad (\theta \text{ in radians}) \\
+      \text{Alternative:} \quad S &= \frac{1}{2}lr \\
+      \text{Full circle:} \quad \theta &= 2\pi, \quad l = 2\pi r, \quad S = \pi r^2 \\
+      \text{Conversion:} \quad \theta_{\text{rad}} &= \theta_{\text{deg}} \times \frac{\pi}{180}
+      \end{aligned}
+     </div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Worked Examples</div>
+     <div class="example-grid">
+      <div class="example-card" onclick="showExample(1)">
+       <h4>Example 1: Arc length calculation</h4>
+       <p>Find arc length for radius 8 cm and angle 120°.</p>
+      </div>
+      <div class="example-card" onclick="showExample(2)">
+       <h4>Example 2: Sector area calculation</h4>
+       <p>Find sector area for radius 6 m and angle π/4 radians.</p>
+      </div>
+      <div class="example-card" onclick="showExample(3)">
+       <h4>Example 3: Using alternative formula</h4>
+       <p>Find sector area given arc length 15 cm and radius 10 cm.</p>
+      </div>
+     </div>
+
+     <div class="example-detail" id="exampleDetail"></div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Practice Problems</div>
+     <div class="practice-problems">
+      <div class="problem-item">
+       <h4>Problem 1</h4>
+       <p>Find the arc length of a circle with radius 12 cm and central angle 45°.</p>
+       <button class="solution-btn" onclick="toggleSolution(1)">Show Solution</button>
+       <div class="solution" id="solution1">
+        <p><strong>Solution:</strong></p>
+        <p>First convert 45° to radians: 45 × (π/180) = π/4</p>
+        <p>Arc length l = rθ = 12 × π/4 = 3π cm</p>
+        <p><strong>Result:</strong> Arc length = 3π cm ≈ 9.42 cm</p>
+       </div>
+      </div>
+
+      <div class="problem-item">
+       <h4>Problem 2</h4>
+       <p>Find the area of a sector with radius 10 m and central angle 2.5 radians.</p>
+       <button class="solution-btn" onclick="toggleSolution(2)">Show Solution</button>
+       <div class="solution" id="solution2">
+        <p><strong>Solution:</strong></p>
+        <p>Sector area S = (1/2)r²θ = (1/2) × 100 × 2.5 = 125 m²</p>
+        <p><strong>Result:</strong> Sector area = 125 m²</p>
+       </div>
+      </div>
+
+      <div class="problem-item">
+       <h4>Problem 3</h4>
+       <p>A sector has arc length 20 cm and radius 8 cm. Find the sector area.</p>
+       <button class="solution-btn" onclick="toggleSolution(3)">Show Solution</button>
+       <div class="solution" id="solution3">
+        <p><strong>Solution:</strong></p>
+        <p>Sector area S = (1/2)lr = (1/2) × 20 × 8 = 80 cm²</p>
+        <p><strong>Result:</strong> Sector area = 80 cm²</p>
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <div class="section-title">Key Takeaways</div>
+     <ul class="takeaway-list">
+      <li class="takeaway-item">Arc length formula l = rθ works only when θ is in radians</li>
+      <li class="takeaway-item">Sector area formula S = (1/2)r²θ works only when θ is in radians</li>
+      <li class="takeaway-item">Alternative sector area formula S = (1/2)lr uses arc length and radius</li>
+      <li class="takeaway-item">Always convert degrees to radians before using these formulas</li>
+      <li class="takeaway-item">Full circle: θ = 2π radians, l = 2πr, S = πr²</li>
+      <li class="takeaway-item">Semicircle: θ = π radians, l = πr, S = (1/2)πr²</li>
+      <li class="takeaway-item">Quarter circle: θ = π/2 radians, l = (π/2)r, S = (1/4)πr²</li>
+      <li class="takeaway-item">Arc length has same units as radius, sector area has square units</li>
+      <li class="takeaway-item">These formulas are fundamental to trigonometry and calculus</li>
+      <li class="takeaway-item">Real-world applications include navigation, engineering, and computer graphics</li>
+     </ul>
+    </div>
+   </div>
+  </div>
+
+  <script>
+   function calculateArcSector() {
+    try {
+     const radius = parseFloat(document.getElementById('radius').value);
+     const angle = parseFloat(document.getElementById('angle').value);
+     const angleUnit = document.getElementById('angleUnit').value;
+
+     if (isNaN(radius) || isNaN(angle) || radius <= 0) {
+      throw new Error('Please enter valid positive numbers');
+     }
+
+     let angleInRadians;
+     if (angleUnit === 'degrees') {
+      angleInRadians = angle * Math.PI / 180;
+     } else {
+      angleInRadians = angle;
+     }
+
+     const arcLength = radius * angleInRadians;
+     const sectorArea = 0.5 * radius * radius * angleInRadians;
+
+     // Display results
+     document.getElementById('inputDisplay').innerHTML = `<strong>Input:</strong> r = ${radius}, θ = ${angle} ${angleUnit === 'degrees' ? '°' : 'rad'}`;
+     document.getElementById('arcLengthDisplay').innerHTML = `<strong>Arc Length:</strong> ${arcLength.toFixed(2)} units`;
+     document.getElementById('sectorAreaDisplay').innerHTML = `<strong>Sector Area:</strong> ${sectorArea.toFixed(2)} square units`;
+
+     // Show exact values if possible
+     let fractionText = '';
+     if (angleUnit === 'degrees') {
+      const commonFractions = {
+        30: 'π/6', 45: 'π/4', 60: 'π/3', 90: 'π/2',
+        120: '2π/3', 135: '3π/4', 150: '5π/6', 180: 'π',
+        270: '3π/2', 360: '2π'
+      };
+      if (commonFractions[angle]) {
+        const exactArc = `${radius} × ${commonFractions[angle]} = ${(radius * angle * Math.PI / 180 / Math.PI).toFixed(3)}π`;
+        const exactArea = `(${radius}² × ${commonFractions[angle]})/2 = ${(radius * radius * angle * Math.PI / 180 / 2 / Math.PI).toFixed(3)}π`;
+        fractionText = `l = ${exactArc}, S = ${exactArea}`;
+      }
+     } else {
+      const simplified = simplifyAngle(angle);
+      if (simplified !== angle.toString()) {
+        fractionText = `l = ${radius} × ${simplified}, S = ${radius}² × ${simplified} / 2`;
+      }
+     }
+
+     document.getElementById('fractionDisplay').innerHTML = `<strong>Exact:</strong> ${fractionText || 'See decimal values above'}`;
+
+     document.getElementById('errorMessage').style.display = 'none';
+    } catch (error) {
+     document.getElementById('errorMessage').textContent = error.message;
+     document.getElementById('errorMessage').style.display = 'block';
+    }
+   }
+
+   function simplifyAngle(angle) {
+    const pi = Math.PI;
+    const tolerance = 0.001;
+
+    // Check for common multiples of π
+    for (let num = 1; num <= 12; num++) {
+     for (let den = 1; den <= 12; den++) {
+      if (Math.abs(angle - num * pi / den) < tolerance) {
+       return num === 1 && den === 1 ? 'π' : num === 1 ? `π/${den}` : den === 1 ? `${num}π` : `${num}π/${den}`;
+      }
+     }
+    }
+    return angle.toFixed(3);
+   }
+
+   function showExamples() {
+    const examples = [
+     { radius: 8, angle: 120, unit: 'degrees', arc: '8π/3', area: '32π/3' },
+     { radius: 6, angle: Math.PI/4, unit: 'radians', arc: '6π/4', area: '18π/8' },
+     { radius: 10, angle: 2.5, unit: 'radians', arc: '25', area: '125' }
+    ];
+
+    let table = '<table style="width: 100%; border-collapse: collapse; margin: 20px 0;">';
+    table += '<tr style="background: #667eea; color: white;"><th style="padding: 10px; border: 1px solid #ddd;">Radius</th><th style="padding: 10px; border: 1px solid #ddd;">Angle</th><th style="padding: 10px; border: 1px solid #ddd;">Arc Length</th><th style="padding: 10px; border: 1px solid #ddd;">Sector Area</th></tr>';
+
+    examples.forEach(ex => {
+     const angleDisplay = ex.unit === 'degrees' ? `${ex.angle}°` : `${ex.angle === Math.PI/4 ? 'π/4' : ex.angle}`;
+     table += `<tr style="background: rgba(255,255,255,0.8);">
+               <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">${ex.radius}</td>
+               <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">${angleDisplay}</td>
+               <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">${ex.arc}</td>
+               <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">${ex.area}</td>
+              </tr>`;
+    });
+    table += '</table>';
+
+    document.getElementById('exampleDetail').innerHTML = '<h4>Example Calculations</h4>' + table;
+    document.getElementById('exampleDetail').style.display = 'block';
+   }
+
+   function resetDemo() {
+    document.getElementById('radius').value = '5';
+    document.getElementById('angle').value = '1.57';
+    document.getElementById('angleUnit').value = 'radians';
+    calculateArcSector();
+    document.getElementById('errorMessage').style.display = 'none';
+   }
+
+   function showExample(exampleNumber) {
+    const detail = document.getElementById('exampleDetail');
+    let content = '';
+
+    switch(exampleNumber) {
+     case 1:
+      content = `
+       <h4>Detailed Example 1 - Arc length calculation</h4>
+       <div class="calculation-steps">
+        <div class="calculation-step">Given: radius r = 8 cm, angle θ = 120°</div>
+        <div class="calculation-step">Convert degrees to radians: 120° × (π/180) = 120π/180 = 2π/3</div>
+        <div class="calculation-step">Arc length formula: l = rθ = 8 × (2π/3) = 16π/3 cm</div>
+        <div class="calculation-step">Decimal approximation: 16π/3 ≈ 16.755 cm</div>
+       </div>
+      `;
+      break;
+     case 2:
+      content = `
+       <h4>Detailed Example 2 - Sector area calculation</h4>
+       <div class="calculation-steps">
+        <div class="calculation-step">Given: radius r = 6 m, angle θ = π/4 radians</div>
+        <div class="calculation-step">Sector area formula: S = (1/2)r²θ = (1/2) × 36 × (π/4) = 18π/4 = 9π/2 m²</div>
+        <div class="calculation-step">Decimal approximation: 9π/2 ≈ 14.14 m²</div>
+        <div class="calculation-step">Alternative: S = (1/2)lr where l = rθ = 6 × π/4 = 6π/4 = 3π/2</div>
+       </div>
+      `;
+      break;
+     case 3:
+      content = `
+       <h4>Detailed Example 3 - Using alternative formula</h4>
+       <div class="calculation-steps">
+        <div class="calculation-step">Given: arc length l = 15 cm, radius r = 10 cm</div>
+        <div class="calculation-step">Alternative sector area formula: S = (1/2)lr = (1/2) × 15 × 10 = 75 cm²</div>
+        <div class="calculation-step">Verify with standard formula: First find θ = l/r = 15/10 = 1.5 radians</div>
+        <div class="calculation-step">S = (1/2)r²θ = (1/2) × 100 × 1.5 = 75 cm² ✓</div>
+       </div>
+      `;
+      break;
+    }
+
+    detail.innerHTML = content;
+    detail.style.display = 'block';
+    MathJax.typesetPromise();
+   }
+
+   function toggleSolution(problemNumber) {
+    const solution = document.getElementById('solution' + problemNumber);
+    if (solution.style.display === 'none' || solution.style.display === '') {
+     solution.style.display = 'block';
+    } else {
+     solution.style.display = 'none';
+    }
+   }
+
+   // Initialize canvas visualization
+   window.addEventListener('load', function() {
+    const canvas = document.getElementById('sectorCanvas');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width;
+    const h = canvas.height;
+
+    const centerX = w / 2 - 50;
+    const centerY = h / 2 + 20;
+    const radius = 140;
+    const theta = 1.2; // Central angle in radians
+
+    // Draw full circle (light)
+    ctx.strokeStyle = '#e0e0e0';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, 2*Math.PI);
+    ctx.stroke();
+
+    // Draw and fill the sector
+    ctx.fillStyle = 'rgba(52, 152, 219, 0.2)';
+    ctx.beginPath();
+    ctx.moveTo(centerX, centerY);
+    ctx.arc(centerX, centerY, radius, -theta, 0, false);
+    ctx.lineTo(centerX, centerY);
+    ctx.fill();
+
+    // Draw sector outline
+    ctx.strokeStyle = '#3498db';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, -theta, 0, false);
+    ctx.stroke();
+
+    // Draw first radius
+    ctx.strokeStyle = '#e74c3c';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(centerX, centerY);
+    ctx.lineTo(centerX + radius, centerY);
+    ctx.stroke();
+
+    // Draw second radius
+    const x1 = centerX + radius * Math.cos(theta);
+    const y1 = centerY - radius * Math.sin(theta);
+
+    ctx.strokeStyle = '#e74c3c';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(centerX, centerY);
+    ctx.lineTo(x1, y1);
+    ctx.stroke();
+
+    // Draw angle indicator arc
+    ctx.strokeStyle = '#9b59b6';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, 50, -theta, 0, false);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Draw center point
+    ctx.fillStyle = '#2c3e50';
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, 5, 0, 2*Math.PI);
+    ctx.fill();
+
+    // Draw arc endpoints
+    ctx.fillStyle = '#3498db';
+    ctx.beginPath();
+    ctx.arc(centerX + radius, centerY, 5, 0, 2*Math.PI);
+    ctx.fill();
+
+    ctx.fillStyle = '#3498db';
+    ctx.beginPath();
+    ctx.arc(x1, y1, 5, 0, 2*Math.PI);
+    ctx.fill();
+
+    // Labels
+    ctx.font = 'italic 16px Georgia';
+    ctx.fillStyle = '#2c3e50';
+    ctx.textAlign = 'right';
+    ctx.fillText('O', centerX - 12, centerY - 8);
+
+    // Radius labels
+    ctx.fillStyle = '#e74c3c';
+    ctx.textAlign = 'center';
+    ctx.fillText('r', centerX + radius/2, centerY + 20);
+
+    const midX = centerX + (radius/2) * Math.cos(theta);
+    const midY = centerY - (radius/2) * Math.sin(theta);
+    ctx.fillText('r', midX - 12, midY - 10);
+
+    // Arc length label
+    const arcMidAngle = theta / 2;
+    const arcMidX = centerX + (radius + 20) * Math.cos(arcMidAngle);
+    const arcMidY = centerY - (radius + 20) * Math.sin(arcMidAngle);
+    ctx.font = 'bold 15px Arial';
+    ctx.fillStyle = '#3498db';
+    ctx.textAlign = 'center';
+    ctx.fillText('l = rθ', arcMidX, arcMidY);
+
+    // Angle label
+    const angleLabelX = centerX + 60 * Math.cos(arcMidAngle);
+    const angleLabelY = centerY - 60 * Math.sin(arcMidAngle);
+    ctx.font = 'italic 16px Georgia';
+    ctx.fillStyle = '#9b59b6';
+    ctx.textAlign = 'center';
+    ctx.fillText('θ', angleLabelX, angleLabelY);
+
+    // Sector area label
+    const areaLabelX = centerX + (radius * 0.4) * Math.cos(arcMidAngle);
+    const areaLabelY = centerY - (radius * 0.4) * Math.sin(arcMidAngle);
+    ctx.font = 'bold 14px Arial';
+    ctx.fillStyle = '#3498db';
+    ctx.textAlign = 'center';
+    ctx.fillText('S', areaLabelX+50, areaLabelY-20);
+
+    // Formula annotations on the right
+    ctx.font = '15px Arial';
+    ctx.fillStyle = '#2c3e50';
+    ctx.textAlign = 'left';
+    const rightX = w - 140;
+    const startY = 100;
+
+    ctx.fillText('Arc length:', rightX, startY);
+    ctx.font = 'italic 15px Georgia';
+    ctx.fillText('l = rθ', rightX + 10, startY + 22);
+
+    ctx.font = '15px Arial';
+    ctx.fillText('Sector area:', rightX, startY + 60);
+    ctx.font = 'italic 15px Georgia';
+    ctx.fillText('S = ½r²θ', rightX + 10, startY + 82);
+    ctx.fillText('S = ½lr', rightX + 10, startY + 104);
+   });
+
+   // Initialize calculator
+   calculateArcSector();
+  </script>
+ </body>
+</html>

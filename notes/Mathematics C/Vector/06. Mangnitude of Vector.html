@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<!-- tags: Vector -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Vector AB and Its Magnitude
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+    /* Enhanced text containment and readability */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      hyphens: auto;
+    }
+
+    .main-content {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      border-radius: 15px;
+      padding: 30px;
+      margin: 20px 0;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .section {
+      margin-bottom: 40px;
+      background: rgba(255,255,255,0.9);
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .section h2 {
+      color: #2c3e50;
+      border-bottom: 3px solid #3498db;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+      font-size: 1.8em;
+      font-weight: 600;
+    }
+
+    .section h3 {
+      color: #34495e;
+      margin-bottom: 15px;
+      font-size: 1.4em;
+      font-weight: 500;
+    }
+
+    /* Law blocks with gradient backgrounds */
+    .law-block {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      color: white;
+      box-shadow: 0 4px 15px rgba(102,126,234,0.3);
+    }
+
+    .law-eq {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin-bottom: 15px;
+      text-align: center;
+      border-bottom: 2px solid rgba(255,255,255,0.3);
+      padding-bottom: 10px;
+    }
+
+    .law-block .math {
+      margin: 8px 0;
+      font-size: 1.1em;
+      line-height: 1.6;
+    }
+
+    /* Operation blocks */
+    .operation-block {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      color: white;
+      box-shadow: 0 4px 15px rgba(245,87,108,0.3);
+    }
+
+    .operation-block .formula {
+      background: rgba(255,255,255,0.9);
+      color: #333;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      text-align: center;
+      font-size: 1.3em;
+      font-weight: bold;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    /* Hint blocks */
+    .hint-block {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      color: white;
+      box-shadow: 0 4px 15px rgba(79,172,254,0.3);
+    }
+
+    .hint-block strong {
+      font-size: 1.2em;
+      display: block;
+      margin-bottom: 15px;
+      text-align: center;
+      border-bottom: 2px solid rgba(255,255,255,0.3);
+      padding-bottom: 10px;
+    }
+
+    /* Interactive demo styling */
+    .interactive-demo {
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      border-radius: 12px;
+      padding: 25px;
+      margin: 25px 0;
+      box-shadow: 0 4px 15px rgba(168,237,234,0.3);
+    }
+
+    .interactive-demo h3 {
+      color: #2c3e50;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 1.5em;
+    }
+
+    .demo-input {
+      width: 80px;
+      padding: 8px 12px;
+      border: 2px solid #3498db;
+      border-radius: 6px;
+      font-size: 1em;
+      margin: 0 5px;
+      background: rgba(255,255,255,0.9);
+      color: #333;
+    }
+
+    .demo-input:focus {
+      outline: none;
+      border-color: #2980b9;
+      box-shadow: 0 0 5px rgba(52,152,219,0.5);
+    }
+
+    .demo-button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1em;
+      margin: 5px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 10px rgba(102,126,234,0.3);
+    }
+
+    .demo-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(102,126,234,0.4);
+    }
+
+    .demo-result {
+      background: rgba(255,255,255,0.9);
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 15px;
+      font-family: 'Courier New', monospace;
+      font-size: 1em;
+      color: #333;
+      white-space: pre-line;
+      border: 1px solid #ddd;
+      min-height: 40px;
+    }
+
+    /* Problem items */
+    .problem-item {
+      background: rgba(255,255,255,0.95);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 15px 0;
+      border-left: 5px solid #3498db;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .problem-number {
+      display: inline-block;
+      background: #3498db;
+      color: white;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 30px;
+      font-weight: bold;
+      margin-right: 15px;
+      vertical-align: top;
+    }
+
+    .problem-content {
+      display: inline-block;
+      width: calc(100% - 50px);
+      vertical-align: top;
+    }
+
+    .solution-button {
+      background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+      color: #333;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9em;
+      margin: 10px 0;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(255,154,158,0.3);
+    }
+
+    .solution-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 3px 12px rgba(255,154,158,0.4);
+    }
+
+    .solution-content {
+      display: none;
+      margin-top: 15px;
+      padding: 15px;
+      background: rgba(240,240,240,0.8);
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+
+    .calculation-steps {
+      margin: 10px 0;
+    }
+
+    .calculation-step {
+      margin: 8px 0;
+      padding: 8px 12px;
+      background: rgba(255,255,255,0.7);
+      border-radius: 6px;
+      border-left: 3px solid #3498db;
+    }
+
+    /* Key takeaways */
+    .key-takeaways {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 12px;
+      padding: 25px;
+      margin: 25px 0;
+      color: white;
+      box-shadow: 0 4px 15px rgba(102,126,234,0.3);
+    }
+
+    .key-takeaways h3 {
+      text-align: center;
+      font-size: 1.5em;
+      margin-bottom: 20px;
+      border-bottom: 2px solid rgba(255,255,255,0.3);
+      padding-bottom: 10px;
+    }
+
+    .key-takeaways ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .key-takeaways li {
+      margin: 10px 0;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .key-takeaways li:last-child {
+      border-bottom: none;
+    }
+
+    /* Enhanced canvas styling */
+    .vector-canvas {
+      display: block;
+      margin: 20px auto;
+      border: 2px solid #3498db;
+      border-radius: 8px;
+      background: white;
+      box-shadow: 0 4px 15px rgba(52,152,219,0.2);
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 10px;
+      }
+
+      .main-content {
+        padding: 20px;
+      }
+
+      .section {
+        padding: 15px;
+      }
+
+      .interactive-demo {
+        padding: 15px;
+      }
+
+      .demo-input {
+        width: 60px;
+        margin: 5px;
+      }
+
+      .demo-button {
+        display: block;
+        width: 100%;
+        margin: 5px 0;
+      }
+
+      .problem-content {
+        width: calc(100% - 40px);
+      }
+    }
+
+    /* MathJax styling */
+    .mjx-chtml {
+      font-size: 1.1em !important;
+    }
+
+    /* Formula boxes */
+    .formula-box {
+      background: rgba(255,255,255,0.9);
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      text-align: center;
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #333;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    /* Property lists */
+    .property-list {
+      background: rgba(255,255,255,0.9);
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      color: #333;
+    }
+
+    .property-list li {
+      margin: 8px 0;
+      padding: 5px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .property-list li:last-child {
+      border-bottom: none;
+    }
+
+    /* Vector law styling */
+    .vector-law {
+      background: rgba(255,255,255,0.9);
+      border-radius: 8px;
+      padding: 15px;
+      margin: 10px 0;
+      border-left: 4px solid #3498db;
+      color: #333;
+    }
+
+    .law-name {
+      font-weight: bold;
+      color: #3498db;
+      margin-bottom: 5px;
+    }
+
+    .law-formula {
+      font-size: 1.2em;
+      margin: 8px 0;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .law-description {
+      font-style: italic;
+      color: #666;
+    }
+
+    /* Position vector controls */
+    .position-controls {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .control-label {
+      font-size: 0.9em;
+      font-weight: bold;
+      color: #333;
+    }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Vector">
+   Magnitude of Vector
+  </div>
+  <div class="container">
+   <div class="main-content">
+
+    <div class="section">
+     <h2>Mathematical Foundation</h2>
+     <p>The magnitude (or length) of a vector represents its size or distance from the origin in vector space. For a vector \(\vec{v} = (v_1, v_2)\), the magnitude is calculated using the Euclidean distance formula.</p>
+
+     <div class="law-block">
+      <div class="law-eq">Vector Magnitude Formula</div>
+      <div class="math">For a vector \(\vec{v} = (v_1, v_2)\):</div>
+      <div class="math">\(|\vec{v}| = \sqrt{v_1^2 + v_2^2}\)</div>
+      <div class="math">For a vector \(\vec{v} = (v_1, v_2, v_3)\) in 3D:</div>
+      <div class="math">\(|\vec{v}| = \sqrt{v_1^2 + v_2^2 + v_3^2}\)</div>
+     </div>
+
+     <div class="hint-block">
+      <strong>Key Properties of Vector Magnitude</strong>
+      <div class="math">\(|\vec{v}| \geq 0\) (non-negative)</div>
+      <div class="math">\(|\vec{v}| = 0\) if and only if \(\vec{v} = \vec{0}\)</div>
+      <div class="math">\(|\vec{v}| = |- \vec{v}|\) (magnitude of negative vector)</div>
+     </div>
+    </div>
+
+    <div class="section">
+     <h2>Position Vectors and Distance</h2>
+     <p>The position vector of a point P(a,b) is the vector from the origin to that point: \(\overrightarrow{OP} = (a,b)\). The magnitude of this position vector gives the distance from the origin to the point.</p>
+
+     <div class="operation-block">
+      <div class="formula">Distance from Origin: \(|\overrightarrow{OP}| = \sqrt{a^2 + b^2}\)</div>
+     </div>
+
+     <div class="vector-law">
+      <div class="law-name">Distance Between Two Points</div>
+      <div class="law-formula">\(|\overrightarrow{AB}| = \sqrt{(b_1 - a_1)^2 + (b_2 - a_2)^2}\)</div>
+      <div class="law-description">Where A(a₁,a₂) and B(b₁,b₂) are points in the plane</div>
+     </div>
+    </div>
+
+    <div class="section">
+     <h2>Interactive Position Vector Calculator</h2>
+     <div class="interactive-demo">
+      <h3>Calculate Vector Magnitude and Distance</h3>
+      <div class="position-controls">
+       <div class="control-group">
+        <div class="control-label">Point A (x₁, y₁)</div>
+        <input class="demo-input" id="ax" placeholder="x₁" type="number" value="2"/>
+        <input class="demo-input" id="ay" placeholder="y₁" type="number" value="3"/>
+       </div>
+       <div class="control-group">
+        <div class="control-label">Point B (x₂, y₂)</div>
+        <input class="demo-input" id="bx" placeholder="x₂" type="number" value="5"/>
+        <input class="demo-input" id="by" placeholder="y₂" type="number" value="7"/>
+       </div>
+      </div>
+      <button class="demo-button" onclick="calculateMagnitude()">Calculate Magnitude</button>
+      <div class="demo-result" id="magnitudeResult"></div>
+     </div>
+
+     <canvas class="vector-canvas" height="300" id="vectorCanvas" width="500"></canvas>
+    </div>
+
+    <div class="section">
+     <h2>Worked Examples</h2>
+
+     <div class="problem-item">
+      <div class="problem-number">1</div>
+      <div class="problem-content">
+       <strong>Find the magnitude of vector \(\vec{v} = (3, 4)\)</strong>
+       <button class="solution-button" onclick="toggleSolution(1)">Show Solution</button>
+       <div class="solution-content" id="solution1">
+        <div class="calculation-steps">
+         <div class="calculation-step">\(|\vec{v}| = \sqrt{3^2 + 4^2} = \sqrt{9 + 16} = \sqrt{25} = 5\)</div>
+         <div class="calculation-step">The magnitude is 5 units.</div>
+        </div>
+       </div>
+      </div>
+     </div>
+
+     <div class="problem-item">
+      <div class="problem-number">2</div>
+      <div class="problem-content">
+       <strong>Find the distance between points A(1,2) and B(4,6)</strong>
+       <button class="solution-button" onclick="toggleSolution(2)">Show Solution</button>
+       <div class="solution-content" id="solution2">
+        <div class="calculation-steps">
+         <div class="calculation-step">\(|\overrightarrow{AB}| = \sqrt{(4-1)^2 + (6-2)^2} = \sqrt{3^2 + 4^2} = \sqrt{9 + 16} = \sqrt{25} = 5\)</div>
+         <div class="calculation-step">The distance between A and B is 5 units.</div>
+        </div>
+       </div>
+      </div>
+     </div>
+
+     <div class="problem-item">
+      <div class="problem-number">3</div>
+      <div class="problem-content">
+       <strong>Find the magnitude of vector \(\vec{u} = (-2, 3)\)</strong>
+       <button class="solution-button" onclick="toggleSolution(3)">Show Solution</button>
+       <div class="solution-content" id="solution3">
+        <div class="calculation-steps">
+         <div class="calculation-step">\(|\vec{u}| = \sqrt{(-2)^2 + 3^2} = \sqrt{4 + 9} = \sqrt{13} \approx 3.606\)</div>
+         <div class="calculation-step">The magnitude is \(\sqrt{13}\) units.</div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="section">
+     <h2>Applications</h2>
+     <p>Vector magnitude has numerous applications in physics, engineering, and computer graphics:</p>
+
+     <div class="property-list">
+      <li><strong>Physics:</strong> Speed, force magnitude, displacement distance</li>
+      <li><strong>Engineering:</strong> Structural analysis, stress calculations</li>
+      <li><strong>Computer Graphics:</strong> Distance calculations, collision detection</li>
+      <li><strong>Navigation:</strong> GPS distance calculations, path finding</li>
+      <li><strong>Statistics:</strong> Euclidean distance in clustering algorithms</li>
+     </div>
+    </div>
+
+    <div class="section">
+     <h2>Practice Problems</h2>
+
+     <div class="problem-item">
+      <div class="problem-number">1</div>
+      <div class="problem-content">
+       <strong>Calculate \(|\vec{v}|\) for \(\vec{v} = (6, 8)\)</strong>
+       <button class="solution-button" onclick="toggleSolution(4)">Show Solution</button>
+       <div class="solution-content" id="solution4">
+        <div class="calculation-steps">
+         <div class="calculation-step">\(|\vec{v}| = \sqrt{6^2 + 8^2} = \sqrt{36 + 64} = \sqrt{100} = 10\)</div>
+        </div>
+       </div>
+      </div>
+     </div>
+
+     <div class="problem-item">
+      <div class="problem-number">2</div>
+      <div class="problem-content">
+       <strong>Find the distance between P(-1,3) and Q(2,7)</strong>
+       <button class="solution-button" onclick="toggleSolution(5)">Show Solution</button>
+       <div class="solution-content" id="solution5">
+        <div class="calculation-steps">
+         <div class="calculation-step">\(|\overrightarrow{PQ}| = \sqrt{(2-(-1))^2 + (7-3)^2} = \sqrt{3^2 + 4^2} = \sqrt{9 + 16} = \sqrt{25} = 5\)</div>
+        </div>
+       </div>
+      </div>
+     </div>
+
+     <div class="problem-item">
+      <div class="problem-number">3</div>
+      <div class="problem-content">
+       <strong>Which vector has greater magnitude: \(\vec{a} = (5, 12)\) or \(\vec{b} = (8, 15)\)?</strong>
+       <button class="solution-button" onclick="toggleSolution(6)">Show Solution</button>
+       <div class="solution-content" id="solution6">
+        <div class="calculation-steps">
+         <div class="calculation-step">\(|\vec{a}| = \sqrt{5^2 + 12^2} = \sqrt{25 + 144} = \sqrt{169} = 13\)</div>
+         <div class="calculation-step">\(|\vec{b}| = \sqrt{8^2 + 15^2} = \sqrt{64 + 225} = \sqrt{289} = 17\)</div>
+         <div class="calculation-step">Vector \(\vec{b}\) has greater magnitude (17 > 13).</div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <h3>Key Takeaways</h3>
+     <ul>
+      <li>The magnitude of a vector is always non-negative and represents its length</li>
+      <li>Use the formula \(|\vec{v}| = \sqrt{v_1^2 + v_2^2}\) for 2D vectors</li>
+      <li>The distance between two points is the magnitude of the vector connecting them</li>
+      <li>Vector magnitude is essential for measuring distances in coordinate geometry</li>
+      <li>The magnitude of a zero vector is zero, and zero magnitude implies a zero vector</li>
+     </ul>
+    </div>
+
+   </div>
+  </div>
+
+  <script>
+   function calculateMagnitude() {
+    const ax = parseFloat(document.getElementById('ax').value) || 0;
+    const ay = parseFloat(document.getElementById('ay').value) || 0;
+    const bx = parseFloat(document.getElementById('bx').value) || 0;
+    const by = parseFloat(document.getElementById('by').value) || 0;
+
+    const dx = bx - ax;
+    const dy = by - ay;
+    const magnitude = Math.sqrt(dx * dx + dy * dy);
+
+    const resultDiv = document.getElementById('magnitudeResult');
+    resultDiv.innerHTML = `
+     <strong>Vector AB:</strong> (${dx}, ${dy})<br>
+     <strong>Magnitude |AB|:</strong> ${magnitude.toFixed(3)}<br>
+     <strong>Distance:</strong> ${magnitude.toFixed(3)} units
+    `;
+
+    drawVector(ax, ay, bx, by, magnitude);
+   }
+
+   function drawVector(ax, ay, bx, by, magnitude) {
+    const canvas = document.getElementById('vectorCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Set up coordinate system
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const scale = 30; // pixels per unit
+
+    // Draw grid
+    ctx.strokeStyle = '#e0e0e0';
+    ctx.lineWidth = 1;
+    for (let x = -10; x <= 10; x++) {
+     const screenX = centerX + x * scale;
+     ctx.beginPath();
+     ctx.moveTo(screenX, 0);
+     ctx.lineTo(screenX, canvas.height);
+     ctx.stroke();
+    }
+    for (let y = -10; y <= 10; y++) {
+     const screenY = centerY - y * scale;
+     ctx.beginPath();
+     ctx.moveTo(0, screenY);
+     ctx.lineTo(canvas.width, screenY);
+     ctx.stroke();
+    }
+
+    // Draw axes
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, centerY);
+    ctx.lineTo(canvas.width, centerY);
+    ctx.moveTo(centerX, 0);
+    ctx.lineTo(centerX, canvas.height);
+    ctx.stroke();
+
+    // Convert to screen coordinates
+    const screenAx = centerX + ax * scale;
+    const screenAy = centerY - ay * scale;
+    const screenBx = centerX + bx * scale;
+    const screenBy = centerY - by * scale;
+
+    // Draw vector
+    ctx.strokeStyle = '#f57c00';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(screenAx, screenAy);
+    ctx.lineTo(screenBx, screenBy);
+    ctx.stroke();
+
+    // Draw arrowhead
+    const dx = screenBx - screenAx;
+    const dy = screenBy - screenAy;
+    const angle = Math.atan2(dy, dx);
+    const arrowLength = 12;
+    ctx.beginPath();
+    ctx.moveTo(screenBx, screenBy);
+    ctx.lineTo(screenBx - arrowLength * Math.cos(angle - Math.PI/6),
+              screenBy - arrowLength * Math.sin(angle - Math.PI/6));
+    ctx.moveTo(screenBx, screenBy);
+    ctx.lineTo(screenBx - arrowLength * Math.cos(angle + Math.PI/6),
+              screenBy - arrowLength * Math.sin(angle + Math.PI/6));
+    ctx.stroke();
+
+    // Draw points
+    ctx.fillStyle = '#b71c1c';
+    ctx.beginPath();
+    ctx.arc(screenAx, screenAy, 5, 0, 2 * Math.PI);
+    ctx.arc(screenBx, screenBy, 5, 0, 2 * Math.PI);
+    ctx.fill();
+
+    // Label points
+    ctx.font = 'bold 14px Arial';
+    ctx.fillStyle = '#b71c1c';
+    ctx.fillText(`A(${ax},${ay})`, screenAx - 40, screenAy + 20);
+    ctx.fillText(`B(${bx},${by})`, screenBx + 10, screenBy - 10);
+
+    // Label vector
+    const midX = (screenAx + screenBx) / 2;
+    const midY = (screenAy + screenBy) / 2;
+    ctx.fillStyle = '#f57c00';
+    ctx.font = '16px Arial';
+    ctx.fillText('AB', midX - 10, midY - 10);
+
+    // Show magnitude
+    ctx.fillStyle = '#333';
+    ctx.font = '12px Arial';
+    ctx.fillText(`|AB| = ${magnitude.toFixed(2)}`, midX - 30, midY + 25);
+   }
+
+   function toggleSolution(problemNumber) {
+    const solution = document.getElementById('solution' + problemNumber);
+    if (solution.style.display === 'none' || solution.style.display === '') {
+     solution.style.display = 'block';
+    } else {
+     solution.style.display = 'none';
+    }
+   }
+
+   // Initialize with default values
+   document.addEventListener('DOMContentLoaded', function() {
+    calculateMagnitude();
+   });
+  </script>
+</html>

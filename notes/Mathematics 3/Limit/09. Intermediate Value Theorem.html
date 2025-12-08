@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<!-- tags: Limit -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Intermediate Value Theorem
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Limit">
+   Intermediate Value Theorem
+  </div>
+  <div class="container">
+   <div class="main-content">
+    <style>
+      .main-content {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        overflow: auto;
+        max-width: 100%;
+      }
+      
+      .section {
+        margin-bottom: 30px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #007acc;
+      }
+      
+      .section h2 {
+        color: #007acc;
+        margin-top: 0;
+        margin-bottom: 15px;
+        font-size: 1.4em;
+      }
+      
+      .highlight-box {
+        background: #e3f2fd;
+        border: 2px solid #2196f3;
+        border-radius: 6px;
+        padding: 15px;
+        margin: 15px 0;
+        font-weight: bold;
+        color: #1565c0;
+      }
+      
+      .theorem-statement {
+        background: linear-gradient(135deg, #f3e5f5 0%, #e1f5fe 100%);
+        border: 2px solid #9c27b0;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+        text-align: center;
+        font-size: 1.1em;
+      }
+      
+      .theorem-statement .formula {
+        background: white;
+        padding: 15px;
+        border-radius: 6px;
+        margin: 15px 0;
+        font-family: 'Times New Roman', serif;
+        font-size: 1.2em;
+      }
+      
+      .corollary {
+        background: #fff9c4;
+        border: 2px solid #ff9800;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+      }
+      
+      .corollary h3 {
+        color: #e65100;
+        margin-top: 0;
+      }
+      
+      .svg-container {
+        text-align: center;
+        margin: 20px 0;
+        background: white;
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      
+      .svg-container svg {
+        max-width: 100%;
+        height: auto;
+      }
+      
+      .problem-item {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 15px;
+        margin: 10px 0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      }
+      
+      .solution-btn {
+        background: #007acc;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        margin: 10px 0;
+        transition: background 0.3s;
+      }
+      
+      .solution-btn:hover {
+        background: #005999;
+      }
+      
+      .solution {
+        display: none;
+        background: #f0f8ff;
+        border: 1px solid #007acc;
+        border-radius: 4px;
+        padding: 15px;
+        margin-top: 10px;
+      }
+      
+      .key-takeaways {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 30px;
+      }
+      
+      .key-takeaways h3 {
+        margin-top: 0;
+        color: white;
+      }
+      
+      .key-takeaways ul {
+        margin: 0;
+        padding-left: 20px;
+      }
+      
+      .key-takeaways li {
+        margin: 8px 0;
+      }
+      
+      #ivtCanvas {
+        border: 2px solid #007acc;
+        border-radius: 8px;
+        background: white;
+        margin: 20px 0;
+        max-width: 100%;
+        height: auto;
+      }
+      
+      .visual-guide {
+        text-align: center;
+        margin: 20px 0;
+      }
+      
+      .visual-guide p {
+        font-style: italic;
+        color: #666;
+        margin-bottom: 20px;
+      }
+      
+      .proof-explanation {
+        background: #e8f5e8;
+        border: 1px solid #4caf50;
+        border-radius: 6px;
+        padding: 15px;
+        margin: 15px 0;
+      }
+    </style>
+    <div class="theorem-statement">
+      <h2>📚 The Intermediate Value Theorem</h2>
+      <p>If f is continuous on [a, b] and k is any number between f(a) and f(b), then there exists at least one number c in (a, b) such that f(c) = k.</p>
+      
+      <div class="formula">
+        Let f be continuous on [a, b] with f(a) ≠ f(b). For any k between f(a) and f(b), ∃ c ∈ (a, b) such that f(c) = k.
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>🔍 Core Concept</h2>
+      <p>The Intermediate Value Theorem guarantees that continuous functions take on every value between their minimum and maximum values on a closed interval. This seems intuitively obvious - if a function starts at one value and ends at another, it must pass through all intermediate values.</p>
+      
+      <div class="highlight-box">
+        Key Requirements:
+        <br>• Function must be continuous on [a, b]
+        <br>• k must be between f(a) and f(b)
+        <br>• The theorem guarantees at least one c where f(c) = k
+        <br>• c is strictly between a and b
+      </div>
+      
+      <div class="proof-explanation">
+        <strong>Why continuity matters:</strong> The theorem fails for discontinuous functions. For example, the step function f(x) = 0 for x < 0 and f(x) = 1 for x ≥ 0 doesn't take any value between 0 and 1 on [-1, 1].
+      </div>
+    </div>
+
+    <div class="corollary">
+      <h3>🎯 Important Corollary: Root Existence</h3>
+      <p>If f is continuous on [a, b] and f(a) and f(b) have opposite signs, then f has at least one root in (a, b).</p>
+      
+      <div class="formula">
+        If f(a) · f(b) < 0, then ∃ c ∈ (a, b) such that f(c) = 0.
+      </div>
+      
+      <p>This corollary is extremely useful for proving that equations have solutions.</p>
+    </div>
+
+    <div class="section">
+      <h2>📊 Visual Illustrations</h2>
+      
+      <div class="svg-container">
+        <p><strong>General IVT:</strong> f takes every value between f(a) and f(b)</p>
+        <svg height="140" viewbox="0 0 380 140" width="380">
+         <!-- Axes -->
+         <line stroke="#222" stroke-width="2" x1="40" x2="340" y1="120" y2="120"></line>
+         <line stroke="#222" stroke-width="2" x1="40" x2="40" y1="120" y2="20"></line>
+         <!-- Function curve -->
+         <path d="M40,120 Q80,60 120,80 Q160,100 200,60 Q240,30 280,90 Q320,130 340,60" fill="none" stroke="#6c3483" stroke-width="2"></path>
+         <!-- Dashed lines for f(a), f(b) -->
+         <line stroke="#888" stroke-dasharray="5,5" x1="80" x2="80" y1="120" y2="60"></line>
+         <line stroke="#888" stroke-dasharray="5,5" x1="320" x2="320" y1="120" y2="100"></line>
+         <!-- Horizontal k line -->
+         <line stroke="#00bcd4" stroke-width="2" x1="60" x2="340" y1="80" y2="80"></line>
+         <!-- Points and labels -->
+         <circle cx="80" cy="80" fill="#6c3483" r="3"></circle>
+         <circle cx="320" cy="100" fill="#6c3483" r="3"></circle>
+         <text font-size="16" x="75" y="135">a</text>
+         <text font-size="16" x="315" y="135">b</text>
+         <text font-size="16" x="50" y="35">y</text>
+         <text font-size="16" x="345" y="125">x</text>
+         <text fill="#6c3483" font-size="16" x="60" y="75">f(a)</text>
+         <text fill="#6c3483" font-size="16" x="325" y="95">f(b)</text>
+         <text fill="#00bcd4" font-size="16" x="345" y="85">k</text>
+        </svg>
+      </div>
+      
+      <div class="svg-container">
+        <p><strong>Root Finding:</strong> f(a) and f(b) have opposite signs</p>
+        <svg height="140" viewbox="0 0 380 140" width="380">
+         <!-- Axes -->
+         <line stroke="#222" stroke-width="2" x1="40" x2="340" y1="120" y2="120"></line>
+         <line stroke="#222" stroke-width="2" x1="40" x2="40" y1="120" y2="20"></line>
+         <!-- Function curve -->
+         <path d="M40,120 Q80,60 120,80 Q160,100 200,60 Q240,30 280,90 Q320,130 340,60" fill="none" stroke="#6c3483" stroke-width="2"></path>
+         <!-- Dashed lines for f(a), f(b) -->
+         <line stroke="#888" stroke-dasharray="5,5" x1="80" x2="80" y1="120" y2="60"></line>
+         <line stroke="#888" stroke-dasharray="5,5" x1="320" x2="320" y1="120" y2="100"></line>
+         <!-- Horizontal y=0 line -->
+         <line stroke="#00bcd4" stroke-width="2" x1="60" x2="340" y1="120" y2="120"></line>
+         <!-- Points and labels -->
+         <circle cx="80" cy="80" fill="#6c3483" r="3"></circle>
+         <circle cx="320" cy="100" fill="#6c3483" r="3"></circle>
+         <text font-size="16" x="75" y="135">a</text>
+         <text font-size="16" x="315" y="135">b</text>
+         <text font-size="16" x="50" y="35">y</text>
+         <text font-size="16" x="345" y="125">x</text>
+         <text fill="#6c3483" font-size="16" x="60" y="75">f(a)</text>
+         <text fill="#6c3483" font-size="16" x="325" y="95">f(b)</text>
+         <text fill="#00bcd4" font-size="16" x="345" y="115">y=0</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>🔍 Visual Guide</h2>
+      <div class="visual-guide">
+        <p>Interactive visualization demonstrating the Intermediate Value Theorem:</p>
+        <canvas id="ivtCanvas" width="800" height="500"></canvas>
+      </div>
+      
+      <div class="highlight-box">
+        The visualization shows:
+        <br>• A continuous function on [a, b]
+        <br>• How it takes every value between f(a) and f(b)
+        <br>• The root-finding application
+        <br>• Why continuity is essential
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>💡 Examples</h2>
+      <div class="problem-item">
+        <strong>Example 1:</strong> Show that x³ + x - 1 = 0 has a solution in [0, 1].
+        <br><br>
+        f(x) = x³ + x - 1 is continuous on [0, 1]. f(0) = -1, f(1) = 1. Since -1 and 1 have opposite signs, there exists c ∈ (0, 1) with f(c) = 0.
+      </div>
+      
+      <div class="problem-item">
+        <strong>Example 2:</strong> Does x⁴ + 3x² + 1 = 0 have a solution in [-2, 2]?
+        <br><br>
+        f(x) = x⁴ + 3x² + 1 ≥ 1 > 0 for all x. So f never equals 0, and the equation has no real solutions.
+      </div>
+      
+      <div class="problem-item">
+        <strong>Example 3:</strong> Prove that any polynomial of odd degree has at least one real root.
+        <br><br>
+        Let p(x) be an odd-degree polynomial. As x → ∞, p(x) → ∞; as x → -∞, p(x) → -∞. So p takes both positive and negative values, hence has a root.
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>🔬 Applications</h2>
+      <ul>
+        <li><strong>Root Finding:</strong> Proving equations have solutions (bisection method)</li>
+        <li><strong>Calculus:</strong> Rolle's theorem and mean value theorem</li>
+        <li><strong>Physics:</strong> Existence of equilibrium points</li>
+        <li><strong>Engineering:</strong> Control systems and stability analysis</li>
+        <li><strong>Economics:</strong> Market equilibrium existence</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>📝 Practice Problems</h2>
+      
+      <div class="problem-item">
+        <strong>Problem 1:</strong> Show that the equation x⁵ + 2x³ + x + 1 = 0 has at least one real root.
+        <br><br>
+        <button class="solution-btn" onclick="toggleSolution('prob1')">Show Solution</button>
+        <div id="prob1" class="solution">
+          Let f(x) = x⁵ + 2x³ + x + 1. As x → ∞, f(x) → ∞; as x → -∞, f(x) → -∞. Since f is continuous and takes both positive and negative values, it has at least one root.
+        </div>
+      </div>
+      
+      <div class="problem-item">
+        <strong>Problem 2:</strong> Prove that sin(x) = 1/2 has a solution in [π/6, π/2].
+        <br><br>
+        <button class="solution-btn" onclick="toggleSolution('prob2')">Show Solution</button>
+        <div id="prob2" class="solution">
+          sin(π/6) = 1/2, sin(π/2) = 1. Since sin(x) = 1/2 is between these values, and sin(x) is continuous, there exists c ∈ (π/6, π/2) with sin(c) = 1/2.
+        </div>
+      </div>
+      
+      <div class="problem-item">
+        <strong>Problem 3:</strong> Does eˣ = x + 2 have a solution in [0, 2]?
+        <br><br>
+        <button class="solution-btn" onclick="toggleSolution('prob3')">Show Solution</button>
+        <div id="prob3" class="solution">
+          f(x) = eˣ - x - 2. f(0) = 1 - 2 = -1, f(2) = e² - 2 - 2 ≈ 7.18 - 4 = 3.18. Since f(0) < 0 < f(2), there exists c ∈ (0, 2) with f(c) = 0.
+        </div>
+      </div>
+      
+      <div class="problem-item">
+        <strong>Problem 4:</strong> Explain why the Intermediate Value Theorem doesn't apply to f(x) = 1/x on [-1, 1].
+        <br><br>
+        <button class="solution-btn" onclick="toggleSolution('prob4')">Show Solution</button>
+        <div id="prob4" class="solution">
+          f(x) = 1/x is not continuous on [-1, 1] because it's undefined at x = 0. The theorem requires continuity on the entire closed interval [a, b].
+        </div>
+      </div>
+    </div>
+
+    <div class="key-takeaways">
+      <h3>🎯 Key Takeaways</h3>
+      <ul>
+        <li>IVT guarantees values between f(a) and f(b) are achieved</li>
+        <li>Requires continuity on [a, b]</li>
+        <li>Corollary: opposite signs imply root existence</li>
+        <li>Essential for proving equation solvability</li>
+        <li>Foundation for many calculus theorems</li>
+        <li>Intuitively obvious but rigorously proven</li>
+        <li>Applies to any continuous function on closed intervals</li>
+      </ul>
+    </div>
+   </div>
+  </div>
+  <script>
+    function toggleSolution(id) {
+      const solution = document.getElementById(id);
+      const button = solution.previousElementSibling;
+      
+      if (solution.style.display === 'none' || solution.style.display === '') {
+        solution.style.display = 'block';
+        button.textContent = 'Hide Solution';
+      } else {
+        solution.style.display = 'none';
+        button.textContent = 'Show Solution';
+      }
+    }
+
+    function drawIVTVisualization() {
+      const canvas = document.getElementById('ivtCanvas');
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+      
+      // Clear canvas
+      ctx.clearRect(0, 0, width, height);
+      
+      // Set up coordinate system
+      const margin = 60;
+      const plotWidth = width - 2 * margin;
+      const plotHeight = height - 2 * margin;
+      
+      // Draw axes
+      ctx.strokeStyle = '#333';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(margin, margin);
+      ctx.lineTo(margin, height - margin);
+      ctx.lineTo(width - margin, height - margin);
+      ctx.stroke();
+      
+      // Labels
+      ctx.fillStyle = '#333';
+      ctx.font = '14px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('x', width - margin, height - margin + 40);
+      ctx.save();
+      ctx.translate(margin - 40, height/2);
+      ctx.rotate(-Math.PI/2);
+      ctx.fillText('f(x)', 0, 0);
+      ctx.restore();
+      
+      // Scale factors
+      const xMin = 0, xMax = 4;
+      const yMin = -2, yMax = 4;
+      const xScale = plotWidth / (xMax - xMin);
+      const yScale = plotHeight / (yMax - yMin);
+      
+      // Function to convert to canvas coordinates
+      const toCanvasX = (x) => margin + (x - xMin) * xScale;
+      const toCanvasY = (y) => height - margin - (y - yMin) * yScale;
+      
+      // Draw grid
+      ctx.strokeStyle = '#eee';
+      ctx.lineWidth = 1;
+      for (let x = xMin; x <= xMax; x += 0.5) {
+        const cx = toCanvasX(x);
+        ctx.beginPath();
+        ctx.moveTo(cx, margin);
+        ctx.lineTo(cx, height - margin);
+        ctx.stroke();
+      }
+      for (let y = yMin; y <= yMax; y += 0.5) {
+        const cy = toCanvasY(y);
+        ctx.beginPath();
+        ctx.moveTo(margin, cy);
+        ctx.lineTo(width - margin, cy);
+        ctx.stroke();
+      }
+      
+      // Define a continuous function: f(x) = x² - 2x - 1 (parabola)
+      const f = (x) => x * x - 2 * x - 1;
+      
+      // Plot the function
+      ctx.strokeStyle = '#e74c3c';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      
+      for (let x = xMin; x <= xMax; x += 0.05) {
+        const y = f(x);
+        const cx = toCanvasX(x);
+        const cy = toCanvasY(y);
+        
+        if (x === xMin) ctx.moveTo(cx, cy);
+        else ctx.lineTo(cx, cy);
+      }
+      ctx.stroke();
+      
+      // Define interval [a, b] = [0, 3]
+      const a = 0, b = 3;
+      const fa = f(a), fb = f(b);
+      
+      // Draw vertical lines at a and b
+      ctx.strokeStyle = '#666';
+      ctx.setLineDash([5, 5]);
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(toCanvasX(a), margin);
+      ctx.lineTo(toCanvasX(a), height - margin);
+      ctx.moveTo(toCanvasX(b), margin);
+      ctx.lineTo(toCanvasX(b), height - margin);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      
+      // Draw horizontal lines at f(a) and f(b)
+      ctx.strokeStyle = '#27ae60';
+      ctx.setLineDash([5, 5]);
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(margin, toCanvasY(fa));
+      ctx.lineTo(width - margin, toCanvasY(fa));
+      ctx.stroke();
+      
+      ctx.strokeStyle = '#3498db';
+      ctx.setLineDash([5, 5]);
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(margin, toCanvasY(fb));
+      ctx.lineTo(width - margin, toCanvasY(fb));
+      ctx.stroke();
+      ctx.setLineDash([]);
+      
+      // Draw intermediate value k = 0.5 (between f(a) = -1 and f(b) = 2)
+      const k = 0.5;
+      ctx.strokeStyle = '#f39c12';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(margin, toCanvasY(k));
+      ctx.lineTo(width - margin, toCanvasY(k));
+      ctx.stroke();
+      
+      // Find approximate c where f(c) = k
+      // For f(x) = x² - 2x - 1 = 0.5
+      // x² - 2x - 1.5 = 0
+      // x = [2 ± √(4 + 6)]/2 = [2 ± √10]/2
+      // Positive root: (2 + 3.162)/2 ≈ 2.581
+      const c = (2 + Math.sqrt(10)) / 2;
+      
+      // Draw point at (c, k)
+      ctx.fillStyle = '#f39c12';
+      ctx.beginPath();
+      ctx.arc(toCanvasX(c), toCanvasY(k), 6, 0, 2 * Math.PI);
+      ctx.fill();
+      
+      // Draw point at (a, f(a))
+      ctx.fillStyle = '#27ae60';
+      ctx.beginPath();
+      ctx.arc(toCanvasX(a), toCanvasY(fa), 5, 0, 2 * Math.PI);
+      ctx.fill();
+      
+      // Draw point at (b, f(b))
+      ctx.fillStyle = '#3498db';
+      ctx.beginPath();
+      ctx.arc(toCanvasX(b), toCanvasY(fb), 5, 0, 2 * Math.PI);
+      ctx.fill();
+      
+      // Labels
+      ctx.fillStyle = '#333';
+      ctx.font = '12px Arial';
+      ctx.textAlign = 'left';
+      
+      ctx.fillText(`a = ${a}`, toCanvasX(a) + 5, toCanvasY(fa) - 5);
+      ctx.fillText(`b = ${b}`, toCanvasX(b) + 5, toCanvasY(fb) - 5);
+      ctx.fillText(`f(a) = ${fa}`, toCanvasX(a) + 5, toCanvasY(fa) + 15);
+      ctx.fillText(`f(b) = ${fb.toFixed(1)}`, toCanvasX(b) + 5, toCanvasY(fb) + 15);
+      ctx.fillText(`k = ${k}`, width - margin - 40, toCanvasY(k) - 5);
+      ctx.fillText(`c ≈ ${c.toFixed(2)}`, toCanvasX(c) + 10, toCanvasY(k) - 5);
+      
+      // Legend
+      const legendX = margin + 10;
+      let legendY = margin + 20;
+      
+      ctx.strokeStyle = '#e74c3c';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(legendX, legendY);
+      ctx.lineTo(legendX + 30, legendY);
+      ctx.stroke();
+      ctx.fillStyle = '#333';
+      ctx.fillText('f(x) = x² - 2x - 1', legendX + 40, legendY + 4);
+      legendY += 20;
+      
+      ctx.fillStyle = '#27ae60';
+      ctx.beginPath();
+      ctx.arc(legendX + 15, legendY, 4, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.fillText('f(a)', legendX + 40, legendY + 4);
+      legendY += 20;
+      
+      ctx.fillStyle = '#3498db';
+      ctx.beginPath();
+      ctx.arc(legendX + 15, legendY, 4, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.fillText('f(b)', legendX + 40, legendY + 4);
+      legendY += 20;
+      
+      ctx.strokeStyle = '#f39c12';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(legendX, legendY);
+      ctx.lineTo(legendX + 30, legendY);
+      ctx.stroke();
+      ctx.fillStyle = '#333';
+      ctx.fillText('Intermediate value k', legendX + 40, legendY + 4);
+      legendY += 20;
+      
+      ctx.fillStyle = '#f39c12';
+      ctx.beginPath();
+      ctx.arc(legendX + 15, legendY, 4, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.fillText('c where f(c) = k', legendX + 40, legendY + 4);
+      
+      // Add explanation
+      ctx.fillStyle = '#666';
+      ctx.font = '11px Arial';
+      ctx.fillText('IVT guarantees c exists since k is between f(a) and f(b)', margin + 10, height - margin + 20);
+    }
+
+    // Initialize visualization when page loads
+    window.onload = function() {
+      drawIVTVisualization();
+    };
+  </script>
+ </body>
+</html>

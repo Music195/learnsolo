@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<!-- tags: Mathematics -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Riemann Sum and Definite Integral
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   .solution-btn {
+     background-color: #4CAF50;
+     color: white;
+     border: none;
+     padding: 8px 16px;
+     text-align: center;
+     text-decoration: none;
+     display: inline-block;
+     font-size: 14px;
+     margin: 10px 0;
+     cursor: pointer;
+     border-radius: 4px;
+     transition: background-color 0.3s;
+   }
+   
+   .solution-btn:hover {
+     background-color: #45a049;
+   }
+   
+   .solution {
+     background-color: #f9f9f9;
+     border-left: 4px solid #4CAF50;
+     padding: 15px;
+     margin: 10px 0;
+     border-radius: 0 4px 4px 0;
+   }
+   
+   .problem-item {
+     margin-bottom: 20px;
+     padding: 15px;
+     border: 1px solid #ddd;
+     border-radius: 8px;
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Integration">
+   Riemann Sum and Definite Integral
+  </div>
+  <div class="container">
+   <div class="main-content">
+    <div class="section">
+     <h2>Riemann Sums and the Definite Integral</h2>
+     <p>Riemann sums provide a bridge between the intuitive concept of area and the rigorous mathematical definition of the definite integral. They approximate the area under a curve by dividing the region into rectangles and summing their areas. As the number of rectangles increases and their width decreases, these approximations become increasingly accurate.</p>
+     
+     <div class="highlight-box">
+      <strong>Why Riemann Sums Matter:</strong>
+      <p>Riemann sums form the foundation of integral calculus, providing both a computational method for evaluating integrals and a theoretical framework for understanding the concept of area under curves.</p>
+     </div>
+    </div>
+
+    <div class="section">
+     <h2>Partition and Riemann Sum</h2>
+     
+     <h3>Partition of an Interval</h3>
+     <div class="highlight-box">
+      <p>A partition P of [a, b] is a finite set of points:</p>
+      <p>\( a = x_0 < x_1 < x_2 < \cdots < x_{n-1} < x_n = b \)</p>
+      <p>The width of the k-th subinterval is: \( \Delta x_k = x_k - x_{k-1} \)</p>
+      <p>The norm of the partition is: \( \|P\| = \max \{\Delta x_1, \Delta x_2, \dots, \Delta x_n\} \)</p>
+     </div>
+     
+     <h3>Riemann Sum</h3>
+     <div class="highlight-box">
+      <p>For a function f on [a, b] and partition P, a Riemann sum is:</p>
+      <p>\( S(f, P) = \sum_{k=1}^n f(c_k) \Delta x_k \)</p>
+      <p>where \( c_k \) is chosen in [x_{k-1}, x_k] for each k.</p>
+     </div>
+    </div>
+
+    <div class="section">
+     <h2>Types of Riemann Sums</h2>
+     
+     <h3>Left Riemann Sum</h3>
+     <div class="highlight-box">
+      <p>Uses the left endpoint of each subinterval:</p>
+      <p>\( L_n = \sum_{k=1}^n f(x_{k-1}) \Delta x \)</p>
+      <p>where \( \Delta x = \frac{b-a}{n} \) and \( x_k = a + k \Delta x \)</p>
+     </div>
+     
+     <h3>Right Riemann Sum</h3>
+     <div class="highlight-box">
+      <p>Uses the right endpoint of each subinterval:</p>
+      <p>\( R_n = \sum_{k=1}^n f(x_k) \Delta x \)</p>
+     </div>
+     
+     <h3>Midpoint Riemann Sum</h3>
+     <div class="highlight-box">
+      <p>Uses the midpoint of each subinterval:</p>
+      <p>\( M_n = \sum_{k=1}^n f(\bar{x}_k) \Delta x \)</p>
+      <p>where \( \bar{x}_k = \frac{x_{k-1} + x_k}{2} \)</p>
+     </div>
+    </div>
+
+    <div class="section">
+     <h2>The Definite Integral</h2>
+     <div class="highlight-box">
+      <strong>Definition:</strong> If the limit of Riemann sums exists as the norm of the partition approaches zero, then f is integrable on [a, b] and:
+      <p>\( \int_a^b f(x) \, dx = \lim_{\|P\| \to 0} S(f, P) \)</p>
+      
+      <strong>Equivalent Form:</strong>
+      <p>\( \int_a^b f(x) \, dx = \lim_{n \to \infty} \sum_{k=1}^n f(c_k) \Delta x_k \)</p>
+     </div>
+     
+     <h3>Existence of the Integral</h3>
+     <div class="highlight-box">
+      <p>A function is Riemann integrable if it is bounded and continuous except on a set of measure zero. More precisely:</p>
+      <ul>
+       <li>Continuous functions on [a, b] are integrable</li>
+       <li>Monotonic functions on [a, b] are integrable</li>
+       <li>Functions with finitely many discontinuities are integrable</li>
+       <li>Bounded functions with countably many discontinuities may or may not be integrable</li>
+      </ul>
+     </div>
+    </div>
+
+    <div class="section">
+     <h2>Examples</h2>
+     
+     <h3>Example 1: Left and Right Riemann Sums</h3>
+     <p>Compute the left and right Riemann sums for \( f(x) = x^2 \) on [0, 1] with n = 4.</p>
+     
+     <div class="highlight-box">
+      <strong>Solution:</strong>
+      <p>\( \Delta x = \frac{1-0}{4} = 0.25 \)</p>
+      <p>Partition points: 0, 0.25, 0.5, 0.75, 1</p>
+      <p>Left Riemann sum: \( L_4 = 0.25[f(0) + f(0.25) + f(0.5) + f(0.75)] = 0.25[0 + 0.0625 + 0.25 + 0.5625] = 0.25 \times 0.875 = 0.21875 \)</p>
+      <p>Right Riemann sum: \( R_4 = 0.25[f(0.25) + f(0.5) + f(0.75) + f(1)] = 0.25[0.0625 + 0.25 + 0.5625 + 1] = 0.25 \times 1.875 = 0.46875 \)</p>
+      <p>Exact integral: \( \int_0^1 x^2 \, dx = \frac{1}{3} \approx 0.3333 \)</p>
+     </div>
+     
+     <h3>Example 2: Definite Integral as Limit</h3>
+     <p>Evaluate \( \int_0^1 x^2 \, dx \) using the definition.</p>
+     
+     <div class="highlight-box">
+      <strong>Solution:</strong>
+      <p>Using right Riemann sum with n subintervals:</p>
+      <p>\( \Delta x = \frac{1-0}{n} = \frac{1}{n} \)</p>
+      <p>\( x_k = k \cdot \frac{1}{n} = \frac{k}{n} \)</p>
+      <p>\( R_n = \sum_{k=1}^n f(x_k) \Delta x = \sum_{k=1}^n \left(\frac{k}{n}\right)^2 \cdot \frac{1}{n} = \frac{1}{n^3} \sum_{k=1}^n k^2 = \frac{1}{n^3} \cdot \frac{n(n+1)(2n+1)}{6} \)</p>
+      <p>\( \lim_{n \to \infty} R_n = \lim_{n \to \infty} \frac{2n^2 + 3n + 1}{6n^3} = \lim_{n \to \infty} \frac{2}{6n} + \frac{3}{6n^2} + \frac{1}{6n^3} = \frac{1}{3} \)</p>
+     </div>
+    </div>
+
+    <div class="section">
+     <h2>Visual Guide</h2>
+     <p>The canvas below demonstrates different types of Riemann sums:</p>
+     <canvas id="riemannCanvas" width="600" height="300" style="border: 1px solid #ccc; margin: 20px 0;"></canvas>
+     <p>The visualization shows left, right, and midpoint Riemann sums for a sample function.</p>
+    </div>
+
+    <div class="section">
+     <h2>Practice Problems</h2>
+     
+     <div class="problem-item">
+      <h3>Problem 1</h3>
+      <p>Compute the left Riemann sum for \( f(x) = \sin x \) on [0, π] with n = 4.</p>
+      <button class="solution-btn" onclick="toggleSolution(1)">Show Solution</button>
+      <div class="solution" id="solution-1" style="display: none;">
+       <strong>Solution:</strong>
+       <p>\( \Delta x = \frac{\pi - 0}{4} = \frac{\pi}{4} \)</p>
+       <p>Points: 0, π/4, π/2, 3π/4, π</p>
+       <p>\( L_4 = \frac{\pi}{4} [\sin 0 + \sin(\pi/4) + \sin(\pi/2) + \sin(3\pi/4)] <br>= \frac{\pi}{4} [0 + \frac{\sqrt{2}}{2} + 1 + \frac{\sqrt{2}}{2}] <br>= \frac{\pi}{4} (1 + \sqrt{2}) \)</p>
+      </div>
+     </div>
+     
+     <div class="problem-item">
+      <h3>Problem 2</h3>
+      <p>Find the exact value of \( \int_0^2 (x^2 + 1) \, dx \) and compare with the midpoint Riemann sum for n = 2.</p>
+      <button class="solution-btn" onclick="toggleSolution(2)">Show Solution</button>
+      <div class="solution" id="solution-2" style="display: none;">
+       <strong>Solution:</strong>
+       <p>Exact: \( \int_0^2 (x^2 + 1) \, dx = [\frac{x^3}{3} + x]_0^2 = (\frac{8}{3} + 2) = \frac{14}{3} \)</p>
+       <p>Midpoint with n=2: \( \Delta x = 1 \), midpoints: 0.5, 1.5</p>
+       <p>\( M_2 = 1[(0.5)^2 + 1 + (1.5)^2 + 1] = 1[0.25 + 1 + 2.25 + 1] = 4.5 = \frac{9}{2} \)</p>
+       <p>The midpoint approximation is closer to the exact value than left or right sums would be.</p>
+      </div>
+     </div>
+     
+     <div class="problem-item">
+      <h3>Problem 3</h3>
+      <p>Show that \( \int_0^1 x \, dx = \frac{1}{2} \) using the definition of the integral.</p>
+      <button class="solution-btn" onclick="toggleSolution(3)">Show Solution</button>
+      <div class="solution" id="solution-3" style="display: none;">
+       <strong>Solution:</strong>
+       <p>Using right Riemann sum: \( \Delta x = \frac{1}{n} \), \( x_k = \frac{k}{n} \)</p>
+       <p>\( R_n = \sum_{k=1}^n \frac{k}{n} \cdot \frac{1}{n} = \frac{1}{n^2} \sum_{k=1}^n k = \frac{1}{n^2} \cdot \frac{n(n+1)}{2} = \frac{n+1}{2n} \)</p>
+       <p>\( \lim_{n \to \infty} R_n = \lim_{n \to \infty} \frac{n+1}{2n} = \frac{1}{2} \)</p>
+      </div>
+     </div>
+    </div>
+
+    <div class="section">
+     <h2>Key Takeaways</h2>
+     <div class="key-takeaways">
+      <ul>
+       <li>Riemann sums approximate definite integrals by summing areas of rectangles</li>
+       <li>Definite integral is the limit of Riemann sums as partition norm → 0</li>
+       <li>Left, right, and midpoint sums provide different approximations</li>
+       <li>Midpoint sums are generally more accurate than left or right sums</li>
+       <li>Continuous functions are Riemann integrable</li>
+       <li>The integral represents the exact area under the curve</li>
+       <li>Riemann sums provide both theoretical foundation and computational method</li>
+       <li>All types of Riemann sums converge to the same limit for integrable functions</li>
+      </ul>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+   // Canvas visualization for Riemann sums
+   const canvas = document.getElementById('riemannCanvas');
+   const ctx = canvas.getContext('2d');
+   
+   // Set up coordinate system
+   const width = canvas.width;
+   const height = canvas.height;
+   const centerX = width / 2;
+   const centerY = height / 2;
+   
+   // Scale factors
+   const scaleX = 60;
+   const scaleY = 60;
+   
+   function drawGrid() {
+    ctx.strokeStyle = '#e0e0e0';
+    ctx.lineWidth = 1;
+    
+    // Vertical lines
+    for (let x = centerX; x < width; x += scaleX) {
+     ctx.beginPath();
+     ctx.moveTo(x, 0);
+     ctx.lineTo(x, height);
+     ctx.stroke();
+    }
+    for (let x = centerX; x > 0; x -= scaleX) {
+     ctx.beginPath();
+     ctx.moveTo(x, 0);
+     ctx.lineTo(x, height);
+     ctx.stroke();
+    }
+    
+    // Horizontal lines
+    for (let y = centerY; y < height; y += scaleY) {
+     ctx.beginPath();
+     ctx.moveTo(0, y);
+     ctx.lineTo(width, y);
+     ctx.stroke();
+    }
+    for (let y = centerY; y > 0; y -= scaleY) {
+     ctx.beginPath();
+     ctx.moveTo(0, y);
+     ctx.lineTo(width, y);
+     ctx.stroke();
+    }
+   }
+   
+   function drawAxes() {
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 2;
+    
+    // X-axis
+    ctx.beginPath();
+    ctx.moveTo(0, centerY);
+    ctx.lineTo(width, centerY);
+    ctx.stroke();
+    
+    // Y-axis
+    ctx.beginPath();
+    ctx.moveTo(centerX, 0);
+    ctx.lineTo(centerX, height);
+    ctx.stroke();
+    
+    // Axis labels
+    ctx.fillStyle = '#000';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+    
+    // X-axis labels
+    for (let i = -4; i <= 4; i++) {
+     if (i !== 0) {
+      const x = centerX + i * scaleX;
+      ctx.fillText(i.toString(), x, centerY + 15);
+     }
+    }
+    
+    // Y-axis labels
+    for (let i = -2; i <= 2; i++) {
+     if (i !== 0) {
+      const y = centerY - i * scaleY;
+      ctx.fillText(i.toString(), centerX - 15, y + 4);
+     }
+    }
+   }
+   
+   function plotFunction(func, color, label, a, b) {
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    
+    let firstPoint = true;
+    for (let x = a; x <= b; x += 0.1) {
+     const y = func(x);
+     const canvasX = centerX + x * scaleX;
+     const canvasY = centerY - y * scaleY;
+     
+     if (firstPoint) {
+      ctx.moveTo(canvasX, canvasY);
+      firstPoint = false;
+     } else {
+      ctx.lineTo(canvasX, canvasY);
+     }
+    }
+    ctx.stroke();
+    
+    // Add label
+    ctx.fillStyle = color;
+    ctx.font = '14px Arial';
+    ctx.textAlign = 'left';
+    ctx.fillText(label, 10, 30 + (color === '#ff6b6b' ? 0 : color === '#4ecdc4' ? 20 : 40));
+   }
+   
+   function drawRiemannRectangles(func, a, b, n, type, color) {
+    const deltaX = (b - a) / n;
+    
+    for (let i = 0; i < n; i++) {
+     const xLeft = a + i * deltaX;
+     const xRight = a + (i + 1) * deltaX;
+     
+     let height;
+     if (type === 'left') {
+      height = func(xLeft);
+     } else if (type === 'right') {
+      height = func(xRight);
+     } else if (type === 'midpoint') {
+      height = func((xLeft + xRight) / 2);
+     }
+     
+     const canvasX = centerX + xLeft * scaleX;
+     const canvasY = centerY - height * scaleY;
+     const rectWidth = deltaX * scaleX;
+     const rectHeight = height * scaleY;
+     
+     ctx.fillStyle = color;
+     ctx.fillRect(canvasX, canvasY, rectWidth, rectHeight);
+     ctx.strokeStyle = '#333';
+     ctx.strokeRect(canvasX, canvasY, rectWidth, rectHeight);
+    }
+   }
+   
+   function drawRiemannDemo() {
+    // Clear canvas
+    ctx.clearRect(0, 0, width, height);
+    
+    // Draw grid and axes
+    drawGrid();
+    drawAxes();
+    
+    // Define function
+    const f = x => 0.5 * x * x - 0.5 * x + 1; // quadratic function
+    
+    // Plot function
+    plotFunction(f, '#ff6b6b', 'f(x) = 0.5x² - 0.5x + 1', -2, 2);
+    
+    // Draw different types of Riemann sums
+    const a = -1, b = 1, n = 4;
+    
+    // Left Riemann sum
+    drawRiemannRectangles(f, a, b, n, 'left', 'rgba(255, 107, 107, 0.4)');
+    
+    // Right Riemann sum
+    drawRiemannRectangles(f, a, b, n, 'right', 'rgba(78, 205, 196, 0.4)');
+    
+    // Midpoint Riemann sum
+    drawRiemannRectangles(f, a, b, n, 'midpoint', 'rgba(155, 89, 182, 0.4)');
+    
+    // Add labels
+    ctx.fillStyle = '#333';
+    ctx.font = '14px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('Riemann Sums: Left (red), Right (teal), Midpoint (purple)', centerX, 20);
+    
+    ctx.font = '12px Arial';
+    ctx.fillText('As n → ∞, all Riemann sums converge to ∫ f(x) dx', centerX, height - 20);
+   }
+   
+   // Solution toggle functionality
+   function toggleSolution(problemNumber) {
+    const solution = document.getElementById(`solution-${problemNumber}`);
+    const button = solution.previousElementSibling;
+    
+    if (solution.style.display === 'none') {
+     solution.style.display = 'block';
+     button.textContent = 'Hide Solution';
+    } else {
+     solution.style.display = 'none';
+     button.textContent = 'Show Solution';
+    }
+   }
+   
+   // Initialize visualization when page loads
+   window.addEventListener('load', drawRiemannDemo);
+  </script>
+ </body>
+</html>

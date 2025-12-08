@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<!-- tags: Vector -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Position Vector of the Centroid of a Triangle
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+   }
+
+   .main-content {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 15px;
+    padding: 30px;
+    margin: 20px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+   }
+
+   .fancy-title {
+    text-align: center;
+    font-size: 2.5em;
+    font-weight: bold;
+    margin: 20px 0;
+    color: #2c3e50;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+   }
+
+   .description {
+    font-size: 1.2em;
+    line-height: 1.6;
+    margin: 20px 0;
+    color: #34495e;
+    text-align: center;
+   }
+
+   .content-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin: 30px 0;
+   }
+
+   .formula-block {
+    flex: 1;
+    min-width: 300px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 1.4em;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+   }
+
+   .diagram-block {
+    flex: 1;
+    min-width: 300px;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+   }
+
+   .interactive-demo {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    margin: 30px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+   }
+
+   .demo-title {
+    text-align: center;
+    font-size: 1.8em;
+    margin-bottom: 25px;
+    font-weight: bold;
+   }
+
+   .input-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin: 20px 0;
+    justify-content: center;
+   }
+
+   .input-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+   }
+
+   .input-field label {
+    font-weight: bold;
+    font-size: 1.1em;
+   }
+
+   .input-field input {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    width: 120px;
+    text-align: center;
+    transition: border-color 0.3s;
+   }
+
+   .input-field input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+   }
+
+   .button-group {
+    text-align: center;
+    margin: 25px 0;
+   }
+
+   .btn {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 1.1em;
+    cursor: pointer;
+    margin: 0 10px;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+   }
+
+   .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+   }
+
+   .btn:active {
+    transform: translateY(0);
+   }
+
+   .result-display {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    backdrop-filter: blur(10px);
+   }
+
+   .result-text {
+    font-size: 1.2em;
+    text-align: center;
+    margin: 10px 0;
+   }
+
+   .canvas-container {
+    text-align: center;
+    margin: 20px 0;
+   }
+
+   .centroid-canvas {
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+   }
+
+   .section {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    margin: 25px 0;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+   }
+
+   .section-title {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
+   }
+
+   .example-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+   }
+
+   .example-card {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+   }
+
+   .example-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(245, 87, 108, 0.4);
+   }
+
+   .example-card h4 {
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+   }
+
+   .example-detail {
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    display: none;
+   }
+
+   .calculation-steps {
+    margin: 15px 0;
+   }
+
+   .calculation-step {
+    margin: 8px 0;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 5px;
+    border-left: 4px solid #f5576c;
+   }
+
+   .practice-problems {
+    margin: 20px 0;
+   }
+
+   .problem-item {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+   }
+
+   .problem-item h4 {
+    margin: 0 0 15px 0;
+    font-size: 1.2em;
+   }
+
+   .solution-btn {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    color: #333;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 10px 0;
+    transition: all 0.3s;
+   }
+
+   .solution-btn:hover {
+    background: linear-gradient(135deg, #fcb69f 0%, #ffecd2 100%);
+    transform: scale(1.05);
+   }
+
+   .solution {
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 10px 0;
+    display: none;
+    border-left: 4px solid #667eea;
+   }
+
+   .key-takeaways {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    padding: 25px;
+    border-radius: 12px;
+    margin: 25px 0;
+   }
+
+   .takeaway-list {
+    list-style: none;
+    padding: 0;
+   }
+
+   .takeaway-item {
+    background: rgba(255, 255, 255, 0.8);
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+    font-weight: bold;
+   }
+
+   .error-message {
+    background: #ffebee;
+    color: #c62828;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px 0;
+    display: none;
+    text-align: center;
+    font-weight: bold;
+   }
+
+   @media (max-width: 768px) {
+    .content-wrapper {
+     flex-direction: column;
+    }
+
+    .input-group {
+     flex-direction: column;
+     align-items: center;
+    }
+
+    .fancy-title {
+     font-size: 2em;
+    }
+
+    .formula-block {
+     font-size: 1.2em;
+    }
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Vector">
+   Position Vector of the Centroid of a Triangle
+  </div>
+
+  <div class="container">
+   <div class="main-content">
+    <div class="description">
+     For a triangle \( \triangle \text{ABC} \) with vertices \( A(\vec{a}) \), \( B(\vec{b}) \), and \( C(\vec{c}) \), the position vector \( \vec{g} \) of its centroid G is:
+    </div>
+
+    <div class="content-wrapper">
+     <div class="formula-block">
+      $$ \vec{g} = \frac{\vec{a} + \vec{b} + \vec{c}}{3} $$
+     </div>
+
+     <div class="diagram-block">
+      <svg viewbox="0 0 160 120" xmlns="http://www.w3.org/2000/svg">
+       <!-- Triangle -->
+       <polygon fill="#e0f2f7" points="80,10 10,110 150,110" stroke="#000" stroke-width="1"></polygon>
+       <!-- Vertices Labels -->
+       <text font-size="8" x="78" y="8">A(\(\vec{a}\))</text>
+       <text font-size="8" x="2" y="118">B(\(\vec{b}\))</text>
+       <text font-size="8" x="142" y="118">C(\(\vec{c}\))</text>
+       <!-- Median AD -->
+       <line stroke="#555" stroke-dasharray="2,2" stroke-width="0.5" x1="80" x2="80" y1="10" y2="110"></line>
+       <text font-size="8" x="82" y="118">D(\(\vec{d}\))</text>
+       <circle cx="80" cy="110" fill="#555" r="1.5"></circle>
+       <!-- Centroid G -->
+       <circle cx="80" cy="76.67" fill="#f57c00" r="2"></circle>
+       <text fill="#f57c00" font-size="8" x="85" y="78">G(\(\vec{g}\))</text>
+       <!-- Markings for midpoint D -->
+       <line stroke="#000" stroke-width="1" x1="75" x2="85" y1="112" y2="112"></line>
+       <!-- BD side -->
+       <line stroke="#000" stroke-width="1" x1="78" x2="78" y1="110" y2="114"></line>
+       <line stroke="#000" stroke-width="1" x1="72" x2="72" y1="110" y2="114"></line>
+       <line stroke="#000" stroke-width="1" x1="75" x2="85" y1="112" y2="112"></line>
+       <!-- DC side -->
+       <line stroke="#000" stroke-width="1" x1="82" x2="82" y1="110" y2="114"></line>
+       <line stroke="#000" stroke-width="1" x1="88" x2="88" y1="110" y2="114"></line>
+       <!-- Ratio 2:1 on median AD -->
+       <path d="M80,40 A15,15 0 0,0 70,58" fill="none" stroke="#007bff" stroke-width="0.7"></path>
+       <text fill="#007bff" font-size="7" x="65" y="50">2</text>
+       <path d="M80,88 A10,10 0 0,0 73,98" fill="none" stroke="#007bff" stroke-width="0.7"></path>
+       <text fill="#007bff" font-size="7" x="68" y="95">1</text>
+      </svg>
+     </div>
+    </div>
+
+    <div class="interactive-demo">
+     <div class="demo-title">Interactive Centroid Calculator</div>
+
+     <div class="input-group">
+      <div class="input-field">
+       <label for="ax">A<sub>x</sub>:</label>
+       <input id="ax" step="any" type="number" value="1"/>
+      </div>
+      <div class="input-field">
+       <label for="ay">A<sub>y</sub>:</label>
+       <input id="ay" step="any" type="number" value="1"/>
+      </div>
+      <div class="input-field">
+       <label for="bx">B<sub>x</sub>:</label>
+       <input id="bx" step="any" type="number" value="5"/>
+      </div>
+      <div class="input-field">
+       <label for="by">B<sub>y</sub>:</label>
+       <input id="by" step="any" type="number" value="3"/>
+      </div>
+      <div class="input-field">
+       <label for="cx">C<sub>x</sub>:</label>
+       <input id="cx" step="any" type="number" value="3"/>
+      </div>
+      <div class="input-field">
+       <label for="cy">C<sub>y</sub>:</label>
+       <input id="cy" step="any" type="number" value="5"/>
+      </div>
+     </div>
+
+     <div class="button-group">
+      <button class="btn" onclick="calculateCentroid()">Calculate Centroid</button>
+      <button class="btn" onclick="resetDemo()">Reset</button>
+     </div>
+
+     <div class="error-message" id="errorMessage"></div>
+
+     <div class="result-display">
+      <div class="result-text" id="resultText">
+       Centroid Position Vector: <strong id="centroidResult">( , )</strong>
+      </div>
+     </div>
+
+     <div class="canvas-container">
+      <canvas class="centroid-canvas" height="400" id="centroidCanvas" width="500"></canvas>
+     </div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Mathematical Foundation</div>
+     <p>The centroid of a triangle is the point where the three medians intersect. A median is a line segment from a vertex to the midpoint of the opposite side.</p>
+     <p>The position vector of the centroid can be derived by considering that each median divides the triangle into two regions of equal area, and the centroid is the "center of mass" of the triangle when each vertex has equal weight.</p>
+     <div class="formula-block" style="margin: 20px 0;">
+      $$ \vec{g} = \frac{\vec{a} + \vec{b} + \vec{c}}{3} $$
+     </div>
+     <p>This formula shows that the centroid is simply the average of the position vectors of the three vertices.</p>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Worked Examples</div>
+     <div class="example-grid">
+      <div class="example-card" onclick="showExample(1)">
+       <h4>Example 1: Basic Calculation</h4>
+       <p>Find the centroid of triangle with vertices A(2,1), B(4,5), C(6,3)</p>
+      </div>
+      <div class="example-card" onclick="showExample(2)">
+       <h4>Example 2: Negative Coordinates</h4>
+       <p>Find the centroid of triangle with vertices A(-1,2), B(3,-1), C(1,4)</p>
+      </div>
+      <div class="example-card" onclick="showExample(3)">
+       <h4>Example 3: Decimal Coordinates</h4>
+       <p>Find the centroid of triangle with vertices A(1.5,2.5), B(4.5,1.5), C(2.5,4.5)</p>
+      </div>
+     </div>
+
+     <div class="example-detail" id="exampleDetail"></div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Applications</div>
+     <ul>
+      <li><strong>Center of Mass:</strong> The centroid represents the balance point of the triangle</li>
+      <li><strong>Geometric Center:</strong> Used in computer graphics for triangle rendering and collision detection</li>
+      <li><strong>Engineering:</strong> Important in structural analysis and finite element methods</li>
+      <li><strong>Physics:</strong> Used in calculating gravitational center of triangular plates</li>
+      <li><strong>Navigation:</strong> Helps in determining central positions in triangular formations</li>
+     </ul>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Practice Problems</div>
+     <div class="practice-problems">
+      <div class="problem-item">
+       <h4>Problem 1</h4>
+       <p>Find the position vector of the centroid of a triangle with vertices A(1,2), B(3,4), and C(5,2).</p>
+       <button class="solution-btn" onclick="toggleSolution(1)">Show Solution</button>
+       <div class="solution" id="solution1">
+        <p><strong>Solution:</strong></p>
+        <p>Using the centroid formula: \(\vec{g} = \frac{\vec{a} + \vec{b} + \vec{c}}{3}\)</p>
+        <p>\(\vec{g} = \frac{(1,2) + (3,4) + (5,2)}{3} = \frac{(9,8)}{3} = (3, \frac{8}{3})\)</p>
+        <p>Position vector of centroid: \((3, \frac{8}{3})\)</p>
+       </div>
+      </div>
+
+      <div class="problem-item">
+       <h4>Problem 2</h4>
+       <p>Determine the centroid of triangle ABC where A(-2,1), B(4,3), and C(2,-1).</p>
+       <button class="solution-btn" onclick="toggleSolution(2)">Show Solution</button>
+       <div class="solution" id="solution2">
+        <p><strong>Solution:</strong></p>
+        <p>\(\vec{g} = \frac{(-2,1) + (4,3) + (2,-1)}{3} = \frac{(4,3)}{3} = (\frac{4}{3}, 1)\)</p>
+        <p>Position vector of centroid: \((\frac{4}{3}, 1)\)</p>
+       </div>
+      </div>
+
+      <div class="problem-item">
+       <h4>Problem 3</h4>
+       <p>If the centroid of triangle with vertices A(x₁,y₁), B(x₂,y₂), C(x₃,y₃) is (2,3), find the sum of coordinates.</p>
+       <button class="solution-btn" onclick="toggleSolution(3)">Show Solution</button>
+       <div class="solution" id="solution3">
+        <p><strong>Solution:</strong></p>
+        <p>Centroid coordinates: \((\frac{x_1+x_2+x_3}{3}, \frac{y_1+y_2+y_3}{3}) = (2,3)\)</p>
+        <p>Therefore: \(\frac{x_1+x_2+x_3}{3} = 2\) ⇒ x₁+x₂+x₃ = 6</p>
+        <p>And: \(\frac{y_1+y_2+y_3}{3} = 3\) ⇒ y₁+y₂+y₃ = 9</p>
+        <p>Sum of all coordinates: 6 + 9 = 15</p>
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <div class="section-title">Key Takeaways</div>
+     <ul class="takeaway-list">
+      <li class="takeaway-item">The centroid is the average position of the three vertices</li>
+      <li class="takeaway-item">Formula: \(\vec{g} = \frac{\vec{a} + \vec{b} + \vec{c}}{3}\)</li>
+      <li class="takeaway-item">Each median divides the triangle into two equal areas</li>
+      <li class="takeaway-item">The centroid is the intersection point of all three medians</li>
+      <li class="takeaway-item">Coordinates: \((\frac{x_1+x_2+x_3}{3}, \frac{y_1+y_2+y_3}{3})\)</li>
+      <li class="takeaway-item">Used as center of mass and geometric center of triangles</li>
+     </ul>
+    </div>
+   </div>
+  </div>
+
+  <script>
+   function calculateCentroid() {
+    try {
+      const ax = parseFloat(document.getElementById('ax').value) || 0;
+      const ay = parseFloat(document.getElementById('ay').value) || 0;
+      const bx = parseFloat(document.getElementById('bx').value) || 0;
+      const by = parseFloat(document.getElementById('by').value) || 0;
+      const cx = parseFloat(document.getElementById('cx').value) || 0;
+      const cy = parseFloat(document.getElementById('cy').value) || 0;
+
+      const gx = (ax + bx + cx) / 3;
+      const gy = (ay + by + cy) / 3;
+
+      document.getElementById('centroidResult').textContent = `(${gx.toFixed(2)}, ${gy.toFixed(2)})`;
+      document.getElementById('errorMessage').style.display = 'none';
+
+      drawCentroidVisualization(ax, ay, bx, by, cx, cy, gx, gy);
+    } catch (error) {
+      document.getElementById('errorMessage').textContent = 'Error calculating centroid. Please check your input values.';
+      document.getElementById('errorMessage').style.display = 'block';
+    }
+   }
+
+   function drawCentroidVisualization(ax, ay, bx, by, cx, cy, gx, gy) {
+    const canvas = document.getElementById('centroidCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Calculate bounds and scaling
+    const points = [{x: ax, y: ay}, {x: bx, y: by}, {x: cx, y: cy}];
+    const minX = Math.min(...points.map(p => p.x)) - 1;
+    const maxX = Math.max(...points.map(p => p.x)) + 1;
+    const minY = Math.min(...points.map(p => p.y)) - 1;
+    const maxY = Math.max(...points.map(p => p.y)) + 1;
+
+    const scaleX = (canvas.width - 60) / (maxX - minX);
+    const scaleY = (canvas.height - 60) / (maxY - minY);
+    const scale = Math.min(scaleX, scaleY);
+
+    const offsetX = 30 - minX * scale;
+    const offsetY = 30 - minY * scale;
+
+    // Transform coordinates to canvas
+    const transformX = x => offsetX + x * scale;
+    const transformY = y => canvas.height - (offsetY + y * scale);
+
+    // Draw grid
+    ctx.strokeStyle = '#e0e0e0';
+    ctx.lineWidth = 1;
+    for (let i = Math.floor(minX); i <= Math.ceil(maxX); i++) {
+      const x = transformX(i);
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, canvas.height);
+      ctx.stroke();
+    }
+    for (let i = Math.floor(minY); i <= Math.ceil(maxY); i++) {
+      const y = transformY(i);
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(canvas.width, y);
+      ctx.stroke();
+    }
+
+    // Draw triangle
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 2;
+    ctx.fillStyle = 'rgba(100, 150, 255, 0.2)';
+    ctx.beginPath();
+    ctx.moveTo(transformX(ax), transformY(ay));
+    ctx.lineTo(transformX(bx), transformY(by));
+    ctx.lineTo(transformX(cx), transformY(cy));
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Draw medians
+    ctx.strokeStyle = '#666';
+    ctx.setLineDash([5, 5]);
+    ctx.lineWidth = 1;
+
+    // Median from A to midpoint of BC
+    const mxBC = (bx + cx) / 2;
+    const myBC = (by + cy) / 2;
+    ctx.beginPath();
+    ctx.moveTo(transformX(ax), transformY(ay));
+    ctx.lineTo(transformX(mxBC), transformY(myBC));
+    ctx.stroke();
+
+    // Median from B to midpoint of AC
+    const mxAC = (ax + cx) / 2;
+    const myAC = (ay + cy) / 2;
+    ctx.beginPath();
+    ctx.moveTo(transformX(bx), transformY(by));
+    ctx.lineTo(transformX(mxAC), transformY(myAC));
+    ctx.stroke();
+
+    // Median from C to midpoint of AB
+    const mxAB = (ax + bx) / 2;
+    const myAB = (ay + by) / 2;
+    ctx.beginPath();
+    ctx.moveTo(transformX(cx), transformY(cy));
+    ctx.lineTo(transformX(mxAB), transformY(myAB));
+    ctx.stroke();
+
+    ctx.setLineDash([]);
+
+    // Draw vertices
+    ctx.fillStyle = '#e74c3c';
+    ctx.beginPath();
+    ctx.arc(transformX(ax), transformY(ay), 4, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(transformX(bx), transformY(by), 4, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(transformX(cx), transformY(cy), 4, 0, 2 * Math.PI);
+    ctx.fill();
+
+    // Draw centroid
+    ctx.fillStyle = '#f39c12';
+    ctx.beginPath();
+    ctx.arc(transformX(gx), transformY(gy), 6, 0, 2 * Math.PI);
+    ctx.fill();
+
+    // Draw labels
+    ctx.fillStyle = '#333';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('A', transformX(ax), transformY(ay) - 8);
+    ctx.fillText('B', transformX(bx), transformY(bx) - 8);
+    ctx.fillText('C', transformX(cx), transformY(cy) - 8);
+    ctx.fillText('G', transformX(gx), transformY(gy) - 8);
+
+    // Draw legend
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.fillRect(10, 10, 120, 80);
+    ctx.strokeStyle = '#333';
+    ctx.strokeRect(10, 10, 120, 80);
+
+    ctx.fillStyle = '#333';
+    ctx.font = '10px Arial';
+    ctx.textAlign = 'left';
+    ctx.fillText('Legend:', 15, 25);
+    ctx.fillText('● A, B, C: Vertices', 15, 40);
+    ctx.fillText('● G: Centroid', 15, 55);
+    ctx.fillText('--- : Medians', 15, 70);
+   }
+
+   function showExample(exampleNumber) {
+    const detail = document.getElementById('exampleDetail');
+    let content = '';
+
+    switch(exampleNumber) {
+      case 1:
+        content = `
+          <h4>Detailed Example 1 - Basic Calculation</h4>
+          <div class="calculation-steps">
+            <div class="calculation-step">Points: A(2,1), B(4,5), C(6,3)</div>
+            <div class="calculation-step">Centroid formula: \(\vec{g} = \frac{\vec{a} + \vec{b} + \vec{c}}{3}\)</div>
+            <div class="calculation-step">\(\vec{g} = \frac{(2,1) + (4,5) + (6,3)}{3} = \frac{(12,9)}{3} = (4, 3)\)</div>
+            <div class="calculation-step">Position vector = (4, 3)</div>
+          </div>
+        `;
+        break;
+      case 2:
+        content = `
+          <h4>Detailed Example 2 - Negative Coordinates</h4>
+          <div class="calculation-steps">
+            <div class="calculation-step">Points: A(-1,2), B(3,-1), C(1,4)</div>
+            <div class="calculation-step">Centroid formula: \(\vec{g} = \frac{\vec{a} + \vec{b} + \vec{c}}{3}\)</div>
+            <div class="calculation-step">\(\vec{g} = \frac{(-1,2) + (3,-1) + (1,4)}{3} = \frac{(3,5)}{3} = (1, \frac{5}{3})\)</div>
+            <div class="calculation-step">Position vector = (1, 5/3)</div>
+          </div>
+        `;
+        break;
+      case 3:
+        content = `
+          <h4>Detailed Example 3 - Decimal Coordinates</h4>
+          <div class="calculation-steps">
+            <div class="calculation-step">Points: A(1.5,2.5), B(4.5,1.5), C(2.5,4.5)</div>
+            <div class="calculation-step">Centroid formula: \(\vec{g} = \frac{\vec{a} + \vec{b} + \vec{c}}{3}\)</div>
+            <div class="calculation-step">\(\vec{g} = \frac{(1.5,2.5) + (4.5,1.5) + (2.5,4.5)}{3} = \frac{(8.5,8.5)}{3} = (2.833, 2.833)\)</div>
+            <div class="calculation-step">Position vector ≈ (2.83, 2.83)</div>
+          </div>
+        `;
+        break;
+    }
+
+    detail.innerHTML = content;
+    detail.style.display = 'block';
+    MathJax.typesetPromise();
+   }
+
+   function toggleSolution(problemNumber) {
+    const solution = document.getElementById('solution' + problemNumber);
+    if (solution.style.display === 'none' || solution.style.display === '') {
+      solution.style.display = 'block';
+    } else {
+      solution.style.display = 'none';
+    }
+   }
+
+   function resetDemo() {
+    document.getElementById('ax').value = '1';
+    document.getElementById('ay').value = '1';
+    document.getElementById('bx').value = '5';
+    document.getElementById('by').value = '3';
+    document.getElementById('cx').value = '3';
+    document.getElementById('cy').value = '5';
+    document.getElementById('centroidResult').textContent = '( , )';
+    document.getElementById('errorMessage').style.display = 'none';
+    calculateCentroid();
+   }
+
+   // Initialize with default values
+   document.addEventListener('DOMContentLoaded', function() {
+    calculateCentroid();
+   });
+  </script>
+ </body>
+</html>

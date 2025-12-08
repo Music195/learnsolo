@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<!-- tags: Others -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Integer Division
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+    /* Enhanced text containment and scrolling */
+    .main-content {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      overflow: auto;
+      max-height: none;
+    }
+    
+    .explain, .graybox, .section {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      overflow: auto;
+    }
+    
+    /* Theorem box styling */
+    .theorem-box {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 15px 0;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+    
+    .theorem-box h3 {
+      margin-top: 0;
+      font-size: 1.3em;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    }
+    
+    .theorem-box .formula {
+      font-size: 1.4em;
+      font-weight: bold;
+      background: rgba(255,255,255,0.2);
+      padding: 10px;
+      border-radius: 8px;
+      margin: 10px 0;
+      text-align: center;
+    }
+    
+    /* Interactive demo styling */
+    .interactive-demo {
+      background: #f8f9fa;
+      border: 2px solid #007acc;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+      text-align: center;
+    }
+    
+    .demo-input {
+      padding: 10px;
+      font-size: 16px;
+      border: 2px solid #007acc;
+      border-radius: 6px;
+      margin: 10px;
+      width: 150px;
+    }
+    
+    .demo-button {
+      background: #007acc;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px;
+      transition: background 0.3s;
+    }
+    
+    .demo-button:hover {
+      background: #0056b3;
+    }
+    
+    .demo-result {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 15px 0;
+      min-height: 30px;
+    }
+    
+    /* Problem items styling */
+    .problem-item {
+      background: #fff3cd;
+      border: 2px solid #ffc107;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      position: relative;
+    }
+    
+    .problem-item .problem-number {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: #ffc107;
+      color: #000;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: bold;
+      font-size: 0.9em;
+    }
+    
+    .problem-item .problem-content {
+      margin-left: 60px;
+    }
+    
+    /* Solution button styling */
+    .solution-button {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      margin: 10px 0;
+      transition: background 0.3s;
+    }
+    
+    .solution-button:hover {
+      background: #218838;
+    }
+    
+    .solution-content {
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      border-radius: 6px;
+      padding: 15px;
+      margin: 10px 0;
+      display: none;
+    }
+    
+    /* Key takeaways styling */
+    .key-takeaways {
+      background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+      color: #333;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 20px 0;
+      border: 2px solid rgba(255,255,255,0.3);
+    }
+    
+    .key-takeaways h3 {
+      margin-top: 0;
+      text-align: center;
+      font-size: 1.4em;
+      text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
+    }
+    
+    .key-takeaways ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+    
+    .key-takeaways li {
+      margin: 8px 0;
+      font-weight: bold;
+    }
+    
+    /* Canvas visualization styling */
+    .visualization-container {
+      text-align: center;
+      margin: 20px 0;
+    }
+    
+    #divisionCanvas {
+      border: 2px solid #007acc;
+      border-radius: 8px;
+      background: white;
+      max-width: 100%;
+      height: auto;
+    }
+    
+    /* Section styling */
+    .section {
+      margin: 30px 0;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border-left: 4px solid #007acc;
+    }
+    
+    .section h2 {
+      color: #007acc;
+      margin-top: 0;
+      font-size: 1.5em;
+    }
+    
+    /* Enhanced math styling */
+    .math {
+      font-family: 'Times New Roman', serif;
+    }
+    
+    .highlight {
+      background: #fff3cd;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    
+    .orange { color: #fd7e14; }
+    .blue { color: #007bff; }
+    .green { color: #28a745; }
+    .red { color: #dc3545; }
+    
+    /* Division visualization specific */
+    .division-steps {
+      background: #e9ecef;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: monospace;
+      font-size: 16px;
+    }
+    
+    .division-step {
+      margin: 8px 0;
+      padding: 5px;
+      background: white;
+      border-radius: 4px;
+    }
+    
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .theorem-box, .interactive-demo, .section {
+        padding: 15px;
+      }
+      
+      .demo-input {
+        width: 120px;
+      }
+      
+      .problem-item .problem-content {
+        margin-left: 50px;
+      }
+    }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Others">
+   Integer Division
+  </div>
+  <div class="container">
+   <div class="main-content">
+    <div class="section">
+     <h2>Core Concept: Division Algorithm</h2>
+     <p>The Division Algorithm (also known as the Division Theorem) states that for any integer <strong>a</strong> and any positive integer <strong>b</strong>, there exist unique integers <strong>q</strong> (quotient) and <strong>r</strong> (remainder) such that:</p>
+     
+     <div class="theorem-box">
+      <h3>Division Algorithm Theorem</h3>
+      <div class="formula">
+       $a = bq + r,\quad 0 \leq r < b$
+      </div>
+      <p>Where:</p>
+      <ul style="color: white;">
+       <li><strong>a</strong> is the dividend</li>
+       <li><strong>b</strong> is the divisor (positive integer)</li>
+       <li><strong>q</strong> is the quotient</li>
+       <li><strong>r</strong> is the remainder (0 ≤ r < b)</li>
+      </ul>
+     </div>
+     
+     <p>This theorem guarantees that division with remainder is always possible and the result is unique.</p>
+    </div>
+
+    <div class="section">
+     <h2>Detailed Examples</h2>
+     
+     <h3>Example 1: Positive Numbers</h3>
+     <p>Divide 17 by 5:</p>
+     <div class="division-steps">
+      <div class="division-step">17 ÷ 5 = 3 (quotient) with remainder 2</div>
+      <div class="division-step">Check: 5 × 3 + 2 = 15 + 2 = 17 ✓</div>
+     </div>
+     
+     <h3>Example 2: Negative Dividend</h3>
+     <p>Divide -17 by 5:</p>
+     <div class="division-steps">
+      <div class="division-step">-17 ÷ 5 = -4 (quotient) with remainder 3</div>
+      <div class="division-step">Check: 5 × (-4) + 3 = -20 + 3 = -17 ✓</div>
+      <div class="division-step">Note: Remainder is always non-negative</div>
+     </div>
+     
+     <h3>Example 3: Exact Division</h3>
+     <p>Divide 24 by 6:</p>
+     <div class="division-steps">
+      <div class="division-step">24 ÷ 6 = 4 (quotient) with remainder 0</div>
+      <div class="division-step">Check: 6 × 4 + 0 = 24 ✓</div>
+     </div>
+    </div>
+
+    <div class="section">
+     <h2>Visual Guide</h2>
+     <div class="visualization-container">
+      <canvas id="divisionCanvas" width="800" height="500"></canvas>
+     </div>
+     <p>The visualization above demonstrates the Division Algorithm by showing how numbers are distributed along a number line and how quotients and remainders are determined.</p>
+    </div>
+
+    <div class="section">
+     <h2>Interactive Demo</h2>
+     <div class="interactive-demo">
+      <h3>Division Algorithm Calculator</h3>
+      <p>Enter dividend and divisor to see the quotient and remainder:</p>
+      <input type="number" id="dividend" class="demo-input" placeholder="Dividend (a)" value="17">
+      <input type="number" id="divisor" class="demo-input" placeholder="Divisor (b)" min="1" value="5">
+      <br>
+      <button onclick="calculateDivision()" class="demo-button">Calculate</button>
+      <div id="demoResult" class="demo-result"></div>
+      <div id="divisionSteps"></div>
+     </div>
+    </div>
+
+    <div class="section">
+     <h2>Applications</h2>
+     <ul>
+      <li><strong>Clock Arithmetic:</strong> Used in modular arithmetic and time calculations</li>
+      <li><strong>Computer Science:</strong> Essential for implementing division operations in programming</li>
+      <li><strong>Number Theory:</strong> Foundation for modular arithmetic and the study of remainders</li>
+      <li><strong>Cryptography:</strong> Used in RSA algorithm and other cryptographic systems</li>
+      <li><strong>Calendar Calculations:</strong> Determining days of the week, leap years, etc.</li>
+     </ul>
+    </div>
+
+    <div class="section">
+     <h2>Practice Problems</h2>
+     
+     <div class="problem-item">
+      <div class="problem-number">1</div>
+      <div class="problem-content">
+       <p>Find the quotient and remainder when 47 is divided by 8.</p>
+       <button class="solution-button" onclick="toggleSolution('sol1')">Show Solution</button>
+       <div id="sol1" class="solution-content">
+        <p>47 ÷ 8 = 5 (quotient) with remainder 7</p>
+        <p>Check: 8 × 5 + 7 = 40 + 7 = 47 ✓</p>
+       </div>
+      </div>
+     </div>
+     
+     <div class="problem-item">
+      <div class="problem-number">2</div>
+      <div class="problem-content">
+       <p>Find the quotient and remainder when -23 is divided by 6.</p>
+       <button class="solution-button" onclick="toggleSolution('sol2')">Show Solution</button>
+       <div id="sol2" class="solution-content">
+        <p>-23 ÷ 6 = -4 (quotient) with remainder 1</p>
+        <p>Check: 6 × (-4) + 1 = -24 + 1 = -23 ✓</p>
+       </div>
+      </div>
+     </div>
+     
+     <div class="problem-item">
+      <div class="problem-number">3</div>
+      <div class="problem-content">
+       <p>What is the remainder when 123 is divided by 13?</p>
+       <button class="solution-button" onclick="toggleSolution('sol3')">Show Solution</button>
+       <div id="sol3" class="solution-content">
+        <p>123 ÷ 13 = 9 (quotient) with remainder 6</p>
+        <p>Check: 13 × 9 + 6 = 117 + 6 = 123 ✓</p>
+        <p>The remainder is 6.</p>
+       </div>
+      </div>
+     </div>
+     
+     <div class="problem-item">
+      <div class="problem-number">4</div>
+      <div class="problem-content">
+       <p>Find integers q and r such that 89 = 11q + r, where 0 ≤ r < 11.</p>
+       <button class="solution-button" onclick="toggleSolution('sol4')">Show Solution</button>
+       <div id="sol4" class="solution-content">
+        <p>89 ÷ 11 = 8 (quotient) with remainder 1</p>
+        <p>So q = 8, r = 1</p>
+        <p>Check: 11 × 8 + 1 = 88 + 1 = 89 ✓</p>
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <h3>Key Takeaways</h3>
+     <ul>
+      <li>The Division Algorithm works for any integer dividend and positive integer divisor</li>
+      <li>The remainder r is always non-negative and less than the divisor b</li>
+      <li>The quotient q can be positive, negative, or zero</li>
+      <li>This theorem is fundamental to modular arithmetic</li>
+      <li>The result is unique for each pair (a, b)</li>
+     </ul>
+    </div>
+   </div>
+  </div>
+  <script>
+    function toggleSolution(id) {
+      const solution = document.getElementById(id);
+      const button = solution.previousElementSibling;
+      
+      if (solution.style.display === 'none' || solution.style.display === '') {
+        solution.style.display = 'block';
+        button.textContent = 'Hide Solution';
+      } else {
+        solution.style.display = 'none';
+        button.textContent = 'Show Solution';
+      }
+    }
+
+    function drawDivisionVisualization() {
+      const canvas = document.getElementById('divisionCanvas');
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+      
+      // Clear canvas
+      ctx.clearRect(0, 0, width, height);
+      
+      // Set up coordinate system
+      const margin = 60;
+      const plotWidth = width - 2 * margin;
+      const plotHeight = height - 2 * margin;
+      const centerY = height / 2;
+      
+      // Draw background
+      ctx.fillStyle = '#f8f9fa';
+      ctx.fillRect(0, 0, width, height);
+      
+      // Draw number line
+      ctx.strokeStyle = '#333';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(margin, centerY);
+      ctx.lineTo(width - margin, centerY);
+      ctx.stroke();
+      
+      // Draw tick marks and labels
+      ctx.font = '12px Arial';
+      ctx.textAlign = 'center';
+      for (let i = -10; i <= 20; i += 2) {
+        const x = margin + ((i + 10) / 30) * plotWidth;
+        ctx.beginPath();
+        ctx.moveTo(x, centerY - 5);
+        ctx.lineTo(x, centerY + 5);
+        ctx.stroke();
+        ctx.fillText(i.toString(), x, centerY + 20);
+      }
+      
+      // Example: 17 ÷ 5
+      const dividend = 17;
+      const divisor = 5;
+      const quotient = Math.floor(dividend / divisor);
+      const remainder = dividend % divisor;
+      
+      // Draw dividend point
+      const dividendX = margin + ((dividend + 10) / 30) * plotWidth;
+      ctx.fillStyle = '#007acc';
+      ctx.beginPath();
+      ctx.arc(dividendX, centerY, 6, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.fillStyle = '#333';
+      ctx.fillText('17', dividendX, centerY - 15);
+      
+      // Draw multiples of divisor
+      ctx.fillStyle = '#28a745';
+      for (let i = 0; i <= quotient + 1; i++) {
+        const multiple = i * divisor;
+        const x = margin + ((multiple + 10) / 30) * plotWidth;
+        ctx.beginPath();
+        ctx.arc(x, centerY, 4, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.fillStyle = '#333';
+        ctx.fillText(`${multiple}`, x, centerY - 15);
+        ctx.fillStyle = '#28a745';
+      }
+      
+      // Draw the quotient * divisor point
+      const quotientMultipleX = margin + ((quotient * divisor + 10) / 30) * plotWidth;
+      ctx.fillStyle = '#ff9800';
+      ctx.beginPath();
+      ctx.arc(quotientMultipleX, centerY, 5, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.fillStyle = '#333';
+      ctx.fillText(`${quotient * divisor}`, quotientMultipleX, centerY - 15);
+      
+      // Draw arrows and labels
+      ctx.strokeStyle = '#007acc';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(dividendX, centerY - 30);
+      ctx.lineTo(quotientMultipleX, centerY - 30);
+      ctx.stroke();
+      
+      // Arrow head
+      ctx.beginPath();
+      ctx.moveTo(quotientMultipleX, centerY - 30);
+      ctx.lineTo(quotientMultipleX - 5, centerY - 25);
+      ctx.lineTo(quotientMultipleX - 5, centerY - 35);
+      ctx.closePath();
+      ctx.fillStyle = '#007acc';
+      ctx.fill();
+      
+      ctx.fillStyle = '#007acc';
+      ctx.font = '14px Arial';
+      ctx.fillText(`Remainder = ${remainder}`, (dividendX + quotientMultipleX) / 2, centerY - 40);
+      
+      // Legend
+      ctx.fillStyle = '#333';
+      ctx.font = '12px Arial';
+      ctx.textAlign = 'left';
+      ctx.fillText('Legend:', margin, height - 60);
+      ctx.fillText('• Dividend (17)', margin + 10, height - 45);
+      ctx.fillText('• Multiples of divisor (5)', margin + 10, height - 30);
+      ctx.fillText('• Quotient × divisor (15)', margin + 10, height - 15);
+      
+      // Draw colored dots for legend
+      ctx.fillStyle = '#007acc';
+      ctx.beginPath();
+      ctx.arc(margin, height - 47, 3, 0, 2 * Math.PI);
+      ctx.fill();
+      
+      ctx.fillStyle = '#28a745';
+      ctx.beginPath();
+      ctx.arc(margin, height - 32, 3, 0, 2 * Math.PI);
+      ctx.fill();
+      
+      ctx.fillStyle = '#ff9800';
+      ctx.beginPath();
+      ctx.arc(margin, height - 17, 3, 0, 2 * Math.PI);
+      ctx.fill();
+      
+      // Title
+      ctx.fillStyle = '#333';
+      ctx.font = '16px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('Division Algorithm: 17 ÷ 5 = 3 with remainder 2', width/2, 30);
+    }
+
+    function calculateDivision() {
+      const dividendInput = document.getElementById('dividend');
+      const divisorInput = document.getElementById('divisor');
+      const result = document.getElementById('demoResult');
+      const steps = document.getElementById('divisionSteps');
+      
+      const dividend = parseInt(dividendInput.value);
+      const divisor = parseInt(divisorInput.value);
+      
+      if (isNaN(dividend) || isNaN(divisor) || divisor <= 0) {
+        result.textContent = 'Please enter valid numbers (divisor must be positive)';
+        result.style.color = '#f44336';
+        steps.innerHTML = '';
+        return;
+      }
+      
+      const quotient = Math.floor(dividend / divisor);
+      const remainder = dividend % divisor;
+      
+      // Display result
+      result.innerHTML = `<strong>${dividend} ÷ ${divisor} = ${quotient} with remainder ${remainder}</strong>`;
+      result.style.color = '#4caf50';
+      
+      // Display steps
+      steps.innerHTML = `
+        <div style="background: #e9ecef; padding: 15px; border-radius: 8px; margin-top: 10px;">
+          <h4>Division Steps:</h4>
+          <div style="font-family: monospace; font-size: 14px; line-height: 1.5;">
+            <div>• ${dividend} ÷ ${divisor} = ${quotient} (quotient)</div>
+            <div>• Remainder = ${dividend} - (${divisor} × ${quotient}) = ${dividend} - ${divisor * quotient} = ${remainder}</div>
+            <div>• Verification: ${divisor} × ${quotient} + ${remainder} = ${divisor * quotient} + ${remainder} = ${dividend} ✓</div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Initialize visualization when page loads
+    window.onload = function() {
+      drawDivisionVisualization();
+      
+      // Set up interactive demo
+      const dividendInput = document.getElementById('dividend');
+      const divisorInput = document.getElementById('divisor');
+      
+      dividendInput.addEventListener('input', calculateDivision);
+      divisorInput.addEventListener('input', calculateDivision);
+      calculateDivision(); // Initial calculation
+    };
+  </script>
+ </body>
+</html>

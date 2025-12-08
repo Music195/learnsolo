@@ -2,6 +2,7 @@ import requests
 from flask import Flask, render_template, redirect, request, url_for, Response
 import os
 import json
+import re
 import lists_of_kind_of_problem as lkp
 import google_drive_link as gdl
 
@@ -67,6 +68,12 @@ def view_note(note_path):
     except FileNotFoundError:
         return "<h1>Note file missing</h1>", 404
 
+    # Extract title from fancy-title div
+    note_title = "📚 View By Topics"  # default
+    title_match = re.search(r'<div class="fancy-title"[^>]*>([^<]+)</div>', content)
+    if title_match:
+        note_title = title_match.group(1)
+
     # ...existing code...
     notes_json = json.dumps(notes_list)
     return render_template(
@@ -78,7 +85,8 @@ def view_note(note_path):
         content=content,
         notes_json=notes_json,
         folders=folders,
-        subfolders=subfolders 
+        subfolders=subfolders,
+        note_title=note_title
     )
     
 @app.route('/note/kind_of_problem')

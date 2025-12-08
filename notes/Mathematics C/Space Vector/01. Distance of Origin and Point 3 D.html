@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<!-- tags: Space Vector -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Distance between Origin and a Point in 3D Space
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   .interactive-demo {
+     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+     border: 2px solid #4a90e2;
+     border-radius: 15px;
+     padding: 25px;
+     margin: 20px 0;
+     box-shadow: 0 8px 25px rgba(74, 144, 226, 0.2);
+     color: white;
+   }
+   .demo-controls {
+     display: flex;
+     flex-wrap: wrap;
+     gap: 15px;
+     margin-bottom: 20px;
+     align-items: center;
+   }
+   .control-group {
+     display: flex;
+     flex-direction: column;
+     gap: 5px;
+   }
+   .control-group label {
+     font-weight: bold;
+     color: #e8f4f8;
+     font-size: 14px;
+   }
+   .control-group input {
+     padding: 8px 12px;
+     border: 2px solid #bdc3c7;
+     border-radius: 8px;
+     font-size: 14px;
+     transition: border-color 0.3s;
+     width: 100px;
+   }
+   .control-group input:focus {
+     outline: none;
+     border-color: #4a90e2;
+     box-shadow: 0 0 5px rgba(74, 144, 226, 0.3);
+   }
+   .demo-button {
+     background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+     color: #2c3e50;
+     border: none;
+     padding: 12px 25px;
+     border-radius: 8px;
+     cursor: pointer;
+     font-weight: bold;
+     transition: transform 0.2s, box-shadow 0.2s;
+     align-self: flex-end;
+   }
+   .demo-button:hover {
+     transform: translateY(-2px);
+     box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
+   }
+   .demo-result {
+     background: white;
+     border-radius: 10px;
+     padding: 20px;
+     margin-top: 20px;
+     border-left: 5px solid #4a90e2;
+     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+   }
+   .result-highlight {
+     background: #ecf0f1;
+     padding: 10px;
+     border-radius: 5px;
+     margin: 10px 0;
+     font-family: 'Courier New', monospace;
+   }
+   .practice-problem {
+     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+     color: white;
+     border: none;
+     padding: 15px 25px;
+     border-radius: 10px;
+     cursor: pointer;
+     font-weight: bold;
+     margin: 10px 0;
+     width: 100%;
+     transition: all 0.3s;
+   }
+   .practice-problem:hover {
+     background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+     transform: translateY(-2px);
+   }
+   .solution {
+     background: #f8f9fa;
+     border: 2px solid #28a745;
+     border-radius: 10px;
+     padding: 20px;
+     margin-top: 15px;
+     display: none;
+     border-left: 5px solid #28a745;
+   }
+   .solution.show {
+     display: block;
+   }
+   .key-takeaways {
+     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+     color: white;
+     padding: 25px;
+     border-radius: 15px;
+     margin: 30px 0;
+     box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+   }
+   .key-takeaways h3 {
+     margin-top: 0;
+     color: white;
+     text-align: center;
+     font-size: 1.4em;
+   }
+   .key-takeaways ul {
+     line-height: 2.2;
+     margin: 0;
+   }
+   .key-takeaways li {
+     margin: 10px 0;
+     padding-left: 20px;
+     position: relative;
+   }
+   .key-takeaways li:before {
+     content: "✓";
+     position: absolute;
+     left: 0;
+     color: #ffd700;
+     font-weight: bold;
+   }
+   .enhanced-diagram {
+     background: white;
+     border-radius: 15px;
+     padding: 20px;
+     margin: 20px 0;
+     box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+     text-align: center;
+   }
+   .formula-highlight {
+     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+     color: white;
+     padding: 20px;
+     border-radius: 12px;
+     margin: 20px 0;
+     text-align: center;
+     font-size: 1.3em;
+     box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Space Vector">
+   Distance between Origin and a Point in 3D Space
+  </div>
+  <div class="container">
+   <div class="main-content">
+
+    <!-- Interactive 3D Distance Calculator -->
+    <div class="interactive-demo">
+     <h3 style="color: #e8f4f8; margin-top: 0; text-align: center;">🧮 Interactive 3D Distance Calculator</h3>
+     <p style="text-align: center; color: #e8f4f8; margin-bottom: 20px;">Enter the coordinates of a point to calculate its distance from the origin!</p>
+
+     <div class="demo-controls">
+      <div class="control-group">
+       <label for="coord-x">x-coordinate (a):</label>
+       <input type="number" id="coord-x" step="0.1" value="3">
+      </div>
+
+      <div class="control-group">
+       <label for="coord-y">y-coordinate (b):</label>
+       <input type="number" id="coord-y" step="0.1" value="4">
+      </div>
+
+      <div class="control-group">
+       <label for="coord-z">z-coordinate (c):</label>
+       <input type="number" id="coord-z" step="0.1" value="5">
+      </div>
+
+      <button class="demo-button" onclick="calculateDistance()">Calculate Distance</button>
+     </div>
+
+     <div id="demo-result" class="demo-result" style="display: none;">
+      <h4 style="color: #2c3e50; margin-top: 0;">Distance Calculation Results:</h4>
+      <div id="calculation-steps"></div>
+      <div id="distance-canvas" style="text-align: center; margin-top: 20px;">
+       <canvas id="interactiveCanvas" width="500" height="400"></canvas>
+      </div>
+     </div>
+    </div>
+
+    <div class="formula-highlight">
+     <strong>Main Formula:</strong><br>
+     The distance between the origin O(0,0,0) and a point P(a, b, c) in 3D space is:<br>
+     $$OP = \sqrt{a^2 + b^2 + c^2}$$
+    </div>
+
+    <div class="enhanced-diagram">
+     <h3 style="color: #667eea; margin-top: 0;">3D Distance Visualization</h3>
+     <svg viewbox="-50 -40 250 200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+       <marker id="arrowhead" markerheight="4" markerwidth="6" orient="auto" refx="3" refy="2">
+        <polygon fill="#333" points="0 0, 3 2, 0 4"></polygon>
+       </marker>
+      </defs>
+      <!-- Axes -->
+      <line marker-end="url(#arrowhead)" stroke="#333" stroke-width="1" x1="0" x2="150" y1="100" y2="100"></line>
+      <!-- X-axis -->
+      <text font-size="10" x="155" y="105">x</text>
+      <line marker-end="url(#arrowhead)" stroke="#333" stroke-width="1" x1="0" x2="-20" y1="100" y2="130"></line>
+      <!-- Y-axis (perspective) -->
+      <text font-size="10" x="-30" y="140">y</text>
+      <line marker-end="url(#arrowhead)" stroke="#333" stroke-width="1" x1="0" x2="0" y1="100" y2="-20"></line>
+      <!-- Z-axis -->
+      <text font-size="10" x="5" y="-25">z</text>
+      <!-- Origin O -->
+      <circle cx="0" cy="100" fill="#000" r="2"></circle>
+      <text font-size="10" x="-10" y="115">O</text>
+      <!-- Point P -->
+      <circle cx="80" cy="30" fill="red" r="3"></circle>
+      <text fill="red" font-size="10" x="85" y="28">P(a,b,c)</text>
+      <!-- Distance OP -->
+      <line stroke="red" stroke-width="2" x1="0" x2="80" y1="100" y2="30"></line>
+      <text fill="red" font-size="10" font-weight="bold" x="40" y="60">OP</text>
+      <!-- Projection lines -->
+      <line stroke="#aaa" stroke-dasharray="2,2" stroke-width="0.5" x1="0" x2="80" y1="100" y2="100"></line>
+      <line stroke="#aaa" stroke-dasharray="2,2" stroke-width="0.5" x1="80" x2="80" y1="100" y2="30"></line>
+      <line stroke="#aaa" stroke-dasharray="2,2" stroke-width="0.5" x1="0" x2="80" y1="30" y2="30"></line>
+      <!-- Coordinate labels -->
+      <text font-size="8" x="40" y="108">a</text>
+      <text font-size="8" x="-25" y="100">b</text>
+      <text font-size="8" x="5" y="65">c</text>
+     </svg>
+     <p style="margin-top: 15px; color: #666;"><em>The red line shows the distance OP from origin to point P(a,b,c)</em></p>
+    </div>
+
+    <h2>Derivation of the Distance Formula</h2>
+    <p>The distance formula in 3D space is derived using the Pythagorean theorem applied twice:</p>
+
+    <div class="note">
+     <strong>Step-by-step derivation:</strong>
+     <ol>
+      <li>Let Q be the projection of point P onto the xy-plane. Q has coordinates (a,b,0)</li>
+      <li>The distance OQ in the xy-plane is: $OQ = \sqrt{a^2 + b^2}$</li>
+      <li>Consider right triangle △OQP with right angle at Q</li>
+      <li>The distance QP (vertical leg) is: $QP = |c - 0| = |c| = c$ (assuming c ≥ 0)</li>
+      <li>By Pythagorean theorem: $OP^2 = OQ^2 + QP^2$</li>
+      <li>Substitute: $OP^2 = (a^2 + b^2) + c^2 = a^2 + b^2 + c^2$</li>
+      <li>Therefore: $OP = \sqrt{a^2 + b^2 + c^2}$</li>
+     </ol>
+    </p>
+
+    <h2>Worked Examples</h2>
+
+    <div class="example">
+     <h4>Example 1: Basic Calculation</h4>
+     <p>Find the distance from the origin to the point P(2, 3, 6).</p>
+     <p><strong>Solution:</strong></p>
+     <p>$OP = \sqrt{2^2 + 3^2 + 6^2} = \sqrt{4 + 9 + 36} = \sqrt{49} = 7$</p>
+     <p>The distance is 7 units.</p>
+    </div>
+
+    <div class="example">
+     <h4>Example 2: Decimal Coordinates</h4>
+     <p>Find the distance from the origin to the point P(1.5, 2.5, 3.5).</p>
+     <p><strong>Solution:</strong></p>
+     <p>$OP = \sqrt{(1.5)^2 + (2.5)^2 + (3.5)^2} = \sqrt{2.25 + 6.25 + 12.25} = \sqrt{20.75} \approx 4.56$</p>
+     <p>The distance is approximately 4.56 units.</p>
+    </div>
+
+    <div class="example">
+     <h4>Example 3: Negative Coordinates</h4>
+     <p>Find the distance from the origin to the point P(-2, -3, 4).</p>
+     <p><strong>Solution:</strong></p>
+     <p>$OP = \sqrt{(-2)^2 + (-3)^2 + 4^2} = \sqrt{4 + 9 + 16} = \sqrt{29} \approx 5.39$</p>
+     <p>The distance is approximately 5.39 units. (Note: squares of negatives are positive)</p>
+    </div>
+
+    <h2>Practice Problems</h2>
+
+    <div class="graybox">
+     <strong>Problem 1:</strong> Calculate the distance from the origin to the point P(1, 2, 2).
+     <br><br>
+     <button class="practice-problem" onclick="toggleSolution('sol1')">Show Solution</button>
+     <div id="sol1" class="solution">
+      <strong>Solution:</strong>
+      <br><br>
+      $OP = \sqrt{1^2 + 2^2 + 2^2} = \sqrt{1 + 4 + 4} = \sqrt{9} = 3$
+      <br><br>
+      The distance is 3 units.
+     </div>
+    </div>
+
+    <div class="graybox" style="margin-top: 15px;">
+     <strong>Problem 2:</strong> Find the distance from the origin to the point P(3, 4, 12).
+     <br><br>
+     <button class="practice-problem" onclick="toggleSolution('sol2')">Show Solution</button>
+     <div id="sol2" class="solution">
+      <strong>Solution:</strong>
+      <br><br>
+      $OP = \sqrt{3^2 + 4^2 + 12^2} = \sqrt{9 + 16 + 144} = \sqrt{169} = 13$
+      <br><br>
+      The distance is 13 units.
+     </div>
+    </div>
+
+    <div class="graybox" style="margin-top: 15px;">
+     <strong>Problem 3:</strong> Calculate the distance for point P(-1, -1, √2).
+     <br><br>
+     <button class="practice-problem" onclick="toggleSolution('sol3')">Show Solution</button>
+     <div id="sol3" class="solution">
+      <strong>Solution:</strong>
+      <br><br>
+      $OP = \sqrt{(-1)^2 + (-1)^2 + (\sqrt{2})^2} = \sqrt{1 + 1 + 2} = \sqrt{4} = 2$
+      <br><br>
+      The distance is 2 units.
+     </div>
+    </div>
+
+    <div class="graybox" style="margin-top: 15px;">
+     <strong>Problem 4:</strong> Find the distance from origin to P(2.5, 3.5, 4.5).
+     <br><br>
+     <button class="practice-problem" onclick="toggleSolution('sol4')">Show Solution</button>
+     <div id="sol4" class="solution">
+      <strong>Solution:</strong>
+      <br><br>
+      $OP = \sqrt{(2.5)^2 + (3.5)^2 + (4.5)^2} = \sqrt{6.25 + 12.25 + 20.25} = \sqrt{38.75} \approx 6.23$
+      <br><br>
+      The distance is approximately 6.23 units.
+     </div>
+    </div>
+
+    <div class="graybox" style="margin-top: 15px;">
+     <strong>Problem 5:</strong> What point is exactly 5 units from the origin?
+     <br><br>
+     <button class="practice-problem" onclick="toggleSolution('sol5')">Show Solution</button>
+     <div id="sol5" class="solution">
+      <strong>Solution:</strong>
+      <br><br>
+      Any point P(a,b,c) where $\sqrt{a^2 + b^2 + c^2} = 5$
+      <br><br>
+      Squaring both sides: $a^2 + b^2 + c^2 = 25$
+      <br><br>
+      Examples: P(3,4,0), P(0,3,4), P(5,0,0), etc.
+      <br><br>
+      All points on the sphere with radius 5 centered at the origin.
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <h3>🎯 Key Takeaways</h3>
+     <ul>
+      <li>The 3D distance formula is $OP = \sqrt{a^2 + b^2 + c^2}$ for point P(a,b,c)</li>
+      <li>This is an extension of the 2D distance formula using Pythagorean theorem twice</li>
+      <li>The distance is always positive (or zero for the origin)</li>
+      <li>Squares of negative coordinates become positive in the formula</li>
+      <li>This formula gives the magnitude of the position vector $\vec{OP} = \langle a,b,c \rangle$</li>
+      <li>Points at equal distance from origin lie on a sphere</li>
+      <li>The formula generalizes to n dimensions: $\sqrt{x_1^2 + x_2^2 + \dots + x_n^2}$</li>
+      <li>Interactive calculator helps visualize distance calculations in real-time</li>
+      <li>Practice problems with toggle-able solutions reinforce understanding</li>
+     </ul>
+    </div>
+
+    <script>
+     function calculateDistance() {
+       const a = parseFloat(document.getElementById('coord-x').value);
+       const b = parseFloat(document.getElementById('coord-y').value);
+       const c = parseFloat(document.getElementById('coord-z').value);
+
+       if (isNaN(a) || isNaN(b) || isNaN(c)) {
+         alert('Please enter valid numbers for all coordinates.');
+         return;
+       }
+
+       const distance = Math.sqrt(a*a + b*b + c*c);
+
+       const resultDiv = document.getElementById('demo-result');
+       const stepsDiv = document.getElementById('calculation-steps');
+
+       stepsDiv.innerHTML = `
+         <div class="result-highlight">
+           <strong>Point:</strong> P(${a}, ${b}, ${c})<br>
+           <strong>Formula:</strong> OP = √(a² + b² + c²)
+         </div>
+         <br>
+         <strong>Step-by-step calculation:</strong><br>
+         a² = ${a}² = ${a*a}<br>
+         b² = ${b}² = ${b*b}<br>
+         c² = ${c}² = ${c*c}<br>
+         a² + b² + c² = ${a*a} + ${b*b} + ${c*c} = ${a*a + b*b + c*c}<br>
+         OP = √${a*a + b*b + c*c} = ${distance.toFixed(4)}<br>
+         <br>
+         <strong>Final Answer:</strong> The distance is ${distance.toFixed(4)} units.
+       `;
+
+       resultDiv.style.display = 'block';
+
+       // Draw the 3D visualization
+       drawDistanceVisualization(a, b, c, distance);
+     }
+
+     function drawDistanceVisualization(a, b, c, distance) {
+       const canvas = document.getElementById('interactiveCanvas');
+       const ctx = canvas.getContext('2d');
+       const w = canvas.width;
+       const h = canvas.height;
+       const scale = 30;
+       const originX = w / 2;
+       const originY = h / 2;
+
+       // Clear canvas
+       ctx.clearRect(0, 0, w, h);
+
+       // Set up coordinate system
+       function toCanvasX(x) { return originX + x * scale; }
+       function toCanvasY(y) { return originY - y * scale; }
+
+       // Draw axes
+       ctx.strokeStyle = '#333';
+       ctx.lineWidth = 2;
+       ctx.beginPath();
+       ctx.moveTo(toCanvasX(-8), toCanvasY(0));
+       ctx.lineTo(toCanvasX(8), toCanvasY(0));
+       ctx.moveTo(toCanvasX(0), toCanvasY(-6));
+       ctx.lineTo(toCanvasX(0), toCanvasY(6));
+       ctx.stroke();
+
+       // Draw grid
+       ctx.strokeStyle = '#e0e0e0';
+       ctx.lineWidth = 0.5;
+       for (let x = -8; x <= 8; x++) {
+         ctx.beginPath();
+         ctx.moveTo(toCanvasX(x), toCanvasY(-6));
+         ctx.lineTo(toCanvasX(x), toCanvasY(6));
+         ctx.stroke();
+       }
+       for (let y = -6; y <= 6; y++) {
+         ctx.beginPath();
+         ctx.moveTo(toCanvasX(-8), toCanvasY(y));
+         ctx.lineTo(toCanvasX(8), toCanvasY(y));
+         ctx.stroke();
+       }
+
+       // Draw origin
+       ctx.fillStyle = '#000';
+       ctx.beginPath();
+       ctx.arc(toCanvasX(0), toCanvasY(0), 4, 0, 2 * Math.PI);
+       ctx.fill();
+
+       // Draw point P
+       ctx.fillStyle = '#e74c3c';
+       ctx.beginPath();
+       ctx.arc(toCanvasX(a), toCanvasY(b), 6, 0, 2 * Math.PI);
+       ctx.fill();
+
+       // Draw distance line (simplified 2D representation)
+       ctx.strokeStyle = '#e74c3c';
+       ctx.lineWidth = 3;
+       ctx.beginPath();
+       ctx.moveTo(toCanvasX(0), toCanvasY(0));
+       ctx.lineTo(toCanvasX(a), toCanvasY(b));
+       ctx.stroke();
+
+       // Labels
+       ctx.fillStyle = '#000';
+       ctx.font = '14px Arial';
+       ctx.textAlign = 'center';
+       ctx.fillText('O(0,0)', toCanvasX(0), toCanvasY(0) + 20);
+       ctx.fillText(`P(${a},${b})`, toCanvasX(a), toCanvasY(b) - 15);
+
+       ctx.font = '12px Arial';
+       ctx.fillText(`Distance: ${distance.toFixed(2)}`, w/2, 30);
+     }
+
+     // Toggle solution visibility
+     function toggleSolution(id) {
+       const solution = document.getElementById(id);
+       solution.classList.toggle('show');
+       const button = solution.previousElementSibling;
+       button.textContent = solution.classList.contains('show') ? 'Hide Solution' : 'Show Solution';
+     }
+
+     // Initialize with default values
+     calculateDistance();
+    </script>
+   </div>
+  </div>
+ </body>
+</html>

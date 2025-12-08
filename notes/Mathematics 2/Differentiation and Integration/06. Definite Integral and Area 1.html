@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<!-- tags: Integration, Area -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Definite Integral and Area (Case 1)
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+   }
+
+   .main-content {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 15px;
+    padding: 30px;
+    margin: 20px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+   }
+
+   .fancy-title {
+    text-align: center;
+    font-size: 2.5em;
+    font-weight: bold;
+    margin: 20px 0;
+    color: #2c3e50;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+   }
+
+   .description {
+    font-size: 1.2em;
+    line-height: 1.6;
+    margin: 20px 0;
+    color: #34495e;
+    text-align: center;
+   }
+
+   .content-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin: 30px 0;
+   }
+
+   .formula-block {
+    flex: 1;
+    min-width: 300px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 1.4em;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+   }
+
+   .formula-item {
+    margin: 15px 0;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+   }
+
+   .diagram-block {
+    flex: 1;
+    min-width: 300px;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+   }
+
+   .interactive-demo {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    margin: 30px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+   }
+
+   .demo-title {
+    text-align: center;
+    font-size: 1.8em;
+    margin-bottom: 25px;
+    font-weight: bold;
+   }
+
+   .input-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin: 20px 0;
+    justify-content: center;
+   }
+
+   .input-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+   }
+
+   .input-field label {
+    font-weight: bold;
+    font-size: 1.1em;
+   }
+
+   .input-field input {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    width: 100px;
+    text-align: center;
+    transition: border-color 0.3s;
+   }
+
+   .input-field input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+   }
+
+   .button-group {
+    text-align: center;
+    margin: 25px 0;
+   }
+
+   .btn {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 1.1em;
+    cursor: pointer;
+    margin: 0 10px;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+   }
+
+   .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+   }
+
+   .btn:active {
+    transform: translateY(0);
+   }
+
+   .result-display {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    backdrop-filter: blur(10px);
+   }
+
+   .result-text {
+    font-size: 1.2em;
+    text-align: center;
+    margin: 10px 0;
+   }
+
+   .canvas-container {
+    text-align: center;
+    margin: 20px 0;
+   }
+
+   .area-canvas {
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+   }
+
+   .section {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    margin: 25px 0;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+   }
+
+   .section-title {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
+   }
+
+   .case-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+   }
+
+   .case-card {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(252, 182, 159, 0.3);
+   }
+
+   .case-card h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 1.3em;
+   }
+
+   .case-card .formula {
+    font-weight: bold;
+    color: #e74c3c;
+    font-size: 1.2em;
+    margin: 10px 0;
+   }
+
+   .case-card .description {
+    color: #555;
+    line-height: 1.5;
+   }
+
+   .example-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+   }
+
+   .example-card {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+   }
+
+   .example-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(245, 87, 108, 0.4);
+   }
+
+   .example-card h4 {
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+   }
+
+   .example-detail {
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    display: none;
+   }
+
+   .calculation-steps {
+    margin: 15px 0;
+   }
+
+   .calculation-step {
+    margin: 8px 0;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 5px;
+    border-left: 4px solid #f5576c;
+   }
+
+   .practice-problems {
+    margin: 20px 0;
+   }
+
+   .problem-item {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+   }
+
+   .problem-item h4 {
+    margin: 0 0 15px 0;
+    font-size: 1.2em;
+   }
+
+   .solution-btn {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    color: #333;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 10px 0;
+    transition: all 0.3s;
+   }
+
+   .solution-btn:hover {
+    background: linear-gradient(135deg, #fcb69f 0%, #ffecd2 100%);
+    transform: scale(1.05);
+   }
+
+   .solution {
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 10px 0;
+    display: none;
+    border-left: 4px solid #667eea;
+   }
+
+   .key-takeaways {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    padding: 25px;
+    border-radius: 12px;
+    margin: 25px 0;
+   }
+
+   .takeaway-list {
+    list-style: none;
+    padding: 0;
+   }
+
+   .takeaway-item {
+    background: rgba(255, 255, 255, 0.8);
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+    font-weight: bold;
+   }
+
+   .error-message {
+    background: #ffebee;
+    color: #c62828;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px 0;
+    display: none;
+    text-align: center;
+    font-weight: bold;
+   }
+
+   @media (max-width: 768px) {
+    .content-wrapper {
+     flex-direction: column;
+    }
+
+    .input-group {
+     flex-direction: column;
+     align-items: center;
+    }
+
+    .fancy-title {
+     font-size: 2em;
+    }
+
+    .formula-block {
+     font-size: 1.2em;
+    }
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Integration, Area">
+   Definite Integral and Area (Case 1)
+  </div>
+
+  <div class="container">
+   <div class="main-content">
+    <div class="description">
+     When a function lies above the x-axis, the definite integral directly represents the area between the curve and the x-axis. This is the most straightforward case for area calculations.
+    </div>
+
+    <div class="content-wrapper">
+     <div class="formula-block">
+      <div class="formula-item">
+       <strong>Definite Integral:</strong> $$\int_a^b f(x)\,dx = F(b) - F(a)$$
+      </div>
+      <div class="formula-item">
+       <strong>Area (Case 1):</strong> $$S = \int_a^b \color{#f57c00}{f(x)}\,dx$$
+      </div>
+      <div class="formula-item">
+       <strong>Condition:</strong> $$f(x) \geq 0 \quad \forall x \in [a,b]$$
+      </div>
+     </div>
+
+     <div class="diagram-block">
+      <svg viewbox="0 0 250 200" xmlns="http://www.w3.org/2000/svg">
+       <!-- Area visualization for Case 1 -->
+       <text fill="#333" font-size="14" x="125" y="20" text-anchor="middle">Area Above x-axis: S = ∫ f(x) dx</text>
+       <!-- x-axis -->
+       <line stroke="#666" stroke-width="2" x1="20" x2="230" y1="150" y2="150"></line>
+       <!-- Function curve above x-axis -->
+       <path d="M40 150 Q80 120 120 100 Q160 120 200 150" fill="none" stroke="#27ae60" stroke-width="3"></path>
+       <!-- Area fill -->
+       <path d="M40 150 Q80 120 120 100 Q160 120 200 150 L200 150 L40 150 Z" fill="rgba(39, 174, 96, 0.3)" stroke="#27ae60" stroke-width="2"></path>
+       <!-- Vertical lines -->
+       <line stroke="#888" stroke-dasharray="5,5" stroke-width="1" x1="40" x2="40" y1="100" y2="180"></line>
+       <line stroke="#888" stroke-dasharray="5,5" stroke-width="1" x1="200" x2="200" y1="100" y2="180"></line>
+       <text fill="#333" font-size="12" x="35" y="165">a</text>
+       <text fill="#333" font-size="12" x="195" y="165">b</text>
+       <text fill="#27ae60" font-size="12" x="120" y="85">y = f(x) ≥ 0</text>
+       <!-- Area label -->
+       <text fill="#27ae60" font-size="14" font-weight="bold" x="120" y="135">S</text>
+      </svg>
+     </div>
+    </div>
+
+    <div class="case-grid">
+     <div class="case-card">
+      <h3>Case 1: f(x) ≥ 0</h3>
+      <div class="formula">S = ∫ f(x) dx</div>
+      <div class="description">
+       When the function is above the x-axis, the definite integral directly gives the area between the curve and the x-axis.
+      </div>
+     </div>
+
+     <div class="case-card">
+      <h3>Case 2: f(x) ≤ 0</h3>
+      <div class="formula">S = ∫ -f(x) dx</div>
+      <div class="description">
+       When the function is below the x-axis, the definite integral is negative. Use the absolute value or -f(x).
+      </div>
+     </div>
+
+     <div class="case-card">
+      <h3>Case 3: Mixed</h3>
+      <div class="formula">S = ∫ |f(x)| dx</div>
+      <div class="description">
+       When the function crosses the x-axis, split the integral at the roots and handle each region separately.
+      </div>
+     </div>
+    </div>
+
+    <div class="interactive-demo">
+     <div class="demo-title">Interactive Definite Integral Calculator (Case 1)</div>
+
+     <div class="input-group">
+      <div class="input-field">
+       <label for="funcType">Function Type:</label>
+       <select id="funcType">
+        <option value="quadratic">Quadratic: (x-a)² + c</option>
+        <option value="sine">Sine: sin(x) + 1</option>
+        <option value="exponential">Exponential: e^(-x) + 0.5</option>
+       </select>
+      </div>
+      <div class="input-field">
+       <label for="lowerLimit">Lower Limit (a):</label>
+       <input id="lowerLimit" step="0.1" type="number" value="0"/>
+      </div>
+      <div class="input-field">
+       <label for="upperLimit">Upper Limit (b):</label>
+       <input id="upperLimit" step="0.1" type="number" value="2"/>
+      </div>
+     </div>
+
+     <div class="button-group">
+      <button class="btn" onclick="calculateDefiniteIntegral()">Calculate Integral</button>
+      <button class="btn" onclick="calculateArea()">Calculate Area</button>
+      <button class="btn" onclick="resetDemo()">Reset</button>
+     </div>
+
+     <div class="error-message" id="errorMessage"></div>
+
+     <div class="result-display">
+      <div class="result-text" id="functionDisplay">
+       Function: <strong id="functionText">f(x) = (x-1)² + 0.5</strong>
+      </div>
+      <div class="result-text" id="integralDisplay">
+       Definite Integral: <strong id="integralText">∫₀² f(x) dx = 2.667</strong>
+      </div>
+      <div class="result-text" id="areaDisplay">
+       Area: <strong id="areaText">S = ∫₀² f(x) dx = 2.667</strong>
+      </div>
+     </div>
+
+     <div class="canvas-container">
+      <canvas class="area-canvas" height="400" id="areaCanvas" width="500"></canvas>
+     </div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Mathematical Foundation</div>
+     <p>When a function lies entirely above the x-axis (f(x) ≥ 0 for all x in [a,b]), the definite integral ∫ f(x) dx directly gives the area between the curve and the x-axis.</p>
+     <div class="formula-block" style="margin: 20px 0;">
+      $$\int_a^b f(x)\,dx = F(b) - F(a) \geq 0 \quad (\text{since } f(x) \geq 0)$$
+     </div>
+     <p>This is the most straightforward case because:</p>
+     <ul>
+      <li>The definite integral is always non-negative</li>
+      <li>The value directly represents the geometric area</li>
+      <li>No special adjustments are needed</li>
+     </ul>
+     <p>The Fundamental Theorem of Calculus connects differentiation and integration:</p>
+     <div class="formula-block" style="margin: 20px 0;">
+      $$\frac{d}{dx}\left[\int_a^x f(t)\,dt\right] = f(x)$$
+     </div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Worked Examples</div>
+     <div class="example-grid">
+      <div class="example-card" onclick="showExample(1)">
+       <h4>Example 1: Quadratic Above x-axis</h4>
+       <p>Find area bounded by y = (x-1)² + 1, x-axis, x=0, x=2</p>
+      </div>
+      <div class="example-card" onclick="showExample(2)">
+       <h4>Example 2: Sine Function</h4>
+       <p>Find area bounded by y = sin(x) + 1, x-axis, x=0, x=π</p>
+      </div>
+      <div class="example-card" onclick="showExample(3)">
+       <h4>Example 3: Exponential Function</h4>
+       <p>Find area bounded by y = e^(-x) + 0.5, x-axis, x=0, x=2</p>
+      </div>
+     </div>
+
+     <div class="example-detail" id="exampleDetail"></div>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Applications</div>
+     <ul>
+      <li><strong>Physics:</strong> Displacement, work done by positive forces</li>
+      <li><strong>Economics:</strong> Total revenue, profit calculations</li>
+      <li><strong>Engineering:</strong> Cross-sectional areas, material volumes</li>
+      <li><strong>Probability:</strong> Probability density functions</li>
+      <li><strong>Biology:</strong> Population growth models, concentration curves</li>
+     </ul>
+    </div>
+
+    <div class="section">
+     <div class="section-title">Practice Problems</div>
+     <div class="practice-problems">
+      <div class="problem-item">
+       <h4>Problem 1</h4>
+       <p>Find the area bounded by the curve y = x² + 1, the x-axis, and the lines x = 0 and x = 1.</p>
+       <button class="solution-btn" onclick="toggleSolution(1)">Show Solution</button>
+       <div class="solution" id="solution1">
+        <p><strong>Solution:</strong></p>
+        <p>Definite integral: ∫₀¹ (x² + 1) dx = [x³/3 + x]₀¹ = (1/3 + 1) - 0 = 4/3</p>
+        <p>Since the function is always positive, area S = 4/3</p>
+       </div>
+      </div>
+
+      <div class="problem-item">
+       <h4>Problem 2</h4>
+       <p>Find the area bounded by the curve y = √x, the x-axis, and the lines x = 0 and x = 4.</p>
+       <button class="solution-btn" onclick="toggleSolution(2)">Show Solution</button>
+       <div class="solution" id="solution2">
+        <p><strong>Solution:</strong></p>
+        <p>Definite integral: ∫₀⁴ √x dx = ∫₀⁴ x^(1/2) dx = [x^(3/2)/(3/2)]₀⁴ = (2/3)[x^(3/2)]₀⁴</p>
+        <p>= (2/3)(4^(3/2) - 0) = (2/3)(8) = 16/3</p>
+        <p>Area S = 16/3</p>
+       </div>
+      </div>
+
+      <div class="problem-item">
+       <h4>Problem 3</h4>
+       <p>Find the area bounded by the curve y = e^x, the x-axis, and the lines x = 0 and x = 1.</p>
+       <button class="solution-btn" onclick="toggleSolution(3)">Show Solution</button>
+       <div class="solution" id="solution3">
+        <p><strong>Solution:</strong></p>
+        <p>Definite integral: ∫₀¹ e^x dx = [e^x]₀¹ = e¹ - e⁰ = e - 1 ≈ 2.718 - 1 = 1.718</p>
+        <p>Area S = e - 1</p>
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="key-takeaways">
+     <div class="section-title">Key Takeaways</div>
+     <ul class="takeaway-list">
+      <li class="takeaway-item">Definite integral ∫ f(x) dx gives signed area; positive when f(x) ≥ 0</li>
+      <li class="takeaway-item">For f(x) ≥ 0, area S = ∫ f(x) dx directly</li>
+      <li class="takeaway-item">Fundamental Theorem: ∫ f(x) dx = F(b) - F(a)</li>
+      <li class="takeaway-item">Geometric interpretation: area between curve and x-axis</li>
+      <li class="takeaway-item">Case 1 applies when function is entirely above x-axis</li>
+      <li class="takeaway-item">Definite integral can be interpreted as net accumulation</li>
+     </ul>
+    </div>
+   </div>
+  </div>
+
+  <script>
+   function getFunction(funcType) {
+    switch(funcType) {
+     case 'quadratic':
+      return {
+       f: (x) => (x - 1) * (x - 1) + 0.5,
+       antiderivative: (x) => (1/3) * (x - 1) * (x - 1) * (x - 1) + 0.5 * x,
+       name: '(x-1)² + 0.5'
+      };
+     case 'sine':
+      return {
+       f: (x) => Math.sin(x) + 1,
+       antiderivative: (x) => -Math.cos(x) + x,
+       name: 'sin(x) + 1'
+      };
+     case 'exponential':
+      return {
+       f: (x) => Math.exp(-x) + 0.5,
+       antiderivative: (x) => -Math.exp(-x) + 0.5 * x,
+       name: 'e^(-x) + 0.5'
+      };
+     default:
+      return {
+       f: (x) => (x - 1) * (x - 1) + 0.5,
+       antiderivative: (x) => (1/3) * (x - 1) * (x - 1) * (x - 1) + 0.5 * x,
+       name: '(x-1)² + 0.5'
+      };
+    }
+   }
+
+   function calculateDefiniteIntegral() {
+    try {
+     const funcType = document.getElementById('funcType').value;
+     const a = parseFloat(document.getElementById('lowerLimit').value);
+     const b = parseFloat(document.getElementById('upperLimit').value);
+
+     if (isNaN(a) || isNaN(b)) {
+      document.getElementById('errorMessage').textContent = 'Please enter valid numbers for limits.';
+      document.getElementById('errorMessage').style.display = 'block';
+      return;
+     }
+
+     if (a >= b) {
+      document.getElementById('errorMessage').textContent = 'Lower limit must be less than upper limit.';
+      document.getElementById('errorMessage').style.display = 'block';
+      return;
+     }
+
+     const func = getFunction(funcType);
+     const integral = func.antiderivative(b) - func.antiderivative(a);
+
+     document.getElementById('functionText').textContent = `f(x) = ${func.name}`;
+     document.getElementById('integralText').textContent = `∫_${a}^{${b}} f(x) dx = ${integral.toFixed(3)}`;
+     document.getElementById('errorMessage').style.display = 'none';
+
+     drawAreaVisualization(func, a, b);
+    } catch (error) {
+     document.getElementById('errorMessage').textContent = 'Error calculating integral. Please check your input values.';
+     document.getElementById('errorMessage').style.display = 'block';
+    }
+   }
+
+   function calculateArea() {
+    try {
+     const funcType = document.getElementById('funcType').value;
+     const a = parseFloat(document.getElementById('lowerLimit').value);
+     const b = parseFloat(document.getElementById('upperLimit').value);
+
+     if (isNaN(a) || isNaN(b)) {
+      document.getElementById('errorMessage').textContent = 'Please enter valid numbers for limits.';
+      document.getElementById('errorMessage').style.display = 'block';
+      return;
+     }
+
+     const func = getFunction(funcType);
+     const integral = func.antiderivative(b) - func.antiderivative(a);
+     const area = integral; // Since f(x) ≥ 0, area = integral
+
+     document.getElementById('areaText').textContent = `S = ∫_${a}^{${b}} f(x) dx = ${area.toFixed(3)}`;
+     document.getElementById('errorMessage').style.display = 'none';
+    } catch (error) {
+     document.getElementById('errorMessage').textContent = 'Error calculating area.';
+     document.getElementById('errorMessage').style.display = 'block';
+    }
+   }
+
+   function drawAreaVisualization(func, a, b) {
+    const canvas = document.getElementById('areaCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Calculate bounds
+    const minX = Math.min(a, b) - 0.5;
+    const maxX = Math.max(a, b) + 0.5;
+    const centerY = canvas.height / 2;
+
+    const scaleX = canvas.width / (maxX - minX);
+    const scaleY = canvas.height / 4; // Rough scale
+
+    // Transform functions
+    const transformX = xi => (xi - minX) * scaleX;
+    const transformY = yi => centerY - yi * scaleY;
+
+    // Draw axes
+    ctx.strokeStyle = '#666';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, centerY);
+    ctx.lineTo(canvas.width, centerY);
+    ctx.moveTo(transformX(0), 0);
+    ctx.lineTo(transformX(0), canvas.height);
+    ctx.stroke();
+
+    // Draw function
+    ctx.strokeStyle = '#27ae60';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    let firstPoint = true;
+    for (let xi = minX; xi <= maxX; xi += 0.05) {
+     const yi = func.f(xi);
+     if (!isNaN(yi) && isFinite(yi)) {
+      const canvasX = transformX(xi);
+      const canvasY = transformY(yi);
+      if (firstPoint) {
+       ctx.moveTo(canvasX, canvasY);
+       firstPoint = false;
+      } else {
+       ctx.lineTo(canvasX, canvasY);
+      }
+     }
+    }
+    ctx.stroke();
+
+    // Shade area between curve and x-axis
+    ctx.fillStyle = 'rgba(39, 174, 96, 0.3)';
+    ctx.beginPath();
+    ctx.moveTo(transformX(a), centerY);
+    for (let xi = a; xi <= b; xi += 0.01) {
+     const yi = func.f(xi);
+     const canvasX = transformX(xi);
+     const canvasY = transformY(yi);
+     ctx.lineTo(canvasX, canvasY);
+    }
+    ctx.lineTo(transformX(b), centerY);
+    ctx.closePath();
+    ctx.fill();
+
+    // Draw vertical lines at a and b
+    ctx.strokeStyle = '#888';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath();
+    ctx.moveTo(transformX(a), 0);
+    ctx.lineTo(transformX(a), canvas.height);
+    ctx.moveTo(transformX(b), 0);
+    ctx.lineTo(transformX(b), canvas.height);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Labels
+    ctx.fillStyle = '#333';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(`a = ${a}`, transformX(a), centerY + 15);
+    ctx.fillText(`b = ${b}`, transformX(b), centerY + 15);
+    ctx.fillText('x', canvas.width - 10, centerY + 5);
+    ctx.fillText('y', transformX(0) - 10, 15);
+    ctx.fillText('O', transformX(0) - 10, centerY + 15);
+
+    // Function label
+    ctx.fillStyle = '#27ae60';
+    ctx.font = '14px Arial';
+    ctx.fillText(`y = ${func.name}`, canvas.width / 2, 20);
+
+    // Area label
+    ctx.fillStyle = '#27ae60';
+    ctx.font = 'bold 16px Arial';
+    ctx.fillText('S', (transformX(a) + transformX(b)) / 2, centerY - 10);
+   }
+
+   function showExample(exampleNumber) {
+    const detail = document.getElementById('exampleDetail');
+    let content = '';
+
+    switch(exampleNumber) {
+     case 1:
+      content = `
+       <h4>Detailed Example 1 - Quadratic Above x-axis</h4>
+       <div class="calculation-steps">
+        <div class="calculation-step">Function: f(x) = (x-1)² + 1</div>
+        <div class="calculation-step">Limits: a = 0, b = 2</div>
+        <div class="calculation-step">First expand: (x-1)² + 1 = x² - 2x + 1 + 1 = x² - 2x + 2</div>
+        <div class="calculation-step">Definite integral: ∫₀² (x² - 2x + 2) dx = [x³/3 - x² + 2x]₀²</div>
+        <div class="calculation-step">= (8/3 - 4 + 4) - (0 - 0 + 0) = (8/3 + 0) = 8/3</div>
+        <div class="calculation-step">Since f(x) ≥ 0 in [0,2], area S = 8/3</div>
+        <div class="calculation-step">Verification: f(x) = x² - 2x + 2 ≥ 0 for all x (minimum at x=1, f(1)=1)</div>
+       </div>
+      `;
+      break;
+     case 2:
+      content = `
+       <h4>Detailed Example 2 - Sine Function</h4>
+       <div class="calculation-steps">
+        <div class="calculation-step">Function: f(x) = sin(x) + 1</div>
+        <div class="calculation-step">Limits: a = 0, b = π</div>
+        <div class="calculation-step">Definite integral: ∫₀^π (sin(x) + 1) dx = ∫₀^π sin(x) dx + ∫₀^π 1 dx</div>
+        <div class="calculation-step">= [-cos(x)]₀^π + [x]₀^π = (-cos(π) - (-cos(0))) + (π - 0)</div>
+        <div class="calculation-step">= (-(-1) - (-1)) + π = (1 + 1) + π = 2 + π</div>
+        <div class="calculation-step">Since sin(x) + 1 ≥ 0 for all x, area S = 2 + π</div>
+        <div class="calculation-step">Geometric interpretation: area under y = sin(x) + 1 from 0 to π</div>
+       </div>
+      `;
+      break;
+     case 3:
+      content = `
+       <h4>Detailed Example 3 - Exponential Function</h4>
+       <div class="calculation-steps">
+        <div class="calculation-step">Function: f(x) = e^(-x) + 0.5</div>
+        <div class="calculation-step">Limits: a = 0, b = 2</div>
+        <div class="calculation-step">Definite integral: ∫₀² (e^(-x) + 0.5) dx = ∫₀² e^(-x) dx + ∫₀² 0.5 dx</div>
+        <div class="calculation-step">= [-e^(-x)]₀² + [0.5x]₀² = (-e^(-2) - (-e^0)) + (0.5×2 - 0.5×0)</div>
+        <div class="calculation-step">= (-e^(-2) + 1) + 1 = 2 - e^(-2)</div>
+        <div class="calculation-step">Since e^(-x) + 0.5 > 0 for all x, area S = 2 - e^(-2)</div>
+        <div class="calculation-step">Note: Exponential functions are always positive, so adding 0.5 ensures f(x) > 0</div>
+       </div>
+      `;
+      break;
+    }
+
+    detail.innerHTML = content;
+    detail.style.display = 'block';
+    MathJax.typesetPromise();
+   }
+
+   function toggleSolution(problemNumber) {
+    const solution = document.getElementById('solution' + problemNumber);
+    if (solution.style.display === 'none' || solution.style.display === '') {
+     solution.style.display = 'block';
+    } else {
+     solution.style.display = 'none';
+    }
+   }
+
+   function resetDemo() {
+    document.getElementById('funcType').value = 'quadratic';
+    document.getElementById('lowerLimit').value = '0';
+    document.getElementById('upperLimit').value = '2';
+    document.getElementById('functionText').textContent = 'f(x) = (x-1)² + 0.5';
+    document.getElementById('integralText').textContent = '∫₀² f(x) dx = 2.667';
+    document.getElementById('areaText').textContent = 'S = ∫₀² f(x) dx = 2.667';
+    document.getElementById('errorMessage').style.display = 'none';
+    calculateDefiniteIntegral();
+   }
+
+   // Initialize with default values
+   document.addEventListener('DOMContentLoaded', function() {
+    calculateDefiniteIntegral();
+    calculateArea();
+   });
+  </script>
+ </body>
+</html>

@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<!-- tags: Mathematics -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Definite Integrals
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   .solution-btn {
+     background-color: #4CAF50;
+     color: white;
+     border: none;
+     padding: 8px 16px;
+     text-align: center;
+     text-decoration: none;
+     display: inline-block;
+     font-size: 14px;
+     margin: 10px 0;
+     cursor: pointer;
+     border-radius: 4px;
+     transition: background-color 0.3s;
+   }
+   
+   .solution-btn:hover {
+     background-color: #45a049;
+   }
+   
+   .solution {
+     background-color: #f9f9f9;
+     border-left: 4px solid #4CAF50;
+     padding: 15px;
+     margin: 10px 0;
+     border-radius: 0 4px 4px 0;
+   }
+   
+   .problem-item {
+     margin-bottom: 20px;
+     padding: 15px;
+     border: 1px solid #ddd;
+     border-radius: 8px;
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Integration">
+   Definite Integrals
+  </div>
+   <div class="container">
+    <div class="main-content">
+     <div class="section">
+      <h2>What are Definite Integrals?</h2>
+      <p>A definite integral represents the signed area between a curve and the x-axis over a specified interval. It's the limit of a Riemann sum as the number of rectangles approaches infinity.</p>
+      
+      <div class="highlight-box">
+       <strong>Definition:</strong>
+       <p>If f(x) is continuous on [a, b], then the definite integral is:</p>
+       <p>\( \int_a^b f(x) \, dx = \lim_{n \to \infty} \sum_{i=1}^n f(x_i^*) \Delta x \)</p>
+       <p>where \( \Delta x = \frac{b-a}{n} \) and \( x_i^* \) is a point in the i-th subinterval.</p>
+      </div>
+     </div>
+
+     <div class="section">
+      <h2>Fundamental Theorem of Calculus</h2>
+      <p>The fundamental theorem connects differentiation and integration, making definite integrals computable.</p>
+      
+      <div class="highlight-box">
+       <strong>Part 1 (Evaluation Theorem):</strong>
+       <p>If F'(x) = f(x), then \( \int_a^b f(x) \, dx = F(b) - F(a) \)</p>
+       
+       <strong>Part 2 (Derivative of Integral):</strong>
+       <p>\( \frac{d}{dx} \int_a^x f(t) \, dt = f(x) \)</p>
+      </div>
+     </div>
+
+     <div class="section">
+      <h2>Geometric Interpretation</h2>
+      <p>Definite integrals have powerful geometric meanings:</p>
+      <ul>
+       <li><strong>Area Above X-axis:</strong> Positive contribution to the integral</li>
+       <li><strong>Area Below X-axis:</strong> Negative contribution to the integral</li>
+       <li><strong>Net Area:</strong> Total signed area between curve and x-axis</li>
+       <li><strong>Accumulation:</strong> Total accumulation of a rate of change</li>
+      </ul>
+     </div>
+
+     <div class="section">
+      <h2>Properties of Definite Integrals</h2>
+      <div class="highlight-box">
+       <strong>Key Properties:</strong>
+       <ul>
+        <li>\( \int_a^a f(x) \, dx = 0 \) (Zero width interval)</li>
+        <li>\( \int_a^b f(x) \, dx = -\int_b^a f(x) \, dx \) (Reversal of limits)</li>
+        <li>\( \int_a^b [f(x) + g(x)] \, dx = \int_a^b f(x) \, dx + \int_a^b g(x) \, dx \) (Additivity)</li>
+        <li>\( \int_a^b cf(x) \, dx = c \int_a^b f(x) \, dx \) (Constant multiple)</li>
+        <li>\( \int_a^c f(x) \, dx + \int_c^b f(x) \, dx = \int_a^b f(x) \, dx \) (Additivity over intervals)</li>
+       </ul>
+      </div>
+     </div>
+
+     <div class="section">
+      <h2>Visual Guide</h2>
+      <p>Definite integrals represent the signed area between a curve and the x-axis over specified limits.</p>
+      <canvas id="definiteCanvas" width="600" height="400" style="border: 1px solid #ccc; margin: 20px auto; display: block;"></canvas>
+     </div>
+
+     <div class="section">
+      <h2>Examples</h2>
+      
+      <div class="example">
+       <h3>Example 1: Basic Definite Integral</h3>
+       <p>Evaluate \( \int_1^3 x^2 \, dx \)</p>
+       <div class="steps">
+        <p>Find the antiderivative: \( \int x^2 \, dx = \frac{x^3}{3} + C \)</p>
+        <p>Apply fundamental theorem: \( \left[ \frac{x^3}{3} \right]_1^3 = \frac{3^3}{3} - \frac{1^3}{3} = \frac{27}{3} - \frac{1}{3} = 9 - \frac{1}{3} = \frac{26}{3} \)</p>
+       </div>
+      </div>
+
+      <div class="example">
+       <h3>Example 2: Negative Area</h3>
+       <p>Evaluate \( \int_{-1}^1 x^3 \, dx \)</p>
+       <div class="steps">
+        <p>Antiderivative: \( \int x^3 \, dx = \frac{x^4}{4} + C \)</p>
+        <p>Evaluate: \( \left[ \frac{x^4}{4} \right]_{-1}^1 = \frac{1^4}{4} - \frac{(-1)^4}{4} = \frac{1}{4} - \frac{1}{4} = 0 \)</p>
+        <p>The areas above and below the x-axis cancel out.</p>
+       </div>
+      </div>
+
+      <div class="example">
+       <h3>Example 3: Trigonometric Function</h3>
+       <p>Evaluate \( \int_0^{\pi/2} \sin x \, dx \)</p>
+       <div class="steps">
+        <p>Antiderivative: \( \int \sin x \, dx = -\cos x + C \)</p>
+        <p>Evaluate: \( \left[ -\cos x \right]_0^{\pi/2} = -\cos(\pi/2) - (-\cos 0) = -0 - (-1) = 1 \)</p>
+       </div>
+      </div>
+
+      <div class="example">
+       <h3>Example 4: Using Properties</h3>
+       <p>Evaluate \( \int_0^2 (3x^2 + 2x - 1) \, dx \)</p>
+       <div class="steps">
+        <p>Use additivity: \( \int_0^2 3x^2 \, dx + \int_0^2 2x \, dx - \int_0^2 1 \, dx \)</p>
+        <p>Antiderivatives: \( \int 3x^2 \, dx = x^3 \), \( \int 2x \, dx = x^2 \), \( \int 1 \, dx = x \)</p>
+        <p>Evaluate: \( [x^3]_0^2 + 2[x^2]_0^2 - [x]_0^2 = (8 - 0) + 2(4 - 0) - (2 - 0) = 8 + 8 - 2 = 14 \)</p>
+       </div>
+      </div>
+
+      <div class="example">
+       <h3>Example 5: Exponential Function</h3>
+       <p>Evaluate \( \int_1^e \frac{1}{x} \, dx \)</p>
+       <div class="steps">
+        <p>Antiderivative: \( \int \frac{1}{x} \, dx = \ln|x| + C \)</p>
+        <p>Evaluate: \( [\ln x]_1^e = \ln e - \ln 1 = 1 - 0 = 1 \)</p>
+       </div>
+      </div>
+     </div>
+
+     <div class="section">
+      <h2>Applications of Definite Integrals</h2>
+      <ul>
+       <li><strong>Area Calculation:</strong> Area under curves, between curves</li>
+       <li><strong>Volume Calculation:</strong> Solids of revolution, cross-sections</li>
+       <li><strong>Arc Length:</strong> Length of curves</li>
+       <li><strong>Surface Area:</strong> Surface area of solids of revolution</li>
+       <li><strong>Work:</strong> Work done by variable force</li>
+       <li><strong>Physics:</strong> Center of mass, moment of inertia</li>
+       <li><strong>Probability:</strong> Continuous probability distributions</li>
+       <li><strong>Economics:</strong> Consumer/producer surplus</li>
+      </ul>
+     </div>
+
+     <div class="section">
+      <h2>Practice Problems</h2>
+      <div class="practice-problem">
+       <div class="problem-item">
+        <p><strong>1.</strong> Evaluate \( \int_0^4 x^3 \, dx \)</p>
+        <button class="solution-btn" onclick="toggleSolution(1)">Show Solution</button>
+        <div id="solution-1" class="solution" style="display: none;">
+         <p><strong>Solution:</strong></p>
+         <p>Antiderivative: \( \int x^3 \, dx = \frac{x^4}{4} + C \)</p>
+         <p>\( \left[ \frac{x^4}{4} \right]_0^4 = \frac{4^4}{4} - \frac{0^4}{4} = \frac{256}{4} - 0 = 64 \)</p>
+        </div>
+       </div>
+
+       <div class="problem-item">
+        <p><strong>2.</strong> Evaluate \( \int_{-2}^2 x^2 \, dx \)</p>
+        <button class="solution-btn" onclick="toggleSolution(2)">Show Solution</button>
+        <div id="solution-2" class="solution" style="display: none;">
+         <p><strong>Solution:</strong></p>
+         <p>Antiderivative: \( \int x^2 \, dx = \frac{x^3}{3} + C \)</p>
+         <p>\( \left[ \frac{x^3}{3} \right]_{-2}^2 = \frac{2^3}{3} - \frac{(-2)^3}{3} = \frac{8}{3} - \frac{-8}{3} = \frac{8}{3} + \frac{8}{3} = \frac{16}{3} \)</p>
+        </div>
+       </div>
+
+       <div class="problem-item">
+        <p><strong>3.</strong> Evaluate \( \int_1^3 \frac{1}{x} \, dx \)</p>
+        <button class="solution-btn" onclick="toggleSolution(3)">Show Solution</button>
+        <div id="solution-3" class="solution" style="display: none;">
+         <p><strong>Solution:</strong></p>
+         <p>Antiderivative: \( \int \frac{1}{x} \, dx = \ln|x| + C \)</p>
+         <p>\( [\ln x]_1^3 = \ln 3 - \ln 1 = \ln 3 - 0 = \ln 3 \)</p>
+        </div>
+       </div>
+
+       <div class="problem-item">
+        <p><strong>4.</strong> Evaluate \( \int_0^{\pi/4} \cos 2x \, dx \)</p>
+        <button class="solution-btn" onclick="toggleSolution(4)">Show Solution</button>
+        <div id="solution-4" class="solution" style="display: none;">
+         <p><strong>Solution:</strong></p>
+         <p>Antiderivative: \( \int \cos 2x \, dx = \frac{1}{2} \sin 2x + C \)</p>
+         <p>\( \left[ \frac{1}{2} \sin 2x \right]_0^{\pi/4} = \frac{1}{2} \sin(\pi/2) - \frac{1}{2} \sin 0 = \frac{1}{2}(1) - 0 = \frac{1}{2} \)</p>
+        </div>
+       </div>
+
+       <div class="problem-item">
+        <p><strong>5.</strong> Evaluate \( \int_2^5 (x^2 - 3x + 2) \, dx \)</p>
+        <button class="solution-btn" onclick="toggleSolution(5)">Show Solution</button>
+        <div id="solution-5" class="solution" style="display: none;">
+         <p><strong>Solution:</strong></p>
+         <p>Antiderivatives: \( \int x^2 \, dx = \frac{x^3}{3} \), \( \int -3x \, dx = -\frac{3x^2}{2} \), \( \int 2 \, dx = 2x \)</p>
+         <p>\( \left[ \frac{x^3}{3} - \frac{3x^2}{2} + 2x \right]_2^5 = \left( \frac{125}{3} - \frac{3(25)}{2} + 2(5) \right) - \left( \frac{8}{3} - \frac{3(4)}{2} + 2(2) \right) \)</p>
+         <p>\( = \left( \frac{125}{3} - \frac{75}{2} + 10 \right) - \left( \frac{8}{3} - 6 + 4 \right) = \left( \frac{125}{3} - \frac{75}{2} + 10 \right) - \left( \frac{8}{3} - 2 \right) \)</p>
+         <p>\( = \frac{125}{3} - \frac{75}{2} + 10 - \frac{8}{3} + 2 = \left( \frac{125}{3} - \frac{8}{3} \right) + \left( -\frac{75}{2} \right) + (10 + 2) = \frac{117}{3} - \frac{75}{2} + 12 \)</p>
+         <p>\( = 39 - 37.5 + 12 = 13.5 = \frac{27}{2} \)</p>
+        </div>
+       </div>
+
+       <div class="problem-item">
+        <p><strong>6.</strong> Evaluate \( \int_0^1 e^{3x} \, dx \)</p>
+        <button class="solution-btn" onclick="toggleSolution(6)">Show Solution</button>
+        <div id="solution-6" class="solution" style="display: none;">
+         <p><strong>Solution:</strong></p>
+         <p>Antiderivative: \( \int e^{3x} \, dx = \frac{1}{3} e^{3x} + C \)</p>
+         <p>\( \left[ \frac{1}{3} e^{3x} \right]_0^1 = \frac{1}{3} e^{3(1)} - \frac{1}{3} e^{0} = \frac{1}{3} e^3 - \frac{1}{3} = \frac{1}{3}(e^3 - 1) \)</p>
+        </div>
+       </div>
+      </div>
+     </div>
+
+     <div class="section">
+      <h2>Key Takeaways</h2>
+      <div class="key-takeaways">
+       <ul>
+        <li>Definite integrals represent signed area between curve and x-axis</li>
+        <li>Fundamental theorem: \( \int_a^b f(x) \, dx = F(b) - F(a) \)</li>
+        <li>Properties include additivity, constant multiples, and interval additivity</li>
+        <li>Negative areas contribute negatively to the integral</li>
+        <li>Definite integrals have many real-world applications</li>
+        <li>Always check that f(x) is continuous on [a, b]</li>
+        <li>The integral equals zero over intervals of zero width</li>
+        <li>Reversing limits changes the sign of the integral</li>
+       </ul>
+      </div>
+     </div>
+    </div>
+   </div>
+  <script>
+   // Canvas visualization for definite integrals
+   const canvas = document.getElementById('definiteCanvas');
+   const ctx = canvas.getContext('2d');
+   
+   // Set up coordinate system
+   const width = canvas.width;
+   const height = canvas.height;
+   const centerX = width / 2;
+   const centerY = height / 2;
+   
+   // Scale factors
+   const scaleX = 50;
+   const scaleY = 50;
+   
+   function drawGrid() {
+    ctx.strokeStyle = '#e0e0e0';
+    ctx.lineWidth = 1;
+    
+    // Vertical lines
+    for (let x = centerX; x < width; x += scaleX) {
+     ctx.beginPath();
+     ctx.moveTo(x, 0);
+     ctx.lineTo(x, height);
+     ctx.stroke();
+    }
+    for (let x = centerX; x > 0; x -= scaleX) {
+     ctx.beginPath();
+     ctx.moveTo(x, 0);
+     ctx.lineTo(x, height);
+     ctx.stroke();
+    }
+    
+    // Horizontal lines
+    for (let y = centerY; y < height; y += scaleY) {
+     ctx.beginPath();
+     ctx.moveTo(0, y);
+     ctx.lineTo(width, y);
+     ctx.stroke();
+    }
+    for (let y = centerY; y > 0; y -= scaleY) {
+     ctx.beginPath();
+     ctx.moveTo(0, y);
+     ctx.lineTo(width, y);
+     ctx.stroke();
+    }
+   }
+   
+   function drawAxes() {
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 2;
+    
+    // X-axis
+    ctx.beginPath();
+    ctx.moveTo(0, centerY);
+    ctx.lineTo(width, centerY);
+    ctx.stroke();
+    
+    // Y-axis
+    ctx.beginPath();
+    ctx.moveTo(centerX, 0);
+    ctx.lineTo(centerX, height);
+    ctx.stroke();
+    
+    // Axis labels
+    ctx.fillStyle = '#000';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+    
+    // X-axis labels
+    for (let i = -4; i <= 4; i++) {
+     if (i !== 0) {
+      const x = centerX + i * scaleX;
+      ctx.fillText(i.toString(), x, centerY + 15);
+     }
+    }
+    
+    // Y-axis labels
+    for (let i = -3; i <= 3; i++) {
+     if (i !== 0) {
+      const y = centerY - i * scaleY;
+      ctx.fillText(i.toString(), centerX - 15, y + 4);
+     }
+    }
+   }
+   
+   function plotFunction(func, color, label, a, b) {
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    
+    let firstPoint = true;
+    for (let x = a; x <= b; x += 0.1) {
+     const y = func(x);
+     const canvasX = centerX + x * scaleX;
+     const canvasY = centerY - y * scaleY;
+     
+     if (firstPoint) {
+      ctx.moveTo(canvasX, canvasY);
+      firstPoint = false;
+     } else {
+      ctx.lineTo(canvasX, canvasY);
+     }
+    }
+    ctx.stroke();
+    
+    // Add label
+    ctx.fillStyle = color;
+    ctx.font = '14px Arial';
+    ctx.textAlign = 'left';
+    ctx.fillText(label, 10, 30 + (color === '#ff6b6b' ? 0 : color === '#4ecdc4' ? 20 : 40));
+   }
+   
+   function fillArea(func, a, b, color) {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    
+    // Start from a
+    ctx.moveTo(centerX + a * scaleX, centerY);
+    
+    // Plot the function from a to b
+    for (let x = a; x <= b; x += 0.1) {
+     const y = func(x);
+     const canvasX = centerX + x * scaleX;
+     const canvasY = centerY - y * scaleY;
+     ctx.lineTo(canvasX, canvasY);
+    }
+    
+    // Close the path back to x-axis
+    ctx.lineTo(centerX + b * scaleX, centerY);
+    ctx.closePath();
+    ctx.fill();
+   }
+   
+   function drawDefiniteIntegralDemo() {
+    // Clear canvas
+    ctx.clearRect(0, 0, width, height);
+    
+    // Draw grid and axes
+    drawGrid();
+    drawAxes();
+    
+    // Define the function: f(x) = x^2 - 2x - 3
+    const f = x => x * x - 2 * x - 3;
+    
+    // Plot the function
+    plotFunction(f, '#ff6b6b', 'y = x² - 2x - 3', -4, 4);
+    
+    // Fill the area from x = -1 to x = 3 (where the function is above x-axis)
+    fillArea(f, -1, 3, 'rgba(255, 107, 107, 0.3)');
+    
+    // Draw vertical lines at limits
+    ctx.strokeStyle = '#333';
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath();
+    ctx.moveTo(centerX + (-1) * scaleX, centerY - f(-1) * scaleY);
+    ctx.lineTo(centerX + (-1) * scaleX, centerY);
+    ctx.moveTo(centerX + 3 * scaleX, centerY - f(3) * scaleY);
+    ctx.lineTo(centerX + 3 * scaleX, centerY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    
+    // Add labels for limits
+    ctx.fillStyle = '#333';
+    ctx.font = '14px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('a = -1', centerX + (-1) * scaleX, centerY + 20);
+    ctx.fillText('b = 3', centerX + 3 * scaleX, centerY + 20);
+    
+    // Add integral notation
+    ctx.fillStyle = '#000';
+    ctx.font = '16px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('Definite Integral: Area = ∫_{-1}^3 (x² - 2x - 3) dx', centerX, 20);
+    
+    ctx.font = '12px Arial';
+    ctx.fillText('Shaded area represents the definite integral value', centerX, height - 30);
+   }
+   
+   // Solution toggle functionality
+   function toggleSolution(problemNumber) {
+    const solution = document.getElementById(`solution-${problemNumber}`);
+    const button = solution.previousElementSibling;
+    
+    if (solution.style.display === 'none') {
+     solution.style.display = 'block';
+     button.textContent = 'Hide Solution';
+    } else {
+     solution.style.display = 'none';
+     button.textContent = 'Show Solution';
+    }
+   }
+   
+   // Initialize visualization when page loads
+   window.addEventListener('load', drawDefiniteIntegralDemo);
+  </script>
+ </body>
+</html>

@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<!-- tags: Data Analysis -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Quartile Range &amp; Deviation (四分位範囲・四分位偏差)
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+   .interactive-demo {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border: 2px solid #3498db;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+   }
+   .demo-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 20px;
+   }
+   .control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+   }
+   .control-group label {
+    font-weight: bold;
+    color: #2c3e50;
+   }
+   .control-group input, .control-group textarea {
+    padding: 8px;
+    border: 1px solid #bdc3c7;
+    border-radius: 5px;
+    font-size: 14px;
+   }
+   .control-group textarea {
+    min-height: 60px;
+    resize: vertical;
+   }
+   .demo-output {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+    border: 1px solid #ecf0f1;
+   }
+   .formula-block {
+    background: #ecf0f1;
+    border-left: 4px solid #3498db;
+    padding: 15px;
+    margin: 15px 0;
+    font-family: 'Times New Roman', serif;
+   }
+   .practice-problem {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+   }
+   .solution {
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px 0;
+    display: none;
+   }
+   .solution-button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+   }
+   .solution-button:hover {
+    background: #0056b3;
+   }
+   .key-takeaways {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+   }
+   .key-takeaways h3 {
+    margin-top: 0;
+    color: white;
+   }
+   .key-takeaways ul {
+    margin: 10px 0 0 0;
+    padding-left: 20px;
+   }
+   .key-takeaways li {
+    margin: 8px 0;
+   }
+   .worked-example {
+    background: #e8f4f8;
+    border: 1px solid #bee5eb;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+   }
+   .worked-example h4 {
+    margin-top: 0;
+    color: #0c5460;
+   }
+   .math-foundation {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+   }
+   .math-foundation h3 {
+    margin-top: 0;
+    color: #2c3e50;
+   }
+   .quartile-diagram {
+    background: white;
+    border: 1px solid #ecf0f1;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+    text-align: center;
+   }
+   .quartile-numbers {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin: 15px 0;
+    flex-wrap: wrap;
+   }
+   .qbox {
+    background: #3498db;
+    color: white;
+    padding: 8px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    min-width: 30px;
+    text-align: center;
+   }
+   .qbox.q1 {
+    background: #e74c3c;
+   }
+   .qbox.q2 {
+    background: #27ae60;
+   }
+   .qbox.q3 {
+    background: #f39c12;
+   }
+   .q-label {
+    font-weight: bold;
+    font-size: 14px;
+    margin-top: 5px;
+   }
+   .q-label.q1 {
+    color: #e74c3c;
+   }
+   .q-label.q2 {
+    color: #27ae60;
+   }
+   .q-label.q3 {
+    color: #f39c12;
+   }
+   .range-visualization {
+    background: white;
+    border: 1px solid #ecf0f1;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+   }
+   .range-bar {
+    height: 30px;
+    background: linear-gradient(to right, #e74c3c 0%, #e74c3c 25%, #f39c12 25%, #f39c12 75%, #27ae60 75%, #27ae60 100%);
+    border-radius: 15px;
+    position: relative;
+    margin: 20px 0;
+   }
+   .range-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    font-weight: bold;
+   }
+   .range-labels div {
+    text-align: center;
+   }
+   .deviation-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+   }
+   .deviation-stat {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+   }
+   .deviation-stat .value {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #3498db;
+   }
+   .deviation-stat .label {
+    font-size: 0.9em;
+    color: #666;
+    margin-top: 5px;
+   }
+   .comparison-table {
+    background: white;
+    border: 1px solid #ecf0f1;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+    overflow-x: auto;
+   }
+   .comparison-table table {
+    width: 100%;
+    border-collapse: collapse;
+   }
+   .comparison-table th, .comparison-table td {
+    border: 1px solid #bdc3c7;
+    padding: 10px;
+    text-align: left;
+   }
+   .comparison-table th {
+    background: #f8f9fa;
+    font-weight: bold;
+   }
+   .comparison-table .highlight {
+    background: #fff3cd;
+    font-weight: bold;
+   }
+   @media (max-width: 768px) {
+    .demo-controls {
+     flex-direction: column;
+     align-items: stretch;
+    }
+    .control-group {
+     width: 100%;
+    }
+    .deviation-summary {
+     grid-template-columns: 1fr;
+    }
+    .range-labels {
+     flex-direction: column;
+     gap: 10px;
+    }
+   }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Data Analysis">
+   Quartile Range &amp; Deviation (四分位範囲・四分位偏差)
+  </div>
+  <div class="container">
+   <div class="main-content">
+
+    <div class="math-foundation">
+     <h3>Mathematical Foundation</h3>
+     <p>Quartile range and quartile deviation are measures of dispersion that focus on the spread of the middle 50% of data. Unlike the range (which considers only extreme values), these measures are robust against outliers and provide insights into the variability of the central portion of the dataset. They are particularly useful for understanding data spread when extreme values might distort other measures.</p>
+
+     <div class="formula-block">
+      <strong>Quartile Range (四分位範囲):</strong>
+      <div style="font-size: 1.2em; margin: 10px 0;">
+       \( QR = Q_3 - Q_1 \)
+      </div>
+      <p>The difference between the third and first quartiles, representing the spread of the middle 50% of data.</p>
+
+      <strong>Quartile Deviation (四分位偏差):</strong>
+      <div style="font-size: 1.2em; margin: 10px 0;">
+       \( QD = \dfrac{Q_3 - Q_1}{2} = \dfrac{QR}{2} \)
+      </div>
+      <p>Half of the quartile range, measuring the average deviation from the median within the interquartile range.</p>
+     </div>
+    </div>
+
+    <div class="quartile-diagram">
+     <h4>Quartile Range Visualization</h4>
+     <div class="quartile-numbers">
+      <span class="qbox">2</span>
+      <span class="qbox">6</span>
+      <span class="qbox">8</span>
+      <span class="qbox q1">9</span>
+      <span class="qbox">13</span>
+      <span class="qbox q2">16</span>
+      <span class="qbox">19</span>
+      <span class="qbox q3">21</span>
+      <span class="qbox">29</span>
+     </div>
+     <div style="display:flex; justify-content:center; gap:38px; margin-top:4px;">
+      <div>
+       <div class="q-label q1">Q₁=9</div>
+      </div>
+      <div>
+       <div class="q-label q2">Q₂=16</div>
+      </div>
+      <div>
+       <div class="q-label q3">Q₃=21</div>
+      </div>
+     </div>
+     <div style="margin-top: 20px; font-weight: bold;">
+      Quartile Range = Q₃ - Q₁ = 21 - 9 = 12<br>
+      Quartile Deviation = (21 - 9)/2 = 6
+     </div>
+    </div>
+
+    <div class="range-visualization">
+     <h4>Understanding Quartile Range</h4>
+     <div class="range-bar"></div>
+     <div class="range-labels">
+      <div style="color: #e74c3c;">Q₁ (25th percentile)</div>
+      <div style="color: #f39c12;">Middle 50% (IQR)</div>
+      <div style="color: #27ae60;">Q₃ (75th percentile)</div>
+     </div>
+     <p style="margin-top: 15px; text-align: center;">
+      The quartile range measures the spread of the <strong>middle 50%</strong> of the data,<br>
+      from the 25th percentile to the 75th percentile.
+     </p>
+    </div>
+
+    <div class="interactive-demo">
+     <h3>Interactive Quartile Range Calculator</h3>
+     <div class="demo-controls">
+      <div class="control-group">
+       <label for="data-input">Data Values (comma-separated):</label>
+       <textarea id="data-input" placeholder="e.g., 2, 6, 8, 9, 13, 16, 19, 21, 29">2, 6, 8, 9, 13, 16, 19, 21, 29</textarea>
+      </div>
+      <button onclick="calculateQuartileMeasures()" style="padding: 8px 16px; background: #27ae60; color: white; border: none; border-radius: 5px; cursor: pointer; align-self: flex-end;">Calculate Measures</button>
+     </div>
+
+     <div class="demo-output" id="demo-output">
+      <strong>Current Data:</strong> [2, 6, 8, 9, 13, 16, 19, 21, 29]<br>
+      <strong>Q₁ (25th percentile):</strong> 8<br>
+      <strong>Q₂ (50th percentile, Median):</strong> 16<br>
+      <strong>Q₃ (75th percentile):</strong> 21<br>
+      <div class="deviation-summary">
+       <div class="deviation-stat">
+        <div class="value">13</div>
+        <div class="label">Quartile Range (QR)</div>
+       </div>
+       <div class="deviation-stat">
+        <div class="value">6.5</div>
+        <div class="label">Quartile Deviation (QD)</div>
+       </div>
+       <div class="deviation-stat">
+        <div class="value">27</div>
+        <div class="label">Total Range</div>
+       </div>
+      </div>
+     </div>
+    </div>
+
+    <div class="worked-example">
+     <h4>Worked Example 1: Basic Calculation</h4>
+     <p>For the data: 5, 8, 12, 15, 18, 20, 22, find the quartile range and quartile deviation.</p>
+     <p><strong>Solution:</strong></p>
+     <p>Sorted: 5, 8, 12, 15, 18, 20, 22</p>
+     <p>Q₁ position = (7+1)/4 = 2nd value = 8</p>
+     <p>Q₃ position = 3(7+1)/4 = 6th value = 20</p>
+     <p>Quartile Range = 20 - 8 = 12</p>
+     <p>Quartile Deviation = 12/2 = 6</p>
+    </div>
+
+    <div class="worked-example">
+     <h4>Worked Example 2: Even Number of Values</h4>
+     <p>For the data: 3, 7, 9, 12, 15, 18, find QR and QD.</p>
+     <p><strong>Solution:</strong></p>
+     <p>Sorted: 3, 7, 9, 12, 15, 18</p>
+     <p>Q₁ = (7+9)/2 = 8</p>
+     <p>Q₃ = (15+18)/2 = 16.5</p>
+     <p>Quartile Range = 16.5 - 8 = 8.5</p>
+     <p>Quartile Deviation = 8.5/2 = 4.25</p>
+    </div>
+
+    <div class="worked-example">
+     <h4>Worked Example 3: Comparison with Range</h4>
+     <p>Data: 1, 3, 5, 7, 9, 11, 13, 50</p>
+     <p><strong>Solution:</strong></p>
+     <p>Sorted: 1, 3, 5, 7, 9, 11, 13, 50</p>
+     <p>Q₁ = (3+5)/2 = 4</p>
+     <p>Q₃ = (11+13)/2 = 12</p>
+     <p>Quartile Range = 12 - 4 = 8</p>
+     <p>Total Range = 50 - 1 = 49</p>
+     <p>The outlier (50) greatly affects the range but has minimal impact on the quartile range.</p>
+    </div>
+
+    <div class="comparison-table">
+     <h4>Measures of Dispersion Comparison</h4>
+     <table>
+      <tr>
+       <th>Measure</th>
+       <th>Formula</th>
+       <th>Affected by Outliers?</th>
+       <th>Use Case</th>
+      </tr>
+      <tr>
+       <td>Range</td>
+       <td>Maximum - Minimum</td>
+       <td>Highly affected</td>
+       <td>Quick spread estimate</td>
+      </tr>
+      <tr class="highlight">
+       <td>Quartile Range</td>
+       <td>Q₃ - Q₁</td>
+       <td>Moderately affected</td>
+       <td>Middle 50% spread</td>
+      </tr>
+      <tr>
+       <td>Quartile Deviation</td>
+       <td>(Q₃ - Q₁)/2</td>
+       <td>Moderately affected</td>
+       <td>Average deviation from median</td>
+      </tr>
+      <tr>
+       <td>Variance</td>
+       <td>Sum of squared deviations</td>
+       <td>Highly affected</td>
+       <td>Statistical analysis</td>
+      </tr>
+      <tr>
+       <td>Standard Deviation</td>
+       <td>Square root of variance</td>
+       <td>Highly affected</td>
+       <td>Statistical analysis</td>
+      </tr>
+     </table>
+    </div>
+
+    <h3>Practice Problems</h3>
+
+    <div class="practice-problem">
+     <strong>Problem 1:</strong> For data: 4, 7, 9, 12, 15, 18, 20, find the quartile range and quartile deviation.
+     <br><button class="solution-button" onclick="toggleSolution(1)">Show Solution</button>
+     <div class="solution" id="solution1">
+      <strong>Solution:</strong><br>
+      Sorted: 4, 7, 9, 12, 15, 18, 20<br>
+      Q₁ = (7+9)/2 = 8<br>
+      Q₃ = (15+18)/2 = 16.5<br>
+      QR = 16.5 - 8 = 8.5<br>
+      QD = 8.5/2 = 4.25
+     </div>
+    </div>
+
+    <div class="practice-problem">
+     <strong>Problem 2:</strong> Data: 2, 5, 8, 10, 12, 15, 18. Find QR and QD.
+     <br><button class="solution-button" onclick="toggleSolution(2)">Show Solution</button>
+     <div class="solution" id="solution2">
+      <strong>Solution:</strong><br>
+      Sorted: 2, 5, 8, 10, 12, 15, 18<br>
+      Q₁ position = (8+1)/4 = 2.25th → (5+8)/2 = 6.5<br>
+      Q₃ position = 3(8+1)/4 = 6.75th → (15+18)/2 = 16.5<br>
+      QR = 16.5 - 6.5 = 10<br>
+      QD = 10/2 = 5
+     </div>
+    </div>
+
+    <div class="practice-problem">
+     <strong>Problem 3:</strong> If Q₁ = 25 and Q₃ = 75, what are the QR and QD?
+     <br><button class="solution-button" onclick="toggleSolution(3)">Show Solution</button>
+     <div class="solution" id="solution3">
+      <strong>Solution:</strong><br>
+      QR = 75 - 25 = 50<br>
+      QD = 50/2 = 25
+     </div>
+    </div>
+
+    <div class="practice-problem">
+     <strong>Problem 4:</strong> Data with outlier: 1, 3, 5, 7, 9, 11, 100. Compare range vs quartile range.
+     <br><button class="solution-button" onclick="toggleSolution(4)">Show Solution</button>
+     <div class="solution" id="solution4">
+      <strong>Solution:</strong><br>
+      Sorted: 1, 3, 5, 7, 9, 11, 100<br>
+      Range = 100 - 1 = 99<br>
+      Q₁ = (3+5)/2 = 4<br>
+      Q₃ = (9+11)/2 = 10<br>
+      QR = 10 - 4 = 6<br>
+      The outlier inflates the range by 99-6 = 93 units!
+     </div>
+    </div>
+
+    <div class="practice-problem">
+     <strong>Problem 5:</strong> Quartile deviation is 8. What is the quartile range?
+     <br><button class="solution-button" onclick="toggleSolution(5)">Show Solution</button>
+     <div class="solution" id="solution5">
+      <strong>Solution:</strong><br>
+      QD = QR/2, so QR = 2 × QD = 2 × 8 = 16
+     </div>
+    </div>
+
+    <div style="margin: 30px 0;">
+     <strong>Applications of Quartile Range and Deviation:</strong>
+     <ul>
+      <li><strong>Outlier Detection:</strong> Values beyond Q₃ + 1.5×QR are potential outliers</li>
+      <li><strong>Data Spread Analysis:</strong> Understanding variability in the central data</li>
+      <li><strong>Box Plot Construction:</strong> QR forms the length of the box in box plots</li>
+      <li><strong>Robust Statistics:</strong> Less affected by extreme values than range or standard deviation</li>
+      <li><strong>Quality Control:</strong> Monitoring process variability in manufacturing</li>
+     </ul>
+    </div>
+
+    <div class="key-takeaways">
+     <h3>Key Takeaways</h3>
+     <ul>
+      <li><strong>Quartile Range:</strong> Q₃ - Q₁, measures spread of middle 50% of data.</li>
+      <li><strong>Quartile Deviation:</strong> (Q₃ - Q₁)/2, average deviation from median within IQR.</li>
+      <li><strong>Robustness:</strong> Less affected by outliers than range or standard deviation.</li>
+      <li><strong>Interpretation:</strong> Larger values indicate greater variability in central data.</li>
+      <li><strong>Relationship:</strong> Quartile deviation is exactly half of the quartile range.</li>
+      <li><strong>Box Plots:</strong> Quartile range determines the length of the box in box plot diagrams.</li>
+      <li><strong>Outlier Detection:</strong> Used in statistical methods to identify unusual observations.</li>
+      <li><strong>Comparison:</strong> More reliable than range for datasets with extreme values.</li>
+     </ul>
+    </div>
+
+    <script>
+     function calculateQuartileMeasures() {
+      const input = document.getElementById('data-input').value;
+      const values = input.split(',').map(x => parseFloat(x.trim())).filter(x => !isNaN(x));
+
+      if (values.length < 4) {
+       alert('Please enter at least 4 values to calculate quartiles.');
+       return;
+      }
+
+      // Sort the values
+      const sorted = [...values].sort((a, b) => a - b);
+      const n = sorted.length;
+
+      // Calculate quartile positions
+      const q1Pos = (n + 1) / 4;
+      const q3Pos = 3 * (n + 1) / 4;
+
+      // Calculate quartiles
+      let q1, q3;
+
+      if (n % 2 === 1) {
+       q1 = getQuartileValue(sorted, q1Pos);
+       q3 = getQuartileValue(sorted, q3Pos);
+      } else {
+       q1 = getQuartileValue(sorted, q1Pos);
+       q3 = getQuartileValue(sorted, q3Pos);
+      }
+
+      const qr = q3 - q1;
+      const qd = qr / 2;
+      const totalRange = sorted[sorted.length - 1] - sorted[0];
+      const median = n % 2 === 1 ? sorted[Math.floor(n / 2)] : (sorted[n / 2 - 1] + sorted[n / 2]) / 2;
+
+      // Update output
+      const output = document.getElementById('demo-output');
+      output.innerHTML = `<strong>Current Data:</strong> [${values.join(', ')}]<br>
+      <strong>Sorted Data:</strong> [${sorted.join(', ')}]<br>
+      <strong>Q₁ (25th percentile):</strong> ${q1}<br>
+      <strong>Q₂ (50th percentile, Median):</strong> ${median}<br>
+      <strong>Q₃ (75th percentile):</strong> ${q3}<br>
+      <div class="deviation-summary">
+       <div class="deviation-stat">
+        <div class="value">${qr.toFixed(1)}</div>
+        <div class="label">Quartile Range (QR)</div>
+       </div>
+       <div class="deviation-stat">
+        <div class="value">${qd.toFixed(1)}</div>
+        <div class="label">Quartile Deviation (QD)</div>
+       </div>
+       <div class="deviation-stat">
+        <div class="value">${totalRange.toFixed(1)}</div>
+        <div class="label">Total Range</div>
+       </div>
+      </div>`;
+
+      // Re-render MathJax
+      if (window.MathJax) {
+       MathJax.typesetPromise([output]).catch(function(err) {
+        console.log('MathJax re-render error:', err);
+       });
+      }
+     }
+
+     function getQuartileValue(sorted, position) {
+      const n = sorted.length;
+      const lowerIndex = Math.floor(position) - 1; // Convert to 0-based index
+      const upperIndex = Math.ceil(position) - 1; // Convert to 0-based index
+
+      if (lowerIndex === upperIndex) {
+       return sorted[lowerIndex];
+      } else {
+       const lowerValue = sorted[lowerIndex];
+       const upperValue = sorted[upperIndex];
+       const fraction = position - Math.floor(position);
+       return lowerValue + fraction * (upperValue - lowerValue);
+      }
+     }
+
+     function toggleSolution(num) {
+      const solution = document.getElementById('solution' + num);
+      if (solution.style.display === 'none' || solution.style.display === '') {
+       solution.style.display = 'block';
+      } else {
+       solution.style.display = 'none';
+      }
+     }
+
+     // Initialize with default data
+     calculateQuartileMeasures();
+    </script>
+   </div>
+  </div>
+ </body>
+</html>

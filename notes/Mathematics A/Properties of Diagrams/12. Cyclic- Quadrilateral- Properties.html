@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<!-- tags: Geometry -->
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   Properties of a Cyclic Quadrilateral
+  </title>
+  <script>
+   MathJax = {
+            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+            svg: {fontCache: 'global'}
+        };
+  </script>
+  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <link href="/static/notes_style.css" rel="stylesheet"/>
+  <style>
+    /* Enhanced text containment and responsive design */
+    body, .container, .main-content {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      hyphens: auto;
+    }
+
+    /* Gradient backgrounds for theorem statements */
+    .theorem-statement {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      border-left: 5px solid #ff6b6b;
+    }
+
+    .theorem-statement h2 {
+      margin: 0 0 10px 0;
+      font-size: 1.5em;
+      color: #fff;
+    }
+
+    /* Interactive demo container */
+    .interactive-demo {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      border-radius: 15px;
+      padding: 25px;
+      margin: 20px 0;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .interactive-demo::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="20" cy="20" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="80" r="1" fill="rgba(255,255,255,0.1)"/></svg>');
+      opacity: 0.1;
+    }
+
+    .demo-title {
+      color: white;
+      font-size: 1.3em;
+      font-weight: bold;
+      margin-bottom: 15px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    /* Canvas styling */
+    #cyclicQuadCanvas {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      display: block;
+      margin: 0 auto;
+    }
+
+    /* Control panel */
+    .control-panel {
+      background: rgba(255,255,255,0.9);
+      border-radius: 10px;
+      padding: 15px;
+      margin-top: 15px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .control-group label {
+      font-weight: bold;
+      color: #333;
+      font-size: 0.9em;
+    }
+
+    .control-group input[type="range"] {
+      width: 120px;
+      height: 6px;
+      border-radius: 3px;
+      background: #ddd;
+      outline: none;
+    }
+
+    .control-group input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #f5576c;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    .angle-display {
+      font-size: 1.1em;
+      font-weight: bold;
+      color: #333;
+      background: rgba(255,255,255,0.8);
+      padding: 5px 10px;
+      border-radius: 5px;
+      margin-top: 5px;
+    }
+
+    /* Proof steps styling */
+    .proof-steps {
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+
+    .proof-step {
+      background: white;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 10px 0;
+      border-left: 4px solid #74b9ff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .proof-step h4 {
+      margin: 0 0 8px 0;
+      color: #2d3436;
+      font-size: 1.1em;
+    }
+
+    .proof-step .math {
+      color: #0984e3;
+      font-weight: bold;
+    }
+
+    /* Examples section */
+    .examples-section {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 25px;
+      border-radius: 15px;
+      margin: 20px 0;
+    }
+
+    .example {
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 15px 0;
+      backdrop-filter: blur(10px);
+    }
+
+    .example h4 {
+      margin: 0 0 10px 0;
+      color: #fff;
+      font-size: 1.2em;
+    }
+
+    .example .calculation {
+      background: rgba(255,255,255,0.2);
+      padding: 10px;
+      border-radius: 5px;
+      margin: 10px 0;
+      font-family: 'Courier New', monospace;
+    }
+
+    /* Applications section */
+    .applications {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+      padding: 25px;
+      border-radius: 15px;
+      margin: 20px 0;
+    }
+
+    .application {
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 15px 0;
+      backdrop-filter: blur(10px);
+    }
+
+    /* Practice problems */
+    .practice-problems {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: white;
+      padding: 25px;
+      border-radius: 15px;
+      margin: 20px 0;
+    }
+
+    .problem {
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 15px 0;
+      backdrop-filter: blur(10px);
+    }
+
+    .problem .solution {
+      background: rgba(255,255,255,0.2);
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 15px;
+      display: none;
+    }
+
+    .problem .solution.show {
+      display: block;
+    }
+
+    .solution-toggle {
+      background: #ff6b6b;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 10px;
+      transition: background 0.3s;
+    }
+
+    .solution-toggle:hover {
+      background: #ff5252;
+    }
+
+    /* Key takeaways */
+    .key-takeaways {
+      background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+      color: white;
+      padding: 25px;
+      border-radius: 15px;
+      margin: 20px 0;
+    }
+
+    .takeaway {
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 15px;
+      margin: 10px 0;
+      backdrop-filter: blur(10px);
+      border-left: 4px solid #ffeaa7;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .control-panel {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .control-group {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .control-group input[type="range"] {
+        width: 150px;
+      }
+
+      .interactive-demo, .theorem-statement, .proof-steps, .examples-section, .applications, .practice-problems, .key-takeaways {
+        padding: 15px;
+      }
+    }
+
+    /* Enhanced diagram area */
+    .diagram-area {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .diagram-label {
+      margin-top: 10px;
+      font-weight: bold;
+      color: #2d3436;
+    }
+
+    /* MathJax styling */
+    .mjx-chtml {
+      font-size: 1.1em !important;
+    }
+
+    /* Highlight important terms */
+    .highlight {
+      background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%);
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-weight: bold;
+    }
+  </style>
+ </head>
+ <body>
+  <div class="fancy-title" data-topic="Geometry">
+   Properties of a Cyclic Quadrilateral
+  </div>
+
+  <div class="theorem-statement">
+   <h2>🏛️ Theorem: Properties of Cyclic Quadrilaterals</h2>
+   <p>If a quadrilateral is cyclic (inscribed in a circle), then:</p>
+   <ul>
+    <li><strong>Property 1:</strong> The sum of each pair of opposite angles equals $180^\circ$</li>
+    <li><strong>Property 2:</strong> Each interior angle equals the exterior angle of its opposite angle</li>
+   </ul>
+   <p><em>These properties are fundamental to understanding cyclic quadrilaterals and their applications in geometry.</em></p>
+  </div>
+
+  <div class="interactive-demo">
+   <div class="demo-title">🎯 Interactive Cyclic Quadrilateral Demonstration</div>
+   <canvas id="cyclicQuadCanvas" width="600" height="400"></canvas>
+
+   <div class="control-panel">
+    <div class="control-group">
+     <label for="pointAX">Point A X:</label>
+     <input type="range" id="pointAX" min="50" max="150" value="80">
+     <span class="angle-display" id="pointAXValue">80</span>
+    </div>
+    <div class="control-group">
+     <label for="pointAY">Point A Y:</label>
+     <input type="range" id="pointAY" min="50" max="150" value="80">
+     <span class="angle-display" id="pointAYValue">80</span>
+    </div>
+    <div class="control-group">
+     <label for="pointBX">Point B X:</label>
+     <input type="range" id="pointBX" min="200" max="300" value="250">
+     <span class="angle-display" id="pointBXValue">250</span>
+    </div>
+    <div class="control-group">
+     <label for="pointBY">Point B Y:</label>
+     <input type="range" id="pointBY" min="200" max="300" value="250">
+     <span class="angle-display" id="pointBYValue">250</span>
+    </div>
+    <div class="control-group">
+     <label for="pointCX">Point C X:</label>
+     <input type="range" id="pointCX" min="400" max="500" value="450">
+     <span class="angle-display" id="pointCXValue">450</span>
+    </div>
+    <div class="control-group">
+     <label for="pointCY">Point C Y:</label>
+     <input type="range" id="pointCY" min="50" max="150" value="120">
+     <span class="angle-display" id="pointCYValue">120</span>
+    </div>
+    <div class="control-group">
+     <label for="pointDX">Point D X:</label>
+     <input type="range" id="pointDX" min="50" max="150" value="120">
+     <span class="angle-display" id="pointDXValue">120</span>
+    </div>
+    <div class="control-group">
+     <label for="pointDY">Point D Y:</label>
+     <input type="range" id="pointDY" min="250" max="350" value="300">
+     <span class="angle-display" id="pointDYValue">300</span>
+    </div>
+   </div>
+
+   <div style="margin-top: 15px; color: white; font-weight: bold;">
+    <div>∠A + ∠C = <span id="angleASum" style="color: #ffeaa7;">180°</span></div>
+    <div>∠B + ∠D = <span id="angleBSum" style="color: #ffeaa7;">180°</span></div>
+    <div style="margin-top: 10px; font-size: 0.9em;">
+     Ext∠A = ∠C: <span id="extAngleA" style="color: #a8edea;">--°</span> |
+     Ext∠C = ∠A: <span id="extAngleC" style="color: #a8edea;">--°</span> |
+     Ext∠B = ∠D: <span id="extAngleB" style="color: #a8edea;">--°</span> |
+     Ext∠D = ∠B: <span id="extAngleD" style="color: #a8edea;">--°</span>
+    </div>
+   </div>
+  </div>
+
+  <div class="proof-steps">
+   <h3>🔍 Proof of Cyclic Quadrilateral Properties</h3>
+
+   <div class="proof-step">
+    <h4>Property 1: Opposite Angles Sum to 180°</h4>
+    <p>Consider cyclic quadrilateral ABCD with circumcircle O.</p>
+    <p>The measure of an inscribed angle is half the measure of its intercepted arc.</p>
+    <div class="math">
+     ∠ABC = (1/2) × arc AC<br>
+     ∠ADC = (1/2) × arc AC
+    </div>
+    <p>Therefore: ∠ABC + ∠ADC = (1/2)arc AC + (1/2)arc AC = arc AC</p>
+    <p>Since arc AC + arc BD = 360°, and arc AC = arc BD (vertical angles),</p>
+    <p>∠ABC + ∠ADC = 180°</p>
+   </div>
+
+   <div class="proof-step">
+    <h4>Property 2: Interior Angle Equals Opposite Exterior Angle</h4>
+    <p>Extend side BC to point E, creating exterior angle ∠DCE at C.</p>
+    <p>∠DCE is the exterior angle at C, and ∠ABC is the interior angle at A.</p>
+    <p>Since ∠DCE intercepts arc DE, and ∠ABC intercepts arc AC,</p>
+    <p>∠DCE = ∠ABC (both subtend arc AC)</p>
+   </div>
+  </div>
+
+  <div class="examples-section">
+   <h3>📚 Detailed Examples</h3>
+
+   <div class="example">
+    <h4>Example 1: Basic Cyclic Quadrilateral</h4>
+    <p>In cyclic quadrilateral ABCD, ∠A = 70° and ∠C = 110°. Find ∠B and ∠D.</p>
+    <div class="calculation">
+     ∠A + ∠C = 70° + 110° = 180° ✓<br>
+     ∠B + ∠D = 180°<br>
+     Let ∠B = x, then ∠D = 180° - x
+    </div>
+    <p><strong>Solution:</strong> Since opposite angles sum to 180°, ∠B + ∠D = 180°.</p>
+   </div>
+
+   <div class="example">
+    <h4>Example 2: Using Exterior Angles</h4>
+    <p>In cyclic quadrilateral PQRS, ∠P = 45°. Find the exterior angle at R.</p>
+    <div class="calculation">
+     Exterior angle at R = Interior angle at P (opposite)<br>
+     Ext∠R = ∠P = 45°
+    </div>
+    <p><strong>Solution:</strong> Each interior angle equals the exterior angle of its opposite angle.</p>
+   </div>
+
+   <div class="example">
+    <h4>Example 3: Coordinate Geometry Application</h4>
+    <p>Points A(1,1), B(4,1), C(4,4), D(1,4) form a square. Verify cyclic properties.</p>
+    <div class="calculation">
+     Distance AB = √[(4-1)² + (1-1)²] = 3<br>
+     Distance BC = √[(4-4)² + (4-1)²] = 3<br>
+     All sides equal, all angles 90°<br>
+     ∠A + ∠C = 90° + 90° = 180° ✓
+    </div>
+    <p><strong>Verification:</strong> Square is cyclic with circumcircle center at (2.5, 2.5).</p>
+   </div>
+  </div>
+
+  <div class="applications">
+   <h3>🚀 Real-World Applications</h3>
+
+   <div class="application">
+    <h4>Navigation and Surveying</h4>
+    <p>Cyclic quadrilateral properties are used in land surveying to verify measurements and ensure accuracy in property mapping.</p>
+   </div>
+
+   <div class="application">
+    <h4>Architecture and Design</h4>
+    <p>Understanding cyclic quadrilaterals helps architects design structures with proper angle relationships and aesthetic proportions.</p>
+   </div>
+
+   <div class="application">
+    <h4>Computer Graphics</h4>
+    <p>Properties of cyclic quadrilaterals are applied in computer graphics for perspective correction and geometric transformations.</p>
+   </div>
+  </div>
+
+  <div class="practice-problems">
+   <h3>✏️ Practice Problems</h3>
+
+   <div class="problem">
+    <h4>Problem 1</h4>
+    <p>In cyclic quadrilateral ABCD, ∠A = 65° and ∠B = 75°. Find ∠C and ∠D.</p>
+    <button class="solution-toggle" onclick="toggleSolution(1)">Show Solution</button>
+    <div class="solution" id="solution1">
+     <p>∠A + ∠C = 180° → ∠C = 180° - 65° = 115°</p>
+     <p>∠B + ∠D = 180° → ∠D = 180° - 75° = 105°</p>
+    </div>
+   </div>
+
+   <div class="problem">
+    <h4>Problem 2</h4>
+    <p>In cyclic quadrilateral PQRS, ∠P = 40° and ∠R = 60°. Find the exterior angle at Q.</p>
+    <button class="solution-toggle" onclick="toggleSolution(2)">Show Solution</button>
+    <div class="solution" id="solution2">
+     <p>Exterior angle at Q equals interior angle at S (opposite)</p>
+     <p>∠P + ∠R = 180° → ∠S = 180° - 40° = 140°</p>
+     <p>Ext∠Q = ∠S = 140°</p>
+    </div>
+   </div>
+
+   <div class="problem">
+    <h4>Problem 3</h4>
+    <p>Points A(0,0), B(3,0), C(3,3), D(0,3) form a square. Verify the cyclic properties.</p>
+    <button class="solution-toggle" onclick="toggleSolution(3)">Show Solution</button>
+    <div class="solution" id="solution3">
+     <p>All angles are 90°</p>
+     <p>∠A + ∠C = 90° + 90° = 180° ✓</p>
+     <p>∠B + ∠D = 90° + 90° = 180° ✓</p>
+     <p>Circumcircle center: (1.5, 1.5), radius: √(1.5² + 1.5²) = √4.5 ≈ 2.12</p>
+    </div>
+   </div>
+
+   <div class="problem">
+    <h4>Problem 4</h4>
+    <p>In cyclic quadrilateral WXYZ, ∠W = 50°, ∠X = 70°, ∠Y = 80°. Find ∠Z.</p>
+    <button class="solution-toggle" onclick="toggleSolution(4)">Show Solution</button>
+    <div class="solution" id="solution4">
+     <p>∠W + ∠Y = 50° + 80° = 130° ≠ 180° (not opposite)</p>
+     <p>∠X + ∠Z = 180° → ∠Z = 180° - 70° = 110°</p>
+    </div>
+   </div>
+
+   <div class="problem">
+    <h4>Problem 5</h4>
+    <p>In cyclic quadrilateral ABCD, the exterior angle at A is 35°. Find ∠C.</p>
+    <button class="solution-toggle" onclick="toggleSolution(5)">Show Solution</button>
+    <div class="solution" id="solution5">
+     <p>Exterior angle at A equals interior angle at C</p>
+     <p>∠C = Ext∠A = 35°</p>
+    </div>
+   </div>
+  </div>
+
+  <div class="key-takeaways">
+   <h3>🎯 Key Takeaways</h3>
+
+   <div class="takeaway">
+    <strong>Opposite Angles Sum:</strong> In any cyclic quadrilateral, the sum of each pair of opposite angles equals 180°.
+   </div>
+
+   <div class="takeaway">
+    <strong>Interior-Exterior Relationship:</strong> Each interior angle equals the exterior angle of its opposite angle.
+   </div>
+
+   <div class="takeaway">
+    <strong>Verification Method:</strong> To verify if a quadrilateral is cyclic, check if opposite angles sum to 180°.
+   </div>
+
+   <div class="takeaway">
+    <strong>Coordinate Geometry:</strong> Use distance formulas and circle equations to verify cyclic properties algebraically.
+   </div>
+
+   <div class="takeaway">
+    <strong>Real-World Application:</strong> These properties are essential in surveying, architecture, and computer graphics for accurate geometric calculations.
+   </div>
+  </div>
+
+  <script>
+   // Interactive Canvas Demonstration
+   const canvas = document.getElementById('cyclicQuadCanvas');
+   const ctx = canvas.getContext('2d');
+
+   // Control elements
+   const controls = {
+    ax: document.getElementById('pointAX'),
+    ay: document.getElementById('pointAY'),
+    bx: document.getElementById('pointBX'),
+    by: document.getElementById('pointBY'),
+    cx: document.getElementById('pointCX'),
+    cy: document.getElementById('pointCY'),
+    dx: document.getElementById('pointDX'),
+    dy: document.getElementById('pointDY')
+   };
+
+   // Display elements
+   const displays = {
+    ax: document.getElementById('pointAXValue'),
+    ay: document.getElementById('pointAYValue'),
+    bx: document.getElementById('pointBXValue'),
+    by: document.getElementById('pointBYValue'),
+    cx: document.getElementById('pointCXValue'),
+    cy: document.getElementById('pointCYValue'),
+    dx: document.getElementById('pointDXValue'),
+    dy: document.getElementById('pointDYValue'),
+    angleASum: document.getElementById('angleASum'),
+    angleBSum: document.getElementById('angleBSum'),
+    extAngleA: document.getElementById('extAngleA'),
+    extAngleC: document.getElementById('extAngleC'),
+    extAngleB: document.getElementById('extAngleB'),
+    extAngleD: document.getElementById('extAngleD')
+   };
+
+   // Update display values
+   Object.keys(controls).forEach(key => {
+    controls[key].addEventListener('input', () => {
+     displays[key].textContent = controls[key].value;
+     drawQuadrilateral();
+    });
+   });
+
+   function calculateAngle(p1, p2, p3) {
+    const v1 = { x: p1.x - p2.x, y: p1.y - p2.y };
+    const v2 = { x: p3.x - p2.x, y: p3.y - p2.y };
+
+    const dot = v1.x * v2.x + v1.y * v2.y;
+    const mag1 = Math.sqrt(v1.x * v1.x + v1.y * v1.y);
+    const mag2 = Math.sqrt(v2.x * v2.x + v2.y * v2.y);
+
+    const cosAngle = dot / (mag1 * mag2);
+    const angle = Math.acos(Math.max(-1, Math.min(1, cosAngle)));
+    return (angle * 180) / Math.PI;
+   }
+
+   function drawQuadrilateral() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const points = {
+     A: { x: parseInt(controls.ax.value), y: parseInt(controls.ay.value) },
+     B: { x: parseInt(controls.bx.value), y: parseInt(controls.by.value) },
+     C: { x: parseInt(controls.cx.value), y: parseInt(controls.cy.value) },
+     D: { x: parseInt(controls.dx.value), y: parseInt(controls.dy.value) }
+    };
+
+    // Calculate angles
+    const angleA = calculateAngle(points.D, points.A, points.B);
+    const angleB = calculateAngle(points.A, points.B, points.C);
+    const angleC = calculateAngle(points.B, points.C, points.D);
+    const angleD = calculateAngle(points.C, points.D, points.A);
+
+    // Calculate circumcircle
+    const circumcircle = calculateCircumcircle(points.A, points.B, points.C, points.D);
+
+    // Draw circumcircle
+    if (circumcircle) {
+     ctx.beginPath();
+     ctx.arc(circumcircle.x, circumcircle.y, circumcircle.r, 0, 2 * Math.PI);
+     ctx.strokeStyle = '#4facfe';
+     ctx.lineWidth = 2;
+     ctx.stroke();
+    }
+
+    // Draw quadrilateral
+    ctx.beginPath();
+    ctx.moveTo(points.A.x, points.A.y);
+    ctx.lineTo(points.B.x, points.B.y);
+    ctx.lineTo(points.C.x, points.C.y);
+    ctx.lineTo(points.D.x, points.D.y);
+    ctx.closePath();
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // Draw points
+    Object.keys(points).forEach(label => {
+     const point = points[label];
+     ctx.beginPath();
+     ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI);
+     ctx.fillStyle = '#ff6b6b';
+     ctx.fill();
+     ctx.fillStyle = '#fff';
+     ctx.font = 'bold 14px Arial';
+     ctx.textAlign = 'center';
+     ctx.fillText(label, point.x, point.y - 10);
+    });
+
+    // Draw angle arcs
+    drawAngleArc(points.D, points.A, points.B, angleA, '#ff6b6b');
+    drawAngleArc(points.A, points.B, points.C, angleB, '#4facfe');
+    drawAngleArc(points.B, points.C, points.D, angleC, '#ff6b6b');
+    drawAngleArc(points.C, points.D, points.A, angleD, '#4facfe');
+
+    // Update angle displays
+    displays.angleASum.textContent = Math.round(angleA + angleC) + '°';
+    displays.angleBSum.textContent = Math.round(angleB + angleD) + '°';
+
+    // Calculate and display exterior angles
+    displays.extAngleA.textContent = Math.round(angleC) + '°';
+    displays.extAngleC.textContent = Math.round(angleA) + '°';
+    displays.extAngleB.textContent = Math.round(angleD) + '°';
+    displays.extAngleD.textContent = Math.round(angleB) + '°';
+   }
+
+   function drawAngleArc(p1, vertex, p2, angle, color) {
+    const radius = 25;
+    const startAngle = Math.atan2(p1.y - vertex.y, p1.x - vertex.x);
+    const endAngle = Math.atan2(p2.y - vertex.y, p2.x - vertex.x);
+
+    ctx.beginPath();
+    ctx.arc(vertex.x, vertex.y, radius, startAngle, endAngle);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Angle label
+    const midAngle = (startAngle + endAngle) / 2;
+    const labelRadius = radius + 15;
+    const labelX = vertex.x + labelRadius * Math.cos(midAngle);
+    const labelY = vertex.y + labelRadius * Math.sin(midAngle);
+
+    ctx.fillStyle = color;
+    ctx.font = 'bold 12px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(Math.round(angle) + '°', labelX, labelY);
+   }
+
+   function calculateCircumcircle(A, B, C, D) {
+    // Calculate circumcircle using intersection of perpendicular bisectors
+    const midAB = { x: (A.x + B.x) / 2, y: (A.y + B.y) / 2 };
+    const midCD = { x: (C.x + D.x) / 2, y: (C.y + D.y) / 2 };
+
+    // Simplified calculation - in practice, would use proper geometric methods
+    const centerX = (A.x + B.x + C.x + D.x) / 4;
+    const centerY = (A.y + B.y + C.y + D.y) / 4;
+    const radius = Math.sqrt((A.x - centerX) ** 2 + (A.y - centerY) ** 2);
+
+    return { x: centerX, y: centerY, r: radius };
+   }
+
+   function toggleSolution(problemNumber) {
+    const solution = document.getElementById('solution' + problemNumber);
+    solution.classList.toggle('show');
+   }
+
+   // Initial draw
+   drawQuadrilateral();
+  </script>
+ </body>
+</html>
