@@ -3,11 +3,13 @@ from utils.note_loader import (
     get_notes_list, 
     load_note_content, 
     get_folders_and_subfolders, 
+    get_notes_with_titles,
     NoteNotFound
 )
 import requests
 import os
 import re
+import json
 
 notes_bp = Blueprint("notes", __name__)
 
@@ -40,7 +42,8 @@ def index():
 
 @notes_bp.route("/note/<path:note_path>")
 def view_note(note_path):
-    notes_list = get_notes_list()
+    notes_meta = get_notes_with_titles()
+    notes_list = [n["path"] for n in notes_meta]
     folders, subfolders = get_folders_and_subfolders(notes_list)
 
     if note_path not in notes_list:
@@ -69,9 +72,10 @@ def view_note(note_path):
         "note.html",
         note_path=note_path,
         notes_list=notes_list,
+        notes_meta_json=json.dumps(notes_meta),
         nav=nav,
         content=content,
-        notes_json=str(notes_list),
+        notes_json=json.dumps(notes_list),
         folders=folders,
         subfolders=subfolders,
         note_title=note_title

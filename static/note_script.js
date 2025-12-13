@@ -2,6 +2,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const searchInput = document.getElementById("search");
     const resultsBox = document.getElementById("search-results");
     const noteSelect = document.getElementById("noteSelect");
+    const notesMeta = (typeof NOTES_META !== "undefined" && Array.isArray(NOTES_META))
+        ? NOTES_META
+        : (Array.isArray(NOTES_LIST) ? NOTES_LIST.map(path => ({ path, title: path.split('/').pop() })) : []);
 
     // Build subfolder dropdown based on the currently selected folder
     function updateSubfolderOptions() {
@@ -10,8 +13,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Discover unique subfolders for the chosen folder to keep the list scoped
         let subfolders = new Set();
-        NOTES_LIST.forEach(note => {
-            const parts = note.split('/');
+        notesMeta.forEach(note => {
+            const parts = note.path.split('/');
             if (parts.length > 1 && parts[0] === folder) {
                 subfolders.add(parts[1]);
             }
@@ -39,20 +42,23 @@ document.addEventListener("DOMContentLoaded", () => {
         const subfolder = document.getElementById('subfolderFilter').value;
         noteSelect.innerHTML = "";
 
-        let filtered = NOTES_LIST;
+        let filtered = notesMeta;
         if (folder) {
-            filtered = filtered.filter(n => n.startsWith(folder + '/'));
+            filtered = filtered.filter(n => n.path.startsWith(folder + '/'));
         }
         if (subfolder) {
-            filtered = filtered.filter(n => n.split('/')[1] === subfolder);
+            filtered = filtered.filter(n => {
+                const parts = n.path.split('/');
+                return parts.length > 1 && parts[1] === subfolder;
+            });
         }
          
         noteSelect.innerHTML = "<option value=''>-- Select a topic --</option>";
 
         filtered.forEach(n => {
             const opt = document.createElement("option");
-            opt.value = "/note/" + n;
-            opt.textContent = n.split('/').pop(); // Show only filename
+            opt.value = "/note/" + n.path;
+            opt.textContent = n.title || n.path.split('/').pop();
             noteSelect.appendChild(opt);
         });
     }
@@ -84,8 +90,15 @@ document.addEventListener("DOMContentLoaded", () => {
         filterNotes();
     });
 
-    // Client-side fuzzy search over all notes
-    const fuse = new Fuse(NOTES_LIST, { includeScore: true, threshold: 0.4 });
+    // Client-side fuzzy search over all notes (favor human titles, fall back to path)
+    const fuse = new Fuse(notesMeta, {
+        includeScore: true,
+        threshold: 0.4,
+        keys: [
+            { name: "title", weight: 0.9 },
+            { name: "path", weight: 0.1 }
+        ]
+    });
 
     // Live search results with minimal debounce via DOM event only
     searchInput.addEventListener("input", () => {
@@ -95,12 +108,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const results = fuse.search(query).slice(0, 10);
         results.forEach(result => {
             const a = document.createElement("a");
-            a.href = "/note/" + result.item;
-            let filename = result.item.split('/').pop();
-            if (filename.endsWith('.html')) {
-                filename = filename.slice(0, -5);
-            }
-            a.textContent = filename;
+            const note = result.item;
+            a.href = "/note/" + note.path;
+            a.textContent = note.title || note.path.split('/').pop();
             resultsBox.appendChild(a);
         });
 
