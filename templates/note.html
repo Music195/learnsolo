@@ -1,780 +1,162 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ note_path }} - Math Notes</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <script>
-        const NOTES_LIST = {{ notes_json|safe }};
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
-    <script src="/static/script.js" defer></script>
-    <link rel="stylesheet" href="/static/style.css">
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script type="text/javascript" async
-    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
-    </script>
-    <link rel="icon" type="image/png" href="/static/favicon.png">
-    <style>
-        body {
-            padding: 0 !important;
-            margin: 0 !important;
-            max-width: 100% !important;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        nav {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(10px);
-            box-shadow: 4px 0 30px rgba(0,0,0,0.15);
-            position: fixed;
-            left: -380px;
-            top: 0;
-            height: 100vh;
-            width: 320px;
-            z-index: 1001;
-            padding: 25px 20px;
-            overflow-y: auto;
-            transition: left 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
-        }
-        
-        nav.open {
-            left: 0;
-        }
-        
-        nav::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        nav::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        
-        nav::-webkit-scrollbar-thumb {
-            background: rgba(102, 126, 234, 0.3);
-            border-radius: 10px;
-        }
-        
-        nav::-webkit-scrollbar-thumb:hover {
-            background: rgba(102, 126, 234, 0.5);
-        }
-        
-        .menu-toggle {
-            position: fixed;
-            left: 20px;
-            top: 20px;
-            z-index: 1002;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            color: #667eea;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 12px;
-            width: 48px;
-            height: 48px;
-            font-size: 20px;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        }
-        
-        .menu-toggle:hover {
-            background: #667eea;
-            color: white;
-            border-color: #667eea;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.4);
-        }
-        
-        .menu-toggle.open {
-            left: 335px;
-        }
-        
-        .menu-toggle.open .fa-bars:before {
-            content: "\f00d"; /* Font Awesome times/cross icon */
-        }
-        
-        .home-sidebar {
-            position: absolute;
-            right: 0;
-            top: 20px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            color: #667eea;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 12px 0 0 12px;
-            width: 40px;
-            height: 40px;
-            font-size: 18px;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        }
-        
-        .home-sidebar:hover {
-            background: #667eea;
-            color: white;
-            border-color: #667eea;
-            transform: scale(1.1);
-            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.4);
-        }
-        
-        .sidebar-header {
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid rgba(102, 126, 234, 0.1);
-            position: relative;
-            padding-right: 50px;
-        }
-        
-        .sidebar-header h3 {
-            margin: 0 0 5px 0;
-            color: #667eea;
-            font-size: 20px;
-            font-weight: 700;
-        }
-        
-        .sidebar-header p {
-            margin: 0;
-            color: #999;
-            font-size: 13px;
-        }
-        
-        #up_nav {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 25px;
-        }
-        
-        #up_nav a {
-            padding: 12px 18px;
-            background: rgba(102, 126, 234, 0.08);
-            color: #667eea;
-            text-decoration: none;
-            border-radius: 12px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border: 1px solid transparent;
-        }
-        
-        #up_nav a:hover {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            transform: translateX(5px);
-            border-color: rgba(102, 126, 234, 0.3);
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-        }
-        
-        #up_nav a i {
-            font-size: 16px;
-        }
-        
-        .nav-section {
-            margin-bottom: 25px;
-            position: relative;
-        }
-        
-        .nav-section-title {
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: #999;
-            margin-bottom: 12px;
-            letter-spacing: 0.5px;
-        }
-        
-        .search-wrapper {
-            position: relative;
-        }
-        
-        #search {
-            width: 100%;
-            padding: 12px 15px 12px 40px;
-            border: 1px solid rgba(102, 126, 234, 0.2);
-            border-radius: 12px;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            outline: none;
-            box-sizing: border-box;
-            background: rgba(102, 126, 234, 0.05);
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23667eea' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: 12px center;
-            background-size: 16px;
-        }
-        
-        #search:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-            background-color: white;
-        }
-        
-        #search-results {
-            position: absolute;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            width: 100%;
-            max-height: 300px;
-            overflow-y: auto;
-            margin-top: 5px;
-            z-index: 1002;
-            border: 1px solid rgba(102, 126, 234, 0.1);
-            left: 0;
-            top: 100%;
-        }
-        
-        #search-results::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        #search-results::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        
-        #search-results::-webkit-scrollbar-thumb {
-            background: rgba(102, 126, 234, 0.3);
-            border-radius: 10px;
-        }
-        
-        select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid rgba(102, 126, 234, 0.2);
-            border-radius: 12px;
-            font-size: 14px;
-            outline: none;
-            background: rgba(102, 126, 234, 0.05);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-sizing: border-box;
-            color: #333;
-        }
-        
-        select:hover, select:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-            background: white;
-        }
-        
-        #topic_nav {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        
-        #noteSelect {
-            width: 100%;
-            font-weight: 500;
-        }
-        
-        .nav-buttons {
-            position: fixed;
-            top: 50%;
-            left: 0;
-            right: 0;
-            transform: translateY(-50%);
-            z-index: 1000;
-            pointer-events: none;
-        }
+<!-- Extend the base template which provides common HTML structure, head, and body -->
+{% extends "base.html" %}
 
-        .nav-buttons a, .nav-buttons span {
-            pointer-events: auto;
-            position: absolute;
-            width: 48px;
-            height: 56px;
-            background: linear-gradient(145deg,
-                rgba(255, 255, 255, 0.95) 0%,
-                rgba(255, 255, 255, 0.9) 25%,
-                rgba(255, 255, 255, 0.85) 50%,
-                rgba(255, 255, 255, 0.8) 75%,
-                rgba(255, 255, 255, 0.75) 100%);
-            backdrop-filter: blur(8px) saturate(150%);
-            -webkit-backdrop-filter: blur(8px) saturate(150%);
-            border: 1px solid rgba(255, 255, 255, 1);
-            opacity: 1;
-            box-shadow:
-                0 8px 32px rgba(0, 0, 0, 0.08),
-                0 2px 16px rgba(0, 0, 0, 0.04),
-                inset 0 1px 0 rgba(255, 255, 255, 0.3),
-                inset 0 -1px 0 rgba(0, 0, 0, 0.05);
-            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0.1;
-            transform: scale(0.8) translateY(2px);
-            cursor: pointer;
-        }
+<!-- Override the page title with the current note path -->
+{% block title %} {{ note_path }} - Math Notes {% endblock%}
 
-        .nav-buttons a:first-child::before,
-        .nav-buttons span:first-child::before {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 0;
-            border-top: 4px solid transparent;
-            border-bottom: 4px solid transparent;
-            border-right: 6px solid rgba(255, 255, 255, 0.8);
-            left: 50%;
-            top: 50%;
-            transform: translate(-45%, -50%);
-            transition: all 0.3s ease;
-        }
+<!-- Block for additional head content: CSS, JS libraries, and inline scripts -->
+{% block extra_head %}
 
-        .nav-buttons a:last-child::before,
-        .nav-buttons span:last-child::before {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 0;
-            border-top: 4px solid transparent;
-            border-bottom: 4px solid transparent;
-            border-left: 6px solid rgba(255, 255, 255, 0.8);
-            right: 50%;
-            top: 50%;
-            transform: translate(45%, -50%);
-            transition: all 0.3s ease;
-        }
+<!-- Load the main stylesheet for note page layout and styling -->
+<link rel="stylesheet" href="/static/note_tpl_style.css">
+<!-- Load additional styles for navigation buttons and search -->
+<link rel="stylesheet" href="/static/style.css">
 
-        .nav-buttons a:first-child, .nav-buttons span:first-child {
-            left: 30px;
-            animation: slideInLeft 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
-        }
+<!-- Define JavaScript constant with the list of all notes for search functionality -->
+<script>
+    const NOTES_LIST = {{ notes_json|safe }};
+</script>
 
-        .nav-buttons a:last-child, .nav-buttons span:last-child {
-            right: 30px;
-            animation: slideInRight 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
-        }
+<!-- Load Fuse.js library for fuzzy search functionality -->
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+<!-- Load custom JavaScript for note filtering and search -->
+<script src="/static/script.js" defer></script>
+<!-- Load polyfill for ES6 features in older browsers -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<!-- Load MathJax for rendering mathematical equations -->
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
-        .nav-buttons a:hover {
-            opacity: 1;
-            transform: scale(1.0) translateY(-1px);
-            background: linear-gradient(145deg,
-                rgba(255, 255, 255, 0.4) 0%,
-                rgba(255, 255, 255, 0.3) 25%,
-                rgba(255, 255, 255, 0.2) 50%,
-                rgba(255, 255, 255, 0.1) 75%,
-                rgba(255, 255, 255, 0.05) 100%);
-            box-shadow:
-                0 12px 40px rgba(255, 255, 255, 0.15),
-                0 4px 20px rgba(0, 0, 0, 0.1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.4),
-                inset 0 -1px 0 rgba(0, 0, 0, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            animation: gentlePulse 2s infinite ease-in-out;
-        }
+{% endblock %}
 
-        .nav-buttons a:hover::before,
-        .nav-buttons span:hover::before {
-            border-left-color: rgba(255, 255, 255, 0.95);
-            border-right-color: rgba(255, 255, 255, 0.95);
-            transform: translate(-55%, -50%) scale(1.1);
-        }
+<!-- Main content block that replaces the body content in base.html -->
+{% block body %}
 
-        .nav-buttons a:hover::before {
-            transform: translate(-45%, -50%) scale(1.1);
-        }
+<!-- Menu toggle button to open/close the sidebar navigation -->
+<button class="menu-toggle" onclick="toggleMenu()">
+    <i class="fas fa-bars"></i>
+</button>
 
-        .nav-buttons a:hover:last-child::before {
-            transform: translate(45%, -50%) scale(1.1);
-        }
-
-        .nav-buttons a:active {
-            transform: scale(0.98) translateY(0px);
-            transition: all 0.15s cubic-bezier(0.4, 0.0, 0.6, 1);
-            box-shadow:
-                0 8px 32px rgba(255, 255, 255, 0.12),
-                0 3px 16px rgba(0, 0, 0, 0.08),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2),
-                inset 0 -1px 0 rgba(0, 0, 0, 0.08);
-        }
-
-        /* .nav-buttons span {
-            opacity: 0.3;
-            cursor: not-allowed;
-            background: rgba(224, 224, 224, 0.6);
-            color: #999;
-            border-color: rgba(224, 224, 224, 0.3);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-        } */
-
-        .nav-buttons span:hover {
-            transform: none;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-        }
-
-        @keyframes gentlePulse {
-            0% {
-                box-shadow:
-                    0 12px 40px rgba(255, 255, 255, 0.15),
-                    0 4px 20px rgba(0, 0, 0, 0.1),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.4),
-                    inset 0 -1px 0 rgba(0, 0, 0, 0.03);
-            }
-            50% {
-                box-shadow:
-                    0 14px 45px rgba(255, 255, 255, 0.2),
-                    0 5px 22px rgba(0, 0, 0, 0.12),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.5),
-                    inset 0 -1px 0 rgba(0, 0, 0, 0.02);
-            }
-            100% {
-                box-shadow:
-                    0 12px 40px rgba(255, 255, 255, 0.15),
-                    0 4px 20px rgba(0, 0, 0, 0.1),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.4),
-                    inset 0 -1px 0 rgba(0, 0, 0, 0.03);
-            }
-        }
-
-        @keyframes slideInLeft {
-            from {
-                transform: translateX(-100px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        @keyframes slideInRight {
-            from {
-                transform: translateX(100px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-        
-        .font-size-controls {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            z-index: 999;
-        }
-        
-        .font-size-btn {
-            width: 50px;
-            height: 50px;
-            background: white;
-            color: #667eea;
-            border: 2px solid rgba(255, 255, 255, 0.4);
-            border-radius: 50%;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-        
-        .font-size-btn:hover {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
-        }
-        
-        .font-size-btn:active {
-            transform: scale(0.95);
-        }
-        
-        .note-content {
-            width: 95%;
-            max-width: 1400px;
-            margin: 20px auto 40px;
-            padding: 40px;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            animation: fadeInUp 0.6s ease;
-            box-sizing: border-box;
-        }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @media (max-width: 992px) {
-            .note-content {
-                width: 90%;
-                padding: 30px;
-            }
-        }
-        
-        @media (max-width: 992px) {
-            .note-content {
-                width: 90%;
-                padding: 30px;
-            }
-            
-            .nav-buttons {
-                padding: 0 15px;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            nav {
-                width: 280px;
-                left: -300px;
-                padding: 20px 15px;
-            }
-
-            .nav-buttons a, .nav-buttons span {
-                width: 40px;
-                height: 48px;
-                background: linear-gradient(145deg,
-                    rgba(255, 255, 255, 0.95) 0%,
-                    rgba(255, 255, 255, 0.9) 25%,
-                    rgba(255, 255, 255, 0.85) 50%,
-                    rgba(255, 255, 255, 0.8) 75%,
-                    rgba(255, 255, 255, 0.75) 100%);
-                backdrop-filter: blur(6px) saturate(150%);
-                -webkit-backdrop-filter: blur(6px) saturate(150%);
-                box-shadow:
-                    0 6px 24px rgba(0, 0, 0, 0.08),
-                    0 2px 12px rgba(0, 0, 0, 0.04),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.4),
-                    inset 0 -1px 0 rgba(0, 0, 0, 0.03);
-                border: 1px solid rgba(255, 255, 255, 1);
-            }
-
-            .nav-buttons a:first-child::before,
-            .nav-buttons span:first-child::before {
-                border-top-width: 4px;
-                border-bottom-width: 4px;
-                border-right-width: 6px;
-                transform: translate(-40%, -50%);
-            }
-
-            .nav-buttons a:last-child::before,
-            .nav-buttons span:last-child::before {
-                border-top-width: 4px;
-                border-bottom-width: 4px;
-                border-left-width: 6px;
-                transform: translate(40%, -50%);
-            }
-
-            .font-size-controls {
-                bottom: 20px;
-                right: 20px;
-            }
-
-            .font-size-btn {
-                width: 45px;
-                height: 45px;
-                font-size: 16px;
-            }
-        }
-        
-        @media (max-width: 576px) {
-            nav {
-                width: 260px;
-                left: -280px;
-                padding: 20px 12px;
-            }
-            
-            .menu-toggle {
-                width: 45px;
-                height: 45px;
-                font-size: 18px;
-                left: 15px;
-                top: 15px;
-            }
-            
-            .menu-toggle.open {
-                left: 285px;
-            }
-            
-            .sidebar-header {
-                margin-bottom: 20px;
-            }
-            
-            .sidebar-header h3 {
-                font-size: 16px;
-            }
-            
-            .sidebar-header p {
-                font-size: 12px;
-            }
-            
-            #up_nav a {
-                padding: 10px 12px;
-                font-size: 14px;
-            }
-            
-            select {
-                padding: 10px 12px;
-                font-size: 13px;
-            }
-            
-            .nav-section-title {
-                font-size: 11px;
-            }
-            
-            .nav-buttons a, .nav-buttons span {
-                padding: 10px 20px;
-                font-size: 14px;
-            }
-            
-            .note-content {
-                width: 98%;
-                padding: 20px;
-                margin: 10px auto 20px;
-            }
-            
-            .font-size-controls {
-                bottom: 15px;
-                right: 15px;
-                gap: 8px;
-            }
-            
-            .font-size-btn {
-                width: 45px;
-                height: 45px;
-                font-size: 16px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <button class="menu-toggle" onclick="toggleMenu()">
-        <i class="fas fa-bars"></i>
-    </button>
-    
-    <nav id="sidebar">
-        <div class="sidebar-header">
-            <h3>📚 Math Notes</h3>
-            <p>Browse and search notes</p>
-            <button class="home-sidebar" onclick="location.href='{{ url_for('notes.index') }}'">
-                <i class="fas fa-home"></i>
-            </button>
-        </div>
-        
-        <div id="up_nav">
-        </div>
-        
-        <div class="nav-section">
-            <div class="nav-section-title">Search</div>
-            <div class="search-wrapper">
-                <input type="text" id="search" placeholder="Search notes...">
-                <div id="search-results"></div>
-            </div>
-        </div>
-        
-        <div class="nav-section">
-            <div class="nav-section-title">Filters</div>
-            <select id="folderFilter">
-                {% for folder in folders %}
-                    <option value="{{ folder }}">{{ folder }}</option>
-                {% endfor %}
-            </select>
-            <select id="subfolderFilter" style="margin-top: 10px;">
-                <option value=""></option>
-            </select>
-        </div>
-        
-        <div class="nav-section">
-            <div class="nav-section-title">Topics</div>
-            <select id="noteSelect" onchange="location = this.value;"></select>
-        </div>
-    </nav>
-    
-    <script>
-        function toggleMenu() {
-            const nav = document.getElementById('sidebar');
-            const button = document.querySelector('.menu-toggle');
-            nav.classList.toggle('open');
-            button.classList.toggle('open');
-        }
-        
-        // Close menu when clicking outside
-        document.addEventListener('click', function(event) {
-            const nav = document.getElementById('sidebar');
-            const button = document.querySelector('.menu-toggle');
-            
-            if (!nav.contains(event.target) && !button.contains(event.target) && nav.classList.contains('open')) {
-                toggleMenu();
-            }
-        });
-        
-        // Font size adjustment
-        let currentFontSize = 100;
-        
-        function adjustFontSize(change) {
-            const noteContent = document.querySelector('.note-content');
-            currentFontSize += change * 5;
-            
-            // Limit font size between 70% and 150%
-            if (currentFontSize < 70) currentFontSize = 70;
-            if (currentFontSize > 150) currentFontSize = 150;
-            
-            noteContent.style.fontSize = currentFontSize + '%';
-            
-            // Save to localStorage
-            localStorage.setItem('noteFontSize', currentFontSize);
-        }
-        
-        // Load saved font size on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            const savedFontSize = localStorage.getItem('noteFontSize');
-            if (savedFontSize) {
-                currentFontSize = parseInt(savedFontSize);
-                document.querySelector('.note-content').style.fontSize = currentFontSize + '%';
-            }
-        });
-    </script>
-
-    <div class="nav-buttons">
-        {% if nav.prev %}
-        <a id="skip_backward" href="/note/{{ nav.prev }}">
-        </a>
-        {% else %}
-        <span id="skip_backward">
-        </span>
-        {% endif %}
-        {% if nav.next %}
-        <a id="skip_forward" href="/note/{{ nav.next }}">
-        </a>
-        {% else %}
-        <span id="skip_forward">
-        </span>
-        {% endif %}
-    </div>
-                            
-    <div class="note-content">{{ content|safe }}</div>
-    
-    <div class="font-size-controls">
-        <button class="font-size-btn" onclick="adjustFontSize(1)" title="Increase font size">A+</button>
-        <button class="font-size-btn" onclick="adjustFontSize(-1)" title="Decrease font size">A−</button>
+<!-- Sidebar navigation containing search, filters, and note selection -->
+<nav id="sidebar">
+    <!-- Header section with title and home button -->
+    <div class="sidebar-header">
+        <h3>📚 Math Notes</h3>
+        <p>Browse and search notes</p>
+        <button class="home-sidebar" onclick="location.href='{{ url_for('notes.index') }}'">
+            <i class="fas fa-home"></i>
+        </button>
     </div>
     
-</body>
-</html>
+    <!-- Container for upper navigation links (populated by JavaScript) -->
+    <div id="up_nav">
+    </div>
+    
+    <!-- Search section with input field and results dropdown -->
+    <div class="nav-section">
+        <div class="nav-section-title">Search</div>
+        <div class="search-wrapper">
+            <input type="text" id="search" placeholder="Search notes...">
+            <div id="search-results"></div>
+        </div>
+    </div>
+    
+    <!-- Filters section for folder and subfolder selection -->
+    <div class="nav-section">
+        <div class="nav-section-title">Filters</div>
+        <select id="folderFilter">
+            {% for folder in folders %}
+                <option value="{{ folder }}">{{ folder }}</option>
+            {% endfor %}
+        </select>
+        <select id="subfolderFilter" style="margin-top: 10px;">
+            <option value=""></option>
+        </select>
+    </div>
+    
+    <!-- Topics section with dropdown for note selection -->
+    <div class="nav-section">
+        <div class="nav-section-title">Topics</div>
+        <select id="noteSelect" onchange="location = this.value;"></select>
+    </div>
+</nav>
+
+<!-- JavaScript for sidebar toggle functionality -->
+<script>
+    // Function to toggle the sidebar open/closed state
+    function toggleMenu() {
+        const nav = document.getElementById('sidebar');
+        const button = document.querySelector('.menu-toggle');
+        nav.classList.toggle('open');
+        button.classList.toggle('open');
+    }
+    
+    // Event listener to close sidebar when clicking outside
+    document.addEventListener('click', function(event) {
+        const nav = document.getElementById('sidebar');
+        const button = document.querySelector('.menu-toggle');
+        
+        if (!nav.contains(event.target) && !button.contains(event.target) && nav.classList.contains('open')) {
+            toggleMenu();
+        }
+    });
+    
+    // Font size adjustment functionality
+    let currentFontSize = 100;
+    
+    // Function to increase/decrease font size
+    function adjustFontSize(change) {
+        const noteContent = document.querySelector('.note-content');
+        currentFontSize += change * 5;
+        
+        // Limit font size between 70% and 150%
+        if (currentFontSize < 70) currentFontSize = 70;
+        if (currentFontSize > 150) currentFontSize = 150;
+        
+        noteContent.style.fontSize = currentFontSize + '%';
+        
+        // Save to localStorage
+        localStorage.setItem('noteFontSize', currentFontSize);
+    }
+    
+    // Load saved font size on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const savedFontSize = localStorage.getItem('noteFontSize');
+        if (savedFontSize) {
+            currentFontSize = parseInt(savedFontSize);
+            document.querySelector('.note-content').style.fontSize = currentFontSize + '%';
+        }
+    });
+</script>
+
+<!-- Navigation buttons for previous/next note -->
+<div class="nav-buttons">
+    {% if nav.prev %}
+    <!-- Link to previous note if it exists -->
+    <a id="skip_backward" href="/note/{{ nav.prev }}">
+    </a>
+    {% else %}
+    <!-- Disabled button if no previous note -->
+    <span id="skip_backward">
+    </span>
+    {% endif %}
+    {% if nav.next %}
+    <!-- Link to next note if it exists -->
+    <a id="skip_forward" href="/note/{{ nav.next }}">
+    </a>
+    {% else %}
+    <!-- Disabled button if no next note -->
+    <span id="skip_forward">
+    </span>
+    {% endif %}
+</div>
+                        
+<!-- Main content area displaying the note HTML -->
+<div class="note-content">{{ content|safe }}</div>
+
+<!-- Font size control buttons -->
+<div class="font-size-controls">
+    <button class="font-size-btn" onclick="adjustFontSize(1)" title="Increase font size">A+</button>
+    <button class="font-size-btn" onclick="adjustFontSize(-1)" title="Decrease font size">A−</button>
+</div>
+
+{% endblock %}
