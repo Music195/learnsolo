@@ -81,3 +81,22 @@ def view_note(note_path):
 def proxy_pdf():
     from utils.google_drive import fetch_pdf
     return fetch_pdf()
+
+@notes_bp.route("/viewer")
+def viewer():
+    """
+    WHY:
+    - Renders custom PDF viewer UI
+    - Does NOT stream PDF data
+    -Receives a PDF URL and passes it to the template
+    """
+    
+    pdf_url = request.args.get("file")
+    
+    if not pdf_url:
+        return "<h1>No PDF specified</h1>", 400
+    
+    return render_template (
+        "viewer.html",
+        file_url=pdf_url
+    )
