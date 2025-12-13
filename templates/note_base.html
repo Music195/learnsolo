@@ -1,11 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}
+{% block page_title %}Notes{% endblock %}
+{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="/static/notes_style.css">
+
+<!-- MathJax (shared for all notes) -->
+<script>
+    MathJax = {
+        tex: { inlineMath: [['$', '$'], ['\\(', '\\)']]},
+        svg: { fontCache: 'global'}
+    };
+</script>
+<script async
+    src="https://cnd.jsdelivr.net/npm/mathjax@3/es5/tex.chtml.js">
+</script>
+
+{% block notes_extra_head %}{% endblock %}
+{% endblock %}
+
+{% block body %}
+<div class="fancy-title" data-topic="{% block topic %}No heading{% endblock %}">
+    {% block heading %}Notes{% endblock %}
+</div>
+
+<div class="container">
+    <div class="main-content">
+        {% block content %}{% endblock %}
+    </div>
+</div>
+
+<!-- Shared JS -->
+<script src="/static/js/notes/notes_common.js"></script>
+
+<!-- Page-specific JS -->
+ {% block notes_scripts %}{% endblock %}
+ {% endblock %}
