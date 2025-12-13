@@ -1,1 +1,0 @@
-kind_of_problem = ['EJU Problems', 'Old Question of Japaenese Universities']

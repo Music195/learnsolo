@@ -6,9 +6,9 @@ Briefly describe what this PR changes.
 ## ✅ Pull Request Checklist
 
 ### 🔒 Branch & Safety
-- [ ] This PR does **NOT** push directly to `main`
-- [ ] Changes are made in a feature branch (e.g. `notes-v2`)
-- [ ] No force-pushes were used
+- [✅] This PR does **NOT** push directly to `main`
+- [✅] Changes are made in a feature branch (e.g. `notes-v2`)
+- [✅] No force-pushes were used
 
 ### 🧠 Notes & Content
 - [ ] Note content is separated from reusable HTML templates
