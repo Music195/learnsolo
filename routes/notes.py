@@ -1,10 +1,31 @@
 from flask import Blueprint, render_template, request, Response, redirect
-from utils.note_loader import get_notes_list, load_note_content, get_folders_and_subfolders
+from utils.note_loader import (
+    get_notes_list, 
+    load_note_content, 
+    get_folders_and_subfolders, 
+    NoteNotFound
+)
 import requests
 import os
 import re
 
 notes_bp = Blueprint("notes", __name__)
+
+# STEP 5: Navigation helper
+# ------------------------
+# Computes previous and next note paths
+# so route and templates stay simple.
+def build_nav_links(notes_list, current_note):
+    if current_note not in notes_list:
+        return {"prev": None, "next": None}
+
+    index = notes_list.index(current_note)
+
+    return {
+        "prev": notes_list[index - 1] if index > 0 else None,
+        "next": notes_list[index + 1] if index < len(notes_list) - 1 else None,
+    }
+
 
 @notes_bp.route("/")
 def index():
@@ -25,13 +46,20 @@ def view_note(note_path):
     if note_path not in notes_list:
         return "<h1>Note not found</h1>", 404
 
-    index = notes_list.index(note_path)
-    prev_note = notes_list[index-1] if index > 0 else None
-    next_note = notes_list[index+1] if index < len(notes_list)-1 else None
+    nav = build_nav_links(notes_list, note_path)
 
-    content = load_note_content(note_path)
-    if isinstance(content, tuple):
-        return content  # returns (error_html, 404)
+    # STEP 4: Route-level error handling
+    # --------------------------------
+    # Catch NoteNotFound here to:
+    # - return proper HTTP 404
+    # - keep utils framework-agnostic
+    # - allow future response changes (JSON, custom page)
+
+    try:
+        content = load_note_content(note_path)
+    except NoteNotFound:
+        return "<h1>Note not found</h1>", 404
+
 
     # Extract title
     title_match = re.search(r'<div class="fancy-title"[^>]*>([^<]+)</div>', content)
@@ -41,8 +69,7 @@ def view_note(note_path):
         "note.html",
         note_path=note_path,
         notes_list=notes_list,
-        prev_note=prev_note,
-        next_note=next_note,
+        nav=nav,
         content=content,
         notes_json=str(notes_list),
         folders=folders,

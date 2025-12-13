@@ -19,3 +19,9 @@ if __name__ == "__main__":
     import os
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
+    
+# STEP 2: Lazy loading + cache (Google Drive)
+# STEP 3: PDF proxy security
+# STEP 4: Error normalization
+# STEP 5: Navigation cleanup
+# STEP 6 — Cache invalidation for notes (make caching safe)
