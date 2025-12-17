@@ -1,4 +1,14 @@
-/* Mean Demo */
+function toggleSolution(num) {
+    const solution = document.getElementById('solution' + num);
+    if (solution.style.display === 'none' || solution.style.display === '') {
+        solution.style.display = 'block';
+    } else {
+        solution.style.display = 'none';
+    }
+}
+
+// Mean Demo 
+
 function calculateMean() {
     const input = document.getElementById('data-input').value;
     const values = input.split(',').map(x => parseFloat(x.trim())).filter(x => !isNaN(x));
@@ -52,7 +62,7 @@ function updateVisualization(values) {
     // Clear previous points
     container.innerHTML = '';
 
-    const sortedValues = [...values].sort((a,b) => a - b );
+    const sortedValues = [...values].sort((a, b) => a - b);
 
     // Create data points
     sortedValues.forEach((value, index) => {
@@ -60,21 +70,104 @@ function updateVisualization(values) {
         point.className = 'data-point';
         point.textContent = value;
         point.style.left = `${index * 60 + 20}px`;
-        point.style.top = `${100 - value * 5}px`;
+        // point.style.top = `${100 - value * 5}px`;
         container.appendChild(point);
     });
-}
-
-function toggleSolution(num) {
-    const solution = document.getElementById('solution' + num);
-    if (solution.style.display === 'none' || solution.style.display === '') {
-        solution.style.display = 'block';
-    } else {
-        solution.style.display = 'none';
-    }
 }
 
 // Initialize with default data
 window.addEventListener('DOMContentLoaded', calculateMean);
 
+/* ------------------------------------------------------------------------------------ */
+// Median Demo
+
+function calculateMedian() {
+    const input = document.getElementById('data-input').value;
+    const values = input.split(',').map(x => parseFloat(x.trim())).filter(x => !isNaN(x));
+
+    if (values.length === 0) {
+        alert('Please enter valid numbers separated by commas.');
+        return;
+    }
+
+    // Sort the values
+    const sorted = [...values].sort((a, b) => a - b);
+    let median;
+
+    if (sorted.length % 2 === 1) {
+        // Odd number of values
+        const medianIndex = Math.floor(sorted.length / 2);
+        median = sorted[medianIndex];
+    } else {
+        // Even number of values
+        const mid1 = sorted[sorted.length / 2 - 1];
+        const mid2 = sorted[sorted.length / 2];
+        median = (mid1 + mid2) / 2;
+    }
+
+    // Update visualization
+    updateVisualization1(sorted, median);
+
+    // Update output
+    const output = document.getElementById('demo-output');
+    const isEven = sorted.length % 2 === 0;
+    const medianDesc = isEven
+        ? `${sorted.length / 2}rd and ${sorted.length / 2 + 1}th values`
+        : `${Math.floor(sorted.length / 2) + 1}th value`;
+
+    output.innerHTML = `
+            <div class="summary">
+                <div class="item highlight">
+                <div class="value">${median}</div>
+                <div class="label">Mean</div>
+                </div>
+                <div class="item">
+                <div class="value">${medianDesc}</div>
+                <div class="label">Median position</div>
+                </div>
+                <div class="item">
+                <div class="value">${sorted.length} (${isEven ? 'even' : 'odd'})</div>
+                <div class="label">Data Points</div>
+                </div>
+            </div>`;
+
+    // Re-render MathJax
+    if (window.MathJax) {
+        MathJax.typesetPromise([output]).catch(function (err) {
+            console.log('MathJax re-render error:', err);
+        });
+    }
+}
+
+function updateVisualization1(sorted, median) {
+    const container = document.getElementById('sorted-data');
+
+    // Clear previous content
+    container.innerHTML = '';
+
+    // Create data value elements
+    sorted.forEach((value, index) => {
+        const valueElement = document.createElement('div');
+        valueElement.className = 'data-point';
+        valueElement.textContent = value;
+
+        // Highlight median values
+        if (sorted.length % 2 === 1) {
+            // Odd case - single median
+            if (index === Math.floor(sorted.length / 2)) {
+                valueElement.classList.add('highlight');
+            }
+        } else {
+            // Even case - two middle values
+            if (index === sorted.length / 2 - 1 || index === sorted.length / 2) {
+                valueElement.classList.add('highlight');
+            }
+        }
+
+        container.appendChild(valueElement);
+    });
+}
+
+// Initialize with default data
+window.addEventListener('DOMContentLoaded', calculateMedian);
 /* ------------------------------------------------------------------------------------ */
