@@ -52,6 +52,7 @@ function drawOddDiagram() {
     if (!canvas) return; // Prevent error if canvas not found
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
+
     
     const spacing = Math.min(canvas.width / 10, 30); // Scale spacing, max 30
     const startX = canvas.width / 2 - (spacing * 5) / 2; // Center the 5 dots
