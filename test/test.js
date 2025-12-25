@@ -1,181 +1,161 @@
-const STYLE = {
-  colors: {
-    normal: "#3498db",
-    q1: "#e74c3c",
-    q2: "#27ae60",
-    q3: "#f39c12",
-    title: "#2c3e50",
-    text: "#ffffff"
-  },
-  box: {
-    width: 36,
-    height: 36,
-    radius: 5,
-    gap: 6
-  }
-};
+// import * as data from './test_data.js'
 
-function setupCanvas(canvas, aspect = 0.6) {
-    const ctx = canvas.getContext("2d");
-    const dpr = window.devicePixelRatio || 1;
-    const rect = canvas.getBoundingClientRect();
-    //Set the canvas BUFFER size (device pixels)
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.width * aspect * dpr;
+/* =========================================================
+   CONCEPT: show “main body” of data (middle 50%)
+   - dots: your sorted data points
+   - bracket/box: Q1 to Q3 (IQR)
+   - center line: median
+   - label: quartile deviation = IQR/2
+   ========================================================= */
 
-    canvas.style.height = rect.width * aspect + "px";
-    //Change the drawing coordinate system
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.imageSmoothingEnabled = false;
+// 1) Put your real dataset here (numbers only)
+const data = [12, 15, 18, 20, 22, 25, 27, 30, 33, 35, 36, 38, 40, 42, 45, 48, 50, 52, 55, 100]; // includes an outlier on purpose
 
-    return ctx; //return drawing context for drawing in CSS pixels 
+// -------------------------
+// Stats helpers (conceptual)
+// -------------------------
+const sorted = [...data].sort((a,b) => a-b);
+
+function median(arr) {
+  const n = arr.length;
+  const mid = Math.floor(n/2);
+  return (n % 2 === 0) ? (arr[mid-1] + arr[mid]) / 2 : arr[mid];
 }
 
-function drawDot(ctx, x, y, color = "#3498db", radius = 10) {
-    ctx.beginPath();
-    ctx.arc(x, y, radius, 0, Math.PI * 2);
-    ctx.fillStyle = color;
-    ctx.fill();
+// “Median of halves” quartiles
+function quartiles(arr) {
+  const n = arr.length;
+  const mid = Math.floor(n/2);
+  const lower = arr.slice(0, mid);
+  const upper = (n % 2 === 0) ? arr.slice(mid) : arr.slice(mid + 1);
+  return { Q1: median(lower), Q2: median(arr), Q3: median(upper) };
 }
 
-function drawTitle(ctx, text, x, y) {
-    ctx.fillStyle = "#2c3e50";
-    ctx.font = "bold 14px Arial";
-    ctx.fillText (text, x, y);
+const { Q1, Q2, Q3 } = quartiles(sorted);
+const IQR = Q3 - Q1;
+const quartileDeviation = IQR / 2;
+
+// -------------------------
+// Canvas setup
+// -------------------------
+const canvas = document.getElementById("c");
+const ctx = canvas.getContext("2d");
+
+const W = canvas.width, H = canvas.height;
+const margin = { left: 70, right: 70, top: 40, bottom: 60 };
+
+const axisY = 190;     // horizontal number line
+const dotY  = 150;     // where dots sit above the axis
+const boxY  = 95;      // where the IQR box sits
+const boxH  = 45;
+
+// Domain: use data range, with padding
+const minX = Math.min(...sorted);
+const maxX = Math.max(...sorted);
+const pad = (maxX - minX) * 0.08 || 1; // avoid zero range
+const xMin = minX - pad;
+const xMax = maxX + pad;
+
+// Map a data value → pixel x
+function xScale(x) {
+  const t = (x - xMin) / (xMax - xMin);
+  return margin.left + t * (W - margin.left - margin.right);
 }
 
-function drawDesc(ctx, text, x, y) {
-    ctx.fillStyle = "#666";
-    ctx.font = "12px Arial";
-    ctx.fillText(text, x, y)
+// Drawing helpers
+function line(x1,y1,x2,y2, w=2, color="#222") {
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = w;
+  ctx.beginPath();
+  ctx.moveTo(x1,y1);
+  ctx.lineTo(x2,y2);
+  ctx.stroke();
+  ctx.restore();
 }
 
-function drawOddDiagram() {
-    const canvas1 = document.getElementById("quartileCanvas3");
-    // if (!canvas1) return; // Prevent error if canvas not found
-    // const ctx = canvas.getContext("2d");
-    // if (!ctx) return;
-    const ctx = setupCanvas(canvas1);
-
-    
-    const spacing = Math.min(canvas1.width / 10, 30); // Scale spacing, max 30
-    const startX = canvas1.width / 2 - (spacing * 5) / 2; // Center the 5 dots
-    const startY = canvas1.height / 2;
-    
-
-    drawTitle(ctx, "Odd Number of Data", startX, 40);
-
-    for (let i = 0; i < 6; i++) {
-        const isCenter = i === 2;
-        drawDot(ctx,
-            startX + i * spacing,
-            startY, 
-            isCenter ? "#e74c3c" : "#3498db",
-            isCenter ? 12 : 10
-        );
-    }
-
-    // Draw arrow and description once, outside the loop
-    
-    drawDesc(ctx, "Median (position (5+1)/2 = 3)", startX, canvas1.height - 80);
-    drawArrow(ctx, startX + 2 * spacing, startY + 30);
+function dashed(x1,y1,x2,y2, dash=[5,6], w=1, color="#888") {
+  ctx.save();
+  ctx.setLineDash(dash);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = w;
+  ctx.beginPath();
+  ctx.moveTo(x1,y1);
+  ctx.lineTo(x2,y2);
+  ctx.stroke();
+  ctx.restore();
 }
 
-window.addEventListener("DOMContentLoaded", drawOddDiagram)
-
-
-
-
-function roundRect(ctx, x, y, w, h, r) {
-    ctx.beginPath();
-    ctx.moveTo(x + r, y);
-    ctx.lineTo(x + w - r, y);
-    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-    ctx.lineTo(x + w, y + h - r);
-    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-    ctx.lineTo(x + r, y + h);
-    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-    ctx.lineTo(x, y + r);
-    ctx.quadraticCurveTo(x, y, x + r, y);
-    ctx.closePath();
-    ctx.fill();
+function text(msg, x, y, size=16, color="#111", align="center") {
+  ctx.save();
+  ctx.fillStyle = color;
+  ctx.font = `${size}px system-ui, Arial`;
+  ctx.textAlign = align;
+  ctx.textBaseline = "middle";
+  ctx.fillText(msg, x, y);
+  ctx.restore();
 }
-function drawQuartileDiagram(ctx, data) {
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-    // ---- Title ----
-    ctx.fillStyle = STYLE.colors.title;
-    ctx.font = "bold 14px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText(data.title, ctx.canvas.width / 2, 25);
-
-    // ---- Boxes ----
-    const startY = 50;
-    const totalWidth =
-        data.numbers.length * STYLE.box.width +
-        (data.numbers.length - 1) * STYLE.box.gap;
-
-    let startX = (ctx.canvas.width - totalWidth) / 2;
-
-    data.numbers.forEach((n, i) => {
-        let color = STYLE.colors.normal;
-        if (n === data.q1) color = STYLE.colors.q1;
-        if (n === data.q2) color = STYLE.colors.q2;
-        if (n === data.q3) color = STYLE.colors.q3;
-
-        const x = startX + i * (STYLE.box.width + STYLE.box.gap);
-        const y = startY;
-
-        ctx.fillStyle = color;
-        roundRect(ctx, x, y, STYLE.box.width, STYLE.box.height, STYLE.box.radius);
-
-        ctx.fillStyle = STYLE.colors.text;
-        ctx.font = "bold 13px sans-serif";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText(n, x + STYLE.box.width / 2, y + STYLE.box.height / 2);
-    });
-
-    // ---- Quartile labels ----
-    const labelY = startY + STYLE.box.height + 30;
-    ctx.font = "bold 13px sans-serif";
-
-    ctx.fillStyle = STYLE.colors.q1;
-    ctx.fillText(`Q₁ = ${data.q1}`, ctx.canvas.width * 0.25, labelY);
-
-    ctx.fillStyle = STYLE.colors.q2;
-    ctx.fillText(`Q₂ = ${data.q2}`, ctx.canvas.width * 0.5, labelY);
-
-    ctx.fillStyle = STYLE.colors.q3;
-    ctx.fillText(`Q₃ = ${data.q3}`, ctx.canvas.width * 0.75, labelY);
+function dot(x,y,r=4,color="#444") {
+  ctx.save();
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.arc(x,y,r,0,Math.PI*2);
+  ctx.fill();
+  ctx.restore();
 }
-const data1 = {
-    title: "When data size is 9",
-    numbers: [2, 6, 8, 9, 13, 16, 19, 21, 29],
-    q1: 9,
-    q2: 16,
-    q3: 21
-};
 
-const data2 = {
-    title: "When data size is 8",
-    numbers: [2, 6, 8, 9, 13, 16, 19, 21],
-    q1: 9,
-    q2: 14.5,
-    q3: 19
-};
+// -------------------------
+// Render (the diagram logic)
+// -------------------------
+ctx.clearRect(0,0,W,H);
 
-const canvas1 = document.getElementById("quartileCanvas1");
-const canvas2 = document.getElementById("quartileCanvas2");
+// Title (concept-first)
+text("Quartiles focus on the middle 50% (the “main body”) of the data", W/2, 20, 18, "#111");
 
-const ctx1 = setupCanvas(canvas1);
-const ctx2 = setupCanvas(canvas2);
+// Axis (number line)
+line(margin.left, axisY, W - margin.right, axisY, 2, "#333");
 
-drawQuartileDiagram(ctx1, data1);
-drawQuartileDiagram(ctx2, data2);
+// Draw data dots (sorted positions)
+// Concept: each dot is one observation on the number line
+sorted.forEach(v => dot(xScale(v), dotY, 4, "rgba(60,60,60,0.75)"));
 
-window.addEventListener("resize", () => {
-    drawQuartileDiagram(setupCanvas(canvas1), data1);
-    drawQuartileDiagram(setupCanvas(canvas2), data2);
-});
+// Guides for Q1, Median, Q3
+const xQ1 = xScale(Q1);
+const xQ2 = xScale(Q2);
+const xQ3 = xScale(Q3);
 
+dashed(xQ1, 50, xQ1, axisY + 50, [4,6], 1, "#999");
+dashed(xQ2, 50, xQ2, axisY + 50, [4,6], 1, "#999");
+dashed(xQ3, 50, xQ3, axisY + 50, [4,6], 1, "#999");
+
+// IQR box: middle 50%
+// Concept: the box is the “typical spread”
+ctx.save();
+ctx.fillStyle = "rgba(100,160,255,0.35)";
+ctx.strokeStyle = "rgba(30,90,200,1)";
+ctx.lineWidth = 2;
+ctx.fillRect(xQ1, boxY, xQ3 - xQ1, boxH);
+ctx.strokeRect(xQ1, boxY, xQ3 - xQ1, boxH);
+ctx.restore();
+
+// Median line inside the box
+line(xQ2, boxY, xQ2, boxY + boxH, 3, "rgba(30,90,200,1)");
+
+// Labels
+text("Q1", xQ1, boxY - 16, 14, "#333");
+text("Median", xQ2, boxY - 16, 14, "#333");
+text("Q3", xQ3, boxY - 16, 14, "#333");
+
+// Bracket showing IQR = Q3 - Q1
+const brY = boxY + boxH + 20;
+line(xQ1, brY, xQ3, brY, 2, "rgba(30,90,200,1)");
+line(xQ1, brY - 8, xQ1, brY + 8, 2, "rgba(30,90,200,1)");
+line(xQ3, brY - 8, xQ3, brY + 8, 2, "rgba(30,90,200,1)");
+text(`IQR = Q3 − Q1 = ${IQR.toFixed(2)}`, (xQ1 + xQ3)/2, brY + 18, 14, "rgba(30,90,200,1)");
+
+// Quartile deviation (half of IQR)
+text(`Quartile deviation = IQR/2 = ${quartileDeviation.toFixed(2)}`, W/2, H - 22, 15, "#111");
+
+// Small conceptual note about outliers
+text("Outliers can exist far away, but IQR stays focused on the central half.", W/2, axisY + 35, 13, "#666");

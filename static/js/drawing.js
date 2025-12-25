@@ -1,108 +1,143 @@
+import * as drawingHelper from './drawing_helper.js';
+import * as data from './note_data.js';
 
 window.addEventListener('resize', () => {
-    resizeCanvas();
     // Redraw diagrams after resize
-    drawOddDiagram();
-    drawEvenDiagram();
+    drawOddDataMedian();
+    drawEvenDataMedian();
+    drawOddDataQuartile();
+    drawEvenDataQuartile();
 });
-window.addEventListener('DOMContentLoaded', resizeCanvas);
 
-// Canvas resize for responsiveness
-function resizeCanvas() {
-    const canvases = ['median-canvas1', 'median-canvas2'];
-    canvases.forEach(id => {
-        const canvas = document.getElementById(id);
-        if (canvas) {
-            canvas.width = canvas.offsetWidth;
-            canvas.height = canvas.offsetWidth * 0.75; // Maintain aspect ratio
-        }
-    });
-}
+drawEvenDataMedian();// test to delete eventlistener????
+drawOddDataMedian();// test to delete eventlistener?????
+drawOddDataQuartile();
+drawEvenDataQuartile();
 
 
-//-------- Helpers ----------
-function drawDot(ctx, x, y, color = "#3498db", radius = 10) {
-    ctx.beginPath();
-    ctx.arc(x, y, radius, 0, Math.PI * 2);
-    ctx.fillStyle = color;
-    ctx.fill();
-}
-
-function drawArrow(ctx, x, y) {
-    ctx.fillStyle = "#e74c3c";
-    ctx.font = "24px Arial";
-    ctx.fillText("↑", x-6, y);
-}
-
-function drawTitle(ctx, text, x, y) {
-    ctx.fillStyle = "#2c3e50";
-    ctx.font = "bold 14px Arial";
-    ctx.fillText (text, x, y);
-}
-
-function drawDesc(ctx, text, x, y) {
-    ctx.fillStyle = "#666";
-    ctx.font = "12px Arial";
-    ctx.fillText(text, x, y)
-}
 
 // ---Odd Median Data Diagram----
-function drawOddDiagram() {
+function drawOddDataMedian() {
     const canvas = document.getElementById("median-canvas1");
     if (!canvas) return; // Prevent error if canvas not found
-    const ctx = canvas.getContext("2d");
+    const { ctx, width, height, dpr } = drawingHelper.setupCanvas(canvas);
     if (!ctx) return;
 
-    
-    const spacing = Math.min(canvas.width / 10, 30); // Scale spacing, max 30
-    const startX = canvas.width / 2 - (spacing * 5) / 2; // Center the 5 dots
-    const startY = canvas.height / 2;
-    
 
-    drawTitle(ctx, "Odd Number of Data", startX, 40);
+    const spacing = Math.min(width / 10, 30); // Scale spacing, max 30
+    const startX = width / 2 - (spacing * 4) / 2; // Center the 5 dots
+    const startY = height / 2;
+
+
+    drawingHelper.drawTitle(ctx, startX, startY - spacing, "Odd Number of Data",);
 
     for (let i = 0; i < 5; i++) {
         const isCenter = i === 2;
-        drawDot(ctx,
+        drawingHelper.drawDot(ctx,
             startX + i * spacing,
-            startY, 
-            isCenter ? "#e74c3c" : "#3498db",
-            isCenter ? 12 : 10
+            startY,
+            isCenter ? width / 30 : width / 35,
+            null,
+            isCenter ? data.colors.red : data.colors.blue,
+
         );
     }
 
     // Draw arrow and description once, outside the loop
-    
-    drawDesc(ctx, "Median (position (5+1)/2 = 3)", startX, canvas.height - 80);
-    drawArrow(ctx, startX + 2 * spacing, startY + 30);
+
+    drawingHelper.drawDesc(ctx, startX, startY + spacing * 2, "Median (position (5+1)/2 = 3)");
+    drawingHelper.drawArrow(ctx, startX + (spacing * 4) / 2, startY + 30);
 }
 
-window.addEventListener("DOMContentLoaded", drawOddDiagram);
-
 // Draw even data Median Diagram
-function drawEvenDiagram() {
+function drawEvenDataMedian() {
     const canvas = document.getElementById("median-canvas2");
     if (!canvas) return; // Prevent error if canvas not found
-    const ctx = canvas.getContext("2d");
+    const { ctx, width, height, dpr } = drawingHelper.setupCanvas(canvas);
     if (!ctx) return;
 
-    const spacing = Math.min(canvas.width / 10, 30); // Scale spacing, max 30
-    const startX = canvas.width / 2 - (spacing * 6) / 2; // Center the 6 dots
-    const startY = canvas.height / 2;
+    const spacing = Math.min(width / 10, 30); // Scale spacing, max 30
+    const startX = width / 2 - (spacing * 5) / 2; // Center the 6 dots
+    const startY = height / 2;
 
-    drawTitle(ctx, "Even Number of Data", startX, 40);
+    drawingHelper.drawTitle(ctx, startX, startY - spacing, "Even Number of Data");
 
     for (let i = 0; i < 6; i++) {
         const isCenter = i === 2 || i === 3;
-        drawDot(ctx,
+        drawingHelper.drawDot(ctx,
             startX + i * spacing,
             startY,
-            isCenter ? "#e74c3c" : "#3498db",
-            isCenter ? 12 : 10
+            isCenter ? width / 30 : width / 35,
+            null, //text
+            isCenter ? data.colors.red : data.colors.blue,
         );
     }
 
-    drawArrow(ctx, startX + 2.5 * spacing, startY + 30);
-    drawDesc(ctx, "Median (positions at n/2 and n/2 + 1)", startX, canvas.height - 80);
+    drawingHelper.drawArrow(ctx, startX + (spacing * 5) / 2, startY + spacing, null);
+    drawingHelper.drawDesc(ctx, startX, startY + 2 * spacing, "Median (positions at n/2 and n/2 + 1)");
 }
-window.addEventListener("DOMContentLoaded", drawEvenDiagram);
+
+// Draw odd data quartile Diagram
+function drawOddDataQuartile() {
+    const canvas = document.getElementById("quartileCanvas3");
+    // if (!canvas1) return; // Prevent error if canvas not found
+    const { ctx, width, height, dpr } = drawingHelper.setupCanvas(canvas);
+    if (!ctx) return;
+
+    const count = data.quartileData1.numbers.length;
+    const spacing = Math.min(width / 10, 40); // Scale spacing, max 40
+    const startX = width / 2 - (spacing * (count - 1) / 2); // Center the 9 dots
+    const startY = height / 2;
+
+    drawingHelper.drawTitle(ctx, startX - spacing / 2.5, startY - spacing, data.quartileData1.title)
+
+    for (let i = 0; i < 9; i++) {
+
+
+        drawingHelper.drawDot(ctx,
+            startX + i * spacing,
+            startY,
+            spacing / 2.5,
+            data.quartileData1.numbers[i].toString(),
+            data.colors.blue
+        );
+    }
+    drawingHelper.drawDesc(ctx, startX + spacing * 1.5, startY + spacing, `Q₁ = ${data.quartileData1.q1}`, data.colors.orange);
+    drawingHelper.drawArrow(ctx, startX * 2.7, startY + spacing / 2, spacing / 3);
+    drawingHelper.drawDesc(ctx, startX + spacing * 4, startY + spacing, `Q₂ = ${data.quartileData1.q2}`, data.colors.green);
+    drawingHelper.drawArrow(ctx, startX + spacing * 4.2, startY + spacing / 2, spacing / 3);
+    drawingHelper.drawDesc(ctx, startX + spacing * 6.5, startY + spacing, `Q₃ = ${data.quartileData1.q3}`, data.colors.red);
+    drawingHelper.drawArrow(ctx, startX + spacing * 6.7, startY + spacing / 2, spacing / 3);
+}
+
+// Draw even data quartile digram
+function drawEvenDataQuartile() {
+    const canvas = document.getElementById("quartileCanvas4");
+    // if (!canvas1) return; // Prevent error if canvas not found
+    // const ctx = canvas.getContext("2d");
+    const { ctx, width, height, dpr } = drawingHelper.setupCanvas(canvas);
+    if (!ctx) return;
+
+    const count = data.quartileData2.numbers.length;
+    const spacing = Math.min(width / 10, 40); // Scale spacing, max 30
+    const startX = width / 2 - (spacing * (count - 1) / 2); // Center the 8 dots
+    const startY = height / 2;
+
+    drawingHelper.drawTitle(ctx, startX - spacing / 2.5, startY - spacing, data.quartileData2.title)
+
+    for (let i = 0; i < 8; i++) {
+        drawingHelper.drawDot(ctx,
+            startX + i * spacing,
+            startY,
+            spacing / 2.5,
+            data.quartileData2.numbers[i].toString(),
+            data.colors.blue
+        );
+    }
+    drawingHelper.drawDesc(ctx, startX * 1.7, startY + spacing, `Q₁ = ${data.quartileData2.q1}`, data.colors.orange);
+    drawingHelper.drawArrow(ctx, startX * 1.8, startY + spacing / 2, spacing / 3);
+    drawingHelper.drawDesc(ctx, startX + spacing * 3.5, startY + spacing, `Q₂ = ${data.quartileData2.q2}`, data.colors.green);
+    drawingHelper.drawArrow(ctx, startX + spacing * 3.7, startY + spacing / 2, spacing / 3);
+    drawingHelper.drawDesc(ctx, startX + spacing * 6, startY + spacing, `Q₃ = ${data.quartileData2.q3}`, data.colors.red);
+    drawingHelper.drawArrow(ctx, startX + spacing * 6.2, startY + spacing / 2, spacing / 3);
+}
