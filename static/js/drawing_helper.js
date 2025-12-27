@@ -29,6 +29,7 @@ export function setupCanvas(canvas, aspect = 0.6) {
 }
 
 export function drawDot(ctx, x, y, radius = 10, text = null, color = "#3498db" ) {
+    ctx.save();
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, Math.PI * 2);
     ctx.fillStyle = color;
@@ -41,22 +42,31 @@ export function drawDot(ctx, x, y, radius = 10, text = null, color = "#3498db" )
         ctx.textBaseline = "middle";
         ctx.fillText(text, x, y);
     }
+    ctx.restore();
 }
 
 export function drawTitle(ctx, x, y, text) {
+    ctx.save();
     ctx.fillStyle = "#2c3e50";
     ctx.font = "bold 14px Arial";
     ctx.fillText(text, x, y);
+    ctx.restore();
 }
 
-export function drawDesc(ctx, x, y, text, color = null) {
+export function drawDesc(ctx, x, y, text, size=14,color = null) {
+    ctx.save();
     ctx.fillStyle = color !== null ? color : "#000000ff";
-    ctx.font = "12px Arial";
+    ctx.font = `${size}px system-ui, Arial`;
+    ctx.textBaseline = "middle";
+    ctx.textAlign = "center";
     ctx.fillText(text, x, y);
+    ctx.restore();
 }
 
 export function drawArrow(ctx, x, y, fontSize = null,) {
+    ctx.save();
     ctx.fillStyle = "#e74c3c";
     ctx.font = fontSize !== null ? fontSize + "px Arial" : "14px Arial";
     ctx.fillText("↑", x - 6, y);
+    ctx.restore();
 }

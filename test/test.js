@@ -1,36 +1,37 @@
 // import * as data from './test_data.js'
 import * as drawingHelper from '../static/js/drawing_helper.js'
 
-const data = [12, 15, 18, 20, 22, 25, 27, 30, 33, 35, 36, 38, 40, 42, 48, 50, 52, 55,100];
+const data = [2, 6, 8, 9, 13, 16, 19, 21, 29,40];
 
 // Copy and Sort datas
-const sorted = [...data].sort((a,b) => a-b);
+const quartileRDSorted = [...data].sort((a,b) => a-b);
 
 // Reusable median function 
-function median(arr) {
-    const n = arr.length;
+function medianRD(quartileRDSorted) {
+    const n = quartileRDSorted.length;
     const mid = Math.floor(n/2); // rounding down to the nearest integer
     return (n % 2 === 0) 
-    ? (arr[mid-1] + arr[mid]) / 2
-    : arr[mid];
+    ? (quartileRDSorted[mid-1] + quartileRDSorted[mid]) / 2
+    : quartileRDSorted[mid];
 }
 
 //computing qurtiles conceptually
-function quartiles(arr) {
-    const n = arr.length;
+function quartilesRD(quartileRDSorted) {
+    const n = quartileRDSorted.length;
     const mid = Math.floor(n/2);
 
-    const lower = arr.slice(0, mid);
-    const upper = (n % 2 ===0) ? arr.slice(mid) : arr.slice(mid + 1);
+    const lower = quartileRDSorted.slice(0, mid);
+    const upper = (n % 2 ===0) ? quartileRDSorted.slice(mid) : quartileRDSorted.slice(mid + 1);
 
     return {
-        Q1: median(lower),
-        Q2: median(arr),
-        Q3: median(upper)
+        Q1: medianRD(lower),
+        Q2: medianRD(quartileRDSorted),
+        Q3: medianRD(upper)
     };
 }
 
-const { Q1, Q2, Q3 } = quartiles(sorted);
+
+const { Q1, Q2, Q3 } = quartilesRD(quartileRDSorted);
 
 const IQR = Q3 - Q1;
 const quartileDeviation = IQR / 2;
@@ -48,8 +49,8 @@ const boxY = 95;  // Box even higher
 const boxH = 45; // Box height
 
 //Mapping data to pixels
-const minX = Math.min(...sorted); //minimum value of data
-const maxX = Math.max(...sorted); //maximum value of data
+const minX = Math.min(...quartileRDSorted); //minimum value of data
+const maxX = Math.max(...quartileRDSorted); //maximum value of data
 
 const pad = (maxX - minX) * 0.08 || 1;
 const xMin = minX - pad;  // shift minimum value to the right
@@ -106,27 +107,6 @@ function dot(x, y, r= 4, color="#444") {
     ctx.restore();
 }
 
-//Render the diagram
-
-//Clear the canvas as canvas does not auto-clear.
-ctx.clearRect(0, 0, width, height);
-
-text("Quartiles focus on the middle 50% (the “main body”) of the data", width/2, 20, 18, "#111");
-
-line(margin.left, axisY, width-margin.right, axisY, 2, "#333");
-
-//Plot the dot for each data value
-sorted.forEach(v => dot(xScale(v), dotY, 2,"red"));
-
-//Convert quartile values into pixel x positions
-const xQ1 = xScale(Q1);
-const xQ2 = xScale(Q2);
-const xQ3 = xScale(Q3);
-
-dashed(xQ1, boxY, xQ1, axisY , [4,6], 1, "#999");
-dashed(xQ2, boxY, xQ2, axisY , [4,6], 1, "#999");
-dashed(xQ3, boxY, xQ3, axisY, [4,6], 1, "#999");
-
 function drawBox(x, y, w, h, lw=2) {
     ctx.save();
     ctx.fillStyle = "rgba(100,160,255,0.35)";
@@ -137,14 +117,35 @@ function drawBox(x, y, w, h, lw=2) {
     ctx.restore();
 }
 
+//Render the diagram
+
+//Clear the canvas as canvas does not auto-clear.
+ctx.clearRect(0, 0, width, height);
+
+text("Quartiles focus on the middle 50% (the “main body”) of the data", width/2, 20, 18, "#111");
+
+line(margin.left, axisY, width-margin.right, axisY, 2, "#333");
+
+//Plot the dot for each data value
+quartileRDSorted.forEach(v => dot(xScale(v), dotY, 2,"red"));
+
+//Convert quartile values into pixel x positions
+const xQ1 = xScale(Q1);
+const xQ2 = xScale(Q2);
+const xQ3 = xScale(Q3);
+
+dashed(xQ1, boxY, xQ1, axisY , [4,6], 1, "#999");
+dashed(xQ2, boxY, xQ2, axisY , [4,6], 1, "#999");
+dashed(xQ3, boxY, xQ3, axisY, [4,6], 1, "#999");
+
 drawBox(xQ1, boxY, xQ3-xQ1, boxH);
 
 
 line (xQ2, boxY, xQ2, boxY + boxH, 3, "rgba(30, 90, 200, 1)");
 
-text("Q1", xQ1, boxY- 16, 14, "#333");
-text("Median", xQ2, boxY-16, 14, "#333");
-text("Q3", xQ3, boxY-16, 14, "#333");
+text(`Q1 = ${Q1}`, xQ1, boxY- 16, 14, "#333");
+text(`Median = ${Q2}`, xQ2, boxY-16, 14, "#333");
+text(`Q3 = ${Q3}`, xQ3, boxY-16, 14, "#333");
 
 const brY = boxY + boxH + margin.top / 2;
 //Horizontal bracket line

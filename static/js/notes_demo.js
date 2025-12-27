@@ -1,5 +1,4 @@
 // Mean Demo 
-
 function calculateMean() {
     const inputElement = document.getElementById('mean-data-input');
     if (!inputElement) return;
@@ -46,8 +45,6 @@ function calculateMean() {
     // Re-render MathJax
     if (window.MathJax && MathJax.typesetPromise) {
         MathJax.typesetPromise([output]);
-    } else if (window.MathJax) {
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub, output]);
     }
 }
 
@@ -75,7 +72,6 @@ window.addEventListener('DOMContentLoaded', calculateMean);
 
 /* ------------------------------------------------------------------------------------ */
 // Median Demo
-
 function calculateMedian() {
     const inputElement = document.getElementById('median-data-input');
     if (!inputElement) return;
@@ -131,8 +127,6 @@ function calculateMedian() {
     // Re-render MathJax
     if (window.MathJax && MathJax.typesetPromise) {
         MathJax.typesetPromise([output]);
-    } else if (window.MathJax) {
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub, output]);
     }
 }
 
@@ -233,8 +227,6 @@ function calculateQuartiles() {
     // Re-render MathJax
     if (window.MathJax && MathJax.typesetPromise) {
         MathJax.typesetPromise([output]);
-    } else if (window.MathJax) {
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub, output]);
     }
 }
 
@@ -268,7 +260,6 @@ function updateQuartileViz(sorted) {
         container.appendChild(valueElement);
     });
 }
-
 
 // Initialize with default data
 window.addEventListener('DOMContentLoaded', calculateQuartiles);
@@ -344,8 +335,6 @@ function calculateMode() {
     // Re-render MathJax
     if (window.MathJax && MathJax.typesetPromise) {
         MathJax.typesetPromise([output]);
-    } else if (window.MathJax) {
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub, output]);
     }
 }
 
@@ -378,8 +367,36 @@ function updateModeViz(nonDuplicateSorted, frequency, modes) {
 window.addEventListener('DOMContentLoaded', calculateMode);
 /* ------------------------------------------------------------------------------------ */
 //quartile range and deviation Demo
-function calculateQuartileMeasures() {
-    const input = document.getElementById('quartilerange-data-input').value;
+
+
+// Reusable median function 
+function medianRD(quartileRDSorted) {
+    const n = quartileRDSorted.length;
+    const mid = Math.floor(n/2); // rounding down to the nearest integer
+    return (n % 2 === 0) 
+    ? (quartileRDSorted[mid-1] + quartileRDSorted[mid]) / 2
+    : quartileRDSorted[mid];
+}
+
+//computing qurtiles conceptually
+function quartilesRD(quartileRDSorted) {
+    const n = quartileRDSorted.length;
+    const mid = Math.floor(n/2);
+
+    const lower = quartileRDSorted.slice(0, mid);
+    const upper = (n % 2 ===0) ? quartileRDSorted.slice(mid) : quartileRDSorted.slice(mid + 1);
+
+    return {
+        Q1: medianRD(lower),
+        Q2: medianRD(quartileRDSorted),
+        Q3: medianRD(upper)
+    };
+}
+
+function calculateQuartileRD() {
+    const inputElement = document.getElementById('quartilerange-data-input');
+    if (!inputElement) return;
+    const input = inputElement.value;
     const values = input.split(',').map(x => parseFloat(x.trim())).filter(x => !isNaN(x));
 
     if (values.length < 4) {
@@ -388,82 +405,73 @@ function calculateQuartileMeasures() {
     }
 
     // Sort the values
-    const sorted = [...values].sort((a, b) => a - b);
-    const n = sorted.length;
+    const quartileRDSorted = [...values].sort((a, b) => a - b);
+    const n = quartileRDSorted.length;
 
-    // Calculate quartile positions
-    const q1Pos = (n + 1) / 4;
-    const q3Pos = 3 * (n + 1) / 4;
+    medianRD(quartileRDSorted);
+    const {Q1, Q2, Q3 } =  quartilesRD(quartileRDSorted);
+
+    updateQuartileRDViz(quartileRDSorted);
+
 
     // Calculate quartiles
-    let q1, q3;
+    // let q1, q3;
 
-    if (n % 2 === 1) {
-        q1 = getQuartileValue(sorted, q1Pos);
-        q3 = getQuartileValue(sorted, q3Pos);
-    } else {
-        q1 = getQuartileValue(sorted, q1Pos);
-        q3 = getQuartileValue(sorted, q3Pos);
-    }
+    // if (n % 2 === 1) {
+    //     q1 = getQuartileValue(quartileRDSorted, q1Pos);
+    //     q3 = getQuartileValue(quartileRDSorted, q3Pos);
+    // } else {
+    //     q1 = getQuartileValue(quartileRDSorted, q1Pos);
+    //     q3 = getQuartileValue(quartileRDSorted, q3Pos);
+    // }
 
-    const qr = q3 - q1;
+    const qr = Q3 - Q1;
     const qd = qr / 2;
-    const totalRange = sorted[sorted.length - 1] - sorted[0];
-    const median = n % 2 === 1 ? sorted[Math.floor(n / 2)] : (sorted[n / 2 - 1] + sorted[n / 2]) / 2;
+    const totalRange = quartileRDSorted[n - 1] - quartileRDSorted[0];
+    const median = n % 2 === 1 ? quartileRDSorted[Math.floor(n / 2)] : (quartileRDSorted[n / 2 - 1] + quartileRDSorted[n / 2]) / 2;
 
     // Update output
     const output = document.getElementById('demo-output');
-    output.innerHTML = `<strong>Current Data:</strong> [${values.join(', ')}]<br>
-      <strong>Sorted Data:</strong> [${sorted.join(', ')}]<br>
-      <strong>Q₁ (25th percentile):</strong> ${q1}<br>
-      <strong>Q₂ (50th percentile, Median):</strong> ${median}<br>
-      <strong>Q₃ (75th percentile):</strong> ${q3}<br>
-      <div class="deviation-summary">
-       <div class="deviation-stat">
-        <div class="value">${qr.toFixed(1)}</div>
-        <div class="label">Quartile Range (QR)</div>
-       </div>
-       <div class="deviation-stat">
-        <div class="value">${qd.toFixed(1)}</div>
-        <div class="label">Quartile Deviation (QD)</div>
-       </div>
-       <div class="deviation-stat">
-        <div class="value">${totalRange.toFixed(1)}</div>
-        <div class="label">Total Range</div>
-       </div>
-      </div>`;
+    output.innerHTML = 
+        // <strong>Current Data:</strong> [${values.join(', ')}]<br>
+        // <strong>quartileRDSorted Data:</strong> [${quartileRDSorted.join(', ')}]<br>
+        // <strong>Q₁ (25th percentile):</strong> ${q1}<br>
+        // <strong>Q₂ (50th percentile, Median):</strong> ${median}<br>
+        // <strong>Q₃ (75th percentile):</strong> ${q3}<br></br>
+        `<div class="summary">
+            <div class="item">
+                <div class="value">${qr.toFixed(1)}</div>
+                <div class="label">Quartile Range (QR)</div>
+            </div>
+            <div class="item">
+                <div class="value">${qd.toFixed(1)}</div>
+                <div class="label">Quartile Deviation (QD)</div>
+            </div>
+            <div class="item">
+                <div class="value">${totalRange.toFixed(1)}</div>
+                <div class="label">Total Range</div>
+            </div>
+        </div>`;
 
     // Re-render MathJax
-    if (window.MathJax) {
-        MathJax.typesetPromise([output]).catch(function (err) {
-            console.log('MathJax re-render error:', err);
-        });
+    if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise([output]);
     }
 }
 
-function getQuartileValue(sorted, position) {
-    const n = sorted.length;
-    const lowerIndex = Math.floor(position) - 1; // Convert to 0-based index
-    const upperIndex = Math.ceil(position) - 1; // Convert to 0-based index
+function updateQuartileRDViz(quartileRDSorted) {
+    const container = document.getElementById('sorted-quartileRD-data');
+    if (!container) return;
 
-    if (lowerIndex === upperIndex) {
-        return sorted[lowerIndex];
-    } else {
-        const lowerValue = sorted[lowerIndex];
-        const upperValue = sorted[upperIndex];
-        const fraction = position - Math.floor(position);
-        return lowerValue + fraction * (upperValue - lowerValue);
-    }
+    // Clear previous content
+    container.innerHTML = '';
+
+    // Create data items
+    quartileRDSorted.forEach(value => {
+        const item = document.createElement('div');
+        item.className = 'data-point';
+        item.textContent = value;
+        container.appendChild(item);
+    });
 }
-
-function toggleSolution(num) {
-    const solution = document.getElementById('solution' + num);
-    if (solution.style.display === 'none' || solution.style.display === '') {
-        solution.style.display = 'block';
-    } else {
-        solution.style.display = 'none';
-    }
-}
-
-// Initialize with default data
-calculateQuartileMeasures();
+/* ------------------------------------------------------------------------------------ */
