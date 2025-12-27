@@ -70,13 +70,11 @@
     <h3>Interactive Quartile Range Calculator</h3>
     <div class="demo-controls">
         <div class="control-group">
-            <label for="data-input">Data Values (comma-separated):</label>
-            <textarea id="data-input"
+            <label for="quartilerange-data-input">Data Values (comma-separated):</label>
+            <textarea id="quartilerange-data-input"
                 placeholder="e.g., 2, 6, 8, 9, 13, 16, 19, 21, 29">2, 6, 8, 9, 13, 16, 19, 21, 29</textarea>
         </div>
-        <button onclick="calculateQuartileMeasures()"
-            style="padding: 8px 16px; background: #27ae60; color: white; border: none; border-radius: 5px; cursor: pointer; align-self: flex-end;">Calculate
-            Measures</button>
+        <button onclick="calculateQuartileMeasures()" class="btn-style"> Calculate </button>
     </div>
 
     <div class="demo-output" id="demo-output">
@@ -84,16 +82,16 @@
         <strong>Q₁ (25th percentile):</strong> 8<br>
         <strong>Q₂ (50th percentile, Median):</strong> 16<br>
         <strong>Q₃ (75th percentile):</strong> 21<br>
-        <div class="deviation-summary">
-            <div class="deviation-stat">
+        <div class="summary">
+            <div class="item">
                 <div class="value">13</div>
                 <div class="label">Quartile Range (QR)</div>
             </div>
-            <div class="deviation-stat">
+            <div class="item">
                 <div class="value">6.5</div>
                 <div class="label">Quartile Deviation (QD)</div>
             </div>
-            <div class="deviation-stat">
+            <div class="item">
                 <div class="value">27</div>
                 <div class="label">Total Range</div>
             </div>
@@ -182,7 +180,7 @@
 <div class="practice-problem">
     <strong>Problem 1:</strong> For data: 4, 7, 9, 12, 15, 18, 20, find the quartile range and quartile
     deviation.
-    <br><button class="solution-button" onclick="toggleSolution(1)">Show Solution</button>
+    <br><button class="btn-style" onclick="toggleSolution(1)">Show Solution</button>
     <div class="solution" id="solution1">
         <strong>Solution:</strong><br>
         Sorted: 4, 7, 9, 12, 15, 18, 20<br>
@@ -195,7 +193,7 @@
 
 <div class="practice-problem">
     <strong>Problem 2:</strong> Data: 2, 5, 8, 10, 12, 15, 18. Find QR and QD.
-    <br><button class="solution-button" onclick="toggleSolution(2)">Show Solution</button>
+    <br><button class="btn-style" onclick="toggleSolution(2)">Show Solution</button>
     <div class="solution" id="solution2">
         <strong>Solution:</strong><br>
         Sorted: 2, 5, 8, 10, 12, 15, 18<br>
@@ -208,7 +206,7 @@
 
 <div class="practice-problem">
     <strong>Problem 3:</strong> If Q₁ = 25 and Q₃ = 75, what are the QR and QD?
-    <br><button class="solution-button" onclick="toggleSolution(3)">Show Solution</button>
+    <br><button class="btn-style" onclick="toggleSolution(3)">Show Solution</button>
     <div class="solution" id="solution3">
         <strong>Solution:</strong><br>
         QR = 75 - 25 = 50<br>
@@ -218,7 +216,7 @@
 
 <div class="practice-problem">
     <strong>Problem 4:</strong> Data with outlier: 1, 3, 5, 7, 9, 11, 100. Compare range vs quartile range.
-    <br><button class="solution-button" onclick="toggleSolution(4)">Show Solution</button>
+    <br><button class="btn-style" onclick="toggleSolution(4)">Show Solution</button>
     <div class="solution" id="solution4">
         <strong>Solution:</strong><br>
         Sorted: 1, 3, 5, 7, 9, 11, 100<br>
@@ -232,7 +230,7 @@
 
 <div class="practice-problem">
     <strong>Problem 5:</strong> Quartile deviation is 8. What is the quartile range?
-    <br><button class="solution-button" onclick="toggleSolution(5)">Show Solution</button>
+    <br><button class="btn-style" onclick="toggleSolution(5)">Show Solution</button>
     <div class="solution" id="solution5">
         <strong>Solution:</strong><br>
         QD = QR/2, so QR = 2 × QD = 2 × 8 = 16
@@ -266,95 +264,3 @@
         <li><strong>Comparison:</strong> More reliable than range for datasets with extreme values.</li>
     </ul>
 </div>
-
-<script>
-    function calculateQuartileMeasures() {
-        const input = document.getElementById('data-input').value;
-        const values = input.split(',').map(x => parseFloat(x.trim())).filter(x => !isNaN(x));
-
-        if (values.length < 4) {
-            alert('Please enter at least 4 values to calculate quartiles.');
-            return;
-        }
-
-        // Sort the values
-        const sorted = [...values].sort((a, b) => a - b);
-        const n = sorted.length;
-
-        // Calculate quartile positions
-        const q1Pos = (n + 1) / 4;
-        const q3Pos = 3 * (n + 1) / 4;
-
-        // Calculate quartiles
-        let q1, q3;
-
-        if (n % 2 === 1) {
-            q1 = getQuartileValue(sorted, q1Pos);
-            q3 = getQuartileValue(sorted, q3Pos);
-        } else {
-            q1 = getQuartileValue(sorted, q1Pos);
-            q3 = getQuartileValue(sorted, q3Pos);
-        }
-
-        const qr = q3 - q1;
-        const qd = qr / 2;
-        const totalRange = sorted[sorted.length - 1] - sorted[0];
-        const median = n % 2 === 1 ? sorted[Math.floor(n / 2)] : (sorted[n / 2 - 1] + sorted[n / 2]) / 2;
-
-        // Update output
-        const output = document.getElementById('demo-output');
-        output.innerHTML = `<strong>Current Data:</strong> [${values.join(', ')}]<br>
-      <strong>Sorted Data:</strong> [${sorted.join(', ')}]<br>
-      <strong>Q₁ (25th percentile):</strong> ${q1}<br>
-      <strong>Q₂ (50th percentile, Median):</strong> ${median}<br>
-      <strong>Q₃ (75th percentile):</strong> ${q3}<br>
-      <div class="deviation-summary">
-       <div class="deviation-stat">
-        <div class="value">${qr.toFixed(1)}</div>
-        <div class="label">Quartile Range (QR)</div>
-       </div>
-       <div class="deviation-stat">
-        <div class="value">${qd.toFixed(1)}</div>
-        <div class="label">Quartile Deviation (QD)</div>
-       </div>
-       <div class="deviation-stat">
-        <div class="value">${totalRange.toFixed(1)}</div>
-        <div class="label">Total Range</div>
-       </div>
-      </div>`;
-
-        // Re-render MathJax
-        if (window.MathJax) {
-            MathJax.typesetPromise([output]).catch(function (err) {
-                console.log('MathJax re-render error:', err);
-            });
-        }
-    }
-
-    function getQuartileValue(sorted, position) {
-        const n = sorted.length;
-        const lowerIndex = Math.floor(position) - 1; // Convert to 0-based index
-        const upperIndex = Math.ceil(position) - 1; // Convert to 0-based index
-
-        if (lowerIndex === upperIndex) {
-            return sorted[lowerIndex];
-        } else {
-            const lowerValue = sorted[lowerIndex];
-            const upperValue = sorted[upperIndex];
-            const fraction = position - Math.floor(position);
-            return lowerValue + fraction * (upperValue - lowerValue);
-        }
-    }
-
-    function toggleSolution(num) {
-        const solution = document.getElementById('solution' + num);
-        if (solution.style.display === 'none' || solution.style.display === '') {
-            solution.style.display = 'block';
-        } else {
-            solution.style.display = 'none';
-        }
-    }
-
-    // Initialize with default data
-    calculateQuartileMeasures();
-</script>

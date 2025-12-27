@@ -1,4 +1,5 @@
 export function setupCanvas(canvas, aspect = 0.6) {
+    if (!canvas) throw new Error("Canvas element not found");
     const ctx = canvas.getContext("2d");
     // Get the device pixel ratio
     const dpr = window.devicePixelRatio || 1;
@@ -16,7 +17,7 @@ export function setupCanvas(canvas, aspect = 0.6) {
     canvas.style.height = logicalHeight + "px";
 
     // Map logical pixels to buffer pixels
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);//  Draw using css coordinates but transform to device coordinates
     ctx.imageSmoothingEnabled = false;
 
     return {

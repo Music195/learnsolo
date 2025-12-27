@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return parts.length > 1 && parts[1] === subfolder;
             });
         }
-         
+
         noteSelect.innerHTML = "<option value=''>-- Select a topic --</option>";
 
         filtered.forEach(n => {
@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
         updateSubfolderOptions();
         filterNotes();
     });
-    
+
     // Persist subfolder choice and refresh the note list
     document.getElementById('subfolderFilter').addEventListener('change', () => {
         const selectedSubfolder = document.getElementById('subfolderFilter').value;
@@ -136,4 +136,59 @@ document.addEventListener("DOMContentLoaded", () => {
             if (next) window.location.href = next.href;
         }
     });
+});
+
+//Function to toggle the solution
+function toggleSolution(num) {
+    const solution = document.getElementById('solution' + num);
+    if (solution.style.display === 'none' || solution.style.display === '') {
+        solution.style.display = 'block';
+    } else {
+        solution.style.display = 'none';
+    }
+}
+
+// Function to toggle the sidebar open/closed state
+function toggleMenu() {
+    const nav = document.getElementById('sidebar');
+    const button = document.querySelector('.menu-toggle');
+    nav.classList.toggle('open');
+    button.classList.toggle('open');
+}
+
+// Event listener to close sidebar when clicking outside
+document.addEventListener('click', function (event) {
+    const nav = document.getElementById('sidebar');
+    const button = document.querySelector('.menu-toggle');
+
+    if (!nav.contains(event.target) && !button.contains(event.target) && nav.classList.contains('open')) {
+        toggleMenu();
+    }
+});
+
+// Font size adjustment functionality
+let currentFontSize = 100;
+
+// Function to increase/decrease font size
+function adjustFontSize(change) {
+    const noteContent = document.querySelector('.note-content');
+    currentFontSize += change * 5;
+
+    // Limit font size between 70% and 150%
+    if (currentFontSize < 70) currentFontSize = 70;
+    if (currentFontSize > 150) currentFontSize = 150;
+
+    noteContent.style.fontSize = currentFontSize + '%';
+
+    // Save to localStorage
+    localStorage.setItem('noteFontSize', currentFontSize);
+}
+
+// Load saved font size on page load
+document.addEventListener('DOMContentLoaded', function () {
+    const savedFontSize = localStorage.getItem('noteFontSize');
+    if (savedFontSize) {
+        currentFontSize = parseInt(savedFontSize);
+        document.querySelector('.note-content').style.fontSize = currentFontSize + '%';
+    }
 });

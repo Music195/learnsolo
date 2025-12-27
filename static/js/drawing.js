@@ -19,7 +19,7 @@ drawEvenDataQuartile();
 // ---Odd Median Data Diagram----
 function drawOddDataMedian() {
     const canvas = document.getElementById("median-canvas1");
-    if (!canvas) return; // Prevent error if canvas not found
+    if (!canvas) return; // Throw error if canvas not found
     const { ctx, width, height, dpr } = drawingHelper.setupCanvas(canvas);
     if (!ctx) return;
 
@@ -80,7 +80,7 @@ function drawEvenDataMedian() {
 // Draw odd data quartile Diagram
 function drawOddDataQuartile() {
     const canvas = document.getElementById("quartileCanvas3");
-    // if (!canvas1) return; // Prevent error if canvas not found
+    if (!canvas) return; // Prevent error if canvas not found
     const { ctx, width, height, dpr } = drawingHelper.setupCanvas(canvas);
     if (!ctx) return;
 
@@ -113,7 +113,7 @@ function drawOddDataQuartile() {
 // Draw even data quartile digram
 function drawEvenDataQuartile() {
     const canvas = document.getElementById("quartileCanvas4");
-    // if (!canvas1) return; // Prevent error if canvas not found
+    if (!canvas) return; // Prevent error if canvas not found
     // const ctx = canvas.getContext("2d");
     const { ctx, width, height, dpr } = drawingHelper.setupCanvas(canvas);
     if (!ctx) return;
