@@ -216,48 +216,12 @@ function drawQuartileRD() {
     const xMin = minX - pad;  // shift minimum value to the right
     const xMax = maxX + pad; // shift maximum value to the left 
 
+
+    //Scaling the real data to css coordinates
     function xScale(x) {
         const denom = (xMax - xMin) || 1;
         const t = (x - xMin) / denom; // ration of x position (normalized between 0 and 1)according to data domain
         return margin.left + t * (width - margin.left - margin.right); // return value of drawing width according to t ratio
-    }
-
-    //Drawing helper functions
-
-    // //Reusable straight lines
-    // function line(x1, y1, x2, y2, w = 2, color = "#222") {
-    //     ctx.save();  // save the other drawing settings not to mix with other drawing setting
-    //     ctx.strokeStyle = color;
-    //     ctx.lineWidth = w;
-    //     ctx.beginPath();
-    //     ctx.moveTo(x1, y1);
-    //     ctx.lineTo(x2, y2);
-    //     ctx.stroke();
-    //     ctx.restore();// restore the save settings
-    // }
-    //Reusalble dashed lines
-    function line(x1, y1, x2, y2, dash = null, w = 1, color = "#888") {
-        ctx.save();
-        if (dash !== null) {
-            ctx.setLineDash(dash);
-        }
-        ctx.strokeStyle = color;
-        ctx.lineWidth = w;
-        ctx.beginPath();
-        ctx.moveTo(x1, y1);
-        ctx.lineTo(x2, y2);
-        ctx.stroke();
-        ctx.restore();
-    }
-
-    function drawBox(x, y, w, h, lw = 2) {
-        ctx.save();
-        ctx.fillStyle = "rgba(100,160,255,0.35)";
-        ctx.strokeStyle = "rgba(30,90,200,1)";
-        ctx.lineWidth = lw;
-        ctx.fillRect(x, y, w, h);
-        ctx.strokeRect(x, y, w, h);
-        ctx.restore();
     }
 
     //Render the diagram
@@ -267,36 +231,36 @@ function drawQuartileRD() {
 
     drawingHelper.drawDesc(ctx, width / 2, 20, "Quartiles focus on the middle 50% (the “main body”) of the data", 18, "#111");
 
-    line(margin.left, axisY, width - margin.right, axisY, null, 2, "#333");
+    drawingHelper.line(ctx, margin.left, axisY, width - margin.right, axisY, null, 2, "#333");
 
     //Plot the dot for each data value
-    quartileRDSorted.forEach(v => drawingHelper.drawDot(ctx, xScale(v), dotY, 1, null,"red"));
+    quartileRDSorted.forEach(v => drawingHelper.drawDot(ctx, xScale(v), dotY, 1, null, "red"));
 
     //Convert quartile values into pixel x positions
     const xQ1 = xScale(Q1);
     const xQ2 = xScale(Q2);
     const xQ3 = xScale(Q3);
 
-    line(xQ1, boxY, xQ1, axisY, [4, 6], 1, "#999");
-    line(xQ2, boxY, xQ2, axisY, [4, 6], 1, "#999");
-    line(xQ3, boxY, xQ3, axisY, [4, 6], 1, "#999");
+    drawingHelper.line(ctx, xQ1, boxY, xQ1, axisY, [4, 6], 1, "#999");
+    drawingHelper.line(ctx, xQ2, boxY, xQ2, axisY, [4, 6], 1, "#999");
+    drawingHelper.line(ctx, xQ3, boxY, xQ3, axisY, [4, 6], 1, "#999");
 
-    drawBox(xQ1, boxY, xQ3 - xQ1, boxH);
+    drawingHelper.drawBox(ctx, xQ1, boxY, xQ3 - xQ1, boxH);
 
-    line(xQ2, boxY, xQ2, boxY + boxH, null, 3, "rgba(30, 90, 200, 1)");
+    drawingHelper.line(ctx, xQ2, boxY, xQ2, boxY + boxH, null, 3, "rgba(30, 90, 200, 1)");
 
     drawingHelper.drawDesc(ctx, xQ1, boxY - margin.top, `Q1 = ${Q1}`, 14, "#333");
     drawingHelper.drawDesc(ctx, xQ2, boxY - margin.top * 2, `Median = ${Q2}`, 14, "#333");
-    drawingHelper.drawDesc(ctx, xQ3, boxY - margin.top , `Q3 = ${Q3}`, 14, "#333");
+    drawingHelper.drawDesc(ctx, xQ3, boxY - margin.top, `Q3 = ${Q3}`, 14, "#333");
 
-    const brY = boxY + boxH + margin.top / 2;
+    const brY = dotY + margin.top;
     //Horizontal bracket line
-    line(xQ1, brY, xQ3, brY, null, 2, "rgba(30,90,200,1)");
+    drawingHelper.line(ctx, xQ1, brY, xQ3, brY, null, 2, "rgba(30,90,200,1)");
     //left cap
-    line(xQ3, brY - 8, xQ3, brY + 8, null, 2, "rgba(30,90,200,1)");
+    drawingHelper.line(ctx, xQ3, brY - 8, xQ3, brY + 8, null, 2, "rgba(30,90,200,1)");
     //right cap
-    line(xQ1, brY - 8, xQ1, brY + 8, null, 2, "rgba(30,90,200,1)");
+    drawingHelper.line(ctx, xQ1, brY - 8, xQ1, brY + 8, null, 2, "rgba(30,90,200,1)");
 
-    drawingHelper.drawDesc(ctx, width / 2, axisY + 35, "Outliers can exist far away, but IQR stays focused on the central half.", 13, "#666");
+    drawingHelper.drawDesc(ctx, ctx, width / 2, axisY + 35, "Outliers can exist far away, but IQR stays focused on the central half.", 13, "#666");
 };
 /*------------------------------------------------------------------------------------------------------------------------ */
