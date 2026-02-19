@@ -1,162 +1,179 @@
-// import * as data from './test_data.js'
-import * as drawingHelper from '../static/js/drawing_helper.js'
+const canvas = document.getElementById("plot");
+const ctx = canvas.getContext("2d");
+const tooltip = document.getElementById("tooltip");
 
-const data = [2, 6, 8, 9, 13, 16, 19, 21, 29,40];
+const W = canvas.width;
+const H = canvas.height;
+const PAD = 40;
 
-// Copy and Sort datas
-const quartileRDSorted = [...data].sort((a,b) => a-b);
+let dataX = [], dataY = [];
+let showTrend = true;
+let rValue = 0;
 
-// Reusable median function 
-function medianRD(quartileRDSorted) {
-    const n = quartileRDSorted.length;
-    const mid = Math.floor(n/2); // rounding down to the nearest integer
-    return (n % 2 === 0) 
-    ? (quartileRDSorted[mid-1] + quartileRDSorted[mid]) / 2
-    : quartileRDSorted[mid];
+/* ---------- helpers ---------- */
+const mean = a => a.reduce((s,v)=>s+v,0)/a.length;
+
+function correlation(x, y) {
+  const mx = mean(x), my = mean(y);
+  let num=0, dx=0, dy=0;
+  for (let i=0;i<x.length;i++){
+    num += (x[i]-mx)*(y[i]-my);
+    dx += (x[i]-mx)**2;
+    dy += (y[i]-my)**2;
+  }
+  return num / Math.sqrt(dx*dy);
 }
 
-//computing qurtiles conceptually
-function quartilesRD(quartileRDSorted) {
-    const n = quartileRDSorted.length;
-    const mid = Math.floor(n/2);
-
-    const lower = quartileRDSorted.slice(0, mid);
-    const upper = (n % 2 ===0) ? quartileRDSorted.slice(mid) : quartileRDSorted.slice(mid + 1);
-
-    return {
-        Q1: medianRD(lower),
-        Q2: medianRD(quartileRDSorted),
-        Q3: medianRD(upper)
-    };
+function strength(r){
+  const a = Math.abs(r);
+  if (a>0.8) return "Strong";
+  if (a>0.5) return "Moderate";
+  if (a>0.3) return "Weak";
+  return "Very weak / none";
 }
 
+const map = (v,min,max,a,b)=> a+(v-min)/(max-min)*(b-a);
 
-const { Q1, Q2, Q3 } = quartilesRD(quartileRDSorted);
-
-const IQR = Q3 - Q1;
-const quartileDeviation = IQR / 2;
-
-// Blank canvas sheet
-const canvas = document.getElementById("c");
-const {ctx, width, height, dpr} = drawingHelper.setupCanvas(canvas, 0.25);
-
-//Layout decision
-const margin = { left: 70, right: 70, top: 40, bottom: 60 };
-
-const axisY = 190; //axis at the bottom
-const dotY = 150; //dots slightly above
-const boxY = 95;  // Box even higher
-const boxH = 45; // Box height
-
-//Mapping data to pixels
-const minX = Math.min(...quartileRDSorted); //minimum value of data
-const maxX = Math.max(...quartileRDSorted); //maximum value of data
-
-const pad = (maxX - minX) * 0.08 || 1;
-const xMin = minX - pad;  // shift minimum value to the right
-const xMax = maxX + pad; // shift maximum value to the left 
-
-function xScale(x) {
-    const denom = (xMax - xMin) || 1;
-    const t = (x - xMin) / denom; // ration of x position (normalized between 0 and 1)according to data domain
-    return margin.left + t * (width - margin.left - margin.right); // return value of drawing width according to t ratio
+/* ---------- drawing ---------- */
+function clear(){
+  ctx.clearRect(0,0,W,H);
 }
 
-//Drawing helper functions
-
-//Reusable straight lines
-function line(x1, y1, x2, y2, w=2, color="#222") {
-    ctx.save();  // save the other drawing settings not to mix with other drawing setting
-    ctx.strokeStyle = color;
-    ctx.lineWidth = w;
+function grid(){
+  ctx.strokeStyle="rgba(0,0,0,.08)";
+  for(let x=PAD;x<W;x+=40){
     ctx.beginPath();
-    ctx.moveTo(x1,y1);
-    ctx.lineTo(x2,y2);
+    ctx.moveTo(x,PAD);
+    ctx.lineTo(x,H-PAD);
     ctx.stroke();
-    ctx.restore();// restore the save settings
-}
-//Reusalble dashed lines
-function dashed(x1, y1, x2, y2, dash=[5,6], w=1, color="#888") {
-    ctx.save();
-    ctx.setLineDash(dash);
-    ctx.strokeStyle = color;
-    ctx.lineWidth = w;
+  }
+  for(let y=PAD;y<H;y+=40){
     ctx.beginPath();
-    ctx.moveTo(x1,y1);
-    ctx.lineTo(x2,y2);
+    ctx.moveTo(PAD,y);
+    ctx.lineTo(W-PAD,y);
     ctx.stroke();
-    ctx.restore();
+  }
 }
 
-function text (msg, x, y, size=16, color="#111", align="center") {
-    ctx.save();
-    ctx.fillStyle = color;
-    ctx.font = `${size}px system-ui, Arial`;
-    ctx.textAlign = align;
-    ctx.textBaseline = "middle";
-    ctx.fillText(msg, x, y);
-    ctx.restore();
+function axes(){
+  ctx.strokeStyle="#555";
+  ctx.lineWidth=2;
+  ctx.beginPath();
+  ctx.moveTo(PAD,H-PAD);
+  ctx.lineTo(W-PAD,H-PAD);
+  ctx.moveTo(PAD,PAD);
+  ctx.lineTo(PAD,H-PAD);
+  ctx.stroke();
 }
 
-function dot(x, y, r= 4, color="#444") {
-    ctx.save();
-    ctx.fillStyle = color;
+function ticks(xmin,xmax,ymin,ymax){
+  ctx.fillStyle="#555";
+  ctx.font="11px system-ui";
+  ctx.fillText(xmin, PAD, H-PAD+15);
+  ctx.fillText(xmax, W-PAD-10, H-PAD+15);
+  ctx.fillText(ymax, PAD-25, PAD+5);
+  ctx.fillText(ymin, PAD-25, H-PAD);
+}
+
+function points(x,y,color){
+  x.forEach((xi,i)=>{
+    const px = map(xi,xmin,xmax,PAD,W-PAD);
+    const py = map(y[i],ymin,ymax,H-PAD,PAD);
     ctx.beginPath();
-    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fillStyle=color;
+    ctx.arc(px,py,5,0,Math.PI*2);
     ctx.fill();
-    ctx.restore();
+  });
 }
 
-function drawBox(x, y, w, h, lw=2) {
-    ctx.save();
-    ctx.fillStyle = "rgba(100,160,255,0.35)";
-    ctx.strokeStyle = "rgba(30,90,200,1)";
-    ctx.lineWidth = lw;
-    ctx.fillRect(x, y, w, h);
-    ctx.strokeRect(x, y, w, h);
-    ctx.restore();
+function trendLine(x,y,color){
+  if(!showTrend) return;
+  const mx=mean(x), my=mean(y);
+  let num=0, den=0;
+  for(let i=0;i<x.length;i++){
+    num+=(x[i]-mx)*(y[i]-my);
+    den+=(x[i]-mx)**2;
+  }
+  const m=num/den, b=my-m*mx;
+
+  const y1=m*xmin+b;
+  const y2=m*xmax+b;
+
+  ctx.strokeStyle=color;
+  ctx.lineWidth=3;
+  ctx.beginPath();
+  ctx.moveTo(map(xmin,xmin,xmax,PAD,W-PAD), map(y1,ymin,ymax,H-PAD,PAD));
+  ctx.lineTo(map(xmax,xmin,xmax,PAD,W-PAD), map(y2,ymin,ymax,H-PAD,PAD));
+  ctx.stroke();
 }
 
-//Render the diagram
+/* ---------- interaction ---------- */
+canvas.onmousemove = e=>{
+  const rect=canvas.getBoundingClientRect();
+  const mx=e.clientX-rect.left;
+  const my=e.clientY-rect.top;
 
-//Clear the canvas as canvas does not auto-clear.
-ctx.clearRect(0, 0, width, height);
+  for(let i=0;i<dataX.length;i++){
+    const px=map(dataX[i],xmin,xmax,PAD,W-PAD);
+    const py=map(dataY[i],ymin,ymax,H-PAD,PAD);
+    if(Math.hypot(mx-px,my-py)<7){
+      tooltip.textContent=`(${dataX[i]}, ${dataY[i]})`;
+      tooltip.style.left=e.pageX+"px";
+      tooltip.style.top=e.pageY+"px";
+      tooltip.style.opacity=1;
+      return;
+    }
+  }
+  tooltip.style.opacity=0;
+};
 
-text("Quartiles focus on the middle 50% (the “main body”) of the data", width/2, 20, 18, "#111");
+/* ---------- main ---------- */
+let xmin,xmax,ymin,ymax;
 
-line(margin.left, axisY, width-margin.right, axisY, 2, "#333");
+function generate(){
+  dataX=document.getElementById("x-data").value.split(",").map(Number);
+  dataY=document.getElementById("y-data").value.split(",").map(Number);
+  if(dataX.length!==dataY.length) return alert("Length mismatch");
 
-//Plot the dot for each data value
-quartileRDSorted.forEach(v => dot(xScale(v), dotY, 2,"red"));
+  xmin=Math.min(...dataX);
+  xmax=Math.max(...dataX);
+  ymin=Math.min(...dataY);
+  ymax=Math.max(...dataY);
 
-//Convert quartile values into pixel x positions
-const xQ1 = xScale(Q1);
-const xQ2 = xScale(Q2);
-const xQ3 = xScale(Q3);
+  rValue=correlation(dataX,dataY);
+  redraw();
+}
 
-dashed(xQ1, boxY, xQ1, axisY , [4,6], 1, "#999");
-dashed(xQ2, boxY, xQ2, axisY , [4,6], 1, "#999");
-dashed(xQ3, boxY, xQ3, axisY, [4,6], 1, "#999");
+function redraw(){
+  clear();
+  grid();
+  axes();
+  ticks(xmin,xmax,ymin,ymax);
 
-drawBox(xQ1, boxY, xQ3-xQ1, boxH);
+  const color = rValue>=0 ? "#1f77b4" : "#e74c3c";
+  points(dataX,dataY,color);
+  trendLine(dataX,dataY,color);
 
+  document.getElementById("output").textContent =
+    `Correlation r = ${rValue.toFixed(2)} (${strength(rValue)})`;
+}
 
-line (xQ2, boxY, xQ2, boxY + boxH, 3, "rgba(30, 90, 200, 1)");
+function toggleTrend(){
+  showTrend=!showTrend;
+  redraw();
+}
 
-text(`Q1 = ${Q1}`, xQ1, boxY- 16, 14, "#333");
-text(`Median = ${Q2}`, xQ2, boxY-16, 14, "#333");
-text(`Q3 = ${Q3}`, xQ3, boxY-16, 14, "#333");
+function randomData(){
+  dataX=[...Array(10)].map((_,i)=>i+1);
+  dataY=dataX.map(()=>Math.round(Math.random()*10));
+  document.getElementById("x-data").value=dataX.join(",");
+  document.getElementById("y-data").value=dataY.join(",");
+  generate();
+}
 
-const brY = boxY + boxH + margin.top / 2;
-//Horizontal bracket line
-line(xQ1, brY, xQ3, brY, 2, "rgba(30,90,200,1)");
-//left cap
-line(xQ3, brY-8, xQ3, brY+8, 2, "rgba(30,90,200,1)");
-//right cap
-line(xQ1, brY-8, xQ1, brY+8, 2, "rgba(30,90,200,1)");
-
-text("Outliers can exist far away, but IQR stays focused on the central half.", width/2, axisY+35, 13, "#666")
-
-
-
+function resetPlot(){
+  dataX=[]; dataY=[];
+  clear();
+  document.getElementById("output").textContent="";
+}
 
