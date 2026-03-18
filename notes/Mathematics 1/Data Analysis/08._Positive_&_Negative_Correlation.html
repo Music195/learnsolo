@@ -1,0 +1,398 @@
+<div class="fancy-title" data-topic="Data Analysis">
+    Correlation Coefficient
+</div>
+<div class="math-foundation">
+    <h3>Mathematical Foundation</h3>
+    <p>Correlation describes how two variables move in relation to each other. It tells us whether they tend to increase
+        together, move in opposite directions, or show no clear pattern. When both variables increase or decrease
+        together, the correlation is positive. When one variable increases while the other decreases, the correlation is
+        negative. The correlation coefficient expresses how strong this relationship is, using values from −1 to +1:
+        values close to ±1 indicate a strong linear relationship, while values near 0 indicate little or no linear
+        connection.</p>
+
+
+    <div class="formula-block">
+        <strong>Correlation Coefficient (r):</strong>
+        <div style="font-size: 1.2em; margin: 10px 0;">
+            \( r = \dfrac{s_{xy}}{s_x s_y} = \dfrac{\sum (x_i - \overline{x})(y_i -
+            \overline{y})}{\sqrt{\sum (x_i - \overline{x})^2 \sum (y_i - \overline{y})^2}} \)
+        </div>
+        <p>Where:</p>
+        <ul>
+            <li>\( s_{xy} \) = covariance between x and y</li>
+            <li>\( s_x \) = standard deviation of x</li>
+            <li>\( s_y \) = standard deviation of y</li>
+        </ul>
+    </div>
+
+</div>
+
+<div class="correlation-types">
+    <div class="correlation-type">
+        <h4>Positive Correlation</h4>
+        <div class="description">Both variables increase together<br><strong>Example:</strong> Height and weight
+        </div>
+    </div>
+    <div class="correlation-type">
+        <h4>Negative Correlation</h4>
+        <div class="description">One variable increases, other decreases<br><strong>Example:</strong> Speed and
+            travel time</div>
+    </div>
+    <div class="correlation-type">
+        <h4>No Correlation</h4>
+        <div class="description">No relationship between variables<br><strong>Example:</strong> Shoe size and IQ
+        </div>
+    </div>
+    <div class="correlation-type">
+        <h4>Non-linear Relationship</h4>
+        <div class="description">Correlation ≠ 0, but not linear<br><strong>Example:</strong> Age and happiness
+        </div>
+    </div>
+</div>
+
+<!-- <div class="correlation-row">
+    <div class="correlation-diagram">
+        <div class="correlation-title">
+            Positive Correlation
+        </div>
+        <svg height="120" width="160">
+            <rect fill="#fff" height="120" width="160" x="0" y="0"></rect>
+            <line stroke="#1976d2" stroke-width="2" x1="20" x2="140" y1="100" y2="20"></line>
+            <circle cx="30" cy="90" fill="#ff7043" r="5"></circle>
+            <circle cx="50" cy="75" fill="#ff7043" r="5"></circle>
+            <circle cx="70" cy="60" fill="#ff7043" r="5"></circle>
+            <circle cx="90" cy="45" fill="#ff7043" r="5"></circle>
+            <circle cx="120" cy="30" fill="#ff7043" r="5"></circle>
+        </svg>
+    </div>
+    <div class="correlation-diagram">
+        <div class="correlation-title">
+            Negative Correlation
+        </div>
+        <svg height="120" width="160">
+            <rect fill="#fff" height="120" width="160" x="0" y="0"></rect>
+            <line stroke="#1976d2" stroke-width="2" x1="20" x2="140" y1="20" y2="100"></line>
+            <circle cx="30" cy="30" fill="#ff7043" r="5"></circle>
+            <circle cx="50" cy="45" fill="#ff7043" r="5"></circle>
+            <circle cx="70" cy="60" fill="#ff7043" r="5"></circle>
+            <circle cx="90" cy="75" fill="#ff7043" r="5"></circle>
+            <circle cx="120" cy="90" fill="#ff7043" r="5"></circle>
+        </svg>
+    </div>
+</div> -->
+
+<div class="interactive-demo">
+    <h3>Interactive Scatter Plot & Correlation Calculator</h3>
+    <div class="demo-controls">
+        <div class="control-group">
+            <label for="x-data">X Values (comma-separated):</label>
+            <input id="x-data" placeholder="e.g., 1, 2, 3, 4, 5" value="1, 2, 3, 4, 5">
+        </div>
+        <div class="control-group">
+            <label for="y-data">Y Values (comma-separated):</label>
+            <input id="y-data" placeholder="e.g., 2, 4, 6, 8, 10" value="2, 4, 6, 8, 10">
+        </div>
+        
+        <div class="control-btn">
+            <button id="btn-corcoe-plot" class="btn-style">Generate Plot</button>
+            <button id="btn-corcoe-toggle-trend" class="btn-style">Toggle Trend</button>
+            <button id="btn-corcoe-data" class="btn-style">Random Data</button>
+            <button id="btn-corcoe-reset" class="btn-style">Reset</button>
+        </div>
+        <div class="plot-wrap">
+            <!-- <div id="scatter-plot-container" class="plot">
+                <div class="grid"></div>
+                <div class="axis axis-x"></div>
+                <div class="axis axis-y"></div>
+                <div id="x-ticks" class="ticks x"></div>
+                <div id="y-ticks" class="ticks y"></div>
+            </div> -->
+            <canvas id="plot" width = "420" style="border: 1px solid black"></canvas>
+            <div id="tooltip" class="tooltip"></div>
+            <div id="output" class="output"></div>
+        </div>
+    </div>
+
+    
+
+    <div class="demo-output" id="demo-output">
+        <div class="summary">
+            <div class="item">
+                <div class="value">1.00</div>
+                <div class="label">Correlation (r)</div>
+            </div>
+            <div class="item">
+                <div class="value">Positive</div>
+                <div class="label">Direction</div>
+            </div>
+            <div class="item">
+                <div class="value">Perfect</div>
+                <div class="label">Strength</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="worked-example">
+    <h4>Worked Example 1: Positive Correlation</h4>
+    <p>Hours studied: 2, 4, 6, 8, 10</p>
+    <p>Test scores: 65, 75, 85, 90, 95</p>
+    <p><strong>Analysis:</strong></p>
+    <p>As study hours increase, test scores tend to increase.</p>
+    <p>This shows a positive correlation between study time and academic performance.</p>
+</div>
+
+<div class="worked-example">
+    <h4>Worked Example 2: Negative Correlation</h4>
+    <p>Daily exercise (hours): 0, 1, 2, 3, 4</p>
+    <p>Resting heart rate: 80, 75, 70, 65, 60</p>
+    <p><strong>Analysis:</strong></p>
+    <p>As exercise hours increase, resting heart rate tends to decrease.</p>
+    <p>This shows a negative correlation between exercise and resting heart rate.</p>
+</div>
+
+<div class="worked-example">
+    <h4>Worked Example 3: No Correlation</h4>
+    <p>Shoe size: 7, 8, 9, 10, 11</p>
+    <p>Favorite color (numeric): 3, 1, 2, 3, 1</p>
+    <p><strong>Analysis:</strong></p>
+    <p>No apparent relationship between shoe size and favorite color.</p>
+    <p>This shows little to no correlation between these variables.</p>
+</div>
+
+<div class="correlation-strength">
+    <div class="strength-example">
+        <h5>Strong Positive</h5>
+        <div>r ≈ 0.8 to 1.0</div>
+        <div style="font-size: 12px; color: #666; margin-top: 5px;">Points cluster tightly around upward trend
+        </div>
+    </div>
+    <div class="strength-example">
+        <h5>Weak Positive</h5>
+        <div>r ≈ 0.3 to 0.5</div>
+        <div style="font-size: 12px; color: #666; margin-top: 5px;">Upward trend but scattered points</div>
+    </div>
+    <div class="strength-example">
+        <h5>Weak Negative</h5>
+        <div>r ≈ -0.3 to -0.5</div>
+        <div style="font-size: 12px; color: #666; margin-top: 5px;">Downward trend but scattered points</div>
+    </div>
+    <div class="strength-example">
+        <h5>Strong Negative</h5>
+        <div>r ≈ -0.8 to -1.0</div>
+        <div style="font-size: 12px; color: #666; margin-top: 5px;">Points cluster tightly around downward trend
+        </div>
+    </div>
+</div>
+
+<div class="real-world-examples">
+    <h4>Real-World Examples</h4>
+    <ul>
+        <li><strong>Positive:</strong> Temperature and ice cream sales, education level and income</li>
+        <li><strong>Negative:</strong> Speed and travel time, price and demand (in some cases)</li>
+        <li><strong>No correlation:</strong> Height and intelligence, birth month and lifespan</li>
+    </ul>
+</div>
+
+<div class="caution-note">
+    <h4>⚠️ Important: Correlation ≠ Causation</h4>
+    <p>Just because two variables are correlated doesn't mean one causes the other. Correlation shows
+        association, not causation. Always consider:</p>
+    <ul>
+        <li>Third variables that might influence both</li>
+        <li>Direction of causality</li>
+        <li>Spurious correlations (coincidental relationships)</li>
+    </ul>
+</div>
+
+<h3>Practice Problems</h3>
+
+<div class="practice-problem">
+    <strong>Problem 1:</strong> Describe the correlation: Hours sleeping (4,6,8,10) vs Energy level (3,6,8,9)
+    <br><button class="btn-style" onclick="toggleSolution(1)">Show Solution</button>
+    <div class="solution" id="solution1">
+        <strong>Solution:</strong><br>
+        Positive correlation - as sleep hours increase, energy level tends to increase.
+    </div>
+</div>
+
+<div class="practice-problem">
+    <strong>Problem 2:</strong> What type of correlation: Age (20,30,40,50) vs Reaction time (0.2,0.3,0.4,0.5)
+    <br><button class="btn-style" onclick="toggleSolution(2)">Show Solution</button>
+    <div class="solution" id="solution2">
+        <strong>Solution:</strong><br>
+        Positive correlation - reaction time increases with age.
+    </div>
+</div>
+
+<div class="practice-problem">
+    <strong>Problem 3:</strong> Identify correlation direction: Coffee consumption (1,2,3,4,5 cups) vs Alertness
+    (10,8,6,4,2)
+    <br><button class="btn-style" onclick="toggleSolution(3)">Show Solution</button>
+    <div class="solution" id="solution3">
+        <strong>Solution:</strong><br>
+        This appears to show negative correlation, but actually demonstrates the limitations of caffeine - too
+        much coffee can lead to decreased alertness due to overstimulation.
+    </div>
+</div>
+
+<div class="practice-problem">
+    <strong>Problem 4:</strong> Which shows stronger correlation: r=0.3 or r=-0.7?
+    <br><button class="btn-style" onclick="toggleSolution(4)">Show Solution</button>
+    <div class="solution" id="solution4">
+        <strong>Solution:</strong><br>
+        r=-0.7 shows stronger correlation (negative) than r=0.3 (weak positive).
+    </div>
+</div>
+
+<div class="practice-problem">
+    <strong>Problem 5:</strong> Can correlation prove causation? Explain with an example.
+    <br><button class="btn-style" onclick="toggleSolution(5)">Show Solution</button>
+    <div class="solution" id="solution5">
+        <strong>Solution:</strong><br>
+        No, correlation does not prove causation. Example: Ice cream sales and drowning deaths are positively
+        correlated, but eating ice cream doesn't cause drowning - both increase in summer heat.
+    </div>
+</div>
+
+<div class="key-takeaways">
+    <h3>Key Takeaways</h3>
+    <ul>
+        <li><strong>Positive Correlation:</strong> Both variables increase together (r > 0).</li>
+        <li><strong>Negative Correlation:</strong> One variable increases, other decreases (r < 0).</li>
+        <li><strong>Correlation Coefficient:</strong> r ranges from -1 to +1, measuring strength and direction.
+        </li>
+        <li><strong>Strength Interpretation:</strong> |r| ≥ 0.8 strong, 0.6-0.8 moderate, 0.3-0.6 weak, <0.3 very
+                weak.</li>
+        <li><strong>Scatter Plots:</strong> Visual representation of correlation between two variables.</li>
+        <li><strong>Correlation ≠ Causation:</strong> Association doesn't imply cause-and-effect relationship.
+        </li>
+        <li><strong>Linearity:</strong> Correlation measures linear relationships only.</li>
+        <li><strong>Outliers:</strong> Can significantly affect correlation strength and direction.</li>
+    </ul>
+</div>
+
+<script>
+    // function generateScatterPlot() {
+    //     const xInput = document.getElementById('x-data').value;
+    //     const yInput = document.getElementById('y-data').value;
+
+    //     const xValues = xInput.split(',').map(x => parseFloat(x.trim())).filter(x => !isNaN(x));
+    //     const yValues = yInput.split(',').map(y => parseFloat(y.trim())).filter(y => !isNaN(y));
+
+    //     if (xValues.length !== yValues.length || xValues.length < 2) {
+    //         alert('Please enter equal number of X and Y values (at least 2 pairs).');
+    //         return;
+    //     }
+
+    //     // Calculate correlation coefficient
+    //     const correlation = calculateCorrelation(xValues, yValues);
+    //     const direction = correlation > 0 ? 'Positive' : correlation < 0 ? 'Negative' : 'None';
+    //     const strength = Math.abs(correlation) >= 0.8 ? 'Strong' :
+    //         Math.abs(correlation) >= 0.6 ? 'Moderate' :
+    //             Math.abs(correlation) >= 0.3 ? 'Weak' : 'Very Weak';
+
+    //     // Update scatter plot
+    //     updateScatterPlot(xValues, yValues);
+
+    //     // Update output
+    //     const output = document.getElementById('demo-output');
+    //     output.innerHTML = `
+    //   <div class="summary">
+    //    <div class="item">
+    //     <div class="value">${correlation.toFixed(3)}</div>
+    //     <div class="label">Correlation (r)</div>
+    //    </div>
+    //    <div class="item">
+    //     <div class="value">${direction}</div>
+    //     <div class="label">Direction</div>
+    //    </div>
+    //    <div class="item">
+    //     <div class="value">${strength}</div>
+    //     <div class="label">Strength</div>
+    //    </div>
+    //   </div>`;
+
+    //     // Re-render MathJax
+    //     if (window.MathJax) {
+    //         MathJax.typesetPromise([output]).catch(function (err) {
+    //             console.log('MathJax re-render error:', err);
+    //         });
+    //     }
+    // }
+
+    // function calculateCorrelation(x, y) {
+    //     const n = x.length;
+    //     const sumX = x.reduce((a, b) => a + b, 0);
+    //     const sumY = y.reduce((a, b) => a + b, 0);
+    //     const sumXY = x.reduce((sum, xi, i) => sum + xi * y[i], 0);
+    //     const sumX2 = x.reduce((sum, xi) => sum + xi * xi, 0);
+    //     const sumY2 = y.reduce((sum, yi) => sum + yi * yi, 0);
+
+    //     const numerator = n * sumXY - sumX * sumY;
+    //     const denominator = Math.sqrt((n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY));
+
+    //     return denominator === 0 ? 0 : numerator / denominator;
+    // }
+
+    // function updateScatterPlot(xValues, yValues) {
+    //     const container = document.getElementById('scatter-plot-container');
+
+    //     // Clear previous plot
+    //     const existingPoints = container.querySelectorAll('.data-point, .trend-line');
+    //     existingPoints.forEach(point => point.remove());
+
+    //     // Calculate ranges
+    //     const xMin = Math.min(...xValues);
+    //     const xMax = Math.max(...xValues);
+    //     const yMin = Math.min(...yValues);
+    //     const yMax = Math.max(...yValues);
+
+    //     const xRange = xMax - xMin || 1;
+    //     const yRange = yMax - yMin || 1;
+
+    //     // Plot points
+    //     xValues.forEach((x, i) => {
+    //         const y = yValues[i];
+    //         const xPos = 50 + ((x - xMin) / xRange) * 300; // 50px margin, 300px plot area
+    //         const yPos = 250 - ((y - yMin) / yRange) * 200; // 250px from top, 200px plot height
+
+    //         const point = document.createElement('div');
+    //         point.className = 'data-point';
+    //         point.style.left = xPos + 'px';
+    //         point.style.top = yPos + 'px';
+    //         container.appendChild(point);
+    //     });
+
+    //     // Add trend line if correlation is significant
+    //     const correlation = calculateCorrelation(xValues, yValues);
+    //     if (Math.abs(correlation) > 0.3) {
+    //         const slope = correlation * (yRange / xRange);
+    //         const intercept = (yMax + yMin) / 2 - slope * (xMax + xMin) / 2;
+
+    //         const x1 = xMin;
+    //         const y1 = slope * x1 + intercept;
+    //         const x2 = xMax;
+    //         const y2 = slope * x2 + intercept;
+
+    //         const x1Pos = 50 + ((x1 - xMin) / xRange) * 300;
+    //         const y1Pos = 250 - ((y1 - yMin) / yRange) * 200;
+    //         const x2Pos = 50 + ((x2 - xMin) / xRange) * 300;
+    //         const y2Pos = 250 - ((y2 - yMin) / yRange) * 200;
+
+    //         const length = Math.sqrt((x2Pos - x1Pos) ** 2 + (y2Pos - y1Pos) ** 2);
+    //         const angle = Math.atan2(y2Pos - y1Pos, x2Pos - x1Pos) * 180 / Math.PI;
+
+    //         const trendLine = document.createElement('div');
+    //         trendLine.className = 'trend-line';
+    //         trendLine.style.width = length + 'px';
+    //         trendLine.style.left = x1Pos + 'px';
+    //         trendLine.style.top = y1Pos + 'px';
+    //         trendLine.style.transform = `rotate(${angle}deg)`;
+    //         container.appendChild(trendLine);
+    //     }
+    // }
+
+    // // Initialize with default data
+    // generateScatterPlot();
+</script>

@@ -1,4 +1,5 @@
 import os
+import re
 
 # STEP 4: Error normalization
 # ---------------------------
@@ -18,6 +19,8 @@ class NoteNotFound(Exception):
 NOTES_FOLDER = "notes"
 _cached_notes = None
 _cached_mtime = 0
+_cached_meta = None
+_cached_meta_mtime = 0
 
 def get_notes_list():
     global _cached_notes, _cached_mtime
@@ -48,11 +51,68 @@ def get_notes_list():
     _cached_mtime = current_mtime
     return _cached_notes
 
+
+def _extract_note_title(note_path):
+    """
+    Pull a human-friendly title from the HTML file by looking for a fancy-title
+    block first, then falling back to the <title> tag, and finally the filename.
+    """
+    html_path = os.path.join(NOTES_FOLDER, *note_path.split("/")) + ".html"
+    if not os.path.exists(html_path):
+        return os.path.basename(note_path)
+
+    with open(html_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    # Try <div class="fancy-title"> or <h1 class="fancy-title">
+    match = re.search(
+        r'<(?:div|h1)[^>]*class="[^"]*fancy-title[^"]*"[^>]*>(.*?)</(?:div|h1)>',
+        content,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
+    if not match:
+        # Fallback to <title> tag
+        match = re.search(
+            r"<title[^>]*>(.*?)</title>",
+            content,
+            flags=re.IGNORECASE | re.DOTALL,
+        )
+
+    if match:
+        title = re.sub(r"\s+", " ", match.group(1)).strip()
+        if title:
+            return title
+
+    return os.path.basename(note_path)
+
+
+def get_notes_with_titles():
+    """
+    Return cached metadata of paths and titles so the UI can show readable names.
+    """
+    global _cached_meta, _cached_meta_mtime
+
+    # Ensure the base notes cache is up-to-date
+    notes = get_notes_list()
+
+    if _cached_meta is not None and _cached_meta_mtime == _cached_mtime:
+        return _cached_meta
+
+    meta = []
+    for note in notes:
+        meta.append({"path": note, "title": _extract_note_title(note)})
+
+    _cached_meta = meta
+    _cached_meta_mtime = _cached_mtime
+    return _cached_meta
+
 # STEP 6: Manual cache invalidation hook
 def refresh_notes_cache():
-    global _cached_notes, _cached_mtime
+    global _cached_notes, _cached_mtime, _cached_meta, _cached_meta_mtime
     _cached_notes = None
     _cached_mtime = 0
+    _cached_meta = None
+    _cached_meta_mtime = 0
 
 
 

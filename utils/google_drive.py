@@ -1,7 +1,7 @@
 import requests
 from flask import request, Response, redirect
 from urllib.parse import urlparse
-import google_drive_link as gdl
+from . import google_drive_link as gdl
 
 def get_links(): 
     """
