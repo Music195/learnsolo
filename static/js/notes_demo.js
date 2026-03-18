@@ -146,8 +146,6 @@ function readStr(id, allowed = null) {
     return value;
 }
 
-
-
 // Checking numeric array 
 function readNumericArray(id) {
     const el = document.getElementById(id);
@@ -171,6 +169,28 @@ function readDivElement (id) {
     const el = document.getElementById(id);
     if(!el) throw new Error (`${id} not found`);
     return el;
+}
+
+//to get the maximum and minimum value of x and y 
+function getBoundaryValue (x, y, paddingRatio = 0.05) {
+    if (!x.length || !y.length) {
+        throw new Error("Array must not be empty");
+    }
+
+    const xmin = Math.min(...x);
+    const xmax = Math.max(...x);
+    const ymin = Math.min(...y);
+    const ymax = Math.max(...y);
+
+    const xRange = xmax - xmin;
+    const yRange = ymax - ymin;
+
+    return {
+        xmin: xmin - xRange * paddingRatio,
+        xmax: xmax - xRange * paddingRatio,
+        ymin: ymin - yRange * paddingRatio,
+        ymax: ymax - yRange * paddingRatio
+    };
 }
 
 
@@ -1088,3 +1108,15 @@ function updateVSDViz(values, calculatedMean, deviations) {
 // Initialize with default data
 window.addEventListener('DOMContentLoaded', calculateVSD);
 /* ------------------------------------------------------------------------------------ */
+// Correlation Demo
+
+// const canvas = document.getElementById("plot");
+// const ctx = canvas.getContext("2d");
+
+// const W = canvas.width;
+// const H = canvas.height;
+// const PAD = 40;
+
+// let dataX = [], dataY = [];
+// let showTrend = true;
+// let rValue = 0;

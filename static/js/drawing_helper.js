@@ -116,7 +116,7 @@ export function drawWhiskerLine(ctx, xBoxLeft, xDMax, xBoxRight, xDMin, BoxCente
 export function xScale(x, xMin, xMax, width, marginLeft, marginRight) {
     const denom = xMax - xMin;
     if (denom === 0) {
-        throw new Error("xMax must not equal xMin in xScale");
+        throw new Error("Maximum X coordinate must not equal minimum X coordinate.");
     }
 
     const xRatio = (x - xMin) / denom;
@@ -125,11 +125,23 @@ export function xScale(x, xMin, xMax, width, marginLeft, marginRight) {
     return marginLeft + clampedRatio * (width - (marginLeft + marginRight));
 }
 
-export function clear(width, height) {
+export function yScale(y, yMin, yMax, height, marginTop, marginBottom) {
+    const denom = yMax - yMin;
+    if (denom === 0) {
+        throw new Error("Maximum Y coordinate must not equal minimum Y coordinate.");
+    }
+
+    const yRatio = (y - yMin) / denom;
+    const clampedRatio = Math.min(Math.max(yRatio, 0), 1);
+
+    return height - marginBottom - clampedRatio * (height - (marginTop + marginBottom));
+}
+
+export function clear(ctx, width, height) {
     ctx.clearRect(0,0, width, height);
 }
 
-export function grid(padding, width, height, lw, gridWidth, color) {
+export function grid(ctx, width, height, padding, lineWidth, gridWidth, color) {
     if (gridWidth <= 0) {
         console.warn("Grid width must be greater than 0 to draw grid line");
         return;
@@ -138,53 +150,60 @@ export function grid(padding, width, height, lw, gridWidth, color) {
     ctx.save();
 
     ctx.strokeStyle = color;
-    ctx.lineWidth = lw;
+    ctx.lineWidth = lineWidth;
 
     //Center grid inside padding area
-    const usableWidth = width - padding * 2;
-    const usableHeight = height - padding * 2;
+    // const usableWidth = width - padding * 2;
+    // const usableHeight = height - padding * 2;
 
-    const offsetX = padding + (usableWidth % gridWidth) / 2;
-    const offsetY = padding + (usableHeight % gridWidth ) / 2;
+    // const offsetX = padding + (usableWidth % gridWidth) / 2;
+    // const offsetY = padding + (usableHeight % gridWidth ) / 2;
 
-    ctx.beginPath();
+    
     
     //vertical lines
-    for (let x = offsetX; x < width; x += gridWidth) {
+    for (let x = padding; x < width; x += gridWidth) {
+        ctx.beginPath();
         ctx.moveTo(x, padding);
         ctx.lineTo(x, height - padding);
+        ctx.stroke();
     }
 
     //horizontal lines
-    for (let y = offsetY; y < height; y += gridWidth) {
+    for (let y = padding; y < height; y += gridWidth) {
+        ctx.beginPath();
         ctx.moveTo(padding, y);
         ctx.lineTo(width - padding, y);
+        ctx.stroke();
     }
-
-    ctx.stroke();
     
     ctx.restore();     
 }
 
-export function axes(width, height, padding, lw , color) {
+// to draw the X and Y axes on the canvas
+export function axes(ctx, height, width, padding, lineWidth, color) {
     ctx.save();
 
     ctx.strokeStyle = color;
-    ctx.lineWidth = lw;
+    ctx.lineWidth = lineWidth;
 
-    //X axis
     ctx.beginPath();
+    //X axis
     ctx.moveTo(padding, height - padding);
     ctx.lineTo(width - padding, height - padding);
     //Y axis
     ctx.moveTo(padding , padding);
     ctx.lineTo(padding, height - padding);
+
     ctx.stroke();
 
     ctx.restore();
 }
 
-export function ticks(xmin, xmax, ymin, ymax)  {
+//to draw tick labels for the axes showing the min/max values on the X and Y axes
+export function ticks(ctx, xmin, xmax, ymin, ymax, padding, height, width, size = 11, color = "#555")  {
+    ctx.save();
+
     ctx.fillStyle = color;
     ctx.font = `${size} system-ui`;
     ctx.fillText(xmin, padding,  height - padding + size);
@@ -192,4 +211,64 @@ export function ticks(xmin, xmax, ymin, ymax)  {
     ctx.fillText(ymax, padding - size, padding + size);
     ctx.fillText(ymin, padding - size, height - padding);
 
+    ctx.restore();
+
+}
+
+export function points ({
+        ctx,
+        xMin, xMax, yMin, yMax,
+        xRange, yRange,
+        marginLeft, marginRight, 
+        marginTop, marginBottom, 
+        x, y, color
+    }) {
+    ctx.save();
+
+    x.forEach((xi, i) => {
+        const px = xScale(xi, xMin, xMax, xRange, marginLeft, marginRight);
+        const py = yScale(y[i], yMin, yMax, yRange, marginTop, marginBottom);
+        ctx.beginPath();
+        ctx.fillStyle = color;
+        ctx.arc(px, py, 5, 0, Math.PI * 2);
+        ctx.fill();
+    });
+    
+    ctx.restore();
+}
+
+export function trendLine({
+        ctx,
+        xMin, xMax, yMin, yMax,
+        xRange, yRange,
+        marginLeft, marginRight, 
+        marginTop, marginBottom, 
+        x, y, color,
+        showTrend
+    }) {
+    ctx.save();
+    
+    if (!showTrend) return;
+
+    const mx = mean(x), my = mean(y);
+    // For measuring regression
+    let num = 0, den = 0;
+    for (let i=0; i < x.length; i++) {
+        num += (x[i] - mx) * (y[i]-my);
+        den += (x[i] - mx) ** 2;
+    }
+    const m = num / den;
+    const b = my - m * mx; // y = mx + b;
+
+    const y1 = m * xMin + b;
+    const y2 = m * xMax + b;
+
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(xScale(xMin, xMin, xMax, xRange, marginLeft, marginRight), yScale(y1, yMin, yMax, yRange, marginTop, marginBottom));
+    ctx.lineTo(xScale(xMax, xMin, xMax, xRange, marginLeft, marginRight), yScale(y2, yMin, yMax, yRange, marginTop, marginBottom));
+    ctx.stroke();
+
+    ctx.restore();
 }

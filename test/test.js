@@ -32,7 +32,8 @@ function strength(r){
   return "Very weak / none";
 }
 
-const map = (v,min,max,a,b)=> a+(v-min)/(max-min)*(b-a);
+const map = (v,min,max,a,b)=> a+(v-min)/(max-min)*(b-a); //min,max = where the value currently lives
+                                                        //a,b = where you want it to live
 
 /* ---------- drawing ---------- */
 function clear(){
@@ -76,7 +77,7 @@ function ticks(xmin,xmax,ymin,ymax){
 }
 
 function points(x,y,color){
-  x.forEach((xi,i)=>{
+  x.forEach((xi,i)=>{ //xi = current x value , i = index
     const px = map(xi,xmin,xmax,PAD,W-PAD);
     const py = map(y[i],ymin,ymax,H-PAD,PAD);
     ctx.beginPath();

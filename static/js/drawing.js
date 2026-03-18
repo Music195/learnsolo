@@ -37,23 +37,23 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     bindButton("btn-corcoe-plot", () => {
-        console.log("btn is pressed")
+        console.log("btn-corcoe-plot is pressed")
         generateScatterPlot();
 
     });
 
     bindButton("btn-corcoe-toggle-trend", () => {
-        console.log("btn is pressed")
+        console.log("btn-corcoe-toggle-trend is pressed")
         toggleTrend();
     });
 
     bindButton("btn-corcoe-data", () => {
-        console.log("btn is pressed")
+        console.log("btn-corcoe-data is pressed")
         randomData();
     });
 
     bindButton("btn-corcoe-reset", () => {
-        console.log("btn is pressed")
+        console.log("btn-corcoe-reset is pressed")
         resetPlot();
     });
 
@@ -715,10 +715,27 @@ function drawboxPlot() {
 //     <div id="y-ticks" class="ticks y"></div>`;
 // }
 
-let trendVisible = true;
+let plotState = {
+    ctx : null,
+    canvas : null,
+    xMin : 0, xMax : 0, yMin: 0, yMax : 0,
+    xRange : 0, yRange : 0,
+    x :[], y : [], 
+    showTrend : true, 
+    rValue: 0
+};
 
 //Generate scatter plot
-function generateScatterPlot() {
+export function generateScatterPlot() {
+    const canvas = document.getElementById("plot");
+    if (!canvas) {
+        console.warn("Canvas 'plot' not found!");
+        return;
+    }
+
+    const {ctx, width, height} = drawingHelper.setupCanvas(canvas);
+    if (!ctx) return;
+
     let x, y;
 
     try {
@@ -728,53 +745,87 @@ function generateScatterPlot() {
         console.warn(e.message);
     }
 
-    if (x.length !== y.length) return alert("X and Y must have the same length!");
-
-    resetPlot();
-    let plot, tooltip;
-    try {
-        plot = readDivElement("scatter-plot-container");
-    } catch (e) {
-        console.warn(e.message);
+    if (!x || !y || x.length === 0 || y.length === 0) {
+        console.warn ("No valid data");
         return;
     }
 
-    try {
-        tooltip = readDivElement("tooltip");
-    } catch (e) {
-        console.warn(e.message);
+    if (x.length !== y.length) {
+        alert("X and Y must have the same length!");
+        return ;
+    }
+
+    const {xMin, xMax, yMin, yMax} = getBoundaryValue(x, y, 0);
+    const xRange = xMax - xMin, yRange = yMax - yMin;
+    if (xRange === 0 || yRange === 0 ) {
+        alert("Need at least two different x and y values");
         return;
     }
 
+    // Store state for redraw()
+    plotState = {
+        ctx, 
+        canvas,
+        height, width, 
+        xMin, xMax, yMin, yMax,
+        xRange, yRange,
+        x, y,
+        showTrend: true,
+        rValue: correlation(x, y),
+        marginLeft: 50,
+        marginRight: 50,
+        marginTop: 20,
+        marginBottom: 40,
+        color: "#000",
+    };
+    redraw();
+}
 
+export function redraw () {
+    const { ctx,
+        height, width,
+        xMin, xMax, yMin, yMax,
+        x, y,
+        showTrend,
+        rValue,
+        marginLeft, marginRight, 
+        marginTop, marginBottom 
+    } = plotState;
 
-    const xMin = Math.min(...x), xMax = Math.max(...x);
-    const yMin = Math.min(...y), yMax = Math.max(...y);
+    //Clear and draw background 
+    drawingHelper.clear(ctx, height, width);
+    drawingHelper.grid(ctx, 10, height, width, 2, 20, "#000");
+    drawingHelper.axes(ctx, height, width, 25, 2, "#000");
+    drawingHelper.ticks(ctx, xMin, xMax, yMin, yMax, 20, height, width, 15, "#000");
 
-    document.getElementById("x-ticks").innerHTML = `<span>${xMin}</span><span>${xMax}</span>`;
-    document.getElementById("y-ticks").innerHTML = `<span>${yMin}</span><span>${yMax}</span>`;
-
-    x.forEach((xi, i) => {
-        const dot = document.createElement("div");
-        dot.className = "data-dot";
-
-        const xp = 50 + (xi - xMin) / (xMax - xMin) * 300;
-        const yp = 250 - (y[i] - yMin) / (yMax - yMin) * 200;
-
-        dot.style.left = xp + "px";
-        dot.style.top = yp + "px";
-
-        dot.onmouseenter = () => { tooltip.textContent = `(${xi}, ${y[i]})`; tooltip.style.opacity = 1; };
-        dot.onmousemove = e => { tooltip.style.left = e.pageX + "px"; tooltip.style.top = e.pageY + "px"; };
-        dot.onmouseleave = () => tooltip.style.opacity = 0;
-
-        plot.appendChild(dot);
+    const color = rValue >= 0 ? "#1f77b4" : "#e74c3c";
+    
+    drawingHelper.points( {
+        ctx,
+        xMin, xMax, yMin, yMax,
+        xRange: xMax - xMin,
+        yRange: yMin - yMax,
+        marginLeft, marginRight, marginTop, marginBottom,
+        x, y, color
     });
 
-    const { strength, r } = correlation(x, y);
-    plot.classList.add(r >= 0 ? "positive" : "negative");
+    //Draw trend line if enabled
+    if (showTrend) {
+        drawingHelper.trendLine({
+            ctx,
+            xMin, xMax, yMin, yMax,
+            xRange: xMax - xMin,
+            yRange: yMax - yMin,
+            marginLeft, marginRight, marginTop, marginBottom,
+            x, y, color,
+            showTrend: true
+        });
+    }
+    
 
-    drawingHelper.corSlopeLine("scatter-plot-container", x, y, xMin, xMax, yMin, yMax);
+    // document.getElementById("output").textContent = 
+    //  `Correlation r = ${rValue.toFixed(2)} (${strength(rValue)})`;
+
 }
 
 function randomData() {
@@ -803,17 +854,8 @@ function toggleTrend() {
 
 function resetPlot() {
 
-    const plot = readDivElement("scatter-plot-container");
-
-    plot.className = "plot";
-
-    plot.innerHTML = `
-    <div class="grid"></div>
-    <div class="axis axis-x"></div>
-    <div class="axis axis-y"></div>
-    <div id="x-ticks" class="ticks x"></div>
-    <div id="y-ticks" class="ticks y"></div>`;
 }
+
 
 // if (xMax === xMin || yMax === yMin) {
 //     alert("Need at least two different x values and two different Y values.");

@@ -24,4 +24,4 @@ if __name__ == "__main__":
 # STEP 3: PDF proxy security
 # STEP 4: Error normalization
 # STEP 5: Navigation cleanup
-# STEP 6 — Cache invalidation for notes (make caching safe)
+# STEP 6: Cache invalidation for notes (make caching safe)
