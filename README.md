@@ -1,2 +1,2 @@
 # learningNoteByMin
-＃This web is still on developing stage
+This web is still on developing stage
