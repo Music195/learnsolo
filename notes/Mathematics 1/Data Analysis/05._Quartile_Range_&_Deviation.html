@@ -28,44 +28,6 @@
         <p>Half of the quartile range, measuring the average deviation from the median within the interquartile
             range.</p>
     </div>
-    <!-- <div class="range-visualization">
-        <h4>Understanding Quartile Range</h4>
-        <div class="range-bar"></div>
-        <div class="range-labels">
-            <div style="color: #e74c3c;">Q₁ (25th percentile)</div>
-            <div style="color: #f39c12;">Middle 50% (IQR)</div>
-            <div style="color: #27ae60;">Q₃ (75th percentile)</div>
-        </div>
-    </div> -->
-    <!-- <div class="quartile-diagram">
-        <h4>Quartile Range Visualization</h4>
-        <div class="quartile-numbers">
-            <span class="qbox">2</span>
-            <span class="qbox">6</span>
-            <span class="qbox">8</span>
-            <span class="qbox q1">9</span>
-            <span class="qbox">13</span>
-            <span class="qbox q2">16</span>
-            <span class="qbox">19</span>
-            <span class="qbox q3">21</span>
-            <span class="qbox">29</span>
-        </div>
-        <div style="display:flex; justify-content:center; gap:38px; margin-top:4px;">
-            <div>
-                <div class="q-label q1">Q₁=9</div>
-            </div>
-            <div>
-                <div class="q-label q2">Q₂=16</div>
-            </div>
-            <div>
-                <div class="q-label q3">Q₃=21</div>
-            </div>
-        </div>
-        <div style="margin-top: 20px; font-weight: bold;">
-            Quartile Range = Q₃ - Q₁ = 21 - 9 = 12<br>
-            Quartile Deviation = (21 - 9)/2 = 6
-        </div>
-    </div> -->
 </div>
 
 
@@ -88,10 +50,6 @@
     </div>
 
     <div class="demo-output" id="quartile-rd-demo-output">
-        <!-- <strong>Current Data:</strong> [2, 6, 8, 9, 13, 16, 19, 21, 29]<br>
-        <strong>Q₁ (25th percentile):</strong> 8<br>
-        <strong>Q₂ (50th percentile, Median):</strong> 16<br>
-        <strong>Q₃ (75th percentile):</strong> 21<br> -->
         <div class="summary">
             <div class="item">
                 <div class="value">13</div>
@@ -108,6 +66,306 @@
         </div>
     </div>
 </div>
+
+<script>
+    (() => {
+        const STYLE = {
+            boxHeightRatio: 0.25,
+            dotOffsetRatio: 0.05,
+            lineWidthRatio: 0.006,
+            fontRatio: 0.07
+        };
+
+        function getInputData(id) {
+            const inputElement = document.getElementById(id);
+            if (!inputElement) return;
+            const input = inputElement.value;
+            if (!input) return;  // Only check if empty
+            const values = input.split(',').map(x => parseFloat(x.trim())).filter(x => !isNaN(x));
+            if (values.length < 4) return; // Check number of valid numbers
+            return values;
+        };
+
+
+        // Checking numeric array 
+        function readNumericArray(id) {
+            const el = document.getElementById(id);
+            if (!el) throw new Error(`${id} not found`);
+            if (!el.value.trim()) throw new Error(`${id} is empty`);
+
+            const arr = el.value
+                .split(",")
+                .map(v => Number(v.trim()))
+                .filter(v => !Number.isNaN(v));
+
+            if (arr.length ===0) {
+                throw new Error(`${id} contains no valid numbers`);
+            }
+
+            return arr;
+        }
+
+        // Checking div element
+        function readDivElement (id) {
+            const el = document.getElementById(id);
+            if(!el) throw new Error (`${id} not found`);
+            return el;
+        }
+
+        function drawQuartileRD() {
+            const values = getInputData('quartilerange-data-input');
+            // Copy and Sort datas
+            const quartileRDSorted = values ? [...values].sort((a, b) => a - b) : [];
+
+            if (quartileRDSorted.length < 4) return; // Need at least 4 values for quartiles
+
+            //quartilesRD is called from notes_demos.js which is global and not module
+            const { Q1, Q2, Q3 } = quartiles(quartileRDSorted);
+
+            // Blank canvas sheet
+            const canvas = document.getElementById("quartileRD-canvas");
+            if (!canvas) return;
+            const { ctx, width, height, dpr } = setupCanvas(canvas, 0.3);
+            if (!ctx) return;
+
+            //Layout decision
+            const margin = { left: 70, right: 70, top: width / 50, bottom: 60 };
+
+            const axisY = height * 0.8; //axis at the bottom
+            const dotY = axisY - height / 8; //dots slightly above
+            const boxH = height * STYLE.boxHeightRatio; // Box height
+            const boxY = dotY - boxH - height / 20;  // Box even higher
+
+            //Mapping data to pixels
+            const minX = Math.min(...quartileRDSorted); //minimum value of data
+            const maxX = Math.max(...quartileRDSorted); //maximum value of data
+
+            const range = maxX - minX;
+            const pad = range === 0 ? Math.abs(maxX || 1) * 0.1 : range * 0.08 //Handles constant data
+            const xMin = minX - pad;  // shift minimum value to the right
+            const xMax = maxX + pad; // shift maximum value to the left 
+
+
+            //Scaling the real data to css coordinates
+            // function xScale(x) {
+            //     const denom = (xMax - xMin) || 1;
+            //     const t = (x - xMin) / denom; // ration of x position (normalized between 0 and 1)according to data domain
+            //     return margin.left + t * (width - margin.left - margin.right); // return value of drawing width according to t ratio
+            // }
+
+            //Convert quartile values into pixel x positions
+            const xQ1 = xScale(Q1, xMin, xMax, width, margin.left, margin.right);
+            const xQ2 = xScale(Q2, xMin, xMax, width, margin.left, margin.right);
+            const xQ3 = xScale(Q3, xMin, xMax, width, margin.left, margin.right);
+
+            //Render the diagram
+
+            //Clear the canvas as canvas does not auto-clear.
+            ctx.clearRect(0, 0, width, height);
+
+            drawTitle(ctx,
+                width / 2,
+                axisY - height / 2.5 - boxH,
+                "Quartiles focus on the middle 50% (the “main body”) of the data",
+                height / 13,
+                "#111"
+            );
+
+            drawDesc(ctx,
+                xQ1,
+                boxY - height / 10,
+                `Q1 = ${Q1}`,
+                height / 16,
+                "#333"
+            );
+
+            drawDesc(ctx,
+                xQ2,
+                boxY - height / 6.7,
+                `Median = ${Q2}`,
+                height / 16,
+                "#333"
+            );
+
+            drawDesc(
+                ctx,
+                xQ3,
+                boxY - height / 10,
+                `Q3 = ${Q3}`,
+                height / 16,
+                "#333"
+            );
+
+            drawBox(
+                ctx,
+                xQ1,
+                boxY,
+                xQ3 - xQ1,
+                boxH,
+                height * STYLE.lineWidthRatio
+            );
+
+            // Draw middle line of box
+            drawLine(ctx,
+                xQ2,
+                boxY,
+                xQ2,
+                boxY + boxH,
+                null,
+                height * STYLE.lineWidthRatio,
+                "rgba(30, 90, 200, 1)"
+            );
+
+            // Draw three dashed line at Q1, Q2, Q3
+            drawLine(ctx, xQ1, boxY - margin.top / 2, xQ1, axisY, [4, 6], 1, "#999");
+            drawLine(ctx, xQ2, boxY - margin.top / 2, xQ2, axisY, [4, 6], 1, "#999");
+            drawLine(ctx, xQ3, boxY - margin.top / 2, xQ3, axisY, [4, 6], 1, "#999");
+
+            const brY = dotY + margin.top;
+            //Horizontal bracket line
+            drawLine(ctx, xQ1, brY, xQ3, brY, null, 2, "rgba(30,90,200,1)");
+            //right cap
+            drawLine(ctx, xQ3, brY - 8, xQ3, brY + 8, null, 2, "rgba(30,90,200,1)");
+            //left cap
+            drawLine(ctx, xQ1, brY - 8, xQ1, brY + 8, null, 2, "rgba(30,90,200,1)");
+
+            quartileRDSorted.forEach(v =>
+                drawDot(
+                    ctx,
+                    xScale(v, xMin, xMax, width, margin.left, margin.right),
+                    dotY,
+                    height / 100,
+                    null,
+                    "red"
+                )
+            );
+
+            drawLine(
+                ctx,
+                margin.left,
+                axisY,
+                width - margin.right,
+                axisY,
+                null,
+                height / 300,
+                "#333"
+            );
+
+            drawDesc(
+                ctx,
+                width / 2,
+                axisY + height / 10,
+                "Outliers can exist far away, but IQR stays focused on the central half.",
+                height / 14,
+                "#000000ff"
+            );
+        };
+
+        
+        function calculateQuartileRD() {
+    
+            let values;
+            try {
+                values = readNumericArray('quartilerange-data-input');
+            } catch (e) {
+                console.warn (e.message);
+                return;
+            }
+
+            if (values.length === 0) {
+                alert('Please enter valid numerical data.');
+                return;
+            }
+
+
+            if (values.length < 4) {
+                alert('Please enter at least 4 values to calculate quartiles.');
+                return;
+            }
+
+            // Sort the values
+            const quartileRDSorted = [...values].sort((a, b) => a - b);
+            const n = quartileRDSorted.length;
+            const { Q1, Q2, Q3 } = quartiles(quartileRDSorted);
+
+            updateQuartileRDViz(quartileRDSorted);
+
+
+            const qr = Q3 - Q1;
+            const qd = qr / 2;
+            const totalRange = quartileRDSorted[n - 1] - quartileRDSorted[0];
+            const median = n % 2 === 1 ? quartileRDSorted[Math.floor(n / 2)] : (quartileRDSorted[n / 2 - 1] + quartileRDSorted[n / 2]) / 2;
+
+            // Update output
+            
+            let output;
+            
+            try {
+                output = readDivElement('quartile-rd-demo-output');
+            } catch (e) {
+                console.warn(e.message);
+                return;
+            }
+            output.innerHTML =
+                `<div class="summary">
+                    <div class="item">
+                        <div class="value">${qr.toFixed(1)}</div>
+                        <div class="label">Quartile Range (QR)</div>
+                    </div>
+                    <div class="item">
+                        <div class="value">${qd.toFixed(1)}</div>
+                        <div class="label">Quartile Deviation (QD)</div>
+                    </div>
+                    <div class="item">
+                        <div class="value">${totalRange.toFixed(1)}</div>
+                        <div class="label">Total Range</div>
+                    </div>
+                </div>`;
+
+            // Re-render MathJax
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise([output]);
+            }
+        };
+
+        function updateQuartileRDViz(quartileRDSorted) {
+
+            let container;
+            try {
+                container = readDivElement('sorted-quartileRD-data');
+            } catch (e) {
+                console.warn(e.message);
+                return;
+            };
+
+            // Clear previous content
+            container.innerHTML = '';
+
+            // Create data items
+            quartileRDSorted.forEach(value => {
+                const item = document.createElement('div');
+                item.className = 'data-point';
+                item.textContent = value;
+                container.appendChild(item);
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const btn = document.getElementById('btn-quartile-rd');
+            if (!btn) return;
+
+            // Run once on page load
+            calculateQuartileRD();
+            drawQuartileRD();
+
+            // Also run on every button click
+            btn.addEventListener('click', () => {
+                calculateQuartileRD();
+                drawQuartileRD();
+            });
+        });
+    }) ();
+</script>
 
 <div class="worked-example">
     <h4>Worked Example 1: Basic Calculation</h4>

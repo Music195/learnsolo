@@ -58,7 +58,7 @@
             <label for="vsd-data-input">Data Values (comma-separated):</label>
             <textarea id="vsd-data-input" placeholder="e.g., 2, 4, 6, 8, 10">2, 4, 6, 8, 10</textarea>
         </div>
-        <button onclick="calculateVSD()" class="btn-style">
+        <button id="calculateVSD-btn" class="btn-style">
             Calculate
         </button>
     </div>
@@ -69,28 +69,22 @@
     </div>
 
     <div class="demo-output" id="vsd-demo-output">
-        <strong>Current Data:</strong> [2, 4, 6, 8, 10]<br>
-        <strong>Mean (μ):</strong> 6<br>
         <div class="summary">
             <div class="item">
-                <div class="value">8</div>
+                <div class="value">0</div>
                 <div class="label">Variance (s²)</div>
             </div>
             <div class="item">
-                <div class="value">2.83</div>
+                <div class="value">0</div>
                 <div class="label">Std Dev (s)</div>
             </div>
             <div class="item">
-                <div class="value">8</div>
-                <div class="label">Range</div>
+                <div class="value">0</div>
+                <div class="label">Mean</div>
             </div>
             <div class="item">
-                <div class="value">2</div>
-                <div class="label">Min</div>
-            </div>
-            <div class="item">
-                <div class="value">10</div>
-                <div class="label">Max</div>
+                <div class="value">Calculating...</div>
+                <div class="label">Type</div>
             </div>
         </div>
     </div>
@@ -246,3 +240,128 @@
         </li>
     </ul>
 </div>
+
+<script>
+    (() => {
+        function calculateVSD() {
+  
+            let values;
+            try {
+                values = readNumericArray('vsd-data-input');
+            } catch (e) {
+                console.warn (e.message);
+                return;
+            }
+
+            if (values.length < 2) {
+                alert('Please enter at least 2 values.');
+                return;
+            }
+            
+      
+            let calculationType ;
+            try {
+                calculationType = readStr('calculation-type', ['sample', 'population']);
+            } catch (e) {
+                console.warn(e.message);
+                return;
+            }
+
+            // Calculate mean
+            const calculatedMean = mean(values);
+
+            // Calculate deviations and squared deviations
+            const deviations = values.map(val => val - calculatedMean);
+            // Calculate variance
+            const calculatedVariance = calculationType === 'sample' ? sampleVariance(values, calculatedMean) : populationVariance(values, calculatedMean);
+
+            // Calculate standard deviation
+            const stdDev = Math.sqrt(calculatedVariance);
+
+            // Update visualization
+            updateVSDViz(values, calculatedMean, deviations);
+
+            // Update output
+            
+            let output;
+            
+            try {
+                output = readDivElement('vsd-demo-output');
+            } catch (e) {
+                console.warn(e.message);
+                return;
+            }
+
+            output.innerHTML =
+                `
+                    <div class="summary">
+                        <div class="item highlight">
+                            <div class="value">${calculatedVariance.toFixed(2)}</div>
+                            <div class="label">Variance (${calculationType === 'sample' ? 's²' : 'σ²'})</div>
+                        </div>
+                        <div class="item highlight">
+                            <div class="value">${stdDev.toFixed(2)}</div>
+                            <div class="label">Std Dev (${calculationType === 'sample' ? 's' : 'σ'})</div>
+                        </div>
+                        <div class="item">
+                            <div class="value">
+                                ${calculationType === 'sample' ? 'x̄' : 'μ'} : ${calculatedMean.toFixed(2)}
+                            </div>
+                            <div class="label">Mean</div>
+                        </div>
+                        <div class="item">
+                            <div class="value">
+                                ${calculationType.charAt(0).toUpperCase() + calculationType.slice(1)}
+                            </div>
+                            <div class="label">Type</div>
+                        </div>
+                    </div>
+                `;
+
+            // Re-render MathJax
+            if (window.MathJax) {
+                MathJax.typesetPromise([output]).catch(function (err) {
+                    console.log('MathJax re-render error:', err);
+                });
+            }
+        }
+
+        function updateVSDViz(values, calculatedMean, deviations) {
+            
+            let container;
+            try {
+                container = readDivElement('data-deviations');
+            } catch (e) {
+                console.warn(e.message);
+                return;
+            };
+
+            // Clear previous content
+            container.innerHTML = '';
+
+            // Create data items
+            values.forEach((value, index) => {
+                const point = document.createElement('div');
+                point.className = 'data-point';
+                point.textContent = value;
+
+                // Add deviation label
+                const label = document.createElement('div');
+                label.className = 'deviation-label';
+                label.textContent = deviations[index].toFixed(1);
+                point.appendChild(label);
+
+                // Highlight mean
+                if (Math.abs(value - calculatedMean) < 0.001) {
+                    point.classList.add('mean');
+                }
+
+                container.appendChild(point);
+            });
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            calculateVSD();
+        });
+        document.getElementById('calculateVSD-btn').addEventListener('click', calculateVSD);
+    })();
+</script>

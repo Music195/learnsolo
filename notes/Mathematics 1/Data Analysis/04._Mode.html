@@ -26,65 +26,6 @@
     </div>
 </div>
 
-<!-- <div class="mode-types">
-    <div class="mode-type">
-        <h4>Unimodal</h4>
-        <div class="example">Data: 2, 3, 3, 4, 5<br>Mode: 3</div>
-    </div>
-    <div class="mode-type">
-        <h4>Bimodal</h4>
-        <div class="example">Data: 2, 2, 3, 3, 4<br>Mode: 2 and 3</div>
-    </div>
-    <div class="mode-type">
-        <h4>Multimodal</h4>
-        <div class="example">Data: 1, 1, 2, 2, 3, 3<br>Mode: 1, 2, and 3</div>
-    </div>
-    <div class="mode-type">
-        <h4>No Mode</h4>
-        <div class="example">Data: 1, 2, 3, 4, 5<br>Mode: None</div>
-    </div>
-</div> -->
-
-<!-- <div class="diagram-row">
-    <div class="diagram">
-        <div class="diagram-title">
-            Example: Frequency Bar Chart
-        </div>
-        <div class="bars">
-            <div class="bar" style="height: 22px;">
-            </div>
-            <div class="bar" style="height: 38px;">
-            </div>
-            <div class="bar mode" style="height: 56px;">
-            </div>
-            <div class="bar" style="height: 30px;">
-            </div>
-            <div class="bar" style="height: 18px;">
-            </div>
-        </div>
-        <div style="display:flex; justify-content:center; gap:12px;">
-            <div class="bar-label">
-                A
-            </div>
-            <div class="bar-label">
-                B
-            </div>
-            <div class="bar-label" style="color:#ff7043;font-weight:bold;">
-                C
-            </div>
-            <div class="bar-label">
-                D
-            </div>
-            <div class="bar-label">
-                E
-            </div>
-        </div>
-        <div style="margin-top:8px; color:#ff7043; font-weight:bold;">
-            Mode = C
-        </div>
-    </div>
-</div> -->
-
 <div class="interactive-demo">
     <h3>Interactive Mode Calculator</h3>
     <div class="demo-controls">
@@ -92,7 +33,7 @@
             <label for="mode-data-input">Data Values (comma-separated):</label>
             <textarea id="mode-data-input" placeholder="e.g., 2, 3, 3, 4, 5, 3, 6">2, 3, 3, 4, 5, 3, 6</textarea>
         </div>
-        <button onclick="calculateMode()" class="btn-style">
+        <button id="btn-mode" class="btn-style">
             Calculate
         </button>
     </div>
@@ -115,6 +56,170 @@
         </div>
     </div>
 </div>
+
+<script>
+    (() => {
+
+        // Checking numeric array 
+        function readNumericArray(id) {
+            const el = document.getElementById(id);
+            if (!el) throw new Error(`${id} not found`);
+            if (!el.value.trim()) throw new Error(`${id} is empty`);
+
+            const arr = el.value
+                .split(",")
+                .map(v => Number(v.trim()))
+                .filter(v => !Number.isNaN(v));
+
+            if (arr.length ===0) {
+                throw new Error(`${id} contains no valid numbers`);
+            }
+
+            return arr;
+        };
+        // Checking div element
+        function readDivElement (id) {
+            const el = document.getElementById(id);
+            if(!el) throw new Error (`${id} not found`);
+            return el;
+        }
+
+        //computing mode
+        function mode(values) {
+            if (values.length === 0) {
+                return { frequencyMap: new Map(), maxFreq: 0, modes: [] };
+            }
+
+            const freq = new Map(); // Map store key data value pair
+
+            values.forEach(v => {
+                freq.set(v, (freq.get(v) || 0) + 1);
+            });
+
+            const maxFreq = Math.max(...freq.values());
+
+            if (maxFreq === 1) {
+                return { frequencyMap: freq, maxFreq, modes: [] };
+            };
+
+            const modes = [...freq.entries()]             //convert map to array
+                .filter(([_, count]) => count === maxFreq)    //Keep only values that appear most often
+                .map(([value]) => value)                      //Extract just the value (ignore count)
+                .sort((a, b) => a - b);
+
+            return { frequencyMap: freq, maxFreq, modes };
+
+        };
+
+
+        function calculateMode() {
+            
+            let values;
+            try {
+                values = readNumericArray('mode-data-input');
+            } catch (e) {
+                console.warn (e.message);
+                return;
+            }
+
+            if (values.length === 0) {
+                alert('Please enter valid numerical data.');
+                return;
+            }
+
+            const { frequencyMap, maxFreq, modes } = mode(values);
+            console.log('Modes:', modes, 'Max Frequency:', maxFreq, 'Frequency Map:', frequencyMap);
+
+            // Convert Map to sorted arrays (KEEP pairing)
+            const entries = [...frequencyMap.entries()]
+                .sort((a, b) => a[0] - b[0]);
+            console.log('Sorted Entries:', entries);
+
+            // Determine mode type
+            let modeType = 'No mode';
+
+            if (modes.length === 1) modeType = 'Unimodal';
+            else if (modes.length === 2) modeType = 'Bimodal';
+            else if (modes.length > 2) modeType = 'Multimodal';
+
+            // Update visualization
+            console.log('Updating visualization with entries:', entries, 'and modes:', modes);
+            updateModeViz(entries, modes);
+            console.log('Visualization updated.');
+            // Update output
+            let output;
+            
+            try {
+                output = readDivElement('mode-demo-output');
+            } catch (e) {
+                console.warn(e.message);
+                return;
+            }
+            output.innerHTML = `
+                <div class="summary">
+                    <div class="item highlight">
+                        <div class="value">${modes.length > 0 ? modes.join(', ') + ` (appears ${maxFreq} time${maxFreq > 1 ? 's' : ''})` : 'No mode'}</div>
+                        <div class="label">Mode</div>
+                    </div>
+                    <div class="item">
+                        <div class="value">${modeType}</div>
+                        <div class="label">Mode Type</div>
+                    </div>
+                </div>`;
+
+            // Re-render MathJax
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise([output]);
+            };
+        };
+
+        function updateModeViz(entries, modes) {
+            let container;
+            try {
+                container = readDivElement('sorted-mode-data');
+            } catch (e) {
+                console.warn(e.message);
+                return;
+            };
+
+            // Clear previous content
+            container.innerHTML = '';
+
+            console.log('Rendering data points for visualization...');
+            console.log('Entries:', entries);
+
+            // Create data items
+            entries.forEach(([value, count]) => {
+                const item = document.createElement('div');
+                item.className = 'data-point';
+                if (modes.includes(value)) {
+                    item.classList.add('mode');
+                }
+                item.textContent = value;
+
+                // Add frequency count
+                const freqDiv = document.createElement('div');
+                freqDiv.className = 'frequency-count';
+                freqDiv.textContent = count;
+                item.appendChild(freqDiv);
+
+                container.appendChild(item);
+            });
+        };
+        document.addEventListener('DOMContentLoaded', () => {
+            const btn = document.getElementById('btn-mode');
+            if (!btn) return;
+
+            // Run once on page load
+            calculateMode();
+
+            // Also run on every button click
+            btn.addEventListener('click', () => {
+                calculateMode();
+            });
+        });
+    }) ();
+</script>
 
 <div class="worked-example">
     <h4>Worked Example 1: Finding Mode in Raw Data</h4>

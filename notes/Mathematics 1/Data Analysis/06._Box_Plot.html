@@ -23,61 +23,6 @@
         </ul>
     </div>
 </div>
-<!-- 
-<div class="boxplot-components">
-    <div class="component">
-        <h4>📦 Box (IQR)</h4>
-        <div class="description">Contains middle 50% of data (Q₁ to Q₃)</div>
-    </div>
-    <div class="component">
-        <h4>📏 Whiskers</h4>
-        <div class="description">Extend to minimum and maximum values</div>
-    </div>
-    <div class="component">
-        <h4>━ Median Line</h4>
-        <div class="description">Shows the middle value (50th percentile)</div>
-    </div>
-    <div class="component">
-        <h4>● Outliers</h4>
-        <div class="description">Extreme values beyond whiskers</div>
-    </div>
-</div> -->
-<!-- 
-<div class="boxplot-container">
-    <h4>Standard Box Plot Structure</h4>
-    <div style="width:600px; margin:0 auto; position:relative;">
-        <div
-            style="display:flex; justify-content:space-between; width:100%; margin-bottom:8px; font-size:1.08em; color:#1976d2; font-weight:bold;">
-            <span style="width:60px; text-align:center;">Min</span>
-            <span style="width:90px; text-align:center;">Q1</span>
-            <span style="width:90px; text-align:center;">Median</span>
-            <span style="width:90px; text-align:center;">Q3</span>
-            <span style="width:60px; text-align:center;">Max</span>
-        </div>
-        <svg height="140" viewbox="0 0 600 140" width="600" class="boxplot-svg">
-            <line stroke="#222" stroke-width="2" x1="60" x2="150" y1="70" y2="70"></line>
-            <line stroke="#222" stroke-width="2" x1="450" x2="540" y1="70" y2="70"></line>
-            <line stroke="#222" stroke-width="2" x1="60" x2="60" y1="55" y2="85"></line>
-            <line stroke="#ff7043" stroke-width="2" x1="540" x2="540" y1="55" y2="85"></line>
-            <rect fill="#fff" height="60" stroke="#222" stroke-width="2" width="300" x="150" y="40"></rect>
-            <line stroke="#ff7043" stroke-width="3" x1="240" x2="240" y1="40" y2="100"></line>
-            <line stroke="#ff7043" stroke-width="3" x1="150" x2="150" y1="40" y2="100"></line>
-            <line stroke="#222" stroke-width="3" x1="450" x2="450" y1="40" y2="100"></line>
-            <text fill="#222" font-size="18" text-anchor="middle" x="45" y="125">Minimum</text>
-            <text fill="#ff7043" font-size="18" text-anchor="middle" x="150" y="125">Q₁</text>
-            <text fill="#ff7043" font-size="18" text-anchor="middle" x="240" y="125">Median</text>
-            <text fill="#222" font-size="18" text-anchor="middle" x="450" y="125">Q₃</text>
-            <text fill="#ff7043" font-size="18" text-anchor="middle" x="540" y="125">Maximum</text>
-        </svg>
-    </div>
-</div> -->
-
-<!-- <div class="outlier-detection">
-    <h4>Outlier Detection in Box Plots</h4>
-    <p><strong>Lower Fence:</strong> Q₁ - 1.5 × IQR</p>
-    <p><strong>Upper Fence:</strong> Q₃ + 1.5 × IQR</p>
-    <p>Values outside these fences are considered outliers and are plotted as individual points.</p>
-</div> -->
 
 <div class="interactive-demo">
     <h3>Interactive Box Plot Generator</h3>
@@ -135,6 +80,349 @@
     </div>
 </div>
 
+<script>
+    (() => {
+
+        function getOutliers(sortedValues, q1, q3) {
+            const iqr = q3 - q1;
+
+            // Calculate outlier boundaries
+            const lowerFence = q1 - 1.5 * iqr;
+            const upperFence = q3 + 1.5 * iqr;
+
+            // Find outliers
+            const outliers = sortedValues.filter(
+                x => x < lowerFence || x > upperFence
+            );
+
+            // Filter out outliers for whisker calculation
+            // const filtered = sortedValues.filter(x => !outliers.includes(x));
+            //Better
+            const outlierSet = new Set(outliers);
+            const filtered = sortedValues.filter(
+                x => !outlierSet.has(x)
+            );
+
+            // Find actual whiskers (excluding outliers)
+            // Safe even if all values are classified as outliers
+            const lowerWhisker =
+                filtered.length > 0 ? filtered[0] : q1;
+
+            const upperWhisker =
+                filtered.length > 0 ? filtered[filtered.length - 1] : q3;
+
+
+            return {
+                outliers,
+                lowerWhisker,
+                upperWhisker
+            };
+        };
+        
+        function getInputData(id) {
+            const inputElement = document.getElementById(id);
+            if (!inputElement) return;
+            const input = inputElement.value;
+            if (!input) return;  // Only check if empty
+            const values = input.split(',').map(x => parseFloat(x.trim())).filter(x => !isNaN(x));
+            if (values.length < 4) return; // Check number of valid numbers
+            return values;
+        };
+
+        const STYLE = {
+            boxHeightRatio: 0.25,
+            dotOffsetRatio: 0.05,
+            lineWidthRatio: 0.006,
+            fontRatio: 0.07
+        };
+        function drawboxPlot() {
+            const values = getInputData('boxPlot-data-input');
+            const sortedBoxPlotValues = values ? [...values].sort((a, b) => a - b) : [];
+
+            if (sortedBoxPlotValues.length < 4) return; // Need at least 4 values for quartiles
+
+            //quartilesRD is called from notes_demos.js which is global and not module
+            const { Q1, Q2, Q3 } = quartiles(sortedBoxPlotValues);
+            const { outliers, lowerWhisker, upperWhisker } = getOutliers(sortedBoxPlotValues, Q1, Q3);
+
+
+            // Blank canvas sheet
+            const canvas = document.getElementById("boxPlot-canvas");
+            if (!canvas) return;
+            const { ctx, width, height, dpr } = setupCanvas(canvas, 0.2);
+            if (!ctx) return;
+
+
+            const axisY = height * 0.75; //axis at the bottom
+            const dotY = axisY - height / 20; //dots slightly above
+            const boxH = height * STYLE.boxHeightRatio; // Box height
+            const boxY = dotY - boxH - height / 20;  // Box even higher
+
+            //Mapping data to pixels
+            const minX = Math.min(...sortedBoxPlotValues); //minimum value of data
+            const maxX = Math.max(...sortedBoxPlotValues); //maximum value of data
+
+            const range = maxX - minX;
+            const pad = range === 0 ? Math.abs(maxX || 1) * 0.1 : range * 0.08 //Handles constant data
+            const xMin = minX - pad;  // extend domain to add visual padding
+            const xMax = maxX + pad; // extend domain to add visual padding 
+
+            //Layout decision
+            const margin = { left: 70, right: 70, top: width / 50, bottom: 60, spacing: 10 };
+
+
+            //Convert quartile values into pixel x positions
+            const xQ1 = xScale(Q1, xMin, xMax, width, margin.left, margin.right);
+            const xQ2 = xScale(Q2, xMin, xMax, width, margin.left, margin.right);
+            const xQ3 = xScale(Q3, xMin, xMax, width, margin.left, margin.right);
+            const xDMin = xScale(lowerWhisker, xMin, xMax, width, margin.left, margin.right);
+            const xDMax = xScale(upperWhisker, xMin, xMax, width, margin.left, margin.right);
+
+            //Render the diagram
+
+            //Clear the canvas as canvas does not auto-clear.
+            ctx.clearRect(0, 0, width, height);
+
+            drawTitle(ctx,
+                width / 2,
+                axisY - height / 3 - boxH,
+                outliers.length > 0
+                    ? "Outlier Detected! " + outliers.join(', ')
+                    : "No Outlier Detected!",
+                height / 13,
+                "#111"
+            );
+
+            drawDesc(ctx,
+                xQ1,
+                boxY - width / 90,
+                `Q1 = ${Q1}`,
+                height / 16,
+                "#333");
+            drawDesc(ctx,
+                xQ2,
+                boxY - width / 90 * 2,
+                `Median = ${Q2}`,
+                height / 16,
+                "#333"
+            );
+            drawDesc(
+                ctx,
+                xQ3,
+                boxY - width / 90,
+                `Q3 = ${Q3}`,
+                height / 16,
+                "#333"
+            );
+
+            drawBox(
+                ctx,
+                xQ1,
+                boxY,
+                xQ3 - xQ1,
+                boxH,
+                height * STYLE.lineWidthRatio
+            );
+
+            // Draw middle line of box
+            drawLine(ctx,
+                xQ2,
+                boxY,
+                xQ2,
+                boxY + boxH,
+                null,
+                height * STYLE.lineWidthRatio,
+                "rgba(30, 90, 200, 1)"
+            );
+
+
+            drawWhiskerLine(
+                ctx,
+                xQ3,
+                xDMax,
+                xQ1,
+                xDMin,
+                boxY + boxH / 2,
+                boxY + boxH - width / 70,
+                boxY + width / 70,
+                height * STYLE.lineWidthRatio,
+                "rgba(30,90,200,1)"
+            );
+
+            //Add outlier description 
+            outliers.forEach((x, i) =>
+                drawDesc(
+                    ctx,
+                    xScale(x, xMin, xMax, width, margin.left, margin.right),
+                    boxY + boxH / 2 + i * height * 0.04,
+                    x,
+                    height / 15,
+                    "red"
+                )
+            );
+
+            const outlierSet = new Set(outliers);
+
+            //Plot the dot for each data value
+            sortedBoxPlotValues.forEach(v =>
+                drawDot(
+                    ctx,
+                    xScale(v, xMin, xMax, width, margin.left, margin.right),
+                    dotY,
+                    height / 100,
+                    null,
+                    outlierSet.has(v) ? "red" : "#444"
+                )
+            );
+
+            drawLine(
+                ctx,
+                margin.left,
+                axisY,
+                width - margin.right,
+                axisY,
+                null,
+                height / 300,
+                "#333"
+            );
+
+            return {
+                Q1, Q2, Q3,
+                lowerWhisker,
+                upperWhisker,
+                outliers
+            }; // return for later testing
+        };
+
+        function updateBoxPlotViz(sortedBoxPlotValues) {
+
+            let container;
+            try {
+                container = readDivElement('sorted-boxPlot-data');
+            } catch (e) {
+                console.warn(e.message);
+                return;
+            };
+
+            // Clear previous points
+            container.innerHTML = '';
+
+
+            // Create data points
+            sortedBoxPlotValues.forEach((value, index) => {
+                const point = document.createElement('div');
+                point.className = 'data-point';
+                point.textContent = value;
+                // point.style.left = `${index * 60 + 20}px`;
+                // point.style.top = `${100 - value * 5}px`;
+                container.appendChild(point);
+            });
+        };
+
+        function calculateBoxPlot() {
+            
+            let values;
+            try {
+                values = readNumericArray('boxPlot-data-input');
+            } catch (e) {
+                console.warn (e.message);
+                return;
+            }
+
+            if (values.length < 5) {
+                alert('Please enter at least 5 values to create a meaningful box plot.');
+                return;
+            }
+
+            // Sort the values
+            const sortedBoxPlotValues = [...values].sort((a, b) => a - b);
+            updateBoxPlotViz(sortedBoxPlotValues);
+
+            const { Q1, Q2, Q3 } = quartiles(sortedBoxPlotValues);
+            const min = sortedBoxPlotValues[0];
+            const max = sortedBoxPlotValues[sortedBoxPlotValues.length - 1];
+            const iqr = Q3 - Q1;
+
+            // Calculate outlier boundaries
+            const lowerFence = Q1 - 1.5 * iqr;
+            const upperFence = Q3 + 1.5 * iqr;
+
+            // Find outliers
+            const outliers = sortedBoxPlotValues.filter(x => x < lowerFence || x > upperFence);
+
+            // Update statistics display
+            
+            let output;
+            
+            try {
+                output = readDivElement('boxplot-demo-output');
+            } catch (e) {
+                console.warn(e.message);
+                return;
+            }
+            output.innerHTML =
+                `
+                    <div class="summary">
+                        <div class="item">
+                            <div class="value">
+                                ${outliers.length > 0
+                    ? outliers.join(', ')
+                    : "No"}
+                            </div>
+                            <div> Outlier Detected </div>
+                        </div>
+                        <div class="item">
+                            <div class="value">${min}</div>
+                            <div class="label">Min</div>
+                        </div>
+                        <div class="item">
+                            <div class="value">${max}</div>
+                            <div class="label">Max</div>
+                        </div>
+                        <div class="item">
+                            <div class="value">${Q1.toFixed(1)}</div>
+                            <div class="label">Q₁</div>
+                        </div>
+                        <div class="item">
+                            <div class="value">${Q2.toFixed(1)}</div>
+                            <div class="label">Median</div>
+                        </div>
+                        <div class="item">
+                            <div class="value">${Q3.toFixed(1)}</div>
+                            <div class="label">Q₃</div>
+                        </div>
+                        <div class="item">
+                            <div class="value">${iqr.toFixed(1)}</div>
+                            <div class="label">IQR</div>
+                        </div>
+                    </div>
+                `;
+          
+
+            // Re-render MathJax
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise([output]);
+            }
+        };
+        document.addEventListener('DOMContentLoaded', () => {
+            const btn = document.getElementById('btn-boxplot');
+            if (!btn) return;
+
+            // Run once on page load
+            calculateBoxPlot();
+            drawboxPlot();
+
+            // Also run on every button click
+            btn.addEventListener('click', () => {
+                calculateBoxPlot();
+                drawboxPlot();
+            });
+        });
+
+
+    }) ();
+</script>
+
 
 
 <div class="worked-example">
@@ -180,23 +468,7 @@
     </ul>
 </div>
 
-<!-- <div class="comparison-section">
-    <h4>Comparing Multiple Datasets</h4>
-    <div class="dataset-inputs">
-        <div class="dataset-group">
-            <label for="dataset1">Dataset A:</label>
-            <input id="dataset1" placeholder="e.g., 2, 4, 6, 8, 10" value="2, 4, 6, 8, 10">
-        </div>
-        <div class="dataset-group">
-            <label for="dataset2">Dataset B:</label>
-            <input id="dataset2" placeholder="e.g., 1, 5, 7, 9, 15" value="1, 5, 7, 9, 15">
-        </div>
-    </div>
-    <button onclick="compareDatasets()"
-        style="padding: 8px 16px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">Compare
-        Datasets</button>
-    <div id="comparison-output" style="margin-top: 20px;"></div>
-</div> -->
+
 
 <h3>Practice Problems</h3>
 
@@ -274,3 +546,4 @@
             skewness.</li>
     </ul>
 </div>
+

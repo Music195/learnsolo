@@ -27,56 +27,6 @@
             <li>$x_k$ = k-th value in ordered data</li>
         </ul>
     </div>
-    <!-- <div class="diagram-row">
-        <div class="diagram">
-            <div class="diagram-title">
-                Odd Number of Data
-            </div>
-            <div class="dots">
-                <span class="dot">
-                </span>
-                <span class="dot">
-                </span>
-                <span class="dot center">
-                </span>
-                <span class="dot">
-                </span>
-                <span class="dot">
-                </span>
-            </div>
-            <div class="arrow">
-                ↑
-            </div>
-            <div class="diagram-desc">
-                Median (position (5+1)/2 = 3)
-            </div>
-        </div>
-        <div class="diagram">
-            <div class="diagram-title">
-                Even Number of Data
-            </div>
-            <div class="dots">
-                <span class="dot">
-                </span>
-                <span class="dot">
-                </span>
-                <span class="dot center2">
-                </span>
-                <span class="dot center2">
-                </span>
-                <span class="dot">
-                </span>
-                <span class="dot">
-                </span>
-            </div>
-            <div class="arrow">
-                ↑
-            </div>
-            <div class="diagram-desc">
-                Average of positions n/2 and n/2+1
-            </div>
-        </div>
-    </div> -->
     <div class="row">
         <div class="canvas-box">
             <canvas id="median-canvas1"></canvas>
@@ -94,7 +44,7 @@
             <label for="median-data-input">Data Values (comma-separated):</label>
             <textarea id="median-data-input" placeholder="e.g., 5, 7, 3, 8, 12, 6">5, 7, 3, 8, 12, 6</textarea>
         </div>
-        <button onclick="calculateMedian()" class="btn-style">
+        <button id="btn-median" class="btn-style">
             Calculate
         </button>
     </div>
@@ -121,6 +71,237 @@
         </div>
     </div>
 </div>
+
+<script>
+    (() => {
+        // Median Demo
+        const colors =  {
+            blue: "#244ff9ff",
+            green: "#27ae60",
+            red: "#ff0505ff",
+            yellow: "#fff702ff",
+            orange: "#ffb300ff",
+            white: "#ffffff",
+        };
+
+        const quartileData1 = {
+            title: "When data size is 9",
+            numbers: [2, 6, 8, 9, 13, 16, 19, 21, 29],
+            q1: 7,
+            q2: 13,
+            q3: 20,
+        };
+
+        const quartileData2 = {
+            title: "When data size is 8",
+            numbers: [2, 6, 8, 9, 13, 16, 19, 21],
+            q1: 6,
+            q2: 11,
+            q3: 19,
+        };
+
+        // Checking numeric array 
+        function readNumericArray(id) {
+            const el = document.getElementById(id);
+            if (!el) throw new Error(`${id} not found`);
+            if (!el.value.trim()) throw new Error(`${id} is empty`);
+
+            const arr = el.value
+                .split(",")
+                .map(v => Number(v.trim()))
+                .filter(v => !Number.isNaN(v));
+
+            if (arr.length ===0) {
+                throw new Error(`${id} contains no valid numbers`);
+            }
+
+            return arr;
+        }
+
+        // ---Odd Median Data Diagram----
+        function drawOddDataMedian() {
+            const canvas = document.getElementById("median-canvas1");
+            if (!canvas) return; // Throw error if canvas not found
+            const { ctx, width, height, dpr } = setupCanvas(canvas);
+            if (!ctx) return;
+
+
+            const spacing = Math.min(width / 10, 30); // Scale spacing, max 30
+            const startX = width / 2 - (spacing * 4) / 2; // Center the 5 dots
+            const startY = height / 2;
+
+
+            drawTitle(ctx, startX, startY - spacing, "Odd Number of Data",);
+
+            for (let i = 0; i < 5; i++) {
+                const isCenter = i === 2;
+                drawDot(ctx,
+                    startX + i * spacing,
+                    startY,
+                    isCenter ? width / 30 : width / 35,
+                    null,
+                    isCenter ? colors.red : colors.blue,
+
+                );
+            }
+
+            // Draw arrow and description once, outside the loop
+
+            drawDesc(ctx, startX, startY + spacing * 2, "Median (position (5+1)/2 = 3)");
+            drawArrow(ctx, startX + (spacing * 4) / 2, startY + 30);
+        }
+/*------------------------------------------------------------------------------------------------------------------------ */
+        // Draw even data Median Diagram
+        function drawEvenDataMedian() {
+            const canvas = document.getElementById("median-canvas2");
+            if (!canvas) return; // Prevent error if canvas not found
+            const { ctx, width, height, dpr } = setupCanvas(canvas);
+            if (!ctx) return;
+
+            const spacing = Math.min(width / 10, 30); // Scale spacing, max 30
+            const startX = width / 2 - (spacing * 5) / 2; // Center the 6 dots
+            const startY = height / 2;
+
+            drawTitle(ctx, startX, startY - spacing, "Even Number of Data");
+
+            for (let i = 0; i < 6; i++) {
+                const isCenter = i === 2 || i === 3;
+                drawDot(ctx,
+                    startX + i * spacing,
+                    startY,
+                    isCenter ? width / 30 : width / 35,
+                    null, //text
+                    isCenter ? colors.red : colors.blue,
+                );
+            }
+
+            drawArrow(ctx, startX + (spacing * 5) / 2, startY + spacing, null);
+            drawDesc(ctx, startX, startY + 2 * spacing, "Median (positions at n/2 and n/2 + 1)");
+        }
+
+        function calculateMedian() {
+            
+            let values;
+            try {
+                values = readNumericArray('median-data-input');
+            } catch (e) {
+                console.warn (e.message);
+                return;
+            }
+
+            if (values.length === 0) {
+                alert('Please enter valid numbers separated by commas.');
+                return;
+            }
+
+            // Sort the values
+            const sortedMedianValues = [...values].sort((a, b) => a - b);
+            let median;
+
+            if (sortedMedianValues.length % 2 === 1) {
+                // Odd number of values
+                const medianIndex = Math.floor(sortedMedianValues.length / 2);
+                median = sortedMedianValues[medianIndex];
+            } else {
+                // Even number of values
+                const mid1 = sortedMedianValues[sortedMedianValues.length / 2 - 1];
+                const mid2 = sortedMedianValues[sortedMedianValues.length / 2];
+                median = (mid1 + mid2) / 2;
+            }
+
+            // Update visualization
+            updateMedianViz(sortedMedianValues);
+
+            // Update output
+            let output;
+            
+            try {
+                output = readDivElement('median-demo-output');
+            } catch (e) {
+                console.warn(e.message);
+                return;
+            }
+            
+            const isEven = sortedMedianValues.length % 2 === 0;
+            const medianDesc = isEven
+                ? `${sortedMedianValues.length / 2}rd and ${sortedMedianValues.length / 2 + 1}th values`
+                : `${Math.floor(sortedMedianValues.length / 2) + 1}th value`;
+
+            output.innerHTML = `
+                    <div class="summary">
+                        <div class="item highlight">
+                        <div class="value">${median}</div>
+                        <div class="label">Mean</div>
+                        </div>
+                        <div class="item">
+                        <div class="value">${medianDesc}</div>
+                        <div class="label">Median position</div>
+                        </div>
+                        <div class="item">
+                        <div class="value">${sortedMedianValues.length} (${isEven ? 'even' : 'odd'})</div>
+                        <div class="label">Data Points</div>
+                        </div>
+                    </div>`;
+
+            // Re-render MathJax
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise([output]);
+            }
+        };
+
+        function updateMedianViz(sortedMedianValues) {
+            let container;
+            try {
+                container = readDivElement('sorted-median-data');
+            } catch (e) {
+                console.warn(e.message);
+                return;
+            };
+
+            // Clear previous content
+            container.innerHTML = '';
+
+            // Create data value elements
+            sortedMedianValues.forEach((value, index) => {
+                const valueElement = document.createElement('div');
+                valueElement.className = 'data-point';
+                valueElement.textContent = value;
+
+                // Highlight median values
+                if (sortedMedianValues.length % 2 === 1) {
+                    // Odd case - single median
+                    if (index === Math.floor(sortedMedianValues.length / 2)) {
+                        valueElement.classList.add('highlight');
+                    }
+                } else {
+                    // Even case - two middle values
+                    if (index === sortedMedianValues.length / 2 - 1 || index === sortedMedianValues.length / 2) {
+                        valueElement.classList.add('highlight');
+                    }
+                }
+
+                container.appendChild(valueElement);
+            });
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const btn = document.getElementById('btn-median');
+            if (!btn) return;
+
+            // Run once on page load
+            calculateMedian();
+            drawEvenDataMedian();
+            drawOddDataMedian();
+
+            // Also run on every button click
+            btn.addEventListener('click', () => {
+                calculateMedian();
+                drawEvenDataMedian();
+                drawOddDataMedian();
+            });
+        });
+    }) ();
+</script>
 
 <div class="worked-example">
     <h4>Worked Example 1: Odd Number of Values</h4>

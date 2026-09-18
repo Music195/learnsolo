@@ -61,7 +61,7 @@
         </div>
         <div class="control-group">
             <label for="y-data">Y Values (comma-separated):</label>
-            <input id="y-data" placeholder="e.g., 2, 4, 6, 8, 10" value="2, 4, 6, 8, 10">
+            <input id="y-data" placeholder="e.g., 1, 2, 3, 4, 5" value="1, 2, 3, 4, 5">
         </div>
         
         <div class="control-btn">
@@ -70,7 +70,7 @@
             <button id="random-data" class="btn-style">Random Data</button>
             <button id="reset-plot" class="btn-style">Reset</button>
         </div>
-        <div class="plot-wrap">
+        <div class="plot-wrap" style="position: relative;">
             <canvas id="plot" width = "500" height = "400"  style="border: 1px solid black"></canvas>
             <div id="tooltip" class="tooltip"></div>
             <div id="output" class="output"></div>
@@ -281,21 +281,33 @@
             ctx.clearRect(0,0,W,H);
         }
 
-        function grid(){
-            ctx.strokeStyle="rgba(0,0,0,.08)";
-            for(let x=PAD;x<W;x+=40){
+        function grid() {
+            ctx.strokeStyle = "rgba(0,0,0,.08)";
+
+            const divisions = 5;
+
+            for (let i = 0; i <= divisions; i++) {
+
+                const xValue = xmin + (xmax - xmin) * i / divisions;
+                const x = map(xValue, xmin, xmax, PAD, W - PAD);
+
                 ctx.beginPath();
-                ctx.moveTo(x,PAD);
-                ctx.lineTo(x,H-PAD);
+                ctx.moveTo(x, PAD);
+                ctx.lineTo(x, H - PAD);
                 ctx.stroke();
             }
-            for(let y=PAD;y<H;y+=40){
+
+            for (let i = 0; i <= divisions; i++) {
+
+                const yValue = ymin + (ymax - ymin) * i / divisions;
+                const y = map(yValue, ymin, ymax, H - PAD, PAD);
+
                 ctx.beginPath();
-                ctx.moveTo(PAD,y);
-                ctx.lineTo(W-PAD,y);
+                ctx.moveTo(PAD, y);
+                ctx.lineTo(W - PAD, y);
                 ctx.stroke();
             }
-        }
+}
 
         function axes(){
             ctx.strokeStyle="#555";
@@ -308,13 +320,35 @@
             ctx.stroke();
         }
 
-        function ticks(xmin,xmax,ymin,ymax){
-            ctx.fillStyle="#555";
-            ctx.font="11px system-ui";
-            ctx.fillText(xmin, PAD, H-PAD+15);
-            ctx.fillText(xmax, W-PAD-10, H-PAD+15);
-            ctx.fillText(ymax, PAD-25, PAD+5);
-            ctx.fillText(ymin, PAD-25, H-PAD);
+        function ticks() {
+            ctx.fillStyle = "#555";
+            ctx.font = "11px system-ui";
+
+            const divisions = 5;
+
+            for (let i = 0; i <= divisions; i++) {
+
+                const xValue = xmin + (xmax - xmin) * i / divisions;
+                const x = map(xValue, xmin, xmax, PAD, W - PAD);
+
+                ctx.fillText(
+                    xValue.toFixed(1),
+                    x - 8,
+                    H - PAD + 15
+                );
+            }
+
+            for (let i = 0; i <= divisions; i++) {
+
+                const yValue = ymin + (ymax - ymin) * i / divisions;
+                const y = map(yValue, ymin, ymax, H - PAD, PAD);
+
+                ctx.fillText(
+                    yValue.toFixed(1),
+                    PAD - 30,
+                    y + 4
+                );
+            }
         }
 
         function points(x,y,color){
@@ -358,10 +392,10 @@
             for(let i=0;i<dataX.length;i++){
                 const px=map(dataX[i],xmin,xmax,PAD,W-PAD);
                 const py=map(dataY[i],ymin,ymax,H-PAD,PAD);
-                if(Math.hypot(mx-px,my-py)<7){
+                if(Math.hypot(mx-px,my-py)<12){
                     tooltip.textContent=`(${dataX[i]}, ${dataY[i]})`;
-                    tooltip.style.left=e.pageX+"px";
-                    tooltip.style.top=e.pageY+"px";
+                    tooltip.style.left=(mx+10)+"px";
+                    tooltip.style.top=(my+10)+"px";
                     tooltip.style.opacity=1;
                     return;
                 }
@@ -377,7 +411,7 @@
             clear();
             grid();
             axes();
-            ticks(xmin,xmax,ymin,ymax);
+            ticks();
 
             const color = rValue>=0 ? "#1f77b4" : "#e74c3c";
             points(dataX,dataY,color);
@@ -417,16 +451,17 @@
             plotGenerate();
         }
 
-        function resetPlot(){
-            dataX=[1,2,3,4,5]; dataY=[1,2,3,4,5];
-            clear();
-            document.getElementById("x-data").value=dataX.join(",");
-            document.getElementById("y-data").value=dataY.join(",");
-            redraw();
-            document.getElementById("rValue").textContent="1.00";
-            document.getElementById("rDirection").textContent="Positive";
-            document.getElementById("rStrength").textContent="Perfect";
+        function resetPlot() {
+
+            document.getElementById("x-data").value = "1,2,3,4,5";
+            document.getElementById("y-data").value = "1,2,3,4,5";
+
+            plotGenerate();
         }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            plotGenerate();
+        });
         // Events are connected here
         document.getElementById("generate-plot")
             .addEventListener("click", plotGenerate);
@@ -441,7 +476,5 @@
             .addEventListener("click", resetPlot);
 
     })();
-
-
 
 </script>

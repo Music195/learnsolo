@@ -40,7 +40,7 @@
          <label for="mean-data-input">Data Values (comma-separated):</label>
          <textarea id="mean-data-input" placeholder="e.g., 5, 7, 3, 8, 12, 6">5, 7, 3, 8, 12, 6</textarea>
       </div>
-      <button id="calculateMean" class="btn-style">
+      <button id="btn-mean" class="btn-style">
          Calculate
       </button>
    </div>
@@ -71,6 +71,108 @@
       </div>
    </div>
 </div>
+
+<script>
+   (() => {
+      // Checking numeric array 
+      function calculateMean() {
+         let values;
+         try {
+            values = readNumericArray('mean-data-input');
+         } catch (e) {
+            console.warn (e.message);
+            return;
+         }
+         
+
+         if (values.length === 0) {
+            alert('Please enter valid numbers separated by commas.');
+            return;
+         }
+
+         const sortedMeanValues = [...values].sort((a, b) => a - b);
+
+         const sum = totalSum(sortedMeanValues);
+         const calculatedMean = mean(sortedMeanValues);
+         const variance = populationVariance(sortedMeanValues, calculatedMean);
+
+         // Update visualization
+         updateMeanViz(sortedMeanValues);
+
+         // Update output
+         let output;
+         
+         try {
+            output = readDivElement('mean-demo-output');
+         } catch (e) {
+            console.warn(e.message);
+            return;
+         }
+         output.innerHTML =
+            `  <div class="summary">
+                  <div class="item highlight">
+                     <div class="value">${calculatedMean.toFixed(2)}</div>
+                     <div class="label">Mean</div>
+                  </div>
+                  <div class="item">
+                     <div class="value">${sum.toFixed(2)}</div>
+                     <div class="label">Total Sum</div>
+                  </div>
+                  <div class="item">
+                     <div class="value">${sortedMeanValues.length}</div>
+                     <div class="label">Data Points</div>
+                  </div>
+                  <div class="item">
+                     <div class="value">${variance.toFixed(2)}</div>
+                     <div class="label">Variance</div>
+                  </div>
+               </div>
+            `;
+
+         // Re-render MathJax
+         if (window.MathJax && MathJax.typesetPromise) {
+            MathJax.typesetPromise([output]);
+         }
+      };
+
+      function updateMeanViz(sortedMeanValues) {
+         let container;
+         try {
+            container = readDivElement('sorted-mean-data');
+         } catch (e) {
+            console.warn(e.message);
+            return;
+         };
+         // Clear previous points
+         container.innerHTML = '';
+
+
+         // Create data points
+         sortedMeanValues.forEach((value, index) => {
+            const point = document.createElement('div');
+            point.className = 'data-point';
+            point.textContent = value;
+            // point.style.left = `${index * 60 + 20}px`;
+            // point.style.top = `${100 - value * 5}px`;
+            container.appendChild(point);
+         });
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+            const btn = document.getElementById('btn-mean');
+            if (!btn) return;
+
+            // Run once on page load
+            calculateMean();
+
+            // Also run on every button click
+            btn.addEventListener('click', () => {
+               console.log('Calculate button clicked. Recalculating mean...');
+               calculateMean();
+            });
+        });
+   }) ();
+</script>
 
 <div class="worked-example shadow">
    <h4>Worked Example 1: Calculating Mean of Test Scores</h4>

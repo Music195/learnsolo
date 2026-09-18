@@ -5,8 +5,8 @@
 <div class="math-foundation">
     <h3>Mathematical Foundation</h3>
     <p>Quartiles are statistical measures that divide an ordered dataset into four equal parts, providing
-        insights into the distribution and spread of data. They extend the concept of the median by
-        identifying the boundaries that separate the lowest 25%, middle 50%, and highest 25% of the data.
+        insights into the distribution and spread of  They extend the concept of the median by
+        identifying the boundaries that separate the lowest 25%, middle 50%, and highest 25% of the 
         Quartiles are essential for understanding data distribution, detecting outliers, and creating box
         plots.</p>
 
@@ -26,61 +26,7 @@
             <li><strong>Exclusive Method:</strong> Q₁ at position (n+3)/4, Q₃ at position (3n+1)/4</li>
         </ul>
     </div>
-    <!-- <div class="quartile-row">
-                <div class="quartile-diagram">
-                    <div class="quartile-title">
-                        When data size is 9
-                    </div>
-                    <div class="quartile-numbers">
-                        <span class="qbox">2</span>
-                        <span class="qbox">6</span>
-                        <span class="qbox">8</span>
-                        <span class="qbox q1">9</span>
-                        <span class="qbox">13</span>
-                        <span class="qbox q2">16</span>
-                        <span class="qbox">19</span>
-                        <span class="qbox q3">21</span>
-                        <span class="qbox">29</span>
-                    </div>
-                    <div style="display:flex; justify-content:center; gap:38px; margin-top:4px;">
-                        <div>
-                            <div class="q-label q1">Q₁=9</div>
-                        </div>
-                        <div>
-                            <div class="q-label q2">Q₂=16</div>
-                        </div>
-                        <div>
-                            <div class="q-label q3">Q₃=21</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="quartile-diagram">
-                    <div class="quartile-title">
-                        When data size is 8
-                    </div>
-                    <div class="quartile-numbers">
-                        <span class="qbox">2</span>
-                        <span class="qbox">6</span>
-                        <span class="qbox">8</span>
-                        <span class="qbox q1">9</span>
-                        <span class="qbox">13</span>
-                        <span class="qbox q2">16</span>
-                        <span class="qbox q3">19</span>
-                        <span class="qbox">21</span>
-                    </div>
-                    <div style="display:flex; justify-content:center; gap:38px; margin-top:4px;">
-                        <div>
-                            <div class="q-label q1">Q₁=9</div>
-                        </div>
-                        <div>
-                            <div class="q-label q2">Q₂=14.5</div>
-                        </div>
-                        <div>
-                            <div class="q-label q3">Q₃=19</div>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
+
     <div class="row">
         <div class="canvas-box">
             <canvas id="quartileCanvas3"></canvas>
@@ -98,7 +44,7 @@
             <textarea id="quartile-data-input"
                 placeholder="e.g., 2, 6, 8, 9, 13, 16, 19, 21, 29">2, 6, 8, 9, 13, 16, 19, 21, 29</textarea>
         </div>
-        <button onclick="calculateQuartiles()" class="btn-style">
+        <button id="btn-quartile" class="btn-style">
             Calculate
         </button>
     </div>
@@ -129,6 +75,264 @@
         </div>
     </div>
 </div>
+
+<script>
+    (() => {
+        const colors =  {
+            blue: "#244ff9ff",
+            green: "#27ae60",
+            red: "#ff0505ff",
+            yellow: "#fff702ff",
+            orange: "#ffb300ff",
+            white: "#ffffff",
+        };
+
+        const quartileData1 = {
+            title: "When data size is 9",
+            numbers: [2, 6, 8, 9, 13, 16, 19, 21, 29],
+            q1: 7,
+            q2: 13,
+            q3: 20,
+        };
+
+        const quartileData2 = {
+            title: "When data size is 8",
+            numbers: [2, 6, 8, 9, 13, 16, 19, 21],
+            q1: 6,
+            q2: 11,
+            q3: 19,
+        };
+        // Draw odd data quartile Diagram
+        function drawOddDataQuartile() {
+            const canvas = document.getElementById("quartileCanvas3");
+            if (!canvas) return; // Prevent error if canvas not found
+            const { ctx, width, height, dpr } = setupCanvas(canvas);
+            if (!ctx) return;
+
+            const count = quartileData1.numbers.length;
+            const spacing = Math.min(width / 10, 40); // Scale spacing, max 40
+            const startX = width / 2 - (spacing * (count - 1) / 2); // Center the 9 dots
+            const startY = height / 2;
+
+            drawTitle(ctx, startX - spacing / 2.5, startY - spacing, quartileData1.title)
+
+            for (let i = 0; i < 9; i++) {
+
+
+                drawDot(ctx,
+                    startX + i * spacing,
+                    startY,
+                    spacing / 2.5,
+                    quartileData1.numbers[i].toString(),
+                    colors.blue
+                );
+            }
+            drawDesc(ctx, startX + spacing * 1.5, startY + spacing, `Q₁ = ${quartileData1.q1}`, 12, colors.orange);
+            drawArrow(ctx, startX * 2.6, startY + spacing / 2, spacing / 3);
+            drawDesc(ctx, startX + spacing * 4, startY + spacing, `Q₂ = ${quartileData1.q2}`, 12, colors.green);
+            drawArrow(ctx, startX + spacing * 4.1, startY + spacing / 2, spacing / 3);
+            drawDesc(ctx, startX + spacing * 6.5, startY + spacing, `Q₃ = ${quartileData1.q3}`, 12, colors.red);
+            drawArrow(ctx, startX + spacing * 6.6, startY + spacing / 2, spacing / 3);
+        }
+
+        // Draw even data quartile digram
+        function drawEvenDataQuartile() {
+            const canvas = document.getElementById("quartileCanvas4");
+            if (!canvas) return; // Prevent error if canvas not found
+  
+            const { ctx, width, height, dpr } = setupCanvas(canvas);
+            if (!ctx) return;
+
+            const count = quartileData2.numbers.length;
+            const spacing = Math.min(width / 10, 40); // Scale spacing, max 30
+            const startX = width / 2 - (spacing * (count - 1) / 2); // Center the 8 dots
+            const startY = height / 2;
+
+            drawTitle(ctx, startX - spacing / 2.5, startY - spacing, quartileData2.title)
+
+            for (let i = 0; i < 8; i++) {
+                drawDot(ctx,
+                    startX + i * spacing,
+                    startY,
+                    spacing / 2.5,
+                    quartileData2.numbers[i].toString(),
+                    colors.blue
+                );
+            }
+            drawDesc(ctx, startX * 1.7, startY + spacing, `Q₁ = ${quartileData2.q1}`, 12, colors.orange);
+            drawArrow(ctx, startX * 1.7, startY + spacing / 2, spacing / 3);
+            drawDesc(ctx, startX + spacing * 3.5, startY + spacing, `Q₂ = ${quartileData2.q2}`, 12, colors.green);
+            drawArrow(ctx, startX + spacing * 3.6, startY + spacing / 2, spacing / 3);
+            drawDesc(ctx, startX + spacing * 6, startY + spacing, `Q₃ = ${quartileData2.q3}`, 12, colors.red);
+            drawArrow(ctx, startX + spacing * 6.1, startY + spacing / 2, spacing / 3);
+        }
+        function setupCanvas(canvas, aspect = 0.6) {
+            if (!canvas) throw new Error("Canvas element not found");
+            const ctx = canvas.getContext("2d");
+            // Get the device pixel ratio
+            const dpr = window.devicePixelRatio || 1;
+
+            // CSS size (logical pixels) /coordinates
+            const rect = canvas.getBoundingClientRect();
+            const logicalWidth = rect.width;
+            const logicalHeight = rect.width * aspect;//Define my own css height related to css width
+
+            // BUFFER size (device pixels) /coordinates
+            canvas.width = Math.round(logicalWidth * dpr);
+            canvas.height = Math.round(logicalHeight * dpr);
+
+            // Match CSS height to logical height
+            canvas.style.height = logicalHeight + "px";
+
+            // Map logical pixels to buffer pixels
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);//  Draw using css coordinates but transform to device coordinates
+            ctx.imageSmoothingEnabled = false;
+
+            return {
+                ctx,
+                width: logicalWidth,
+                height: logicalHeight,
+                dpr
+            }; //return drawing context for drawing in CSS pixels 
+        }
+
+        function calculateQuartiles() {
+            
+            let values;
+            try {
+                values = readNumericArray('quartile-data-input');
+            } catch (e) {
+                console.warn (e.message);
+                return;
+            }
+
+            if (values.length < 4) {
+                alert('Please enter at least 4 values to calculate quartiles.');
+                return;
+            }
+
+            // Sort the values
+            const sorted = [...values].sort((a, b) => a - b);
+            const n = sorted.length;
+
+            // Calculate quartile positions
+            const q1Pos = (n + 1) / 4;
+            const q3Pos = 3 * (n + 1) / 4;
+
+            // Calculate quartiles
+            let q1, q2, q3;
+
+            if (n % 2 === 1) {
+                // Odd number of values
+                q2 = sorted[Math.floor(n / 2)];
+                q1 = getQuartileValue(sorted, q1Pos);
+                q3 = getQuartileValue(sorted, q3Pos);
+            } else {
+                // Even number of values
+                q2 = (sorted[n / 2 - 1] + sorted[n / 2]) / 2;
+                q1 = getQuartileValue(sorted, q1Pos);
+                q3 = getQuartileValue(sorted, q3Pos);
+            }
+
+            const iqr = q3 - q1;
+
+            // Update visualization
+            updateQuartileViz(sorted);
+
+            // Update output
+            let output;
+            
+            try {
+                output = readDivElement('quartile-demo-output');
+            } catch (e) {
+                console.warn(e.message);
+                return;
+            }
+
+            output.innerHTML = `
+                            <div class="summary">
+                            <div class="item">
+                                <div class="value">${q1}</div>
+                                <div class="label">Q₁</div>
+                            </div>
+                            <div class="item">
+                                <div class="value">${q2}</div>
+                                <div class="label">Q₂ (Median)</div>
+                            </div>
+                            <div class="item">
+                                <div class="value">${q3}</div>
+                                <div class="label">Q₃</div>
+                            </div>
+                            <div class="item">
+                                <div class="value">${iqr.toFixed(1)}</div>
+                                <div class="label">IQR</div>
+                            </div>
+                            </div>`;
+
+            // Re-render MathJax
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise([output]);
+            }
+        };
+
+        // can remove later 
+        function getQuartileValue(sorted, position) {
+            const n = sorted.length;
+            const lowerIndex = Math.floor(position) - 1; // Convert to 0-based index
+            const upperIndex = Math.ceil(position) - 1; // Convert to 0-based index
+
+            if (lowerIndex === upperIndex) {
+                return sorted[lowerIndex];
+            } else {
+                const lowerValue = sorted[lowerIndex];
+                const upperValue = sorted[upperIndex];
+                const fraction = position - Math.floor(position);
+                return lowerValue + fraction * (upperValue - lowerValue);
+            }
+        };
+
+        function updateQuartileViz(sorted) {
+
+            let container;
+            try {
+                container = readDivElement('sorted-quartile-data');
+            } catch (e) {
+                console.warn(e.message);
+                return;
+            };
+            // Clear previous content
+            container.innerHTML = '';
+
+            // Create data value elements
+            // Create data value elements
+            sorted.forEach((value) => {
+                const valueElement = document.createElement('div');
+                valueElement.className = 'data-point';
+                valueElement.textContent = value;
+
+                container.appendChild(valueElement);
+            });
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const btn = document.getElementById('btn-quartile');
+            if (!btn) return;
+
+            // Run once on page load
+            calculateQuartiles();
+            drawOddDataQuartile();
+            drawEvenDataQuartile();
+
+            // Also run on every button click
+            btn.addEventListener('click', () => {
+                calculateQuartiles();
+                drawOddDataQuartile();
+                drawEvenDataQuartile();
+            });
+        });
+
+    })();
+</script>
 
 <div class="worked-example">
     <h4>Worked Example 1: Quartiles for Odd Number of Values</h4>
@@ -262,7 +466,7 @@
         <li><strong>Applications:</strong> Used in box plots, outlier detection, comparing data spread, and
             understanding data distribution.</li>
         <li><strong>Robustness:</strong> Quartiles are less affected by extreme values than the mean and
-            range, making them suitable for skewed data.</li>
+            range, making them suitable for skewed </li>
         <li><strong>Box Plot:</strong> Visual representation using quartiles: min, Q₁, median, Q₃, max (with
             whiskers for outliers).</li>
         <li><strong>Quartile Deviation:</strong> Half of IQR, measuring average spread around the median.
