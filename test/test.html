@@ -2,88 +2,198 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Correlation Scatter Plot (Canvas)</title>
-
+<title>Unit Circle Interactive</title>
 <style>
-body {
-  font-family: system-ui, sans-serif;
-  background: #f5f7fa;
-  padding: 30px;
-}
-
-.panel {
-  max-width: 900px;
-  margin: auto;
-  background: white;
-  padding: 20px;
-  border-radius: 14px;
-  border: 1px solid #ddd;
-}
-
-.inputs {
-  display: grid;
-  grid-template-columns: 1fr 1fr auto;
-  gap: 12px;
-}
-
-input, button {
-  padding: 8px;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-}
-
-.controls {
-  margin: 14px 0;
-  display: flex;
-  gap: 10px;
-}
-
-canvas {
-  border: 1px solid #ccc;
-  border-radius: 14px;
-  background: white;
-}
-
-.output {
-  margin-top: 12px;
-  font-weight: 700;
-}
-
-.tooltip {
-  position: absolute;
-  background: #222;
-  color: white;
-  padding: 6px 8px;
-  border-radius: 8px;
-  font-size: 12px;
-  pointer-events: none;
-  opacity: 0;
-}
+  body {
+    background: #111;
+    color: #eee;
+    font-family: system-ui, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+  .controls {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  label { margin-right: 6px; }
+  input {
+    width: 80px;
+    padding: 6px;
+    border-radius: 4px;
+    border: 1px solid #555;
+    background: #222;
+    color: #fff;
+  }
+  button {
+    padding: 8px 18px;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  button:hover { background: #2563eb; }
+  canvas {
+    background: #0a0a0a;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.6);
+  }
+  .values {
+    margin-top: 14px;
+    display: flex;
+    gap: 24px;
+    font-size: 1.1rem;
+  }
+  .values span { color: #94a3b8; }
 </style>
 </head>
-
 <body>
-<div class="panel">
 
-  <div class="inputs">
-    <input id="x-data" value="1,2,3,4,5,6,7">
-    <input id="y-data" value="1,1.5,2,2.5,3,3.4,4">
-    <button onclick="generate()">Plot</button>
+<h2>Unit Circle – Interactive</h2>
+
+<div class="controls">
+  <div>
+    <label for="adj">Adjacent (x):</label>
+    <input id="adj" type="number" value="4" step="any">
   </div>
-
-  <div class="controls">
-    <button onclick="toggleTrend()">Toggle Trend</button>
-    <button onclick="randomData()">Random Data</button>
-    <button onclick="resetPlot()">Reset</button>
+  <div>
+    <label for="opp">Opposite (y):</label>
+    <input id="opp" type="number" value="3" step="any">
   </div>
-
-  <canvas id="plot" width="420" height="320"></canvas>
-  <div id="tooltip" class="tooltip"></div>
-  <div id="output" class="output"></div>
-
+  <button onclick="draw()">Update</button>
 </div>
 
-<script src="test.js"></script>
+<canvas id="canvas" width="560" height="560"></canvas>
+
+<div class="values" id="info">
+  <!-- filled by JS -->
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const W = canvas.width;
+const H = canvas.height;
+const CX = W / 2;          // center
+const CY = H / 2;
+const R  = 220;            // radius of unit circle in pixels
+
+function draw() {
+  const x = parseFloat(document.getElementById('adj').value);
+  const y = parseFloat(document.getElementById('opp').value);
+
+  if (isNaN(x) || isNaN(y) || (x === 0 && y === 0)) {
+    alert('Please enter non-zero numbers for x and y.');
+    return;
+  }
+
+  // Hypotenuse length (for normalization)
+  const hyp = Math.hypot(x, y);
+  // Unit-circle coordinates
+  const ux = x / hyp;   // cos θ
+  const uy = y / hyp;   // sin θ
+
+  // Clear
+  ctx.clearRect(0, 0, W, H);
+
+  // ---- background axes ----
+  ctx.strokeStyle = '#444';
+  ctx.lineWidth = 1.5;
+  // x-axis
+  ctx.beginPath();
+  ctx.moveTo(40, CY);
+  ctx.lineTo(W - 40, CY);
+  ctx.stroke();
+  // y-axis
+  ctx.beginPath();
+  ctx.moveTo(CX, 40);
+  ctx.lineTo(CX, H - 40);
+  ctx.stroke();
+
+  // axis labels
+  ctx.fillStyle = '#aaa';
+  ctx.font = '16px system-ui';
+  ctx.fillText('x', W - 30, CY - 10);
+  ctx.fillText('y', CX + 10, 30);
+
+  // ---- unit circle ----
+  ctx.beginPath();
+  ctx.arc(CX, CY, R, 0, Math.PI * 2);
+  ctx.strokeStyle = '#666';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // ---- point on circle ----
+  const px = CX + ux * R;
+  const py = CY - uy * R;   // canvas y is inverted
+
+  // hypotenuse (gray)
+  ctx.beginPath();
+  ctx.moveTo(CX, CY);
+  ctx.lineTo(px, py);
+  ctx.strokeStyle = '#94a3b8';
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+
+  // adjacent (cos) – blue horizontal
+  ctx.beginPath();
+  ctx.moveTo(CX, CY);
+  ctx.lineTo(px, CY);
+  ctx.strokeStyle = '#3b82f6';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+
+  // opposite (sin) – green vertical
+  ctx.beginPath();
+  ctx.moveTo(px, CY);
+  ctx.lineTo(px, py);
+  ctx.strokeStyle = '#22c55e';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+
+  // orange point
+  ctx.beginPath();
+  ctx.arc(px, py, 8, 0, Math.PI * 2);
+  ctx.fillStyle = '#f97316';
+  ctx.fill();
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // labels on the diagram
+  ctx.fillStyle = '#3b82f6';
+  ctx.font = '15px system-ui';
+  ctx.fillText('cos θ', (CX + px) / 2 - 20, CY + 20);
+
+  ctx.fillStyle = '#22c55e';
+  ctx.fillText('sin θ', px + 12, (CY + py) / 2);
+
+  // ---- numerical values ----
+  const sin = uy;
+  const cos = ux;
+  const tan = y / x;
+  const angleDeg = Math.atan2(y, x) * 180 / Math.PI;
+
+  document.getElementById('info').innerHTML = `
+    <div><span>sin θ</span> = ${sin.toFixed(4)}</div>
+    <div><span>cos θ</span> = ${cos.toFixed(4)}</div>
+    <div><span>tan θ</span> = ${tan.toFixed(4)}</div>
+    <div><span>θ</span> = ${angleDeg.toFixed(2)}°</div>
+  `;
+}
+
+// initial draw
+draw();
+
+// also redraw when Enter is pressed in the inputs
+document.getElementById('adj').addEventListener('keydown', e => { if (e.key === 'Enter') draw(); });
+document.getElementById('opp').addEventListener('keydown', e => { if (e.key === 'Enter') draw(); });
+</script>
 </body>
 </html>
-
