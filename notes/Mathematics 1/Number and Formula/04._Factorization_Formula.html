@@ -1,614 +1,173 @@
-<!DOCTYPE html>
 <!-- tags: Algebra -->
-<html lang="en">
- <head>
-  <meta charset="utf-8"/>
-  <title>
-   Factorization Formula
-  </title>
-  <script>
-   MathJax = {
-            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
-            svg: {fontCache: 'global'}
-        };
-  </script>
-  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
-  </script>
-  <link href="/static/notes_style.css" rel="stylesheet"/>
-  <style>
-   .solution-button {
-    background: #007bff;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 10px;
-   }
-   .solution-button:hover {
-    background: #0056b3;
-   }
-   .factorization-calculator {
-    background: white;
-    border: 1px solid #ecf0f1;
-    border-radius: 8px;
-    padding: 20px;
-    margin: 20px 0;
-   }
-   .input-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-    margin-bottom: 20px;
-   }
-   .result-display {
-    background: #f8f9fa;
-    border-radius: 8px;
-    padding: 15px;
-    margin-top: 15px;
-   }
-   .result-item {
-    display: flex;
-    justify-content: space-between;
-    margin: 8px 0;
-    padding: 8px;
-    background: white;
-    border-radius: 5px;
-   }
-   .result-label {
-    font-weight: bold;
-    color: #2c3e50;
-   }
-   .result-value {
-    color: #3498db;
-    font-weight: bold;
-   }
-   .formula-section {
-    background: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    padding: 20px;
-    margin: 20px 0;
-   }
-   .formula-section h4 {
-    margin-top: 0;
-    color: #495057;
-   }
-   .formula-item {
-    background: white;
-    border-radius: 8px;
-    padding: 15px;
-    margin: 10px 0;
-    border: 1px solid #ecf0f1;
-   }
-   .formula-equation {
-    font-size: 1.2em;
-    font-weight: bold;
-    color: #2c3e50;
-    margin-bottom: 8px;
-   }
-   .formula-explanation {
-    color: #666;
-    font-style: italic;
-   }
-   .factoring-method {
-    background: #fff3e0;
-    border: 1px solid #ffe0b2;
-    border-radius: 8px;
-    padding: 20px;
-    margin: 20px 0;
-   }
-   .factoring-method h4 {
-    margin-top: 0;
-    color: #e65100;
-   }
-   .factoring-steps {
-    background: #e8f4f8;
-    border: 1px solid #bee5eb;
-    border-radius: 8px;
-    padding: 20px;
-    margin: 20px 0;
-   }
-   .factoring-steps h4 {
-    margin-top: 0;
-    color: #0c5460;
-   }
-   .step-list {
-    counter-reset: step-counter;
-   }
-   .step-item {
-    counter-increment: step-counter;
-    margin: 10px 0;
-    padding-left: 30px;
-    position: relative;
-   }
-   .step-item::before {
-    content: counter(step-counter) ".";
-    position: absolute;
-    left: 0;
-    top: 0;
-    font-weight: bold;
-    color: #3498db;
-   }
-   @media (max-width: 768px) {
-    .input-grid {
-     grid-template-columns: 1fr;
+<!-- =====================================================================
+     NOTE: Factorization Formulas (因数分解の公式)
+     Uses the shared blocks from static/css/note_blocks.css.
+     Do not add a <style> block here; change note_blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Algebra">Factorization Formula</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Expansion run backwards</h2>
+    <p>Factorising turns a sum into a product. Read each expansion formula from right to left.
+      Always take out any <strong>common factor</strong> first, then look for a pattern.</p>
+  </section>
+
+  <!-- FORMULA: the patterns -->
+  <div class="note-formula">
+    <h3>Patterns</h3>
+    <div class="formula-main">$$a^2 \pm 2ab + b^2 = (a \pm b)^2, \qquad a^2 - b^2 = (a + b)(a - b)$$</div>
+    <div class="formula-main">$$x^2 + (a + b)x + ab = (x + a)(x + b), \qquad a^3 \pm b^3 = (a \pm b)(a^2 \mp ab + b^2)$$</div>
+  </div>
+
+  <div class="note-formula">
+    <h3>Cross method for $px^2 + qx + r$ (たすき掛け)</h3>
+    <div class="formula-main">$$acx^2 + (ad + bc)x + bd = (ax + b)(cx + d)$$</div>
+    <p class="symbols">Choose $a, c$ with $ac = p$ and $b, d$ with $bd = r$ so that the cross sum $ad + bc = q$.</p>
+  </div>
+
+  <!-- DEMO: factorise a quadratic; code at the bottom -->
+  <div class="note-demo">
+    <h2>Factorise $px^2 + qx + r$ (whole numbers)</h2>
+    <div class="controls">
+      <label>$p$ = <input type="number" id="fcP" value="2"></label>
+      <label>$q$ = <input type="number" id="fcQ" value="7"></label>
+      <label>$r$ = <input type="number" id="fcR" value="3"></label>
+    </div>
+    <div class="output table-text" id="fcOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Factorise $x^2 - 2x - 15$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Two numbers with product $-15$ and sum $-2$: $3$ and $-5$.</li>
+      </ol>
+      <p class="answer">$(x + 3)(x - 5)$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Factorise $3x^2 + 5x - 2$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$3 = 3 \times 1$, $\;-2 = (-1) \times 2$. Cross: $3 \cdot 2 + 1 \cdot (-1) = 5$ ✓</li>
+      </ol>
+      <p class="answer">$(3x - 1)(x + 2)$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Factorise $2x^3 - 18x$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Common factor first: $2x(x^2 - 9)$.</li>
+        <li>Difference of squares: $x^2 - 9 = (x + 3)(x - 3)$.</li>
+      </ol>
+      <p class="answer">$2x(x + 3)(x - 3)$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Factorise $x^2 + xy - 2y^2 + 2x + 7y - 3$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Arrange in $x$: $x^2 + (y + 2)x - (2y^2 - 7y + 3)$.</li>
+        <li>$2y^2 - 7y + 3 = (2y - 1)(y - 3)$, so the constant term is $-(2y - 1)(y - 3)$.</li>
+        <li>Find two terms with product $-(2y - 1)(y - 3)$ and sum $y + 2$: $(2y - 1)$ and $-(y - 3)$.</li>
+      </ol>
+      <p class="answer">$(x + 2y - 1)(x - y + 3)$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">Factorise $8x^3 - 27$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$(2x)^3 - 3^3 = (2x - 3)\big((2x)^2 + 2x \cdot 3 + 3^2\big)$</li>
+      </ol>
+      <p class="answer">$(2x - 3)(4x^2 + 6x + 9)$</p>
+    </details>
+  </div>
+
+  <!-- TIP: several letters -->
+  <div class="note-tip">
+    With several letters, arrange by the letter of <strong>lowest degree</strong> (or by one letter, as in Example 4) and treat the others as numbers.
+  </div>
+
+  <!-- WARNING: finish the job -->
+  <div class="note-warning">
+    Factorise completely: $x^4 - 1 = (x^2 + 1)(x^2 - 1)$ is not finished, because $x^2 - 1 = (x + 1)(x - 1)$.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Common factor first, then a pattern.</li>
+      <li>$px^2 + qx + r$: cross method, checking that the cross sum equals $q$.</li>
+      <li>Check by expanding your answer.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script>
+  // "Factorise px² + qx + r" demo (the TRY IT block above).
+  // Tries every split p = a·c and r = b·d (whole numbers) and reports the
+  // first one whose cross sum a·d + b·c equals q.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const ids = ['fcP', 'fcQ', 'fcR'];
+    const output = document.getElementById('fcOutput');
+
+    // Divisors of n, positive and negative: divisors(6) -> [1, -1, 2, -2, 3, -3, 6, -6]
+    function divisors(n) {
+      const out = [];
+      for (let i = 1; i <= Math.abs(n); i++) if (n % i === 0) out.push(i, -i);
+      return out;
     }
-   }
-  </style>
- </head>
- <body>
-  <div class="fancy-title" data-topic="Algebra">
-   Factorization Formula
-  </div>
-  <div class="container">
-   <div class="main-content">
+    // "(2x + 1)" style bracket
+    const bracket = (a, b) => `(${a === 1 ? '' : a === -1 ? '-' : a}x ${b < 0 ? '−' : '+'} ${Math.abs(b)})`;
 
-    <div class="math-foundation">
-     <h3>Mathematical Foundation</h3>
-     <p>Factorization formulas are the reverse of expansion formulas. They allow us to break down complex expressions into simpler factors, which is essential for solving equations, simplifying expressions, and understanding the structure of algebraic relationships. These formulas provide systematic methods to factor polynomials and identify special patterns that can be factored using specific identities.</p>
-    </div>
+    // "2x² − 5x + 3" style expression
+    const expr = (p, q, r) => `${p}x² ${q < 0 ? '−' : '+'} ${Math.abs(q)}x ${r < 0 ? '−' : '+'} ${Math.abs(r)}`;
 
-    <div class="formula-section">
-     <h4>Perfect Square Trinomials</h4>
-
-     <div class="formula-item">
-      <div class="formula-equation">a² + 2ab + b² = (a + b)²</div>
-      <div class="formula-explanation">Perfect square trinomial with positive middle term factors as square of sum.</div>
-     </div>
-
-     <div class="formula-item">
-      <div class="formula-equation">a² - 2ab + b² = (a - b)²</div>
-      <div class="formula-explanation">Perfect square trinomial with negative middle term factors as square of difference.</div>
-     </div>
-    </div>
-
-    <div class="formula-section">
-     <h4>Difference of Squares</h4>
-
-     <div class="formula-item">
-      <div class="formula-equation">a² - b² = (a + b)(a - b)</div>
-      <div class="formula-explanation">Difference of two squares factors into sum and difference of the square roots.</div>
-     </div>
-    </div>
-
-    <div class="formula-section">
-     <h4>General Quadratic Trinomial</h4>
-
-     <div class="formula-item">
-      <div class="formula-equation">x² + (a + b)x + ab = (x + a)(x + b)</div>
-      <div class="formula-explanation">General quadratic factors where coefficients sum to middle term and multiply to constant.</div>
-     </div>
-
-     <div class="formula-item">
-      <div class="formula-equation">acx² + (ad + bc)x + bd = (ax + b)(cx + d)</div>
-      <div class="formula-explanation">General quadratic with leading coefficient greater than 1.</div>
-     </div>
-    </div>
-
-    <div class="formula-section">
-     <h4>Sum and Difference of Cubes</h4>
-
-     <div class="formula-item">
-      <div class="formula-equation">a³ + b³ = (a + b)(a² - ab + b²)</div>
-      <div class="formula-explanation">Sum of cubes factors into binomial times quadratic with specific pattern.</div>
-     </div>
-
-     <div class="formula-item">
-      <div class="formula-equation">a³ - b³ = (a - b)(a² + ab + b²)</div>
-      <div class="formula-explanation">Difference of cubes factors into binomial times quadratic with alternating signs.</div>
-     </div>
-    </div>
-
-    <div class="factoring-method">
-     <h4>General Factoring Strategy</h4>
-     <p>When factoring quadratic expressions ax² + bx + c:</p>
-     <ul>
-      <li>Find two numbers that multiply to give ac and add to give b</li>
-      <li>Write the middle term as sum of these two numbers</li>
-      <li>Factor by grouping the terms</li>
-      <li>Factor out the common binomial factor</li>
-     </ul>
-    </div>
-
-    <div class="factoring-steps">
-     <h4>Step-by-Step Factoring Process</h4>
-     <div class="step-list">
-      <div class="step-item">Identify the type of expression (quadratic, cubic, difference of squares, etc.)</div>
-      <div class="step-item">For quadratics ax² + bx + c, find factors of ac that sum to b</div>
-      <div class="step-item">Check for perfect square patterns (middle term = 2√(first×last))</div>
-      <div class="step-item">Apply the appropriate factorization formula</div>
-      <div class="step-item">Verify by expanding the factors to check against original expression</div>
-     </div>
-    </div>
-
-    <div class="interactive-demo">
-     <h3>Interactive Factorization Calculator</h3>
-     <div class="factorization-calculator">
-      <div style="margin-bottom: 15px;">
-       <strong>Select expression type:</strong>
-       <select id="factor-type" onchange="updateFactorInputs()" style="margin-left: 10px; padding: 5px;">
-        <option value="quadratic-simple">x² + bx + c</option>
-        <option value="quadratic-general">ax² + bx + c</option>
-        <option value="difference-squares">a² - b²</option>
-        <option value="perfect-square-pos">a² + 2ab + b²</option>
-        <option value="perfect-square-neg">a² - 2ab + b²</option>
-        <option value="sum-cubes">a³ + b³</option>
-        <option value="diff-cubes">a³ - b³</option>
-       </select>
-      </div>
-
-      <div id="quadratic-simple-inputs" class="input-grid">
-       <div class="control-group">
-        <label for="quad-a">a (x² coefficient):</label>
-        <input id="quad-a" placeholder="coefficient of x²" type="number" step="1" value="1">
-       </div>
-       <div class="control-group">
-        <label for="quad-b">b (x coefficient):</label>
-        <input id="quad-b" placeholder="coefficient of x" type="number" step="1">
-       </div>
-       <div class="control-group">
-        <label for="quad-c">c (constant):</label>
-        <input id="quad-c" placeholder="constant term" type="number" step="1">
-       </div>
-      </div>
-
-      <div id="two-var-inputs" class="input-grid" style="display: none;">
-       <div class="control-group">
-        <label for="var-a">a:</label>
-        <input id="var-a" placeholder="value of a" type="number" step="0.01">
-       </div>
-       <div class="control-group">
-        <label for="var-b">b:</label>
-        <input id="var-b" placeholder="value of b" type="number" step="0.01">
-       </div>
-      </div>
-
-      <button onclick="calculateFactorization()" style="padding: 10px 20px; background: #27ae60; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">Factor Expression</button>
-      <div class="result-display" id="factor-results" style="display: none;">
-       <h4>Factorization Result:</h4>
-       <div id="factor-result-content"></div>
-      </div>
-     </div>
-    </div>
-
-    <div class="worked-example">
-     <h4>Worked Example 1: Perfect Square Trinomial</h4>
-     <p>Factor: x² + 6x + 9</p>
-     <p><strong>Solution:</strong></p>
-     <p>This is a perfect square: x² + 2(x)(3) + 3² = (x + 3)²</p>
-     <p>Check: (x + 3)² = x² + 6x + 9 ✓</p>
-    </div>
-
-    <div class="worked-example">
-     <h4>Worked Example 2: Difference of Squares</h4>
-     <p>Factor: 4x² - 9</p>
-     <p><strong>Solution:</strong></p>
-     <p>4x² - 9 = (2x)² - 3² = (2x + 3)(2x - 3)</p>
-     <p>Check: (2x + 3)(2x - 3) = 4x² - 9 ✓</p>
-    </div>
-
-    <div class="worked-example">
-     <h4>Worked Example 3: General Quadratic</h4>
-     <p>Factor: x² + 5x + 6</p>
-     <p><strong>Solution:</strong></p>
-     <p>Find factors of 6 that sum to 5: 2 and 3</p>
-     <p>x² + 5x + 6 = (x + 2)(x + 3)</p>
-     <p>Check: (x + 2)(x + 3) = x² + 3x + 2x + 6 = x² + 5x + 6 ✓</p>
-    </div>
-
-    <div class="worked-example">
-     <h4>Worked Example 4: Sum of Cubes</h4>
-     <p>Factor: x³ + 8</p>
-     <p><strong>Solution:</strong></p>
-     <p>x³ + 8 = x³ + 2³ = (x + 2)(x² - 2x + 4)</p>
-     <p>Check: (x + 2)(x² - 2x + 4) = x³ - 2x² + 4x + 2x² - 4x + 8 = x³ + 8 ✓</p>
-    </div>
-
-    <h3>Practice Problems</h3>
-
-    <div class="practice-problem">
-     <strong>Problem 1:</strong> Factor x² + 8x + 16
-     <br><button class="solution-button" onclick="toggleSolution(1)">Show Solution</button>
-     <div class="solution" id="solution1">
-      <strong>Solution:</strong><br>
-      x² + 8x + 16 = (x + 4)²<br>
-      Check: (x + 4)² = x² + 8x + 16 ✓
-     </div>
-    </div>
-
-    <div class="practice-problem">
-     <strong>Problem 2:</strong> Factor 9x² - 25
-     <br><button class="solution-button" onclick="toggleSolution(2)">Show Solution</button>
-     <div class="solution" id="solution2">
-      <strong>Solution:</strong><br>
-      9x² - 25 = (3x)² - 5² = (3x + 5)(3x - 5)<br>
-      Check: (3x + 5)(3x - 5) = 9x² - 25 ✓
-     </div>
-    </div>
-
-    <div class="practice-problem">
-     <strong>Problem 3:</strong> Factor x² + 7x + 12
-     <br><button class="solution-button" onclick="toggleSolution(3)">Show Solution</button>
-     <div class="solution" id="solution3">
-      <strong>Solution:</strong><br>
-      Factors of 12 that sum to 7: 3 and 4<br>
-      x² + 7x + 12 = (x + 3)(x + 4)<br>
-      Check: (x + 3)(x + 4) = x² + 4x + 3x + 12 = x² + 7x + 12 ✓
-     </div>
-    </div>
-
-    <div class="practice-problem">
-     <strong>Problem 4:</strong> Factor 2x² + 7x + 3
-     <br><button class="solution-button" onclick="toggleSolution(4)">Show Solution</button>
-     <div class="solution" id="solution4">
-      <strong>Solution:</strong><br>
-      ac = 6, factors of 6 that sum to 7: 1 and 6<br>
-      2x² + x + 6x + 3 = x(2x + 1) + 3(2x + 1) = (2x + 1)(x + 3)<br>
-      Check: (2x + 1)(x + 3) = 2x² + 6x + x + 3 = 2x² + 7x + 3 ✓
-     </div>
-    </div>
-
-    <div class="practice-problem">
-     <strong>Problem 5:</strong> Factor x³ - 27
-     <br><button class="solution-button" onclick="toggleSolution(5)">Show Solution</button>
-     <div class="solution" id="solution5">
-      <strong>Solution:</strong><br>
-      x³ - 27 = x³ - 3³ = (x - 3)(x² + 3x + 9)<br>
-      Check: (x - 3)(x² + 3x + 9) = x³ + 3x² + 9x - 3x² - 9x - 27 = x³ - 27 ✓
-     </div>
-    </div>
-
-    <div class="key-takeaways">
-     <h3>Key Takeaways</h3>
-     <ul>
-      <li><strong>Perfect Squares:</strong> a² ± 2ab + b² = (a ± b)² - check middle term equals 2ab</li>
-      <li><strong>Difference of Squares:</strong> a² - b² = (a + b)(a - b) - only works for subtraction</li>
-      <li><strong>General Quadratic:</strong> x² + (a+b)x + ab = (x+a)(x+b) - find factors of constant that sum to middle coefficient</li>
-      <li><strong>Leading Coefficient:</strong> For ax² + bx + c, find factors of ac that sum to b</li>
-      <li><strong>Sum of Cubes:</strong> a³ + b³ = (a + b)(a² - ab + b²)</li>
-      <li><strong>Difference of Cubes:</strong> a³ - b³ = (a - b)(a² + ab + b²)</li>
-      <li><strong>Verification:</strong> Always expand factors to verify correctness</li>
-      <li><strong>Common Mistakes:</strong> Watch signs and ensure factors multiply correctly</li>
-      <li><strong>Grouping:</strong> For 4 terms, factor by grouping pairs first</li>
-      <li><strong>Prime:</strong> If no factors found, expression may be prime</li>
-     </ul>
-    </div>
-
-    <script>
-     function updateFactorInputs() {
-      const factorType = document.getElementById('factor-type').value;
-      const quadraticSimple = document.getElementById('quadratic-simple-inputs');
-      const twoVar = document.getElementById('two-var-inputs');
-
-      if (factorType === 'quadratic-simple' || factorType === 'quadratic-general') {
-       quadraticSimple.style.display = 'grid';
-       twoVar.style.display = 'none';
-      } else {
-       quadraticSimple.style.display = 'none';
-       twoVar.style.display = 'grid';
+    function update() {
+      const [p, q, r] = ids.map((id) => parseInt(document.getElementById(id).value));
+      if ([p, q, r].some(Number.isNaN) || p === 0 || r === 0) {
+        output.textContent = 'Enter whole numbers with p ≠ 0 and r ≠ 0.'; return;
       }
-     }
-
-     function calculateFactorization() {
-      const factorType = document.getElementById('factor-type').value;
-      const resultsDiv = document.getElementById('factor-results');
-      const resultContent = document.getElementById('factor-result-content');
-
-      if (factorType === 'quadratic-simple') {
-       const a = parseInt(document.getElementById('quad-a').value);
-       const b = parseInt(document.getElementById('quad-b').value);
-       const c = parseInt(document.getElementById('quad-c').value);
-
-       if (isNaN(a) || isNaN(b) || isNaN(c)) {
-        resultContent.innerHTML = '<p style="color: red;">Please enter valid integer coefficients.</p>';
-        resultsDiv.style.display = 'block';
-        return;
-       }
-
-       // Find factors of c that sum to b
-       const factors = findFactors(c);
-       let found = false;
-       let factor1, factor2;
-
-       for (let i = 0; i < factors.length; i++) {
-        for (let j = 0; j < factors.length; j++) {
-         if (factors[i] * factors[j] === c && factors[i] + factors[j] === b) {
-          factor1 = factors[i];
-          factor2 = factors[j];
-          found = true;
-          break;
-         }
-        }
-        if (found) break;
-       }
-
-       if (!found) {
-        resultContent.innerHTML = '<p style="color: orange;">No simple factors found. The expression may be prime or require different factoring method.</p>';
-       } else {
-        resultContent.innerHTML = `
-         <div class="result-item"><span class="result-label">Expression:</span> <span class="result-value">${a}x² + ${b}x + ${c}</span></div>
-         <div class="result-item"><span class="result-label">Factors of ${c}:</span> <span class="result-value">${factor1} and ${factor2}</span></div>
-         <div class="result-item"><span class="result-label">Factorization:</span> <span class="result-value">(x + ${factor1})(x + ${factor2})</span></div>
-         <div class="result-item"><span class="result-label">Verification:</span> <span class="result-value">(x + ${factor1})(x + ${factor2}) = x² + ${factor2}x + ${factor1}x + ${factor1 * factor2} = x² + ${b}x + ${c} ✓</span></div>
-        `;
-       }
-
-      } else if (factorType === 'quadratic-general') {
-       const a = parseInt(document.getElementById('quad-a').value);
-       const b = parseInt(document.getElementById('quad-b').value);
-       const c = parseInt(document.getElementById('quad-c').value);
-
-       if (isNaN(a) || isNaN(b) || isNaN(c) || a === 0) {
-        resultContent.innerHTML = '<p style="color: red;">Please enter valid coefficients (a ≠ 0).</p>';
-        resultsDiv.style.display = 'block';
-        return;
-       }
-
-       // Find factors of (a*c) that sum to b
-       const ac = a * c;
-       const factors = findFactors(ac);
-       let found = false;
-       let factor1, factor2, factor3, factor4;
-
-       for (let i = 0; i < factors.length; i++) {
-        for (let j = 0; j < factors.length; j++) {
-         if (factors[i] * factors[j] === ac) {
-          // Check if we can split these for the quadratic
-          const sum1 = factors[i] + factors[j];
-          if (sum1 === b) {
-           factor1 = factors[i];
-           factor2 = factors[j];
-           factor3 = ac / factors[i];
-           factor4 = ac / factors[j];
-           found = true;
-           break;
+      for (const a of divisors(p).filter((v) => v > 0)) {
+        const c = p / a;
+        for (const b of divisors(r)) {
+          const d = r / b;
+          if (a * d + b * c === q) {
+            output.textContent =
+              `Split p = ${p} as ${a} × ${c},  r = ${r} as ${b} × ${d}\n\n` +
+              `   ${a}       ${b}   →  ${a} × ${d} = ${a * d}\n` +
+              `   ${c}       ${d}   →  ${b} × ${c} = ${b * c}\n` +
+              `   cross sum = ${a * d} + ${b * c} = ${q}  ✓\n\n` +
+              `${expr(p, q, r)} = ${bracket(a, b)}${bracket(c, d)}`;
+            return;
           }
-         }
         }
-        if (found) break;
-       }
-
-       if (!found) {
-        resultContent.innerHTML = '<p style="color: orange;">No simple factors found. Try factoring by grouping or other methods.</p>';
-       } else {
-        resultContent.innerHTML = `
-         <div class="result-item"><span class="result-label">Expression:</span> <span class="result-value">${a}x² + ${b}x + ${c}</span></div>
-         <div class="result-item"><span class="result-label">ac = ${a}×${c} = ${ac}</span></div>
-         <div class="result-item"><span class="result-label">Factors:</span> <span class="result-value">${factor1} and ${factor2}</span></div>
-         <div class="result-item"><span class="result-label">Factorization:</span> <span class="result-value">(${a}x + ${factor1 / a})(${a}x + ${factor2 / a})</span></div>
-        `;
-       }
-
-      } else if (factorType === 'difference-squares') {
-       const a = parseFloat(document.getElementById('var-a').value);
-       const b = parseFloat(document.getElementById('var-b').value);
-
-       if (isNaN(a) || isNaN(b)) {
-        resultContent.innerHTML = '<p style="color: red;">Please enter valid values.</p>';
-        resultsDiv.style.display = 'block';
-        return;
-       }
-
-       const a2 = a * a;
-       const b2 = b * b;
-
-       resultContent.innerHTML = `
-        <div class="result-item"><span class="result-label">Expression:</span> <span class="result-value">${a}² - ${b}²</span></div>
-        <div class="result-item"><span class="result-label">Formula:</span> <span class="result-value">a² - b² = (a + b)(a - b)</span></div>
-        <div class="result-item"><span class="result-label">Factorization:</span> <span class="result-value">(${a} + ${b})(${a} - ${b})</span></div>
-        <div class="result-item"><span class="result-label">Verification:</span> <span class="result-value">(${a} + ${b})(${a} - ${b}) = ${a}² - ${b}² ✓</span></div>
-       `;
-
-      } else if (factorType === 'perfect-square-pos') {
-       const a = parseFloat(document.getElementById('var-a').value);
-       const b = parseFloat(document.getElementById('var-b').value);
-
-       if (isNaN(a) || isNaN(b)) {
-        resultContent.innerHTML = '<p style="color: red;">Please enter valid values.</p>';
-        resultsDiv.style.display = 'block';
-        return;
-       }
-
-       const middleTerm = 2 * a * b;
-
-       resultContent.innerHTML = `
-        <div class="result-item"><span class="result-label">Expression:</span> <span class="result-value">${a}² + 2(${a})(${b}) + ${b}²</span></div>
-        <div class="result-item"><span class="result-label">Middle term check:</span> <span class="result-value">2ab = 2×${a}×${b} = ${middleTerm}</span></div>
-        <div class="result-item"><span class="result-label">Factorization:</span> <span class="result-value">(${a} + ${b})²</span></div>
-        <div class="result-item"><span class="result-label">Verification:</span> <span class="result-value">(${a} + ${b})² = ${a}² + 2${a}${b} + ${b}² ✓</span></div>
-       `;
-
-      } else if (factorType === 'perfect-square-neg') {
-       const a = parseFloat(document.getElementById('var-a').value);
-       const b = parseFloat(document.getElementById('var-b').value);
-
-       if (isNaN(a) || isNaN(b)) {
-        resultContent.innerHTML = '<p style="color: red;">Please enter valid values.</p>';
-        resultsDiv.style.display = 'block';
-        return;
-       }
-
-       const middleTerm = 2 * a * b;
-
-       resultContent.innerHTML = `
-        <div class="result-item"><span class="result-label">Expression:</span> <span class="result-value">${a}² - 2(${a})(${b}) + ${b}²</span></div>
-        <div class="result-item"><span class="result-label">Middle term check:</span> <span class="result-value">2ab = 2×${a}×${b} = ${middleTerm}</span></div>
-        <div class="result-item"><span class="result-label">Factorization:</span> <span class="result-value">(${a} - ${b})²</span></div>
-        <div class="result-item"><span class="result-label">Verification:</span> <span class="result-value">(${a} - ${b})² = ${a}² - 2${a}${b} + ${b}² ✓</span></div>
-       `;
-
-      } else if (factorType === 'sum-cubes') {
-       const a = parseFloat(document.getElementById('var-a').value);
-       const b = parseFloat(document.getElementById('var-b').value);
-
-       if (isNaN(a) || isNaN(b)) {
-        resultContent.innerHTML = '<p style="color: red;">Please enter valid values.</p>';
-        resultsDiv.style.display = 'block';
-        return;
-       }
-
-       const a3 = a * a * a;
-       const b3 = b * b * b;
-       const sum = a3 + b3;
-
-       resultContent.innerHTML = `
-        <div class="result-item"><span class="result-label">Expression:</span> <span class="result-value">${a}³ + ${b}³</span></div>
-        <div class="result-item"><span class="result-label">Formula:</span> <span class="result-value">a³ + b³ = (a + b)(a² - ab + b²)</span></div>
-        <div class="result-item"><span class="result-label">Factorization:</span> <span class="result-value">(${a} + ${b})(${a}² - ${a}${b} + ${b}²)</span></div>
-        <div class="result-item"><span class="result-label">Verification:</span> <span class="result-value">${a}³ + ${b}³ = ${sum} ✓</span></div>
-       `;
-
-      } else if (factorType === 'diff-cubes') {
-       const a = parseFloat(document.getElementById('var-a').value);
-       const b = parseFloat(document.getElementById('var-b').value);
-
-       if (isNaN(a) || isNaN(b)) {
-        resultContent.innerHTML = '<p style="color: red;">Please enter valid values.</p>';
-        resultsDiv.style.display = 'block';
-        return;
-       }
-
-       const a3 = a * a * a;
-       const b3 = b * b * b;
-       const diff = a3 - b3;
-
-       resultContent.innerHTML = `
-        <div class="result-item"><span class="result-label">Expression:</span> <span class="result-value">${a}³ - ${b}³</span></div>
-        <div class="result-item"><span class="result-label">Formula:</span> <span class="result-value">a³ - b³ = (a - b)(a² + ab + b²)</span></div>
-        <div class="result-item"><span class="result-label">Factorization:</span> <span class="result-value">(${a} - ${b})(${a}² + ${a}${b} + ${b}²)</span></div>
-        <div class="result-item"><span class="result-label">Verification:</span> <span class="result-value">${a}³ - ${b}³ = ${diff} ✓</span></div>
-       `;
       }
-
-      resultsDiv.style.display = 'block';
-     }
-
-     function findFactors(n) {
-      const factors = [];
-      for (let i = 1; i <= Math.abs(n); i++) {
-       if (n % i === 0) {
-        factors.push(i);
-        if (i !== n/i && n/i !== -i) factors.push(-i);
-        if (i !== -n/i) factors.push(n/i);
-       }
-      }
-      return factors;
-     }
-
-     function toggleSolution(num) {
-      const solution = document.getElementById('solution' + num);
-      if (solution.style.display === 'none' || solution.style.display === '') {
-       solution.style.display = 'block';
-      } else {
-       solution.style.display = 'none';
-      }
-     }
-
-     // Initialize
-     updateFactorInputs();
-    </script>
-   </div>
-  </div>
- </body>
-</html>
+      output.textContent = `No split works: ${expr(p, q, r)} does not factorise with whole numbers.`;
+    }
+    ids.forEach((id) => document.getElementById(id).addEventListener('input', update));
+    update();
+  })();
+</script>
