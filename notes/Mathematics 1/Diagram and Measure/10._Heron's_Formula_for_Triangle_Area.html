@@ -1,332 +1,169 @@
-<!DOCTYPE html>
 <!-- tags: Trigonometry -->
-<html lang="en">
- <head>
-  <meta charset="utf-8"/>
-  <title>
-   Heron's Formula for Triangle Area
-  </title>
-  <script>
-   MathJax = {
-            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
-            svg: {fontCache: 'global'}
-        };
-  </script>
-  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
-  </script>
-  <link href="/static/notes_style.css" rel="stylesheet"/>
-  <style>
-   .solution-button {
-    background: #007bff;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 10px;
-   }
-   .solution-button:hover {
-    background: #0056b3;
-   }
-   .derivation-section {
-    background: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    padding: 20px;
-    margin: 20px 0;
-   }
-   .derivation-section h4 {
-    margin-top: 0;
-    color: #495057;
-   }
-   .heron-calculator {
-    background: white;
-    border: 1px solid #ecf0f1;
-    border-radius: 8px;
-    padding: 20px;
-    margin: 20px 0;
-   }
-   .input-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-    margin-bottom: 20px;
-   }
-   .result-display {
-    background: #f8f9fa;
-    border-radius: 8px;
-    padding: 15px;
-    margin-top: 15px;
-   }
-   .result-item {
-    display: flex;
-    justify-content: space-between;
-    margin: 8px 0;
-    padding: 8px;
-    background: white;
-    border-radius: 5px;
-   }
-   .result-label {
-    font-weight: bold;
-    color: #2c3e50;
-   }
-   .result-value {
-    color: #3498db;
-    font-weight: bold;
-   }
-   .triangle-diagram {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 20px 0;
-   }
-   .triangle-svg {
-    background: white;
-    border: 1px solid #ecf0f1;
-    border-radius: 8px;
-    padding: 20px;
-   }
-   .geometric-proof {
-    background: #fff3e0;
-    border: 1px solid #ffe0b2;
-    border-radius: 8px;
-    padding: 20px;
-    margin: 20px 0;
-   }
-   .geometric-proof h4 {
-    margin-top: 0;
-    color: #e65100;
-   }
-   @media (max-width: 768px) {
-    .input-grid {
-     grid-template-columns: 1fr;
-    }
-   }
-  </style>
- </head>
- <body>
-  <div class="fancy-title" data-topic="Trigonometry">
-   Heron's Formula for Triangle Area
+<!-- =====================================================================
+     NOTE: Heron's Formula (ヘロンの公式)
+     Uses the shared blocks from static/css/note_blocks.css and the
+     drawing helper static/js/note_geom.js (no draggable points here;
+     the triangle is rebuilt from the three typed side lengths).
+     Do not add a <style> block here; change note_blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Trigonometry">Heron's Formula for Triangle Area</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Area from the three sides only</h2>
+    <p>Three side lengths fix a triangle completely, so they must also fix its area. Heron's formula gives that area directly,
+      with no angles and no height.</p>
+  </section>
+
+  <!-- FORMULA: Heron -->
+  <div class="note-formula">
+    <h3>Heron's formula</h3>
+    <div class="formula-main">$$S = \sqrt{s(s - a)(s - b)(s - c)}, \qquad s = \frac{a + b + c}{2}$$</div>
+    <p class="symbols">$s$: half the perimeter (semiperimeter). The sides must satisfy the triangle inequality, which makes every factor positive.</p>
   </div>
-  <div class="container">
-   <div class="main-content">
 
-    <div class="math-foundation">
-     <h3>Mathematical Foundation</h3>
-     <p>Heron's formula, named after the ancient Greek mathematician Hero of Alexandria, provides a way to calculate the area of any triangle when all three side lengths are known. Unlike other area formulas that require height or angle information, Heron's formula depends only on the side lengths, making it extremely useful for solving geometry problems where only distances are given.</p>
-    </div>
-
-    <div class="formula-block">
-     <h3>Heron's Formula</h3>
-     <div style="font-size: 1.4em; text-align: center; margin: 15px 0;">
-      Area = √[s(s-a)(s-b)(s-c)]
-     </div>
-     <p><strong>Where:</strong></p>
-     <ul>
-      <li><strong>s</strong> is the semiperimeter: s = (a + b + c)/2</li>
-      <li><strong>a, b, c</strong> are the side lengths of the triangle</li>
-     </ul>
-     <p><strong>Alternative forms:</strong></p>
-     <ul>
-      <li>Area = (1/4)√[(a+b+c)(b+c-a)(c+a-b)(a+b-c)]</li>
-      <li>Area = (1/4)√[2(a²b² + b²c² + c²a²) - (a⁴ + b⁴ + c⁴)]</li>
-     </ul>
-    </div>
-
-    <div class="triangle-diagram">
-     <div class="triangle-svg">
-      <svg height="250" viewbox="0 0 280 250" width="280">
-       <!-- Triangle -->
-       <polygon fill="#fff" points="40,200 240,200 140,40" stroke="#222" stroke-width="2"/>
-       <!-- Height line -->
-       <line stroke="#e65100" stroke-dasharray="5,5" stroke-width="2" x1="140" x2="140" y1="40" y2="200"/>
-       <text fill="#e65100" font-family="serif" font-size="16" x="145" y="120">h</text>
-       <!-- Base -->
-       <line stroke="#222" stroke-width="3" x1="40" x2="240" y1="200" y2="200"/>
-       <!-- Side labels -->
-       <text fill="#222" font-family="serif" font-size="18" text-anchor="middle" x="140" y="220">a</text>
-       <text fill="#222" font-family="serif" font-size="18" x="80" y="130">b</text>
-       <text fill="#222" font-family="serif" font-size="18" x="200" y="130">c</text>
-       <!-- Vertices -->
-       <text fill="#222" font-family="serif" font-size="16" x="25" y="215">B</text>
-       <text fill="#222" font-family="serif" font-size="16" x="255" y="215">C</text>
-       <text fill="#222" font-family="serif" font-size="16" text-anchor="middle" x="140" y="25">A</text>
-       <!-- Area division -->
-       <polygon fill="#e3f2fd" opacity="0.5" points="40,200 140,200 140,40"/>
-       <polygon fill="#f3e5f5" opacity="0.5" points="140,200 240,200 140,40"/>
-       <!-- Semiperimeter concept -->
-       <text fill="#666" font-family="serif" font-size="14" x="50" y="180">s-a</text>
-       <text fill="#666" font-family="serif" font-size="14" x="180" y="180">s-b</text>
-       <text fill="#666" font-family="serif" font-size="14" x="130" y="80">s-c</text>
-      </svg>
-     </div>
-    </div>
-
-    <div class="derivation-section">
-     <h4>Derivation: From Base-Height Formula</h4>
-     <p>Consider a triangle with sides a, b, c and height h from vertex A to base a:</p>
-     <ul>
-      <li>Area = (1/2) × base × height = (1/2) × a × h</li>
-      <li>By Pythagorean theorem: b² = h² + (s-a)² and c² = h² + (s-b)²</li>
-      <li>Subtracting: b² - c² = (s-a)² - (s-b)² = (s-a - s + b)(s-a + s - b) = (b-a)(2s - a - b)</li>
-      <li>But 2s - a - b = c, so b² - c² = (b-a)c</li>
-      <li>From b² = h² + (s-a)²: h² = b² - (s-a)²</li>
-      <li>h² = [s(s-a)(s-b)(s-c)] × 16 / a²</li>
-      <li>Area = (1/2)a × h = (1/2)a × √[16s(s-a)(s-b)(s-c)/a²] = √[s(s-a)(s-b)(s-c)]</li>
-     </ul>
-    </div>
-
-    <div class="geometric-proof">
-     <h4>Geometric Interpretation</h4>
-     <p>The formula can be understood geometrically by considering the area as composed of three smaller triangles formed by dropping perpendiculars from the vertices to the opposite sides. Each small triangle has area equal to the product of the semiperimeter differences and the height.</p>
-     <p>The key insight is that the height h satisfies: h² = [16s(s-a)(s-b)(s-c)] / a²</p>
-     <p>This leads directly to the area formula when we substitute into the base-height formula.</p>
-    </div>
-
-    <div class="interactive-demo">
-     <h3>Interactive Heron's Formula Calculator</h3>
-     <div class="heron-calculator">
-      <div class="input-grid">
-       <div class="control-group">
-        <label for="side-a-heron">Side a:</label>
-        <input id="side-a-heron" placeholder="length" type="number" step="0.01">
-       </div>
-       <div class="control-group">
-        <label for="side-b-heron">Side b:</label>
-        <input id="side-b-heron" placeholder="length" type="number" step="0.01">
-       </div>
-       <div class="control-group">
-        <label for="side-c-heron">Side c:</label>
-        <input id="side-c-heron" placeholder="length" type="number" step="0.01">
-       </div>
-      </div>
-      <button onclick="calculateHeron()" style="padding: 10px 20px; background: #27ae60; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">Calculate Area</button>
-      <div class="result-display" id="heron-results" style="display: none;">
-       <h4>Result:</h4>
-       <div id="heron-result-content"></div>
-      </div>
-     </div>
-    </div>
-
-    <div class="worked-example">
-     <h4>Worked Example 1: Basic Calculation</h4>
-     <p>Find the area of a triangle with sides 3 cm, 4 cm, 5 cm.</p>
-     <p><strong>Solution:</strong></p>
-     <p>Semiperimeter s = (3 + 4 + 5)/2 = 6 cm</p>
-     <p>Area = √[6(6-3)(6-4)(6-5)] = √[6×3×2×1] = √[36] = 6 cm²</p>
-    </div>
-
-    <div class="worked-example">
-     <h4>Worked Example 2: Decimal Sides</h4>
-     <p>Find the area of a triangle with sides 7.2 cm, 8.5 cm, 9.1 cm.</p>
-     <p><strong>Solution:</strong></p>
-     <p>s = (7.2 + 8.5 + 9.1)/2 = 12.4 cm</p>
-     <p>Area = √[12.4(12.4-7.2)(12.4-8.5)(12.4-9.1)] = √[12.4×5.2×3.9×3.3]</p>
-     <p>Area = √[12.4×5.2×3.9×3.3] ≈ √[838.416] ≈ 28.96 cm²</p>
-    </div>
-
-    <div class="worked-example">
-     <h4>Worked Example 3: Large Triangle</h4>
-     <p>Find the area of a triangle with sides 13 cm, 14 cm, 15 cm.</p>
-     <p><strong>Solution:</strong></p>
-     <p>s = (13 + 14 + 15)/2 = 21 cm</p>
-     <p>Area = √[21(21-13)(21-14)(21-15)] = √[21×8×7×6] = √[7056] ≈ 84 cm²</p>
-    </div>
-
-    <h3>Practice Problems</h3>
-
-    <div class="practice-problem">
-     <strong>Problem 1:</strong> Find the area of a triangle with sides 5 cm, 6 cm, 7 cm.
-     <br><button class="solution-button" onclick="toggleSolution(1)">Show Solution</button>
-     <div class="solution" id="solution1">
-      <strong>Solution:</strong><br>
-      s = (5 + 6 + 7)/2 = 9 cm<br>
-      Area = √[9(9-5)(9-6)(9-7)] = √[9×4×3×2] = √[216] ≈ 14.7 cm²
-     </div>
-    </div>
-
-    <div class="practice-problem">
-     <strong>Problem 2:</strong> Find the area of a triangle with sides 8 cm, 10 cm, 12 cm.
-     <br><button class="solution-button" onclick="toggleSolution(2)">Show Solution</button>
-     <div class="solution" id="solution2">
-      <strong>Solution:</strong><br>
-      s = (8 + 10 + 12)/2 = 15 cm<br>
-      Area = √[15(15-8)(15-10)(15-12)] = √[15×7×5×3] = √[1575] ≈ 39.7 cm²
-     </div>
-    </div>
-
-    <div class="practice-problem">
-     <strong>Problem 3:</strong> Find the area of a triangle with sides 9 cm, 12 cm, 15 cm.
-     <br><button class="solution-button" onclick="toggleSolution(3)">Show Solution</button>
-     <div class="solution" id="solution3">
-      <strong>Solution:</strong><br>
-      s = (9 + 12 + 15)/2 = 18 cm<br>
-      Area = √[18(18-9)(18-12)(18-15)] = √[18×9×6×3] = √[2916] = 54 cm²
-     </div>
-    </div>
-
-    <div class="key-takeaways">
-     <h3>Key Takeaways</h3>
-     <ul>
-      <li><strong>Formula:</strong> Area = √[s(s-a)(s-b)(s-c)] where s = (a+b+c)/2</li>
-      <li><strong>Semiperimeter:</strong> s is half the perimeter of the triangle</li>
-      <li><strong>Triangle Inequality:</strong> Must satisfy a+b>c, a+c>b, b+c>a</li>
-      <li><strong>Units:</strong> Area has units of length squared</li>
-      <li><strong>Equilateral:</strong> For equilateral triangle: Area = (√3/4) × side²</li>
-      <li><strong>Right Triangle:</strong> Reduces to (1/2)ab when c² = a² + b²</li>
-      <li><strong>Applications:</strong> Surveying, navigation, engineering</li>
-      <li><strong>Historical:</strong> Discovered by Hero of Alexandria (c. 10-70 AD)</li>
-      <li><strong>Alternative Forms:</strong> Multiple algebraic equivalents exist</li>
-      <li><strong>Geometric Meaning:</strong> Relates area to side lengths only</li>
-     </ul>
-    </div>
-
-    <script>
-     function calculateHeron() {
-      const a = parseFloat(document.getElementById('side-a-heron').value);
-      const b = parseFloat(document.getElementById('side-b-heron').value);
-      const c = parseFloat(document.getElementById('side-c-heron').value);
-
-      if (isNaN(a) || isNaN(b) || isNaN(c)) {
-       alert('Please enter valid side lengths.');
-       return;
-      }
-
-      // Check triangle inequality
-      if (a + b <= c || a + c <= b || b + c <= a) {
-       const resultsDiv = document.getElementById('heron-results');
-       const resultContent = document.getElementById('heron-result-content');
-       resultContent.innerHTML = '<p style="color: red; font-weight: bold;">Error: These side lengths do not form a valid triangle.<br>The sum of any two sides must be greater than the third side.</p>';
-       resultsDiv.style.display = 'block';
-       return;
-      }
-
-      const s = (a + b + c) / 2;
-      const area = Math.sqrt(s * (s - a) * (s - b) * (s - c));
-
-      const resultsDiv = document.getElementById('heron-results');
-      const resultContent = document.getElementById('heron-result-content');
-
-      resultContent.innerHTML = `
-       <div class="result-item"><span class="result-label">Semiperimeter s =</span> <span class="result-value">(${a} + ${b} + ${c}) / 2 = ${s}</span></div>
-       <div class="result-item"><span class="result-label">Formula:</span> <span class="result-value">Area = √[s(s-a)(s-b)(s-c)]</span></div>
-       <div class="result-item"><span class="result-label">Calculation:</span> <span class="result-value">√[${s}(${s}-${a})(${s}-${b})(${s}-${c})]</span></div>
-       <div class="result-item"><span class="result-label">Area =</span> <span class="result-value">${area.toFixed(2)} square units</span></div>
-      `;
-
-      resultsDiv.style.display = 'block';
-     }
-
-     function toggleSolution(num) {
-      const solution = document.getElementById('solution' + num);
-      if (solution.style.display === 'none' || solution.style.display === '') {
-       solution.style.display = 'block';
-      } else {
-       solution.style.display = 'none';
-      }
-     }
-    </script>
-   </div>
+  <!-- PROOF: from ½ab sin C and the law of cosines -->
+  <div class="note-proof">
+    <ol>
+      <li>$S = \dfrac{1}{2}ab\sin C$, so $S^2 = \dfrac{1}{4}a^2b^2(1 - \cos C)(1 + \cos C)$.</li>
+      <li>Law of cosines: $\cos C = \dfrac{a^2 + b^2 - c^2}{2ab}$. Then
+        $1 + \cos C = \dfrac{(a + b)^2 - c^2}{2ab} = \dfrac{(a + b + c)(a + b - c)}{2ab}$ and
+        $1 - \cos C = \dfrac{c^2 - (a - b)^2}{2ab} = \dfrac{(c - a + b)(c + a - b)}{2ab}$.</li>
+      <li>So $S^2 = \dfrac{1}{16}(a + b + c)(a + b - c)(b + c - a)(c + a - b)$.</li>
+      <li>With $a + b + c = 2s$: $a + b - c = 2(s - c)$, $b + c - a = 2(s - a)$, $c + a - b = 2(s - b)$. Hence $S^2 = s(s - a)(s - b)(s - c)$.</li>
+    </ol>
   </div>
- </body>
-</html>
+
+  <!-- DEMO: type three sides; code at the bottom -->
+  <div class="note-demo">
+    <h2>Type three side lengths</h2>
+    <div class="controls">
+      <label>$a$ = <input type="number" id="heA" value="13" min="0" step="any"></label>
+      <label>$b$ = <input type="number" id="heB" value="14" min="0" step="any"></label>
+      <label>$c$ = <input type="number" id="heC" value="15" min="0" step="any"></label>
+    </div>
+    <canvas id="heCanvas"></canvas>
+    <div class="output table-text" id="heOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find the area of the triangle with sides 3, 4, 5.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$s = 6$; $S = \sqrt{6 \cdot 3 \cdot 2 \cdot 1} = \sqrt{36}$</li>
+      </ol>
+      <p class="answer">$S = 6$ (same as $\dfrac{1}{2} \cdot 3 \cdot 4$)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find the area of the triangle with sides 5, 6, 7.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$s = 9$; $S = \sqrt{9 \cdot 4 \cdot 3 \cdot 2} = \sqrt{216}$</li>
+      </ol>
+      <p class="answer">$S = 6\sqrt{6}$ $(\approx 14.70)$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Find the area of the triangle with sides 13, 14, 15, and its inradius $r$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$s = 21$; $S = \sqrt{21 \cdot 8 \cdot 7 \cdot 6} = \sqrt{7056} = 84$</li>
+        <li>$r = \dfrac{S}{s} = \dfrac{84}{21}$ (note 09)</li>
+      </ol>
+      <p class="answer">$S = 84$, $r = 4$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Find the area of the triangle with sides 7, 8, 9.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$s = 12$; $S = \sqrt{12 \cdot 5 \cdot 4 \cdot 3} = \sqrt{720} = \sqrt{144 \cdot 5}$</li>
+      </ol>
+      <p class="answer">$S = 12\sqrt{5}$ $(\approx 26.83)$</p>
+    </details>
+  </div>
+
+  <!-- TIP: factor before multiplying -->
+  <div class="note-tip">
+    Don't multiply everything out under the root. Split the factors into primes and pull out pairs: $\sqrt{21 \cdot 8 \cdot 7 \cdot 6} = \sqrt{2^4 \cdot 3^2 \cdot 7^2} = 4 \cdot 3 \cdot 7$.
+  </div>
+
+  <!-- WARNING: awkward with roots -->
+  <div class="note-warning">
+    If the sides contain square roots, Heron's formula gets messy. Use the law of cosines to find $\cos C$, then $\sin C$, then $S = \dfrac{1}{2}ab\sin C$.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$S = \sqrt{s(s - a)(s - b)(s - c)}$ with $s = \dfrac{a + b + c}{2}$.</li>
+      <li>It comes from $S = \dfrac{1}{2}ab\sin C$ plus the law of cosines.</li>
+      <li>Best when all three sides are whole numbers.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/note_geom.js"></script>
+<script>
+  // "Type three side lengths" demo (the TRY IT block above).
+  // Builds the triangle from a, b, c (B at the left, C at the right, A placed
+  // with the law of cosines), scales it to fit, and shows Heron's steps.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const G = window.NoteGeom;
+    const output = document.getElementById('heOutput');
+    const ids = ['heA', 'heB', 'heC'];
+    const read = () => ids.map((id) => parseFloat(document.getElementById(id).value));
+
+    const board = G.board(document.getElementById('heCanvas'), {
+      points: {},
+      draw(g) {
+        const [a, b, c] = read();
+        if (![a, b, c].every((v) => v > 0)) { output.textContent = 'Enter three positive numbers.'; return; }
+        if (a + b <= c || b + c <= a || c + a <= b) {
+          output.textContent = 'No triangle: each side must be shorter than the other two added together.';
+          return;
+        }
+        // Triangle in side-length units: B = (0, 0), C = (a, 0), A from cos B
+        const cosB = (a * a + c * c - b * b) / (2 * a * c);
+        const Ax = c * cosB, Ay = c * Math.sqrt(1 - cosB * cosB);
+        const minX = Math.min(0, Ax), maxX = Math.max(a, Ax);
+        const k = Math.min(440 / (maxX - minX), 260 / Ay);   // pixels per unit
+        const ox = 260 - k * (minX + maxX) / 2, oy = 300;
+        const map = (x, y) => [ox + k * x, oy - k * y];
+        const A = map(Ax, Ay), B = map(0, 0), C = map(a, 0);
+        g.poly([A, B, C]);
+        g.seg(A, B); g.seg(B, C); g.seg(C, A);
+        g.dot(A, '#0f172a', 'A'); g.dot(B, '#0f172a', 'B'); g.dot(C, '#0f172a', 'C');
+        g.text([(B[0] + C[0]) / 2, B[1] + 18], 'a = ' + a, '#2563eb');
+        g.text([(A[0] + C[0]) / 2 + 10, (A[1] + C[1]) / 2], 'b = ' + b, '#2563eb');
+        g.text([(A[0] + B[0]) / 2 - 50, (A[1] + B[1]) / 2], 'c = ' + c, '#2563eb');
+
+        const s = (a + b + c) / 2, prod = s * (s - a) * (s - b) * (s - c);
+        const n = (v) => +v.toFixed(4);
+        output.textContent =
+          `s = (${a} + ${b} + ${c}) / 2 = ${n(s)}\n` +
+          `s − a = ${n(s - a)},  s − b = ${n(s - b)},  s − c = ${n(s - c)}\n` +
+          `s(s − a)(s − b)(s − c) = ${n(prod)}\n` +
+          `S = √${n(prod)} = ${Math.sqrt(prod).toFixed(4)}`;
+      },
+    });
+    ids.forEach((id) => document.getElementById(id).addEventListener('input', board.redraw));
+  })();
+</script>
