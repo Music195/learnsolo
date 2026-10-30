@@ -26,6 +26,12 @@
      g.hline(y, color, opts)         horizontal line y = const
      g.band(x1, x2, color)           highlight the x-axis from x1 to x2 (an interval on the number line)
      g.fill(f, x1, x2, color)        shade between y = f(x) and the x-axis for x1 ≤ x ≤ x2
+     g.circle(c, r, color, opts)     circle with centre c, radius r  opts: { width, dash }
+     g.line(a, b, c, color, opts)    the whole line ax + by + c = 0 (vertical lines too)
+     g.region(test, color)           shade every point where test(x, y) is true
+
+   For round circles, make the x-range about 1.55 times the y-range, e.g.
+   x: [-7.75, 7.75], y: [-5, 5].
 
    Also: NotePlot.poly([a, b, c]) → "x² − 2x + 3" style text (highest power first,
    zero terms dropped, 1s hidden). Optional second argument: the letter.
@@ -56,7 +62,8 @@
       constrain: constrainPx,
       draw(pg, P) {
         mathPoints = {};
-        Object.entries(P).forEach(([k, v]) => (mathPoints[k] = toMath(v)));
+        // round away pixel → maths float noise (2.9999999999999996 → 3)
+        Object.entries(P).forEach(([k, v]) => (mathPoints[k] = toMath(v).map((c) => +c.toFixed(9))));
         drawAxes(pg);
         options.draw(mathPainter(pg), mathPoints);
       },
@@ -111,6 +118,28 @@
           for (let i = 0; i <= 200; i++) { const x = a + (b - a) * i / 200; pts.push(toPx([x, f(x)])); }
           pts.push(toPx([b, 0]));
           pg.poly(pts, color);
+        },
+        circle(c, r, color = '#2563eb', opts = {}) {
+          let prev = toPx([c[0] + r, c[1]]);
+          for (let i = 1; i <= 120; i++) {
+            const t = i * Math.PI / 60, cur = toPx([c[0] + r * Math.cos(t), c[1] + r * Math.sin(t)]);
+            pg.seg(prev, cur, color, { width: opts.width || 3, dash: opts.dash });
+            prev = cur;
+          }
+        },
+        line(a, b, c, color = '#2563eb', opts = {}) {
+          const o = { width: opts.width || 3, dash: opts.dash };
+          if (Math.abs(b) > 1e-9) pg.seg(toPx([x0, -(a * x0 + c) / b]), toPx([x1, -(a * x1 + c) / b]), color, o);
+          else if (Math.abs(a) > 1e-9) pg.seg(toPx([-c / a, y0]), toPx([-c / a, y1]), color, o);
+        },
+        region(test, color = 'rgba(37, 99, 235, 0.15)') {
+          const s = 4; // cell size in pixels
+          for (let px = PAD; px < W - PAD; px += s) {
+            for (let py = PAD; py < H - PAD; py += s) {
+              const [x, y] = toMath([px + s / 2, py + s / 2]);
+              if (test(x, y)) pg.poly([[px, py], [px + s, py], [px + s, py + s], [px, py + s]], color);
+            }
+          }
         },
       };
       return g;
