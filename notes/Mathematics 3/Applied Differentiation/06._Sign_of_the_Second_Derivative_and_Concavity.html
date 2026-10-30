@@ -1,553 +1,151 @@
-<!DOCTYPE html>
-<!-- tags: Mathematics -->
-<html lang="en">
- <head>
-  <meta charset="utf-8"/>
-  <title>
-   Sign of the Second Derivative and Concavity
-  </title>
-  <script>
-   MathJax = {
-            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
-            svg: {fontCache: 'global'}
-        };
-  </script>
-  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
-  </script>
-  <link href="/static/notes_style.css" rel="stylesheet"/>
-  <style>
-   .demo-input-group {
-    display: flex;
-    flex-direction: column;
-    min-width: 200px;
-   }
-   .demo-input-group label {
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #2c3e50;
-   }
-   .demo-input {
-    padding: 8px;
-    border: 2px solid #bdc3c7;
-    border-radius: 6px;
-    font-size: 14px;
-    transition: border-color 0.3s;
-   }
-   .demo-input:focus {
-    outline: none;
-    border-color: #3498db;
-   }
-   .demo-button {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: transform 0.2s;
-   }
-   .demo-button:hover {
-    transform: translateY(-2px);
-   }
-   .demo-result {
-    background: white;
-    border-radius: 8px;
-    padding: 15px;
-    margin-top: 15px;
-    border-left: 4px solid #3498db;
-   }
-   .solution-toggle {
-    background: #2c3e50;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    margin-top: 10px;
-    transition: background-color 0.3s;
-   }
-   .solution-toggle:hover {
-    background: #34495e;
-   }
-   .solution-content {
-    display: none;
-    background: rgba(255, 255, 255, 0.9);
-    color: #2c3e50;
-    padding: 15px;
-    border-radius: 8px;
-    margin-top: 10px;
-   }
-   .concavity-concepts {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 15px;
-    margin: 20px 0;
-   }
-   .concept-card {
-    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-    padding: 15px;
-    border-radius: 8px;
-    border-left: 4px solid #e67e22;
-   }
-   .concept-card h4 {
-    margin-top: 0;
-    color: #2c3e50;
-   }
-   .math-orange {
-    color: #e67e22;
-    font-weight: bold;
-   }
-   .visualization-section {
-    background: white;
-    border-radius: 8px;
-    padding: 15px;
-    margin: 15px 0;
-    border: 2px solid #ecf0f1;
-    text-align: center;
-   }
-   .theorem-box {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 20px;
-    border-radius: 12px;
-    margin: 20px 0;
-    border-left: 5px solid #3498db;
-   }
-   .inflection-points {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    color: white;
-    padding: 20px;
-    border-radius: 12px;
-    margin: 20px 0;
-   }
-  </style>
- </head>
- <body>
-  <div class="fancy-title" data-topic="Mathematics">
-   Sign of the Second Derivative and Concavity
+<!-- tags: Differentiation -->
+<!-- =====================================================================
+     NOTE: Sign of the Second Derivative and Concavity (曲線の凹凸)
+     Uses the shared blocks from static/css/note_blocks.css and the
+     graph helper static/js/note_plot.js (built on note_geom.js).
+     Do not add a <style> block here; change note_blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Differentiation">Sign of the Second Derivative and Concavity</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Is the slope getting steeper or flatter?</h2>
+    <p>If $f''(x) &gt; 0$, the slope $f'$ is increasing. The curve bends upward like a bowl: <strong>concave up</strong> (下に凸). Every tangent lies below the curve.</p>
+    <p>If $f''(x) &lt; 0$, the slope is decreasing. The curve bends downward like a cap: <strong>concave down</strong> (上に凸). Every tangent lies above the curve.</p>
+  </section>
+
+  <!-- FORMULA: the test -->
+  <div class="note-formula">
+    <h3>On an interval</h3>
+    <div class="formula-main">$$f''(x) &gt; 0 \Rightarrow \text{concave up (下に凸)}, \qquad f''(x) &lt; 0 \Rightarrow \text{concave down (上に凸)}$$</div>
+    <p class="symbols">Concave up: the chord between two points lies above the curve; the tangent lies below. Concave down: the other way round.</p>
   </div>
-  <div class="container">
-   <div class="main-content">
-    <div class="section-title">
-     Sign of the Second Derivative and Concavity
+
+  <!-- PROOF: tangent below a concave-up curve -->
+  <div class="note-proof">
+    <ol>
+      <li>Let $f'' &gt; 0$ and compare $f$ with its tangent at $a$: $g(x) = f(x) - \{f(a) + f'(a)(x - a)\}$.</li>
+      <li>$g'(x) = f'(x) - f'(a)$. Since $f'' &gt; 0$, $f'$ is increasing, so $g' &lt; 0$ for $x &lt; a$ and $g' &gt; 0$ for $x &gt; a$.</li>
+      <li>So $g$ has its minimum $g(a) = 0$ at $a$: $g(x) \ge 0$, meaning the curve is above the tangent.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: tangent below/above; code at the bottom -->
+  <div class="note-demo">
+    <h2>Concave up parts in blue, concave down parts in orange</h2>
+    <div class="controls">
+      <label>$f(x)$ = <select id="ccF">
+        <option value="0">x³ − 3x² + 2</option>
+        <option value="1">sin x</option>
+        <option value="2">2e^(−x²)</option>
+      </select></label>
+      <label>tangent at $x$ = <input type="range" id="ccX" min="-3" max="3" step="0.05" value="-0.5"></label>
     </div>
+    <canvas id="ccCanvas"></canvas>
+    <div class="output table-text" id="ccOutput"></div>
+  </div>
 
-    <div class="theorem-box">
-     <h3>Fundamental Theorem: Second Derivative and Concavity</h3>
-     <p>Suppose $f(x)$ is twice differentiable on an interval $I$. Then:</p>
-     <ol style="line-height: 2;">
-      <li>If $f''(x) > 0$ for all $x$ in $I$, then $f$ is <strong>concave upward</strong> on $I$</li>
-      <li>If $f''(x) < 0$ for all $x$ in $I$, then $f$ is <strong>concave downward</strong> on $I$</li>
-     </ol>
-    </div>
-
-    <div class="math-foundation">
-     <h3>Mathematical Foundations</h3>
-     <p>The second derivative measures the rate of change of the first derivative, revealing the curvature of the function. Positive second derivative indicates concave upward (cup shape), while negative indicates concave downward (cap shape).</p>
-
-     <div class="concavity-concepts">
-      <div class="concept-card">
-       <h4>Concave Upward (∪)</h4>
-       <p>$f''(x) > 0$ everywhere</p>
-       <p>Cup shape that holds water</p>
-       <p>Tangent lines lie below curve</p>
-       <p>Speed of change is increasing</p>
-      </div>
-
-      <div class="concept-card">
-       <h4>Concave Downward (∩)</h4>
-       <p>$f''(x) < 0$ everywhere</p>
-       <p>Cap shape like umbrella</p>
-       <p>Tangent lines lie above curve</p>
-       <p>Speed of change is decreasing</p>
-      </div>
-
-      <div class="concept-card">
-       <h4>Inflection Points</h4>
-       <p>Where concavity changes</p>
-       <p>$f''(x) = 0$ or undefined</p>
-       <p>Horizontal tangent to f'</p>
-       <p>Curve changes direction</p>
-      </div>
-
-      <div class="concept-card">
-       <h4>Geometric Test</h4>
-       <p>Chord vs tangent position</p>
-       <p>Secant line above/below curve</p>
-       <p>Visual concavity check</p>
-       <p>Alternative to derivative test</p>
-      </div>
-     </div>
-    </div>
-
-    <div class="interactive-demo">
-     <h3>Interactive Concavity Analyzer</h3>
-     <p>Enter a function to analyze its concavity and find inflection points.</p>
-
-     <div class="demo-controls">
-      <div class="demo-input-group">
-       <label for="function-input">Function f(x):</label>
-       <input type="text" id="function-input" class="demo-input" value="x^3 - 3x^2 + 2" placeholder="e.g., x^3 - 3x^2 + 2, x^4 - 2x^2, sin(x)">
-      </div>
-      <div class="demo-input-group">
-       <label for="analysis-interval">Analysis Interval:</label>
-       <input type="text" id="analysis-interval" class="demo-input" value="-2, 4" placeholder="e.g., -2, 4 or -1, 3">
-      </div>
-      <button onclick="analyzeConcavity()" class="demo-button">Analyze Concavity</button>
-     </div>
-
-     <div class="demo-result">
-      <h4>Concavity Analysis Results:</h4>
-      <p><strong>Function:</strong> <span id="function-display">f(x) = x³ - 3x² + 2</span></p>
-      <p><strong>First Derivative:</strong> <span id="first-derivative-display">f'(x) = 3x² - 6x</span></p>
-      <p><strong>Second Derivative:</strong> <span id="second-derivative-display">f''(x) = 6x - 6</span></p>
-      <p><strong>Inflection Points:</strong> <span id="inflection-points">x = 1</span></p>
-      <p><strong>Concave Upward:</strong> <span id="concave-up">(1, ∞)</span></p>
-      <p><strong>Concave Downward:</strong> <span id="concave-down">(-∞, 1)</span></p>
-     </div>
-
-     <div class="visualization-section">
-      <h4>Function and Concavity Regions:</h4>
-      <canvas id="concavityCanvas" width="600" height="400"></canvas>
-      <p><em>Green regions: concave upward, Red regions: concave downward. Yellow dot marks inflection point.</em></p>
-     </div>
-    </div>
-
-    <div class="inflection-points">
-     <h3>Inflection Points</h3>
-
-     <div style="margin-bottom: 20px;">
-      <h4>Definition</h4>
-      <p>An inflection point is a point on the curve where the concavity changes from upward to downward or vice versa.</p>
-      <p>At an inflection point: $f''(x) = 0$ or $f''(x)$ is undefined</p>
-     </div>
-
-     <div style="margin-bottom: 20px;">
-      <h4>Finding Inflection Points</h4>
-      <ol>
-       <li>Find $f''(x)$</li>
-       <li>Set $f''(x) = 0$ and solve</li>
-       <li>Check for undefined points</li>
-       <li>Test intervals around candidates</li>
-       <li>Verify concavity change</li>
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find where $f(x) = x^3 - 3x^2 + 2$ is concave up and concave down.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$f'(x) = 3x^2 - 6x$, $\;f''(x) = 6x - 6 = 6(x - 1)$.</li>
+        <li>$f'' &lt; 0$ for $x &lt; 1$ and $f'' &gt; 0$ for $x &gt; 1$.</li>
       </ol>
-     </div>
-    </div>
-
-    <div class="worked-example">
-     <h3>Worked Examples</h3>
-
-     <div style="margin-bottom: 20px;">
-      <h4>Example 1: Cubic Function</h4>
-      <p>Analyze concavity of $f(x) = x^3 - 3x^2 + 2$.</p>
-      <p><strong>Step 1:</strong> f'(x) = 3x² - 6x, f''(x) = 6x - 6 = 6(x - 1)</p>
-      <p><strong>Step 2:</strong> Critical point for f'': x = 1</p>
-      <p><strong>Step 3:</strong> Test intervals: (-∞, 1), (1, ∞)</p>
-      <p><strong>Step 4:</strong> x < 1: f''(x) < 0 (concave downward)</p>
-      <p><strong>Step 5:</strong> x > 1: f''(x) > 0 (concave upward)</p>
-      <p><strong>Step 6:</strong> Inflection point at x = 1</p>
-     </div>
-
-     <div style="margin-bottom: 20px;">
-      <h4>Example 2: Quadratic Function</h4>
-      <p>Analyze concavity of $f(x) = x^2 - 4$.</p>
-      <p><strong>Step 1:</strong> f'(x) = 2x, f''(x) = 2</p>
-      <p><strong>Step 2:</strong> f''(x) = 2 > 0 for all x</p>
-      <p><strong>Step 3:</strong> Concave upward everywhere</p>
-      <p><strong>Step 4:</strong> No inflection points</p>
-     </div>
-
-     <div style="margin-bottom: 20px;">
-      <h4>Example 3: Trigonometric Function</h4>
-      <p>Find inflection points of $f(x) = \sin(x)$.</p>
-      <p><strong>Step 1:</strong> f'(x) = cos(x), f''(x) = -sin(x)</p>
-      <p><strong>Step 2:</strong> -sin(x) = 0 ⇒ sin(x) = 0 ⇒ x = nπ</p>
-      <p><strong>Step 3:</strong> Inflection points at x = 0, π, 2π, etc.</p>
-      <p><strong>Step 4:</strong> Concave downward: (0, π), (2π, 3π), ...</p>
-      <p><strong>Step 5:</strong> Concave upward: (-π, 0), (π, 2π), ...</p>
-     </div>
-    </div>
-
-    <div class="practice-problem">
-     <h3>Practice Problems</h3>
-
-     <div style="margin-bottom: 20px;">
-      <h4>Problem 1</h4>
-      <p>Determine concavity and find inflection points of $f(x) = x^4 - 4x^2$.</p>
-      <button onclick="toggleSolution('sol1')" class="solution-toggle">Show Solution</button>
-      <div id="sol1" class="solution-content">
-       <p><strong>Step 1:</strong> f'(x) = 4x³ - 8x, f''(x) = 12x² - 8</p>
-       <p><strong>Step 2:</strong> 12x² - 8 = 0 ⇒ x² = 2/3 ⇒ x = ±√(2/3)</p>
-       <p><strong>Step 3:</strong> Test intervals: (-∞, -√(2/3)), (-√(2/3), √(2/3)), (√(2/3), ∞)</p>
-       <p><strong>Step 4:</strong> |x| < √(2/3): f''(x) < 0 (concave downward)</p>
-       <p><strong>Step 5:</strong> |x| > √(2/3): f''(x) > 0 (concave upward)</p>
-       <p><strong>Step 6:</strong> Inflection points at x = ±√(2/3)</p>
-      </div>
-     </div>
-
-     <div style="margin-bottom: 20px;">
-      <h4>Problem 2</h4>
-      <p>Analyze concavity of $f(x) = e^{-x^2}$.</p>
-      <button onclick="toggleSolution('sol2')" class="solution-toggle">Show Solution</button>
-      <div id="sol2" class="solution-content">
-       <p><strong>Step 1:</strong> f'(x) = -2xe^{-x^2}, f''(x) = -2e^{-x^2} + 4x²e^{-x^2} = 2e^{-x^2}(2x² - 1)</p>
-       <p><strong>Step 2:</strong> 2x² - 1 = 0 ⇒ x = ±1/√2</p>
-       <p><strong>Step 3:</strong> Test intervals: (-∞, -1/√2), (-1/√2, 1/√2), (1/√2, ∞)</p>
-       <p><strong>Step 4:</strong> |x| < 1/√2: f''(x) < 0 (concave downward)</p>
-       <p><strong>Step 5:</strong> |x| > 1/√2: f''(x) > 0 (concave upward)</p>
-       <p><strong>Step 6:</strong> Inflection points at x = ±1/√2</p>
-      </div>
-     </div>
-
-     <div style="margin-bottom: 20px;">
-      <h4>Problem 3</h4>
-      <p>Find inflection points of $f(x) = \ln(x)$ for x > 0.</p>
-      <button onclick="toggleSolution('sol3')" class="solution-toggle">Show Solution</button>
-      <div id="sol3" class="solution-content">
-       <p><strong>Step 1:</strong> f'(x) = 1/x, f''(x) = -1/x²</p>
-       <p><strong>Step 2:</strong> f''(x) = -1/x² < 0 for all x > 0</p>
-       <p><strong>Step 3:</strong> Concave downward everywhere</p>
-       <p><strong>Step 4:</strong> No inflection points</p>
-      </div>
-     </div>
-
-     <div style="margin-bottom: 20px;">
-      <h4>Problem 4</h4>
-      <p>Determine concavity of $f(x) = x^3 + x^2 - 2x + 1$.</p>
-      <button onclick="toggleSolution('sol4')" class="solution-toggle">Show Solution</button>
-      <div id="sol4" class="solution-content">
-       <p><strong>Step 1:</strong> f'(x) = 3x² + 2x - 2, f''(x) = 6x + 2</p>
-       <p><strong>Step 2:</strong> 6x + 2 = 0 ⇒ x = -1/3</p>
-       <p><strong>Step 3:</strong> Test intervals: (-∞, -1/3), (-1/3, ∞)</p>
-       <p><strong>Step 4:</strong> x < -1/3: f''(x) < 0 (concave downward)</p>
-       <p><strong>Step 5:</strong> x > -1/3: f''(x) > 0 (concave upward)</p>
-       <p><strong>Step 6:</strong> Inflection point at x = -1/3</p>
-      </div>
-     </div>
-    </div>
-
-    <div class="key-takeaways">
-     <h3>Key Takeaways</h3>
-     <ul>
-      <li><strong>Concave upward:</strong> $f''(x) > 0$, cup shape ∪</li>
-      <li><strong>Concave downward:</strong> $f''(x) < 0$, cap shape ∩</li>
-      <li><strong>Inflection points:</strong> Where concavity changes, $f''(x) = 0$</li>
-      <li><strong>Tangent line test:</strong> Below curve (up), above curve (down)</li>
-      <li><strong>Second derivative:</strong> Measures curvature and acceleration</li>
-      <li><strong>Applications:</strong> Optimization, curve sketching, physics</li>
-      <li><strong>Visual memory:</strong> ∪ holds water, ∩ sheds water</li>
-      <li><strong>Rate interpretation:</strong> How fast the slope is changing</li>
-     </ul>
-    </div>
-
-    <div class="formula-list">
-     <div class="formula-row">
-      <span class="number">
-       1
-      </span>
-      <span class="formula">
-       $f''(x) > 0 \implies$ concave upward
-       <span class="math-orange">
-        (Cup Shape ∪)
-       </span>
-      </span>
-     </div>
-     <div class="formula-row">
-      <span class="number">
-       2
-      </span>
-      <span class="formula">
-       $f''(x) < 0 \implies$ concave downward
-       <span class="math-orange">
-        (Cap Shape ∩)
-       </span>
-      </span>
-     </div>
-     <div class="formula-row">
-      <span class="number">
-       3
-      </span>
-      <span class="formula">
-       $f''(c) = 0 \implies$ inflection point
-       <span class="math-orange">
-        (Concavity Change)
-       </span>
-      </span>
-     </div>
-    </div>
-
-    <div class="visualization-section">
-     <h4>Concavity Visualization</h4>
-     <p>Interactive demonstration showing concave upward and downward regions:</p>
-     <canvas id="concavityVisualizationCanvas" width="600" height="400"></canvas>
-     <p><em>The colored backgrounds show concavity regions, with inflection points marked in yellow</em></p>
-    </div>
-   </div>
+      <p class="answer">Concave down for $x &lt; 1$, concave up for $x &gt; 1$</p>
+    </details>
   </div>
 
-  <script>
-   function evaluateFunction(func, x) {
-    const expr = func.toLowerCase().replace(/\s/g, '');
-    if (expr === 'x^3-3x^2+2') return x*x*x - 3*x*x + 2;
-    if (expr === 'x^4-2x^2') return x*x*x*x - 2*x*x;
-    if (expr === 'sin(x)') return Math.sin(x);
-    if (expr === 'x^2-4') return x*x - 4;
-    if (expr === 'e^{-x^2}') return Math.exp(-x*x);
-    if (expr === 'ln(x)') return Math.log(x);
-    if (expr === 'x^3+x^2-2x+1') return x*x*x + x*x - 2*x + 1;
-    return x*x*x - 3*x*x + 2; // default
-   }
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find the concavity of $f(x) = \log x$ and of $f(x) = e^{-x}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$(\log x)'' = -\dfrac{1}{x^2} &lt; 0$ for all $x &gt; 0$.</li>
+        <li>$(e^{-x})'' = e^{-x} &gt; 0$ for all $x$.</li>
+      </ol>
+      <p class="answer">$\log x$ is concave down everywhere; $e^{-x}$ is concave up everywhere</p>
+    </details>
+  </div>
 
-   function evaluateSecondDerivative(func, x) {
-    const expr = func.toLowerCase().replace(/\s/g, '');
-    if (expr === 'x^3-3x^2+2') return 6*x - 6;
-    if (expr === 'x^4-2x^2') return 12*x*x - 8;
-    if (expr === 'sin(x)') return -Math.sin(x);
-    if (expr === 'x^2-4') return 2;
-    if (expr === 'e^{-x^2}') return 2*Math.exp(-x*x)*(2*x*x - 1);
-    if (expr === 'ln(x)') return -1/(x*x);
-    if (expr === 'x^3+x^2-2x+1') return 6*x + 2;
-    return 6*x - 6; // default
-   }
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Show that $\sin x \ge \dfrac{2}{\pi}x$ for $0 \le x \le \dfrac{\pi}{2}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$(\sin x)'' = -\sin x \le 0$ on this interval, so $y = \sin x$ is concave down there.</li>
+        <li>For a concave-down curve, the chord lies below the curve. The chord from $(0, 0)$ to $\left(\dfrac{\pi}{2}, 1\right)$ is $y = \dfrac{2}{\pi}x$.</li>
+      </ol>
+      <p class="answer">$\sin x \ge \dfrac{2}{\pi}x$ on $\left[0, \dfrac{\pi}{2}\right]$ ✓</p>
+    </details>
+  </div>
 
-   function findInflectionPoints(func) {
-    // For demo purposes, return known inflection points for specific functions
-    const expr = func.toLowerCase().replace(/\s/g, '');
-    if (expr === 'x^3-3x^2+2') return [1];
-    if (expr === 'x^4-2x^2') return [-Math.sqrt(2/3), Math.sqrt(2/3)];
-    if (expr === 'sin(x)') return [0, Math.PI, 2*Math.PI];
-    if (expr === 'e^{-x^2}') return [-1/Math.sqrt(2), 1/Math.sqrt(2)];
-    if (expr === 'x^3+x^2-2x+1') return [-1/3];
-    return [1]; // default
-   }
+  <!-- WARNING: concave up ≠ increasing -->
+  <div class="note-warning">
+    Concavity says nothing about up or down movement. $e^{-x}$ is <strong>decreasing</strong> but concave up. The sign of $f'$ gives increasing/decreasing; the sign of $f''$ gives the bending.
+  </div>
 
-   function analyzeConcavity() {
-    const funcInput = document.getElementById('function-input').value;
-    const intervalInput = document.getElementById('analysis-interval').value;
-    const [start, end] = intervalInput.split(',').map(x => parseFloat(x.trim()));
+  <!-- TIP: words in Japanese textbooks -->
+  <div class="note-tip">
+    Japanese textbooks say 下に凸 ("bulging downward") for $f'' &gt; 0$, the bowl shape. Picture where the bulge points: down for a bowl.
+  </div>
 
-    if (!funcInput || isNaN(start) || isNaN(end)) {
-     alert('Please enter valid function and interval');
-     return;
-    }
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$f'' &gt; 0$: concave up (下に凸), tangents below the curve.</li>
+      <li>$f'' &lt; 0$: concave down (上に凸), tangents above the curve.</li>
+      <li>Concavity gives chord/tangent inequalities.</li>
+    </ul>
+  </div>
 
-    const inflectionPoints = findInflectionPoints(funcInput);
-    const filteredPoints = inflectionPoints.filter(x => x >= start && x <= end);
+</article>
 
-    // Analyze concavity intervals
-    const intervals = [start, ...filteredPoints, end];
-    let concaveUpIntervals = [];
-    let concaveDownIntervals = [];
+<script src="/static/js/note_geom.js"></script>
+<script src="/static/js/note_plot.js"></script>
+<script>
+  // "Concavity" demo (the TRY IT block above).
+  // Colours the curve by the sign of f″ and draws the tangent at the chosen x.
+  // In a blue (concave-up) part the tangent sits below the curve; in orange, above.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const fBox = document.getElementById('ccF'), xBox = document.getElementById('ccX');
+    const output = document.getElementById('ccOutput');
+    const f3 = (v) => +v.toFixed(3);
 
-    for (let i = 0; i < intervals.length - 1; i++) {
-     const testPoint = (intervals[i] + intervals[i+1]) / 2;
-     const secondDeriv = evaluateSecondDerivative(funcInput, testPoint);
+    const FUNCS = [
+      { f: (x) => x ** 3 - 3 * x * x + 2, d: (x) => 3 * x * x - 6 * x, d2: (x) => 6 * x - 6 },
+      { f: Math.sin, d: Math.cos, d2: (x) => -Math.sin(x) },
+      { f: (x) => 2 * Math.exp(-x * x), d: (x) => -4 * x * Math.exp(-x * x), d2: (x) => (8 * x * x - 4) * Math.exp(-x * x) },
+    ];
 
-     if (secondDeriv > 0) {
-      concaveUpIntervals.push(`(${intervals[i].toFixed(2)}, ${intervals[i+1].toFixed(2)})`);
-     } else if (secondDeriv < 0) {
-      concaveDownIntervals.push(`(${intervals[i].toFixed(2)}, ${intervals[i+1].toFixed(2)})`);
-     }
-    }
-
-    document.getElementById('function-display').textContent = `f(x) = ${funcInput}`;
-    document.getElementById('first-derivative-display').textContent = `f'(x) = ${getFirstDerivativeString(funcInput)}`;
-    document.getElementById('second-derivative-display').textContent = `f''(x) = ${getSecondDerivativeString(funcInput)}`;
-    document.getElementById('inflection-points').textContent = filteredPoints.length > 0 ?
-     filteredPoints.map(x => `x = ${x.toFixed(2)}`).join(', ') : 'None in interval';
-    document.getElementById('concave-up').textContent = concaveUpIntervals.join(', ') || 'None';
-    document.getElementById('concave-down').textContent = concaveDownIntervals.join(', ') || 'None';
-
-    drawConcavityVisualization(funcInput, start, end, filteredPoints);
-   }
-
-   function getFirstDerivativeString(func) {
-    const expr = func.toLowerCase().replace(/\s/g, '');
-    if (expr === 'x^3-3x^2+2') return '3x² - 6x';
-    if (expr === 'x^4-2x^2') return '4x³ - 4x';
-    if (expr === 'sin(x)') return 'cos(x)';
-    if (expr === 'x^2-4') return '2x';
-    if (expr === 'e^{-x^2}') return '-2xe^{-x^2}';
-    if (expr === 'ln(x)') return '1/x';
-    if (expr === 'x^3+x^2-2x+1') return '3x² + 2x - 2';
-    return '3x² - 6x'; // default
-   }
-
-   function getSecondDerivativeString(func) {
-    const expr = func.toLowerCase().replace(/\s/g, '');
-    if (expr === 'x^3-3x^2+2') return '6x - 6';
-    if (expr === 'x^4-2x^2') return '12x² - 8';
-    if (expr === 'sin(x)') return '-sin(x)';
-    if (expr === 'x^2-4') return '2';
-    if (expr === 'e^{-x^2}') return '2e^{-x^2}(2x² - 1)';
-    if (expr === 'ln(x)') return '-1/x²';
-    if (expr === 'x^3+x^2-2x+1') return '6x + 2';
-    return '6x - 6'; // default
-   }
-
-   function drawConcavityVisualization(func, start, end, inflectionPoints) {
-    const canvas = document.getElementById('concavityCanvas');
-    const ctx = canvas.getContext('2d');
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    const width = canvas.width;
-    const height = canvas.height;
-    const scale = 40;
-    const originX = width / 2;
-    const originY = height / 2;
-
-    function toCanvasX(x) { return originX + x * scale; }
-    function toCanvasY(y) { return originY - y * scale; }
-
-    // Draw concavity regions
-    ctx.globalAlpha = 0.2;
-    for (let x = start; x < end; x += 0.1) {
-     const secondDeriv = evaluateSecondDerivative(func, x);
-     const y1 = evaluateFunction(func, x);
-     const y2 = evaluateFunction(func, x + 0.1);
-
-     if (secondDeriv > 0) {
-      ctx.fillStyle = '#27ae60'; // green for concave up
-     } else {
-      ctx.fillStyle = '#e74c3c'; // red for concave down
-     }
-
-     ctx.fillRect(toCanvasX(x), Math.min(toCanvasY(y1), toCanvasY(y2)), 4, Math.abs(toCanvasY(y1) - toCanvasY(y2)));
-    }
-    ctx.globalAlpha = 1;
-
-    // Draw function curve
-    ctx.strokeStyle = '#2196F3';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    for (let x = start; x <= end; x += 0.1) {
-     const y = evaluateFunction(func, x);
-     const canvasX = toCanvasX(x);
-     const canvasY = toCanvasY(y);
-     if (x === start) ctx.moveTo(canvasX, canvasY);
-     else ctx.lineTo(canvasX, canvasY);
-    }
-    ctx.stroke();
-
-    // Draw inflection points
-    ctx.fillStyle = '#f39c12';
-    inflectionPoints.forEach(x => {
-     const y = evaluateFunction(func, x);
-     ctx.beginPath();
-     ctx.arc(toCanvasX(x), toCanvasY(y), 6, 0, 2 * Math.PI);
-     ctx.fill();
+    const plot = NotePlot.graph(document.getElementById('ccCanvas'), {
+      x: [-3.2, 3.2], y: [-2.5, 3],
+      draw(g) {
+        const F = FUNCS[+fBox.value], x0 = +xBox.value;
+        // colour each small piece of the curve by the sign of f″ at its middle
+        for (let i = 0; i < 400; i++) {
+          const a = -3.2 + 6.4 * i / 400, b = a + 6.4 / 400;
+          g.seg([a, F.f(a)], [b, F.f(b)], F.d2((a + b) / 2) >= 0 ? '#2563eb' : '#ea580c', { width: 3 });
+        }
+        const y0 = F.f(x0), m = F.d(x0), k = F.d2(x0);
+        g.fn((x) => y0 + m * (x - x0), '#475569', { width: 1.5, dash: true });
+        g.dot([x0, y0], '#0f172a');
+        output.textContent =
+          `x = ${x0}:  f''(x) = ${f3(k)}\n` +
+          (Math.abs(k) < 1e-3 ? `f'' ≈ 0 here: a possible inflection point`
+            : k > 0 ? 'f\'\' > 0: concave up (下に凸), the tangent lies below the curve'
+            : 'f\'\' < 0: concave down (上に凸), the tangent lies above the curve');
+      },
     });
-   }
-
-   function toggleSolution(id) {
-    const element = document.getElementById(id);
-    element.style.display = element.style.display === 'none' ? 'block' : 'none';
-   }
-
-   // Initialize
-   analyzeConcavity();
-  </script>
- </body>
-</html>
+    fBox.addEventListener('change', plot.redraw);
+    xBox.addEventListener('input', plot.redraw);
+  })();
+</script>
