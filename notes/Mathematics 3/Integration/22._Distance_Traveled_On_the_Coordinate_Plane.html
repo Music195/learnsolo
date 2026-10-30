@@ -1,398 +1,171 @@
-<!DOCTYPE html>
-<!-- tags: Integration, Distance, Definite Integral, Velocity, Parametric Curve -->
-<html lang="en">
- <head>
-  <meta charset="utf-8"/>
-  <title>
-   Distance Traveled on the Coordinate Plane
-  </title>
-  <script>
-   MathJax = {
-            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
-            svg: {fontCache: 'global'}
-        };
-  </script>
-  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
-  </script>
-  <link href="/static/notes_style.css" rel="stylesheet"/>
- </head>
- <body>
-  <div class="fancy-title" data-topic="Integration">
-   Distance Traveled on the Coordinate Plane
+<!-- tags: Integration -->
+<!-- =====================================================================
+     NOTE: Distance Travelled on the Coordinate Plane (平面上の点の移動距離)
+     Uses the shared blocks from static/css/note_blocks.css and the
+     graph helper static/js/note_plot.js (built on note_geom.js).
+     Do not add a <style> block here; change note_blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Integration">Distance Traveled On the Coordinate Plane</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Add up the speed over time</h2>
+    <p>A point moves with $x = f(t)$, $y = g(t)$. Its speed is the length of the velocity vector, $|\vec{v}| = \sqrt{(x')^2 + (y')^2}$ (Applied Differentiation note 10).</p>
+    <p>Distance is speed × time for each small time step. Integrating the speed gives the total distance travelled along the path. This is usually more than the straight-line distance between the start and the end.</p>
+  </section>
+
+  <!-- FORMULA: distance travelled -->
+  <div class="note-formula">
+    <h3>From $t = a$ to $t = b$</h3>
+    <div class="formula-main">$$\text{distance} = \int_a^b |\vec{v}|\,dt = \int_a^b \sqrt{\left(\frac{dx}{dt}\right)^2 + \left(\frac{dy}{dt}\right)^2}\,dt$$</div>
+    <p class="symbols">The position at time $b$ is $\left(x(a) + \displaystyle\int_a^b x'\,dt,\; y(a) + \int_a^b y'\,dt\right)$, where each coordinate is integrated separately.</p>
   </div>
-  <style>
-    .solution-btn {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border: none;
-      color: white;
-      padding: 10px 20px;
-      text-align: center;
-      text-decoration: none;
-      display: inline-block;
-      font-size: 14px;
-      margin: 10px 0;
-      cursor: pointer;
-      border-radius: 25px;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    }
-    .solution-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-    }
-    .problem-item {
-      margin: 20px 0;
-      padding: 15px;
-      border: 2px solid #e1e8ed;
-      border-radius: 10px;
-      background: #fafbfc;
-      word-wrap: break-word;
-      overflow-wrap: break-word;
-      overflow: auto;
-      white-space: normal;
-    }
-    .highlight-box {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 15px;
-      border-radius: 10px;
-      margin: 15px 0;
-      word-wrap: break-word;
-      overflow-wrap: break-word;
-      overflow: auto;
-      white-space: normal;
-    }
-    .section {
-      margin: 25px 0;
-      padding: 20px;
-      border: 1px solid #e1e8ed;
-      border-radius: 10px;
-      background: white;
-      word-wrap: break-word;
-      overflow-wrap: break-word;
-      overflow: auto;
-      white-space: normal;
-    }
-    .canvas-container {
-      text-align: center;
-      margin: 20px 0;
-      padding: 15px;
-      border: 1px solid #e1e8ed;
-      border-radius: 10px;
-      background: #fafbfc;
-    }
-  </style>
-  <div class="container">
-   <div class="main-content">
-    <div class="section">
-     <h2>📐 Concepts</h2>
-     <p>When a point moves along a curve in the coordinate plane with parametric equations \( x = x(t) \), \( y = y(t) \), the <strong>distance traveled</strong> (arc length) between times \( t_1 \) and \( t_2 \) is given by:</p>
-     
-     <div class="formula-block">
-      <div class="math" style="font-size:1.3em;">
-       \( s = \int_{t_1}^{t_2} \sqrt{\left(\frac{dx}{dt}\right)^2 + \left(\frac{dy}{dt}\right)^2} \, dt \)
-      </div>
-     </div>
-     
-     <p>This formula represents the speed of the particle at each instant, which is the magnitude of the velocity vector \( \vec{v} = \langle \frac{dx}{dt}, \frac{dy}{dt} \rangle \).</p>
-     
-     <div class="highlight-box">
-      <strong>Geometric Interpretation:</strong> The arc length integral sums up infinitesimal distances \( ds = \sqrt{(dx)^2 + (dy)^2} \) along the curve, similar to the Pythagorean theorem for each tiny segment.
-     </div>
-    </div>
 
-    <div class="section">
-     <h2>🔍 Examples</h2>
-     
-     <h3>Example 1: Straight Line</h3>
-     <p>A particle moves along the line \( y = x \) from (0,0) to (1,1). If \( x = t \), \( y = t \), find the distance traveled from t=0 to t=1.</p>
-     <div class="formula-block">
-      \( \frac{dx}{dt} = 1, \quad \frac{dy}{dt} = 1 \)
-      <br><br>
-      \( s = \int_{0}^{1} \sqrt{1^2 + 1^2} \, dt = \int_{0}^{1} \sqrt{2} \, dt = \sqrt{2} \)
-     </div>
-     
-     <h3>Example 2: Circle</h3>
-     <p>A point moves around a circle of radius r: \( x = r\cos t \), \( y = r\sin t \). Find distance for one full revolution (t from 0 to 2π).</p>
-     <div class="formula-block">
-      \( \frac{dx}{dt} = -r\sin t, \quad \frac{dy}{dt} = r\cos t \)
-      <br><br>
-      \( s = \int_{0}^{2\pi} \sqrt{(-r\sin t)^2 + (r\cos t)^2} \, dt = \int_{0}^{2\pi} \sqrt{r^2(\sin^2 t + \cos^2 t)} \, dt \)
-      <br><br>
-      \( = \int_{0}^{2\pi} r \, dt = r \cdot 2\pi = 2\pi r \) (circumference)
-     </div>
-     
-     <h3>Example 3: Parabolic Path</h3>
-     <p>A projectile follows \( x = t \), \( y = -\frac{1}{2}gt^2 + v_0 t \). Find distance from t=0 to t=T.</p>
-     <div class="formula-block">
-      \( \frac{dx}{dt} = 1, \quad \frac{dy}{dt} = -gt + v_0 \)
-      <br><br>
-      \( s = \int_{0}^{T} \sqrt{1^2 + (-gt + v_0)^2} \, dt \)
-     </div>
-    </div>
-
-    <div class="section">
-     <h2>📊 Visual Guide</h2>
-     <p>The interactive diagram below shows a parametric curve with its arc length calculation. The curve is traced out over time, and the total distance traveled is shown.</p>
-     
-     <div class="canvas-container">
-      <canvas id="arcLengthCanvas" width="600" height="400"></canvas>
-     </div>
-    </div>
-
-    <div class="section">
-     <h2>🚀 Applications</h2>
-     <ul>
-      <li><strong>Physics:</strong> Calculating distance traveled by objects moving in two dimensions (projectiles, planetary orbits)</li>
-      <li><strong>Engineering:</strong> Determining cable lengths, path planning for robots, material usage calculations</li>
-      <li><strong>Computer Graphics:</strong> Computing curve lengths for animation and rendering</li>
-      <li><strong>Navigation:</strong> GPS path distance calculations, flight path optimization</li>
-      <li><strong>Manufacturing:</strong> Calculating material requirements for curved components</li>
-     </ul>
-    </div>
-
-    <div class="section">
-     <h2>✏️ Practice Problems</h2>
-     
-     <div class="problem-item">
-      <strong>Problem 1:</strong> Find the distance traveled by a particle with parametric equations \( x = t^2 \), \( y = 2t \) from t=0 to t=2.
-      <br><br>
-      <button class="solution-btn" onclick="toggleSolution('sol1')">Show Solution</button>
-      <div id="sol1" class="solution">
-       <div class="formula-block">
-        \( \frac{dx}{dt} = 2t, \quad \frac{dy}{dt} = 2 \)
-        <br><br>
-        \( s = \int_{0}^{2} \sqrt{(2t)^2 + 2^2} \, dt = \int_{0}^{2} \sqrt{4t^2 + 4} \, dt = \int_{0}^{2} \sqrt{4(t^2 + 1)} \, dt \)
-        <br><br>
-        \( = \int_{0}^{2} 2\sqrt{t^2 + 1} \, dt = 2\left[\frac{1}{2}t\sqrt{t^2 + 1} + \frac{1}{2}\ln|t + \sqrt{t^2 + 1}|\right]_{0}^{2} \)
-        <br><br>
-        \( = \left[t\sqrt{t^2 + 1} + \ln|t + \sqrt{t^2 + 1}|\right]_{0}^{2} = (2\sqrt{5} + \ln(2 + \sqrt{5})) - (0 + \ln 1) \)
-        <br><br>
-        \( = 2\sqrt{5} + \ln(2 + \sqrt{5}) \approx 4.47 + 1.44 = 5.91 \)
-       </div>
-      </div>
-     </div>
-
-     <div class="problem-item">
-      <strong>Problem 2:</strong> A cycloid is given by \( x = t - \sin t \), \( y = 1 - \cos t \). Find the arc length for one arch (t from 0 to 2π).
-      <br><br>
-      <button class="solution-btn" onclick="toggleSolution('sol2')">Show Solution</button>
-      <div id="sol2" class="solution">
-       <div class="formula-block">
-        \( \frac{dx}{dt} = 1 - \cos t, \quad \frac{dy}{dt} = \sin t \)
-        <br><br>
-        \( s = \int_{0}^{2\pi} \sqrt{(1 - \cos t)^2 + (\sin t)^2} \, dt = \int_{0}^{2\pi} \sqrt{1 - 2\cos t + \cos^2 t + \sin^2 t} \, dt \)
-        <br><br>
-        \( = \int_{0}^{2\pi} \sqrt{2 - 2\cos t} \, dt = \int_{0}^{2\pi} \sqrt{4 \cdot \frac{1 - \cos t}{2}} \, dt = \int_{0}^{2\pi} 2\sqrt{\frac{1 - \cos t}{2}} \, dt \)
-        <br><br>
-        \( = \int_{0}^{2\pi} \sqrt{2(1 - \cos t)} \, dt = \int_{0}^{2\pi} \sqrt{2} \cdot \sqrt{1 - \cos t} \, dt \)
-        <br><br>
-        Using the identity \( 1 - \cos t = 2\sin^2(t/2) \):
-        <br><br>
-        \( s = \sqrt{2} \int_{0}^{2\pi} \sqrt{2\sin^2(t/2)} \, dt = \sqrt{2} \int_{0}^{2\pi} \sqrt{2} |\sin(t/2)| \, dt = 2 \int_{0}^{2\pi} |\sin(t/2)| \, dt \)
-        <br><br>
-        \( = 2 \int_{0}^{2\pi} \sin(t/2) \, dt \) (since sin(t/2) ≥ 0 for t ∈ [0, 2π])
-        <br><br>
-        \( = 2 \left[-2\cos(t/2)\right]_{0}^{2\pi} = 2(-2)(\cos \pi - \cos 0) = -4(-1 - 1) = -4(-2) = 8 \)
-       </div>
-      </div>
-     </div>
-
-     <div class="problem-item">
-      <strong>Problem 3:</strong> Find the length of the curve \( x = \cos^3 t \), \( y = \sin^3 t \) (astroid) from t=0 to t=π/2.
-      <br><br>
-      <button class="solution-btn" onclick="toggleSolution('sol3')">Show Solution</button>
-      <div id="sol3" class="solution">
-       <div class="formula-block">
-        \( \frac{dx}{dt} = 3\cos^2 t (-\sin t) = -3\cos^2 t \sin t \)
-        <br>
-        \( \frac{dy}{dt} = 3\sin^2 t \cos t \)
-        <br><br>
-        \( s = \int_{0}^{\pi/2} \sqrt{(-3\cos^2 t \sin t)^2 + (3\sin^2 t \cos t)^2} \, dt \)
-        <br><br>
-        \( = \int_{0}^{\pi/2} \sqrt{9\cos^4 t \sin^2 t + 9\sin^4 t \cos^2 t} \, dt = \int_{0}^{\pi/2} 3|\cos t \sin t| \sqrt{\cos^2 t + \sin^2 t} \, dt \)
-        <br><br>
-        \( = \int_{0}^{\pi/2} 3|\cos t \sin t| \cdot 1 \, dt = 3 \int_{0}^{\pi/2} \cos t \sin t \, dt \) (since both ≥ 0 in this interval)
-        <br><br>
-        \( = 3 \cdot \frac{1}{2} \int_{0}^{\pi/2} \sin 2t \, dt = \frac{3}{2} \left[-\frac{1}{2}\cos 2t\right]_{0}^{\pi/2} = -\frac{3}{4} [\cos 2t]_{0}^{\pi/2} \)
-        <br><br>
-        \( = -\frac{3}{4} (\cos \pi - \cos 0) = -\frac{3}{4} (-1 - 1) = -\frac{3}{4} (-2) = \frac{6}{4} = \frac{3}{2} \)
-       </div>
-      </div>
-     </div>
-    </div>
-
-    <div class="key-takeaways">
-     <h3>🎯 Key Takeaways</h3>
-     <ul>
-      <li>Arc length formula: \( s = \int \sqrt{\left(\frac{dx}{dt}\right)^2 + \left(\frac{dy}{dt}\right)^2} \, dt \)</li>
-      <li>This represents the magnitude of the velocity vector integrated over time</li>
-      <li>The formula works for any parametric curve in the plane</li>
-      <li>For straight lines, it reduces to the distance formula</li>
-      <li>For circles, it gives the expected circumference</li>
-      <li>Integration may require trigonometric identities or substitution techniques</li>
-     </ul>
-    </div>
-   </div>
+  <!-- PROOF: small steps -->
+  <div class="note-proof">
+    <ol>
+      <li>In a short time $\Delta t$ the point moves $\Delta x \approx x'\Delta t$ and $\Delta y \approx y'\Delta t$.</li>
+      <li>By Pythagoras that step has length $\sqrt{\Delta x^2 + \Delta y^2} \approx \sqrt{x'^2 + y'^2}\,\Delta t$.</li>
+      <li>Adding the steps and letting $\Delta t \to 0$ gives the integral.</li>
+    </ol>
   </div>
-  <script>
-    function toggleSolution(id) {
-      const solution = document.getElementById(id);
-      const button = solution.previousElementSibling;
-      
-      if (solution.style.display === 'none' || solution.style.display === '') {
-        solution.style.display = 'block';
-        button.textContent = 'Hide Solution';
-      } else {
-        solution.style.display = 'none';
-        button.textContent = 'Show Solution';
-      }
-    }
 
-    function drawArcLengthVisualization() {
-      const canvas = document.getElementById('arcLengthCanvas');
-      const ctx = canvas.getContext('2d');
-      const width = canvas.width;
-      const height = canvas.height;
-      
-      // Clear canvas
-      ctx.clearRect(0, 0, width, height);
-      
-      // Set up coordinate system
-      const margin = 60;
-      const plotWidth = width - 2 * margin;
-      const plotHeight = height - 2 * margin;
-      
-      // Draw axes
-      ctx.strokeStyle = '#333';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(margin, margin);
-      ctx.lineTo(margin, height - margin);
-      ctx.lineTo(width - margin, height - margin);
-      ctx.stroke();
-      
-      // Labels
-      ctx.fillStyle = '#333';
-      ctx.font = '14px Arial';
-      ctx.textAlign = 'center';
-      ctx.fillText('x', width - margin, height - margin + 40);
-      ctx.save();
-      ctx.translate(margin - 40, height/2);
-      ctx.rotate(-Math.PI/2);
-      ctx.fillText('y', 0, 0);
-      ctx.restore();
-      
-      // Parametric curve: x = 2cos(t), y = sin(2t) (butterfly-like curve)
-      const xFunc = (t) => 2 * Math.cos(t);
-      const yFunc = (t) => Math.sin(2 * t);
-      
-      // Derivatives for speed calculation
-      const dxFunc = (t) => -2 * Math.sin(t);
-      const dyFunc = (t) => 2 * Math.cos(2 * t);
-      const speedFunc = (t) => Math.sqrt(dxFunc(t) * dxFunc(t) + dyFunc(t) * dyFunc(t));
-      
-      // Scale factors
-      const tMin = 0, tMax = 2 * Math.PI;
-      const xMin = -3, xMax = 3;
-      const yMin = -2, yMax = 2;
-      const xScale = plotWidth / (xMax - xMin);
-      const yScale = plotHeight / (yMax - yMin);
-      
-      // Function to convert to canvas coordinates
-      const toCanvasX = (x) => margin + (x - xMin) * xScale;
-      const toCanvasY = (y) => height - margin - (y - yMin) * yScale;
-      
-      // Draw grid
-      ctx.strokeStyle = '#eee';
-      ctx.lineWidth = 1;
-      for (let x = xMin; x <= xMax; x += 1) {
-        const cx = toCanvasX(x);
-        ctx.beginPath();
-        ctx.moveTo(cx, margin);
-        ctx.lineTo(cx, height - margin);
-        ctx.stroke();
-      }
-      for (let y = yMin; y <= yMax; y += 1) {
-        const cy = toCanvasY(y);
-        ctx.beginPath();
-        ctx.moveTo(margin, cy);
-        ctx.lineTo(width - margin, cy);
-        ctx.stroke();
-      }
-      
-      // Draw the parametric curve
-      ctx.strokeStyle = '#e74c3c';
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      const steps = 200;
-      for (let i = 0; i <= steps; i++) {
-        const t = tMin + (tMax - tMin) * i / steps;
-        const x = xFunc(t);
-        const y = yFunc(t);
-        const cx = toCanvasX(x);
-        const cy = toCanvasY(y);
-        if (i === 0) ctx.moveTo(cx, cy);
-        else ctx.lineTo(cx, cy);
-      }
-      ctx.stroke();
-      
-      // Show arc length calculation by drawing small segments
-      ctx.strokeStyle = '#27ae60';
-      ctx.lineWidth = 2;
-      const arcSteps = 20;
-      let totalArcLength = 0;
-      
-      for (let i = 0; i < arcSteps; i++) {
-        const t1 = tMin + (tMax - tMin) * i / arcSteps;
-        const t2 = tMin + (tMax - tMin) * (i + 1) / arcSteps;
-        
-        const x1 = xFunc(t1), y1 = yFunc(t1);
-        const x2 = xFunc(t2), y2 = yFunc(t2);
-        
-        const cx1 = toCanvasX(x1), cy1 = toCanvasY(y1);
-        const cx2 = toCanvasX(x2), cy2 = toCanvasY(y2);
-        
-        // Draw small segment
-        ctx.beginPath();
-        ctx.moveTo(cx1, cy1);
-        ctx.lineTo(cx2, cy2);
-        ctx.stroke();
-        
-        // Calculate and accumulate arc length
-        const dt = (t2 - t1);
-        const avgSpeed = (speedFunc(t1) + speedFunc(t2)) / 2;
-        totalArcLength += avgSpeed * dt;
-      }
-      
-      // Legend and information
-      ctx.fillStyle = '#333';
-      ctx.font = '12px Arial';
-      ctx.textAlign = 'left';
-      ctx.fillText('Parametric curve: x = 2cos(t), y = sin(2t)', margin + 10, margin + 20);
-      ctx.fillText('Green segments show arc length calculation', margin + 10, margin + 40);
-      ctx.fillText(`Approximate arc length: ${totalArcLength.toFixed(2)}`, margin + 10, margin + 60);
-      
-      // Draw color indicators
-      ctx.strokeStyle = '#e74c3c';
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.moveTo(margin + 250, margin + 15);
-      ctx.lineTo(margin + 280, margin + 15);
-      ctx.stroke();
-      
-      ctx.strokeStyle = '#27ae60';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(margin + 250, margin + 35);
-      ctx.lineTo(margin + 280, margin + 35);
-      ctx.stroke();
-    }
+  <!-- DEMO: path travelled so far; code at the bottom -->
+  <div class="note-demo">
+    <h2>Distance along the path (dark blue) vs straight-line distance (dashed)</h2>
+    <div class="controls">
+      <label>motion <select id="dpP">
+        <option value="0">circle (2cos t, 2sin t)</option>
+        <option value="1">cycloid (t − sin t, 1 − cos t)</option>
+        <option value="2">astroid (2cos³t, 2sin³t)</option>
+      </select></label>
+      <label>time = <input type="range" id="dpT" min="0" max="1" step="0.005" value="0.4"></label>
+    </div>
+    <canvas id="dpCanvas"></canvas>
+    <div class="output table-text" id="dpOutput"></div>
+  </div>
 
-    // Initialize visualization when page loads
-    window.onload = function() {
-      drawArcLengthVisualization();
-    };
-  </script>
- </body>
-</html>
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">P moves with $(x, y) = (3\cos t, 3\sin t)$. Find the distance travelled from $t = 0$ to $t = \pi$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$|\vec{v}| = \sqrt{9\sin^2 t + 9\cos^2 t} = 3$.</li>
+        <li>$\displaystyle\int_0^{\pi} 3\,dt$</li>
+      </ol>
+      <p class="answer">$3\pi$ (half the circumference), though P ends only $6$ away from its start</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">P moves with $(x, y) = (t - \sin t, 1 - \cos t)$. Find the distance travelled from $t = 0$ to $t = 2\pi$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$|\vec{v}|^2 = (1 - \cos t)^2 + \sin^2 t = 2 - 2\cos t = 4\sin^2\dfrac{t}{2}$.</li>
+        <li>On $[0, 2\pi]$, $\sin\dfrac{t}{2} \ge 0$, so $|\vec{v}| = 2\sin\dfrac{t}{2}$.</li>
+        <li>$\displaystyle\int_0^{2\pi} 2\sin\frac{t}{2}\,dt = \Big[-4\cos\frac{t}{2}\Big]_0^{2\pi} = 4 + 4$</li>
+      </ol>
+      <p class="answer">$8$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">P moves with $(x, y) = (e^t\cos t, e^t\sin t)$. Find the distance travelled from $t = 0$ to $t = 1$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$x' = e^t(\cos t - \sin t)$, $y' = e^t(\sin t + \cos t)$.</li>
+        <li>$x'^2 + y'^2 = e^{2t}\{(\cos t - \sin t)^2 + (\sin t + \cos t)^2\} = 2e^{2t}$, so $|\vec{v}| = \sqrt{2}e^t$.</li>
+        <li>$\displaystyle\int_0^1 \sqrt{2}e^t\,dt$</li>
+      </ol>
+      <p class="answer">$\sqrt{2}(e - 1)$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">P starts at $(0, 0)$ with velocity $\vec{v} = (2t, 3t^2)$. Find its position and the distance travelled at $t = 2$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Position: $\left(\displaystyle\int_0^2 2t\,dt, \int_0^2 3t^2\,dt\right) = (4, 8)$.</li>
+        <li>$|\vec{v}| = \sqrt{4t^2 + 9t^4} = t\sqrt{4 + 9t^2}$ for $t \ge 0$.</li>
+        <li>Put $u = 4 + 9t^2$, $du = 18t\,dt$: $\displaystyle\frac{1}{18}\int_4^{40} \sqrt{u}\,du = \frac{1}{27}\left(40\sqrt{40} - 8\right)$.</li>
+      </ol>
+      <p class="answer">Position $(4, 8)$; distance $\dfrac{80\sqrt{10} - 8}{27} \approx 9.07$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: speed, not coordinates -->
+  <div class="note-warning">
+    Distance travelled is <strong>not</strong> $\int x'\,dt + \int y'\,dt$, and it is not the straight-line distance between the start and the end.
+    Integrate the length $\sqrt{x'^2 + y'^2}$, and take the square root of a perfect square with its correct sign.
+  </div>
+
+  <!-- TIP: simplify inside the root -->
+  <div class="note-tip">
+    Expand $x'^2 + y'^2$ and look for $\sin^2 + \cos^2 = 1$ or a perfect square. Most textbook problems are designed so the square root comes out cleanly.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Distance $= \int_a^b \sqrt{x'^2 + y'^2}\,dt$.</li>
+      <li>Position: integrate $x'$ and $y'$ separately.</li>
+      <li>$1 - \cos t = 2\sin^2\frac{t}{2}$ is the key step for cycloids.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/note_geom.js"></script>
+<script src="/static/js/note_plot.js"></script>
+<script>
+  // "Path travelled" demo (the TRY IT block above).
+  // The whole path is light blue, the part travelled so far is dark blue, and the
+  // dashed segment joins the start to P. The distance travelled is the integral of
+  // the speed, found here with thin time steps.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const pBox = document.getElementById('dpP'), tBox = document.getElementById('dpT');
+    const output = document.getElementById('dpOutput');
+    const f3 = (v) => +v.toFixed(3);
+    const T1 = 2 * Math.PI;
+
+    // each motion: position r(t) and velocity v(t) for 0 ≤ t ≤ 2π (the cycloid is shifted to fit)
+    const PATHS = [
+      { r: (t) => [2 * Math.cos(t), 2 * Math.sin(t)], v: (t) => [-2 * Math.sin(t), 2 * Math.cos(t)] },
+      { r: (t) => [t - Math.sin(t) - Math.PI, 1 - Math.cos(t) - 1], v: (t) => [1 - Math.cos(t), Math.sin(t)] },
+      { r: (t) => [2 * Math.cos(t) ** 3, 2 * Math.sin(t) ** 3], v: (t) => [-6 * Math.cos(t) ** 2 * Math.sin(t), 6 * Math.sin(t) ** 2 * Math.cos(t)] },
+    ];
+
+    const plot = NotePlot.graph(document.getElementById('dpCanvas'), {
+      x: [-3.875, 3.875], y: [-2.5, 2.5],
+      draw(g) {
+        const P = PATHS[+pBox.value], T = T1 * +tBox.value;
+        for (let i = 0; i < 240; i++) g.seg(P.r(T1 * i / 240), P.r(T1 * (i + 1) / 240), '#bfdbfe', { width: 3 });
+        let dist = 0;
+        const n = 600, h = T / n;
+        for (let i = 0; i < n; i++) {
+          g.seg(P.r(i * h), P.r((i + 1) * h), '#1d4ed8', { width: 4 });
+          dist += Math.hypot(...P.v((i + 0.5) * h)) * h;
+        }
+        const A = P.r(0), B = P.r(T);
+        g.seg(A, B, '#ea580c', { dash: true, width: 2 });
+        g.dot(A, '#334155', 'start'); g.dot(B, '#1d4ed8', 'P');
+        output.textContent =
+          `t = ${f3(T)}:  speed now ${f3(Math.hypot(...P.v(T)))}\n` +
+          `distance travelled ∫|v| dt = ${f3(dist)},   straight-line distance ${f3(Math.hypot(B[0] - A[0], B[1] - A[1]))}`;
+      },
+    });
+    pBox.addEventListener('change', plot.redraw);
+    tBox.addEventListener('input', plot.redraw);
+  })();
+</script>

@@ -1,439 +1,157 @@
-<!DOCTYPE html>
-<!-- tags: Mathematics -->
-<html lang="en">
- <head>
-  <meta charset="utf-8"/>
-  <title>
-   Indefinite Integrals of Trigonometric Functions
-  </title>
-  <script>
-   MathJax = {
-            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
-            svg: {fontCache: 'global'}
-        };
-  </script>
-  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
-  </script>
-  <link href="/static/notes_style.css" rel="stylesheet"/>
-  <style>
-   .solution-btn {
-     background-color: #4CAF50;
-     color: white;
-     border: none;
-     padding: 8px 16px;
-     text-align: center;
-     text-decoration: none;
-     display: inline-block;
-     font-size: 14px;
-     margin: 10px 0;
-     cursor: pointer;
-     border-radius: 4px;
-     transition: background-color 0.3s;
-   }
-   
-   .solution-btn:hover {
-     background-color: #45a049;
-   }
-   
-   .problem-item {
-     margin-bottom: 20px;
-     padding: 15px;
-     border: 1px solid #ddd;
-     border-radius: 8px;
-     background-color: #fafafa;
-   }
-  </style>
- </head>
- <body>
-  <div class="fancy-title" data-topic="Mathematics">
-   Indefinite Integrals of Trigonometric Functions
+<!-- tags: Integration -->
+<!-- =====================================================================
+     NOTE: Indefinite Integrals of Trigonometric Functions (三角関数の不定積分)
+     Uses the shared blocks from static/css/note_blocks.css and the
+     graph helper static/js/note_plot.js (built on note_geom.js).
+     Do not add a <style> block here; change note_blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Integration">Indefinite Integrals of Trigonometric Functions</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Read the derivative table backwards</h2>
+    <p>Each trig derivative gives an integral: $(\sin x)' = \cos x$, $(\cos x)' = -\sin x$, $(\tan x)' = \dfrac{1}{\cos^2 x}$.</p>
+    <p>Squares and products such as $\sin^2 x$ or $\sin x\cos x$ are not in the table. Turn them into single sines and cosines first, using the double-angle and product-to-sum formulas (Math II).</p>
+  </section>
+
+  <!-- FORMULA: the basic table -->
+  <div class="note-formula">
+    <h3>Basic integrals ($x$ in radians)</h3>
+    <div class="formula-main">$$\int \sin x\,dx = -\cos x + C, \qquad \int \cos x\,dx = \sin x + C$$</div>
+    <div class="formula-main">$$\int \frac{1}{\cos^2 x}\,dx = \tan x + C, \qquad \int \frac{1}{\sin^2 x}\,dx = -\frac{1}{\tan x} + C$$</div>
+    <p class="symbols">Lowering the power: $\sin^2 x = \dfrac{1 - \cos 2x}{2}$, $\;\cos^2 x = \dfrac{1 + \cos 2x}{2}$, $\;\sin x\cos x = \dfrac{\sin 2x}{2}$.</p>
   </div>
-  <div class="container">
-   <div class="main-content">     <div class="section">
-      <h2>Basic Trigonometric Integrals</h2>
-      <p>The most fundamental trigonometric integrals are the antiderivatives of sine and cosine functions:</p>
-      
-      <div class="highlight-box">
-       <strong>Basic Rules:</strong>
-       <ul>
-        <li>\( \int \sin x \, dx = -\cos x + C \)</li>
-        <li>\( \int \cos x \, dx = \sin x + C \)</li>
-        <li>\( \int \sec^2 x \, dx = \tan x + C \)</li>
-        <li>\( \int \csc^2 x \, dx = -\cot x + C \)</li>
-       </ul>
-      </div>
-     </div>
 
-     <div class="section">
-      <h2>Why These Rules Work</h2>
-      <p>These integrals are derived directly from the derivatives of trigonometric functions:</p>
-      <ul>
-       <li>\( \frac{d}{dx}[-\cos x] = \sin x \), so \( \int \sin x \, dx = -\cos x + C \)</li>
-       <li>\( \frac{d}{dx}[\sin x] = \cos x \), so \( \int \cos x \, dx = \sin x + C \)</li>
-       <li>\( \frac{d}{dx}[\tan x] = \sec^2 x \), so \( \int \sec^2 x \, dx = \tan x + C \)</li>
-       <li>\( \frac{d}{dx}[-\cot x] = \csc^2 x \), so \( \int \csc^2 x \, dx = -\cot x + C \)</li>
-      </ul>
-     </div>
-
-     <div class="section">
-      <h2>Advanced Trigonometric Integrals</h2>
-      <p>More complex trigonometric integrals often require trigonometric identities:</p>
-      
-      <div class="highlight-box">
-       <strong>Using Pythagorean Identities:</strong>
-       <ul>
-        <li>\( \int \tan x \, dx = \int \frac{\sin x}{\cos x} \, dx = -\ln|\cos x| + C = \ln|\sec x| + C \)</li>
-        <li>\( \int \cot x \, dx = \int \frac{\cos x}{\sin x} \, dx = \ln|\sin x| + C \)</li>
-        <li>\( \int \sec x \, dx = \ln|\sec x + \tan x| + C \) (more advanced)</li>
-        <li>\( \int \csc x \, dx = -\ln|\csc x + \cot x| + C \) (more advanced)</li>
-       </ul>
-      </div>
-     </div>
-
-     <div class="section">
-      <h2>Visual Guide</h2>
-      <p>The trigonometric integrals represent areas under trigonometric curves.</p>
-      <canvas id="trigCanvas" width="600" height="400" style="border: 1px solid #ccc; margin: 20px auto; display: block;"></canvas>
-     </div>
-
-     <div class="section">
-      <h2>Examples</h2>
-      
-      <div class="example">
-       <h3>Example 1: Basic Sine Integral</h3>
-       <p>Find \( \int \sin(3x) \, dx \)</p>
-       <div class="steps">
-        <p>Using the substitution method: Let u = 3x, then du = 3 dx, so dx = du/3</p>
-        <p>\( \int \sin(3x) \, dx = \int \sin u \cdot \frac{du}{3} = \frac{1}{3} \int \sin u \, du = \frac{1}{3} (-\cos u) + C = -\frac{1}{3} \cos(3x) + C \)</p>
-       </div>
-      </div>
-
-      <div class="example">
-       <h3>Example 2: Secant Squared</h3>
-       <p>Find \( \int \sec^2(2x) \, dx \)</p>
-       <div class="steps">
-        <p>Using substitution: Let u = 2x, then du = 2 dx, so dx = du/2</p>
-        <p>\( \int \sec^2(2x) \, dx = \int \sec^2 u \cdot \frac{du}{2} = \frac{1}{2} \int \sec^2 u \, du = \frac{1}{2} \tan u + C = \frac{1}{2} \tan(2x) + C \)</p>
-       </div>
-      </div>
-
-      <div class="example">
-       <h3>Example 3: Tangent Function</h3>
-       <p>Find \( \int \tan x \, dx \)</p>
-       <div class="steps">
-        <p>Rewrite using identity: \( \tan x = \frac{\sin x}{\cos x} \)</p>
-        <p>\( \int \tan x \, dx = \int \frac{\sin x}{\cos x} \, dx \)</p>
-        <p>Let u = cos x, then du = -sin x dx, so -du = sin x dx</p>
-        <p>\( \int \frac{\sin x}{\cos x} \, dx = \int \frac{-du}{u} = -\int \frac{du}{u} = -\ln|u| + C = -\ln|\cos x| + C = \ln|\sec x| + C \)</p>
-       </div>
-      </div>
-
-      <div class="example">
-       <h3>Example 4: Cosecant Squared</h3>
-       <p>Find \( \int \csc^2(4x) \, dx \)</p>
-       <div class="steps">
-        <p>Using substitution: Let u = 4x, then du = 4 dx, so dx = du/4</p>
-        <p>\( \int \csc^2(4x) \, dx = \int \csc^2 u \cdot \frac{du}{4} = \frac{1}{4} \int \csc^2 u \, du = \frac{1}{4} (-\cot u) + C = -\frac{1}{4} \cot(4x) + C \)</p>
-       </div>
-      </div>
-     </div>
-
-     <div class="section">
-      <h2>Integration Techniques for Trigonometric Functions</h2>
-      <ul>
-       <li><strong>Direct Integration:</strong> For basic functions like sin x, cos x, sec²x, csc²x</li>
-       <li><strong>Substitution:</strong> For functions like sin(kx), cos(kx), sec²(kx), etc.</li>
-       <li><strong>Trigonometric Identities:</strong> Rewrite complex expressions using identities</li>
-       <li><strong>Integration by Parts:</strong> For products involving trigonometric functions</li>
-       <li><strong>Reduction Formulas:</strong> For higher powers of trigonometric functions</li>
-      </ul>
-     </div>
-
-     <div class="section">
-      <h2>Applications</h2>
-      <ul>
-       <li><strong>Physics:</strong> Simple harmonic motion, wave functions, pendulum problems</li>
-       <li><strong>Engineering:</strong> AC circuit analysis, signal processing</li>
-       <li><strong>Mathematics:</strong> Fourier series, differential equations</li>
-       <li><strong>Real-world:</strong> Sound waves, electromagnetic waves, oscillatory motion</li>
-      </ul>
-     </div>
-
-     <div class="section">
-      <h2>Practice Problems</h2>
-      <div class="practice-problem">
-       <div class="problem-item">
-        <p><strong>1.</strong> Find \( \int \sin(5x) \, dx \)</p>
-        <button class="solution-btn" onclick="toggleSolution(1)">Show Solution</button>
-        <div id="solution-1" class="solution" style="display: none;">
-         <p><strong>Solution:</strong></p>
-         <p>Let u = 5x, then du = 5 dx, so dx = du/5</p>
-         <p>\( \int \sin(5x) \, dx = \int \sin u \cdot \frac{du}{5} = \frac{1}{5} \int \sin u \, du = \frac{1}{5} (-\cos u) + C = -\frac{1}{5} \cos(5x) + C \)</p>
-        </div>
-       </div>
-
-       <div class="problem-item">
-        <p><strong>2.</strong> Find \( \int \cos(2x) \, dx \)</p>
-        <button class="solution-btn" onclick="toggleSolution(2)">Show Solution</button>
-        <div id="solution-2" class="solution" style="display: none;">
-         <p><strong>Solution:</strong></p>
-         <p>Let u = 2x, then du = 2 dx, so dx = du/2</p>
-         <p>\( \int \cos(2x) \, dx = \int \cos u \cdot \frac{du}{2} = \frac{1}{2} \int \cos u \, du = \frac{1}{2} \sin u + C = \frac{1}{2} \sin(2x) + C \)</p>
-        </div>
-       </div>
-
-       <div class="problem-item">
-        <p><strong>3.</strong> Find \( \int \sec^2(3x) \, dx \)</p>
-        <button class="solution-btn" onclick="toggleSolution(3)">Show Solution</button>
-        <div id="solution-3" class="solution" style="display: none;">
-         <p><strong>Solution:</strong></p>
-         <p>Let u = 3x, then du = 3 dx, so dx = du/3</p>
-         <p>\( \int \sec^2(3x) \, dx = \int \sec^2 u \cdot \frac{du}{3} = \frac{1}{3} \int \sec^2 u \, du = \frac{1}{3} \tan u + C = \frac{1}{3} \tan(3x) + C \)</p>
-        </div>
-       </div>
-
-       <div class="problem-item">
-        <p><strong>4.</strong> Find \( \int \tan x \, dx \)</p>
-        <button class="solution-btn" onclick="toggleSolution(4)">Show Solution</button>
-        <div id="solution-4" class="solution" style="display: none;">
-         <p><strong>Solution:</strong></p>
-         <p>Rewrite: \( \tan x = \frac{\sin x}{\cos x} \)</p>
-         <p>Let u = cos x, then du = -sin x dx, so -du = sin x dx</p>
-         <p>\( \int \frac{\sin x}{\cos x} \, dx = \int \frac{-du}{u} = -\ln|u| + C = -\ln|\cos x| + C = \ln|\sec x| + C \)</p>
-        </div>
-       </div>
-
-       <div class="problem-item">
-        <p><strong>5.</strong> Find \( \int \csc^2 x \, dx \)</p>
-        <button class="solution-btn" onclick="toggleSolution(5)">Show Solution</button>
-        <div id="solution-5" class="solution" style="display: none;">
-         <p><strong>Solution:</strong></p>
-         <p>Direct integration: \( \int \csc^2 x \, dx = -\cot x + C \)</p>
-         <p>Check: \( \frac{d}{dx}[-\cot x] = -\left(-\csc^2 x\right) = \csc^2 x \)</p>
-        </div>
-       </div>
-
-       <div class="problem-item">
-        <p><strong>6.</strong> Find \( \int \cot(4x) \, dx \)</p>
-        <button class="solution-btn" onclick="toggleSolution(6)">Show Solution</button>
-        <div id="solution-6" class="solution" style="display: none;">
-         <p><strong>Solution:</strong></p>
-         <p>Rewrite: \( \cot(4x) = \frac{\cos(4x)}{\sin(4x)} \)</p>
-         <p>Let u = sin(4x), then du = 4 cos(4x) dx, so cos(4x) dx = du/4</p>
-         <p>\( \int \frac{\cos(4x)}{\sin(4x)} \, dx = \int \frac{du/4}{u} = \frac{1}{4} \int \frac{du}{u} = \frac{1}{4} \ln|u| + C = \frac{1}{4} \ln|\sin(4x)| + C \)</p>
-        </div>
-       </div>
-      </div>
-     </div>
-
-     <div class="section">
-      <h2>Key Takeaways</h2>
-      <div class="key-takeaways">
-       <ul>
-        <li>\( \int \sin x \, dx = -\cos x + C \), \( \int \cos x \, dx = \sin x + C \)</li>
-        <li>\( \int \sec^2 x \, dx = \tan x + C \), \( \int \csc^2 x \, dx = -\cot x + C \)</li>
-        <li>Use substitution for functions like sin(kx), cos(kx), sec²(kx)</li>
-        <li>Complex trigonometric integrals often require identities and algebraic manipulation</li>
-        <li>Always verify your answers by differentiation</li>
-        <li>Watch for domain restrictions with logarithmic results</li>
-       </ul>
-      </div>
-     </div>
-   </div>
+  <!-- PROOF: check the last two by differentiating -->
+  <div class="note-proof">
+    <ol>
+      <li>$(\tan x)' = \left(\dfrac{\sin x}{\cos x}\right)' = \dfrac{\cos^2 x + \sin^2 x}{\cos^2 x} = \dfrac{1}{\cos^2 x}$.</li>
+      <li>$\left(-\dfrac{1}{\tan x}\right)' = -\left(\dfrac{\cos x}{\sin x}\right)' = -\dfrac{-\sin^2 x - \cos^2 x}{\sin^2 x} = \dfrac{1}{\sin^2 x}$.</li>
+      <li>For $\cos 2x$: $\left(\dfrac{\sin 2x}{2}\right)' = \cos 2x$. In general $\displaystyle\int \cos kx\,dx = \frac{\sin kx}{k} + C$.</li>
+    </ol>
   </div>
-  <script>
-   window.addEventListener('load', function() {
-      const canvas = document.getElementById('trigCanvas');
-      const ctx = canvas.getContext('2d');
-      const w = canvas.width;
-      const h = canvas.height;
-      const padding = 60;
-      const graphW = w - 2 * padding;
-      const graphH = h - 2 * padding;
-      const xMin = -Math.PI;
-      const xMax = Math.PI;
-      const yMin = -2;
-      const yMax = 2;
 
-      // Clear canvas with white background
-      ctx.fillStyle = 'white';
-      ctx.fillRect(0, 0, w, h);
+  <!-- DEMO: lowering the power; code at the bottom -->
+  <div class="note-demo">
+    <h2>A square of a trig function is a wave around a constant</h2>
+    <div class="controls">
+      <label>integrand <select id="itF">
+        <option value="0">sin²x</option>
+        <option value="1">cos²x</option>
+        <option value="2">sin x cos x</option>
+      </select></label>
+    </div>
+    <canvas id="itCanvas"></canvas>
+    <div class="output table-text" id="itOutput"></div>
+  </div>
 
-      function toCanvasX(x) {
-         return padding + ((x - xMin) / (xMax - xMin)) * graphW;
-      }
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find $\displaystyle\int (3\sin x - 2\cos x)\,dx$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$3(-\cos x) - 2\sin x + C$</li>
+      </ol>
+      <p class="answer">$-3\cos x - 2\sin x + C$</p>
+    </details>
+  </div>
 
-      function toCanvasY(y) {
-         return h - padding - ((y - yMin) / (yMax - yMin)) * graphH;
-      }
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find $\displaystyle\int \tan^2 x\,dx$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\tan^2 x = \dfrac{\sin^2 x}{\cos^2 x} = \dfrac{1 - \cos^2 x}{\cos^2 x} = \dfrac{1}{\cos^2 x} - 1$.</li>
+        <li>Integrate each term.</li>
+      </ol>
+      <p class="answer">$\tan x - x + C$</p>
+    </details>
+  </div>
 
-      // Draw background grid
-      ctx.save();
-      ctx.strokeStyle = '#f0f0f0';
-      ctx.lineWidth = 0.5;
-      
-      // Vertical grid lines
-      for (let x = xMin; x <= xMax; x += Math.PI/4) {
-         ctx.beginPath();
-         ctx.moveTo(toCanvasX(x), padding);
-         ctx.lineTo(toCanvasX(x), h - padding);
-         ctx.stroke();
-      }
-      
-      // Horizontal grid lines
-      for (let y = yMin; y <= yMax; y += 0.5) {
-         ctx.beginPath();
-         ctx.moveTo(padding, toCanvasY(y));
-         ctx.lineTo(w - padding, toCanvasY(y));
-         ctx.stroke();
-      }
-      ctx.restore();
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Find $\displaystyle\int \cos^2 x\,dx$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\cos^2 x = \dfrac{1 + \cos 2x}{2}$</li>
+        <li>$\dfrac{x}{2} + \dfrac{1}{2} \cdot \dfrac{\sin 2x}{2} + C$</li>
+      </ol>
+      <p class="answer">$\dfrac{x}{2} + \dfrac{\sin 2x}{4} + C$</p>
+    </details>
+  </div>
 
-      // Draw axes
-      ctx.save();
-      ctx.strokeStyle = '#333';
-      ctx.lineWidth = 2;
-      // x-axis
-      ctx.beginPath();
-      ctx.moveTo(toCanvasX(xMin), toCanvasY(0));
-      ctx.lineTo(toCanvasX(xMax), toCanvasY(0));
-      ctx.stroke();
-      // y-axis
-      ctx.beginPath();
-      ctx.moveTo(toCanvasX(0), toCanvasY(yMin));
-      ctx.lineTo(toCanvasX(0), toCanvasY(yMax));
-      ctx.stroke();
-      ctx.restore();
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Find $\displaystyle\int \sin 3x \cos x\,dx$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Product to sum: $\sin 3x\cos x = \dfrac{1}{2}(\sin 4x + \sin 2x)$.</li>
+        <li>$\dfrac{1}{2}\left(-\dfrac{\cos 4x}{4} - \dfrac{\cos 2x}{2}\right) + C$</li>
+      </ol>
+      <p class="answer">$-\dfrac{\cos 4x}{8} - \dfrac{\cos 2x}{4} + C$</p>
+    </details>
+  </div>
 
-      // Plot sin(x) (blue)
-      ctx.save();
-      ctx.strokeStyle = '#2196f3';
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      for (let x = xMin; x <= xMax; x += 0.02) {
-         const y = Math.sin(x);
-         if (y >= yMin && y <= yMax) {
-            if (x === xMin) ctx.moveTo(toCanvasX(x), toCanvasY(y));
-            else ctx.lineTo(toCanvasX(x), toCanvasY(y));
-         }
-      }
-      ctx.stroke();
-      ctx.restore();
+  <!-- WARNING: signs and the inner factor -->
+  <div class="note-warning">
+    Watch the signs: $\displaystyle\int \sin x\,dx = -\cos x + C$, not $\cos x$.
+    For $\sin kx$ and $\cos kx$, divide by $k$: $\displaystyle\int \sin 2x\,dx = -\dfrac{\cos 2x}{2} + C$.
+  </div>
 
-      // Plot antiderivative -cos(x) (red, dashed)
-      ctx.save();
-      ctx.strokeStyle = '#f44336';
-      ctx.lineWidth = 2;
-      ctx.setLineDash([8, 4]);
-      ctx.beginPath();
-      for (let x = xMin; x <= xMax; x += 0.02) {
-         const y = -Math.cos(x);
-         if (y >= yMin && y <= yMax) {
-            if (x === xMin) ctx.moveTo(toCanvasX(x), toCanvasY(y));
-            else ctx.lineTo(toCanvasX(x), toCanvasY(y));
-         }
-      }
-      ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.restore();
+  <!-- TIP: check -->
+  <div class="note-tip">
+    Not sure of a sign? Differentiate your answer. For example, $(-\cos x)' = \sin x$ confirms the first formula.
+  </div>
 
-      // Plot cos(x) (green)
-      ctx.save();
-      ctx.strokeStyle = '#4caf50';
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      for (let x = xMin; x <= xMax; x += 0.02) {
-         const y = Math.cos(x);
-         if (y >= yMin && y <= yMax) {
-            if (x === xMin) ctx.moveTo(toCanvasX(x), toCanvasY(y));
-            else ctx.lineTo(toCanvasX(x), toCanvasY(y));
-         }
-      }
-      ctx.stroke();
-      ctx.restore();
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$\int \sin x = -\cos x$, $\;\int \cos x = \sin x$, $\;\int \dfrac{1}{\cos^2 x} = \tan x$ (each $+ C$).</li>
+      <li>Squares: lower the power with the double-angle formulas.</li>
+      <li>Products: use the product-to-sum formulas.</li>
+    </ul>
+  </div>
 
-      // Plot antiderivative sin(x) (orange, dashed)
-      ctx.save();
-      ctx.strokeStyle = '#ff9800';
-      ctx.lineWidth = 2;
-      ctx.setLineDash([8, 4]);
-      ctx.beginPath();
-      for (let x = xMin; x <= xMax; x += 0.02) {
-         const y = Math.sin(x);
-         if (y >= yMin && y <= yMax) {
-            if (x === xMin) ctx.moveTo(toCanvasX(x), toCanvasY(y));
-            else ctx.lineTo(toCanvasX(x), toCanvasY(y));
-         }
-      }
-      ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.restore();
+</article>
 
-      // Labels and legends
-      ctx.save();
-      ctx.font = 'bold 16px Arial';
-      
-      // Function labels
-      ctx.fillStyle = '#2196f3';
-      ctx.fillText('sin(x) function', padding + 20, padding - 20);
-      ctx.fillStyle = '#f44336';
-      ctx.fillText('-cos(x) antiderivative', padding + 20, padding);
-      ctx.fillStyle = '#4caf50';
-      ctx.fillText('cos(x) function', padding + 20, padding + 25);
-      ctx.fillStyle = '#ff9800';
-      ctx.fillText('sin(x) antiderivative', padding + 20, padding + 50);
-      
-      // Integration explanation
-      ctx.font = '14px Arial';
-      ctx.fillStyle = '#333';
-      ctx.fillText('TRIGONOMETRIC INTEGRALS:', w/2 + 30, h - 80);
-      ctx.fillText('∫sin(x) dx = -cos(x) + C', w/2 + 30, h - 60);
-      ctx.fillText('∫cos(x) dx = sin(x) + C', w/2 + 30, h - 40);
-      ctx.fillText('Integration reverses differentiation', w/2 + 30, h - 20);
-      
-      ctx.restore();
+<script src="/static/js/note_geom.js"></script>
+<script src="/static/js/note_plot.js"></script>
+<script>
+  // "Lowering the power" demo (the TRY IT block above).
+  // Blue: the integrand. Grey dashed: the constant it waves around.
+  // Orange: its antiderivative (with C = 0), which climbs at the rate of that constant.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const fBox = document.getElementById('itF');
+    const output = document.getElementById('itOutput');
 
-      // Legend
-      ctx.save();
-      ctx.font = '14px Arial';
-      ctx.fillStyle = '#2196f3';
-      ctx.fillText('— sin(x)', padding, h - 50);
-      ctx.fillStyle = '#f44336';
-      ctx.fillText('--- ∫sin(x) dx', padding, h - 30);
-      ctx.fillStyle = '#4caf50';
-      ctx.fillText('— cos(x)', padding, h - 10);
-      ctx.fillStyle = '#ff9800';
-      ctx.fillText('--- ∫cos(x) dx', padding + 200, h - 50);
-      ctx.restore();
+    // each integrand: the function, its centre line, its antiderivative and the text
+    const FUNCS = [
+      { f: (x) => Math.sin(x) ** 2, mid: 0.5, F: (x) => x / 2 - Math.sin(2 * x) / 4,
+        text: 'sin²x = 1/2 − (cos 2x)/2\n∫ sin²x dx = x/2 − (sin 2x)/4 + C' },
+      { f: (x) => Math.cos(x) ** 2, mid: 0.5, F: (x) => x / 2 + Math.sin(2 * x) / 4,
+        text: 'cos²x = 1/2 + (cos 2x)/2\n∫ cos²x dx = x/2 + (sin 2x)/4 + C' },
+      { f: (x) => Math.sin(x) * Math.cos(x), mid: 0, F: (x) => -Math.cos(2 * x) / 4,
+        text: 'sin x cos x = (sin 2x)/2\n∫ sin x cos x dx = −(cos 2x)/4 + C' },
+    ];
 
-      // Axis labels
-      ctx.save();
-      ctx.font = '12px Arial';
-      ctx.fillStyle = '#666';
-      ctx.fillText('-π', toCanvasX(-Math.PI) + 5, h - padding + 20);
-      ctx.fillText('-π/2', toCanvasX(-Math.PI/2) - 15, h - padding + 20);
-      ctx.fillText('0', toCanvasX(0) - 3, h - padding + 20);
-      ctx.fillText('π/2', toCanvasX(Math.PI/2) - 10, h - padding + 20);
-      ctx.fillText('π', toCanvasX(Math.PI) - 3, h - padding + 20);
-      ctx.restore();
-   });
-
-   // Function to toggle solution visibility
-   function toggleSolution(problemNumber) {
-      const solution = document.getElementById('solution-' + problemNumber);
-      const button = solution.previousElementSibling;
-      
-      if (solution.style.display === 'none') {
-         solution.style.display = 'block';
-         button.textContent = 'Hide Solution';
-      } else {
-         solution.style.display = 'none';
-         button.textContent = 'Show Solution';
-      }
-   }
-
-   // Make toggleSolution function globally available
-   window.toggleSolution = toggleSolution;
-  </script>
- </body>
-</html>
+    const plot = NotePlot.graph(document.getElementById('itCanvas'), {
+      x: [-0.5, 7], y: [-1.2, 3.6], xPi: true,
+      draw(g) {
+        const F = FUNCS[+fBox.value];
+        g.hline(F.mid, '#94a3b8');
+        g.fn(F.f, '#2563eb');
+        g.fn(F.F, '#ea580c');
+        output.textContent = F.text + `\nthe wave averages ${F.mid}, so F rises by about ${F.mid} per unit of x`;
+      },
+    });
+    fBox.addEventListener('change', plot.redraw);
+  })();
+</script>

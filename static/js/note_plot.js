@@ -27,6 +27,7 @@
      g.hline(y, color, opts)         horizontal line y = const
      g.band(x1, x2, color)           highlight the x-axis from x1 to x2 (an interval on the number line)
      g.fill(f, x1, x2, color)        shade between y = f(x) and the x-axis for x1 ≤ x ≤ x2
+     g.poly([p, q, r, …], color)     filled polygon through the points (e.g. a region between curves)
      g.circle(c, r, color, opts)     circle with centre c, radius r  opts: { width, dash }
      g.line(a, b, c, color, opts)    the whole line ax + by + c = 0 (vertical lines too)
      g.region(test, color)           shade every point where test(x, y) is true
@@ -120,6 +121,7 @@
           pts.push(toPx([b, 0]));
           pg.poly(pts, color);
         },
+        poly: (pts, color = 'rgba(37, 99, 235, 0.15)') => pg.poly(pts.map(toPx), color),
         circle(c, r, color = '#2563eb', opts = {}) {
           let prev = toPx([c[0] + r, c[1]]);
           for (let i = 1; i <= 120; i++) {
