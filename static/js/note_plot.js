@@ -8,6 +8,7 @@
    Main function:
      NotePlot.graph(canvas, {
        x: [-5, 5], y: [-4, 6],                   // visible ranges (maths units)
+       xPi: true,                                // optional: x ticks at multiples of π/2, labelled π/2, π, …
        points: { P: [1, 2] },                    // optional draggable points (maths units)
        constrain: { P: ([x, y]) => [x, x * x] }, // optional: move a dragged point, e.g. onto a curve
        draw: function (g, P) { ... },            // draws the figure; P.P is [x, y] in maths units
@@ -70,7 +71,7 @@
     });
 
     function drawAxes(pg) {
-      const sx = tickStep(x1 - x0), sy = tickStep(y1 - y0);
+      const sx = options.xPi ? Math.PI / 2 : tickStep(x1 - x0), sy = tickStep(y1 - y0);
       for (let x = Math.ceil(x0 / sx) * sx; x <= x1; x += sx) pg.seg(toPx([x, y0]), toPx([x, y1]), '#f1f5f9', { width: 1 });
       for (let y = Math.ceil(y0 / sy) * sy; y <= y1; y += sy) pg.seg(toPx([x0, y]), toPx([x1, y]), '#f1f5f9', { width: 1 });
       const ax = Math.min(Math.max(0, y0), y1), ay = Math.min(Math.max(0, x0), x1); // where the axes sit
@@ -79,7 +80,7 @@
       for (let x = Math.ceil(x0 / sx) * sx; x <= x1; x += sx) {
         if (Math.abs(x) < sx / 2) continue;
         const p = toPx([x, ax]);
-        pg.text([p[0], p[1] + 12], String(+x.toFixed(6)), '#94a3b8');
+        pg.text([p[0], p[1] + 12], options.xPi ? piLabel(x) : String(+x.toFixed(6)), '#94a3b8');
       }
       for (let y = Math.ceil(y0 / sy) * sy; y <= y1; y += sy) {
         if (Math.abs(y) < sy / 2) continue;
@@ -154,6 +155,13 @@
         board.redraw();
       },
     };
+  }
+
+  // x as a multiple of π/2 in words: π/2, π, 3π/2, −π, …
+  function piLabel(x) {
+    const k = Math.round(x / (Math.PI / 2)), sign = k < 0 ? '−' : '', a = Math.abs(k);
+    if (a % 2 === 0) return `${sign}${a === 2 ? '' : a / 2}π`;
+    return `${sign}${a === 1 ? '' : a}π/2`;
   }
 
   // Polynomial as readable text: poly([1, -2, 0, 3]) -> "x³ − 2x² + 3"
