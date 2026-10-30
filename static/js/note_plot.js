@@ -9,6 +9,7 @@
      NotePlot.graph(canvas, {
        x: [-5, 5], y: [-4, 6],                   // visible ranges (maths units)
        xPi: true,                                // optional: x ticks at multiples of π/2, labelled π/2, π, …
+       plain: true,                              // optional: no axes or grid (e.g. for 3D pictures drawn by hand)
        points: { P: [1, 2] },                    // optional draggable points (maths units)
        constrain: { P: ([x, y]) => [x, x * x] }, // optional: move a dragged point, e.g. onto a curve
        draw: function (g, P) { ... },            // draws the figure; P.P is [x, y] in maths units
@@ -66,7 +67,7 @@
         mathPoints = {};
         // round away pixel → maths float noise (2.9999999999999996 → 3)
         Object.entries(P).forEach(([k, v]) => (mathPoints[k] = toMath(v).map((c) => +c.toFixed(9))));
-        drawAxes(pg);
+        if (!options.plain) drawAxes(pg);
         options.draw(mathPainter(pg), mathPoints);
       },
     });
