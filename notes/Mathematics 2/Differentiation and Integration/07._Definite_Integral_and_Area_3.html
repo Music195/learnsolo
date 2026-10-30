@@ -1,841 +1,141 @@
-<!DOCTYPE html>
 <!-- tags: Integration -->
-<html lang="en">
- <head>
-  <meta charset="utf-8"/>
-  <title>
-   Definite Integral and Area (Case 3)
-  </title>
-  <script>
-   MathJax = {
-            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
-            svg: {fontCache: 'global'}
-        };
-  </script>
-  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
-  </script>
-  <link href="/static/notes_style.css" rel="stylesheet"/>
-  <style>
+<!-- =====================================================================
+     NOTE: Definite Integral and Area (3): between two curves (2曲線間の面積)
+     Uses the shared blocks from static/css/note_blocks.css and the
+     graph helper static/js/note_plot.js (built on note_geom.js).
+     Do not add a <style> block here; change note_blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
 
-   .description {
-    font-size: 1.2em;
-    line-height: 1.6;
-    margin: 20px 0;
-    color: #34495e;
-    text-align: center;
-   }
+  <h1 class="note-title" data-topic="Integration">Definite Integral and Area 3</h1>
 
-   .content-wrapper {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 30px;
-    margin: 30px 0;
-   }
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>(upper) − (lower), then integrate</h2>
+    <p>The area between two graphs is the height of the gap, $f(x) - g(x)$ with $f$ on top, added up from $x = a$ to $x = b$.
+      This works wherever the curves are, above or below the $x$-axis.</p>
+  </section>
 
-   .formula-item {
-    margin: 15px 0;
-    padding: 10px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-   }
-
-   .diagram-block {
-    flex: 1;
-    min-width: 300px;
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-   }
-
-   .demo-title {
-    text-align: center;
-    font-size: 1.8em;
-    margin-bottom: 25px;
-    font-weight: bold;
-   }
-
-   .input-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    margin: 20px 0;
-    justify-content: center;
-   }
-
-   .input-field {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-   }
-
-   .input-field label {
-    font-weight: bold;
-    font-size: 1.1em;
-   }
-
-   .input-field input {
-    padding: 10px;
-    border: 2px solid #ddd;
-    border-radius: 8px;
-    font-size: 1em;
-    width: 100px;
-    text-align: center;
-    transition: border-color 0.3s;
-   }
-
-   .input-field input:focus {
-    outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
-   }
-
-   .button-group {
-    text-align: center;
-    margin: 25px 0;
-   }
-
-   .btn {
-    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-    color: white;
-    border: none;
-    padding: 12px 25px;
-    border-radius: 8px;
-    font-size: 1.1em;
-    cursor: pointer;
-    margin: 0 10px;
-    transition: all 0.3s;
-    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
-   }
-
-   .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
-   }
-
-   .btn:active {
-    transform: translateY(0);
-   }
-
-   .result-display {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 20px;
-    border-radius: 10px;
-    margin: 20px 0;
-    backdrop-filter: blur(10px);
-   }
-
-   .result-text {
-    font-size: 1.2em;
-    text-align: center;
-    margin: 10px 0;
-   }
-
-   .canvas-container {
-    text-align: center;
-    margin: 20px 0;
-   }
-
-   .area-canvas {
-    border: 2px solid #ddd;
-    border-radius: 10px;
-    background: white;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-   }
-
-   .section {
-    background: white;
-    padding: 25px;
-    border-radius: 12px;
-    margin: 25px 0;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-   }
-
-   .section-title {
-    font-size: 1.8em;
-    font-weight: bold;
-    color: #2c3e50;
-    margin-bottom: 20px;
-    text-align: center;
-   }
-
-   .case-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    margin: 20px 0;
-   }
-
-   .case-card {
-    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    box-shadow: 0 4px 15px rgba(252, 182, 159, 0.3);
-   }
-
-   .case-card h3 {
-    margin: 0 0 15px 0;
-    color: #333;
-    font-size: 1.3em;
-   }
-
-   .case-card .formula {
-    font-weight: bold;
-    color: #e74c3c;
-    font-size: 1.2em;
-    margin: 10px 0;
-   }
-
-   .case-card .description {
-    color: #555;
-    line-height: 1.5;
-   }
-
-   .example-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-    margin: 20px 0;
-   }
-
-   .example-card {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    color: white;
-    padding: 20px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.3s;
-    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
-   }
-
-   .example-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(245, 87, 108, 0.4);
-   }
-
-   .example-card h4 {
-    margin: 0 0 10px 0;
-    font-size: 1.2em;
-   }
-
-   .example-detail {
-    background: rgba(255, 255, 255, 0.95);
-    color: #333;
-    padding: 20px;
-    border-radius: 10px;
-    margin: 15px 0;
-    display: none;
-   }
-
-   .calculation-steps {
-    margin: 15px 0;
-   }
-
-   .calculation-step {
-    margin: 8px 0;
-    padding: 8px;
-    background: rgba(255, 255, 255, 0.8);
-    border-radius: 5px;
-    border-left: 4px solid #f5576c;
-   }
-
-   .practice-problems {
-    margin: 20px 0;
-   }
-
-   .problem-item {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 20px;
-    border-radius: 10px;
-    margin: 15px 0;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-   }
-
-   .problem-item h4 {
-    margin: 0 0 15px 0;
-    font-size: 1.2em;
-   }
-
-   .solution-btn {
-    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-    color: #333;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    margin: 10px 0;
-    transition: all 0.3s;
-   }
-
-   .solution-btn:hover {
-    background: linear-gradient(135deg, #fcb69f 0%, #ffecd2 100%);
-    transform: scale(1.05);
-   }
-
-   .takeaway-list {
-    list-style: none;
-    padding: 0;
-   }
-
-   .takeaway-item {
-    background: rgba(255, 255, 255, 0.8);
-    margin: 10px 0;
-    padding: 15px;
-    border-radius: 8px;
-    border-left: 4px solid #667eea;
-    font-weight: bold;
-   }
-
-   .error-message {
-    background: #ffebee;
-    color: #c62828;
-    padding: 10px;
-    border-radius: 5px;
-    margin: 10px 0;
-    display: none;
-    text-align: center;
-    font-weight: bold;
-   }
-
-   @media (max-width: 768px) {
-    .content-wrapper {
-     flex-direction: column;
-    }
-
-    .input-group {
-     flex-direction: column;
-     align-items: center;
-    }
-   }
-  </style>
- </head>
- <body>
-  <div class="fancy-title" data-topic="Integration">
-   Definite Integral and Area (Case 3)
+  <!-- FORMULA: between curves -->
+  <div class="note-formula">
+    <h3>$f(x) \ge g(x)$ on $a \le x \le b$</h3>
+    <div class="formula-main">$$S = \int_a^b \{f(x) - g(x)\}\,dx$$</div>
+    <p class="symbols">If the curves cross inside the interval, split there and swap which one is on top.</p>
   </div>
 
-  <div class="container">
-   <div class="main-content">
-    <div class="description">
-     When finding the area between two curves, the definite integral represents the difference between the upper and lower functions. This case handles regions bounded by two curves rather than a single curve and the x-axis.
-    </div>
-
-    <div class="content-wrapper">
-     <div class="formula-block">
-      <div class="formula-item">
-       <strong>Definite Integral:</strong> $$\int_a^b [f(x) - g(x)]\,dx = F(b) - F(a) - (G(b) - G(a))$$
-      </div>
-      <div class="formula-item">
-       <strong>Area (Case 3):</strong> $$S = \int_a^b \color{#f57c00}{(f(x) - g(x))}\,dx$$
-      </div>
-      <div class="formula-item">
-       <strong>Condition:</strong> $$f(x) \geq g(x) \quad \forall x \in [a,b]$$
-      </div>
-     </div>
-
-     <div class="diagram-block">
-      <svg viewbox="0 0 250 200" xmlns="http://www.w3.org/2000/svg">
-       <!-- Area visualization for Case 3 -->
-       <text fill="#333" font-size="14" x="125" y="20" text-anchor="middle">Area Between Two Curves: S = ∫ (f(x) - g(x)) dx</text>
-       <!-- x-axis -->
-       <line stroke="#666" stroke-width="2" x1="20" x2="230" y1="150" y2="150"></line>
-       <!-- Upper curve f(x) -->
-       <path d="M40 150 Q80 120 120 100 Q160 120 200 150" fill="none" stroke="#e74c3c" stroke-width="3"></path>
-       <!-- Lower curve g(x) -->
-       <path d="M40 150 Q80 160 120 170 Q160 160 200 150" fill="none" stroke="#27ae60" stroke-width="3"></path>
-       <!-- Area fill between curves -->
-       <path d="M40 150 Q80 120 120 100 Q160 120 200 150 L200 150 Q160 160 120 170 Q80 160 40 150 Z" fill="rgba(52, 152, 219, 0.3)" stroke="#3498db" stroke-width="2"></path>
-       <!-- Vertical lines -->
-       <line stroke="#888" stroke-dasharray="5,5" stroke-width="1" x1="40" x2="40" y1="100" y2="180"></line>
-       <line stroke="#888" stroke-dasharray="5,5" stroke-width="1" x1="200" x2="200" y1="100" y2="180"></line>
-       <text fill="#333" font-size="12" x="35" y="165">a</text>
-       <text fill="#333" font-size="12" x="195" y="165">b</text>
-       <text fill="#e74c3c" font-size="12" x="120" y="85">y = f(x)</text>
-       <text fill="#27ae60" font-size="12" x="120" y="185">y = g(x)</text>
-       <!-- Area label -->
-       <text fill="#3498db" font-size="14" font-weight="bold" x="120" y="135">S</text>
-      </svg>
-     </div>
-    </div>
-
-    <div class="case-grid">
-     <div class="case-card">
-      <h3>Case 1: f(x) ≥ 0</h3>
-      <div class="formula">S = ∫ f(x) dx</div>
-      <div class="description">
-       Area between curve and x-axis when function is above the x-axis.
-      </div>
-     </div>
-
-     <div class="case-card">
-      <h3>Case 2: f(x) ≤ 0</h3>
-      <div class="formula">S = ∫ -f(x) dx</div>
-      <div class="description">
-       Area between curve and x-axis when function is below the x-axis.
-      </div>
-     </div>
-
-     <div class="case-card">
-      <h3>Case 3: Two Curves</h3>
-      <div class="formula">S = ∫ (f(x) - g(x)) dx</div>
-      <div class="description">
-       Area between two curves f(x) and g(x), where f(x) is the upper curve.
-      </div>
-     </div>
-    </div>
-
-    <div class="interactive-demo">
-     <div class="demo-title">Interactive Area Between Curves Calculator</div>
-
-     <div class="input-group">
-      <div class="input-field">
-       <label for="upperFunc">Upper Function f(x):</label>
-       <select id="upperFunc">
-        <option value="quadratic">x²</option>
-        <option value="linear">2x + 1</option>
-        <option value="sine">sin(x) + 2</option>
-       </select>
-      </div>
-      <div class="input-field">
-       <label for="lowerFunc">Lower Function g(x):</label>
-       <select id="lowerFunc">
-        <option value="constant">1</option>
-        <option value="linear">x</option>
-        <option value="sine">sin(x) + 1</option>
-       </select>
-      </div>
-      <div class="input-field">
-       <label for="lowerLimit">Lower Limit (a):</label>
-       <input id="lowerLimit" step="0.1" type="number" value="0"/>
-      </div>
-      <div class="input-field">
-       <label for="upperLimit">Upper Limit (b):</label>
-       <input id="upperLimit" step="0.1" type="number" value="2"/>
-      </div>
-     </div>
-
-     <div class="button-group">
-      <button class="btn" onclick="calculateAreaBetweenCurves()">Calculate Area</button>
-      <button class="btn" onclick="resetDemo()">Reset</button>
-     </div>
-
-     <div class="error-message" id="errorMessage"></div>
-
-     <div class="result-display">
-      <div class="result-text" id="functionDisplay">
-       Functions: <strong id="functionText">f(x) = x², g(x) = 1</strong>
-      </div>
-      <div class="result-text" id="integralDisplay">
-       Area: <strong id="areaText">S = ∫₀² (x² - 1) dx = 8/3</strong>
-      </div>
-     </div>
-
-     <div class="canvas-container">
-      <canvas class="area-canvas" height="400" id="areaCanvas" width="500"></canvas>
-     </div>
-    </div>
-
-    <div class="section">
-     <div class="section-title">Mathematical Foundation</div>
-     <p>The area between two curves f(x) and g(x) from x = a to x = b, where f(x) ≥ g(x), is given by:</p>
-     <div class="formula-block" style="margin: 20px 0;">
-      $$S = \int_a^b [f(x) - g(x)]\,dx = [F(x) - G(x)]_a^b = [F(b) - G(b)] - [F(a) - G(a)]$$
-     </div>
-     <p>This represents the accumulation of the vertical differences between the curves:</p>
-     <ul>
-      <li>At each x, the height of the area element is f(x) - g(x)</li>
-      <li>The definite integral sums these infinitesimal areas</li>
-      <li>The result is always non-negative when f(x) ≥ g(x)</li>
-     </ul>
-     <p>If the curves intersect, the integral must be split at intersection points:</p>
-     <div class="formula-block" style="margin: 20px 0;">
-      $$S = \int_a^c [f(x) - g(x)]\,dx + \int_c^b [g(x) - f(x)]\,dx$$
-     </div>
-    </div>
-
-    <div class="section">
-     <div class="section-title">Worked Examples</div>
-     <div class="example-grid">
-      <div class="example-card" onclick="showExample(1)">
-       <h4>Example 1: Parabola and Line</h4>
-       <p>Find area between y = x² and y = x from x=0 to x=1</p>
-      </div>
-      <div class="example-card" onclick="showExample(2)">
-       <h4>Example 2: Two Trigonometric Functions</h4>
-       <p>Find area between y = sin(x) + 1 and y = cos(x) + 1 from x=0 to x=π/2</p>
-      </div>
-      <div class="example-card" onclick="showExample(3)">
-       <h4>Example 3: Exponential Functions</h4>
-       <p>Find area between y = e^x and y = e^(x/2) from x=0 to x=2</p>
-      </div>
-     </div>
-
-     <div class="example-detail" id="exampleDetail"></div>
-    </div>
-
-    <div class="section">
-     <div class="section-title">Applications</div>
-     <ul>
-      <li><strong>Physics:</strong> Work done between force curves, fluid flow between boundaries</li>
-      <li><strong>Economics:</strong> Consumer/producer surplus, profit between cost curves</li>
-      <li><strong>Engineering:</strong> Cross-sectional areas, material between surfaces</li>
-      <li><strong>Biology:</strong> Population differences, concentration gradients</li>
-      <li><strong>Statistics:</strong> Areas between probability distributions</li>
-     </ul>
-    </div>
-
-    <div class="section">
-     <div class="section-title">Practice Problems</div>
-     <div class="practice-problems">
-      <div class="problem-item">
-       <h4>Problem 1</h4>
-       <p>Find the area bounded by the curves y = x² + 1 and y = 2x + 1 from x = 0 to x = 2.</p>
-       <button class="solution-btn" onclick="toggleSolution(1)">Show Solution</button>
-       <div class="solution" id="solution1">
-        <p><strong>Solution:</strong></p>
-        <p>Area S = ∫₀² [(x² + 1) - (2x + 1)] dx = ∫₀² (x² - 2x) dx</p>
-        <p>= [x³/3 - x²]₀² = (8/3 - 4) - 0 = 8/3 - 12/3 = -4/3</p>
-        <p>Since the area is negative, the curves have switched positions. The actual area is 4/3.</p>
-       </div>
-      </div>
-
-      <div class="problem-item">
-       <h4>Problem 2</h4>
-       <p>Find the area between y = √x and y = x² from x = 0 to x = 1.</p>
-       <button class="solution-btn" onclick="toggleSolution(2)">Show Solution</button>
-       <div class="solution" id="solution2">
-        <p><strong>Solution:</strong></p>
-        <p>First find intersection: √x = x² ⇒ x² - √x = 0 ⇒ x(x - 1/√x) = 0</p>
-        <p>At x = 0: √0 = 0² ⇒ 0 = 0</p>
-        <p>At x = 1: √1 = 1² ⇒ 1 = 1</p>
-        <p>Check which is upper: at x = 0.5, √0.5 ≈ 0.707, (0.5)² = 0.25, so √x is upper.</p>
-        <p>S = ∫₀¹ (√x - x²) dx = [2x^(3/2)/3 - x³/3]₀¹ = (2/3 - 1/3) - 0 = 1/3</p>
-       </div>
-      </div>
-
-      <div class="problem-item">
-       <h4>Problem 3</h4>
-       <p>Find the area between y = e^x and y = 1 from x = 0 to x = 1.</p>
-       <button class="solution-btn" onclick="toggleSolution(3)">Show Solution</button>
-       <div class="solution" id="solution3">
-        <p><strong>Solution:</strong></p>
-        <p>Since e^x ≥ 1 for x ≥ 0, the area is: S = ∫₀¹ (e^x - 1) dx</p>
-        <p>= [e^x - x]₀¹ = (e - 1) - (1 - 0) = e - 1 - 1 = e - 2</p>
-        <p>Area = e - 2 ≈ 2.718 - 2 = 0.718</p>
-       </div>
-      </div>
-     </div>
-    </div>
-
-    <div class="key-takeaways">
-     <div class="section-title">Key Takeaways</div>
-     <ul class="takeaway-list">
-      <li class="takeaway-item">Area between curves: S = ∫ [f(x) - g(x)] dx where f(x) ≥ g(x)</li>
-      <li class="takeaway-item">Order matters: upper function minus lower function</li>
-      <li class="takeaway-item">Find intersection points to determine integration limits</li>
-      <li class="takeaway-item">Split integral if curves cross within the interval</li>
-      <li class="takeaway-item">Definite integral gives signed area; absolute value gives actual area</li>
-      <li class="takeaway-item">Fundamental Theorem: ∫ [F'(x) - G'(x)] dx = F(x) - G(x) + C</li>
-     </ul>
-    </div>
-   </div>
+  <div class="note-formula">
+    <h3>Parabola and line meeting at $x = \alpha, \beta$</h3>
+    <div class="formula-main">$$\int_\alpha^\beta (x - \alpha)(x - \beta)\,dx = -\frac{(\beta - \alpha)^3}{6}$$</div>
+    <p class="symbols">So the area between $y = ax^2 + \ldots$ and a line it meets at $\alpha, \beta$ is $\dfrac{|a|(\beta - \alpha)^3}{6}$.</p>
   </div>
 
-  <script>
-   function getFunction(funcType) {
-    switch(funcType) {
-     case 'quadratic':
-      return {
-       f: (x) => x * x,
-       antiderivative: (x) => x * x * x / 3,
-       name: 'x²'
-      };
-     case 'linear':
-      return {
-       f: (x) => 2 * x + 1,
-       antiderivative: (x) => x * x + x,
-       name: '2x + 1'
-      };
-     case 'sine':
-      return {
-       f: (x) => Math.sin(x) + 2,
-       antiderivative: (x) => -Math.cos(x) + 2 * x,
-       name: 'sin(x) + 2'
-      };
-     case 'constant':
-      return {
-       f: (x) => 1,
-       antiderivative: (x) => x,
-       name: '1'
-      };
-     case 'lower_linear':
-      return {
-       f: (x) => x,
-       antiderivative: (x) => x * x / 2,
-       name: 'x'
-      };
-     case 'lower_sine':
-      return {
-       f: (x) => Math.sin(x) + 1,
-       antiderivative: (x) => -Math.cos(x) + x,
-       name: 'sin(x) + 1'
-      };
-     default:
-      return {
-       f: (x) => x * x,
-       antiderivative: (x) => x * x * x / 3,
-       name: 'x²'
-      };
-    }
-   }
+  <!-- DEMO: move the line; code at the bottom -->
+  <div class="note-demo">
+    <h2>Area between $y = x^2$ and $y = mx + k$</h2>
+    <div class="controls">
+      <label>$m$ = <input type="range" id="a3M" min="-2" max="2" step="0.5" value="1"></label>
+      <label>$k$ = <input type="range" id="a3K" min="-1" max="4" step="0.5" value="2"></label>
+    </div>
+    <canvas id="a3Canvas"></canvas>
+    <div class="output table-text" id="a3Output"></div>
+  </div>
 
-   function calculateAreaBetweenCurves() {
-    try {
-     const upperType = document.getElementById('upperFunc').value;
-     const lowerType = document.getElementById('lowerFunc').value;
-     const a = parseFloat(document.getElementById('lowerLimit').value);
-     const b = parseFloat(document.getElementById('upperLimit').value);
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find the area enclosed by $y = x^2$ and $y = x + 2$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$x^2 = x + 2 \Rightarrow (x + 1)(x - 2) = 0$: $x = -1, 2$. The line is on top in between.</li>
+        <li>$S = \displaystyle\int_{-1}^{2} (x + 2 - x^2)\,dx = \Big[\dfrac{x^2}{2} + 2x - \dfrac{x^3}{3}\Big]_{-1}^{2} = \dfrac{10}{3} - \left(-\dfrac{7}{6}\right)$</li>
+      </ol>
+      <p class="answer">$\dfrac{9}{2}$ (or $\dfrac{3^3}{6}$)</p>
+    </details>
+  </div>
 
-     if (isNaN(a) || isNaN(b)) {
-      document.getElementById('errorMessage').textContent = 'Please enter valid numbers for limits.';
-      document.getElementById('errorMessage').style.display = 'block';
-      return;
-     }
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find the area between $y = x^2 + 1$ and $y = 2x + 1$ for $0 \le x \le 2$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>At $x = 1$: $2 &lt; 3$, so the line is on top. Gap: $(2x + 1) - (x^2 + 1) = 2x - x^2$.</li>
+        <li>$S = \Big[x^2 - \dfrac{x^3}{3}\Big]_0^2 = 4 - \dfrac{8}{3}$</li>
+      </ol>
+      <p class="answer">$\dfrac{4}{3}$</p>
+    </details>
+  </div>
 
-     if (a >= b) {
-      document.getElementById('errorMessage').textContent = 'Lower limit must be less than upper limit.';
-      document.getElementById('errorMessage').style.display = 'block';
-      return;
-     }
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Find the area enclosed by $y = x^2 - 4x + 3$ and $y = -x^2 + 2x + 3$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Equal when $2x^2 - 6x = 0$: $x = 0, 3$.</li>
+        <li>Gap: $(-x^2 + 2x + 3) - (x^2 - 4x + 3) = -2x^2 + 6x = -2x(x - 3)$.</li>
+        <li>$S = \dfrac{2 \cdot 3^3}{6}$</li>
+      </ol>
+      <p class="answer">$9$</p>
+    </details>
+  </div>
 
-     const upperFunc = getFunction(upperType);
-     const lowerFunc = getFunction(lowerType === 'constant' ? 'constant' : lowerType === 'linear' ? 'lower_linear' : 'lower_sine');
+  <!-- WARNING: upper minus lower -->
+  <div class="note-warning">
+    Subtract in the right order: <strong>upper − lower</strong>. If you get a negative "area", you subtracted the wrong way round.
+  </div>
 
-     const area = (upperFunc.antiderivative(b) - upperFunc.antiderivative(a)) - (lowerFunc.antiderivative(b) - lowerFunc.antiderivative(a));
+  <!-- TIP: check a point -->
+  <div class="note-tip">
+    To see which curve is on top, pick any $x$ between the meeting points and compare the two $y$ values.
+  </div>
 
-     document.getElementById('functionText').textContent = `f(x) = ${upperFunc.name}, g(x) = ${lowerFunc.name}`;
-     document.getElementById('areaText').textContent = `S = ∫_${a}^{${b}} (${upperFunc.name} - ${lowerFunc.name}) dx = ${area.toFixed(3)}`;
-     document.getElementById('errorMessage').style.display = 'none';
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Find the meeting points; they are the limits.</li>
+      <li>$S = \displaystyle\int_a^b (\text{upper} - \text{lower})\,dx$.</li>
+      <li>Parabola and line: $\dfrac{|a|(\beta - \alpha)^3}{6}$.</li>
+    </ul>
+  </div>
 
-     drawAreaBetweenCurves(upperFunc, lowerFunc, a, b);
-    } catch (error) {
-     document.getElementById('errorMessage').textContent = 'Error calculating area. Please check your input values.';
-     document.getElementById('errorMessage').style.display = 'block';
-    }
-   }
+</article>
 
-   function drawAreaBetweenCurves(upperFunc, lowerFunc, a, b) {
-    const canvas = document.getElementById('areaCanvas');
-    const ctx = canvas.getContext('2d');
+<script src="/static/js/note_geom.js"></script>
+<script src="/static/js/note_plot.js"></script>
+<script>
+  // "Area between y = x² and y = mx + k" demo (the TRY IT block above).
+  // Meeting points solve x² − mx − k = 0; area = (β − α)³ / 6 (a = 1).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const mBox = document.getElementById('a3M'), kBox = document.getElementById('a3K');
+    const output = document.getElementById('a3Output');
 
-    // Clear canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Calculate bounds
-    const minX = Math.min(a, b) - 0.5;
-    const maxX = Math.max(a, b) + 0.5;
-    const centerY = canvas.height / 2;
-
-    const scaleX = canvas.width / (maxX - minX);
-    const scaleY = canvas.height / 4; // Rough scale
-
-    // Transform functions
-    const transformX = xi => (xi - minX) * scaleX;
-    const transformY = yi => centerY - yi * scaleY;
-
-    // Draw axes
-    ctx.strokeStyle = '#666';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(0, centerY);
-    ctx.lineTo(canvas.width, centerY);
-    ctx.moveTo(transformX(0), 0);
-    ctx.lineTo(transformX(0), canvas.height);
-    ctx.stroke();
-
-    // Draw upper function
-    ctx.strokeStyle = '#e74c3c';
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    let firstPoint = true;
-    for (let xi = minX; xi <= maxX; xi += 0.05) {
-     const yi = upperFunc.f(xi);
-     if (!isNaN(yi) && isFinite(yi)) {
-      const canvasX = transformX(xi);
-      const canvasY = transformY(yi);
-      if (firstPoint) {
-       ctx.moveTo(canvasX, canvasY);
-       firstPoint = false;
-      } else {
-       ctx.lineTo(canvasX, canvasY);
-      }
-     }
-    }
-    ctx.stroke();
-
-    // Draw lower function
-    ctx.strokeStyle = '#27ae60';
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    firstPoint = true;
-    for (let xi = minX; xi <= maxX; xi += 0.05) {
-     const yi = lowerFunc.f(xi);
-     if (!isNaN(yi) && isFinite(yi)) {
-      const canvasX = transformX(xi);
-      const canvasY = transformY(yi);
-      if (firstPoint) {
-       ctx.moveTo(canvasX, canvasY);
-       firstPoint = false;
-      } else {
-       ctx.lineTo(canvasX, canvasY);
-      }
-     }
-    }
-    ctx.stroke();
-
-    // Shade area between curves
-    ctx.fillStyle = 'rgba(52, 152, 219, 0.3)';
-    ctx.beginPath();
-    // Upper curve from a to b
-    for (let xi = a; xi <= b; xi += 0.01) {
-     const yi = upperFunc.f(xi);
-     const canvasX = transformX(xi);
-     const canvasY = transformY(yi);
-     if (xi === a) ctx.moveTo(canvasX, canvasY);
-     else ctx.lineTo(canvasX, canvasY);
-    }
-    // Lower curve from b to a (reverse)
-    for (let xi = b; xi >= a; xi -= 0.01) {
-     const yi = lowerFunc.f(xi);
-     const canvasX = transformX(xi);
-     const canvasY = transformY(yi);
-     ctx.lineTo(canvasX, canvasY);
-    }
-    ctx.closePath();
-    ctx.fill();
-
-    // Draw vertical lines at a and b
-    ctx.strokeStyle = '#888';
-    ctx.lineWidth = 1;
-    ctx.setLineDash([5, 5]);
-    ctx.beginPath();
-    ctx.moveTo(transformX(a), 0);
-    ctx.lineTo(transformX(a), canvas.height);
-    ctx.moveTo(transformX(b), 0);
-    ctx.lineTo(transformX(b), canvas.height);
-    ctx.stroke();
-    ctx.setLineDash([]);
-
-    // Labels
-    ctx.fillStyle = '#333';
-    ctx.font = '12px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText(`a = ${a}`, transformX(a), centerY + 15);
-    ctx.fillText(`b = ${b}`, transformX(b), centerY + 15);
-    ctx.fillText('x', canvas.width - 10, centerY + 5);
-    ctx.fillText('y', transformX(0) - 10, 15);
-    ctx.fillText('O', transformX(0) - 10, centerY + 15);
-
-    // Function labels
-    ctx.fillStyle = '#e74c3c';
-    ctx.font = '14px Arial';
-    ctx.fillText(`y = ${upperFunc.name}`, canvas.width / 2, 20);
-    ctx.fillStyle = '#27ae60';
-    ctx.fillText(`y = ${lowerFunc.name}`, canvas.width / 2, canvas.height - 20);
-
-    // Area label
-    ctx.fillStyle = '#3498db';
-    ctx.font = 'bold 16px Arial';
-    ctx.fillText('S', (transformX(a) + transformX(b)) / 2, centerY - 10);
-   }
-
-   function showExample(exampleNumber) {
-    const detail = document.getElementById('exampleDetail');
-    let content = '';
-
-    switch(exampleNumber) {
-     case 1:
-      content = `
-       <h4>Detailed Example 1 - Parabola and Line</h4>
-       <div class="calculation-steps">
-        <div class="calculation-step">Functions: f(x) = x² (upper), g(x) = x (lower)</div>
-        <div class="calculation-step">Limits: a = 0, b = 1</div>
-        <div class="calculation-step">First find intersection: x² = x ⇒ x² - x = 0 ⇒ x(x - 1) = 0 ⇒ x = 0, x = 1</div>
-        <div class="calculation-step">Check which is upper: at x = 0.5, (0.5)² = 0.25 < 0.5, so x is upper</div>
-        <div class="calculation-step">Area S = ∫₀¹ (x - x²) dx = [x²/2 - x³/3]₀¹ = (0.5 - 1/3) - 0 = 0.5 - 0.333 = 0.167</div>
-        <div class="calculation-step">Note: We switched f and g since x > x² in [0,1]</div>
-       </div>
-      `;
-      break;
-     case 2:
-      content = `
-       <h4>Detailed Example 2 - Trigonometric Functions</h4>
-       <div class="calculation-steps">
-        <div class="calculation-step">Functions: f(x) = sin(x) + 1, g(x) = cos(x) + 1</div>
-        <div class="calculation-step">Limits: a = 0, b = π/2</div>
-        <div class="calculation-step">At x = 0: sin(0) + 1 = 1, cos(0) + 1 = 2, so cos(x) + 1 is upper</div>
-        <div class="calculation-step">At x = π/2: sin(π/2) + 1 = 2, cos(π/2) + 1 = 1, so sin(x) + 1 is upper</div>
-        <div class="calculation-step">Find intersection: sin(x) + 1 = cos(x) + 1 ⇒ sin(x) = cos(x) ⇒ x = π/4</div>
-        <div class="calculation-step">Split integral: S = ∫₀^{π/4} (cos(x) + 1 - (sin(x) + 1)) dx + ∫_{π/4}^{π/2} (sin(x) + 1 - (cos(x) + 1)) dx</div>
-        <div class="calculation-step">= ∫₀^{π/4} (cos(x) - sin(x)) dx + ∫_{π/4}^{π/2} (sin(x) - cos(x)) dx</div>
-        <div class="calculation-step">= [sin(x) + cos(x)]₀^{π/4} + [-cos(x) - sin(x)]_{π/4}^{π/2}</div>
-        <div class="calculation-step">Calculate: (sin(π/4) + cos(π/4)) - (sin(0) + cos(0)) + [(-cos(π/2) - sin(π/2)) - (-cos(π/4) - sin(π/4))]</div>
-        <div class="calculation-step">= (0.707 + 0.707) - (0 + 1) + [(-0 - 1) - (-0.707 - 0.707)] = 1.414 - 1 + [-1 - (-1.414)] = 0.414 + 0.414 = 0.828</div>
-       </div>
-      `;
-      break;
-     case 3:
-      content = `
-       <h4>Detailed Example 3 - Exponential Functions</h4>
-       <div class="calculation-steps">
-        <div class="calculation-step">Functions: f(x) = e^x, g(x) = e^(x/2)</div>
-        <div class="calculation-step">Limits: a = 0, b = 2</div>
-        <div class="calculation-step">Since e^x > e^(x/2) for x > 0, f(x) is upper</div>
-        <div class="calculation-step">Area S = ∫₀² (e^x - e^(x/2)) dx</div>
-        <div class="calculation-step">= [e^x - 2e^(x/2)]₀² = (e² - 2e) - (e⁰ - 2e⁰) = (7.389 - 2×2.718) - (1 - 2×1)</div>
-        <div class="calculation-step">= (7.389 - 5.436) - (1 - 2) = 1.953 - (-1) = 2.953</div>
-        <div class="calculation-step">Area ≈ 2.953</div>
-       </div>
-      `;
-      break;
-    }
-
-    detail.innerHTML = content;
-    detail.style.display = 'block';
-    MathJax.typesetPromise();
-   }
-
-   function toggleSolution(problemNumber) {
-    const solution = document.getElementById('solution' + problemNumber);
-    if (solution.style.display === 'none' || solution.style.display === '') {
-     solution.style.display = 'block';
-    } else {
-     solution.style.display = 'none';
-    }
-   }
-
-   function resetDemo() {
-    document.getElementById('upperFunc').value = 'quadratic';
-    document.getElementById('lowerFunc').value = 'constant';
-    document.getElementById('lowerLimit').value = '0';
-    document.getElementById('upperLimit').value = '2';
-    document.getElementById('functionText').textContent = 'f(x) = x², g(x) = 1';
-    document.getElementById('areaText').textContent = 'S = ∫₀² (x² - 1) dx = 8/3';
-    document.getElementById('errorMessage').style.display = 'none';
-    calculateAreaBetweenCurves();
-   }
-
-   // Initialize with default values
-   document.addEventListener('DOMContentLoaded', function() {
-    calculateAreaBetweenCurves();
-   });
-  </script>
- </body>
-</html>
+    const plot = NotePlot.graph(document.getElementById('a3Canvas'), {
+      x: [-3.5, 3.5], y: [-2, 8],
+      draw(g) {
+        const m = +mBox.value, k = +kBox.value;
+        const line = (x) => m * x + k, par = (x) => x * x;
+        const D = m * m + 4 * k;
+        if (D > 0) {
+          const al = (m - Math.sqrt(D)) / 2, be = (m + Math.sqrt(D)) / 2;
+          // Shade the gap: draw thin vertical strips between the curves
+          for (let i = 0; i <= 120; i++) {
+            const x = al + (be - al) * i / 120;
+            g.seg([x, par(x)], [x, line(x)], 'rgba(37, 99, 235, 0.25)', { width: 2 });
+          }
+          g.dot([al, par(al)], '#0f172a'); g.dot([be, par(be)], '#0f172a');
+          output.textContent =
+            `x² = ${NotePlot.poly([m, k])}  →  x = ${al.toFixed(3)}, ${be.toFixed(3)}\n` +
+            `S = ∫ (line − x²) dx = (β − α)³ / 6 = ${(be - al).toFixed(3)}³ / 6 = ${((be - al) ** 3 / 6).toFixed(4)}`;
+        } else {
+          output.textContent = 'The line does not cross the parabola twice: no enclosed region.';
+        }
+        g.fn(par, '#2563eb');
+        g.fn(line, '#ea580c');
+      },
+    });
+    [mBox, kBox].forEach((el) => el.addEventListener('input', plot.redraw));
+  })();
+</script>
