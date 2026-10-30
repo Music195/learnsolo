@@ -18,6 +18,8 @@
               or "single" (only A). Default: "overlap", or "single" without B.
      shade  : function (inA, inB) -> true/false. Regions where it returns
               true are coloured. E.g. union: (a, b) => a || b
+     counts : instead of listing elements, write one number per region:
+              { onlyA, both, onlyB, neither }  (for counting problems)
    ===================================================================== */
 (function () {
   // ---------- Set helpers (sets are arrays of strings) ----------
@@ -180,7 +182,27 @@
       ctx.fillText(name, c.x + (c.r + 6) * Math.cos(angle) - 6, c.y + (c.r + 6) * Math.sin(angle) - 18);
     }
 
-    // 3. Elements, each in the region it belongs to
+    // 3a. Counting mode: one big number in the middle of each region
+    if (options.counts) {
+      const c = options.counts;
+      const cA = circles.A, cB = circles.B;
+      const spotsForCounts = [
+        [c.onlyA, cA.x - cA.r / 2, cA.y],
+        [c.both, (cA.x + cB.x) / 2, cA.y],
+        [c.onlyB, cB.x + cB.r / 2, cB.y],
+        [c.neither, RECT.x + 40, RECT.y + RECT.h - 30],
+      ];
+      ctx.font = 'bold 22px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#0f172a';
+      for (const [value, x, y] of spotsForCounts) {
+        if (value !== undefined) ctx.fillText(String(value), x, y);
+      }
+      return;
+    }
+
+    // 3b. Elements, each in the region it belongs to
     const spots = candidateSpots(circles);
     const used = new Set();
     const cA = circles.A, cB = circles.B;
