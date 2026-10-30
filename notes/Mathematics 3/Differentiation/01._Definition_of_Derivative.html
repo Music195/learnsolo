@@ -1,320 +1,168 @@
-<!DOCTYPE html>
-<!-- tags: Mathematics -->
-<html lang="en">
- <head>
-  <meta charset="utf-8"/>
-  <title>
-   Definition of Derivative
-  </title>
-  <script>
-   MathJax = {
-            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
-            svg: {fontCache: 'global'}
-        };
-  </script>
-  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
-  </script>
-  <link href="/static/notes_style.css" rel="stylesheet"/>
- </head>
- <body>
-    <div class="fancy-title" data-topic="Differentiation">
-     Definition of Derivative
+<!-- tags: Differentiation -->
+<!-- =====================================================================
+     NOTE: Definition of the Derivative (微分係数と導関数)
+     Uses the shared blocks from static/css/note_blocks.css and the
+     graph helper static/js/note_plot.js (built on note_geom.js).
+     Do not add a <style> block here; change note_blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Differentiation">Definition of Derivative</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>The slope of a secant, squeezed to a tangent</h2>
+    <p>Take two points on $y = f(x)$, at $x = a$ and $x = a + h$. The line through them (a <strong>secant</strong>) has slope $\dfrac{f(a + h) - f(a)}{h}$, the average rate of change.</p>
+    <p>Let $h \to 0$. The second point slides onto the first and the secant turns into the <strong>tangent</strong>.
+      The limit of its slope is the <strong>derivative</strong> $f'(a)$, the rate of change at that instant.</p>
+  </section>
+
+  <!-- FORMULA: derivative at a point and derived function -->
+  <div class="note-formula">
+    <h3>Derivative at $x = a$ (微分係数)</h3>
+    <div class="formula-main">$$f'(a) = \lim_{h \to 0} \frac{f(a + h) - f(a)}{h} = \lim_{x \to a} \frac{f(x) - f(a)}{x - a}$$</div>
+  </div>
+
+  <div class="note-formula">
+    <h3>Derived function (導関数)</h3>
+    <div class="formula-main">$$f'(x) = \lim_{h \to 0} \frac{f(x + h) - f(x)}{h}$$</div>
+    <p class="symbols">Also written $y'$, $\dfrac{dy}{dx}$, $\dfrac{d}{dx}f(x)$. Finding $f'(x)$ is called <strong>differentiating</strong> $f$.</p>
+  </div>
+
+  <!-- PROOF: the definition applied to 1/x -->
+  <div class="note-proof">
+    <ol>
+      <li>Take $f(x) = \dfrac{1}{x}$. Then $f(x + h) - f(x) = \dfrac{1}{x + h} - \dfrac{1}{x} = \dfrac{-h}{x(x + h)}$.</li>
+      <li>Divide by $h$: $\dfrac{-1}{x(x + h)}$. The troublesome $h$ in the denominator is gone.</li>
+      <li>Let $h \to 0$: $f'(x) = -\dfrac{1}{x^2}$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: secant → tangent; code at the bottom -->
+  <div class="note-demo">
+    <h2>Shrink $h$ and watch the secant become the tangent</h2>
+    <div class="controls">
+      <label>$f(x)$ = <select id="ddF">
+        <option value="0">x²</option>
+        <option value="1">x³ − 3x</option>
+        <option value="2">sin x</option>
+        <option value="3">1/x</option>
+      </select></label>
+      <label>$a$ = <input type="range" id="ddA" min="-2.5" max="2.5" step="0.1" value="1"></label>
+      <label>$h$ = <input type="range" id="ddH" min="-2" max="2" step="0.01" value="1.5"></label>
     </div>
-    <div class="container">
-     <div class="main-content">
-        <div class="title">Definition of the Derivative</div>
-        <div class="formula-block">
-         <div style="font-size: 1.15em; color: #333; text-align: center; margin-bottom: 10px;">
-            For a function $f(x)$, the derivative at $x = a$ is defined as:
-         </div>
-         <div class="formula-math">
-            $$f'(a) = \lim_{h \to 0} \frac{f(a+h) - f(a)}{h} = \lim_{x \to a} \frac{f(x) - f(a)}{x - a}$$
-         </div>
-        </div>
-        <div style="margin: 30px 0;">
-         <strong>1. Geometric Interpretation</strong>
-         <div class="graybox">
-            <strong>Tangent and Secant Lines:</strong>
-            <ul style="line-height: 1.8;">
-             <li>The derivative $f'(a)$ is the slope of the tangent line to $y = f(x)$ at $x = a$</li>
-             <li>The difference quotient $\frac{f(a+h) - f(a)}{h}$ is the slope of the secant line between $(a, f(a))$ and $(a+h, f(a+h))$</li>
-             <li>As $h \to 0$, the secant line approaches the tangent line</li>
-            </ul>
-         </div>
-         <div style="text-align: center; margin: 15px 0;">
-            <canvas id="derivativeCanvas" width="700" height="400"></canvas>
-         </div>
-         <p style="text-align: center; font-style: italic;">Curve (purple), secant line (blue), tangent line (orange) at $x=a$</p>
-        </div>
-        <div style="margin: 30px 0;">
-         <strong>2. Conceptual Meaning</strong>
-         <div class="graybox">
-            <strong>Physical Interpretation:</strong>
-            <ul style="line-height: 1.8;">
-             <li>In physics, the derivative represents instantaneous rate of change (e.g., velocity is the derivative of position)</li>
-             <li>In economics, it represents marginal change (e.g., marginal cost)</li>
-             <li>In geometry, it gives the slope of the curve at a point</li>
-            </ul>
-         </div>
-        </div>
-        <div style="margin: 30px 0;">
-         <strong>3. Notation</strong>
-         <div class="graybox">
-            <ul style="line-height: 1.8;">
-             <li>$f'(x)$: Lagrange notation</li>
-             <li>$\dfrac{df}{dx}$: Leibniz notation</li>
-             <li>$D_x f(x)$: Euler notation</li>
-            </ul>
-         </div>
-        </div>
-        <div style="margin: 30px 0;">
-         <strong>4. Examples</strong>
-         <div class="graybox">
-            <strong>Example 1:</strong> Find the derivative of $f(x) = x^2$ at $x = 3$ using the definition.
-            <div style="margin: 10px 0;">
-             $$f'(3) = \lim_{h \to 0} \frac{(3+h)^2 - 9}{h} = \lim_{h \to 0} \frac{9 + 6h + h^2 - 9}{h} = \lim_{h \to 0} \frac{6h + h^2}{h} = \lim_{h \to 0} (6 + h) = 6$$
-            </div>
-         </div>
-         <div class="graybox" style="margin-top: 15px;">
-            <strong>Example 2:</strong> Find the derivative of $f(x) = \sin x$ at $x = 0$ using the definition.
-            <div style="margin: 10px 0;">
-             $$f'(0) = \lim_{h \to 0} \frac{\sin(h) - 0}{h} = \lim_{h \to 0} \frac{\sin h}{h} = 1$$
-            </div>
-         </div>
-         <div class="graybox" style="margin-top: 15px;">
-            <strong>Example 3:</strong> Find the derivative of $f(x) = e^x$ at $x = 0$ using the definition.
-            <div style="margin: 10px 0;">
-             $$f'(0) = \lim_{h \to 0} \frac{e^{0+h} - e^0}{h} = \lim_{h \to 0} \frac{e^h - 1}{h} = 1$$
-            </div>
-         </div>
-        </div>
-        <div style="margin: 30px 0;">
-         <strong>5. Differentiability and Continuity</strong>
-         <div class="graybox">
-            <ul style="line-height: 1.8;">
-             <li>If $f$ is differentiable at $a$, then $f$ is continuous at $a$</li>
-             <li>Not all continuous functions are differentiable (e.g., $|x|$ at $x=0$)</li>
-            </ul>
-         </div>
-        </div>
-        <div style="margin: 30px 0;">
-         <strong>6. Applications</strong>
-         <div class="graybox">
-            <strong>Physics:</strong> Instantaneous velocity, acceleration
-         </div>
-         <div class="graybox" style="margin-top: 15px;">
-            <strong>Economics:</strong> Marginal cost, marginal revenue
-         </div>
-         <div class="graybox" style="margin-top: 15px;">
-            <strong>Biology:</strong> Growth rates
-         </div>
-        </div>
-        <div style="margin: 30px 0;">
-         <strong>7. Practice Problems</strong>
-         <div class="graybox">
-            <strong>Problem 1:</strong> Use the definition to find the derivative of $f(x) = x^3$ at $x = 2$.
-         </div>
-         <div class="graybox" style="margin-top: 15px;">
-            <strong>Problem 2:</strong> Is $f(x) = |x|$ differentiable at $x = 0$?
-         </div>
-        </div>
-        <div style="margin: 30px 0;">
-         <strong>8. Key Takeaways</strong>
-         <div class="graybox">
-            <ul style="line-height: 2;">
-             <li>The derivative is the limit of the difference quotient</li>
-             <li>It represents the slope of the tangent line</li>
-             <li>Physical meaning: instantaneous rate of change</li>
-             <li>If differentiable, then continuous</li>
-             <li>Not all continuous functions are differentiable</li>
-            </ul>
-         </div>
-        </div>
-        <script>
-            window.addEventListener('load', function() {
-               // Remake: Enhanced conceptual diagram for derivative definition
-               const canvas = document.getElementById('derivativeCanvas');
-               const ctx = canvas.getContext('2d');
-               
-               // Clear canvas with white background first
-               ctx.fillStyle = 'white';
-               ctx.fillRect(0, 0, canvas.width, canvas.height);
-               
-               // Remake: Enhanced conceptual diagram for derivative definition
-               const w = canvas.width;
-               const h = canvas.height;
-               const padding = 60;
-               const graphW = w - 2 * padding;
-               const graphH = h - 2 * padding;
-               const xMin = -1;
-               const xMax = 5;
-               const yMin = -1;
-               const yMax = 8;
-               function toCanvasX(x) {
-                  return padding + ((x - xMin) / (xMax - xMin)) * graphW;
-               }
-               function toCanvasY(y) {
-                  return h - padding - ((y - yMin) / (yMax - yMin)) * graphH;
-               }
-               // Background grid
-               ctx.save();
-               ctx.strokeStyle = '#e0e0e0';
-               ctx.lineWidth = 0.5;
-               for (let x = 0; x <= 5; x++) {
-                  ctx.beginPath();
-                  ctx.moveTo(toCanvasX(x), padding);
-                  ctx.lineTo(toCanvasX(x), h - padding);
-                  ctx.stroke();
-               }
-               for (let y = 0; y <= 8; y++) {
-                  ctx.beginPath();
-                  ctx.moveTo(padding, toCanvasY(y));
-                  ctx.lineTo(w - padding, toCanvasY(y));
-                  ctx.stroke();
-               }
-               ctx.restore();
-               // Axes
-               ctx.save();
-               ctx.strokeStyle = '#333';
-               ctx.lineWidth = 3;
-               // x-axis
-               ctx.beginPath();
-               ctx.moveTo(toCanvasX(xMin), toCanvasY(0));
-               ctx.lineTo(toCanvasX(xMax) + 25, toCanvasY(0));
-               ctx.stroke();
-               // x-axis arrow
-               ctx.beginPath();
-               ctx.moveTo(toCanvasX(xMax) + 25, toCanvasY(0));
-               ctx.lineTo(toCanvasX(xMax) + 13, toCanvasY(0) - 9);
-               ctx.lineTo(toCanvasX(xMax) + 13, toCanvasY(0) + 9);
-               ctx.closePath();
-               ctx.fillStyle = '#333';
-               ctx.fill();
-               // y-axis
-               ctx.beginPath();
-               ctx.moveTo(toCanvasX(0), toCanvasY(yMin));
-               ctx.lineTo(toCanvasX(0), toCanvasY(yMax) - 25);
-               ctx.stroke();
-               // y-axis arrow
-               ctx.beginPath();
-               ctx.moveTo(toCanvasX(0), toCanvasY(yMax) - 25);
-               ctx.lineTo(toCanvasX(0) - 9, toCanvasY(yMax) - 13);
-               ctx.lineTo(toCanvasX(0) + 9, toCanvasY(yMax) - 13);
-               ctx.closePath();
-               ctx.fillStyle = '#333';
-               ctx.fill();
-               // Axis labels
-               ctx.font = 'bold 20px Arial';
-               ctx.fillStyle = '#333';
-               ctx.fillText('x', toCanvasX(xMax) + 30, toCanvasY(0) + 10);
-               ctx.fillText('y', toCanvasX(0) - 30, toCanvasY(yMax) - 30);
-               ctx.restore();
-               // Curve: f(x) = x^2
-               ctx.save();
-               ctx.strokeStyle = '#7c43bd';
-               ctx.lineWidth = 5;
-               ctx.beginPath();
-               for (let x = 0; x <= 4; x += 0.02) {
-                  const y = x * x;
-                  if (x === 0) ctx.moveTo(toCanvasX(x), toCanvasY(y));
-                  else ctx.lineTo(toCanvasX(x), toCanvasY(y));
-               }
-               ctx.stroke();
-               ctx.restore();
-               // Points
-               const a = 3;
-               const fa = a * a;
-               const hVal = 1.2;
-               const x2 = a + hVal;
-               const y2 = x2 * x2;
-               // Point A
-               ctx.save();
-               ctx.fillStyle = '#7c43bd';
-               ctx.beginPath();
-               ctx.arc(toCanvasX(a), toCanvasY(fa), 10, 0, 2 * Math.PI);
-               ctx.fill();
-               ctx.strokeStyle = '#fff';
-               ctx.lineWidth = 2;
-               ctx.stroke();
-               ctx.font = 'bold 18px Arial';
-               ctx.fillStyle = '#7c43bd';
-               ctx.fillText('A', toCanvasX(a) + 16, toCanvasY(fa) - 16);
-               ctx.font = '16px Arial';
-               ctx.fillText('(a, f(a))', toCanvasX(a) - 50, toCanvasY(fa) + 35);
-               ctx.restore();
-               // Point B
-               ctx.save();
-               ctx.fillStyle = '#1976d2';
-               ctx.beginPath();
-               ctx.arc(toCanvasX(x2), toCanvasY(y2), 10, 0, 2 * Math.PI);
-               ctx.fill();
-               ctx.strokeStyle = '#fff';
-               ctx.lineWidth = 2;
-               ctx.stroke();
-               ctx.font = 'bold 18px Arial';
-               ctx.fillStyle = '#1976d2';
-               ctx.fillText('B', toCanvasX(x2) + 16, toCanvasY(y2) - 16);
-               ctx.font = '16px Arial';
-               ctx.fillText('(a+h, f(a+h))', toCanvasX(x2) - 50, toCanvasY(y2) + 35);
-               ctx.restore();
-               // Secant line
-               ctx.save();
-               ctx.strokeStyle = '#1976d2';
-               ctx.lineWidth = 4;
-               ctx.setLineDash([16, 10]);
-               ctx.beginPath();
-               ctx.moveTo(toCanvasX(a), toCanvasY(fa));
-               ctx.lineTo(toCanvasX(x2), toCanvasY(y2));
-               ctx.stroke();
-               ctx.setLineDash([]);
-               // Secant label
-               const secantLabelX = (toCanvasX(a) + toCanvasX(x2)) / 2;
-               const secantLabelY = (toCanvasY(fa) + toCanvasY(y2)) / 2 + 25;
-               ctx.font = 'bold 17px Arial';
-               ctx.fillStyle = '#1976d2';
-               ctx.fillText('Secant', secantLabelX, secantLabelY);
-               ctx.restore();
-               // Tangent line at a
-               ctx.save();
-               const slope = 2 * a;
-               ctx.strokeStyle = '#ff1744';
-               ctx.lineWidth = 4;
-               ctx.setLineDash([22, 10]);
-               ctx.beginPath();
-               let tangentStart = null, tangentEnd = null;
-               for (let x = a - 0.8; x <= a + 0.8; x += 0.05) {
-                  const y = fa + slope * (x - a);
-                  const cx = toCanvasX(x), cy = toCanvasY(y);
-                  if (x === a - 0.8) {
-                     ctx.moveTo(cx, cy);
-                     tangentStart = {x: cx, y: cy};
-                  } else {
-                     ctx.lineTo(cx, cy);
-                     tangentEnd = {x: cx, y: cy};
-                  }
-               }
-               ctx.stroke();
-               ctx.setLineDash([]);
-               // Tangent label at center of canvas
-               const centerY = h / 2;
-               const labelX = (tangentStart.x + tangentEnd.x) / 2;
-               ctx.font = 'bold 18px Arial';
-               ctx.fillStyle = '#ff1744';
-               ctx.fillText('Tangent', labelX, centerY);
-               ctx.restore();
-               // Legend
-               ctx.save();
-               ctx.font = '16px Arial';
-               ctx.fillStyle = '#7c43bd';
-               ctx.fillText('— Curve: f(x) = x²', padding, h - 38);
-               ctx.fillStyle = '#1976d2';
-               ctx.fillText('--- Secant line', padding, h - 18);
-               ctx.fillStyle = '#ff1744';
-               ctx.fillText('--- Tangent line', padding + 220, h - 18);
-               ctx.restore();
-            });
-        </script>
-     </div>
-    </div>
- </body>
-</html>
+    <canvas id="ddCanvas"></canvas>
+    <div class="output table-text" id="ddOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Use the definition to find $f'(3)$ for $f(x) = x^2$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\dfrac{(3 + h)^2 - 9}{h} = \dfrac{6h + h^2}{h} = 6 + h$</li>
+        <li>$h \to 0$</li>
+      </ol>
+      <p class="answer">$f'(3) = 6$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Use the definition to find $f'(x)$ for $f(x) = \sqrt{x}$ ($x &gt; 0$).</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\dfrac{\sqrt{x + h} - \sqrt{x}}{h}$: multiply top and bottom by $\sqrt{x + h} + \sqrt{x}$.</li>
+        <li>$= \dfrac{(x + h) - x}{h(\sqrt{x + h} + \sqrt{x})} = \dfrac{1}{\sqrt{x + h} + \sqrt{x}}$</li>
+        <li>$h \to 0$: $\dfrac{1}{2\sqrt{x}}$</li>
+      </ol>
+      <p class="answer">$f'(x) = \dfrac{1}{2\sqrt{x}}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">If $f'(a) = 3$, find $\displaystyle\lim_{h \to 0} \frac{f(a + 2h) - f(a)}{h}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Make the step in the bracket match the denominator: $\dfrac{f(a + 2h) - f(a)}{h} = 2 \cdot \dfrac{f(a + 2h) - f(a)}{2h}$.</li>
+        <li>As $h \to 0$, $2h \to 0$, so the fraction tends to $f'(a)$.</li>
+      </ol>
+      <p class="answer">$2f'(a) = 6$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: h is not set to 0 directly -->
+  <div class="note-warning">
+    You can't just put $h = 0$: that gives $\dfrac{0}{0}$. Simplify first so that the $h$ in the denominator cancels, <em>then</em> let $h \to 0$.
+  </div>
+
+  <!-- TIP: matching the step -->
+  <div class="note-tip">
+    In limits like Example 3, the step added inside $f(a + \square)$ must equal the denominator $\square$. Multiply and divide by a constant to make them match.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$f'(a)$ = limit of the secant slope = slope of the tangent at $x = a$.</li>
+      <li>$f'(x) = \displaystyle\lim_{h \to 0} \frac{f(x + h) - f(x)}{h}$.</li>
+      <li>Simplify until $h$ cancels, then take the limit.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/note_geom.js"></script>
+<script src="/static/js/note_plot.js"></script>
+<script>
+  // "Secant to tangent" demo (the TRY IT block above).
+  // Draws f, the secant through (a, f(a)) and (a + h, f(a + h)) in orange,
+  // and the true tangent at a (dashed teal). As h → 0 the slopes agree.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const fBox = document.getElementById('ddF'), aBox = document.getElementById('ddA'), hBox = document.getElementById('ddH');
+    const output = document.getElementById('ddOutput');
+    const f4 = (v) => +v.toFixed(4);
+
+    // each function with its exact derivative (used for the tangent)
+    const FUNCS = [
+      { f: (x) => x * x, d: (x) => 2 * x },
+      { f: (x) => x ** 3 - 3 * x, d: (x) => 3 * x * x - 3 },
+      { f: Math.sin, d: Math.cos },
+      { f: (x) => 1 / x, d: (x) => -1 / (x * x) },
+    ];
+
+    const plot = NotePlot.graph(document.getElementById('ddCanvas'), {
+      x: [-4, 4], y: [-3, 5],
+      draw(g) {
+        const k = +fBox.value, F = FUNCS[k], a = +aBox.value, h = +hBox.value;
+        if (k === 3) { g.fn(F.f, '#2563eb', { to: -1e-3 }); g.fn(F.f, '#2563eb', { from: 1e-3 }); } // two branches of 1/x
+        else g.fn(F.f, '#2563eb');
+        if (k === 3 && (Math.abs(a) < 0.05 || a * (a + h) <= 0)) {
+          output.textContent = '1/x is not defined at 0: keep a and a + h on the same side of 0.';
+          return;
+        }
+        const P = [a, F.f(a)], m = F.d(a);
+        g.fn((x) => P[1] + m * (x - a), '#0d9488', { width: 2, dash: true });
+        if (Math.abs(h) < 1e-9) {
+          g.dot(P, '#2563eb', 'A');
+          output.textContent = `h = 0 is not allowed (0/0). Tangent slope f'(${a}) = ${f4(m)}`;
+          return;
+        }
+        const Q = [a + h, F.f(a + h)], s = (Q[1] - P[1]) / h;
+        g.fn((x) => P[1] + s * (x - a), '#ea580c', { width: 2 });
+        g.dot(P, '#2563eb', 'A'); g.dot(Q, '#ea580c', 'B');
+        output.textContent =
+          `secant slope (f(a + h) − f(a)) / h = (${f4(Q[1])} − ${f4(P[1])}) / ${h} = ${f4(s)}\n` +
+          `tangent slope f'(a) = ${f4(m)}     difference ${f4(s - m)}`;
+      },
+    });
+    fBox.addEventListener('change', plot.redraw);
+    [aBox, hBox].forEach((el) => el.addEventListener('input', plot.redraw));
+  })();
+</script>
