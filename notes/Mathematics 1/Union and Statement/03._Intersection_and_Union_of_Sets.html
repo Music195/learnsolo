@@ -1,616 +1,163 @@
-<!DOCTYPE html>
 <!-- tags: Set and Elements -->
-<html lang="en">
- <head>
-  <meta charset="utf-8"/>
-  <title>
-   Intersection and Union of Sets
-  </title>
-  <script>
-   MathJax = {
-            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
-            svg: {fontCache: 'global'}
-        };
-  </script>
-  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
-  </script>
-  <link href="/static/notes_style.css" rel="stylesheet"/>
-  <style>
-   .demo-input-group {
-    display: flex;
-    flex-direction: column;
-    min-width: 150px;
-   }
-   .demo-input-group label {
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #2c3e50;
-   }
-   .demo-input {
-    padding: 8px;
-    border: 2px solid #bdc3c7;
-    border-radius: 6px;
-    font-size: 14px;
-    transition: border-color 0.3s;
-   }
-   .demo-input:focus {
-    outline: none;
-    border-color: #3498db;
-   }
-   .demo-button {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: transform 0.2s;
-   }
-   .demo-button:hover {
-    transform: translateY(-2px);
-   }
-   .demo-result {
-    background: white;
-    border-radius: 8px;
-    padding: 15px;
-    margin-top: 15px;
-    border-left: 4px solid #3498db;
-   }
-   .solution-toggle {
-    background: #2c3e50;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    margin-top: 10px;
-    transition: background-color 0.3s;
-   }
-   .solution-toggle:hover {
-    background: #34495e;
-   }
-   .solution-content {
-    display: none;
-    background: rgba(255, 255, 255, 0.9);
-    color: #2c3e50;
-    padding: 15px;
-    border-radius: 8px;
-    margin-top: 10px;
-   }
-   .set-operations {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 15px;
-    margin: 20px 0;
-   }
-   .operation-card {
-    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-    padding: 15px;
-    border-radius: 8px;
-    border-left: 4px solid #e67e22;
-   }
-   .operation-card h4 {
-    margin-top: 0;
-    color: #2c3e50;
-   }
-   .venn-interactive {
-    background: white;
-    border-radius: 8px;
-    padding: 15px;
-    margin: 15px 0;
-    border: 2px solid #ecf0f1;
-    text-align: center;
-   }
-   .operation-results {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-    margin: 15px 0;
-   }
-   .result-card {
-    background: #f8f9fa;
-    padding: 15px;
-    border-radius: 8px;
-    border: 2px solid #dee2e6;
-    text-align: center;
-   }
-   .result-card h4 {
-    margin-top: 0;
-    color: #2c3e50;
-   }
-   .math-blue {
-    color: #3498db;
-    font-weight: bold;
-   }
-   .venn-container {
-    display: flex;
-    justify-content: center;
-    gap: 60px;
-    margin: 40px 0;
-    flex-wrap: wrap;
-   }
-   .venn-diagram {
-    text-align: center;
-   }
-   .venn-label {
-    font-size: 1.3em;
-    margin-bottom: 15px;
-    font-weight: 600;
-    color: #667eea;
-   }
-   .venn-description {
-    margin-top: 15px;
-    font-size: 0.95em;
-    color: #555;
-    max-width: 250px;
-   }
-  </style>
- </head>
- <body>
-  <div class="fancy-title" data-topic="Set and Elements">
-   Intersection and Union of Sets
-  </div>
-  <div class="container">
-   <div class="main-content">
-    <div class="section-title">
-     Intersection and Union of Sets
-    </div>
+<!-- =====================================================================
+     NOTE: Intersection and Union
+     Uses the shared blocks from static/css/note_blocks.css.
+     Do not add a <style> block here; change note_blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
 
-    <div class="math-foundation">
-     <h3>Mathematical Foundations</h3>
-     <p>Set operations combine sets in different ways. The intersection finds common elements, while the union combines all elements from both sets.</p>
+  <h1 class="note-title" data-topic="Set and Elements">Intersection and Union of Sets</h1>
 
-     <div class="set-operations">
-      <div class="operation-card">
-       <h4>Intersection</h4>
-       <p class="math-blue">A ∩ B</p>
-       <p>Elements in both A and B</p>
-       <p>Common to both sets</p>
-       <p>Can be empty if no common elements</p>
-      </div>
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Combining two sets</h2>
+    <p>The <strong>intersection</strong> $A \cap B$ keeps only the elements that are in <strong>both</strong> sets.</p>
+    <p>The <strong>union</strong> $A \cup B$ collects every element that is in <strong>at least one</strong> of the sets.</p>
+  </section>
 
-      <div class="operation-card">
-       <h4>Union</h4>
-       <p class="math-blue">A ∪ B</p>
-       <p>Elements in A or B or both</p>
-       <p>All elements from both sets</p>
-       <p>Removes duplicates</p>
-      </div>
-
-      <div class="operation-card">
-       <h4>Properties</h4>
-       <p>Commutative: A ∩ B = B ∩ A</p>
-       <p>Associative: (A ∩ B) ∩ C = A ∩ (B ∩ C)</p>
-       <p>Distributive: A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C)</p>
-       <p>Identity: A ∩ U = A, A ∪ ∅ = A</p>
-      </div>
-     </div>
-    </div>
-
-    <div class="interactive-demo">
-     <h3>Interactive Set Operations Calculator</h3>
-     <p>Enter two sets and see their intersection and union.</p>
-
-     <div class="demo-controls">
-      <div class="demo-input-group">
-       <label for="set-a">Set A (comma-separated):</label>
-       <input type="text" id="set-a" class="demo-input" value="1, 2, 3, 4" placeholder="e.g., 1, 2, 3, 4">
-      </div>
-      <div class="demo-input-group">
-       <label for="set-b">Set B (comma-separated):</label>
-       <input type="text" id="set-b" class="demo-input" value="3, 4, 5, 6" placeholder="e.g., 3, 4, 5, 6">
-      </div>
-      <button onclick="calculateOperations()" class="demo-button">Calculate</button>
-     </div>
-
-     <div class="venn-interactive">
-      <h4>Sets Visualization:</h4>
-      <canvas id="interactive-venn" width="400" height="200" style="display: block; margin: 0 auto; border: 1px solid #ccc;"></canvas>
-     </div>
-
-     <div class="operation-results">
-      <div class="result-card">
-       <h4>Set A</h4>
-       <p id="display-a">A = {1, 2, 3, 4}</p>
-      </div>
-      <div class="result-card">
-       <h4>Set B</h4>
-       <p id="display-b">B = {3, 4, 5, 6}</p>
-      </div>
-      <div class="result-card">
-       <h4>Intersection</h4>
-       <p id="display-intersection">A ∩ B = {3, 4}</p>
-      </div>
-      <div class="result-card">
-       <h4>Union</h4>
-       <p id="display-union">A ∪ B = {1, 2, 3, 4, 5, 6}</p>
-      </div>
-     </div>
-    </div>
-
-    <div class="worked-example">
-     <h3>Worked Examples</h3>
-
-     <div style="margin-bottom: 20px;">
-      <h4>Example 1: Basic Operations</h4>
-      <p>Let A = {1, 2, 3, 4} and B = {3, 4, 5, 6}</p>
-      <p>Intersection: A ∩ B = {3, 4} (elements in both sets)</p>
-      <p>Union: A ∪ B = {1, 2, 3, 4, 5, 6} (all elements from both sets)</p>
-     </div>
-
-     <div style="margin-bottom: 20px;">
-      <h4>Example 2: Disjoint Sets</h4>
-      <p>Let C = {1, 2} and D = {3, 4}</p>
-      <p>Intersection: C ∩ D = ∅ (no common elements)</p>
-      <p>Union: C ∪ D = {1, 2, 3, 4} (all elements combined)</p>
-     </div>
-
-     <div style="margin-bottom: 20px;">
-      <h4>Example 3: One Set Subset of Another</h4>
-      <p>Let E = {2, 4} and F = {1, 2, 3, 4, 5}</p>
-      <p>Intersection: E ∩ F = {2, 4} (same as E since E ⊂ F)</p>
-      <p>Union: E ∪ F = {1, 2, 3, 4, 5} (same as F since E ⊂ F)</p>
-     </div>
-
-     <div style="margin-bottom: 20px;">
-      <h4>Example 4: Same Sets</h4>
-      <p>Let G = {a, b, c} and H = {a, b, c}</p>
-      <p>Intersection: G ∩ H = {a, b, c} (same as both sets)</p>
-      <p>Union: G ∪ H = {a, b, c} (same as both sets)</p>
-     </div>
-    </div>
-
-    <div class="practice-problem">
-     <h3>Practice Problems</h3>
-
-     <div style="margin-bottom: 20px;">
-      <h4>Problem 1</h4>
-      <p>Given A = {1, 2, 3, 4, 5} and B = {4, 5, 6, 7, 8}:</p>
-      <p>Find A ∩ B and A ∪ B</p>
-      <button onclick="toggleSolution('sol1')" class="solution-toggle">Show Solution</button>
-      <div id="sol1" class="solution-content">
-       <p>A ∩ B = {4, 5}</p>
-       <p>A ∪ B = {1, 2, 3, 4, 5, 6, 7, 8}</p>
-      </div>
-     </div>
-
-     <div style="margin-bottom: 20px;">
-      <h4>Problem 2</h4>
-      <p>Given P = {a, b, c} and Q = {c, d, e}:</p>
-      <p>Find P ∩ Q and P ∪ Q</p>
-      <button onclick="toggleSolution('sol2')" class="solution-toggle">Show Solution</button>
-      <div id="sol2" class="solution-content">
-       <p>P ∩ Q = {c}</p>
-       <p>P ∪ Q = {a, b, c, d, e}</p>
-      </div>
-     </div>
-
-     <div style="margin-bottom: 20px;">
-      <h4>Problem 3</h4>
-      <p>Given R = {1, 3, 5} and S = {2, 4, 6}:</p>
-      <p>Find R ∩ S and R ∪ S</p>
-      <button onclick="toggleSolution('sol3')" class="solution-toggle">Show Solution</button>
-      <div id="sol3" class="solution-content">
-       <p>R ∩ S = ∅ (no common elements)</p>
-       <p>R ∪ S = {1, 2, 3, 4, 5, 6}</p>
-      </div>
-     </div>
-    </div>
-
-    <div class="key-takeaways">
-     <h3>Key Takeaways</h3>
-     <ul>
-      <li>A ∩ B contains elements that are in both A and B</li>
-      <li>A ∪ B contains elements that are in A or B or both</li>
-      <li>Intersection and union are commutative: A ∩ B = B ∩ A, A ∪ B = B ∪ A</li>
-      <li>Intersection and union are associative: (A ∩ B) ∩ C = A ∩ (B ∩ C)</li>
-      <li>Distributive property: A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C)</li>
-      <li>Identity elements: A ∩ U = A, A ∪ ∅ = A where U is universal set</li>
-      <li>If A and B are disjoint (A ∩ B = ∅), then |A ∪ B| = |A| + |B|</li>
-      <li>Inclusion-exclusion: |A ∪ B| = |A| + |B| - |A ∩ B|</li>
-      <li>Intersection can be empty, union is never empty if at least one set is non-empty</li>
-     </ul>
-    </div>
-
-    <div class="explanation">
-     The set of all elements that belong to both sets $A$ and $B$ is called the
-     <strong>
-      intersection
-     </strong>
-     of $A$ and $B$, written as
-     <span class="math-blue">
-      $A \cap B$
-     </span>
-     .
-    </div>
-    <div class="explanation">
-     The set of all elements that belong to at least one of $A$ or $B$ is called the
-     <strong>
-      union
-     </strong>
-     of $A$ and $B$, written as
-     <span class="math-blue">
-      $A \cup B$
-     </span>
-     .
-    </div>
-    <div class="venn-container">
-     <div class="venn-diagram">
-      <div class="venn-label">
-       Intersection: $A \cap B$
-      </div>
-      <canvas height="180" id="intersectionCanvas" width="250">
-      </canvas>
-      <div class="venn-description">
-       Elements that belong to
-       <strong>
-        both
-       </strong>
-       A and B
-      </div>
-     </div>
-     <div class="venn-diagram">
-      <div class="venn-label">
-       Union: $A \cup B$
-      </div>
-      <canvas height="180" id="unionCanvas" width="250">
-      </canvas>
-      <div class="venn-description">
-       Elements that belong to
-       <strong>
-        A or B or both
-       </strong>
-      </div>
-     </div>
-    </div>
-   </div>
+  <!-- FORMULA: definitions -->
+  <div class="note-formula">
+    <h3>Intersection ("and")</h3>
+    <div class="formula-main">$$A \cap B = \{\,x \mid x \in A \text{ and } x \in B\,\}$$</div>
   </div>
 
-  <script>
-   function parseSet(input) {
-    return input.split(',').map(x => x.trim()).filter(x => x !== '');
-   }
+  <div class="note-formula">
+    <h3>Union ("or")</h3>
+    <div class="formula-main">$$A \cup B = \{\,x \mid x \in A \text{ or } x \in B\,\}$$</div>
+    <p class="symbols">In maths "or" includes "both".</p>
+  </div>
 
-   function calculateOperations() {
-    const aInput = document.getElementById('set-a').value;
-    const bInput = document.getElementById('set-b').value;
+  <!-- TIP: remembering the symbols -->
+  <div class="note-tip">
+    $\cup$ looks like a cup that holds <strong>everything</strong> (union).
+    $\cap$ is the cup turned upside down, holding only what is <strong>shared</strong> (intersection).
+  </div>
 
-    const setA = parseSet(aInput);
-    const setB = parseSet(bInput);
+  <!-- DEMO: Venn diagram with intersection/union shading; code at the bottom -->
+  <div class="note-demo">
+    <h2>Intersection and union explorer</h2>
+    <div class="controls">
+      <label>$A$ <input type="text" id="iuA" class="wide" value="1, 2, 3, 4, 5"></label>
+      <label>$B$ <input type="text" id="iuB" class="wide" value="3, 4, 5, 6, 7"></label>
+    </div>
+    <div class="controls choices">
+      <button type="button" data-op="intersect" class="active">$A \cap B$</button>
+      <button type="button" data-op="union">$A \cup B$</button>
+    </div>
+    <canvas id="iuCanvas"></canvas>
+    <div class="output" id="iuOutput"></div>
+  </div>
 
-    // Calculate intersection
-    const intersection = setA.filter(x => setB.includes(x));
+  <!-- CONCEPT: rules that intersection and union follow -->
+  <section class="note-concept">
+    <h2>Rules</h2>
+    <table>
+      <tr><th>Rule</th><th>Intersection</th><th>Union</th></tr>
+      <tr><td>Order doesn't matter</td><td>$A \cap B = B \cap A$</td><td>$A \cup B = B \cup A$</td></tr>
+      <tr><td>Grouping doesn't matter</td><td>$(A \cap B) \cap C = A \cap (B \cap C)$</td><td>$(A \cup B) \cup C = A \cup (B \cup C)$</td></tr>
+      <tr><td>Distributive</td><td>$A \cap (B \cup C) = (A \cap B) \cup (A \cap C)$</td><td>$A \cup (B \cap C) = (A \cup B) \cap (A \cup C)$</td></tr>
+      <tr><td>With $\varnothing$ and $U$</td><td>$A \cap \varnothing = \varnothing,\ \ A \cap U = A$</td><td>$A \cup \varnothing = A,\ \ A \cup U = U$</td></tr>
+      <tr><td>When $A \subset B$</td><td>$A \cap B = A$</td><td>$A \cup B = B$</td></tr>
+    </table>
+  </section>
 
-    // Calculate union
-    const union = [...new Set([...setA, ...setB])];
+  <!-- WARNING: the most common mistake with this topic -->
+  <div class="note-warning">
+    Write each element <strong>once</strong> in a union: $\{1, 2, 3\} \cup \{3, 4\} = \{1, 2, 3, 4\}$, not $\{1, 2, 3, 3, 4\}$.
+    And if two sets share nothing, the intersection is $\varnothing$; don't leave it blank.
+  </div>
 
-    // Update displays
-    document.getElementById('display-a').textContent = `A = {${setA.join(', ')}}`;
-    document.getElementById('display-b').textContent = `B = {${setB.join(', ')}}`;
-    document.getElementById('display-intersection').textContent = `A ∩ B = {${intersection.join(', ')}}`;
-    document.getElementById('display-union').textContent = `A ∪ B = {${union.join(', ')}}`;
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">$A = \{2, 4, 6, 8, 10\}$, $B = \{1, 3, 5, 7, 9\}$. Find $A \cap B$ and $A \cup B$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$A$ is even numbers, $B$ is odd numbers: nothing is in both.</li>
+        <li>Together they contain every number from 1 to 10.</li>
+      </ol>
+      <p class="answer">$A \cap B = \varnothing$, $\;A \cup B = \{1, 2, 3, \dots, 10\}$</p>
+    </details>
+  </div>
 
-    drawInteractiveVenn(setA, setB, intersection, union);
-   }
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">$C$ = the vowels $\{a, e, i, o, u\}$, $D$ = the letters of "mathematics". Find $C \cap D$ and $C \cup D$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Letters of "mathematics", each once: $D = \{m, a, t, h, e, i, c, s\}$</li>
+        <li>Vowels that appear in $D$: $a, e, i$</li>
+        <li>All letters from either set: $a, c, e, h, i, m, o, s, t, u$</li>
+      </ol>
+      <p class="answer">$C \cap D = \{a, e, i\}$, $\;C \cup D = \{a, c, e, h, i, m, o, s, t, u\}$</p>
+    </details>
+  </div>
 
-   function drawInteractiveVenn(setA, setB, intersection, union) {
-    const canvas = document.getElementById('interactive-venn');
-    const ctx = canvas.getContext('2d');
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Check $A \cap (B \cup C) = (A \cap B) \cup (A \cap C)$ for $A = \{1, 2, 3, 4\}$, $B = \{2, 3, 5, 6\}$, $C = \{3, 4, 7, 8\}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Left side: $B \cup C = \{2, 3, 4, 5, 6, 7, 8\}$, so $A \cap (B \cup C) = \{2, 3, 4\}$</li>
+        <li>Right side: $A \cap B = \{2, 3\}$, $A \cap C = \{3, 4\}$, so their union is $\{2, 3, 4\}$</li>
+      </ol>
+      <p class="answer">Both sides equal $\{2, 3, 4\}$. ✔</p>
+    </details>
+  </div>
 
-    // Clear canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$A \cap B$: in both. $\;A \cup B$: in at least one.</li>
+      <li>Both operations ignore order and grouping, and each distributes over the other.</li>
+      <li>If $A \subset B$, then $A \cap B = A$ and $A \cup B = B$.</li>
+      <li>No common elements means $A \cap B = \varnothing$.</li>
+    </ul>
+  </div>
 
-    // Background
-    ctx.fillStyle = '#f8f9fa';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+</article>
 
-    // Set A (left circle) - filled
-    ctx.beginPath();
-    ctx.arc(120, 100, 60, 0, 2 * Math.PI);
-    ctx.fillStyle = 'rgba(102, 126, 234, 0.3)';
-    ctx.fill();
-    ctx.strokeStyle = '#667eea';
-    ctx.lineWidth = 3;
-    ctx.stroke();
+<script src="/static/js/note_venn.js"></script>
+<script>
+  // Intersection and union explorer (the TRY IT block above).
+  // The two buttons choose which region is shaded; typing in A or B redraws.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const aInput = document.getElementById('iuA');
+    const bInput = document.getElementById('iuB');
+    const canvas = document.getElementById('iuCanvas');
+    const output = document.getElementById('iuOutput');
+    let op = 'intersect'; // which operation is currently shown
 
-    // Set B (right circle) - filled
-    ctx.beginPath();
-    ctx.arc(280, 100, 60, 0, 2 * Math.PI);
-    ctx.fillStyle = 'rgba(118, 75, 162, 0.3)';
-    ctx.fill();
-    ctx.strokeStyle = '#764ba2';
-    ctx.lineWidth = 3;
-    ctx.stroke();
+    // What each button shades and computes
+    const operations = {
+      intersect: { name: 'A ∩ B', shade: (a, b) => a && b, result: NoteVenn.intersect },
+      union:     { name: 'A ∪ B', shade: (a, b) => a || b, result: NoteVenn.union },
+    };
 
-    // Intersection area (darker overlap)
-    ctx.save();
-    ctx.globalCompositeOperation = 'multiply';
-    ctx.beginPath();
-    ctx.arc(120, 100, 60, 0, 2 * Math.PI);
-    ctx.clip();
-    ctx.beginPath();
-    ctx.arc(280, 100, 60, 0, 2 * Math.PI);
-    ctx.fillStyle = 'rgba(102, 126, 234, 0.4)';
-    ctx.fill();
-    ctx.restore();
+    function update() {
+      const A = NoteVenn.parse(aInput.value);
+      const B = NoteVenn.parse(bInput.value);
+      const { name, shade, result } = operations[op];
 
-    // Redraw circles
-    ctx.beginPath();
-    ctx.arc(120, 100, 60, 0, 2 * Math.PI);
-    ctx.strokeStyle = '#667eea';
-    ctx.lineWidth = 3;
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.arc(280, 100, 60, 0, 2 * Math.PI);
-    ctx.strokeStyle = '#764ba2';
-    ctx.lineWidth = 3;
-    ctx.stroke();
-
-    // Labels
-    ctx.fillStyle = '#222';
-    ctx.font = 'bold 20px Times New Roman';
-    ctx.fillText('A', 105, 105);
-    ctx.fillText('B', 295, 105);
-
-    // Sample elements (show first few)
-    ctx.font = '12px Arial';
-    ctx.fillStyle = '#333';
-
-    // A only elements
-    const aOnly = setA.filter(x => !setB.includes(x));
-    if (aOnly.length > 0) {
-     ctx.fillText(aOnly.slice(0, 2).join(', '), 80, 80);
+      NoteVenn.draw(canvas, { A, B, shade });
+      output.textContent = `${name} = ${NoteVenn.format(result(A, B))}`;
     }
 
-    // B only elements
-    const bOnly = setB.filter(x => !setA.includes(x));
-    if (bOnly.length > 0) {
-     ctx.fillText(bOnly.slice(0, 2).join(', '), 320, 80);
-    }
-
-    // Intersection elements
-    if (intersection.length > 0) {
-     ctx.fillText(intersection.slice(0, 2).join(', '), 190, 95);
-    }
-   }
-
-   function drawVennIntersection() {
-    const canvas = document.getElementById('intersectionCanvas');
-    const ctx = canvas.getContext('2d');
-
-    // Background
-    ctx.fillStyle = '#f8f9fa';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Set A (left circle) - outline only
-    ctx.beginPath();
-    ctx.arc(90, 90, 50, 0, 2 * Math.PI);
-    ctx.strokeStyle = '#667eea';
-    ctx.lineWidth = 3;
-    ctx.stroke();
-
-    // Set B (right circle) - outline only
-    ctx.beginPath();
-    ctx.arc(160, 90, 50, 0, 2 * Math.PI);
-    ctx.strokeStyle = '#764ba2';
-    ctx.lineWidth = 3;
-    ctx.stroke();
-
-    // Intersection (filled)
-    ctx.globalCompositeOperation = 'source-over';
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(90, 90, 50, 0, 2 * Math.PI);
-    ctx.clip();
-    ctx.beginPath();
-    ctx.arc(160, 90, 50, 0, 2 * Math.PI);
-    ctx.fillStyle = 'rgba(102, 126, 234, 0.5)';
-    ctx.fill();
-    ctx.restore();
-
-    // Redraw circles to fix clipping artifacts
-    ctx.beginPath();
-    ctx.arc(90, 90, 50, 0, 2 * Math.PI);
-    ctx.strokeStyle = '#667eea';
-    ctx.lineWidth = 3;
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.arc(160, 90, 50, 0, 2 * Math.PI);
-    ctx.strokeStyle = '#764ba2';
-    ctx.lineWidth = 3;
-    ctx.stroke();
-
-    // Labels
-    ctx.fillStyle = '#222';
-    ctx.font = 'bold 24px Times New Roman';
-    ctx.fillText('A', 70, 95);
-    ctx.fillText('B', 175, 95);
-
-    // Sample elements
-    ctx.font = '14px Arial';
-    ctx.fillStyle = '#555';
-    ctx.fillText('1, 2', 55, 75);
-    ctx.fillText('3, 4', 115, 85);
-    ctx.fillText('5, 6', 180, 75);
-   }
-
-   function drawVennUnion() {
-    const canvas = document.getElementById('unionCanvas');
-    const ctx = canvas.getContext('2d');
-
-    // Background
-    ctx.fillStyle = '#f8f9fa';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Set A (left circle) - filled
-    ctx.beginPath();
-    ctx.arc(90, 90, 50, 0, 2 * Math.PI);
-    ctx.fillStyle = 'rgba(102, 126, 234, 0.5)';
-    ctx.fill();
-    ctx.strokeStyle = '#667eea';
-    ctx.lineWidth = 3;
-    ctx.stroke();
-
-    // Set B (right circle) - filled
-    ctx.beginPath();
-    ctx.arc(160, 90, 50, 0, 2 * Math.PI);
-    ctx.fillStyle = 'rgba(118, 75, 162, 0.5)';
-    ctx.fill();
-    ctx.strokeStyle = '#764ba2';
-    ctx.lineWidth = 3;
-    ctx.stroke();
-
-    // Intersection area (darker overlap)
-    ctx.save();
-    ctx.globalCompositeOperation = 'multiply';
-    ctx.beginPath();
-    ctx.arc(90, 90, 50, 0, 2 * Math.PI);
-    ctx.clip();
-    ctx.beginPath();
-    ctx.arc(160, 90, 50, 0, 2 * Math.PI);
-    ctx.fillStyle = 'rgba(102, 126, 234, 0.3)';
-    ctx.fill();
-    ctx.restore();
-
-    // Redraw circles to fix clipping
-    ctx.beginPath();
-    ctx.arc(90, 90, 50, 0, 2 * Math.PI);
-    ctx.strokeStyle = '#667eea';
-    ctx.lineWidth = 3;
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.arc(160, 90, 50, 0, 2 * Math.PI);
-    ctx.strokeStyle = '#764ba2';
-    ctx.lineWidth = 3;
-    ctx.stroke();
-
-    // Labels
-    ctx.fillStyle = '#222';
-    ctx.font = 'bold 24px Times New Roman';
-    ctx.fillText('A', 70, 95);
-    ctx.fillText('B', 175, 95);
-
-    // Sample elements
-    ctx.font = '14px Arial';
-    ctx.fillStyle = '#333';
-    ctx.fillText('1, 2', 55, 75);
-    ctx.fillText('3, 4', 115, 85);
-    ctx.fillText('5, 6', 180, 75);
-   }
-
-   function toggleSolution(id) {
-    const element = document.getElementById(id);
-    element.style.display = element.style.display === 'none' ? 'block' : 'none';
-   }
-
-   // Initialize
-   drawVennIntersection();
-   drawVennUnion();
-   calculateOperations();
-  </script>
- </body>
-</html>
+    document.querySelectorAll('.note-demo .choices button').forEach((button) => {
+      button.addEventListener('click', () => {
+        op = button.dataset.op;
+        // Fill in the chosen button, outline the other
+        document.querySelectorAll('.note-demo .choices button')
+          .forEach((b) => b.classList.toggle('active', b === button));
+        update();
+      });
+    });
+    aInput.addEventListener('input', update);
+    bInput.addEventListener('input', update);
+    update(); // draw the default sets straight away
+  })();
+</script>

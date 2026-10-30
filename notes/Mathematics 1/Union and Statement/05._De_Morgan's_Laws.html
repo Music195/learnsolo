@@ -1,713 +1,176 @@
-<!DOCTYPE html>
 <!-- tags: Set and Elements -->
-<html lang="en">
- <head>
-  <meta charset="utf-8"/>
-  <title>
-   De Morgan's Laws
-  </title>
-  <script>
-   MathJax = {
-            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
-            svg: {fontCache: 'global'}
-        };
-  </script>
-  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
-  </script>
-  <link href="/static/notes_style.css" rel="stylesheet"/>
-  <style>
-   .demo-input-group {
-    display: flex;
-    flex-direction: column;
-    min-width: 150px;
-   }
-   .demo-input-group label {
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #2c3e50;
-   }
-   .demo-input {
-    padding: 8px;
-    border: 2px solid #bdc3c7;
-    border-radius: 6px;
-    font-size: 14px;
-    transition: border-color 0.3s;
-   }
-   .demo-input:focus {
-    outline: none;
-    border-color: #3498db;
-   }
-   .demo-button {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: transform 0.2s;
-   }
-   .demo-button:hover {
-    transform: translateY(-2px);
-   }
-   .demo-result {
-    background: white;
-    border-radius: 8px;
-    padding: 15px;
-    margin-top: 15px;
-    border-left: 4px solid #3498db;
-   }
-   .solution-toggle {
-    background: #2c3e50;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    margin-top: 10px;
-    transition: background-color 0.3s;
-   }
-   .solution-toggle:hover {
-    background: #34495e;
-   }
-   .solution-content {
-    display: none;
-    background: rgba(255, 255, 255, 0.9);
-    color: #2c3e50;
-    padding: 15px;
-    border-radius: 8px;
-    margin-top: 10px;
-   }
-   .demorgan-laws {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 15px;
-    margin: 20px 0;
-   }
-   .law-card {
-    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-    padding: 15px;
-    border-radius: 8px;
-    border-left: 4px solid #e67e22;
-   }
-   .law-card h4 {
-    margin-top: 0;
-    color: #2c3e50;
-   }
-   .venn-interactive {
-    background: white;
-    border-radius: 8px;
-    padding: 15px;
-    margin: 15px 0;
-    border: 2px solid #ecf0f1;
-    text-align: center;
-   }
-   .law-verification {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-    margin: 15px 0;
-   }
-   .verification-card {
-    background: #f8f9fa;
-    padding: 15px;
-    border-radius: 8px;
-    border: 2px solid #dee2e6;
-    text-align: center;
-   }
-   .verification-card h4 {
-    margin-top: 0;
-    color: #2c3e50;
-   }
-   .math-orange {
-    color: #e67e22;
-    font-weight: bold;
-   }
-   .venn-container {
-    display: flex;
-    justify-content: center;
-    gap: 50px;
-    margin: 40px 0;
-    flex-wrap: wrap;
-   }
-   .demorgan-diagram {
-    text-align: center;
-   }
-   .venn-label {
-    font-size: 1.3em;
-    margin-bottom: 15px;
-    font-weight: 600;
-    color: #667eea;
-   }
-   .venn-description {
-    margin-top: 15px;
-    font-size: 0.95em;
-    color: #555;
-    max-width: 280px;
-    line-height: 1.6;
-   }
-  </style>
- </head>
- <body>
-  <div class="fancy-title" data-topic="Set and Elements">
-   De Morgan's Laws
-  </div>
-  <div class="container">
-   <div class="main-content">
-    <div class="section-title">
-     De Morgan's Laws
-    </div>
+<!-- =====================================================================
+     NOTE: De Morgan's Laws
+     Uses the shared blocks from static/css/note_blocks.css.
+     Do not add a <style> block here; change note_blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
 
-    <div class="math-foundation">
-     <h3>Mathematical Foundations</h3>
-     <p>De Morgan's laws describe how complement operations interact with union and intersection. These fundamental laws allow us to rewrite complex set expressions and are essential for logical reasoning in set theory.</p>
+  <h1 class="note-title" data-topic="Set and Elements">De Morgan's Laws</h1>
 
-     <div class="demorgan-laws">
-      <div class="law-card">
-       <h4>First Law: Complement of Union</h4>
-       <p>$\overline{A \cup B} = \overline{A} \cap \overline{B}$</p>
-       <p>The complement of the union equals the intersection of the complements</p>
-       <p>Elements not in A ∪ B are elements not in A and not in B</p>
-      </div>
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Taking the complement of $\cup$ and $\cap$</h2>
+    <p>When you take the complement of a union or an intersection, the bar <strong>splits over each set</strong>
+      and the symbol <strong>flips</strong>: $\cup$ becomes $\cap$, and $\cap$ becomes $\cup$.</p>
+  </section>
 
-      <div class="law-card">
-       <h4>Second Law: Complement of Intersection</h4>
-       <p>$\overline{A \cap B} = \overline{A} \cup \overline{B}$</p>
-       <p>The complement of the intersection equals the union of the complements</p>
-       <p>Elements not in A ∩ B are elements not in A or not in B</p>
-      </div>
-
-      <div class="law-card">
-       <h4>Logical Equivalence</h4>
-       <p>¬(P ∧ Q) ≡ ¬P ∨ ¬Q</p>
-       <p>¬(P ∨ Q) ≡ ¬P ∧ ¬Q</p>
-       <p>Same laws apply to logic with NOT, AND, OR</p>
-       <p>Foundation of digital logic and computer science</p>
-      </div>
-     </div>
-    </div>
-
-    <div class="interactive-demo">
-     <h3>Interactive De Morgan's Law Verifier</h3>
-     <p>Enter sets A and B to verify that the laws hold true.</p>
-
-     <div class="demo-controls">
-      <div class="demo-input-group">
-       <label for="set-a">Set A (comma-separated):</label>
-       <input type="text" id="set-a" class="demo-input" value="1, 2, 3" placeholder="e.g., 1, 2, 3">
-      </div>
-      <div class="demo-input-group">
-       <label for="set-b">Set B (comma-separated):</label>
-       <input type="text" id="set-b" class="demo-input" value="3, 4, 5" placeholder="e.g., 3, 4, 5">
-      </div>
-      <div class="demo-input-group">
-       <label for="universal-set">Universal Set U:</label>
-       <input type="text" id="universal-set" class="demo-input" value="1, 2, 3, 4, 5, 6" placeholder="e.g., 1, 2, 3, 4, 5, 6">
-      </div>
-      <button onclick="verifyDeMorgan()" class="demo-button">Verify Laws</button>
-     </div>
-
-     <div class="venn-interactive">
-      <h4>Visual Verification:</h4>
-      <canvas id="demorgan-interactive" width="500" height="250" style="display: block; margin: 0 auto; border: 1px solid #ccc;"></canvas>
-     </div>
-
-     <div class="law-verification">
-      <div class="verification-card">
-       <h4>First Law</h4>
-       <p>$\overline{A \cup B} = \overline{A} \cap \overline{B}$</p>
-       <p id="law1-result">Not verified</p>
-      </div>
-      <div class="verification-card">
-       <h4>Second Law</h4>
-       <p>$\overline{A \cap B} = \overline{A} \cup \overline{B}$</p>
-       <p id="law2-result">Not verified</p>
-      </div>
-      <div class="verification-card">
-       <h4>Left Side</h4>
-       <p id="left-display">A ∪ B = {1, 2, 3, 4, 5}</p>
-       <p id="left-complement">$\overline{A \cup B}$ = {6}</p>
-      </div>
-      <div class="verification-card">
-       <h4>Right Side</h4>
-       <p id="right-display">$\overline{A} \cap \overline{B}$ = {6}</p>
-       <p id="verification">✓ Equal</p>
-      </div>
-     </div>
-    </div>
-
-    <div class="worked-example">
-     <h3>Worked Examples</h3>
-
-     <div style="margin-bottom: 20px;">
-      <h4>Example 1: First Law - Complement of Union</h4>
-      <p>Let U = {1, 2, 3, 4, 5}, A = {1, 2, 3}, B = {3, 4, 5}</p>
-      <p>A ∪ B = {1, 2, 3, 4, 5}</p>
-      <p>$\overline{A \cup B} = \overline{\{1, 2, 3, 4, 5\}} = \emptyset$</p>
-      <p>$\overline{A} = \{4, 5\}$, $\overline{B} = \{1, 2\}$</p>
-      <p>$\overline{A} \cap \overline{B} = \{4, 5\} \cap \{1, 2\} = \emptyset$</p>
-      <p>Both sides equal ∅ ✓</p>
-     </div>
-
-     <div style="margin-bottom: 20px;">
-      <h4>Example 2: Second Law - Complement of Intersection</h4>
-      <p>Let U = {1, 2, 3, 4, 5}, A = {1, 2, 3}, B = {2, 3, 4}</p>
-      <p>A ∩ B = {2, 3}</p>
-      <p>$\overline{A \cap B} = \overline{\{2, 3\}} = \{1, 4, 5\}$</p>
-      <p>$\overline{A} = \{4, 5\}$, $\overline{B} = \{1, 5\}$</p>
-      <p>$\overline{A} \cup \overline{B} = \{4, 5\} \cup \{1, 5\} = \{1, 4, 5\}$</p>
-      <p>Both sides equal {1, 4, 5} ✓</p>
-     </div>
-
-     <div style="margin-bottom: 20px;">
-      <h4>Example 3: Logical Application</h4>
-      <p>Negate: "x > 5 and x < 10"</p>
-      <p>Using De Morgan: ¬(P ∧ Q) ≡ ¬P ∨ ¬Q</p>
-      <p>¬(x > 5 ∧ x < 10) ≡ ¬(x > 5) ∨ ¬(x < 10)</p>
-      <p>≡ x ≤ 5 ∨ x ≥ 10</p>
-      <p>The solution is x ≤ 5 or x ≥ 10</p>
-     </div>
-    </div>
-
-    <div class="practice-problem">
-     <h3>Practice Problems</h3>
-
-     <div style="margin-bottom: 20px;">
-      <h4>Problem 1</h4>
-      <p>Given U = {1, 2, 3, 4, 5, 6}, A = {1, 2, 3}, B = {3, 4, 5}:</p>
-      <p>Verify: $\overline{A \cup B} = \overline{A} \cap \overline{B}$</p>
-      <button onclick="toggleSolution('sol1')" class="solution-toggle">Show Solution</button>
-      <div id="sol1" class="solution-content">
-       <p>A ∪ B = {1, 2, 3, 4, 5}</p>
-       <p>$\overline{A \cup B} = \{6\}$</p>
-       <p>$\overline{A} = \{4, 5, 6\}$, $\overline{B} = \{1, 2, 6\}$</p>
-       <p>$\overline{A} \cap \overline{B} = \{6\}$</p>
-       <p>Both sides equal {6} ✓</p>
-      </div>
-     </div>
-
-     <div style="margin-bottom: 20px;">
-      <h4>Problem 2</h4>
-      <p>Given U = {a, b, c, d, e}, P = {a, b}, Q = {b, c}:</p>
-      <p>Verify: $\overline{P \cap Q} = \overline{P} \cup \overline{Q}$</p>
-      <button onclick="toggleSolution('sol2')" class="solution-toggle">Show Solution</button>
-      <div id="sol2" class="solution-content">
-       <p>P ∩ Q = {b}</p>
-       <p>$\overline{P \cap Q} = \{a, c, d, e\}$</p>
-       <p>$\overline{P} = \{c, d, e\}$, $\overline{Q} = \{a, d, e\}$</p>
-       <p>$\overline{P} \cup \overline{Q} = \{a, c, d, e\}$</p>
-       <p>Both sides equal {a, c, d, e} ✓</p>
-      </div>
-     </div>
-
-     <div style="margin-bottom: 20px;">
-      <h4>Problem 3</h4>
-      <p>Use De Morgan's law to negate: "x ≥ 2 and x ≤ 8"</p>
-      <button onclick="toggleSolution('sol3')" class="solution-toggle">Show Solution</button>
-      <div id="sol3" class="solution-content">
-       <p>¬(x ≥ 2 ∧ x ≤ 8) ≡ ¬(x ≥ 2) ∨ ¬(x ≤ 8)</p>
-       <p>≡ x < 2 ∨ x > 8</p>
-       <p>The solution is x < 2 or x > 8</p>
-      </div>
-     </div>
-    </div>
-
-    <div class="key-takeaways">
-     <h3>Key Takeaways</h3>
-     <ul>
-      <li>$\overline{A \cup B} = \overline{A} \cap \overline{B}$: Complement of union equals intersection of complements</li>
-      <li>$\overline{A \cap B} = \overline{A} \cup \overline{B}$: Complement of intersection equals union of complements</li>
-      <li>These laws apply to both set theory and logic (with ¬, ∧, ∨)</li>
-      <li>Essential for simplifying complex set expressions and logical statements</li>
-      <li>Foundation of digital logic, computer science, and mathematical reasoning</li>
-      <li>Can be extended to more than two sets: $\overline{\bigcup A_i} = \bigcap \overline{A_i}$</li>
-      <li>Help convert between union/intersection and their complements</li>
-      <li>Critical for solving inequalities and set theory problems</li>
-     </ul>
-    </div>
-
-    <div class="formula-list">
-     <div class="formula-row">
-      <span class="number">
-       1
-      </span>
-      <span class="formula">
-       $\overline{A \cup B} = \overline{A}$
-       <span class="math-orange">
-        $\cap$
-       </span>
-       $\overline{B}$
-      </span>
-     </div>
-     <div class="formula-row">
-      <span class="number">
-       2
-      </span>
-      <span class="formula">
-       $\overline{A \cap B} = \overline{A}$
-       <span class="math-orange">
-        $\cup$
-       </span>
-       $\overline{B}$
-      </span>
-     </div>
-    </div>
-    <div class="venn-container">
-     <div class="demorgan-diagram">
-      <div class="venn-label">
-       $\overline{A \cup B}$
-      </div>
-      <canvas height="200" id="demorganCanvas1" width="280">
-      </canvas>
-      <div class="venn-description">
-       Complement of the union:
-       <br/>
-       Elements
-       <strong>
-        outside both A and B
-       </strong>
-       <br/>
-       (Everything except A∪B)
-      </div>
-     </div>
-     <div class="demorgan-diagram">
-      <div class="venn-label">
-       $\overline{A} \cap \overline{B}$
-      </div>
-      <canvas height="200" id="demorganCanvas2" width="280">
-      </canvas>
-      <div class="venn-description">
-       Intersection of complements:
-       <br/>
-       Elements
-       <strong>
-        not in A AND not in B
-       </strong>
-       <br/>
-       (Same as above!)
-      </div>
-     </div>
-    </div>
-    <div class="venn-container">
-     <div class="demorgan-diagram">
-      <div class="venn-label">
-       $\overline{A \cap B}$
-      </div>
-      <canvas height="200" id="demorganCanvas3" width="280">
-      </canvas>
-      <div class="venn-description">
-       Complement of intersection:
-       <br/>
-       Elements
-       <strong>
-        outside the overlap
-       </strong>
-       <br/>
-       (Everything except A∩B)
-      </div>
-     </div>
-     <div class="demorgan-diagram">
-      <div class="venn-label">
-       $\overline{A} \cup \overline{B}$
-      </div>
-      <canvas height="200" id="demorganCanvas4" width="280">
-      </canvas>
-      <div class="venn-description">
-       Union of complements:
-       <br/>
-       Elements
-       <strong>
-        not in A OR not in B
-       </strong>
-       <br/>
-       (Same as above!)
-      </div>
-     </div>
-    </div>
-   </div>
+  <!-- FORMULA: the two laws -->
+  <div class="note-formula">
+    <h3>Complement of a union</h3>
+    <div class="formula-main">$$\overline{A \cup B} = \overline{A} \cap \overline{B}$$</div>
+    <p class="symbols">"Not in $A$ or $B$" = "not in $A$ <strong>and</strong> not in $B$"</p>
   </div>
 
-  <script>
-   function parseSet(input) {
-    return input.split(',').map(x => x.trim()).filter(x => x !== '');
-   }
+  <div class="note-formula">
+    <h3>Complement of an intersection</h3>
+    <div class="formula-main">$$\overline{A \cap B} = \overline{A} \cup \overline{B}$$</div>
+    <p class="symbols">"Not in both" = "not in $A$ <strong>or</strong> not in $B$"</p>
+  </div>
 
-   function verifyDeMorgan() {
-    const aInput = document.getElementById('set-a').value;
-    const bInput = document.getElementById('set-b').value;
-    const uInput = document.getElementById('universal-set').value;
+  <!-- TIP: an everyday example -->
+  <div class="note-tip">
+    Everyday check: "not (tea or coffee)" means "no tea <strong>and</strong> no coffee".
+    "Not (tea and coffee)" means you are missing <strong>at least one</strong> of them: no tea <strong>or</strong> no coffee.
+  </div>
 
-    const setA = parseSet(aInput);
-    const setB = parseSet(bInput);
-    const setU = parseSet(uInput);
+  <!-- DEMO: compare both sides of each law; code at the bottom -->
+  <div class="note-demo">
+    <h2>Check De Morgan's laws</h2>
+    <div class="controls">
+      <label>$U$ <input type="text" id="dmU" class="wide" value="1, 2, 3, 4, 5, 6"></label>
+      <label>$A$ <input type="text" id="dmA" class="wide" value="1, 2, 3"></label>
+      <label>$B$ <input type="text" id="dmB" class="wide" value="3, 4, 5"></label>
+    </div>
+    <div class="controls choices">
+      <button type="button" data-law="1" class="active">$\overline{A \cup B} = \overline{A} \cap \overline{B}$</button>
+      <button type="button" data-law="2">$\overline{A \cap B} = \overline{A} \cup \overline{B}$</button>
+    </div>
+    <canvas id="dmCanvas"></canvas>
+    <div class="output table-text" id="dmOutput"></div>
+  </div>
 
-    // Calculate union and intersection
-    const union = [...new Set([...setA, ...setB])];
-    const intersection = setA.filter(x => setB.includes(x));
+  <!-- PROOF: why the first law works -->
+  <section class="note-proof">
+    <h2>Why $\overline{A \cup B} = \overline{A} \cap \overline{B}$</h2>
+    <ol class="note-steps">
+      <li>$x \in \overline{A \cup B}$ means $x$ is <strong>not</strong> in $A \cup B$.</li>
+      <li>$A \cup B$ contains everything in $A$ or $B$, so $x$ is in neither: $x \notin A$ <strong>and</strong> $x \notin B$.</li>
+      <li>That is $x \in \overline{A}$ and $x \in \overline{B}$, i.e. $x \in \overline{A} \cap \overline{B}$.</li>
+      <li>Each step also works backwards, so the two sets have exactly the same elements.</li>
+    </ol>
+  </section>
 
-    // Calculate complements
-    const complementA = setU.filter(x => !setA.includes(x));
-    const complementB = setU.filter(x => !setB.includes(x));
-    const complementUnion = setU.filter(x => !union.includes(x));
-    const complementIntersection = setU.filter(x => !intersection.includes(x));
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">$U = \{1, 2, 3, 4, 5, 6\}$, $A = \{1, 2, 3\}$, $B = \{3, 4, 5\}$. Check $\overline{A \cup B} = \overline{A} \cap \overline{B}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Left: $A \cup B = \{1, 2, 3, 4, 5\}$, so $\overline{A \cup B} = \{6\}$</li>
+        <li>Right: $\overline{A} = \{4, 5, 6\}$, $\overline{B} = \{1, 2, 6\}$, so $\overline{A} \cap \overline{B} = \{6\}$</li>
+      </ol>
+      <p class="answer">Both sides are $\{6\}$. ✔</p>
+    </details>
+  </div>
 
-    // Verify first law: complement(union) = intersection(complements)
-    const rightSide1 = complementA.filter(x => complementB.includes(x));
-    const law1Holds = arraysEqual(complementUnion, rightSide1);
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">$U = \{1, 2, 3, 4, 5, 6\}$, $A = \{1, 2, 3\}$, $B = \{2, 3, 4\}$. Check $\overline{A \cap B} = \overline{A} \cup \overline{B}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Left: $A \cap B = \{2, 3\}$, so $\overline{A \cap B} = \{1, 4, 5, 6\}$</li>
+        <li>Right: $\overline{A} = \{4, 5, 6\}$, $\overline{B} = \{1, 5, 6\}$, so $\overline{A} \cup \overline{B} = \{1, 4, 5, 6\}$</li>
+      </ol>
+      <p class="answer">Both sides are $\{1, 4, 5, 6\}$. ✔</p>
+    </details>
+  </div>
 
-    // Verify second law: complement(intersection) = union(complements)
-    const unionComplements = [...new Set([...complementA, ...complementB])];
-    const law2Holds = arraysEqual(complementIntersection, unionComplements);
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Of 40 students, 25 like maths, 18 like English, and 10 like both. How many like neither?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>"Neither" is $\overline{M} \cap \overline{E} = \overline{M \cup E}$ (De Morgan)</li>
+        <li>$n(M \cup E) = n(M) + n(E) - n(M \cap E) = 25 + 18 - 10 = 33$</li>
+        <li>$n(\overline{M \cup E}) = 40 - 33$</li>
+      </ol>
+      <p class="answer">7 students like neither.</p>
+    </details>
+  </div>
 
-    // Update displays
-    document.getElementById('left-display').textContent = `A ∪ B = {${union.join(', ')}}`;
-    document.getElementById('left-complement').textContent = `Ā ∪ B̄ = {${unionComplements.join(', ')}}`;
-    document.getElementById('right-display').textContent = `Ā ∩ B̄ = {${rightSide1.join(', ')}}`;
-    document.getElementById('verification').textContent = law1Holds ? '✓ Equal' : '✗ Not equal';
+  <!-- WARNING: the most common mistake with this topic -->
+  <div class="note-warning">
+    The bar does <strong>not</strong> simply split: $\overline{A \cup B} \neq \overline{A} \cup \overline{B}$.
+    When the bar breaks apart, the symbol between the sets must flip.
+  </div>
 
-    document.getElementById('law1-result').textContent = law1Holds ? '✓ Verified' : '✗ Failed';
-    document.getElementById('law2-result').textContent = law2Holds ? '✓ Verified' : '✗ Failed';
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$\overline{A \cup B} = \overline{A} \cap \overline{B}$ and $\overline{A \cap B} = \overline{A} \cup \overline{B}$.</li>
+      <li>Split the bar, flip the symbol.</li>
+      <li>"Neither $A$ nor $B$" $= \overline{A \cup B}$: count it as $n(U) - n(A \cup B)$.</li>
+    </ul>
+  </div>
 
-    drawInteractiveDeMorgan(setA, setB, setU);
-   }
+</article>
 
-   function arraysEqual(a, b) {
-    if (a.length !== b.length) return false;
-    return a.every(x => b.includes(x)) && b.every(x => a.includes(x));
-   }
+<script src="/static/js/note_venn.js"></script>
+<script>
+  // De Morgan checker (the TRY IT block above).
+  // For the chosen law, works out both sides separately and shades the result.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const uInput = document.getElementById('dmU');
+    const aInput = document.getElementById('dmA');
+    const bInput = document.getElementById('dmB');
+    const canvas = document.getElementById('dmCanvas');
+    const output = document.getElementById('dmOutput');
+    let law = '1'; // which law is currently shown
 
-   function drawInteractiveDeMorgan(setA, setB, setU) {
-    const canvas = document.getElementById('demorgan-interactive');
-    const ctx = canvas.getContext('2d');
+    function update() {
+      const A = NoteVenn.parse(aInput.value);
+      const B = NoteVenn.parse(bInput.value);
+      const U = NoteVenn.union(NoteVenn.parse(uInput.value), NoteVenn.union(A, B));
+      const notA = NoteVenn.minus(U, A);
+      const notB = NoteVenn.minus(U, B);
+      const f = NoteVenn.format;
 
-    // Clear canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+      let lines;
+      if (law === '1') {
+        // Left side: complement of the union.  Right side: intersection of the complements.
+        const union = NoteVenn.union(A, B);
+        lines = [
+          `Left:  A ∪ B = ${f(union)}   →   complement = ${f(NoteVenn.minus(U, union))}`,
+          `Right: Ā = ${f(notA)},  B̄ = ${f(notB)}   →   Ā ∩ B̄ = ${f(NoteVenn.intersect(notA, notB))}`,
+        ];
+        NoteVenn.draw(canvas, { U, A, B, shade: (a, b) => !a && !b });
+      } else {
+        // Left side: complement of the intersection.  Right side: union of the complements.
+        const both = NoteVenn.intersect(A, B);
+        lines = [
+          `Left:  A ∩ B = ${f(both)}   →   complement = ${f(NoteVenn.minus(U, both))}`,
+          `Right: Ā = ${f(notA)},  B̄ = ${f(notB)}   →   Ā ∪ B̄ = ${f(NoteVenn.union(notA, notB))}`,
+        ];
+        NoteVenn.draw(canvas, { U, A, B, shade: (a, b) => !(a && b) });
+      }
+      output.textContent = lines.join('\n');
+    }
 
-    // Background (universal set)
-    ctx.fillStyle = '#e8f5e8';
-    ctx.fillRect(50, 50, 400, 150);
-
-    // Universal set border
-    ctx.strokeStyle = '#222';
-    ctx.lineWidth = 3;
-    ctx.strokeRect(50, 50, 400, 150);
-
-    // Set A (left circle)
-    ctx.beginPath();
-    ctx.arc(150, 125, 60, 0, 2 * Math.PI);
-    ctx.fillStyle = 'rgba(102, 126, 234, 0.3)';
-    ctx.fill();
-    ctx.strokeStyle = '#667eea';
-    ctx.lineWidth = 3;
-    ctx.stroke();
-
-    // Set B (right circle)
-    ctx.beginPath();
-    ctx.arc(350, 125, 60, 0, 2 * Math.PI);
-    ctx.fillStyle = 'rgba(118, 75, 162, 0.3)';
-    ctx.fill();
-    ctx.strokeStyle = '#764ba2';
-    ctx.lineWidth = 3;
-    ctx.stroke();
-
-    // Labels
-    ctx.fillStyle = '#222';
-    ctx.font = 'bold 20px Times New Roman';
-    ctx.fillText('A', 135, 130);
-    ctx.fillText('B', 375, 130);
-    ctx.font = '16px Arial';
-    ctx.fillText('U', 25, 40);
-   }
-
-   function drawDeMorganLaw1() {
-    // First law LEFT: complement of (A union B) - GREEN area outside circles
-    const canvas = document.getElementById('demorganCanvas1');
-    const ctx = canvas.getContext('2d');
-
-    // Green background only inside rectangle
-    ctx.fillStyle = '#5a8f5a';
-    ctx.fillRect(10, 10, 260, 180);
-
-    // Draw universal set border
-    ctx.strokeStyle = '#000';
-    ctx.lineWidth = 3;
-    ctx.strokeRect(10, 10, 260, 180);
-
-    // Draw white circles for A and B (unshaded regions)
-    ctx.fillStyle = '#f5f5dc';
-    ctx.beginPath();
-    ctx.arc(110, 100, 55, 0, 2 * Math.PI);
-    ctx.fill();
-
-    ctx.beginPath();
-    ctx.arc(170, 100, 55, 0, 2 * Math.PI);
-    ctx.fill();
-
-    // Draw circle borders
-    ctx.beginPath();
-    ctx.arc(110, 100, 55, 0, 2 * Math.PI);
-    ctx.strokeStyle = '#000';
-    ctx.lineWidth = 2.5;
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.arc(170, 100, 55, 0, 2 * Math.PI);
-    ctx.stroke();
-
-    // Labels
-    ctx.fillStyle = '#000';
-    ctx.font = 'bold 24px serif';
-    ctx.fillText('A', 90, 105);
-    ctx.fillText('B', 185, 105);
-    ctx.font = 'italic 22px serif';
-    ctx.fillText('u', 20, 30);
-   }
-
-   function drawDeMorganLaw2() {
-    // First law RIGHT: same as left (showing equivalence)
-    const canvas = document.getElementById('demorganCanvas2');
-    const ctx = canvas.getContext('2d');
-
-    // Green background only inside rectangle
-    ctx.fillStyle = '#5a8f5a';
-    ctx.fillRect(10, 10, 260, 180);
-
-    // Border
-    ctx.strokeStyle = '#000';
-    ctx.lineWidth = 3;
-    ctx.strokeRect(10, 10, 260, 180);
-
-    // White circles
-    ctx.fillStyle = '#f5f5dc';
-    ctx.beginPath();
-    ctx.arc(110, 100, 55, 0, 2 * Math.PI);
-    ctx.fill();
-
-    ctx.beginPath();
-    ctx.arc(170, 100, 55, 0, 2 * Math.PI);
-    ctx.fill();
-
-    // Circle borders
-    ctx.beginPath();
-    ctx.arc(110, 100, 55, 0, 2 * Math.PI);
-    ctx.strokeStyle = '#000';
-    ctx.lineWidth = 2.5;
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.arc(170, 100, 55, 0, 2 * Math.PI);
-    ctx.stroke();
-
-    // Labels
-    ctx.fillStyle = '#000';
-    ctx.font = 'bold 24px serif';
-    ctx.fillText('A', 90, 105);
-    ctx.fillText('B', 185, 105);
-    ctx.font = 'italic 22px serif';
-    ctx.fillText('u', 20, 30);
-   }
-
-   function drawDeMorganLaw3() {
-    // Second law LEFT: complement of intersection - WHITE only at overlap, GREEN everywhere else
-    const canvas = document.getElementById('demorganCanvas3');
-    const ctx = canvas.getContext('2d');
-
-    // Green background only inside rectangle
-    ctx.fillStyle = '#5a8f5a';
-    ctx.fillRect(10, 10, 260, 180);
-
-    // Draw white intersection area only
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(110, 100, 55, 0, 2 * Math.PI);
-    ctx.clip();
-    ctx.beginPath();
-    ctx.arc(170, 100, 55, 0, 2 * Math.PI);
-    ctx.fillStyle = '#f5f5dc';
-    ctx.fill();
-    ctx.restore();
-
-    // Draw border
-    ctx.strokeStyle = '#000';
-    ctx.lineWidth = 3;
-    ctx.strokeRect(10, 10, 260, 180);
-
-    // Draw circle borders
-    ctx.beginPath();
-    ctx.arc(110, 100, 55, 0, 2 * Math.PI);
-    ctx.strokeStyle = '#000';
-    ctx.lineWidth = 2.5;
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.arc(170, 100, 55, 0, 2 * Math.PI);
-    ctx.stroke();
-
-    // Labels
-    ctx.fillStyle = '#000';
-    ctx.font = 'bold 24px serif';
-    ctx.fillText('A', 90, 105);
-    ctx.fillText('B', 185, 105);
-    ctx.font = 'italic 22px serif';
-    ctx.fillText('u', 20, 30);
-   }
-
-   function drawDeMorganLaw4() {
-    // Second law RIGHT: same as left (showing equivalence)
-    const canvas = document.getElementById('demorganCanvas4');
-    const ctx = canvas.getContext('2d');
-
-    // Green background only inside rectangle
-    ctx.fillStyle = '#5a8f5a';
-    ctx.fillRect(10, 10, 260, 180);
-
-    // Draw white intersection only
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(110, 100, 55, 0, 2 * Math.PI);
-    ctx.clip();
-    ctx.beginPath();
-    ctx.arc(170, 100, 55, 0, 2 * Math.PI);
-    ctx.fillStyle = '#f5f5dc';
-    ctx.fill();
-    ctx.restore();
-
-    // Draw border
-    ctx.strokeStyle = '#000';
-    ctx.lineWidth = 3;
-    ctx.strokeRect(10, 10, 260, 180);
-
-    // Draw circle borders
-    ctx.beginPath();
-    ctx.arc(110, 100, 55, 0, 2 * Math.PI);
-    ctx.strokeStyle = '#000';
-    ctx.lineWidth = 2.5;
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.arc(170, 100, 55, 0, 2 * Math.PI);
-    ctx.stroke();
-
-    // Labels
-    ctx.fillStyle = '#000';
-    ctx.font = 'bold 24px serif';
-    ctx.fillText('A', 90, 105);
-    ctx.fillText('B', 185, 105);
-    ctx.font = 'italic 22px serif';
-    ctx.fillText('u', 20, 30);
-   }
-
-   function toggleSolution(id) {
-    const element = document.getElementById(id);
-    element.style.display = element.style.display === 'none' ? 'block' : 'none';
-   }
-
-   // Initialize
-   drawDeMorganLaw1();
-   drawDeMorganLaw2();
-   drawDeMorganLaw3();
-   drawDeMorganLaw4();
-   verifyDeMorgan();
-  </script>
- </body>
-</html>
+    document.querySelectorAll('.note-demo .choices button').forEach((button) => {
+      button.addEventListener('click', () => {
+        law = button.dataset.law;
+        // Fill in the chosen button, outline the other
+        document.querySelectorAll('.note-demo .choices button')
+          .forEach((b) => b.classList.toggle('active', b === button));
+        update();
+      });
+    });
+    [uInput, aInput, bInput].forEach((input) => input.addEventListener('input', update));
+    update(); // draw the default sets straight away
+  })();
+</script>
