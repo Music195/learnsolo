@@ -6,7 +6,7 @@ from utils.note_loader import (
     get_notes_with_titles,
     NoteNotFound
 )
-from utils.practice_loader import get_practice_sets
+from utils.practice_loader import get_practice_sets, get_past_papers
 import requests
 import os
 
@@ -105,6 +105,13 @@ def build_search_index():
             "title": "Practice: " + practice["title"],
             "where": " · ".join([COURSE_NAMES.get(parts[0], parts[0]), TOPIC_NAMES.get(parts[1], parts[1]), "Practice"]),
             "url": url_for("problems.practice", practice_path=practice["path"]),
+        })
+    # Past questions, e.g. "EJU Past Questions · Past question"
+    for paper in get_past_papers():
+        index.append({
+            "title": "Past question: " + paper["title"],
+            "where": paper["path"].split("/")[0] + " · Past question",
+            "url": url_for("problems.past", past_path=paper["path"]),
         })
     return index
 

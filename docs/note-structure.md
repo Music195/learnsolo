@@ -152,7 +152,31 @@ A practice file is a fragment like a note:
 </article>
 ```
 
-- `data-level`: `basic`, `standard` or `challenge` (the badge and colour).
+- `data-level`: `basic`, `standard`, `challenge` or `exam` (the badge and colour).
 - `data-answer` (optional): the value the answer box checks against. Write it the way a student would type it: `45`, `6`, `2√7`, `5/2`, `√3/2`, `5π/6`, `3e`, `4/e^2`, `π^2/2` (digits, `+ − × ÷ ^ ( )`, `√`, `π` and `e` are understood). Typed answers count as correct within 0.01, so `5.29` is accepted for `2√7`. Leave it out for problems whose answer isn't one number (proofs, "find all…").
 - The answer box and the "I got it / Review later" buttons are added by `practice.js`; don't write them in the file.
 - Keep the solution steps short and numbered, like the examples in the notes, and put any extra insight in `<p class="practice-note">` inside the solution.
+
+## 8. Past questions
+
+Past exam questions use the same file format as practice sets, grouped by exam instead of by topic:
+
+```
+past/EJU Past Questions/01._Sample_Paper_Math_Course_2.html   →   /past/EJU Past Questions/01._Sample_Paper_Math_Course_2
+```
+
+- **Past questions** (`/note/kind_of_problem`, the "Practice problems" link on the home page) shows one card per folder in `past/`. Clicking a card lists its papers (`/note/kind_of_problem/<folder>`), and each paper opens in `templates/practice.html` with hints, solutions and answer boxes. The search box finds papers too.
+- **New exam:** make a new folder in `past/`. Give it an icon and a one-line description in `CATEGORY_INFO` in `routes/problems.py` (without one it gets a generic description).
+- **New paper:** add an HTML file to the folder. Number files `01._`, `02._`, … to set the order. Use `data-level="exam"` for each problem.
+- **Problems in parts:** list the parts right after the question and number the solution steps the same way. The answer box checks one number, so say which part to type in:
+
+```html
+<p class="question">A bag holds 4 red balls and 3 white balls…</p>
+<ol class="parts">
+  <li>(1) Find the probability that exactly 2 are red.</li>
+  <li>(2) Find the expected number of red balls. (Type this one in the box.)</li>
+</ol>
+```
+
+- Real past papers belong to the exam's publisher (JASSO for the EJU, or the university), so check you may republish a paper before adding it.
+- Styles: `static/css/past_tpl_style.css` (the list pages) and `static/css/practice.css` (the paper itself).

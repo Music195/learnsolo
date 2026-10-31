@@ -1,85 +1,77 @@
+<!-- =====================================================================
+     PAST QUESTIONS: /note/kind_of_problem and /note/kind_of_problem/<category>
+     Without `category`: one card per folder in past/ (routes/problems.py).
+     With `category`: the papers in that folder. Each paper opens as an
+     HTML page with hints and solutions (templates/practice.html).
+     Same look as the note pages: floating bar, purple header, white cards.
+     ===================================================================== -->
 {% extends "base.html" %}
 
-{% block title %} 
-    {% if topic %}{{ topic }}{% else %}Problem Categories{% endif %} - Learning
-{% endblock %}
+{% block title %}{{ category.name if category else 'Past questions' }} · Learn Solo{% endblock %}
 
 {% block extra_head %}
-<link rel="stylesheet" href="/static/css/problem_list_tpl_style.css">
-{% endblock%}
+<link rel="stylesheet" href="/static/css/floatbar.css">
+<!-- Page, purple header and colours, shared with the note pages -->
+<link rel="stylesheet" href="/static/css/note_tpl_style.css">
+<link rel="stylesheet" href="/static/css/past_tpl_style.css">
+{% endblock %}
 
 {% block body %}
+{% include "_floatbar.html" %}
 
-<!-- ========================= -->
-<!-- HEADER SECTION -->
-<!-- ========================= -->
-<div class="header-section">
-    <div style="position: relative; max-width: 800px; margin: 0 auto;">
-        <div style="position: absolute; left: 20px; top: 0; display: flex; gap: 10px;">
-            {% if topic %}
-            <a href="{{ url_for('problems.kind_of_problem') }}" class="home-btn">
-                <i class="fas fa-arrow-left"></i>
-            </a>
-            {% endif %}
-            <a href="{{ url_for('notes.index') }}" class="home-btn">
-                <i class="fas fa-home"></i>
-            </a>
-        </div>
+<!-- HEADER -->
+<header class="note-header">
+    <div class="note-header-inner">
+        <p class="note-chips">
+            {% if category %}<a href="{{ url_for('problems.kind_of_problem') }}"><i class="fas fa-arrow-left"></i> All past questions</a>
+            {% else %}<a href="{{ url_for('notes.index') }}"><i class="fas fa-house"></i> Home</a>{% endif %}
+        </p>
+        {% if category %}
+        <h1>{{ category.name }}</h1>
+        <p class="past-lead">{{ category.about }}</p>
+        {% else %}
+        <h1>Past questions</h1>
+        <p class="past-lead">Exam problems to test yourself. Each one has a hint, a step-by-step solution and an answer check.</p>
+        {% endif %}
     </div>
-    <h1>
-        {% if topic %}
-            📚 {{ topic }}
-        {% else %}
-            🎯 Problem Categories
-        {% endif %}
-    </h1>
-    <p class="subtitle">
-        {% if topic %}
-            Select a problem to view
-        {% else %}
-            Choose a category to explore
-        {% endif %}
-    </p>
-</div>
+</header>
 
-<!-- ========================= -->
-<!-- MAIN CONTENT -->
-<!-- ========================= -->
-<div class="content-container">
-<div class="card">
-    <h5 class="card-title">
-        <i class="fas fa-list"></i>
-        {% if topic %}Available Problems{% else %}Available Categories{% endif %}
-    </h5>
-    <ul class="list-group">
-        {% if topic %}
-            <!-- Problem list view (files) -->
-            {% for link_dic in lists_of_link_dic['files'] %}
-            <li class="list-group-item">
-                <!--  ~ for string concatenation -->
-                {% set drive_url = 'https://drive.google.com/uc?id=' ~ link_dic['link_id'] ~ '&export=download' %}
-                <a href="{{ url_for('notes.viewer', 
-                                    file=drive_url) }}" >
-                    <span class="list-icon">📄</span>
-                    <span>{{ link_dic['name'].split('.')[0] }}</span>
-                </a>
-                <span class="list-number">{{ loop.index }}</span>
-            </li>
-            {% endfor %}
+<main class="past-content">
+    {% if category %}
+    <!-- PAPERS IN ONE CATEGORY -->
+    <ol class="paper-list">
+        {% for paper in category.papers %}
+        <li>
+            <a class="paper-row" href="{{ url_for('problems.past', past_path=paper.path) }}">
+                <span class="paper-num">{{ loop.index }}</span>
+                <span class="paper-text">
+                    <strong>{{ paper.title }}</strong>
+                    <span>{{ paper.count }} problem{{ 's' if paper.count != 1 }}{{ ' · ' ~ paper.intro if paper.intro }}</span>
+                </span>
+                <span class="paper-go">Start <i class="fas fa-arrow-right"></i></span>
+            </a>
+        </li>
+        {% endfor %}
+    </ol>
+    {% else %}
+    <!-- ALL CATEGORIES -->
+    <div class="past-grid">
+        {% for cat in categories %}
+        <a class="past-card" href="{{ url_for('problems.problem', category=cat.name) }}">
+            <span class="past-icon"><i class="fas {{ cat.icon }}"></i></span>
+            <strong class="past-name">{{ cat.name }}</strong>
+            <span class="past-about">{{ cat.about }}</span>
+            <span class="past-foot">
+                {{ cat.papers|length }} paper{{ 's' if cat.papers|length != 1 }}
+                <span class="past-go">Open <i class="fas fa-arrow-right"></i></span>
+            </span>
+        </a>
         {% else %}
-            <!-- Category list view -->
-            {% for category in categorized_links.keys() %}
-            <li class="list-group-item">
-                <a href="/note/kind_of_problem/{{ category }}">
-                    <span class="list-icon">📁</span>
-                    <span>{{ category }}</span>
-                </a>
-                <span class="list-number">{{ loop.index }}</span>
-            </li>
-            {% endfor %}
-        {% endif %}
-    </ul>
-</div>
-</div>
+        <p class="past-empty">No past questions yet.</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+</main>
 
+<script src="/static/js/floatbar.js"></script>
 {% endblock %}
