@@ -19,20 +19,23 @@
   try { saved = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { saved = {}; }
 
   // ---------- Reading a typed answer ----------
-  // Turns "2√7", "√3/2", "sqrt(28)", "45°", "-1/2" into a number, or null if
-  // it can't. Only digits, + − × ÷ ( ) and square roots are allowed.
+  // Turns "2√7", "√3/2", "sqrt(28)", "5π/6", "1/e", "π²/2", "45°", "-1/2"
+  // into a number, or null if it can't. Only digits, + − × ÷ ^ ( ), square
+  // roots, π and e are allowed.
   function toNumber(text) {
     let s = String(text).trim().toLowerCase()
       .replace(/[°\s]/g, '')
       .replace(/[−–]/g, '-').replace(/×/g, '*').replace(/÷/g, '/')
+      .replace(/\^/g, '**').replace(/²/g, '**2').replace(/³/g, '**3')
       .replace(/^[a-z]+=/, '');                                  // "k=6" → "6"
     if (!s) return null;
-    s = s.replace(/(√|sqrt)(\d+(\.\d+)?)/g, 'R($2)')              // √7 → R(7)
+    s = s.replace(/π|pi/g, 'P').replace(/e/g, 'E');               // π → P, e → E
+    s = s.replace(/(√|sqrt)(\d+(\.\d+)?|P|E)/g, 'R($2)')          // √7 → R(7)
          .replace(/(√|sqrt)\(/g, 'R(');                          // √(28) → R(28)
-    s = s.replace(/(\d|\))(R|\()/g, '$1*$2');                    // 2R(7) → 2*R(7)
-    if (!/^[0-9+\-*/().R]+$/.test(s)) return null;               // nothing else allowed
+    s = s.replace(/(\d|\)|P|E)(?=[RPE(])/g, '$1*');              // 2R(7) → 2*R(7), 5P → 5*P
+    if (!/^[0-9+\-*/().RPE]+$/.test(s)) return null;             // nothing else allowed
     try {
-      const value = Function('R', '"use strict"; return (' + s + ');')(Math.sqrt);
+      const value = Function('R', 'P', 'E', '"use strict"; return (' + s + ');')(Math.sqrt, Math.PI, Math.E);
       return Number.isFinite(value) ? value : null;
     } catch (e) {
       return null;
@@ -100,7 +103,7 @@
         const value = toNumber(input.value);
         box.classList.remove('right', 'wrong');
         if (value === null) {
-          result.textContent = 'Type a number, e.g. 3, 1/2, 2√3 or 1.5';
+          result.textContent = 'Type a number, e.g. 3, 1/2, 2√3, π/4 or 1.5';
           return;
         }
         if (Math.abs(value - target) < 0.01) {
