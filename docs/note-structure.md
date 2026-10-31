@@ -9,17 +9,18 @@ notes/<Course>/<Topic>/NN._Title.html          ← the note file (an HTML fragme
         │
 utils/note_loader.py   finds every .html under notes/, reads each note's title
         │
-routes/notes.py        /note/<path> → loads the file, works out previous/next notes
+routes/notes.py        /note/<path> → loads the file, works out where it sits
+                       (Math C › Vector · 17 of 17) and the previous/next notes
         │
-templates/note.html    the shared page: sidebar, ◀ ▶ buttons, font-size buttons,
-                       MathJax, and the shared CSS
+templates/note.html    the shared page: floating bar, Topics sidebar, purple header
+                       with the title, previous/next cards, MathJax, the shared CSS
         │
-<div class="note-content">{{ content|safe }}</div>   ← the note is inserted here
+<main class="note-content">{{ content|safe }}</main>   ← the note is inserted here
 ```
 
-- **`utils/note_loader.py`** walks `notes/` and turns each file path into a URL path, for example `Mathematics C/Vector/17._Line_Perpendicular_To_a_Vector`. The list is sorted, so the `NN.` number at the start of each filename sets the order of the ◀ ▶ buttons. The list is cached and rebuilt when the folder changes.
-- **The note's title** comes from `<h1 class="note-title">`, not from the filename. The loader reads it for the sidebar and search, and the route reads it for the page heading. So the title can differ from the filename (for example, Vector note 06's filename has the typo "Mangnitude" but its title is spelled correctly).
-- **Course and topic folders** (for example `Mathematics C` / `Vector`) become the two filter dropdowns in the sidebar.
+- **`utils/note_loader.py`** walks `notes/` and turns each file path into a URL path, for example `Mathematics C/Vector/17._Line_Perpendicular_To_a_Vector`. The list is sorted, so the `NN.` number at the start of each filename sets the order of the previous/next buttons. The list is cached and rebuilt when the folder changes.
+- **The note's title** comes from `<h1 class="note-title">`, not from the filename. The loader reads it for the sidebar and search, and the route shows it in the purple header (the note's own `<h1>` is hidden by the CSS, so the title isn't shown twice). So the title can differ from the filename (for example, Vector note 06's filename has the typo "Mangnitude" but its title is spelled correctly).
+- **Course and topic folders** (for example `Mathematics C` / `Vector`) become the Course and Topic dropdowns in the Topics sidebar.
 - **`templates/note.html`** loads MathJax with `$...$` as the maths delimiter, and loads `static/css/note_blocks.css` for the shared note design.
 
 ## 2. Inside a note file
@@ -31,7 +32,7 @@ Using `notes/Mathematics C/Vector/17._Line_Perpendicular_To_a_Vector.html` as th
 | 1 | `<!-- tags: Vector -->` | Topic tag |
 | 2–7 | Header comment | Topic name in English and Japanese, plus which shared files the note uses |
 | 8 | `<article class="note-page">` | Wraps the note so the shared CSS applies to it |
-| 10 | `<h1 class="note-title" data-topic="Vector">` | Title; the CSS shows "VECTOR" in small letters above it |
+| 10 | `<h1 class="note-title" data-topic="Vector">` | Title, read for the header, sidebar and search (hidden inside the note itself) |
 | 13–110 | The 8 blocks | See below |
 | 114–115 | `<script src=...>` | Loads the drawing helpers |
 | 116–146 | Demo script | Draws the interactive TRY IT demo |
@@ -86,6 +87,14 @@ Every demo script has the same shape:
 | `static/js/note_plot.js` | Graph and vector notes (built on `note_geom.js`, so load both) | `NotePlot.graph()`: maths coordinates with y pointing up, automatic axes and grid, and drawing tools like `g.fn`, `g.seg`, `g.line`, `g.poly`, `g.region`. The `plain: true` option hides the axes and grid, for the 3D drawings |
 | `static/js/note_venn.js` | Set notes | `NoteVenn`: parses and formats sets and draws Venn diagrams |
 | `static/css/note_blocks.css` | Every note | All the block styles |
+
+The page around the note, which notes don't need to touch:
+
+| File | What it does |
+|---|---|
+| `templates/_floatbar.html`, `static/css/floatbar.css`, `static/js/floatbar.js` | The floating bar shared by the home and note pages: logo, where you are, search (loads `/search-index.json`), text size, previous/next, Topics |
+| `static/css/note_tpl_style.css` | Note page layout: background, header, the card (920px wide), sidebar, previous/next cards |
+| `static/js/note_tpl.js` | Topics sidebar, A−/A+ text size (saved), ← / → keys for previous/next (not while a slider or text box has focus) |
 
 Each helper file begins with a comment listing its functions and their options, so read that first when writing a new demo.
 

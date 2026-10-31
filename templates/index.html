@@ -8,6 +8,7 @@
 {% block extra_head %}
 <meta name="description" content="Free interactive notes for Japanese high-school courses. Drag, slide and see why every formula works.">
 <!-- Styles for the home page only (Bootstrap is already loaded by base.html) -->
+<link rel="stylesheet" href="/static/css/floatbar.css">
 <link rel="stylesheet" href="/static/css/index_tpl_style.css">
 {% endblock %}
 
@@ -30,30 +31,7 @@
 <!-- Subject names as English text: "A", "A and B", "A, B and C" -->
 {% macro names(items) %}{% for s in items %}{{ s.name }}{% if loop.revindex == 2 %} and {% elif not loop.last %}, {% endif %}{% endfor %}{% endmacro %}
 
-<!-- FLOATING BAR: stays at the top while scrolling; on phones the links fold into a menu -->
-<nav class="floatbar" aria-label="Main">
-    <div class="floatbar-inner">
-        <a class="brand" href="{{ url_for('notes.index') }}"><i class="fas fa-book-open"></i> Learn Solo</a>
-        <span class="beta" title="New notes and features are still being added">Beta</span>
-
-        <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="floatMenu" aria-label="Open menu">
-            <i class="fas fa-bars"></i>
-        </button>
-
-        <div class="float-menu" id="floatMenu">
-            <a href="#subjects">Subjects</a>
-            <a href="#how">How it works</a>
-            <a href="{{ url_for('problems.kind_of_problem') }}">Practice</a>
-            <!-- Search by note title; results come from search_index (see static/js/home.js) -->
-            <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input id="noteSearch" type="search" placeholder="Search notes…" autocomplete="off"
-                       aria-label="Search notes" aria-controls="searchResults" aria-expanded="false">
-                <ul id="searchResults" class="search-results" role="listbox" hidden></ul>
-            </div>
-        </div>
-    </div>
-</nav>
+{% include "_floatbar.html" %}
 
 <!-- HERO: what the site is, the two main actions, and a live demo -->
 <header class="hero">
@@ -184,11 +162,8 @@
     MathJax = { tex: { inlineMath: [['$', '$']] } };
 </script>
 <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-<!-- Every note's title, place and link, for the search box -->
-<script>
-    const SEARCH_INDEX = {{ search_index | tojson }};
-</script>
 <script src="/static/js/note_geom.js"></script>
 <script src="/static/js/note_plot.js"></script>
+<script src="/static/js/floatbar.js"></script>
 <script src="/static/js/home.js"></script>
 {% endblock %}

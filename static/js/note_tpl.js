@@ -1,194 +1,112 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const searchInput = document.getElementById("search");
-    const resultsBox = document.getElementById("search-results");
-    const noteSelect = document.getElementById("noteSelect");
-    const notesMeta = (typeof NOTES_META !== "undefined" && Array.isArray(NOTES_META))
-        ? NOTES_META
-        : (Array.isArray(NOTES_LIST) ? NOTES_LIST.map(path => ({ path, title: path.split('/').pop() })) : []);
+/* =====================================================================
+   note_tpl.js — the page around each note (templates/note.html)
+   ---------------------------------------------------------------------
+   1. Sidebar: the Topics button opens it; pick a course and a topic to
+      list their notes. It starts on the course and topic being read.
+   2. Text size: the A− / A+ buttons in the floating bar (saved for next time)
+   3. ← / → keys: go to the previous / next note
+   The floating bar's menu and search are in floatbar.js.
+   Each part is wrapped in a function so names can't clash with the notes.
+   ===================================================================== */
 
-    // Build subfolder dropdown based on the currently selected folder
-    function updateSubfolderOptions() {
-        const folder = document.getElementById('folderFilter').value;
-        const subfolderFilter = document.getElementById('subfolderFilter');
+// 1. Sidebar
+(function () {
+  const sidebar = document.getElementById('sidebar');
+  const backdrop = document.getElementById('sidebarBackdrop');
+  const openBtn = document.getElementById('topicsBtn');
+  const closeBtn = document.getElementById('sidebarClose');
+  const courseSelect = document.getElementById('folderFilter');
+  const topicSelect = document.getElementById('subfolderFilter');
+  const list = document.getElementById('noteList');
+  if (!sidebar || typeof NOTES_META === 'undefined') return;
 
-        // Discover unique subfolders for the chosen folder to keep the list scoped
-        let subfolders = new Set();
-        notesMeta.forEach(note => {
-            const parts = note.path.split('/');
-            if (parts.length > 1 && parts[0] === folder) {
-                subfolders.add(parts[1]);
-            }
-        });
+  const names = typeof DISPLAY_NAMES !== 'undefined' ? DISPLAY_NAMES : { courses: {}, topics: {} };
+  const current = decodeURIComponent(location.pathname).replace(/^\/note\//, '');
+  const noteUrl = (path) => '/note/' + path.split('/').map(encodeURIComponent).join('/');
 
-        // Refresh the options to reflect the latest subfolder set
-        subfolderFilter.innerHTML = `<option value="">Title</option>`;
-        Array.from(subfolders).sort().forEach(sub => {
-            const opt = document.createElement("option");
-            opt.value = sub;
-            opt.textContent = sub;
-            subfolderFilter.appendChild(opt);
-        });
-
-        // Restore saved subfolder when the parent folder matches
-        const savedSubfolder = localStorage.getItem('selectedSubfolder');
-        if (savedSubfolder && folder === localStorage.getItem('selectedFolder')) {
-            subfolderFilter.value = savedSubfolder;
-        }
-    }
-
-    // Filter note list by folder/subfolder and repopulate the main select
-    function filterNotes() {
-        const folder = document.getElementById('folderFilter').value;
-        const subfolder = document.getElementById('subfolderFilter').value;
-        noteSelect.innerHTML = "";
-
-        let filtered = notesMeta;
-        if (folder) {
-            filtered = filtered.filter(n => n.path.startsWith(folder + '/'));
-        }
-        if (subfolder) {
-            filtered = filtered.filter(n => {
-                const parts = n.path.split('/');
-                return parts.length > 1 && parts[1] === subfolder;
-            });
-        }
-
-        noteSelect.innerHTML = "<option value=''>-- Select a topic --</option>";
-
-        filtered.forEach(n => {
-            const opt = document.createElement("option");
-            opt.value = "/note/" + n.path;
-            opt.textContent = n.title || n.path.split('/').pop();
-            noteSelect.appendChild(opt);
-        });
-    }
-
-    // Restore saved selections on page load so returning users keep their last folder choice
-    const savedFolder = localStorage.getItem('selectedFolder');
-    const folderFilter = document.getElementById('folderFilter');
-    if (savedFolder) {
-        folderFilter.value = savedFolder;
-    }
-
-    // Initialize dropdowns on page load to sync UI with current filters
-    updateSubfolderOptions();
-    filterNotes();
-
-    // Persist folder choice and reset dependent subfolder when folder changes
-    folderFilter.addEventListener('change', () => {
-        const selectedFolder = folderFilter.value;
-        localStorage.setItem('selectedFolder', selectedFolder);
-        localStorage.removeItem('selectedSubfolder'); // Clear subfolder when folder changes
-        updateSubfolderOptions();
-        filterNotes();
+  // Topic dropdown: the topics of the chosen course, in folder order
+  function fillTopics(selected) {
+    const course = courseSelect.value;
+    const topics = [...new Set(NOTES_META
+      .map((n) => n.path.split('/'))
+      .filter((p) => p.length > 2 && p[0] === course)
+      .map((p) => p[1]))];
+    topicSelect.innerHTML = '';
+    topics.forEach((t) => {
+      const opt = document.createElement('option');
+      opt.value = t;
+      opt.textContent = names.topics[t] || t;
+      topicSelect.appendChild(opt);
     });
+    if (topics.includes(selected)) topicSelect.value = selected;
+    fillList();
+  }
 
-    // Persist subfolder choice and refresh the note list
-    document.getElementById('subfolderFilter').addEventListener('change', () => {
-        const selectedSubfolder = document.getElementById('subfolderFilter').value;
-        localStorage.setItem('selectedSubfolder', selectedSubfolder);
-        filterNotes();
+  // Note list: every note in the chosen course and topic
+  function fillList() {
+    const folder = courseSelect.value + '/' + topicSelect.value + '/';
+    list.innerHTML = '';
+    NOTES_META.filter((n) => n.path.startsWith(folder)).forEach((n) => {
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.href = noteUrl(n.path);
+      a.textContent = n.title || n.path.split('/').pop();
+      if (n.path === current) a.setAttribute('aria-current', 'page');
+      li.appendChild(a);
+      list.appendChild(li);
     });
+  }
 
-    // Client-side fuzzy search over all notes (favor human titles, fall back to path)
-    const fuse = new Fuse(notesMeta, {
-        includeScore: true,
-        threshold: 0.4,
-        keys: [
-            { name: "title", weight: 0.9 },
-            { name: "path", weight: 0.1 }
-        ]
-    });
+  courseSelect.value = sidebar.dataset.course;
+  fillTopics(sidebar.dataset.topic);
+  courseSelect.addEventListener('change', () => fillTopics());
+  topicSelect.addEventListener('change', fillList);
 
-    // Live search results with minimal debounce via DOM event only
-    searchInput.addEventListener("input", () => {
-        const query = searchInput.value.trim();
-        resultsBox.innerHTML = "";
-        if (!query) return;
-        const results = fuse.search(query).slice(0, 10);
-        results.forEach(result => {
-            const a = document.createElement("a");
-            const note = result.item;
-            a.href = "/note/" + note.path;
-            a.textContent = note.title || note.path.split('/').pop();
-            resultsBox.appendChild(a);
-        });
-
-        searchInput.addEventListener("blur", () => {
-            setTimeout(() => { resultsBox.style.display = "none"; }, 200);
-        });
-        // Show or hide the box based on results to avoid empty dropdown
-        if (results.length > 0) {
-            resultsBox.style.display = "block";
-        } else {
-            resultsBox.style.display = "none";
-        }
-    });
-
-    // Arrow key navigation to move between previous/next pages quickly
-    document.addEventListener("keydown", (e) => {
-        if (e.key === "ArrowLeft") {
-            const back = document.querySelector(".nav-buttons a:first-child");
-            if (back) window.location.href = back.href;
-        }
-        if (e.key === "ArrowRight") {
-            const next = document.querySelector(".nav-buttons a:last-child");
-            if (next) window.location.href = next.href;
-        }
-    });
-});
-
-//Function to toggle the solution
-function toggleSolution(num) {
-    const solution = document.getElementById('solution' + num);
-    if (solution.style.display === 'none' || solution.style.display === '') {
-        solution.style.display = 'block';
-    } else {
-        solution.style.display = 'none';
+  function setOpen(open) {
+    sidebar.classList.toggle('open', open);
+    backdrop.hidden = !open;
+    if (openBtn) openBtn.setAttribute('aria-expanded', open);
+    if (open) {
+      // Start the list at the note being read
+      const here = list.querySelector('[aria-current]');
+      if (here) here.scrollIntoView({ block: 'center' });
+      closeBtn.focus();
+    } else if (openBtn && sidebar.contains(document.activeElement)) {
+      openBtn.focus();
     }
-}
+  }
+  if (openBtn) openBtn.addEventListener('click', () => setOpen(!sidebar.classList.contains('open')));
+  closeBtn.addEventListener('click', () => setOpen(false));
+  backdrop.addEventListener('click', () => setOpen(false));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && sidebar.classList.contains('open')) setOpen(false);
+  });
+})();
 
-// Function to toggle the sidebar open/closed state
-function toggleMenu() {
-    const nav = document.getElementById('sidebar');
-    const button = document.querySelector('.menu-toggle');
-    nav.classList.toggle('open');
-    button.classList.toggle('open');
-}
+// 2. Text size: 70%–150% in steps of 5%, remembered in localStorage
+(function () {
+  const content = document.getElementById('noteContent');
+  if (!content) return;
+  let size = parseInt(localStorage.getItem('noteFontSize'), 10) || 100;
+  function apply() {
+    size = Math.min(Math.max(size, 70), 150);
+    content.style.fontSize = size + '%';
+    localStorage.setItem('noteFontSize', size);
+  }
+  apply();
+  document.querySelectorAll('[data-text-size]').forEach((btn) =>
+    btn.addEventListener('click', () => { size += 5 * Number(btn.dataset.textSize); apply(); }));
+})();
 
-// Event listener to close sidebar when clicking outside
-document.addEventListener('click', function (event) {
-    const nav = document.getElementById('sidebar');
-    const button = document.querySelector('.menu-toggle');
-
-    if (!nav.contains(event.target) && !button.contains(event.target) && nav.classList.contains('open')) {
-        toggleMenu();
-    }
-});
-
-// Font size adjustment functionality
-let currentFontSize = 100;
-
-// Function to increase/decrease font size
-function adjustFontSize(change) {
-    const noteContent = document.querySelector('.note-content');
-    currentFontSize += change * 5;
-
-    // Limit font size between 70% and 150%
-    if (currentFontSize < 70) currentFontSize = 70;
-    if (currentFontSize > 150) currentFontSize = 150;
-
-    noteContent.style.fontSize = currentFontSize + '%';
-
-    // Save to localStorage
-    localStorage.setItem('noteFontSize', currentFontSize);
-}
-
-// Load saved font size on page load
-document.addEventListener('DOMContentLoaded', function () {
-    const savedFontSize = localStorage.getItem('noteFontSize');
-    if (savedFontSize) {
-        currentFontSize = parseInt(savedFontSize);
-        document.querySelector('.note-content').style.fontSize = currentFontSize + '%';
-    }
-});
+// 3. ← / → keys go to the previous / next note.
+// Ignored while typing or using a slider, so the demos' arrow keys still work.
+(function () {
+  document.addEventListener('keydown', (e) => {
+    if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+    const el = document.activeElement;
+    if (el && (el.isContentEditable || /^(INPUT|SELECT|TEXTAREA|BUTTON)$/.test(el.tagName))) return;
+    if (document.getElementById('sidebar')?.classList.contains('open')) return;
+    const link = document.getElementById(e.key === 'ArrowLeft' ? 'prevLink' : e.key === 'ArrowRight' ? 'nextLink' : '');
+    if (link) location.href = link.href;
+  });
+})();

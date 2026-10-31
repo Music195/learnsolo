@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, Response, redirect, url_for
+from flask import Blueprint, render_template, request, Response, redirect, url_for, jsonify
 from utils.note_loader import (
     get_notes_list, 
     load_note_content, 
@@ -8,8 +8,6 @@ from utils.note_loader import (
 )
 import requests
 import os
-import re
-import json
 
 notes_bp = Blueprint("notes", __name__)
 
@@ -110,18 +108,37 @@ def index():
         "courses": len(courses),
         "topics": sum(len(c["topics"]) for c in courses),
     }
-    return render_template(
-        "index.html",
-        subjects=build_subjects(courses),
-        stats=stats,
-        search_index=build_search_index(),
-    )
+    return render_template("index.html", subjects=build_subjects(courses), stats=stats)
+
+
+# The search box in the floating bar loads this once, when it is first used,
+# so pages don't have to carry the whole list of notes.
+@notes_bp.route("/search-index.json")
+def search_index():
+    return jsonify(build_search_index())
+
+
+# Note page helper: "where you are" for the floating bar and the note header,
+# e.g. Math C › Vector · 17 of 17, with links to the course and topic.
+def build_location(notes_list, note_path):
+    parts = note_path.split("/")
+    folder = note_path.rsplit("/", 1)[0]
+    siblings = [p for p in notes_list if p.rsplit("/", 1)[0] == folder]
+    course_first = next(p for p in notes_list if p.startswith(parts[0] + "/"))
+    return {
+        "course": COURSE_NAMES.get(parts[0], parts[0]),
+        "course_first": course_first,
+        "topic": TOPIC_NAMES.get(parts[1], parts[1]) if len(parts) > 2 else None,
+        "topic_first": siblings[0],
+        "index": siblings.index(note_path) + 1,
+        "total": len(siblings),
+    }
 
 @notes_bp.route("/note/<path:note_path>")
 def view_note(note_path):
     notes_meta = get_notes_with_titles()
     notes_list = [n["path"] for n in notes_meta]
-    folders, subfolders = get_folders_and_subfolders(notes_list)
+    folders, _ = get_folders_and_subfolders(notes_list)
 
     if note_path not in notes_list:
         return "<h1>Note not found</h1>", 404
@@ -141,22 +158,27 @@ def view_note(note_path):
         return "<h1>Note not found</h1>", 404
 
 
-    # Extract title
-    # Old notes use <div class="fancy-title">, converted notes use <h1 class="note-title">
-    title_match = re.search(r'<(?:div|h1) class="(?:fancy|note)-title"[^>]*>([^<]+)</(?:div|h1)>', content)
-    note_title = title_match.group(1).strip() if title_match else "📚 View By Topics"
+    # Titles come from each note's <h1 class="note-title"> (see note_loader.py)
+    titles = {n["path"]: n["title"] for n in notes_meta}
+    # Previous / next cards: the title, and the course · topic shown under it
+    for key in ("prev", "next"):
+        if nav[key]:
+            location = build_location(notes_list, nav[key])
+            nav[key] = {
+                "path": nav[key], "title": titles[nav[key]],
+                "where": " · ".join(filter(None, [location["course"], location["topic"]])),
+            }
 
     return render_template(
         "note.html",
         note_path=note_path,
-        notes_list=notes_list,
-        notes_meta_json=json.dumps(notes_meta),
+        notes_meta=notes_meta,
         nav=nav,
         content=content,
-        notes_json=json.dumps(notes_list),
         folders=folders,
-        subfolders=subfolders,
-        note_title=note_title
+        note_title=titles[note_path],
+        location=build_location(notes_list, note_path),
+        display_names={"courses": COURSE_NAMES, "topics": TOPIC_NAMES},
     )
 
 @notes_bp.route("/proxy-pdf")

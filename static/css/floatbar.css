@@ -1,0 +1,194 @@
+/* =====================================================================
+   floatbar.css — the floating bar on the home and note pages
+   (templates/_floatbar.html, script: static/js/floatbar.js)
+   ===================================================================== */
+.floatbar {
+    /* Colours used by the bar (same as the home page) */
+    --brand: #667eea;
+    --brand-dark: #4c3fb5;
+    --text: #1e293b;
+    --muted: #64748b;
+    --line: #e2e8f0;
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans JP', sans-serif;
+}
+
+/* ---------- Floating bar (sticks to the top while scrolling) ---------- */
+.floatbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.08);
+}
+
+.floatbar-inner {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand { font-size: 1.2rem; font-weight: 800; color: var(--brand-dark); text-decoration: none; white-space: nowrap; }
+.brand:hover { color: var(--brand-dark); }
+
+/* Small tag instead of the old "still developing" banner */
+.beta {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 3px 9px;
+    border-radius: 999px;
+    color: var(--brand-dark);
+    background: #eef2ff;
+    border: 1px solid #c7d2fe;
+}
+
+/* Links + search, pushed to the right */
+.float-menu { margin-left: auto; display: flex; align-items: center; gap: 4px; }
+
+.float-menu > a {
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    color: var(--text);
+    text-decoration: none;
+}
+
+.float-menu > a:hover { background: #f1f5f9; color: var(--brand-dark); }
+
+/* ☰ button: only shown on phones (see Small screens) */
+.menu-btn {
+    display: none;
+    margin-left: auto;
+    border: 1px solid var(--line);
+    background: #fff;
+    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+    color: var(--text);
+}
+
+/* ---------- Note search ---------- */
+.search-box { position: relative; margin-left: 8px; flex: 0 1 240px; min-width: 150px; }
+
+.search-box > i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    pointer-events: none;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 8px 12px 8px 36px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #f8fafc;
+    font-size: 0.95rem;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.search-box input:focus { outline: none; background: #fff; border-color: var(--brand); box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.25); }
+
+/* Results list under the search box */
+.search-results {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 6px);
+    width: min(380px, 90vw);
+    max-height: 70vh;
+    overflow-y: auto;
+    list-style: none;
+    margin: 0;
+    padding: 6px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.15);
+}
+
+.search-results a { display: block; padding: 8px 10px; border-radius: 8px; color: var(--text); text-decoration: none; }
+.search-results a strong { display: block; font-weight: 600; }
+.search-results a span { font-size: 0.85rem; color: var(--muted); }
+.search-results a:hover, .search-results li[aria-selected="true"] a { background: #eef2ff; }
+.search-results .empty { padding: 10px; color: var(--muted); }
+
+/* ---------- Note pages: where you are, e.g. Math C › Vector · 17 of 17 ---------- */
+.crumbs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;           /* lets long names shrink with "…" instead of pushing the bar wider */
+    margin-left: 8px;
+    padding-left: 16px;
+    border-left: 1px solid var(--line);
+    white-space: nowrap;
+    color: var(--muted);
+    font-size: 0.95rem;
+}
+
+.crumbs a { color: var(--text); font-weight: 600; text-decoration: none; overflow: hidden; text-overflow: ellipsis; }
+.crumbs a:first-child, .crumbs-count { flex: none; }   /* only a long topic name shrinks */
+.crumbs a:hover { color: var(--brand-dark); text-decoration: underline; }
+.crumbs i { font-size: 0.7rem; }
+
+/* ---------- Note pages: text size, previous/next and Topics buttons ---------- */
+.bar-group { display: flex; gap: 4px; margin-left: 6px; }
+
+.bar-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-width: 38px;
+    height: 38px;
+    padding: 0 10px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+    color: var(--text);
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.bar-btn:hover { border-color: var(--brand); color: var(--brand-dark); background: #eef2ff; }
+.bar-btn.disabled { opacity: 0.35; cursor: default; }
+.bar-btn.disabled:hover { border-color: var(--line); color: var(--text); background: #fff; }
+.bar-topics { margin-left: 6px; background: var(--brand); border-color: var(--brand); color: #fff; }
+.bar-topics:hover, .bar-topics[aria-expanded="true"] { background: var(--brand-dark); border-color: var(--brand-dark); color: #fff; }
+
+.floatbar a:focus-visible, .floatbar button:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+
+/* ---------- Small screens: everything after the logo folds into the ☰ menu ---------- */
+@media (max-width: 860px) {
+    .floatbar-inner { flex-wrap: wrap; }
+    .menu-btn { display: block; }
+    .crumbs { display: none; }   /* the note header shows where you are */
+    .float-menu {
+        display: none;
+        width: 100%;
+        margin: 0;
+        padding: 8px 0 4px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+    .float-menu.open { display: flex; }
+    .search-box { margin: 0; flex: none; }
+    .search-box input { width: 100%; }
+    .search-results { left: 0; right: auto; width: 100%; }
+    .bar-group { margin: 0; }
+    .bar-group .bar-btn { flex: 1; height: 42px; }
+    .bar-topics { margin: 0; height: 42px; }
+}

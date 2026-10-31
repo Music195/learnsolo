@@ -3,8 +3,7 @@
    ---------------------------------------------------------------------
    1. Hero demo: drag P along y = x²/2 (uses note_plot.js)
    2. Subject tabs: show one subject's courses at a time
-   3. Phone menu: the ☰ button opens the floating bar's links
-   4. Note search: type in the floating bar to find notes by title
+   The floating bar (menu + search) is in floatbar.js.
    Each part is wrapped in a function so names can't clash.
    ===================================================================== */
 
@@ -55,87 +54,5 @@
       select(next);
       next.focus();
     });
-  });
-})();
-
-// 3. Phone menu: ☰ toggles the links; picking a link closes the menu again.
-(function () {
-  const button = document.getElementById('menuBtn');
-  const menu = document.getElementById('floatMenu');
-  if (!button || !menu) return;
-  function setOpen(open) {
-    menu.classList.toggle('open', open);
-    button.setAttribute('aria-expanded', open);
-    button.innerHTML = open ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
-  }
-  button.addEventListener('click', () => setOpen(!menu.classList.contains('open')));
-  menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
-})();
-
-// 4. Note search: shows up to 8 notes whose title or place ("Math I · Vector")
-// contains every word typed. ↑/↓ choose a result, Enter opens it, Esc closes.
-(function () {
-  const input = document.getElementById('noteSearch');
-  const list = document.getElementById('searchResults');
-  if (!input || !list || typeof SEARCH_INDEX === 'undefined') return;
-  let results = [], active = -1;
-
-  function show(open) {
-    list.hidden = !open;
-    input.setAttribute('aria-expanded', open);
-  }
-
-  function render() {
-    list.innerHTML = '';
-    if (!results.length) {
-      const li = document.createElement('li');
-      li.className = 'empty';
-      li.textContent = 'No notes found';
-      list.appendChild(li);
-      return;
-    }
-    results.forEach((note, i) => {
-      const li = document.createElement('li');
-      li.setAttribute('role', 'option');
-      li.setAttribute('aria-selected', i === active);
-      const a = document.createElement('a');
-      a.href = note.url;
-      a.innerHTML = '<strong></strong><span></span>';
-      a.querySelector('strong').textContent = note.title; // textContent: titles are never run as HTML
-      a.querySelector('span').textContent = note.where;
-      li.appendChild(a);
-      list.appendChild(li);
-    });
-  }
-
-  input.addEventListener('input', () => {
-    const words = input.value.toLowerCase().split(/\s+/).filter(Boolean);
-    if (!words.length) { show(false); return; }
-    results = SEARCH_INDEX
-      .filter((n) => words.every((w) => `${n.title} ${n.where}`.toLowerCase().includes(w)))
-      .slice(0, 8);
-    active = results.length ? 0 : -1;
-    render();
-    show(true);
-  });
-
-  input.addEventListener('keydown', (e) => {
-    if (list.hidden) return;
-    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-      e.preventDefault();
-      if (!results.length) return;
-      active = (active + (e.key === 'ArrowDown' ? 1 : -1) + results.length) % results.length;
-      render();
-    } else if (e.key === 'Enter' && active >= 0) {
-      e.preventDefault();
-      location.href = results[active].url;
-    } else if (e.key === 'Escape') {
-      show(false);
-    }
-  });
-
-  // Close the list when clicking anywhere else
-  document.addEventListener('click', (e) => {
-    if (!e.target.closest('.search-box')) show(false);
   });
 })();
