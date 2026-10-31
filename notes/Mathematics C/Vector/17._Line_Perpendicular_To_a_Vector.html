@@ -123,8 +123,18 @@
     const output = document.getElementById('vhOutput');
     const half = ([x, y]) => [Math.round(x * 2) / 2, Math.round(y * 2) / 2];
     const par = (v) => (v < 0 ? `(${v})` : `${v}`); // wrap negatives: 2×(−1)
-    // "a(x − 1)" style term; drops "− 0" and writes "+ 2" for "− (−2)"
-    const term = (k, v, at) => (at === 0 ? `${par(k)}${v}` : `${par(k)}(${v}${at > 0 ? ` − ${at}` : ` + ${-at}`})`);
+    // "(x − 1)", or just "x" when the coordinate is 0; writes "+ 2" for "− (−2)"
+    const bracket = (v, at) => (at === 0 ? v : `(${v} ${at > 0 ? '−' : '+'} ${Math.abs(at)})`);
+    // Joins [coefficient, letter] pairs into "2x − y + 3": zero terms are dropped,
+    // a coefficient of 1 is hidden, and the signs go between the terms.
+    function linear(parts) {
+      const terms = parts.filter(([k]) => k !== 0).map(([k, body], i) => {
+        const size = Math.abs(k) === 1 && body ? '' : Math.abs(k);
+        const sign = k < 0 ? (i ? ' − ' : '−') : (i ? ' + ' : '');
+        return sign + size + body;
+      });
+      return terms.join('') || '0';
+    }
 
     NotePlot.graph(document.getElementById('vhCanvas'), {
       x: [-6.2, 6.2], y: [-4, 4],
@@ -138,7 +148,8 @@
         g.seg(A, P.N, '#7c3aed', { width: 3 });
         g.seg(A, P.P, '#ea580c', { width: 2, dash: true });
         output.textContent =
-          `line: ${term(n[0], 'x', A[0])} + ${term(n[1], 'y', A[1])} = 0,  i.e. ${n[0]}x + ${n[1]}y + ${c} = 0`.replace(/\b1([xy])/g, '$1').replace(/\+ -/g, '− ') + '\n' +
+          `line: ${linear([[n[0], bracket('x', A[0])], [n[1], bracket('y', A[1])]])} = 0,  ` +
+          `i.e. ${linear([[n[0], 'x'], [n[1], 'y'], [c, '']])} = 0\n` +
           `n·AP = ${par(n[0])}×${par(ap[0])} + ${par(n[1])}×${par(ap[1])} = ${dot}  → P is ${Math.abs(dot) < 1e-9 ? 'on' : 'not on'} the line`;
       },
     });
