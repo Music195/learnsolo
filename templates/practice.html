@@ -27,7 +27,7 @@
             {% else %}
             {% if location.course_first %}<a href="{{ url_for('notes.view_note', note_path=location.course_first) }}">{{ location.course }}</a>{% endif %}
             {% if location.topic_first %}<a href="{{ url_for('notes.view_note', note_path=location.topic_first) }}">{{ location.topic }}</a>{% endif %}
-            <span class="chip-practice"><i class="fas fa-puzzle-piece"></i> Practice</span>
+            <span class="chip-practice"><i class="fas fa-puzzle-piece"></i> {{ 'Topic review' if review else 'Practice' }}</span>
             {% endif %}
         </p>
         <h1>{{ title }}</h1>
@@ -44,7 +44,8 @@
 <main class="note-content" id="noteContent" data-practice="{{ practice_path }}">{{ content|safe }}</main>
 
 <!-- AFTER THE PROBLEMS
-     Practice set: back to the notes, then the next set in this topic.
+     Practice set: back to the notes, then the next set (in this topic,
+     else the next topic's first set, else the next course's).
      Past paper: back to its category, then the next paper. -->
 <nav class="note-pager" aria-label="More">
     {% if paper %}
@@ -64,9 +65,15 @@
     {% endif %}
     {% if nav.next %}
     <a class="pager-card pager-next" href="{{ nav.next.url }}">
-        <span class="pager-label">Next {{ 'paper' if paper else 'practice' }} <i class="fas fa-arrow-right"></i></span>
+        {% if paper %}
+        <span class="pager-label">Next paper <i class="fas fa-arrow-right"></i></span>
         <strong>{{ nav.next.title }}</strong>
-        <span class="pager-where">{{ location.course }}{{ ' · ' ~ location.topic if location.topic }}</span>
+        <span class="pager-where">{{ location.course }}</span>
+        {% else %}
+        <span class="pager-label">{{ 'Topic review' if nav.next.review else 'Next topic' if nav.next.new_topic else 'Next practice' }} <i class="fas fa-arrow-right"></i></span>
+        <strong>{{ nav.next.title }}</strong>
+        <span class="pager-where">{{ nav.next.where }}</span>
+        {% endif %}
     </a>
     {% else %}
     <a class="pager-card pager-next" href="{{ url_for('past.index') }}">

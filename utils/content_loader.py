@@ -101,7 +101,7 @@ def load_note(note_path):
 # -----------------------------
 # Same file format; the folders are small, so they are read fresh each time.
 def get_sets(folder):
-    """Every set in `folder`, in order, as {"path", "title", "intro", "count", "notes", "review"}."""
+    """Every set in `folder`, in order, as {"path", "title", "intro", "count", "notes", "covers", "moved_from", "review"}."""
     sets = []
     for path in _paths(folder):
         content = _read(folder, path)
@@ -116,6 +116,10 @@ def get_sets(folder):
             "count": body.count('class="practice-problem"'),
             # the notes its problems link to ("Uses: ..."), for "Practise this note"
             "notes": sorted(set(re.findall(r'href="/notes/([^"#]+)"', body))),
+            # from the top comment, e.g. "01–05" or "05, 10 and 11" (concept sets only)
+            "covers": _first(r"covers notes ([^.\n]+)\.", content),
+            # earlier paths ("old|older"), where saved progress may still be
+            "moved_from": _first(r'data-moved-from="([^"]*)"', content),
             # the last set of a topic, a mix of the whole topic
             "review": path.endswith("-topic-review"),
         })

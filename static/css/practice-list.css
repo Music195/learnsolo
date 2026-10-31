@@ -1,0 +1,205 @@
+/* =====================================================================
+   practice-list.css — the practice hub (templates/practice-list.html)
+   ---------------------------------------------------------------------
+   The page, purple header and colours come from note-page.css.
+   This file adds:
+     .hub-tabs     one tab per course
+     .topic-card   one card per topic, with its list of sets
+     .set-row      one practice set (the topic review is .is-review)
+     .hub-past     the link to the past questions
+   ===================================================================== */
+
+.hub-lead { max-width: 42em; margin: 0; font-size: 1.05rem; opacity: 0.92; }
+
+/* White area overlapping the bottom of the header, like the note card */
+.hub-content {
+    position: relative;
+    max-width: var(--page-width);
+    margin: -56px auto 48px;
+    padding: 0 16px;
+    box-sizing: content-box;
+}
+
+/* ---------- Course tabs ---------- */
+.hub-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 6px;
+    margin-bottom: 20px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+}
+
+.hub-tab {
+    flex: 1 1 auto;
+    padding: 10px 14px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.hub-tab:hover { color: var(--brand-dark); background: #f5f3ff; }
+.hub-tab[aria-selected="true"] { color: #fff; background: var(--brand-dark); }
+.hub-tab:focus-visible { outline: 3px solid #c4b5fd; outline-offset: 2px; }
+
+/* ---------- Topic cards ---------- */
+.hub-panel { display: grid; gap: 20px; }
+.hub-panel[hidden] { display: none; }
+
+.topic-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+    overflow: hidden;
+}
+
+.topic-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--line);
+    background: linear-gradient(90deg, #f5f3ff, #fff);
+}
+
+.topic-num {
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    color: #fff;
+    background: var(--brand);
+}
+
+.topic-text { min-width: 0; flex: 1; }
+.topic-text h2 { margin: 0; font-size: 1.2rem; font-weight: 800; }
+.topic-meta { margin: 2px 0 0; color: var(--muted); font-size: 0.9rem; }
+.topic-solved { color: #15803d; font-weight: 700; }
+.topic-solved::before { content: "· "; color: var(--muted); font-weight: 400; }
+
+.topic-notes {
+    flex: none;
+    padding: 8px 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    color: var(--brand-dark);
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+    background: #fff;
+}
+
+.topic-notes:hover { border-color: var(--brand); color: var(--brand-dark); }
+
+/* ---------- Sets in a topic ---------- */
+.set-list { list-style: none; margin: 0; padding: 6px; }
+.set-list li + li { border-top: 1px solid var(--line); }
+
+.set-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    color: var(--text);
+    text-decoration: none;
+}
+
+.set-row:hover { color: var(--text); background: #f5f3ff; }
+
+.set-num {
+    flex: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    font-size: 0.9rem;
+    color: var(--brand-dark);
+    background: #ede9fe;
+}
+
+.set-row.is-review .set-num { color: #be185d; background: #fce7f3; }
+
+.set-text { min-width: 0; flex: 1; }
+.set-text strong { display: block; font-size: 1.02rem; }
+.set-text > span { display: block; color: var(--muted); font-size: 0.88rem; }
+
+.set-badge {
+    display: inline-block;
+    padding: 0 8px;
+    margin-right: 4px;
+    border-radius: 999px;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 0.78rem;
+    color: #be185d;
+    background: #fce7f3;
+}
+
+/* "Solved 2 of 6", filled in by practice-list.js once a set is started */
+.set-progress {
+    flex: none;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--brand-dark);
+    background: #ede9fe;
+}
+
+.set-progress.is-done { color: #15803d; background: #dcfce7; }
+
+/* ---------- Past questions ---------- */
+.hub-past {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 28px;
+    padding: 20px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-left: 5px solid #db2777;
+    border-radius: 16px;
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+    color: var(--text);
+    text-decoration: none;
+}
+
+.hub-past:hover { color: var(--text); background: #fdf2f8; }
+
+.hub-past-icon {
+    flex: none;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    font-size: 1.3rem;
+    color: #db2777;
+    background: #fce7f3;
+}
+
+.hub-past-text { min-width: 0; flex: 1; }
+.hub-past-text strong { display: block; font-size: 1.15rem; }
+.hub-past-text span { display: block; color: var(--muted); font-size: 0.92rem; }
+.hub-past-go { flex: none; color: #db2777; font-weight: 700; }
+
+@media (max-width: 600px) {
+    .hub-content { padding: 0 8px; }
+    .topic-head { padding: 14px; gap: 10px; }
+    .hub-past-go { display: none; }
+    .set-row { padding: 10px 8px; gap: 10px; }
+}

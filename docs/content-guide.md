@@ -142,11 +142,14 @@ content/practice/math-c/01-plane-vectors/02-dot-product.html   →   /practice/m
 ```
 
 - **Sets in a topic:** first the **concept sets**, each covering 3–5 related notes (about 6 problems, from `basic` up to one `exam` question in parts), then the **topic review**, a mix of the whole topic, named `<nn>-topic-review.html`. Every note should be used by at least two problems.
-- **Renaming a set** changes its URL, and saved progress is stored by URL. List the old paths in `data-moved-from` on the `<article>` (separated by `|`); `practice.js` moves saved progress to the new path the first time the page opens.
-- The page (`templates/practice.html`) has the same floating bar, header and card as a note. The header shows "Solved 2 of 5"; progress is saved on the student's device.
+- **Top comment:** a concept set says which notes it covers, as `Concept set 2 for Plane Vectors: covers notes 07–11.` The practice page shows this text ("Covers notes 07–11"), so write it the way a student should read it (`05, 10 and 11` is fine too).
+- **Renaming a set** changes its URL, and saved progress is stored by URL. List the old paths in `data-moved-from` on the `<article>` (separated by `|`); `practice.js` moves saved progress to the new path the first time the page opens, and the practice page reads it from the old paths until then.
+- **The practice page** (`/practice`, the "Practice" link in the floating bar and on the home page) has a tab per course and a card per topic. Each card lists the topic's sets in order, with the notes they cover and "Solved 2 of 6" from the progress saved on the device; the topic review is marked **Topic review**. The past questions are linked at the bottom. `/practice#math-a` opens on Math A.
+- The set page (`templates/practice.html`) has the same floating bar, header and card as a note. The header shows "Solved 2 of 5"; "Practice" in the floating bar goes back to the practice page.
+- **At the end of a set**, the next card leads on in the practice page's order: **Next practice** (the next set in the topic), **Topic review**, then **Next topic** (the next topic's first set; after a course's last topic, the next course). The ← / → buttons follow the same order.
 - After each note, a **Practise this note** card opens the first concept set whose problems link to that note (via "Uses:"), and the topic's other sets are listed under it. The search box finds practice sets too.
-- Styles: `static/css/practice.css`. Script: `static/js/practice.js`. Loader: `utils/content_loader.py`. Route: `/practice/...` in `routes/practice.py`.
-- A topic needs at least one note, because the header links back to the topic's notes.
+- Styles: `static/css/practice.css` (a set) and `static/css/practice-list.css` (the practice page). Scripts: `static/js/practice.js` and `static/js/practice-list.js`. Loader: `utils/content_loader.py`. Routes: `/practice` and `/practice/...` in `routes/practice.py`.
+- A topic needs at least one note, because the header links back to the topic's notes. Sets in a topic without notes are left off the practice page.
 
 A practice file is a fragment like a note:
 
@@ -182,7 +185,7 @@ Past exam questions use the same file format as practice sets, grouped by exam i
 content/past/eju/01-sample-paper-math-course-2.html   →   /past/eju/01-sample-paper-math-course-2
 ```
 
-- **Past questions** (`/past`, the "Practice problems" link on the home page) shows one card per folder in `content/past/`. Clicking a card lists its papers (`/past/<folder>`), and each paper opens in `templates/practice.html` with hints, solutions and answer boxes. The search box finds papers too.
+- **Past questions** (`/past`, linked at the bottom of the practice page) shows one card per folder in `content/past/`. Clicking a card lists its papers (`/past/<folder>`), and each paper opens in `templates/practice.html` with hints, solutions and answer boxes. The search box finds papers too.
 - **New exam:** make a new folder in `content/past/`. Give it a name, an icon and a one-line description in `PAST_CATEGORIES` in `utils/courses.py` (without one it gets a generic description). Routes: `routes/past.py`.
 - **New paper:** add an HTML file to the folder. Number files `01-`, `02-`, … to set the order. Use `data-level="exam"` for each problem.
 - **Problems in parts:** list the parts right after the question and number the solution steps the same way. The answer box checks one number, so say which part to type in:
