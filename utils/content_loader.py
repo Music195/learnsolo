@@ -101,10 +101,11 @@ def load_note(note_path):
 # -----------------------------
 # Same file format; the folders are small, so they are read fresh each time.
 def get_sets(folder):
-    """Every set in `folder`, in order, as {"path", "title", "intro", "count"}."""
+    """Every set in `folder`, in order, as {"path", "title", "intro", "count", "notes", "review"}."""
     sets = []
     for path in _paths(folder):
         content = _read(folder, path)
+        body = re.sub(r"<!--.*?-->", "", content, flags=re.S)
         sets.append({
             "path": path,
             "title": _first(r'<h1[^>]*class="[^"]*practice-title[^"]*"[^>]*>(.*?)</h1>', content)
@@ -112,7 +113,11 @@ def get_sets(folder):
             # first sentence of the intro, for lists of sets
             "intro": re.split(r"(?<=\.)\s", _first(r'<p class="practice-intro">(.*?)</p>', content) or "")[0],
             # count problems outside comments (the file's top comment mentions the tag too)
-            "count": re.sub(r"<!--.*?-->", "", content, flags=re.S).count('class="practice-problem"'),
+            "count": body.count('class="practice-problem"'),
+            # the notes its problems link to ("Uses: ..."), for "Practise this note"
+            "notes": sorted(set(re.findall(r'href="/notes/([^"#]+)"', body))),
+            # the last set of a topic, a mix of the whole topic
+            "review": path.endswith("-topic-review"),
         })
     return sets
 

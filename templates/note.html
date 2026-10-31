@@ -70,15 +70,22 @@
 <main class="note-content" id="noteContent">{{ content|safe }}</main>
 
 {% if practice %}
-<!-- PRACTICE: problem sets for this topic (files in content/practice/<course>/<topic>/) -->
-<section class="practice-links" aria-label="Practice this topic">
-    {% for set in practice %}
-    <a class="practice-link" href="{{ url_for('practice.view_set', practice_path=set.path) }}">
+<!-- PRACTICE: the set that practises this note, then the topic's other sets
+     (files in content/practice/<course>/<topic>/, chosen in routes/notes.py) -->
+<section class="practice-links" aria-label="Practise this note">
+    <a class="practice-link" href="{{ url_for('practice.view_set', practice_path=practice.main.path) }}">
         <i class="fas fa-puzzle-piece"></i>
-        <span><strong>Practice this topic: {{ set.title }}</strong><span>{{ set.count }} problems with hints and step-by-step solutions</span></span>
+        <span><strong>Practise this note: {{ practice.main.title }}</strong><span>{{ practice.main.count }} problems with hints and step-by-step solutions</span></span>
         <span class="go">Start <i class="fas fa-arrow-right"></i></span>
     </a>
-    {% endfor %}
+    {% if practice.more %}
+    <p class="practice-more">
+        <span>More practice for {{ practice.topic }}:</span>
+        {% for set in practice.more %}
+        <a href="{{ url_for('practice.view_set', practice_path=set.path) }}">{{ 'Topic review' if set.review else set.title }}</a>{{ ' ·' if not loop.last }}
+        {% endfor %}
+    </p>
+    {% endif %}
 </section>
 {% endif %}
 

@@ -141,8 +141,10 @@ Practice problems with worked solutions are HTML pages too, kept in their own fo
 content/practice/math-c/01-plane-vectors/01-dot-product-and-angles.html   →   /practice/math-c/01-plane-vectors/01-dot-product-and-angles
 ```
 
+- **Sets in a topic:** first the **concept sets**, each covering 3–5 related notes (about 6 problems, from `basic` up to one `exam` question in parts), then the **topic review**, a mix of the whole topic, named `<nn>-topic-review.html`. Every note should be used by at least two problems.
+- **Renaming a set** changes its URL, and saved progress is stored by URL. List the old paths in `data-moved-from` on the `<article>` (separated by `|`); `practice.js` moves saved progress to the new path the first time the page opens.
 - The page (`templates/practice.html`) has the same floating bar, header and card as a note. The header shows "Solved 2 of 5"; progress is saved on the student's device.
-- Every note in the same topic shows a **Practice this topic** card after the note, and the search box finds practice sets too.
+- After each note, a **Practise this note** card opens the first concept set whose problems link to that note (via "Uses:"), and the topic's other sets are listed under it. The search box finds practice sets too.
 - Styles: `static/css/practice.css`. Script: `static/js/practice.js`. Loader: `utils/content_loader.py`. Route: `/practice/...` in `routes/practice.py`.
 - A topic needs at least one note, because the header links back to the topic's notes.
 

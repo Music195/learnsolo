@@ -79,9 +79,20 @@ def view_note(note_path):
         display_names={"courses": {c: course_name(c) for c in courses},
                        "topics": {t: topic_name(t) for t in topics}},
         show_topics=True,
-        # Practice sets for this note's topic, shown as cards after the note
-        practice=[s for s in get_practice_sets() if s["path"].rsplit("/", 1)[0] == note_path.rsplit("/", 1)[0]],
+        practice=build_practice(note_path),
     )
+
+
+# Practice after a note: the set that practises this note, then the topic's
+# other sets. The main set is the first concept set whose problems link to
+# the note; if none does, the topic's first set.
+def build_practice(note_path):
+    folder = note_path.rsplit("/", 1)[0]
+    sets = [s for s in get_practice_sets() if s["path"].rsplit("/", 1)[0] == folder]
+    if not sets:
+        return None
+    main = next((s for s in sets if not s["review"] and note_path in s["notes"]), sets[0])
+    return {"main": main, "more": [s for s in sets if s is not main], "topic": topic_name(folder.split("/")[-1])}
 
 
 # PDF viewer (for PDFs on Google Drive)
