@@ -138,7 +138,7 @@ The app finds the new file on its own; you don't need to register it anywhere.
 Practice problems with worked solutions are HTML pages too, kept in their own folder with the same course/topic folders as the notes:
 
 ```
-content/practice/math-c/01-plane-vectors/01-dot-product-and-angles.html   →   /practice/math-c/01-plane-vectors/01-dot-product-and-angles
+content/practice/math-c/01-plane-vectors/02-dot-product.html   →   /practice/math-c/01-plane-vectors/02-dot-product
 ```
 
 - **Sets in a topic:** first the **concept sets**, each covering 3–5 related notes (about 6 problems, from `basic` up to one `exam` question in parts), then the **topic review**, a mix of the whole topic, named `<nn>-topic-review.html`. Every note should be used by at least two problems.
