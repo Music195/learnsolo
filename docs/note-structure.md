@@ -89,7 +89,18 @@ Every demo script has the same shape:
 
 Each helper file begins with a comment listing its functions and their options, so read that first when writing a new demo.
 
-## 5. Adding a new note
+## 5. Subjects on the home page
+
+The home page (`templates/index.html`, scripts in `static/js/home.js`) groups the course folders into subject tabs. The list of subjects is `SUBJECTS` in `routes/notes.py`:
+
+- A course folder belongs to the subject its name **starts with**: `Mathematics 1` → Mathematics, `Physics Basic` → Physics.
+- A subject with no notes yet shows a **Coming soon** tab. It switches on by itself once a folder for it has notes.
+- A folder that matches no subject in the list gets its own tab, named after the folder's first word (for example `Chemistry Basic` → Chemistry). Add it to `SUBJECTS` to choose its icon and tab order.
+- `COURSE_NAMES` and `TOPIC_NAMES` only change the names shown on the home page and in search (for example `Mathematics 1` → "Math I"). Folders are never renamed.
+
+To start Physics, add notes like `notes/Physics Basic/Motion/01._Velocity.html`, using the same 8-block layout as the maths notes.
+
+## 6. Adding a new note
 
 1. Copy an existing note from the same folder.
 2. Rename it with the next number, for example `18._Something.html`.

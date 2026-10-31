@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, Response, redirect
+from flask import Blueprint, render_template, request, Response, redirect, url_for
 from utils.note_loader import (
     get_notes_list, 
     load_note_content, 
@@ -29,11 +29,21 @@ def build_nav_links(notes_list, current_note):
     }
 
 
-# Home page helper
-# ----------------
-# Groups the notes into courses and topics for the course cards.
+# Home page helpers
+# -----------------
+# Group the notes into subjects → courses → topics for the home page.
 # Folder names stay as they are on disk; these maps only change
 # what the home page shows.
+
+# Subjects in tab order. A course folder belongs to the subject its
+# name starts with ("Mathematics 1" → Mathematics, "Physics Basic" →
+# Physics). A subject with no notes yet shows as "Coming soon".
+# A folder that matches none of these gets its own tab, named after
+# the folder's first word.
+SUBJECTS = [
+    {"name": "Mathematics", "icon": "fa-square-root-variable"},
+    {"name": "Physics", "icon": "fa-atom"},
+]
 COURSE_NAMES = {
     "Mathematics 1": "Math I", "Mathematics 2": "Math II", "Mathematics 3": "Math III",
     "Mathematics A": "Math A", "Mathematics B": "Math B", "Mathematics C": "Math C",
@@ -51,7 +61,7 @@ def build_courses(notes_list):
         if len(parts) < 3:
             continue
         course = courses.setdefault(parts[0], {
-            "name": COURSE_NAMES.get(parts[0], parts[0]),
+            "folder": parts[0], "name": COURSE_NAMES.get(parts[0], parts[0]),
             "first": path, "count": 0, "topics": {},
         })
         course["count"] += 1
@@ -63,6 +73,35 @@ def build_courses(notes_list):
     return list(courses.values())
 
 
+def build_subjects(courses):
+    subjects = [dict(s, courses=[]) for s in SUBJECTS]
+    for course in courses:
+        subject = next((s for s in subjects if course["folder"].startswith(s["name"])), None)
+        if subject is None:  # a new subject not listed in SUBJECTS
+            subject = {"name": course["folder"].split()[0], "icon": "fa-book", "courses": []}
+            subjects.append(subject)
+        subject["courses"].append(course)
+    for subject in subjects:
+        subject["count"] = sum(c["count"] for c in subject["courses"])
+    return subjects
+
+
+# One entry per note for the search box: title, link and "Math I · Vector"
+def build_search_index():
+    index = []
+    for note in get_notes_with_titles():
+        parts = note["path"].split("/")
+        where = " · ".join(
+            [COURSE_NAMES.get(parts[0], parts[0])] +
+            ([TOPIC_NAMES.get(parts[1], parts[1])] if len(parts) > 2 else [])
+        )
+        index.append({
+            "title": note["title"], "where": where,
+            "url": url_for("notes.view_note", note_path=note["path"]),
+        })
+    return index
+
+
 @notes_bp.route("/")
 def index():
     courses = build_courses(get_notes_list())
@@ -71,7 +110,12 @@ def index():
         "courses": len(courses),
         "topics": sum(len(c["topics"]) for c in courses),
     }
-    return render_template("index.html", courses=courses, stats=stats)
+    return render_template(
+        "index.html",
+        subjects=build_subjects(courses),
+        stats=stats,
+        search_index=build_search_index(),
+    )
 
 @notes_bp.route("/note/<path:note_path>")
 def view_note(note_path):

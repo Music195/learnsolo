@@ -2,11 +2,11 @@
 {% extends "base.html" %}
 
 <!-- Override the page title -->
-{% block title %}Learn Solo · Interactive high-school maths{% endblock %}
+{% block title %}Learn Solo · Interactive high-school notes{% endblock %}
 
 <!-- Block for additional head content: CSS links -->
 {% block extra_head %}
-<meta name="description" content="Free interactive notes for Japanese high-school maths (Math I–III, A–C). Drag, slide and see why every formula works.">
+<meta name="description" content="Free interactive notes for Japanese high-school courses. Drag, slide and see why every formula works.">
 <!-- Styles for the home page only (Bootstrap is already loaded by base.html) -->
 <link rel="stylesheet" href="/static/css/index_tpl_style.css">
 {% endblock %}
@@ -23,23 +23,50 @@
     "Math B":   ("fa-list-ol",              "#0d9488"),
     "Math C":   ("fa-location-arrow",       "#16a34a"),
 } %}
+{% set ready = subjects | selectattr("count") | list %}
+{% set soon = subjects | rejectattr("count") | list %}
+<!-- The tab open at the start: the first subject that has notes -->
+{% set first_tab = ready[0] if ready else subjects[0] %}
+<!-- Subject names as English text: "A", "A and B", "A, B and C" -->
+{% macro names(items) %}{% for s in items %}{{ s.name }}{% if loop.revindex == 2 %} and {% elif not loop.last %}, {% endif %}{% endfor %}{% endmacro %}
+
+<!-- FLOATING BAR: stays at the top while scrolling; on phones the links fold into a menu -->
+<nav class="floatbar" aria-label="Main">
+    <div class="floatbar-inner">
+        <a class="brand" href="{{ url_for('notes.index') }}"><i class="fas fa-book-open"></i> Learn Solo</a>
+        <span class="beta" title="New notes and features are still being added">Beta</span>
+
+        <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="floatMenu" aria-label="Open menu">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="float-menu" id="floatMenu">
+            <a href="#subjects">Subjects</a>
+            <a href="#how">How it works</a>
+            <a href="{{ url_for('problems.kind_of_problem') }}">Practice</a>
+            <!-- Search by note title; results come from search_index (see static/js/home.js) -->
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input id="noteSearch" type="search" placeholder="Search notes…" autocomplete="off"
+                       aria-label="Search notes" aria-controls="searchResults" aria-expanded="false">
+                <ul id="searchResults" class="search-results" role="listbox" hidden></ul>
+            </div>
+        </div>
+    </div>
+</nav>
 
 <!-- HERO: what the site is, the two main actions, and a live demo -->
 <header class="hero">
-    <nav class="topbar">
-        <span class="brand"><i class="fas fa-book-open"></i> Learn Solo</span>
-        <span class="beta" title="New notes and features are still being added">Beta</span>
-    </nav>
-
     <div class="hero-grid">
         <div class="hero-text">
-            <h1>High-school maths you can <span class="highlight">see</span></h1>
+            <h1>High-school subjects you can <span class="highlight">see</span></h1>
             <p class="lead-text">
                 Drag points, move sliders and watch every formula work.
-                Interactive notes for Math I–III and A–C, free to use.
+                Free interactive notes for
+                {{ names(ready) }}{% if soon %}, with {{ names(soon) }} coming soon{% endif %}.
             </p>
             <div class="hero-actions">
-                <a class="btn-main" href="#courses">Start learning <i class="fas fa-arrow-down"></i></a>
+                <a class="btn-main" href="#subjects">Start learning <i class="fas fa-arrow-down"></i></a>
                 <a class="btn-ghost" href="{{ url_for('problems.kind_of_problem') }}"><i class="fas fa-puzzle-piece"></i> Practice problems</a>
             </div>
             <ul class="stats">
@@ -60,39 +87,67 @@
 </header>
 
 <main>
-    <!-- COURSES: one card per course, with links to each topic -->
-    <section id="courses" class="section">
-        <h2 class="section-title">Choose your course</h2>
+    <!-- SUBJECTS: one tab per subject; each tab shows its course cards -->
+    <section id="subjects" class="section">
+        <h2 class="section-title">Choose your subject and course</h2>
         <p class="section-sub">Pick a course to start at its first note, or jump straight to a topic.</p>
 
-        <div class="course-grid">
-            {% for course in courses %}
-            {% set icon, color = course_style.get(course.name, ("fa-book", "#2563eb")) %}
-            <article class="course-card" style="--accent: {{ color }}">
-                <a class="course-head" href="{{ url_for('notes.view_note', note_path=course.first) }}">
-                    <span class="course-icon"><i class="fas {{ icon }}"></i></span>
-                    <span>
-                        <span class="course-name">{{ course.name }}</span>
-                        <span class="course-count">{{ course.count }} notes · {{ course.topics|length }} topic{{ "s" if course.topics|length != 1 }}</span>
-                    </span>
-                    <i class="fas fa-arrow-right course-go"></i>
-                </a>
-                <ul class="topic-list">
-                    {% for topic in course.topics %}
-                    <li><a href="{{ url_for('notes.view_note', note_path=topic.first) }}">{{ topic.name }}</a></li>
-                    {% endfor %}
-                </ul>
-            </article>
+        <div class="subject-tabs" role="tablist" aria-label="Subjects">
+            {% for subject in subjects %}
+            <button class="subject-tab" role="tab" id="tab-{{ loop.index }}" aria-controls="panel-{{ loop.index }}"
+                    aria-selected="{{ 'true' if subject == first_tab else 'false' }}">
+                <i class="fas {{ subject.icon }}"></i>
+                <span>{{ subject.name }}</span>
+                <span class="tab-count {{ '' if subject.count else 'soon' }}">
+                    {{ subject.count ~ (" note" if subject.count == 1 else " notes") if subject.count else "Coming soon" }}
+                </span>
+            </button>
             {% endfor %}
         </div>
+
+        {% for subject in subjects %}
+        <div class="subject-panel" role="tabpanel" id="panel-{{ loop.index }}" aria-labelledby="tab-{{ loop.index }}"
+             {{ '' if subject == first_tab else 'hidden' }}>
+            {% if subject.count %}
+            <div class="course-grid">
+                {% for course in subject.courses %}
+                {% set icon, color = course_style.get(course.name, (subject.icon, "#2563eb")) %}
+                <article class="course-card" style="--accent: {{ color }}">
+                    <a class="course-head" href="{{ url_for('notes.view_note', note_path=course.first) }}">
+                        <span class="course-icon"><i class="fas {{ icon }}"></i></span>
+                        <span>
+                            <span class="course-name">{{ course.name }}</span>
+                            <span class="course-count">{{ course.count }} note{{ "s" if course.count != 1 }} · {{ course.topics|length }} topic{{ "s" if course.topics|length != 1 }}</span>
+                        </span>
+                        <i class="fas fa-arrow-right course-go"></i>
+                    </a>
+                    <ul class="topic-list">
+                        {% for topic in course.topics %}
+                        <li><a href="{{ url_for('notes.view_note', note_path=topic.first) }}">{{ topic.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </article>
+                {% endfor %}
+            </div>
+            {% else %}
+            <!-- Subject without notes yet -->
+            <div class="coming-soon">
+                <i class="fas {{ subject.icon }}"></i>
+                <h3>{{ subject.name }} notes are coming soon</h3>
+                <p>They'll appear here as soon as they're ready. Until then, explore the
+                   {{ names(ready) }} notes.</p>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
     </section>
 
     <!-- HOW IT WORKS: the same four steps in every note -->
-    <section class="section how">
+    <section id="how" class="section how">
         <h2 class="section-title">Every note works the same way</h2>
         <ol class="steps">
             <li><i class="fas fa-lightbulb"></i><strong>Concept</strong><span>The idea in plain words, then the formula and why it works.</span></li>
-            <li><i class="fas fa-hand-pointer"></i><strong>Try it</strong><span>A live demo: drag and slide to see the maths change.</span></li>
+            <li><i class="fas fa-hand-pointer"></i><strong>Try it</strong><span>A live demo: drag and slide to see the idea change.</span></li>
             <li><i class="fas fa-pencil"></i><strong>Examples</strong><span>Worked problems. Try first, then reveal the solution.</span></li>
             <li><i class="fas fa-bookmark"></i><strong>Remember</strong><span>Common mistakes, a tip, and the key points to keep.</span></li>
         </ol>
@@ -129,31 +184,11 @@
     MathJax = { tex: { inlineMath: [['$', '$']] } };
 </script>
 <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<!-- Every note's title, place and link, for the search box -->
+<script>
+    const SEARCH_INDEX = {{ search_index | tojson }};
+</script>
 <script src="/static/js/note_geom.js"></script>
 <script src="/static/js/note_plot.js"></script>
-<script>
-  // Hero demo: P slides along y = x²/2 (x snaps to steps of 0.1).
-  // The orange line is the tangent at P; its slope equals the x-coordinate of P.
-  // Wrapped in a function so these names can't clash with other page scripts.
-  (function () {
-    const output = document.getElementById('heroOutput');
-    const f = (x) => x * x / 2;
-    const onCurve = ([x]) => {
-      const t = Math.min(Math.max(Math.round(x * 10) / 10, -3), 3);
-      return [t, f(t)];
-    };
-
-    NotePlot.graph(document.getElementById('heroCanvas'), {
-      x: [-4.65, 4.65], y: [-1, 5],
-      points: { P: [1.5, f(1.5)] },
-      constrain: { P: onCurve },
-      draw(g, P) {
-        const [a, b] = P.P;
-        g.fn(f, '#2563eb', { width: 3 });
-        g.fn((x) => a * (x - a) + b, '#ea580c', { width: 2 });  // tangent: y = a(x − a) + a²/2
-        output.textContent = `P = (${+a.toFixed(1)}, ${+b.toFixed(3)})   slope of tangent = ${+a.toFixed(1)}`;
-      },
-    });
-  })();
-</script>
+<script src="/static/js/home.js"></script>
 {% endblock %}
