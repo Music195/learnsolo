@@ -245,7 +245,7 @@ content/past/university/01-sample-paper-proof-and-calculus.html   →   /past/un
 content/past/eju/course-1/03-mock-paper.html                       →   /past/eju/course-1/03-mock-paper
 ```
 
-- **Past questions** (`/past`, linked at the bottom of the practice page) shows one card per folder in `content/past/`. Clicking a card lists its papers (`/past/<folder>`), and each paper opens in `templates/practice.html` with hints, solutions and answer boxes. The search box finds papers too.
+- **Past questions** (`/past`, linked at the bottom of the practice page and from "More to explore" on the home page) shows one card per folder in `content/past/`. Clicking a card lists its papers (`/past/<folder>`), and each paper opens in `templates/practice.html` with hints, solutions and answer boxes. The search box finds papers too.
 - **Subfolders** (`eju/course-1/`, `eju/course-2/`) become tabs on the folder's list page, which uses the practice hub's tabs, rows and "Solved n of m" badges (`practice-list.css`, `practice-list.js`). Previous / next on a paper stay inside its subfolder, and the floating bar shows "EJU Mock Papers › Course 1 (Basic) · Paper 3 of 10". `/past/eju#course-2` opens on Course 2. Name the subfolders under `"groups"` in `PAST_CATEGORIES`.
 - **New exam:** make a new folder in `content/past/`. Give it a name, an icon and a one-line description in `PAST_CATEGORIES` in `utils/courses.py` (without one it gets a generic description). Routes: `routes/past.py`.
 - **New paper:** add an HTML file to the folder (or subfolder). Number files `01-`, `02-`, … to set the order. Use `data-level="exam"` for each problem.
