@@ -35,5 +35,5 @@ This project is built to act as a personal study companion, helping users struct
 ├── utils/                  # content_loader.py (reads content/), courses.py (display names)
 ├── templates/              # Page templates (partials/ holds shared pieces)
 ├── static/                 # css/, js/ (js/demos/ holds the demo helpers)
-├── docs/content-guide.md   # How to write notes, practice sets and past papers
+├── docs/content-guide.md   # How the project fits together, and how to write notes, practice sets and past papers
 └── README.md               # Project documentation
