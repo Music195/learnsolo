@@ -1,9 +1,9 @@
 /* =====================================================================
-   note_plot.js — shared helper for function-graph demos
+   demos/plot.js — shared helper for function-graph demos
    ---------------------------------------------------------------------
-   Built on note_geom.js, so a note loads both:
-       <script src="/static/js/note_geom.js"></script>
-       <script src="/static/js/note_plot.js"></script>
+   Built on demos/geom.js, so a note loads both:
+       <script src="/static/js/demos/geom.js"></script>
+       <script src="/static/js/demos/plot.js"></script>
 
    Main function:
      NotePlot.graph(canvas, {

@@ -1,8 +1,8 @@
 /* =====================================================================
-   note_geom.js — shared helper for geometry demos with draggable points
+   demos/geom.js — shared helper for geometry demos with draggable points
    ---------------------------------------------------------------------
    Used by the TRY IT demos in the geometry notes. A note loads it with:
-       <script src="/static/js/note_geom.js"></script>
+       <script src="/static/js/demos/geom.js"></script>
 
    Main function:
      NoteGeom.board(canvas, {

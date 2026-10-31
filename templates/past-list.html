@@ -1,6 +1,6 @@
 <!-- =====================================================================
-     PAST QUESTIONS: /note/kind_of_problem and /note/kind_of_problem/<category>
-     Without `category`: one card per folder in past/ (routes/problems.py).
+     PAST QUESTIONS: /past and /past/<category>
+     Without `category`: one card per folder in content/past/ (routes/past.py).
      With `category`: the papers in that folder. Each paper opens as an
      HTML page with hints and solutions (templates/practice.html).
      Same look as the note pages: floating bar, purple header, white cards.
@@ -12,19 +12,19 @@
 {% block extra_head %}
 <link rel="stylesheet" href="/static/css/floatbar.css">
 <!-- Page, purple header and colours, shared with the note pages -->
-<link rel="stylesheet" href="/static/css/note_tpl_style.css">
-<link rel="stylesheet" href="/static/css/past_tpl_style.css">
+<link rel="stylesheet" href="/static/css/note-page.css">
+<link rel="stylesheet" href="/static/css/past.css">
 {% endblock %}
 
 {% block body %}
-{% include "_floatbar.html" %}
+{% include "partials/floatbar.html" %}
 
 <!-- HEADER -->
 <header class="note-header">
     <div class="note-header-inner">
         <p class="note-chips">
-            {% if category %}<a href="{{ url_for('problems.kind_of_problem') }}"><i class="fas fa-arrow-left"></i> All past questions</a>
-            {% else %}<a href="{{ url_for('notes.index') }}"><i class="fas fa-house"></i> Home</a>{% endif %}
+            {% if category %}<a href="{{ url_for('past.index') }}"><i class="fas fa-arrow-left"></i> All past questions</a>
+            {% else %}<a href="{{ url_for('home.index') }}"><i class="fas fa-house"></i> Home</a>{% endif %}
         </p>
         {% if category %}
         <h1>{{ category.name }}</h1>
@@ -42,7 +42,7 @@
     <ol class="paper-list">
         {% for paper in category.papers %}
         <li>
-            <a class="paper-row" href="{{ url_for('problems.past', past_path=paper.path) }}">
+            <a class="paper-row" href="{{ url_for('past.paper', category=category.folder, paper=paper.path.split('/', 1)[1]) }}">
                 <span class="paper-num">{{ loop.index }}</span>
                 <span class="paper-text">
                     <strong>{{ paper.title }}</strong>
@@ -57,7 +57,7 @@
     <!-- ALL CATEGORIES -->
     <div class="past-grid">
         {% for cat in categories %}
-        <a class="past-card" href="{{ url_for('problems.problem', category=cat.name) }}">
+        <a class="past-card" href="{{ url_for('past.category', category=cat.folder) }}">
             <span class="past-icon"><i class="fas {{ cat.icon }}"></i></span>
             <strong class="past-name">{{ cat.name }}</strong>
             <span class="past-about">{{ cat.about }}</span>

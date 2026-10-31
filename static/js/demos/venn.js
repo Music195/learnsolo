@@ -1,9 +1,9 @@
 /* =====================================================================
-   note_venn.js — shared Venn diagram helper for the set notes
+   demos/venn.js — shared Venn diagram helper for the set notes
    ---------------------------------------------------------------------
-   Used by the TRY IT demos in notes/Mathematics A/Union and Elements.
+   Used by the TRY IT demos in content/notes/math-a/01-sets.
    A note loads it with:
-       <script src="/static/js/note_venn.js"></script>
+       <script src="/static/js/demos/venn.js"></script>
 
    Main functions:
      NoteVenn.parse("1, 2, 2, 3")      -> ["1", "2", "3"]  (duplicates removed)

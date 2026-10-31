@@ -1,5 +1,5 @@
 /* =====================================================================
-   note_tpl.js — the page around each note (templates/note.html)
+   note-page.js — the page around each note (templates/note.html)
    ---------------------------------------------------------------------
    1. Sidebar: the Topics button opens it; pick a course and a topic to
       list their notes. It starts on the course and topic being read.
@@ -21,8 +21,8 @@
   if (!sidebar || typeof NOTES_META === 'undefined') return;
 
   const names = typeof DISPLAY_NAMES !== 'undefined' ? DISPLAY_NAMES : { courses: {}, topics: {} };
-  const current = decodeURIComponent(location.pathname).replace(/^\/note\//, '');
-  const noteUrl = (path) => '/note/' + path.split('/').map(encodeURIComponent).join('/');
+  const current = decodeURIComponent(location.pathname).replace(/^\/notes\//, '');
+  const noteUrl = (path) => '/notes/' + path;
 
   // Topic dropdown: the topics of the chosen course, in folder order
   function fillTopics(selected) {

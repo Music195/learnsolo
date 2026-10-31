@@ -1,15 +1,17 @@
 from flask import Flask
+from routes.home import home_bp
 from routes.notes import notes_bp
-from routes.problems import problems_bp
-# from utils.note_loader import *
-# from utils.google_drive import *
+from routes.practice import practice_bp
+from routes.past import past_bp
 
 def create_app():
     app = Flask(__name__)
     
     # Register blueprints
-    app.register_blueprint(notes_bp)
-    app.register_blueprint(problems_bp)
+    app.register_blueprint(home_bp)       # home page and search
+    app.register_blueprint(notes_bp)      # /notes/... and the PDF viewer
+    app.register_blueprint(practice_bp)   # /practice/...
+    app.register_blueprint(past_bp)       # /past/...
     
     return app
 
