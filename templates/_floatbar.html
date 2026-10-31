@@ -19,7 +19,7 @@
             <i class="fas fa-chevron-right"></i>
             <a href="{{ url_for('notes.view_note', note_path=location.topic_first) }}">{{ location.topic }}</a>
             {% endif %}
-            <span class="crumbs-count">· {{ location.index }} of {{ location.total }}</span>
+            <span class="crumbs-count">· {{ location.kind ~ ' ' if location.kind }}{{ location.index }} of {{ location.total }}</span>
         </div>
         {% endif %}
 
@@ -53,8 +53,8 @@
             <div class="bar-group" role="group" aria-label="Previous and next note">
                 {% for key, icon, label in [("prev", "fa-chevron-left", "Previous"), ("next", "fa-chevron-right", "Next")] %}
                 {% if nav[key] %}
-                <a class="bar-btn" id="{{ key }}Link" href="{{ url_for('notes.view_note', note_path=nav[key].path) }}"
-                   title="{{ label }}: {{ nav[key].title }}" aria-label="{{ label }} note: {{ nav[key].title }}">
+                <a class="bar-btn" id="{{ key }}Link" href="{{ nav[key].url }}"
+                   title="{{ label }}: {{ nav[key].title }}" aria-label="{{ label }}: {{ nav[key].title }}">
                     <i class="fas {{ icon }}"></i>
                 </a>
                 {% else %}
@@ -63,10 +63,12 @@
                 {% endfor %}
             </div>
 
-            <!-- Opens the sidebar with the course/topic filters and the list of notes -->
+            {% if show_topics %}
+            <!-- Opens the sidebar with the course/topic filters and the list of notes (note pages only) -->
             <button class="bar-btn bar-topics" id="topicsBtn" aria-controls="sidebar" aria-expanded="false">
                 <i class="fas fa-list-ul"></i> Topics
             </button>
+            {% endif %}
             {% endif %}
         </div>
     </div>

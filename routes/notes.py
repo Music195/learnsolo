@@ -6,6 +6,7 @@ from utils.note_loader import (
     get_notes_with_titles,
     NoteNotFound
 )
+from utils.practice_loader import get_practice_sets
 import requests
 import os
 
@@ -97,6 +98,14 @@ def build_search_index():
             "title": note["title"], "where": where,
             "url": url_for("notes.view_note", note_path=note["path"]),
         })
+    # Practice sets too, e.g. "Math C · Vector · Practice"
+    for practice in get_practice_sets():
+        parts = practice["path"].split("/")
+        index.append({
+            "title": "Practice: " + practice["title"],
+            "where": " · ".join([COURSE_NAMES.get(parts[0], parts[0]), TOPIC_NAMES.get(parts[1], parts[1]), "Practice"]),
+            "url": url_for("problems.practice", practice_path=practice["path"]),
+        })
     return index
 
 
@@ -165,7 +174,7 @@ def view_note(note_path):
         if nav[key]:
             location = build_location(notes_list, nav[key])
             nav[key] = {
-                "path": nav[key], "title": titles[nav[key]],
+                "url": url_for("notes.view_note", note_path=nav[key]), "title": titles[nav[key]],
                 "where": " · ".join(filter(None, [location["course"], location["topic"]])),
             }
 
@@ -179,6 +188,9 @@ def view_note(note_path):
         note_title=titles[note_path],
         location=build_location(notes_list, note_path),
         display_names={"courses": COURSE_NAMES, "topics": TOPIC_NAMES},
+        show_topics=True,
+        # Practice sets for this note's topic, shown as cards after the note
+        practice=[s for s in get_practice_sets() if s["path"].rsplit("/", 1)[0] == note_path.rsplit("/", 1)[0]],
     )
 
 @notes_bp.route("/proxy-pdf")

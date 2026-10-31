@@ -117,3 +117,42 @@ To start Physics, add notes like `notes/Physics Basic/Motion/01._Velocity.html`,
 4. Give the demo a new id prefix and rewrite its `draw()` function.
 
 The app finds the new file on its own; you don't need to register it anywhere.
+
+## 7. Practice sets
+
+Practice problems with worked solutions are HTML pages too, kept in their own folder with the same Course/Topic layout as the notes:
+
+```
+practice/Mathematics C/Vector/01._Dot_Product_and_Angles.html   →   /practice/Mathematics C/Vector/01._Dot_Product_and_Angles
+```
+
+- The page (`templates/practice.html`) has the same floating bar, header and card as a note. The header shows "Solved 2 of 5"; progress is saved on the student's device.
+- Every note in the same topic shows a **Practice this topic** card after the note, and the search box finds practice sets too.
+- Styles: `static/css/practice.css`. Script: `static/js/practice.js`. Loader: `utils/practice_loader.py`. Route: `/practice/...` in `routes/problems.py`.
+- A topic needs at least one note, because the header links back to the topic's notes.
+
+A practice file is a fragment like a note:
+
+```html
+<article class="note-page practice-page">
+  <h1 class="practice-title">Dot Product and Angles</h1>
+  <p class="practice-intro">What this set practises.</p>
+
+  <section class="practice-problem" data-level="basic" data-answer="45" data-placeholder="angle in degrees">
+    <h2>Problem 1</h2>
+    <p class="question">The question, with maths in $...$.</p>
+    <p class="related">Uses: <a href="/note/...">The note it practises</a></p>
+    <details class="hint"><summary>Show hint</summary><p>A nudge, not the answer.</p></details>
+    <details class="solution">
+      <summary>Show solution</summary>
+      <ol class="note-steps"><li>Step 1</li><li>Step 2</li></ol>
+      <p class="answer">The final answer</p>
+    </details>
+  </section>
+</article>
+```
+
+- `data-level`: `basic`, `standard` or `challenge` (the badge and colour).
+- `data-answer` (optional): the value the answer box checks against. Write it the way a student would type it: `45`, `6`, `2√7`, `5/2`, `√3/2`. Typed answers count as correct within 0.01, so `5.29` is accepted for `2√7`. Leave it out for problems whose answer isn't one number (proofs, "find all…").
+- The answer box and the "I got it / Review later" buttons are added by `practice.js`; don't write them in the file.
+- Keep the solution steps short and numbered, like the examples in the notes, and put any extra insight in `<p class="practice-note">` inside the solution.

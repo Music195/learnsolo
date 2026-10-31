@@ -12,6 +12,10 @@
 <link rel="stylesheet" href="/static/css/note_tpl_style.css">
 <!-- The 8 note blocks inside every note (<article class="note-page">) -->
 <link rel="stylesheet" href="/static/css/note_blocks.css">
+{% if practice %}
+<!-- Only for topics with a practice set: the "Practice this topic" cards -->
+<link rel="stylesheet" href="/static/css/practice.css">
+{% endif %}
 {% endblock %}
 
 <!-- Main content block that replaces the body content in base.html -->
@@ -65,11 +69,24 @@
      Its own <h1 class="note-title"> is hidden by the CSS, as the header above shows the title. -->
 <main class="note-content" id="noteContent">{{ content|safe }}</main>
 
+{% if practice %}
+<!-- PRACTICE: problem sets for this topic (files in practice/<Course>/<Topic>/) -->
+<section class="practice-links" aria-label="Practice this topic">
+    {% for set in practice %}
+    <a class="practice-link" href="{{ url_for('problems.practice', practice_path=set.path) }}">
+        <i class="fas fa-puzzle-piece"></i>
+        <span><strong>Practice this topic: {{ set.title }}</strong><span>{{ set.count }} problems with hints and step-by-step solutions</span></span>
+        <span class="go">Start <i class="fas fa-arrow-right"></i></span>
+    </a>
+    {% endfor %}
+</section>
+{% endif %}
+
 <!-- PREVIOUS / NEXT: cards at the end of the note (also the ← / → keys) -->
 <nav class="note-pager" aria-label="Previous and next note">
     {% for key, label, icon in [("prev", "Previous", "fa-arrow-left"), ("next", "Next", "fa-arrow-right")] %}
     {% if nav[key] %}
-    <a class="pager-card pager-{{ key }}" href="{{ url_for('notes.view_note', note_path=nav[key].path) }}">
+    <a class="pager-card pager-{{ key }}" href="{{ nav[key].url }}">
         <span class="pager-label">{% if key == "prev" %}<i class="fas {{ icon }}"></i> {% endif %}{{ label }}{% if key == "next" %} <i class="fas {{ icon }}"></i>{% endif %}</span>
         <strong>{{ nav[key].title }}</strong>
         <span class="pager-where">{{ nav[key].where }}</span>
