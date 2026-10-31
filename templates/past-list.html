@@ -1,7 +1,8 @@
 <!-- =====================================================================
      PAST QUESTIONS: /past and /past/<category>
      Without `category`: one card per folder in content/past/ (routes/past.py).
-     With `category`: the papers in that folder. Each paper opens as an
+     With `category`: the papers in that folder, with a tab per subfolder
+     if it has them (EJU Course 1 / Course 2). Each paper opens as an
      HTML page with hints and solutions (templates/practice.html).
      Same look as the note pages: floating bar, purple header, white cards.
      ===================================================================== -->
@@ -14,6 +15,10 @@
 <!-- Page, purple header and colours, shared with the note pages -->
 <link rel="stylesheet" href="/static/css/note-page.css">
 <link rel="stylesheet" href="/static/css/past.css">
+{% if category and category.groups %}
+<!-- Tabs, paper rows and progress badges, shared with the practice hub -->
+<link rel="stylesheet" href="/static/css/practice-list.css">
+{% endif %}
 {% endblock %}
 
 {% block body %}
@@ -37,12 +42,55 @@
 </header>
 
 <main class="past-content">
-    {% if category %}
+    {% if category and category.groups %}
+    <!-- PAPERS IN SUBFOLDERS: one tab per group (e.g. EJU Course 1 / Course 2) -->
+    <div class="hub-tabs" role="tablist" aria-label="Courses" data-remember="past-tab:{{ category.folder }}">
+        {% for group in category.groups %}
+        <button class="hub-tab" role="tab" id="tab-{{ group.folder }}" data-course="{{ group.folder }}"
+                aria-controls="panel-{{ group.folder }}" aria-selected="{{ 'true' if loop.first else 'false' }}">
+            {{ group.name }}
+        </button>
+        {% endfor %}
+    </div>
+    {% for group in category.groups %}
+    <section class="hub-panel" role="tabpanel" id="panel-{{ group.folder }}" aria-labelledby="tab-{{ group.folder }}"
+             {{ 'hidden' if not loop.first }}>
+        <article class="topic-card">
+            <header class="topic-head">
+                <div class="topic-text">
+                    <h2>{{ group.name }}</h2>
+                    <!-- "Solved n of m" for the whole group is filled in by practice-list.js -->
+                    <p class="topic-meta">
+                        {{ group.papers|length }} paper{{ 's' if group.papers|length != 1 }} · {{ group.papers|sum(attribute='count') }} problems
+                        <span class="topic-solved" hidden></span>
+                    </p>
+                </div>
+            </header>
+            <ol class="set-list">
+                {% for paper in group.papers %}
+                <li>
+                    <a class="set-row" href="{{ paper_url(paper) }}"
+                       data-practice="past/{{ paper.path }}" data-moved-from="{{ paper.moved_from or '' }}" data-count="{{ paper.count }}">
+                        <span class="set-num">{{ loop.index }}</span>
+                        <span class="set-text">
+                            <strong>{{ paper.title }}</strong>
+                            <!-- What each problem practises, from its exam label -->
+                            <span>{{ paper.labels|join(' · ') if paper.labels else paper.intro }}</span>
+                        </span>
+                        <span class="set-progress" hidden></span>
+                    </a>
+                </li>
+                {% endfor %}
+            </ol>
+        </article>
+    </section>
+    {% endfor %}
+    {% elif category %}
     <!-- PAPERS IN ONE CATEGORY -->
     <ol class="paper-list">
         {% for paper in category.papers %}
         <li>
-            <a class="paper-row" href="{{ url_for('past.paper', category=category.folder, paper=paper.path.split('/', 1)[1]) }}">
+            <a class="paper-row" href="{{ paper_url(paper) }}">
                 <span class="paper-num">{{ loop.index }}</span>
                 <span class="paper-text">
                     <strong>{{ paper.title }}</strong>
@@ -74,4 +122,5 @@
 </main>
 
 <script src="/static/js/floatbar.js"></script>
+{% if category and category.groups %}<script src="/static/js/practice-list.js"></script>{% endif %}
 {% endblock %}

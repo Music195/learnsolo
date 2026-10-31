@@ -8,7 +8,7 @@ LearnSolo is a study site for Japanese high-school maths (Math I, II, III, A, B 
 |---|---|---|---|
 | **Notes** | One idea per page: concept, formula, proof, an interactive demo, worked examples | `content/notes/` | `/notes/...` |
 | **Practice sets** | 6–7 problems with hints, solutions and an answer box, for a few notes at a time, then a topic review | `content/practice/` | `/practice`, `/practice/...` |
-| **Past questions** | Exam-style papers (EJU and university), checked the same way as practice sets | `content/past/` | `/past`, `/past/...` |
+| **Past questions** | Exam papers, checked the same way as practice sets: **EJU Mock Papers** (original papers in the EJU format, 10 per course) and **University Past Questions** | `content/past/` | `/past`, `/past/...` |
 
 **There is no database.** Every page is an HTML file under `content/`. Flask finds the files, wraps each one in a shared page template and serves it. To add a page, add a file (sections 6, 7 and 8). Nothing has to be registered.
 
@@ -21,7 +21,8 @@ Home (/)  ── subject tabs → course → topic ──►  Note  ◄─ previ
    ▼                                              ▼
 Practice hub (/practice) ── tab per course ──►  Practice set ── Next practice → Topic review → Next topic
    │
-   └─ bottom link ──►  Past questions (/past) ──►  Exam folder ──►  Paper
+   └─ bottom link ──►  Past questions (/past) ──┬─►  EJU Mock Papers (/past/eju) ── Course 1 / Course 2 tab ──►  Paper
+                                                 └─►  University Past Questions (/past/university) ──►  Paper
 ```
 
 The floating bar at the top of every page has the search box, which finds notes, sets and papers, plus links to Practice and Past questions.
@@ -34,9 +35,9 @@ The floating bar at the top of every page has the search box, which finds notes,
 | Routes | `routes/home.py` | `/` (home page) and `/search-index.json` (the search box's list of every page) |
 | | `routes/notes.py` | `/notes/<path>`, plus the older Google Drive PDF viewer (`/viewer`, `/proxy-pdf`), which no page links to now |
 | | `routes/practice.py` | `/practice` (the hub) and `/practice/<path>` (one set, with next/previous) |
-| | `routes/past.py` | `/past`, `/past/<exam>` and `/past/<exam>/<paper>` |
-| Reading content | `utils/content_loader.py` | Walks `content/`, reads titles, covers and progress-related fields, and caches the lists |
-| Names | `utils/courses.py` | Display names: `math-1` → "Math I", topic name fixes, subjects, past-question categories |
+| | `routes/past.py` | `/past`, `/past/<exam>` and `/past/<exam>/[<course>/]<paper>`; old paper addresses redirect to the new ones |
+| Reading content | `utils/content_loader.py` | Walks `content/`, reads titles, covers, exam labels and progress-related fields, and caches the lists |
+| Names | `utils/courses.py` | Display names: `math-1` → "Math I", topic name fixes, subjects, past-question categories (`eju` → "EJU Mock Papers", `course-1` → "Course 1 (Basic)") |
 | Google Drive | `utils/google_drive.py`, `utils/google_drive_link.py` | Only for the PDF viewer. They need `GOOGLE_CREDENTIALS_JSON` |
 | Templates | `templates/base.html` | The shared `<head>`: Bootstrap, Font Awesome, fonts |
 | | `templates/partials/floatbar.html` | The floating bar on every page |
@@ -57,7 +58,7 @@ The sections below go into detail:
 content/
 ├── notes/<course>/<topic>/<nn-name>.html      the notes
 ├── practice/<course>/<topic>/<nn-name>.html   practice sets (same course and topic folders as notes/)
-└── past/<category>/<nn-name>.html             past question papers (eju/, university/)
+└── past/<category>/[<group>/]<nn-name>.html   past question papers (eju/course-1/, eju/course-2/, university/)
 ```
 
 - Every folder and file name is **lowercase words joined by hyphens**, starting with a two-digit number that sets the order: `content/notes/math-1/03-quadratic-functions/05-quadratic-formula.html`.
@@ -230,15 +231,31 @@ A practice file is a fragment like a note:
 
 ## 8. Past questions
 
-Past exam questions use the same file format as practice sets, grouped by exam instead of by topic:
+Past exam questions use the same file format as practice sets, grouped by exam instead of by topic. There are two categories:
+
+| Folder | Name on the site | What it holds |
+|---|---|---|
+| `content/past/eju/course-1/`, `course-2/` | **EJU Mock Papers**, with a Course 1 (Basic) and a Course 2 (Advanced) tab | 10 original mock papers per course, 6 problems each |
+| `content/past/university/` | **University Past Questions** | Longer problems with written solutions |
+
+An exam folder can be split into subfolders, as the EJU papers are by course:
 
 ```
-content/past/eju/01-sample-paper-math-course-2.html   →   /past/eju/01-sample-paper-math-course-2
+content/past/university/01-sample-paper-proof-and-calculus.html   →   /past/university/01-sample-paper-proof-and-calculus
+content/past/eju/course-1/03-mock-paper.html                       →   /past/eju/course-1/03-mock-paper
 ```
 
-- **Past questions** (`/past`, linked at the bottom of the practice page) shows one card per folder in `content/past/`. Clicking a card lists its papers (`/past/<folder>`), and each paper opens in `templates/practice.html` with hints, solutions and answer boxes. The search box finds papers too.
+- **Past questions** (`/past`, linked at the bottom of the practice page and from "More to explore" on the home page) shows one card per folder in `content/past/`. Clicking a card lists its papers (`/past/<folder>`), and each paper opens in `templates/practice.html` with hints, solutions and answer boxes. The search box finds papers too.
+- **Subfolders** (`eju/course-1/`, `eju/course-2/`) become tabs on the folder's list page, which uses the practice hub's tabs, rows and "Solved n of m" badges (`practice-list.css`, `practice-list.js`). Previous / next on a paper stay inside its subfolder, and the floating bar shows "EJU Mock Papers › Course 1 (Basic) · Paper 3 of 10". `/past/eju#course-2` opens on Course 2. Name the subfolders under `"groups"` in `PAST_CATEGORIES`.
 - **New exam:** make a new folder in `content/past/`. Give it a name, an icon and a one-line description in `PAST_CATEGORIES` in `utils/courses.py` (without one it gets a generic description). Routes: `routes/past.py`.
-- **New paper:** add an HTML file to the folder. Number files `01-`, `02-`, … to set the order. Use `data-level="exam"` for each problem.
+- **New paper:** add an HTML file to the folder (or subfolder). Number files `01-`, `02-`, … to set the order. Use `data-level="exam"` for each problem.
+- **EJU mock papers** (10 per course) follow the exam's layout: six problems in the order I Q1, I Q2, II Q1, II Q2, III, IV. Course 1 and Course 2 share the kind of question in Section I (quadratic functions, then counting and probability). After that, Course 1 has numbers and sets, quadratics, integers and figures; Course 2 has sequences, logarithms or trigonometry, vectors or complex numbers, then Math III differentiation and integration. Each problem names its exam question in a label after the title, and the list page shows these labels as the paper's topics:
+
+```html
+<h2>Problem 1 <span class="exam-label">I Q1 · Quadratic functions</span></h2>
+```
+
+- **Renaming a paper:** list the old paths in `data-moved-from`, with `past/` in front (`data-moved-from="past/eju/02-practice-paper-course-1"`). Saved progress moves to the new path, and old links redirect to it.
 - **Problems in parts:** list the parts right after the question and number the solution steps the same way. The answer box checks one number, so say which part to type in:
 
 ```html
@@ -249,8 +266,9 @@ content/past/eju/01-sample-paper-math-course-2.html   →   /past/eju/01-sample-
 </ol>
 ```
 
-- Real past papers belong to the exam's publisher (JASSO for the EJU, or the university), so check you may republish a paper before adding it.
-- Styles: `static/css/past.css` (the list pages) and `static/css/practice.css` (the paper itself).
+- Real past papers belong to the exam's publisher (JASSO for the EJU, or the university), so check you may republish a paper before adding it. The EJU mock papers are original problems in the same format, not copies of past papers.
+- Styles: `static/css/past.css` (the list pages), `static/css/practice-list.css` (the tabs on `/past/eju`) and `static/css/practice.css` (the paper itself, including `.exam-label`).
+- The search box lists EJU papers as "Past question: Mock Paper 3 · Course 1" with "EJU Mock Papers · Course 1 (Basic) · Past question" under it.
 
 ## 9. What is saved on the device
 
@@ -258,8 +276,9 @@ The site has no accounts. Everything a student does is kept in the browser's `lo
 
 | Key | Written by | What it holds |
 |---|---|---|
-| `practice:<path>` | `static/js/practice.js` | One practice set's progress, for example `practice:math-1/03-quadratic-functions/01-vertex-form`. It is a JSON map from problem number (from 0) to `"solved"` or `"review"`. Past papers use `practice:past/<exam>/<paper>`, so they never clash with a set |
+| `practice:<path>` | `static/js/practice.js` | One practice set's progress, for example `practice:math-1/03-quadratic-functions/01-vertex-form`. It is a JSON map from problem number (from 0) to `"solved"` or `"review"`. Past papers use `practice:past/<path>`, for example `practice:past/eju/course-1/03-mock-paper`, so they never clash with a set |
 | `practice-hub:course` | `static/js/practice-list.js` | The course tab last opened on `/practice` |
+| `past-tab:<exam>` | `static/js/practice-list.js` | The tab last opened on a past-question list, for example `past-tab:eju` |
 | `noteFontSize` | `static/js/note-page.js` | The A−/A+ text size, from 70 to 150 (%) |
 
 Because progress is stored under the set's path, renaming a set loses it unless you add `data-moved-from` (section 7).

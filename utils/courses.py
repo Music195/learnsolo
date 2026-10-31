@@ -27,12 +27,16 @@ COURSES = {
     "math-c": {"name": "Math C", "subject": "Mathematics"},
 }
 
-# Past question folders (content/past/<folder>/) -> name, icon and description
+# Past question folders (content/past/<folder>/) -> name, icon and description.
+# A folder may hold subfolders (content/past/eju/course-1/); "groups" names
+# them, and the list page shows one tab per subfolder.
 PAST_CATEGORIES = {
     "eju": {
-        "name": "EJU Past Questions",
+        "name": "EJU Mock Papers",
         "icon": "fa-file-pen",
-        "about": "Examination for Japanese University Admission for International Students: Mathematics Course 1 and Course 2.",
+        "about": "Original mock papers in the format of the EJU (Examination for Japanese University Admission): "
+                 "Mathematics Course 1 and Course 2, six problems each.",
+        "groups": {"course-1": "Course 1 (Basic)", "course-2": "Course 2 (Advanced)"},
     },
     "university": {
         "name": "University Past Questions",
@@ -66,11 +70,17 @@ def topic_name(folder):
 
 
 def past_category(folder):
-    """{"folder", "name", "icon", "about"} for a folder in content/past/."""
+    """{"folder", "name", "icon", "about", "groups"} for a folder in content/past/."""
     info = PAST_CATEGORIES.get(folder, {})
     return {
         "folder": folder,
         "name": info.get("name") or _from_folder(folder),
         "icon": info.get("icon", "fa-folder-open"),
         "about": info.get("about", "Past exam problems with hints and full solutions."),
+        "groups": info.get("groups", {}),
     }
+
+
+def past_group(category, folder):
+    """Name of a subfolder of a past category: "course-1" -> "Course 1 (Basic)"."""
+    return past_category(category)["groups"].get(folder) or _from_folder(folder)

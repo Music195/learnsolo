@@ -5,7 +5,7 @@ import re
 #
 #   content/notes/<course>/<topic>/<nn-name>.html      the notes
 #   content/practice/<course>/<topic>/<nn-name>.html   practice sets, same folders as the notes
-#   content/past/<category>/<nn-name>.html             past question papers
+#   content/past/<category>/[<group>/]<nn-name>.html   past question papers
 #
 # A file's "path" is its place inside notes/, practice/ or past/ without
 # ".html", e.g. "math-1/03-quadratic-functions/05-quadratic-formula".
@@ -101,7 +101,7 @@ def load_note(note_path):
 # -----------------------------
 # Same file format; the folders are small, so they are read fresh each time.
 def get_sets(folder):
-    """Every set in `folder`, in order, as {"path", "title", "intro", "count", "notes", "covers", "moved_from", "review"}."""
+    """Every set in `folder`, in order, as {"path", "title", "intro", "count", "notes", "covers", "moved_from", "review", "labels"}."""
     sets = []
     for path in _paths(folder):
         content = _read(folder, path)
@@ -122,6 +122,8 @@ def get_sets(folder):
             "moved_from": _first(r'data-moved-from="([^"]*)"', content),
             # the last set of a topic, a mix of the whole topic
             "review": path.endswith("-topic-review"),
+            # past papers: what each problem practises, from <span class="exam-label">I Q1 · Quadratics</span>
+            "labels": [l.split("·")[-1].strip() for l in re.findall(r'class="exam-label">([^<]*)<', body)],
         })
     return sets
 
