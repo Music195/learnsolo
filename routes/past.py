@@ -80,7 +80,7 @@ def paper(category, paper):
     index = siblings.index(this)
     category_url = url_for("past.category", category=category) + ("#" + group if group else "")
     where = info["name"] + (" · " + past_group(category, group) if group else "")
-    # Floating bar: EJU Past Questions › Course 1 (Basic) · Paper 3 of 10
+    # Floating bar: EJU Mock Papers › Course 1 (Basic) · Paper 3 of 10
     location = {
         "course": info["name"], "course_url": url_for("past.category", category=category),
         "topic": past_group(category, group) if group else None, "topic_url": category_url,

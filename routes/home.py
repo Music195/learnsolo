@@ -57,7 +57,7 @@ def build_search_index():
             "where": " · ".join([course_name(parts[0]), topic_name(parts[1]), "Practice"]),
             "url": url_for("practice.view_set", practice_path=practice["path"]),
         })
-    # Past questions, e.g. "EJU Past Questions · Course 1 (Basic) · Past question"
+    # Past questions, e.g. "EJU Mock Papers · Course 1 (Basic) · Past question"
     for paper in get_past_papers():
         category, name = paper["path"].split("/", 1)
         group = [past_group(category, name.split("/")[0])] if "/" in name else []

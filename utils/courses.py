@@ -32,7 +32,7 @@ COURSES = {
 # them, and the list page shows one tab per subfolder.
 PAST_CATEGORIES = {
     "eju": {
-        "name": "EJU Past Questions",
+        "name": "EJU Mock Papers",
         "icon": "fa-file-pen",
         "about": "Original mock papers in the format of the EJU (Examination for Japanese University Admission): "
                  "Mathematics Course 1 and Course 2, six problems each.",
