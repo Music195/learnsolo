@@ -1,5 +1,6 @@
 /* =====================================================================
-   practice-list.js — the practice hub (templates/practice-list.html)
+   practice-list.js — the practice hub (templates/practice-list.html),
+   also used by past-question lists with tabs (templates/past-list.html)
    ---------------------------------------------------------------------
    1. Course tabs: shows one course at a time. The choice is remembered
       on this device, and /practice#math-a opens Math A.
@@ -10,7 +11,8 @@
 (function () {
   // ---------- 1. Course tabs ----------
   const tabs = [...document.querySelectorAll('.hub-tab')];
-  const TAB_KEY = 'practice-hub:course';
+  // Where the chosen tab is remembered (the EJU list page uses its own key)
+  const TAB_KEY = document.querySelector('.hub-tabs')?.dataset.remember || 'practice-hub:course';
 
   function show(course) {
     const tab = tabs.find((t) => t.dataset.course === course) || tabs[0];

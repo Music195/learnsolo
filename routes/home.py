@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, url_for, jsonify
 from utils.content_loader import get_notes_list, get_notes_with_titles, get_practice_sets, get_past_papers
-from utils.courses import SUBJECTS, course_name, course_subject, topic_name, past_category
+from utils.courses import SUBJECTS, course_name, course_subject, topic_name, past_category, past_group
 
 home_bp = Blueprint("home", __name__)
 
@@ -57,12 +57,13 @@ def build_search_index():
             "where": " · ".join([course_name(parts[0]), topic_name(parts[1]), "Practice"]),
             "url": url_for("practice.view_set", practice_path=practice["path"]),
         })
-    # Past questions, e.g. "EJU Past Questions · Past question"
+    # Past questions, e.g. "EJU Past Questions · Course 1 (Basic) · Past question"
     for paper in get_past_papers():
         category, name = paper["path"].split("/", 1)
+        group = [past_group(category, name.split("/")[0])] if "/" in name else []
         index.append({
             "title": "Past question: " + paper["title"],
-            "where": past_category(category)["name"] + " · Past question",
+            "where": " · ".join([past_category(category)["name"]] + group + ["Past question"]),
             "url": url_for("past.paper", category=category, paper=name),
         })
     return index
