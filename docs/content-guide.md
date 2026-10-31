@@ -8,7 +8,7 @@ LearnSolo is a study site for Japanese high-school maths (Math I, II, III, A, B 
 |---|---|---|---|
 | **Notes** | One idea per page: concept, formula, proof, an interactive demo, worked examples | `content/notes/` | `/notes/...` |
 | **Practice sets** | 6–7 problems with hints, solutions and an answer box, for a few notes at a time, then a topic review | `content/practice/` | `/practice`, `/practice/...` |
-| **Past questions** | Exam-style papers (EJU and university), checked the same way as practice sets | `content/past/` | `/past`, `/past/...` |
+| **Past questions** | Exam papers, checked the same way as practice sets: **EJU Mock Papers** (original papers in the EJU format, 10 per course) and **University Past Questions** | `content/past/` | `/past`, `/past/...` |
 
 **There is no database.** Every page is an HTML file under `content/`. Flask finds the files, wraps each one in a shared page template and serves it. To add a page, add a file (sections 6, 7 and 8). Nothing has to be registered.
 
@@ -21,7 +21,8 @@ Home (/)  ── subject tabs → course → topic ──►  Note  ◄─ previ
    ▼                                              ▼
 Practice hub (/practice) ── tab per course ──►  Practice set ── Next practice → Topic review → Next topic
    │
-   └─ bottom link ──►  Past questions (/past) ──►  Exam folder ──►  Paper
+   └─ bottom link ──►  Past questions (/past) ──┬─►  EJU Mock Papers (/past/eju) ── Course 1 / Course 2 tab ──►  Paper
+                                                 └─►  University Past Questions (/past/university) ──►  Paper
 ```
 
 The floating bar at the top of every page has the search box, which finds notes, sets and papers, plus links to Practice and Past questions.
@@ -34,9 +35,9 @@ The floating bar at the top of every page has the search box, which finds notes,
 | Routes | `routes/home.py` | `/` (home page) and `/search-index.json` (the search box's list of every page) |
 | | `routes/notes.py` | `/notes/<path>`, plus the older Google Drive PDF viewer (`/viewer`, `/proxy-pdf`), which no page links to now |
 | | `routes/practice.py` | `/practice` (the hub) and `/practice/<path>` (one set, with next/previous) |
-| | `routes/past.py` | `/past`, `/past/<exam>` and `/past/<exam>/[<course>/]<paper>` |
-| Reading content | `utils/content_loader.py` | Walks `content/`, reads titles, covers and progress-related fields, and caches the lists |
-| Names | `utils/courses.py` | Display names: `math-1` → "Math I", topic name fixes, subjects, past-question categories |
+| | `routes/past.py` | `/past`, `/past/<exam>` and `/past/<exam>/[<course>/]<paper>`; old paper addresses redirect to the new ones |
+| Reading content | `utils/content_loader.py` | Walks `content/`, reads titles, covers, exam labels and progress-related fields, and caches the lists |
+| Names | `utils/courses.py` | Display names: `math-1` → "Math I", topic name fixes, subjects, past-question categories (`eju` → "EJU Mock Papers", `course-1` → "Course 1 (Basic)") |
 | Google Drive | `utils/google_drive.py`, `utils/google_drive_link.py` | Only for the PDF viewer. They need `GOOGLE_CREDENTIALS_JSON` |
 | Templates | `templates/base.html` | The shared `<head>`: Bootstrap, Font Awesome, fonts |
 | | `templates/partials/floatbar.html` | The floating bar on every page |
@@ -230,7 +231,14 @@ A practice file is a fragment like a note:
 
 ## 8. Past questions
 
-Past exam questions use the same file format as practice sets, grouped by exam instead of by topic. An exam folder can be split into subfolders, as the EJU papers are by course:
+Past exam questions use the same file format as practice sets, grouped by exam instead of by topic. There are two categories:
+
+| Folder | Name on the site | What it holds |
+|---|---|---|
+| `content/past/eju/course-1/`, `course-2/` | **EJU Mock Papers**, with a Course 1 (Basic) and a Course 2 (Advanced) tab | 10 original mock papers per course, 6 problems each |
+| `content/past/university/` | **University Past Questions** | Longer problems with written solutions |
+
+An exam folder can be split into subfolders, as the EJU papers are by course:
 
 ```
 content/past/university/01-sample-paper-proof-and-calculus.html   →   /past/university/01-sample-paper-proof-and-calculus
@@ -259,7 +267,8 @@ content/past/eju/course-1/03-mock-paper.html                       →   /past/e
 ```
 
 - Real past papers belong to the exam's publisher (JASSO for the EJU, or the university), so check you may republish a paper before adding it. The EJU mock papers are original problems in the same format, not copies of past papers.
-- Styles: `static/css/past.css` (the list pages) and `static/css/practice.css` (the paper itself).
+- Styles: `static/css/past.css` (the list pages), `static/css/practice-list.css` (the tabs on `/past/eju`) and `static/css/practice.css` (the paper itself, including `.exam-label`).
+- The search box lists EJU papers as "Past question: Mock Paper 3 · Course 1" with "EJU Mock Papers · Course 1 (Basic) · Past question" under it.
 
 ## 9. What is saved on the device
 
@@ -267,7 +276,7 @@ The site has no accounts. Everything a student does is kept in the browser's `lo
 
 | Key | Written by | What it holds |
 |---|---|---|
-| `practice:<path>` | `static/js/practice.js` | One practice set's progress, for example `practice:math-1/03-quadratic-functions/01-vertex-form`. It is a JSON map from problem number (from 0) to `"solved"` or `"review"`. Past papers use `practice:past/<exam>/<paper>`, so they never clash with a set |
+| `practice:<path>` | `static/js/practice.js` | One practice set's progress, for example `practice:math-1/03-quadratic-functions/01-vertex-form`. It is a JSON map from problem number (from 0) to `"solved"` or `"review"`. Past papers use `practice:past/<path>`, for example `practice:past/eju/course-1/03-mock-paper`, so they never clash with a set |
 | `practice-hub:course` | `static/js/practice-list.js` | The course tab last opened on `/practice` |
 | `past-tab:<exam>` | `static/js/practice-list.js` | The tab last opened on a past-question list, for example `past-tab:eju` |
 | `noteFontSize` | `static/js/note-page.js` | The A−/A+ text size, from 70 to 150 (%) |
