@@ -29,16 +29,49 @@ def build_nav_links(notes_list, current_note):
     }
 
 
+# Home page helper
+# ----------------
+# Groups the notes into courses and topics for the course cards.
+# Folder names stay as they are on disk; these maps only change
+# what the home page shows.
+COURSE_NAMES = {
+    "Mathematics 1": "Math I", "Mathematics 2": "Math II", "Mathematics 3": "Math III",
+    "Mathematics A": "Math A", "Mathematics B": "Math B", "Mathematics C": "Math C",
+}
+TOPIC_NAMES = {
+    "Quardratic Function": "Quadratic Function",  # folder name has a typo
+    "Other": "Integers",                          # divisibility, gcd, congruence
+    "Parabola": "Conic Sections",                 # also covers ellipses and hyperbolas
+}
+
+def build_courses(notes_list):
+    courses = {}
+    for path in notes_list:  # already sorted, so the first note seen is note 01
+        parts = path.split("/")
+        if len(parts) < 3:
+            continue
+        course = courses.setdefault(parts[0], {
+            "name": COURSE_NAMES.get(parts[0], parts[0]),
+            "first": path, "count": 0, "topics": {},
+        })
+        course["count"] += 1
+        course["topics"].setdefault(parts[1], {
+            "name": TOPIC_NAMES.get(parts[1], parts[1]), "first": path,
+        })
+    for course in courses.values():
+        course["topics"] = list(course["topics"].values())
+    return list(courses.values())
+
+
 @notes_bp.route("/")
 def index():
-    notes_list = get_notes_list()
-    functions = [
-        {"name": "View Formlae", "value": "view_note", "route": "/note/"},
-        {"name": "Math Problem Solving", "value": "kind_of_problem", "route": "/note/"},
-        {"name": "HIDE Channel", "value": "https://hide-channel.studio.site/", "route": "external"},
-        {"name": "Future Projects(Comming Soon)", "value": "", "route": "disabled"}
-    ]
-    return render_template("index.html", notes_list=notes_list, functions=functions)
+    courses = build_courses(get_notes_list())
+    stats = {
+        "notes": sum(c["count"] for c in courses),
+        "courses": len(courses),
+        "topics": sum(len(c["topics"]) for c in courses),
+    }
+    return render_template("index.html", courses=courses, stats=stats)
 
 @notes_bp.route("/note/<path:note_path>")
 def view_note(note_path):
