@@ -1,0 +1,250 @@
+/* =====================================================================
+   practice.css — practice set pages (templates/practice.html)
+   ---------------------------------------------------------------------
+   The page layout (header, card, previous/next) comes from
+   note_tpl_style.css; numbered steps and the answer line come from
+   note_blocks.css. This file adds:
+     .practice-problem   one problem card, coloured by data-level
+                         (basic, standard, challenge, exam)
+     details.hint        "Show hint" (outlined button)
+     details.solution    "Show solution" (filled button)
+     .practice-check     answer box (added by practice.js)
+     .practice-mark      "I got it / Review later" (added by practice.js)
+   ===================================================================== */
+
+/* The header already shows the title */
+.note-content .practice-title { display: none; }
+.note-content .practice-title + * { margin-top: 0; }
+
+/* "Practice" chip in the header (not a link, so a different look) */
+.chip-practice {
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #78350f;
+    background: #fde68a;
+}
+
+/* "Start again" next to the progress bar */
+/* "Past question" chip on past paper pages */
+.chip-past { color: #fff; background: #db2777; }
+
+.progress-reset {
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    background: transparent;
+    color: #fff;
+    border-radius: 999px;
+    padding: 2px 10px;
+    font-size: 0.8rem;
+}
+
+.progress-reset:hover { background: rgba(255, 255, 255, 0.15); }
+
+.practice-intro { color: var(--muted); font-size: 1.05em; margin: 0 0 8px; }
+
+/* ---------- One problem ---------- */
+.practice-problem {
+    --level: #2563eb;
+    position: relative;
+    margin: 24px 0;
+    padding: 20px 22px 18px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-left: 5px solid var(--level);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+    overflow-x: auto;   /* long formulas scroll instead of breaking the layout */
+}
+
+.practice-problem[data-level="basic"]     { --level: #16a34a; }
+.practice-problem[data-level="standard"]  { --level: #2563eb; }
+.practice-problem[data-level="challenge"] { --level: #db2777; }
+.practice-problem[data-level="exam"]      { --level: #6d28d9; }
+
+/* "Problem 1" with the level badge after it */
+.practice-problem h2 { display: flex; align-items: center; gap: 10px; font-size: 1.2em; margin: 0 0 8px; }
+
+.practice-problem h2::after {
+    content: "Standard";
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 0.65em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #fff;
+    background: var(--level);
+}
+
+.practice-problem[data-level="basic"] h2::after     { content: "Basic"; }
+.practice-problem[data-level="challenge"] h2::after { content: "Challenge"; }
+.practice-problem[data-level="exam"] h2::after      { content: "Exam"; }
+
+/* Parts (1), (2), ... of a longer exam problem */
+.practice-problem .parts { margin: 4px 0 8px; padding-left: 0; list-style: none; }
+.practice-problem .parts li { margin: 4px 0; }
+
+/* Solved / review-later: a mark at the top right of the card */
+.practice-problem.is-solved { border-color: #bbf7d0; border-left-color: #16a34a; background: #f0fdf4; }
+.practice-problem.is-review { border-color: #fde68a; border-left-color: #ca8a04; }
+.practice-problem.is-solved::after, .practice-problem.is-review::after {
+    position: absolute;
+    top: 16px;
+    right: 18px;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+.practice-problem.is-solved::after { content: "✔ Solved"; color: #15803d; }
+.practice-problem.is-review::after { content: "↺ Review later"; color: #a16207; }
+
+.practice-problem .question { font-size: 1.05em; font-weight: 500; margin: 0 0 6px; }
+
+/* "Uses: Vector Angle" link back to the note */
+.practice-problem .related { font-size: 0.88em; color: var(--muted); margin: 0 0 12px; }
+.practice-problem .related a { color: #4c3fb5; font-weight: 600; text-decoration: none; }
+.practice-problem .related a:hover { text-decoration: underline; }
+
+/* ---------- Hint and solution buttons ---------- */
+.practice-problem details { margin-top: 10px; }
+
+.practice-problem summary {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.92em;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+}
+
+.practice-problem summary::-webkit-details-marker { display: none; }
+.practice-problem summary::after { content: " ▸"; }
+.practice-problem details[open] > summary::after { content: " ▾"; }
+
+details.hint > summary { border: 2px solid #ca8a04; color: #a16207; background: #fff; }
+details.hint > summary:hover { background: #fefce8; }
+details.hint[open] { padding: 0 0 4px; }
+details.hint > p { margin: 10px 0 0; padding: 10px 14px; border-radius: 8px; background: #fefce8; }
+
+details.solution > summary { background: #ea580c; color: #fff; border: 2px solid #ea580c; }
+details.solution > summary:hover { filter: brightness(1.08); }
+details.solution[open] > summary { margin-bottom: 6px; }
+details.solution .note-steps { --accent: #ea580c; }
+
+.practice-problem summary:focus-visible { outline: 3px solid #667eea; outline-offset: 2px; }
+
+/* Final answer line (shape from note_blocks.css .note-example .answer) */
+.practice-problem .answer {
+    margin-top: 8px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    background: #fff7ed;
+    font-weight: 600;
+}
+
+/* Extra insight after a solution */
+.practice-note { margin: 10px 0 0; padding: 10px 14px; border-radius: 8px; background: #eef2ff; font-size: 0.95em; }
+
+/* ---------- Answer box (added by practice.js) ---------- */
+.practice-check {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 10px;
+    margin: 4px 0 6px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+}
+
+.practice-check label { font-weight: 600; font-size: 0.9em; }
+
+.practice-check input {
+    flex: 1 1 180px;
+    max-width: 260px;
+    padding: 7px 10px;
+    border: 1px solid #94a3b8;
+    border-radius: 8px;
+    font-size: 1em;
+}
+
+.practice-check input:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.25); }
+
+.practice-check button {
+    padding: 7px 16px;
+    border: none;
+    border-radius: 999px;
+    background: #4c3fb5;
+    color: #fff;
+    font-weight: 600;
+}
+
+.practice-check button:hover { filter: brightness(1.1); }
+.check-result { font-size: 0.9em; font-weight: 600; }
+.practice-check.right { background: #f0fdf4; border-color: #86efac; }
+.practice-check.right .check-result { color: #15803d; }
+.practice-check.wrong { background: #fef2f2; border-color: #fca5a5; }
+.practice-check.wrong .check-result { color: #b91c1c; }
+
+/* ---------- "How did it go?" (added by practice.js) ---------- */
+.practice-mark {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px dashed #e2e8f0;
+    font-size: 0.9em;
+    color: var(--muted);
+}
+
+.practice-mark[hidden] { display: none; }
+
+.mark-btn {
+    padding: 5px 14px;
+    border-radius: 999px;
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    color: var(--text);
+    font-weight: 600;
+}
+
+.mark-btn:hover { border-color: #667eea; }
+.mark-btn[data-state="solved"][aria-pressed="true"] { background: #16a34a; border-color: #16a34a; color: #fff; }
+.mark-btn[data-state="review"][aria-pressed="true"] { background: #ca8a04; border-color: #ca8a04; color: #fff; }
+
+/* ---------- Note pages: "Practice this topic" cards (templates/note.html) ---------- */
+.practice-links { max-width: var(--page-width); margin: 24px auto 0; display: grid; gap: 12px; }
+
+.practice-link {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    border: 1px solid #fde68a;
+    color: var(--text);
+    text-decoration: none;
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.practice-link:hover { color: var(--text); box-shadow: 0 8px 20px rgba(202, 138, 4, 0.18); transform: translateY(-2px); }
+.practice-link > i { font-size: 1.6rem; color: #ca8a04; }
+.practice-link strong { display: block; }
+.practice-link span span { font-size: 0.88rem; color: var(--muted); }
+.practice-link .go { margin-left: auto; color: #a16207; font-weight: 700; white-space: nowrap; }
+
+@media (max-width: 960px) {
+    .practice-links { margin-left: 16px; margin-right: 16px; }
+}
+
+@media (max-width: 600px) {
+    .practice-problem { padding: 16px 14px 14px; }
+    .practice-problem.is-solved::after, .practice-problem.is-review::after { position: static; display: block; margin-top: 8px; }
+    .practice-links { margin: 16px 8px 0; }
+}

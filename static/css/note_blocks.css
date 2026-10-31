@@ -43,10 +43,17 @@
   font-size: 1em; /* the A+/A− buttons scale everything from here */
 }
 
-/* border/padding reset: the older notes_style.css underlines headings */
+/* Headings inside a note: plain, no underline */
 .note-page h2 { font-size: 1.35em; margin: 0 0 0.6em; padding: 0; border: none; color: var(--text); }
 .note-page h3 { font-size: 1.1em; margin: 1em 0 0.4em; padding: 0; border: none; color: var(--text); }
 .note-page p  { margin: 0.5em 0; }
+
+/* Plain lists, tables and code inside a note. :where() keeps these as
+   defaults, so the block rules below (e.g. .note-steps) always win. */
+:where(.note-page) ol, :where(.note-page) ul { margin: 8px 0; padding-left: 1.6em; }
+:where(.note-page) li { margin: 6px 0; padding-left: 4px; }
+:where(.note-page) table { max-width: 100%; }
+:where(.note-page) code { padding: 2px 6px; border-radius: 4px; background: #eef2ff; color: var(--indigo); font-family: ui-monospace, Consolas, monospace; }
 
 /* ---------- Page title ---------- */
 .note-title {
@@ -140,6 +147,8 @@
   margin: 12px 0;
 }
 .note-grid > div {
+  min-width: 0;      /* a wide formula scrolls inside its box instead of overflowing */
+  overflow-x: auto;
   padding: 12px 16px;
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.7);
@@ -150,7 +159,7 @@
 /* ---------- Tables ---------- */
 .note-page table { border-collapse: collapse; margin: 12px auto; }
 .note-page th, .note-page td { border: 1px solid #cbd5e1; padding: 6px 12px; text-align: center; }
-/* colour set explicitly: the older notes_style.css makes header text white */
+/* Header cells: light grey with dark text */
 .note-page th { background: #f1f5f9; color: var(--text); font-weight: 600; }
 
 /* ---------- Example: question + click-to-reveal solution ---------- */
@@ -202,7 +211,7 @@
   cursor: pointer;
 }
 .note-demo button:hover { filter: brightness(1.1); }
-/* width: auto overrides an old global canvas rule that stretched every canvas */
+/* Canvases keep their own size and shrink on narrow screens */
 .note-demo canvas { display: block; width: auto; max-width: 100%; height: auto; margin: 12px auto; background: #fff; border-radius: 8px; }
 /* Where the demo prints its answer */
 .note-demo .output {

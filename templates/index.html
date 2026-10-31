@@ -2,64 +2,168 @@
 {% extends "base.html" %}
 
 <!-- Override the page title -->
-{% block title %}Learn Solo{% endblock %}
+{% block title %}Learn Solo · Interactive high-school notes{% endblock %}
 
 <!-- Block for additional head content: CSS links -->
 {% block extra_head %}
-<!-- Load custom stylesheet for the index page layout -->
+<meta name="description" content="Free interactive notes for Japanese high-school courses. Drag, slide and see why every formula works.">
+<!-- Styles for the home page only (Bootstrap is already loaded by base.html) -->
+<link rel="stylesheet" href="/static/css/floatbar.css">
 <link rel="stylesheet" href="/static/css/index_tpl_style.css">
-<!-- Load Bootstrap CSS framework for responsive design and components -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 {% endblock %}
 
 <!-- Main content block that replaces the body content in base.html -->
 {% block body %}
-    <!-- Hero section with main heading and tagline -->
-    <div class="hero-section">
-        <div class="emoji">📚</div>
-        <h1>Learn Solo</h1>
-        <h2 style = "color: rgb(255, 167, 167)">This Website is still on Developing Stage and will be ready soon. Thanks for your patient!!</h2>
-        <p class="tagline">Your Personal Learning Hub</p>
-        <p style="opacity: 0.9;">✨ You Can Do It! ✨</p>
+
+<!-- One icon and colour per course card, keyed by the display name -->
+{% set course_style = {
+    "Math I":   ("fa-square-root-variable", "#2563eb"),
+    "Math II":  ("fa-wave-square",          "#7c3aed"),
+    "Math III": ("fa-infinity",             "#db2777"),
+    "Math A":   ("fa-dice",                 "#ea580c"),
+    "Math B":   ("fa-list-ol",              "#0d9488"),
+    "Math C":   ("fa-location-arrow",       "#16a34a"),
+} %}
+{% set ready = subjects | selectattr("count") | list %}
+{% set soon = subjects | rejectattr("count") | list %}
+<!-- The tab open at the start: the first subject that has notes -->
+{% set first_tab = ready[0] if ready else subjects[0] %}
+<!-- Subject names as English text: "A", "A and B", "A, B and C" -->
+{% macro names(items) %}{% for s in items %}{{ s.name }}{% if loop.revindex == 2 %} and {% elif not loop.last %}, {% endif %}{% endfor %}{% endmacro %}
+
+{% include "_floatbar.html" %}
+
+<!-- HERO: what the site is, the two main actions, and a live demo -->
+<header class="hero">
+    <div class="hero-grid">
+        <div class="hero-text">
+            <h1>High-school subjects you can <span class="highlight">see</span></h1>
+            <p class="lead-text">
+                Drag points, move sliders and watch every formula work.
+                Free interactive notes for
+                {{ names(ready) }}{% if soon %}, with {{ names(soon) }} coming soon{% endif %}.
+            </p>
+            <div class="hero-actions">
+                <a class="btn-main" href="#subjects">Start learning <i class="fas fa-arrow-down"></i></a>
+                <a class="btn-ghost" href="{{ url_for('problems.kind_of_problem') }}"><i class="fas fa-puzzle-piece"></i> Practice problems</a>
+            </div>
+            <ul class="stats">
+                <li><strong>{{ stats.notes }}</strong> notes</li>
+                <li><strong>{{ stats.courses }}</strong> courses</li>
+                <li><strong>{{ stats.topics }}</strong> topics</li>
+                <li><strong>100%</strong> interactive</li>
+            </ul>
+        </div>
+
+        <!-- A real demo, built with the same helper as the notes -->
+        <figure class="hero-demo">
+            <figcaption><i class="fas fa-hand-pointer"></i> Try it: drag P along $y = \frac{1}{2}x^2$</figcaption>
+            <canvas id="heroCanvas"></canvas>
+            <div class="hero-readout" id="heroOutput"></div>
+        </figure>
     </div>
-    
-    <!-- Container for feature cards -->
-    <div class="card-container">
-        <div class="feature-card">
-            <!-- Section heading for the learning path selection -->
-            <h3 style="text-align: center; color: #667eea; margin-bottom: 30px;">
-                <i class="fas fa-rocket"></i> Choose To Start Your Learning
-            </h3>
-            
-            <!-- Loop through functions to generate feature items -->
-            {% for function in functions %}
-            <!-- Dynamic link generation based on function properties -->
-            <a href="{% if function.route == 'external' %}{{ function.value }}{% elif function.route == 'disabled' %}#{% else %}{{ function.route }}{% if function.route == '/note/' %}{% if function.value == 'view_note' %}{{notes_list[0]}}{% else %}{{function.value}}{% endif %}{% endif %}{% endif %}"
-               class="feature-item {% if function.route == 'disabled' %}disabled{% endif %}"
-               {% if function.route == 'external' %}target="_blank"{% endif %}
-               {% if function.route == 'disabled' %}onclick="return false;"{% endif %}>
-                <!-- Icon selection based on function type -->
-                <div class="feature-icon">
-                    {% if function.value == 'view_note' %}
-                        <i class="fas fa-book-open"></i>
-                    {% elif function.value == 'kind_of_problem' %}
-                        <i class="fas fa-puzzle-piece"></i>
-                    {% elif function.route == 'external' %}
-                        <i class="fas fa-external-link-alt"></i>
-                    {% else %}
-                        <i class="fas fa-hourglass-half"></i>
-                    {% endif %}
-                </div>
-                <!-- Display the function name -->
-                <div class="feature-title">{{ function.name }}</div>
-            </a>
+</header>
+
+<main>
+    <!-- SUBJECTS: one tab per subject; each tab shows its course cards -->
+    <section id="subjects" class="section">
+        <h2 class="section-title">Choose your subject and course</h2>
+        <p class="section-sub">Pick a course to start at its first note, or jump straight to a topic.</p>
+
+        <div class="subject-tabs" role="tablist" aria-label="Subjects">
+            {% for subject in subjects %}
+            <button class="subject-tab" role="tab" id="tab-{{ loop.index }}" aria-controls="panel-{{ loop.index }}"
+                    aria-selected="{{ 'true' if subject == first_tab else 'false' }}">
+                <i class="fas {{ subject.icon }}"></i>
+                <span>{{ subject.name }}</span>
+                <span class="tab-count {{ '' if subject.count else 'soon' }}">
+                    {{ subject.count ~ (" note" if subject.count == 1 else " notes") if subject.count else "Coming soon" }}
+                </span>
+            </button>
             {% endfor %}
         </div>
-    </div>
-    
-    <!-- Footer section with motivational message -->
-    <div class="footer">
-        <p>💡 Keep learning, keep growing!</p>
-        <p style="font-size: 0.9rem; margin-top: 10px;">Made with ❤️ for learners</p>
-    </div>
+
+        {% for subject in subjects %}
+        <div class="subject-panel" role="tabpanel" id="panel-{{ loop.index }}" aria-labelledby="tab-{{ loop.index }}"
+             {{ '' if subject == first_tab else 'hidden' }}>
+            {% if subject.count %}
+            <div class="course-grid">
+                {% for course in subject.courses %}
+                {% set icon, color = course_style.get(course.name, (subject.icon, "#2563eb")) %}
+                <article class="course-card" style="--accent: {{ color }}">
+                    <a class="course-head" href="{{ url_for('notes.view_note', note_path=course.first) }}">
+                        <span class="course-icon"><i class="fas {{ icon }}"></i></span>
+                        <span>
+                            <span class="course-name">{{ course.name }}</span>
+                            <span class="course-count">{{ course.count }} note{{ "s" if course.count != 1 }} · {{ course.topics|length }} topic{{ "s" if course.topics|length != 1 }}</span>
+                        </span>
+                        <i class="fas fa-arrow-right course-go"></i>
+                    </a>
+                    <ul class="topic-list">
+                        {% for topic in course.topics %}
+                        <li><a href="{{ url_for('notes.view_note', note_path=topic.first) }}">{{ topic.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </article>
+                {% endfor %}
+            </div>
+            {% else %}
+            <!-- Subject without notes yet -->
+            <div class="coming-soon">
+                <i class="fas {{ subject.icon }}"></i>
+                <h3>{{ subject.name }} notes are coming soon</h3>
+                <p>They'll appear here as soon as they're ready. Until then, explore the
+                   {{ names(ready) }} notes.</p>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </section>
+
+    <!-- HOW IT WORKS: the same four steps in every note -->
+    <section id="how" class="section how">
+        <h2 class="section-title">Every note works the same way</h2>
+        <ol class="steps">
+            <li><i class="fas fa-lightbulb"></i><strong>Concept</strong><span>The idea in plain words, then the formula and why it works.</span></li>
+            <li><i class="fas fa-hand-pointer"></i><strong>Try it</strong><span>A live demo: drag and slide to see the idea change.</span></li>
+            <li><i class="fas fa-pencil"></i><strong>Examples</strong><span>Worked problems. Try first, then reveal the solution.</span></li>
+            <li><i class="fas fa-bookmark"></i><strong>Remember</strong><span>Common mistakes, a tip, and the key points to keep.</span></li>
+        </ol>
+    </section>
+
+    <!-- MORE: other parts of the site -->
+    <section class="section">
+        <h2 class="section-title">More to explore</h2>
+        <div class="more-grid">
+            <a class="more-card" href="{{ url_for('problems.kind_of_problem') }}">
+                <i class="fas fa-puzzle-piece"></i>
+                <span><strong>Practice problems</strong><span>Problem sets by topic, as PDFs.</span></span>
+            </a>
+            <a class="more-card" href="https://hide-channel.studio.site/" target="_blank" rel="noopener">
+                <i class="fas fa-external-link-alt"></i>
+                <span><strong>HIDE Channel</strong><span>Opens in a new tab.</span></span>
+            </a>
+            <div class="more-card disabled" aria-disabled="true">
+                <i class="fas fa-hourglass-half"></i>
+                <span><strong>Coming soon</strong><span>New projects are on the way.</span></span>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+    <p>💡 Keep learning, keep growing! · Made with ❤️ for learners</p>
+</footer>
+{% endblock %}
+
+{% block extra_js %}
+<!-- MathJax for the formula in the demo caption -->
+<script>
+    MathJax = { tex: { inlineMath: [['$', '$']] } };
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script src="/static/js/note_geom.js"></script>
+<script src="/static/js/note_plot.js"></script>
+<script src="/static/js/floatbar.js"></script>
+<script src="/static/js/home.js"></script>
 {% endblock %}

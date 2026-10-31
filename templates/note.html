@@ -1,111 +1,102 @@
 <!-- Extend the base template which provides common HTML structure, head, and body -->
 {% extends "base.html" %}
 
-<!-- Add the page title with the current note path -->
-{% block title %} {{ note_path }} - Math Notes {% endblock%}
+<!-- Page title, e.g. "Line Perpendicular To a Vector · Math C · Learn Solo" -->
+{% block title %}{{ note_title }} · {{ location.course }} · Learn Solo{% endblock %}
 
-<!-- Block for additional head content: CSS, JS libraries, and inline scripts -->
+<!-- Block for additional head content: CSS -->
 {% block extra_head %}
-
-<!-- Load the main stylesheet for note page layout and styling -->
+<!-- The floating bar (shared with the home page) -->
+<link rel="stylesheet" href="/static/css/floatbar.css">
+<!-- Page layout: background, sidebar, note header and card, previous/next cards -->
 <link rel="stylesheet" href="/static/css/note_tpl_style.css">
-<link rel="stylesheet" href="/static/css/bootstrap.min.css">
-<!-- Specific styles for notes -->
-<link href="/static/css/notes_style.css" rel="stylesheet">
-<!-- Shared look for converted notes (<article class="note-page">) -->
-<link href="/static/css/note_blocks.css" rel="stylesheet">
-
+<!-- The 8 note blocks inside every note (<article class="note-page">) -->
+<link rel="stylesheet" href="/static/css/note_blocks.css">
+{% if practice %}
+<!-- Only for topics with a practice set: the "Practice this topic" cards -->
+<link rel="stylesheet" href="/static/css/practice.css">
+{% endif %}
 {% endblock %}
 
 <!-- Main content block that replaces the body content in base.html -->
 {% block body %}
+{% set parts = note_path.split("/") %}
 
-<!-- Menu toggle button to open/close the sidebar navigation -->
-<button class="menu-toggle" onclick="toggleMenu()">
-    <i class="fas fa-bars"></i>
-</button>
+{% include "_floatbar.html" %}
 
-<!-- Sidebar navigation containing search, filters, and note selection -->
-<nav id="sidebar">
-    <!-- Header section with title and home button -->
-    <div class="sidebar-header">
-        <h3>📚 Math Notes</h3>
-        <p>Browse and search notes</p>
-        <button class="home-sidebar" onclick="location.href='{{ url_for('notes.index') }}'">
-            <i class="fas fa-home"></i>
-        </button>
+<!-- SIDEBAR: opened by the Topics button. Pick a course and topic to list its notes.
+     It starts on the current note's course and topic (see static/js/note_tpl.js). -->
+<aside id="sidebar" aria-label="Topics" data-course="{{ parts[0] }}" data-topic="{{ parts[1] if parts|length > 2 else '' }}">
+    <div class="sidebar-head">
+        <h2>Topics</h2>
+        <button class="sidebar-close" id="sidebarClose" aria-label="Close topics"><i class="fas fa-times"></i></button>
     </div>
-    
-    <!-- Container for upper navigation links (populated by JavaScript) -->
-    <div id="up_nav">
+
+    <label class="sidebar-label" for="folderFilter">Course</label>
+    <select id="folderFilter">
+        {% for folder in folders %}
+        <option value="{{ folder }}">{{ display_names.courses.get(folder, folder) }}</option>
+        {% endfor %}
+    </select>
+
+    <label class="sidebar-label" for="subfolderFilter">Topic</label>
+    <select id="subfolderFilter"></select>
+
+    <!-- Notes in the chosen topic; the one you are reading is highlighted -->
+    <ol id="noteList" class="note-list"></ol>
+</aside>
+<!-- Dark layer behind the open sidebar; clicking it closes the sidebar -->
+<div class="sidebar-backdrop" id="sidebarBackdrop" hidden></div>
+
+<!-- NOTE HEADER: course and topic, the title, and how far along the topic this note is -->
+<header class="note-header">
+    <div class="note-header-inner">
+        <p class="note-chips">
+            <a href="{{ url_for('notes.view_note', note_path=location.course_first) }}">{{ location.course }}</a>
+            {% if location.topic %}
+            <a href="{{ url_for('notes.view_note', note_path=location.topic_first) }}">{{ location.topic }}</a>
+            {% endif %}
+        </p>
+        <h1>{{ note_title }}</h1>
+        <p class="note-progress">
+            Note {{ location.index }} of {{ location.total }}{% if location.topic %} in {{ location.topic }}{% endif %}
+            <span class="progress-bar" aria-hidden="true"><span style="width: {{ (100 * location.index / location.total)|round }}%"></span></span>
+        </p>
     </div>
-    
-    <!-- Search section with input field and results dropdown -->
-    <div class="nav-section">
-        <div class="nav-section-title">Search</div>
-        <div class="search-wrapper">
-            <input type="text" id="search" placeholder="Search notes...">
-            <div id="search-results"></div>
-        </div>
-    </div>
-    
-    <!-- Filters section for folder and subfolder selection -->
-    <div class="nav-section">
-        <div class="nav-section-title">Filters</div>
-        <select id="folderFilter">
-            {% for folder in folders %}
-                <option value="{{ folder }}">{{ folder }}</option>
-            {% endfor %}
-        </select>
-        <select id="subfolderFilter" style="margin-top: 10px;">
-            <option value=""></option>
-        </select>
-    </div>
-    
-    <!-- Topics section with dropdown for note selection -->
-    <div class="nav-section">
-        <div class="nav-section-title">Topics</div>
-        <select id="noteSelect" onchange="location = this.value;"></select>
-    </div>
+</header>
+
+<!-- THE NOTE: the HTML file from notes/, inserted as it is.
+     Its own <h1 class="note-title"> is hidden by the CSS, as the header above shows the title. -->
+<main class="note-content" id="noteContent">{{ content|safe }}</main>
+
+{% if practice %}
+<!-- PRACTICE: problem sets for this topic (files in practice/<Course>/<Topic>/) -->
+<section class="practice-links" aria-label="Practice this topic">
+    {% for set in practice %}
+    <a class="practice-link" href="{{ url_for('problems.practice', practice_path=set.path) }}">
+        <i class="fas fa-puzzle-piece"></i>
+        <span><strong>Practice this topic: {{ set.title }}</strong><span>{{ set.count }} problems with hints and step-by-step solutions</span></span>
+        <span class="go">Start <i class="fas fa-arrow-right"></i></span>
+    </a>
+    {% endfor %}
+</section>
+{% endif %}
+
+<!-- PREVIOUS / NEXT: cards at the end of the note (also the ← / → keys) -->
+<nav class="note-pager" aria-label="Previous and next note">
+    {% for key, label, icon in [("prev", "Previous", "fa-arrow-left"), ("next", "Next", "fa-arrow-right")] %}
+    {% if nav[key] %}
+    <a class="pager-card pager-{{ key }}" href="{{ nav[key].url }}">
+        <span class="pager-label">{% if key == "prev" %}<i class="fas {{ icon }}"></i> {% endif %}{{ label }}{% if key == "next" %} <i class="fas {{ icon }}"></i>{% endif %}</span>
+        <strong>{{ nav[key].title }}</strong>
+        <span class="pager-where">{{ nav[key].where }}</span>
+    </a>
+    {% else %}
+    <!-- Keeps the other card on its own side when there is no previous/next note -->
+    <span class="pager-card pager-{{ key }} pager-empty" aria-hidden="true"></span>
+    {% endif %}
+    {% endfor %}
 </nav>
-
-<!-- JavaScript for sidebar toggle functionality -->
-
-<!-- Navigation buttons for previous/next note -->
-<div class="nav-buttons">
-    {% if nav.prev %}
-    <!-- Link to previous note if it exists -->
-    <a id="skip_backward" href="/note/{{ nav.prev }}" title="Previous note" aria-label="Previous note">
-        <i class="fas fa-chevron-left"></i>
-    </a>
-    {% else %}
-    <!-- Greyed-out button if this is the first note -->
-    <span id="skip_backward" aria-hidden="true">
-        <i class="fas fa-chevron-left"></i>
-    </span>
-    {% endif %}
-    {% if nav.next %}
-    <!-- Link to next note if it exists -->
-    <a id="skip_forward" href="/note/{{ nav.next }}" title="Next note" aria-label="Next note">
-        <i class="fas fa-chevron-right"></i>
-    </a>
-    {% else %}
-    <!-- Greyed-out button if this is the last note -->
-    <span id="skip_forward" aria-hidden="true">
-        <i class="fas fa-chevron-right"></i>
-    </span>
-    {% endif %}
-</div>
-                        
-<!-- Main content area displaying the note HTML -->
-<div class="note-content">{{ content|safe }}</div>
-
-<!-- Font size control buttons -->
-<div class="font-size-controls">
-    <button class="font-size-btn" onclick="adjustFontSize(1)" title="Increase font size">A+</button>
-    <button class="font-size-btn" onclick="adjustFontSize(-1)" title="Decrease font size">A−</button>
-</div>
-
 
 <!-- MathJax config for the notes -->
 <script>
@@ -116,13 +107,11 @@
 </script>
 <!-- Load MathJax for rendering mathematical equations -->
 <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-<!-- Define JavaScript constant with the list of all notes for search functionality -->
+<!-- Every note's path and title, for the sidebar's note list; display names for its dropdowns -->
 <script>
-    const NOTES_META = {{ notes_meta_json|safe }};
-    const NOTES_LIST = {{ notes_json|safe }};
+    const NOTES_META = {{ notes_meta|tojson }};
+    const DISPLAY_NAMES = {{ display_names|tojson }};
 </script>
-<!-- Load Fuse.js library for fuzzy search functionality -->
-<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
-<!-- Load custom JavaScript for note filtering and search -->
-<script src="/static/js/note_tpl.js" ></script>
+<script src="/static/js/floatbar.js"></script>
+<script src="/static/js/note_tpl.js"></script>
 {% endblock %}
