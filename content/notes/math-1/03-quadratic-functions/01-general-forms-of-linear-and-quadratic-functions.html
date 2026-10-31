@@ -1,0 +1,127 @@
+<!-- tags: Quadratic Functions -->
+<!-- =====================================================================
+     NOTE: Linear and Quadratic Functions (1次関数と2次関数)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Quadratic Functions">General Forms of Linear and Quadratic Functions</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Highest power of $x$: 1 gives a line, 2 gives a parabola</h2>
+    <p>A <strong>function</strong> gives exactly one $y$ for each $x$; we write $y = f(x)$, and $f(3)$ means "the value of $y$ when $x = 3$".</p>
+    <p>If the highest power of $x$ is 1, the graph is a straight line. If it is 2, the graph is a curve called a <strong>parabola</strong>.</p>
+  </section>
+
+  <!-- FORMULA: general forms -->
+  <div class="note-formula">
+    <h3>General forms</h3>
+    <div class="formula-main">$$\text{linear: } y = ax + b \;(a \ne 0), \qquad \text{quadratic: } y = ax^2 + bx + c \;(a \ne 0)$$</div>
+    <p class="symbols">Linear: $a$ is the slope, $b$ the $y$-intercept. Quadratic: $c$ is the $y$-intercept and $a$ decides which way the parabola opens.</p>
+  </div>
+
+  <!-- DEMO: sliders; code at the bottom -->
+  <div class="note-demo">
+    <h2>Change the coefficients</h2>
+    <div class="controls">
+      <label>$a$ = <input type="range" id="lqA" min="-3" max="3" step="0.5" value="1"></label>
+      <label>$b$ = <input type="range" id="lqB" min="-4" max="4" step="0.5" value="-2"></label>
+      <label>$c$ = <input type="range" id="lqC" min="-4" max="4" step="0.5" value="-1"></label>
+    </div>
+    <canvas id="lqCanvas"></canvas>
+    <div class="output table-text" id="lqOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">$f(x) = x^2 - 3x + 2$. Find $f(0)$, $f(-1)$ and $f(a + 1)$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$f(0) = 2$, $\;f(-1) = 1 + 3 + 2 = 6$.</li>
+        <li>$f(a + 1) = (a + 1)^2 - 3(a + 1) + 2 = a^2 + 2a + 1 - 3a - 3 + 2$.</li>
+      </ol>
+      <p class="answer">$2$, $\;6$, $\;a^2 - a$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find the linear function whose graph passes through $(1, 3)$ and $(3, -1)$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Slope $a = \dfrac{-1 - 3}{3 - 1} = -2$.</li>
+        <li>$3 = -2 \cdot 1 + b \Rightarrow b = 5$.</li>
+      </ol>
+      <p class="answer">$y = -2x + 5$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">For $y = 2x - 1$ with $-1 \le x \le 2$, find the range of $y$ (値域).</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The slope is positive, so $y$ grows with $x$: smallest at $x = -1$, largest at $x = 2$.</li>
+        <li>$y(-1) = -3$, $\;y(2) = 3$.</li>
+      </ol>
+      <p class="answer">$-3 \le y \le 3$</p>
+    </details>
+  </div>
+
+  <!-- TIP: domain and range -->
+  <div class="note-tip">
+    The allowed $x$ values are the <strong>domain</strong> (定義域); the $y$ values you get are the <strong>range</strong> (値域).
+    For a straight line, the range comes from the two ends of the domain.
+  </div>
+
+  <!-- WARNING: a ≠ 0 -->
+  <div class="note-warning">
+    $y = ax^2 + bx + c$ is only quadratic when $a \ne 0$. If a question says "$y = ax^2 + bx + c$" without that condition, check the case $a = 0$ separately.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$y = ax + b$: line, slope $a$, intercept $b$.</li>
+      <li>$y = ax^2 + bx + c$: parabola, intercept $c$.</li>
+      <li>$f(\text{something})$: substitute it for every $x$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Change the coefficients" demo (the TRY IT block above).
+  // Blue: the quadratic y = ax² + bx + c. Orange dashed: the line y = ax + b
+  // with the same a and b, for comparison.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const ids = ['lqA', 'lqB', 'lqC'];
+    const output = document.getElementById('lqOutput');
+    const val = () => ids.map((id) => +document.getElementById(id).value);
+
+    const plot = NotePlot.graph(document.getElementById('lqCanvas'), {
+      x: [-5, 5], y: [-5, 6],
+      draw(g) {
+        const [a, b, c] = val();
+        g.fn((x) => a * x + b, '#ea580c', { width: 2, dash: true });
+        g.fn((x) => a * x * x + b * x + c, '#2563eb');
+        g.dot([0, c], '#2563eb');
+        output.textContent =
+          `quadratic  y = ${NotePlot.poly([a, b, c])}   y-intercept ${c}\n` +
+          `line       y = ${NotePlot.poly([a, b])}   slope ${a}, y-intercept ${b}\n` +
+          (a === 0 ? 'a = 0: the "quadratic" has become a straight line!' : `the parabola opens ${a > 0 ? 'upward' : 'downward'}`);
+      },
+    });
+    ids.forEach((id) => document.getElementById(id).addEventListener('input', plot.redraw));
+  })();
+</script>

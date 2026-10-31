@@ -1,0 +1,132 @@
+<!-- tags: Algebra -->
+<!-- =====================================================================
+     NOTE: Exponent Rules (指数法則)
+     Uses the shared blocks from static/css/note-blocks.css.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Algebra">Exponent Rules</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>An exponent counts how many times you multiply</h2>
+    <p>$a^3$ means $a \times a \times a$: three copies of $a$ multiplied together. Every exponent rule comes from simply counting those copies.</p>
+    <p>For example, $a^2 \times a^3 = (a \cdot a)(a \cdot a \cdot a)$ has $2 + 3 = 5$ copies, so it is $a^5$.</p>
+  </section>
+
+  <!-- FORMULA: the three laws -->
+  <div class="note-formula">
+    <h3>Exponent laws ($m$, $n$ positive whole numbers)</h3>
+    <div class="formula-main">$$a^m \times a^n = a^{m+n}, \qquad (a^m)^n = a^{mn}, \qquad (ab)^n = a^n b^n$$</div>
+    <p class="symbols">Multiply powers of the same base → <strong>add</strong> exponents. Power of a power → <strong>multiply</strong> exponents. Power of a product → each factor gets the power.</p>
+  </div>
+
+  <!-- DEMO: choose numbers; code at the bottom -->
+  <div class="note-demo">
+    <h2>Count the copies</h2>
+    <div class="controls">
+      <label>Rule <select id="exRule">
+        <option value="mul">a^m × a^n</option>
+        <option value="pow">(a^m)^n</option>
+        <option value="prod">(ab)^n</option>
+      </select></label>
+      <label>$m$ = <input type="number" id="exM" value="2" min="1" max="6"></label>
+      <label>$n$ = <input type="number" id="exN" value="3" min="1" max="6"></label>
+    </div>
+    <div class="output table-text" id="exOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Simplify $x^4 \times x^5$ and $(x^3)^4$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$x^4 \times x^5 = x^{4+5}$</li>
+        <li>$(x^3)^4 = x^{3 \times 4}$</li>
+      </ol>
+      <p class="answer">$x^9$, $\;x^{12}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Simplify $(-2a^2b)^3$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Each factor gets the cube: $(-2)^3 (a^2)^3 b^3$.</li>
+        <li>$(-2)^3 = -8$, $(a^2)^3 = a^6$.</li>
+      </ol>
+      <p class="answer">$-8a^6b^3$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Simplify $3x^2y \times (-2xy^3)^2$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$(-2xy^3)^2 = 4x^2y^6$</li>
+        <li>$3x^2y \times 4x^2y^6 = 12\,x^{2+2}\,y^{1+6}$</li>
+      </ol>
+      <p class="answer">$12x^4y^7$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: common mistakes -->
+  <div class="note-warning">
+    $a^2 \times a^3$ is $a^5$, <strong>not</strong> $a^6$. Only a power of a power multiplies the exponents.
+    Also, $(a + b)^2 \ne a^2 + b^2$: the rule $(ab)^n = a^nb^n$ is for products, not sums.
+  </div>
+
+  <!-- TIP: zero and negative exponents -->
+  <div class="note-tip">
+    Coming in Mathematics 2: $a^0 = 1$ and $a^{-n} = \dfrac{1}{a^n}$ (for $a \ne 0$). They are chosen so that the same laws keep working.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$a^m a^n = a^{m+n}$ (add).</li>
+      <li>$(a^m)^n = a^{mn}$ (multiply).</li>
+      <li>$(ab)^n = a^nb^n$, including the sign and the number in front.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script>
+  // "Count the copies" demo (the TRY IT block above).
+  // Writes each power out as repeated multiplication and counts the copies.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const rule = document.getElementById('exRule');
+    const mBox = document.getElementById('exM'), nBox = document.getElementById('exN');
+    const output = document.getElementById('exOutput');
+    const copies = (x, k) => Array(k).fill(x).join('·');   // copies('a', 3) -> "a·a·a"
+
+    function update() {
+      const m = Math.min(6, Math.max(1, parseInt(mBox.value) || 1));
+      const n = Math.min(6, Math.max(1, parseInt(nBox.value) || 1));
+      if (rule.value === 'mul') {
+        output.textContent =
+          `a^${m} × a^${n} = (${copies('a', m)}) × (${copies('a', n)})\n` +
+          `= ${copies('a', m + n)}   (${m} + ${n} = ${m + n} copies)\n= a^${m + n}`;
+      } else if (rule.value === 'pow') {
+        output.textContent =
+          `(a^${m})^${n} = ${Array(n).fill('(' + copies('a', m) + ')').join(' × ')}\n` +
+          `${n} groups of ${m} → ${m} × ${n} = ${m * n} copies\n= a^${m * n}`;
+      } else {
+        output.textContent =
+          `(ab)^${n} = ${Array(n).fill('(ab)').join('')}\n` +
+          `= (${copies('a', n)}) × (${copies('b', n)})   (regroup: order doesn't matter)\n= a^${n} b^${n}`;
+      }
+    }
+    [rule, mBox, nBox].forEach((el) => el.addEventListener('input', update));
+    update();
+  })();
+</script>

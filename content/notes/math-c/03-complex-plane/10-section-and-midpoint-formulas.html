@@ -1,0 +1,160 @@
+<!-- tags: Complex Plane -->
+<!-- =====================================================================
+     NOTE: Section and Midpoint Formula (内分点・外分点)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Complex Plane">Section and Midpoint Formula</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Same formulas as for vectors</h2>
+    <p>Complex numbers add like position vectors, so the section formulas from vectors carry over unchanged. The point dividing AB in the ratio $m : n$ is a weighted average of $\alpha$ and $\beta$.
+      Each end's weight is the part of the ratio on the <em>other</em> side.</p>
+    <p>"Internal" points lie between A and B. "External" points lie on the line AB beyond A or beyond B.</p>
+  </section>
+
+  <!-- FORMULA: section formulas -->
+  <div class="note-formula">
+    <h3>A($\alpha$), B($\beta$), ratio $m : n$</h3>
+    <div class="formula-main">$$\text{internal: } \frac{n\alpha + m\beta}{m + n}, \qquad \text{external: } \frac{-n\alpha + m\beta}{m - n} \;\; (m \ne n)$$</div>
+    <div class="formula-main">$$\text{midpoint: } \frac{\alpha + \beta}{2}, \qquad \text{centroid of ABC: } \frac{\alpha + \beta + \gamma}{3}$$</div>
+  </div>
+
+  <!-- PROOF: internal division -->
+  <div class="note-proof">
+    <ol>
+      <li>P divides AB internally in $m : n$, so $\overrightarrow{AP} = \dfrac{m}{m + n}\overrightarrow{AB}$, i.e. $z - \alpha = \dfrac{m}{m + n}(\beta - \alpha)$.</li>
+      <li>$z = \alpha + \dfrac{m}{m + n}(\beta - \alpha) = \dfrac{(m + n)\alpha - m\alpha + m\beta}{m + n} = \dfrac{n\alpha + m\beta}{m + n}$.</li>
+      <li>External division is the same with $n$ replaced by $-n$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: internal and external points; code at the bottom -->
+  <div class="note-demo">
+    <h2>Drag A and B: internal point P (blue), external point Q (orange)</h2>
+    <div class="controls">
+      <label>$m$ = <input type="range" id="sfM" min="1" max="5" step="1" value="2"></label>
+      <label>$n$ = <input type="range" id="sfN" min="1" max="5" step="1" value="1"></label>
+    </div>
+    <canvas id="sfCanvas"></canvas>
+    <div class="output table-text" id="sfOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A($3 + 2i$), B($1 - 4i$). Find the point dividing AB internally in the ratio $2 : 3$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\dfrac{3(3 + 2i) + 2(1 - 4i)}{5} = \dfrac{11 - 2i}{5}$</li>
+      </ol>
+      <p class="answer">$\dfrac{11}{5} - \dfrac{2}{5}i$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">A($1 + i$), B($4 + 7i$). Find the point dividing AB externally in the ratio $2 : 1$, and in the ratio $1 : 2$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$2 : 1$: $\dfrac{-(1 + i) + 2(4 + 7i)}{2 - 1} = 7 + 13i$ (beyond B).</li>
+        <li>$1 : 2$: $\dfrac{-2(1 + i) + (4 + 7i)}{1 - 2} = -2 - 5i$ (beyond A).</li>
+      </ol>
+      <p class="answer">$7 + 13i$ and $-2 - 5i$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Find the centroid of the triangle with vertices $2 + i$, $3 - 2i$ and $-1 + 3i$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\dfrac{(2 + 3 - 1) + (1 - 2 + 3)i}{3}$</li>
+      </ol>
+      <p class="answer">$\dfrac{4}{3} + \dfrac{2}{3}i$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">The midpoint of AB is $2 + i$ and A is $-1 + 4i$. Find B.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\dfrac{\alpha + \beta}{2} = 2 + i$, so $\beta = 2(2 + i) - \alpha$.</li>
+      </ol>
+      <p class="answer">$5 - 2i$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: weights swap -->
+  <div class="note-warning">
+    In $\dfrac{n\alpha + m\beta}{m + n}$, $\alpha$ is multiplied by $n$, not $m$. The weights swap, because a point closer to B leans more on $\beta$.
+    External division has no point when $m = n$.
+  </div>
+
+  <!-- TIP: check with a sketch -->
+  <div class="note-tip">
+    Check your answer: an internal point must lie between A and B. An external point with $m &gt; n$ lies beyond B, and with $m &lt; n$ beyond A.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Internal $m : n$: $\dfrac{n\alpha + m\beta}{m + n}$; external: $\dfrac{-n\alpha + m\beta}{m - n}$.</li>
+      <li>Midpoint $\dfrac{\alpha + \beta}{2}$; centroid $\dfrac{\alpha + \beta + \gamma}{3}$.</li>
+      <li>Same formulas as position vectors.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Dividing a segment" demo (the TRY IT block above).
+  // A and B are draggable. P = (nα + mβ)/(m + n) lies between them; Q = (−nα + mβ)/(m − n)
+  // lies on the line beyond B (m > n) or beyond A (m < n). The grey line is AB extended.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const mBox = document.getElementById('sfM'), nBox = document.getElementById('sfN');
+    const output = document.getElementById('sfOutput');
+    const f2 = (v) => +v.toFixed(2);
+    // complex number [a, b] as text "a + bi" (zero parts and 1s dropped)
+    const cx = ([a, b]) => {
+      const A = f2(a) || 0, B = f2(b) || 0, bi = Math.abs(B) === 1 ? 'i' : `${Math.abs(B)}i`;
+      if (B === 0) return `${A}`.replace('-', '−');
+      if (A === 0) return (B < 0 ? '−' : '') + bi;
+      return `${A} ${B < 0 ? '−' : '+'} ${bi}`.replace('-', '−');
+    };
+    const comb = (s, p, t, q) => [s * p[0] + t * q[0], s * p[1] + t * q[1]];
+
+    const plot = NotePlot.graph(document.getElementById('sfCanvas'), {
+      x: [-6.2, 6.2], y: [-4, 4],
+      points: { A: [-2, -1], B: [1, 1] },
+      draw(g, pts) {
+        const m = +mBox.value, n = +nBox.value, A = pts.A, B = pts.B;
+        const d = [B[0] - A[0], B[1] - A[1]];
+        if (Math.hypot(...d) > 1e-6) g.line(d[1], -d[0], d[0] * A[1] - d[1] * A[0], '#e2e8f0', { width: 1.5 });
+        g.seg(A, B, '#334155', { width: 3 });
+        const P = comb(n / (m + n), A, m / (m + n), B);
+        g.dot(P, '#2563eb', 'P');
+        let text = `α = ${cx(A)},  β = ${cx(B)}\nP (internal ${m} : ${n}) = ${cx(P)}`;
+        if (m !== n) {
+          const Q = comb(-n / (m - n), A, m / (m - n), B);
+          g.dot(Q, '#ea580c', 'Q');
+          text += `\nQ (external ${m} : ${n}) = ${cx(Q)}, beyond ${m > n ? 'B' : 'A'}`;
+        } else text += '\nm = n: no external point';
+        output.textContent = text;
+      },
+    });
+    [mBox, nBox].forEach((el) => el.addEventListener('input', plot.redraw));
+  })();
+</script>

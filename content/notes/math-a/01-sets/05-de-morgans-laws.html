@@ -1,0 +1,176 @@
+<!-- tags: Set and Elements -->
+<!-- =====================================================================
+     NOTE: De Morgan's Laws
+     Uses the shared blocks from static/css/note-blocks.css.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Set and Elements">De Morgan's Laws</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Taking the complement of $\cup$ and $\cap$</h2>
+    <p>When you take the complement of a union or an intersection, the bar <strong>splits over each set</strong>
+      and the symbol <strong>flips</strong>: $\cup$ becomes $\cap$, and $\cap$ becomes $\cup$.</p>
+  </section>
+
+  <!-- FORMULA: the two laws -->
+  <div class="note-formula">
+    <h3>Complement of a union</h3>
+    <div class="formula-main">$$\overline{A \cup B} = \overline{A} \cap \overline{B}$$</div>
+    <p class="symbols">"Not in $A$ or $B$" = "not in $A$ <strong>and</strong> not in $B$"</p>
+  </div>
+
+  <div class="note-formula">
+    <h3>Complement of an intersection</h3>
+    <div class="formula-main">$$\overline{A \cap B} = \overline{A} \cup \overline{B}$$</div>
+    <p class="symbols">"Not in both" = "not in $A$ <strong>or</strong> not in $B$"</p>
+  </div>
+
+  <!-- TIP: an everyday example -->
+  <div class="note-tip">
+    Everyday check: "not (tea or coffee)" means "no tea <strong>and</strong> no coffee".
+    "Not (tea and coffee)" means you are missing <strong>at least one</strong> of them: no tea <strong>or</strong> no coffee.
+  </div>
+
+  <!-- DEMO: compare both sides of each law; code at the bottom -->
+  <div class="note-demo">
+    <h2>Check De Morgan's laws</h2>
+    <div class="controls">
+      <label>$U$ <input type="text" id="dmU" class="wide" value="1, 2, 3, 4, 5, 6"></label>
+      <label>$A$ <input type="text" id="dmA" class="wide" value="1, 2, 3"></label>
+      <label>$B$ <input type="text" id="dmB" class="wide" value="3, 4, 5"></label>
+    </div>
+    <div class="controls choices">
+      <button type="button" data-law="1" class="active">$\overline{A \cup B} = \overline{A} \cap \overline{B}$</button>
+      <button type="button" data-law="2">$\overline{A \cap B} = \overline{A} \cup \overline{B}$</button>
+    </div>
+    <canvas id="dmCanvas"></canvas>
+    <div class="output table-text" id="dmOutput"></div>
+  </div>
+
+  <!-- PROOF: why the first law works -->
+  <section class="note-proof">
+    <h2>Why $\overline{A \cup B} = \overline{A} \cap \overline{B}$</h2>
+    <ol class="note-steps">
+      <li>$x \in \overline{A \cup B}$ means $x$ is <strong>not</strong> in $A \cup B$.</li>
+      <li>$A \cup B$ contains everything in $A$ or $B$, so $x$ is in neither: $x \notin A$ <strong>and</strong> $x \notin B$.</li>
+      <li>That is $x \in \overline{A}$ and $x \in \overline{B}$, i.e. $x \in \overline{A} \cap \overline{B}$.</li>
+      <li>Each step also works backwards, so the two sets have exactly the same elements.</li>
+    </ol>
+  </section>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">$U = \{1, 2, 3, 4, 5, 6\}$, $A = \{1, 2, 3\}$, $B = \{3, 4, 5\}$. Check $\overline{A \cup B} = \overline{A} \cap \overline{B}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Left: $A \cup B = \{1, 2, 3, 4, 5\}$, so $\overline{A \cup B} = \{6\}$</li>
+        <li>Right: $\overline{A} = \{4, 5, 6\}$, $\overline{B} = \{1, 2, 6\}$, so $\overline{A} \cap \overline{B} = \{6\}$</li>
+      </ol>
+      <p class="answer">Both sides are $\{6\}$. ✔</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">$U = \{1, 2, 3, 4, 5, 6\}$, $A = \{1, 2, 3\}$, $B = \{2, 3, 4\}$. Check $\overline{A \cap B} = \overline{A} \cup \overline{B}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Left: $A \cap B = \{2, 3\}$, so $\overline{A \cap B} = \{1, 4, 5, 6\}$</li>
+        <li>Right: $\overline{A} = \{4, 5, 6\}$, $\overline{B} = \{1, 5, 6\}$, so $\overline{A} \cup \overline{B} = \{1, 4, 5, 6\}$</li>
+      </ol>
+      <p class="answer">Both sides are $\{1, 4, 5, 6\}$. ✔</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Of 40 students, 25 like maths, 18 like English, and 10 like both. How many like neither?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>"Neither" is $\overline{M} \cap \overline{E} = \overline{M \cup E}$ (De Morgan)</li>
+        <li>$n(M \cup E) = n(M) + n(E) - n(M \cap E) = 25 + 18 - 10 = 33$</li>
+        <li>$n(\overline{M \cup E}) = 40 - 33$</li>
+      </ol>
+      <p class="answer">7 students like neither.</p>
+    </details>
+  </div>
+
+  <!-- WARNING: the most common mistake with this topic -->
+  <div class="note-warning">
+    The bar does <strong>not</strong> simply split: $\overline{A \cup B} \neq \overline{A} \cup \overline{B}$.
+    When the bar breaks apart, the symbol between the sets must flip.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$\overline{A \cup B} = \overline{A} \cap \overline{B}$ and $\overline{A \cap B} = \overline{A} \cup \overline{B}$.</li>
+      <li>Split the bar, flip the symbol.</li>
+      <li>"Neither $A$ nor $B$" $= \overline{A \cup B}$: count it as $n(U) - n(A \cup B)$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/venn.js"></script>
+<script>
+  // De Morgan checker (the TRY IT block above).
+  // For the chosen law, works out both sides separately and shades the result.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const uInput = document.getElementById('dmU');
+    const aInput = document.getElementById('dmA');
+    const bInput = document.getElementById('dmB');
+    const canvas = document.getElementById('dmCanvas');
+    const output = document.getElementById('dmOutput');
+    let law = '1'; // which law is currently shown
+
+    function update() {
+      const A = NoteVenn.parse(aInput.value);
+      const B = NoteVenn.parse(bInput.value);
+      const U = NoteVenn.union(NoteVenn.parse(uInput.value), NoteVenn.union(A, B));
+      const notA = NoteVenn.minus(U, A);
+      const notB = NoteVenn.minus(U, B);
+      const f = NoteVenn.format;
+
+      let lines;
+      if (law === '1') {
+        // Left side: complement of the union.  Right side: intersection of the complements.
+        const union = NoteVenn.union(A, B);
+        lines = [
+          `Left:  A ∪ B = ${f(union)}   →   complement = ${f(NoteVenn.minus(U, union))}`,
+          `Right: Ā = ${f(notA)},  B̄ = ${f(notB)}   →   Ā ∩ B̄ = ${f(NoteVenn.intersect(notA, notB))}`,
+        ];
+        NoteVenn.draw(canvas, { U, A, B, shade: (a, b) => !a && !b });
+      } else {
+        // Left side: complement of the intersection.  Right side: union of the complements.
+        const both = NoteVenn.intersect(A, B);
+        lines = [
+          `Left:  A ∩ B = ${f(both)}   →   complement = ${f(NoteVenn.minus(U, both))}`,
+          `Right: Ā = ${f(notA)},  B̄ = ${f(notB)}   →   Ā ∪ B̄ = ${f(NoteVenn.union(notA, notB))}`,
+        ];
+        NoteVenn.draw(canvas, { U, A, B, shade: (a, b) => !(a && b) });
+      }
+      output.textContent = lines.join('\n');
+    }
+
+    document.querySelectorAll('.note-demo .choices button').forEach((button) => {
+      button.addEventListener('click', () => {
+        law = button.dataset.law;
+        // Fill in the chosen button, outline the other
+        document.querySelectorAll('.note-demo .choices button')
+          .forEach((b) => b.classList.toggle('active', b === button));
+        update();
+      });
+    });
+    [uInput, aInput, bInput].forEach((input) => input.addEventListener('input', update));
+    update(); // draw the default sets straight away
+  })();
+</script>

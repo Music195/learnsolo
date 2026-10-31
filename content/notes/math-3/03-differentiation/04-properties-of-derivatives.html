@@ -1,0 +1,155 @@
+<!-- tags: Differentiation -->
+<!-- =====================================================================
+     NOTE: Properties of Derivatives (導関数の性質・積の微分法)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Differentiation">Properties of Derivatives</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Sums split up; products need a rule</h2>
+    <p>Differentiation works term by term: constants come out, and sums and differences split.</p>
+    <p>A product is different. If both factors change, the product changes in two ways at once. Think of a rectangle with sides $u$ and $v$:
+      when both sides grow, the area gains a strip $v\,\Delta u$ on one side and a strip $u\,\Delta v$ on the other.</p>
+  </section>
+
+  <!-- FORMULA: linearity and product rule -->
+  <div class="note-formula">
+    <h3>Constant multiple, sum and difference</h3>
+    <div class="formula-main">$$\{kf(x) + lg(x)\}' = kf'(x) + lg'(x)$$</div>
+  </div>
+
+  <div class="note-formula">
+    <h3>Product rule</h3>
+    <div class="formula-main">$$\{f(x)g(x)\}' = f'(x)g(x) + f(x)g'(x)$$</div>
+    <p class="symbols">Short form: $(uv)' = u'v + uv'$. Three factors: $(uvw)' = u'vw + uv'w + uvw'$.</p>
+  </div>
+
+  <!-- PROOF: product rule from the definition -->
+  <div class="note-proof">
+    <ol>
+      <li>Add and subtract $f(x)g(x + h)$: $f(x + h)g(x + h) - f(x)g(x) = \{f(x + h) - f(x)\}g(x + h) + f(x)\{g(x + h) - g(x)\}$.</li>
+      <li>Divide by $h$: $\dfrac{f(x + h) - f(x)}{h} \cdot g(x + h) + f(x) \cdot \dfrac{g(x + h) - g(x)}{h}$.</li>
+      <li>As $h \to 0$: the fractions tend to $f'(x)$ and $g'(x)$, and $g(x + h) \to g(x)$ (differentiable functions are continuous). So the limit is $f'(x)g(x) + f(x)g'(x)$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: growing rectangle; code at the bottom -->
+  <div class="note-demo">
+    <h2>Rectangle $u \times v$ with $u = x + 1$, $v = \dfrac{x^2}{4} + 1$</h2>
+    <div class="controls">
+      <label>$x$ = <input type="range" id="prX" min="0" max="2.5" step="0.05" value="1.5"></label>
+      <label>step $h$ = <input type="range" id="prH" min="0" max="1" step="0.01" value="0.6"></label>
+    </div>
+    <canvas id="prCanvas"></canvas>
+    <div class="output table-text" id="prOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Differentiate $y = (x^2 + 1)(2x - 3)$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$y' = (x^2 + 1)'(2x - 3) + (x^2 + 1)(2x - 3)' = 2x(2x - 3) + 2(x^2 + 1)$</li>
+        <li>$= 4x^2 - 6x + 2x^2 + 2$</li>
+      </ol>
+      <p class="answer">$y' = 6x^2 - 6x + 2$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Differentiate $y = (x + 1)(x + 2)(x + 3)$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Three factors: $y' = (x + 2)(x + 3) + (x + 1)(x + 3) + (x + 1)(x + 2)$.</li>
+        <li>$= (x^2 + 5x + 6) + (x^2 + 4x + 3) + (x^2 + 3x + 2)$</li>
+      </ol>
+      <p class="answer">$y' = 3x^2 + 12x + 11$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">$f(x) = (x - a)^2g(x)$ with $g$ differentiable. Show that $f'(a) = 0$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$f'(x) = 2(x - a)g(x) + (x - a)^2g'(x)$. (For $(x - a)^2$, expand to $x^2 - 2ax + a^2$ and differentiate.)</li>
+        <li>Both terms contain $(x - a)$, so $f'(a) = 0$.</li>
+      </ol>
+      <p class="answer">$f'(a) = 0$: a double root of $f$ is also a root of $f'$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: the product is not the product of derivatives -->
+  <div class="note-warning">
+    $(uv)' \ne u'v'$. For example $(x \cdot x)' = 2x$, but $(x)'(x)' = 1$.
+  </div>
+
+  <!-- TIP: expand or not -->
+  <div class="note-tip">
+    For small polynomials, expanding first and the product rule give the same answer, so pick whichever is quicker. When a factor is not a polynomial ($\sqrt{x}$, $\sin x$, …), use the product rule.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$(kf + lg)' = kf' + lg'$.</li>
+      <li>$(uv)' = u'v + uv'$; $\;(uvw)' = u'vw + uv'w + uvw'$.</li>
+      <li>Proof: add and subtract a middle term, then use continuity.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Growing rectangle" demo (the TRY IT block above).
+  // Blue: the rectangle u(x) × v(x). When x grows by h, the area gains
+  // an orange strip v·Δu, a teal strip u·Δv and a small red corner Δu·Δv.
+  // Dividing by h and letting h → 0 leaves u'v + uv' (the corner vanishes).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const xBox = document.getElementById('prX'), hBox = document.getElementById('prH');
+    const output = document.getElementById('prOutput');
+    const f3 = (v) => +v.toFixed(3);
+    const u = (x) => x + 1, v = (x) => x * x / 4 + 1;
+    const du = () => 1, dv = (x) => x / 2;
+
+    // shade the rectangle [x1, x2] × [y1, y2]
+    const rect = (g, x1, x2, y1, y2, color) => g.region((x, y) => x >= x1 && x <= x2 && y >= y1 && y <= y2, color);
+
+    const plot = NotePlot.graph(document.getElementById('prCanvas'), {
+      x: [-0.5, 7.25], y: [-0.5, 4.5],
+      draw(g) {
+        const x = +xBox.value, h = +hBox.value;
+        const U = u(x), V = v(x), dU = u(x + h) - U, dV = v(x + h) - V;
+        rect(g, 0, U, 0, V, 'rgba(37, 99, 235, 0.25)');
+        rect(g, U, U + dU, 0, V, 'rgba(234, 88, 12, 0.4)');
+        rect(g, 0, U, V, V + dV, 'rgba(13, 148, 136, 0.4)');
+        rect(g, U, U + dU, V, V + dV, 'rgba(220, 38, 38, 0.6)');
+        g.text([U / 2, V / 2], 'uv', '#1e3a8a');
+        g.text([U / 2, -0.25], `u = ${f3(U)}`, '#1e3a8a');
+        g.text([-0.3, V / 2], 'v', '#1e3a8a');
+        if (h === 0) {
+          output.textContent = `h = 0: (uv)' = u'v + uv' = 1·${f3(V)} + ${f3(U)}·${f3(dv(x))} = ${f3(du() * V + U * dv(x))}`;
+          return;
+        }
+        output.textContent =
+          `Δ(uv) = vΔu + uΔv + ΔuΔv = ${f3(V * dU)} + ${f3(U * dV)} + ${f3(dU * dV)} = ${f3(u(x + h) * v(x + h) - U * V)}\n` +
+          `Δ(uv)/h = ${f3((u(x + h) * v(x + h) - U * V) / h)}   (the corner adds only ${f3(dU * dV / h)})\n` +
+          `limit u'v + uv' = 1·${f3(V)} + ${f3(U)}·${f3(dv(x))} = ${f3(du() * V + U * dv(x))}`;
+      },
+    });
+    [xBox, hBox].forEach((el) => el.addEventListener('input', plot.redraw));
+  })();
+</script>

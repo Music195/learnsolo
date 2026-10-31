@@ -1,0 +1,137 @@
+<!-- tags: Trigonometry -->
+<!-- =====================================================================
+     NOTE: Trigonometric Ratios on the Coordinate Plane (0° ≤ θ ≤ 180°)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     draggable-point helper static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Trigonometry">Definition of Trigonometric Ratios (Coordinate Plane)</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Angles up to 180° using a semicircle</h2>
+    <p>A right triangle only has acute angles. To give $\sin$, $\cos$, $\tan$ a meaning for $0° \le \theta \le 180°$, draw a semicircle of radius $r$
+      centred at the origin. Turn from the positive $x$-axis by $\theta$ to reach the point $P(x, y)$ on the semicircle.</p>
+    <p>For acute $\theta$ this gives the same values as the right triangle. Beyond $90°$, $x$ is negative, so $\cos\theta$ and $\tan\theta$ become negative.</p>
+  </section>
+
+  <!-- FORMULA: coordinate definition -->
+  <div class="note-formula">
+    <h3>Definition</h3>
+    <div class="formula-main">$$\sin\theta = \frac{y}{r}, \qquad \cos\theta = \frac{x}{r}, \qquad \tan\theta = \frac{y}{x}$$</div>
+    <p class="symbols">$\tan 90°$ is not defined ($x = 0$). With $r = 1$: $\cos\theta$ is the $x$-coordinate and $\sin\theta$ the $y$-coordinate.</p>
+  </div>
+
+  <div class="note-formula">
+    <h3>Ranges for $0° \le \theta \le 180°$</h3>
+    <div class="formula-main">$$0 \le \sin\theta \le 1, \qquad -1 \le \cos\theta \le 1$$</div>
+    <p class="symbols">$\tan\theta$ is positive for acute $\theta$, negative for obtuse $\theta$, and is the slope of the line $OP$.</p>
+  </div>
+
+  <!-- DEMO: drag P round the semicircle; code at the bottom -->
+  <div class="note-demo">
+    <h2>Drag $P$ round the semicircle ($r = 1$)</h2>
+    <canvas id="cpCanvas"></canvas>
+    <div class="output table-text" id="cpOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find $\sin 120°$, $\cos 120°$, $\tan 120°$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Take $r = 2$. The point at $120°$ is $P(-1, \sqrt{3})$ (a $30°$–$60°$–$90°$ triangle with the $y$-axis side on the left).</li>
+      </ol>
+      <p class="answer">$\sin 120° = \dfrac{\sqrt{3}}{2}$, $\cos 120° = -\dfrac{1}{2}$, $\tan 120° = -\sqrt{3}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Solve $\sin\theta = \dfrac{1}{2}$ and $\cos\theta = -\dfrac{1}{\sqrt{2}}$ for $0° \le \theta \le 180°$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\sin\theta = \dfrac{1}{2}$: on the unit semicircle, $y = \dfrac{1}{2}$ is reached at two points, $\theta = 30°$ and $150°$.</li>
+        <li>$\cos\theta = -\dfrac{1}{\sqrt{2}}$: $x = -\dfrac{1}{\sqrt{2}}$ only at $\theta = 135°$.</li>
+      </ol>
+      <p class="answer">$\theta = 30°, 150°$; $\;\theta = 135°$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Find the angle $\theta$ between the line $y = -\sqrt{3}\,x$ and the positive $x$-axis.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The slope equals $\tan\theta$: $\tan\theta = -\sqrt{3}$.</li>
+      </ol>
+      <p class="answer">$\theta = 120°$</p>
+    </details>
+  </div>
+
+  <!-- TIP: values at 0, 90, 180 -->
+  <div class="note-tip">
+    Read the end values off the circle: $0°$ is $(1, 0)$, $90°$ is $(0, 1)$, $180°$ is $(-1, 0)$. So $\sin 0° = 0$, $\cos 90° = 0$, $\cos 180° = -1$, $\tan 180° = 0$.
+  </div>
+
+  <!-- WARNING: sine gives two angles -->
+  <div class="note-warning">
+    $\sin\theta = k$ (with $0 &lt; k &lt; 1$) has <strong>two</strong> answers between $0°$ and $180°$, symmetric about $90°$. $\cos\theta = k$ has only one.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$\sin\theta = \dfrac{y}{r}$, $\cos\theta = \dfrac{x}{r}$, $\tan\theta = \dfrac{y}{x}$ for $P(x, y)$ on a semicircle of radius $r$.</li>
+      <li>Obtuse $\theta$: $\sin &gt; 0$, $\cos &lt; 0$, $\tan &lt; 0$.</li>
+      <li>$\tan\theta$ = slope of the line from $O$ at angle $\theta$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Drag P round the semicircle" demo (the TRY IT block above).
+  // P is kept on the upper half of the unit circle; its coordinates are cos θ
+  // and sin θ, shown as an orange (x) and a blue (y) line.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const G = window.NoteGeom;
+    const output = document.getElementById('cpOutput');
+    const O = [260, 280], R = 200; // the unit length is 200 pixels
+    const keepUpper = (p) => G.onCircle([p[0], Math.min(p[1], O[1])], O, R);
+
+    G.board(document.getElementById('cpCanvas'), {
+      points: { O, P: [O[0] + R * Math.cos(2.1), O[1] - R * Math.sin(2.1)] },
+      fixed: ['O'],
+      constrain: { P: keepUpper },
+      draw(g, Pt) {
+        const { P } = Pt;
+        g.seg([30, O[1]], [490, O[1]], '#94a3b8');   // x-axis
+        g.seg([O[0], O[1] + 30], [O[0], 20], '#94a3b8'); // y-axis
+        g.circle(O, R, '#e2e8f0');
+        const F = [P[0], O[1]];
+        g.seg(O, P, '#334155');
+        g.seg(O, F, '#ea580c', { width: 4 });  // x = cos θ
+        g.seg(F, P, '#2563eb', { width: 4 });  // y = sin θ
+        g.arc(O, [O[0] + 50, O[1]], P, '#7c3aed', 30);
+        g.text([O[0] - 12, O[1] + 16], 'O');
+        g.text([O[0] + R, O[1] + 16], '1'); g.text([O[0] - R, O[1] + 16], '−1');
+
+        const x = (P[0] - O[0]) / R, y = (O[1] - P[1]) / R;
+        const theta = Math.atan2(y, x) * 180 / Math.PI;
+        output.textContent =
+          `θ = ${theta.toFixed(1)}°   P = (${x.toFixed(3)}, ${y.toFixed(3)})\n` +
+          `sin θ = y = ${y.toFixed(3)}\ncos θ = x = ${x.toFixed(3)}\n` +
+          `tan θ = y/x = ${Math.abs(x) < 0.002 ? 'not defined (x = 0)' : (y / x).toFixed(3)}`;
+      },
+    });
+  })();
+</script>

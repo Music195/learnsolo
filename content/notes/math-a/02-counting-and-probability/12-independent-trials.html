@@ -1,0 +1,161 @@
+<!-- tags: Probability -->
+<!-- =====================================================================
+     NOTE: Probability of Independent Trials
+     Uses the shared blocks from static/css/note-blocks.css.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Probability">Probability of Independent Trials</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Trials that don't affect each other</h2>
+    <p>Two trials are <strong>independent</strong> when the result of one has no effect on the other: tossing a coin and rolling a die,
+      rolling a die twice, or drawing a ball and <strong>putting it back</strong> before drawing again.</p>
+    <p>Then "this happens in the first trial <em>and</em> that happens in the second" has probability equal to the product.</p>
+  </section>
+
+  <!-- FORMULA: product rule for independent trials -->
+  <div class="note-formula">
+    <h3>Independent trials</h3>
+    <div class="formula-main">$$P(A \text{ in trial 1 and } B \text{ in trial 2}) = P(A) \times P(B)$$</div>
+    <p class="symbols">Works for any number of independent trials: multiply all the probabilities.</p>
+  </div>
+
+  <!-- WARNING: without replacement is not independent -->
+  <div class="note-warning">
+    Drawing <strong>without replacement</strong> is <em>not</em> independent: after taking a red ball there are fewer reds left.
+    Use the multiplication rule for dependent events (note 14), or count with combinations.
+  </div>
+
+  <!-- DEMO: tree diagram for two independent trials; code at the bottom -->
+  <div class="note-demo">
+    <h2>Tree diagram for two trials</h2>
+    <div class="controls">
+      <label>$P(A)$ in trial 1 <input type="number" id="ipA" value="0.5" step="0.05" min="0" max="1"></label>
+      <label>$P(B)$ in trial 2 <input type="number" id="ipB" value="0.3333" step="0.05" min="0" max="1"></label>
+    </div>
+    <canvas id="ipCanvas" width="520" height="240"></canvas>
+    <div class="output table-text" id="ipOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A coin is tossed and a die is rolled. Find the probability of heads and a number $\ge 5$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$P(\text{heads}) = \dfrac{1}{2}$, $\;P(5 \text{ or } 6) = \dfrac{2}{6} = \dfrac{1}{3}$</li>
+        <li>The trials are independent: $\dfrac{1}{2} \times \dfrac{1}{3}$</li>
+      </ol>
+      <p class="answer">$\dfrac{1}{6}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Bag P has 3 red and 2 white balls; bag Q has 4 red and 4 white. One ball is drawn from each bag. Find the probability that the two balls are the same colour.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Both red: $\dfrac{3}{5} \times \dfrac{4}{8} = \dfrac{12}{40}$</li>
+        <li>Both white: $\dfrac{2}{5} \times \dfrac{4}{8} = \dfrac{8}{40}$</li>
+        <li>The two cases are mutually exclusive, so add.</li>
+      </ol>
+      <p class="answer">$\dfrac{20}{40} = \dfrac{1}{2}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A, B and C each try a problem; they solve it with probabilities $\dfrac{1}{2}, \dfrac{1}{3}, \dfrac{1}{4}$, independently. Find the probability that the problem gets solved.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>"Solved" = at least one person solves it. Opposite: nobody solves it.</li>
+        <li>$P(\text{nobody}) = \dfrac{1}{2} \times \dfrac{2}{3} \times \dfrac{3}{4} = \dfrac{1}{4}$</li>
+        <li>$1 - \dfrac{1}{4}$</li>
+      </ol>
+      <p class="answer">$\dfrac{3}{4}$</p>
+    </details>
+  </div>
+
+  <!-- TIP: multiply along, add across -->
+  <div class="note-tip">
+    On a tree diagram: <strong>multiply along</strong> a path (this and then that), <strong>add across</strong> paths (this way or that way).
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Independent trials: multiply the probabilities.</li>
+      <li>With replacement → independent; without replacement → not.</li>
+      <li>Combine with the complement rule for "at least one" questions.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script>
+  // Tree diagram for two independent trials (the TRY IT block above).
+  // First split: A / not A. Second split: B / not B with the same P(B) on every
+  // branch (that is what independence means). Path probability = product.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const aInput = document.getElementById('ipA');
+    const bInput = document.getElementById('ipB');
+    const canvas = document.getElementById('ipCanvas');
+    const ctx = canvas.getContext('2d');
+    const output = document.getElementById('ipOutput');
+
+    const fmt = (v) => Number(v.toFixed(4)).toString();
+
+    // Line from (x1, y1) to (x2, y2) with a probability label in the middle
+    function branch(x1, y1, x2, y2, label, color) {
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+      ctx.fillStyle = color;
+      ctx.font = '13px sans-serif';
+      ctx.textAlign = 'center';
+      // label above an upward branch, below a downward one, so it never sits on the line
+      ctx.fillText(label, (x1 + x2) / 2, (y1 + y2) / 2 + (y2 > y1 ? 16 : -6));
+    }
+
+    function update() {
+      const a = parseFloat(aInput.value);
+      const b = parseFloat(bInput.value);
+      if ([a, b].some((v) => isNaN(v) || v < 0 || v > 1)) {
+        output.textContent = 'Probabilities must be between 0 and 1.';
+        return;
+      }
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const start = { x: 20, y: 120 };
+      const mids = [{ y: 60, name: 'A', p: a }, { y: 180, name: 'Ā', p: 1 - a }];
+      const results = [];
+
+      mids.forEach((mid) => {
+        branch(start.x, start.y, 200, mid.y, `${mid.name}: ${fmt(mid.p)}`, '#2563eb');
+        [{ dy: -28, name: 'B', p: b }, { dy: 28, name: 'B̄', p: 1 - b }].forEach((leaf) => {
+          branch(200, mid.y, 360, mid.y + leaf.dy, `${leaf.name}: ${fmt(leaf.p)}`, '#7c3aed');
+          const product = mid.p * leaf.p;
+          ctx.fillStyle = '#0f172a';
+          ctx.textAlign = 'left';
+          ctx.fillText(`${mid.name}${leaf.name} = ${fmt(product)}`, 370, mid.y + leaf.dy + 4);
+          results.push(product);
+        });
+      });
+
+      output.textContent =
+        `P(A and B) = ${fmt(a)} × ${fmt(b)} = ${fmt(a * b)}\n` +
+        `all four paths add to ${fmt(results.reduce((s, v) => s + v, 0))}`;
+    }
+
+    aInput.addEventListener('input', update);
+    bInput.addEventListener('input', update);
+    update(); // draw the default tree straight away
+  })();
+</script>

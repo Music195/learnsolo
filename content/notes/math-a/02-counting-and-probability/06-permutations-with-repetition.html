@@ -1,0 +1,136 @@
+<!-- tags: Probability -->
+<!-- =====================================================================
+     NOTE: Counting Repeated Permutations
+     Uses the shared blocks from static/css/note-blocks.css.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Probability">Counting Repeated Permutations</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Repeats allowed</h2>
+    <p>When the same item may be used again, every position has the <strong>full</strong> set of choices.
+      A 3-digit lock with digits $0$–$9$ has $10 \times 10 \times 10 = 1000$ codes, because $000$ and $777$ are allowed.</p>
+  </section>
+
+  <!-- FORMULA: n^r -->
+  <div class="note-formula">
+    <h3>Repeated permutation</h3>
+    <div class="formula-main">$$\underbrace{n \times n \times \cdots \times n}_{r \text{ positions}} = n^r$$</div>
+    <p class="symbols">
+      $n$ = number of choices for each position<br>
+      $r$ = number of positions ($r$ can be larger than $n$)
+    </p>
+  </div>
+
+  <!-- TIP: which number is the base -->
+  <div class="note-tip">
+    The <strong>base</strong> is the number of options for each choice; the <strong>power</strong> is how many choices are made.
+    4 people each picking one of 3 rooms: each person makes a choice from 3 options, so $3^4 = 81$, not $4^3$.
+  </div>
+
+  <!-- DEMO: list all sequences; code at the bottom -->
+  <div class="note-demo">
+    <h2>List every sequence</h2>
+    <div class="controls">
+      <label>Symbols <input type="text" id="rpSymbols" value="0, 1"></label>
+      <label>Length $r$ <input type="number" id="rpR" value="3" min="1" max="8"></label>
+    </div>
+    <div class="output table-text" id="rpOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">How many 4-digit numbers can be made with the digits $0$–$9$ (repeats allowed)?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>First digit: 9 choices (not 0); the other three: 10 each</li>
+      </ol>
+      <p class="answer">$9 \times 10^3 = 9000$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">How many subsets does $\{a, b, c, d, e\}$ have?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Each element is either in or out: 2 choices, 5 times</li>
+      </ol>
+      <p class="answer">$2^5 = 32$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">5 people are split into two rooms A and B. Each room must have at least one person. How many ways?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Each person picks room A or B: $2^5 = 32$ ways</li>
+        <li>Remove the 2 cases with an empty room (everyone in A, everyone in B)</li>
+      </ol>
+      <p class="answer">$32 - 2 = 30$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: rooms without names -->
+  <div class="note-warning">
+    If the two rooms are <strong>not named</strong> (just "two groups"), swapping A and B gives the same split,
+    so Example 3 becomes $30 \div 2 = 15$.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Repeats allowed: $n^r$ ($n$ choices per position, $r$ positions).</li>
+      <li>Restrictions (no leading 0) change the count for that position only.</li>
+      <li>Splitting into non-empty named groups: $2^n - 2$; unnamed: divide by $2$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script>
+  // "List every sequence" demo (the TRY IT block above).
+  // Builds all sequences of length r from the chosen symbols, repeats allowed.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const symbolsInput = document.getElementById('rpSymbols');
+    const rInput = document.getElementById('rpR');
+    const output = document.getElementById('rpOutput');
+
+    function update() {
+      const symbols = [...new Set(symbolsInput.value.split(',').map((s) => s.trim()).filter(Boolean))];
+      const r = parseInt(rInput.value, 10);
+      if (symbols.length === 0 || isNaN(r) || r < 1 || r > 8) {
+        output.textContent = 'Type some symbols separated by commas, and a length from 1 to 8.';
+        return;
+      }
+
+      const count = symbols.length ** r;
+      const lines = [`${symbols.length}^${r} = ${count}`];
+
+      if (count <= 256) {
+        // Start with the empty sequence and add one position at a time
+        let sequences = [''];
+        for (let i = 0; i < r; i++) {
+          sequences = sequences.flatMap((s) => symbols.map((sym) => s + sym));
+        }
+        for (let i = 0; i < sequences.length; i += 8) lines.push(sequences.slice(i, i + 8).join('  '));
+      } else {
+        lines.push('(too many to list; try a shorter length)');
+      }
+      output.textContent = lines.join('\n');
+    }
+
+    symbolsInput.addEventListener('input', update);
+    rInput.addEventListener('input', update);
+    update(); // show the default sequences straight away
+  })();
+</script>

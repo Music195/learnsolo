@@ -1,0 +1,129 @@
+<!-- tags: Exponent and Logarithm -->
+<!-- =====================================================================
+     NOTE: Graph of the Logarithmic Function (対数関数のグラフ)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Exponent and Logarithm">Logarithm Function Graph</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>The exponential graph, reflected in $y = x$</h2>
+    <p>$y = \log_a x$ means $x = a^y$: the same relationship as $y = a^x$ with $x$ and $y$ swapped. Swapping $x$ and $y$ reflects a graph in the line $y = x$.</p>
+    <p>So every feature of $y = a^x$ has a matching one: $(0, 1)$ becomes $(1, 0)$, and the asymptote $y = 0$ becomes $x = 0$.</p>
+  </section>
+
+  <!-- FORMULA: features -->
+  <div class="note-formula">
+    <h3>$y = \log_a x$ ($a &gt; 0$, $a \ne 1$)</h3>
+    <div class="formula-main">$$\text{domain } x &gt; 0, \qquad \text{range: all } y, \qquad \text{passes } (1, 0) \text{ and } (a, 1), \qquad \text{asymptote } x = 0$$</div>
+    <p class="symbols">$a &gt; 1$: increasing. $0 &lt; a &lt; 1$: decreasing. $y = \log_a x$ and $y = a^x$ are mirror images in $y = x$ (inverse functions).</p>
+  </div>
+
+  <!-- DEMO: drag a point on the exponential; code at the bottom -->
+  <div class="note-demo">
+    <h2>Drag $P$ on $y = a^x$; its reflection $Q$ lies on $y = \log_a x$</h2>
+    <div class="controls">
+      <label>$a$ = <input type="range" id="lgA" min="0.25" max="3" step="0.25" value="2"></label>
+    </div>
+    <canvas id="lgCanvas"></canvas>
+    <div class="output table-text" id="lgOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Give the domain, the point on the $x$-axis and the asymptote of $y = \log_3 x$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Antilogarithm positive: $x &gt; 0$. $\log_3 1 = 0$. Asymptote: the $y$-axis.</li>
+      </ol>
+      <p class="answer">$x &gt; 0$; $(1, 0)$; $x = 0$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Which graph is the mirror image of $y = \log_2 x$ in the line $y = x$, and which is its mirror image in the $x$-axis?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>In $y = x$: swap $x, y$: $x = \log_2 y \Rightarrow y = 2^x$.</li>
+        <li>In the $x$-axis: $y \to -y$: $y = -\log_2 x = \log_{\frac{1}{2}} x$.</li>
+      </ol>
+      <p class="answer">$y = 2^x$; $\;y = \log_{\frac{1}{2}} x$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Describe $y = \log_2 (x - 1) + 2$ and its asymptote.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$y = \log_2 x$ moved 1 right and 2 up.</li>
+        <li>The asymptote $x = 0$ moves to $x = 1$; the point $(1, 0)$ moves to $(2, 2)$.</li>
+      </ol>
+      <p class="answer">Asymptote $x = 1$; domain $x &gt; 1$; passes $(2, 2)$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: inverse pairs -->
+  <div class="note-warning">
+    $y = \log_2 x$ is the reflection of $y = 2^x$, <strong>not</strong> of $y = \left(\dfrac{1}{2}\right)^x$. The bases must match.
+  </div>
+
+  <!-- TIP: sketch -->
+  <div class="note-tip">
+    To sketch, plot $(1, 0)$ and $(a, 1)$, draw the $y$-axis as the asymptote, then rise ($a &gt; 1$) or fall ($0 &lt; a &lt; 1$).
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$y = \log_a x$ is $y = a^x$ reflected in $y = x$.</li>
+      <li>Through $(1, 0)$; domain $x &gt; 0$; asymptote $x = 0$.</li>
+      <li>$a &gt; 1$ increasing, $0 &lt; a &lt; 1$ decreasing.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Drag P" demo (the TRY IT block above).
+  // P = (t, aᵗ) on the exponential; Q = (aᵗ, t), its mirror image in y = x,
+  // is on the log graph.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const aBox = document.getElementById('lgA');
+    const output = document.getElementById('lgOutput');
+    const a = () => +aBox.value;
+    const onExp = ([x]) => { const t = Math.max(-2.5, Math.min(2.5, x)); return [t, a() ** t]; };
+
+    const plot = NotePlot.graph(document.getElementById('lgCanvas'), {
+      x: [-3, 6], y: [-3, 6],
+      points: { P: [1.5, 2 ** 1.5] },
+      constrain: { P: onExp },
+      draw(g, Pt) {
+        const A = a();
+        if (A === 1) { output.textContent = 'a = 1 is not allowed.'; return; }
+        g.fn((x) => x, '#cbd5e1', { width: 1.5, dash: true });
+        g.fn((x) => A ** x, '#2563eb');
+        g.fn((x) => Math.log(x) / Math.log(A), '#ea580c', { from: 0.001 });
+        const [t, v] = Pt.P;
+        g.seg([t, v], [v, t], '#94a3b8', { dash: true });
+        g.dot([v, t], '#ea580c', 'Q');
+        output.textContent =
+          `P = (${t.toFixed(2)}, ${v.toFixed(3)}) on y = ${A}^x\n` +
+          `Q = (${v.toFixed(3)}, ${t.toFixed(2)}) on y = log_${A} x   (log_${A} ${v.toFixed(3)} = ${t.toFixed(2)})`;
+      },
+    });
+    aBox.addEventListener('input', () => plot.move('P', onExp(plot.points.P)));
+  })();
+</script>

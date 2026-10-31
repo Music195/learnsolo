@@ -1,0 +1,154 @@
+<!-- tags: Complex Number and Equation -->
+<!-- =====================================================================
+     NOTE: Remainder Theorem (剰余の定理)
+     Uses the shared blocks from static/css/note-blocks.css.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Complex Number and Equation">Remainder Theorem</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>The remainder is just a substitution</h2>
+    <p>When you divide a polynomial $P(x)$ by $x - k$, the remainder is a number. You can find it without dividing: just work out $P(k)$.</p>
+  </section>
+
+  <!-- FORMULA: remainder theorem -->
+  <div class="note-formula">
+    <h3>Remainder theorem</h3>
+    <div class="formula-main">$$P(x) \div (x - k) \text{ leaves remainder } P(k), \qquad P(x) \div (ax + b) \text{ leaves remainder } P\!\left(-\frac{b}{a}\right)$$</div>
+  </div>
+
+  <!-- PROOF: division identity -->
+  <div class="note-proof">
+    <ol>
+      <li>Dividing by a degree-1 polynomial leaves a constant remainder $R$: $P(x) = (x - k)Q(x) + R$.</li>
+      <li>Put $x = k$: $P(k) = 0 \cdot Q(k) + R = R$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: synthetic division; code at the bottom -->
+  <div class="note-demo">
+    <h2>Divide $P(x)$ by $x - k$ (synthetic division, 組立除法)</h2>
+    <div class="controls">
+      <label>coefficients of $P$ <input type="text" id="rtP" class="wide" value="1, -2, 3, -1"></label>
+      <label>$k$ = <input type="number" id="rtK" value="1"></label>
+    </div>
+    <div class="output table-text" id="rtOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find the remainder when $P(x) = x^3 - 2x^2 + 3x - 1$ is divided by $x - 1$ and by $x + 2$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$P(1) = 1 - 2 + 3 - 1 = 1$.</li>
+        <li>$x + 2 = x - (-2)$: $P(-2) = -8 - 8 - 6 - 1 = -23$.</li>
+      </ol>
+      <p class="answer">$1$; $\;-23$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find the remainder when $2x^3 + x - 3$ is divided by $2x + 1$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$2x + 1 = 0$ at $x = -\dfrac{1}{2}$.</li>
+        <li>$2\left(-\dfrac{1}{8}\right) - \dfrac{1}{2} - 3 = -\dfrac{1}{4} - \dfrac{1}{2} - 3$.</li>
+      </ol>
+      <p class="answer">$-\dfrac{15}{4}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">$P(x)$ leaves remainder 5 when divided by $x - 1$ and $-3$ when divided by $x + 3$. Find the remainder when $P(x)$ is divided by $(x - 1)(x + 3)$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Dividing by a quadratic leaves a remainder of degree ≤ 1: $P(x) = (x - 1)(x + 3)Q(x) + ax + b$.</li>
+        <li>$P(1) = a + b = 5$ and $P(-3) = -3a + b = -3$.</li>
+        <li>Subtract: $4a = 8$, so $a = 2$, $b = 3$.</li>
+      </ol>
+      <p class="answer">$2x + 3$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">$x^3 + ax^2 - 4x + 1$ leaves remainder 3 when divided by $x - 2$. Find $a$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$P(2) = 8 + 4a - 8 + 1 = 4a + 1 = 3$.</li>
+      </ol>
+      <p class="answer">$a = \dfrac{1}{2}$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: sign of k -->
+  <div class="note-warning">
+    For $x + 2$, substitute $x = -2$ (the value that makes the divisor $0$), not $x = 2$.
+  </div>
+
+  <!-- TIP: quadratic divisor -->
+  <div class="note-tip">
+    The remainder always has a lower degree than the divisor: a constant for a linear divisor, $ax + b$ for a quadratic divisor.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Remainder of $P(x) \div (x - k)$ is $P(k)$.</li>
+      <li>Divisor $ax + b$: substitute $x = -\dfrac{b}{a}$.</li>
+      <li>Quadratic divisor: write the remainder as $ax + b$ and use two substitutions.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Synthetic division" demo (the TRY IT block above).
+  // Bring down the first coefficient, multiply by k, add to the next, repeat.
+  // The last number is the remainder and equals P(k).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const pBox = document.getElementById('rtP'), kBox = document.getElementById('rtK');
+    const output = document.getElementById('rtOutput');
+    const n = (v) => +v.toFixed(4);
+    const col = (v) => String(n(v)).padStart(7);
+
+    function update() {
+      const co = pBox.value.split(',').map((s) => parseFloat(s));
+      const k = parseFloat(kBox.value);
+      if (co.length < 2 || co.some(Number.isNaN) || Number.isNaN(k)) {
+        output.textContent = 'Type the coefficients from the highest power down, e.g. 1, -2, 3, -1 for x³ − 2x² + 3x − 1.';
+        return;
+      }
+      const mids = [''], bottom = [co[0]];
+      for (let i = 1; i < co.length; i++) {
+        mids.push(bottom[i - 1] * k);
+        bottom.push(co[i] + bottom[i - 1] * k);
+      }
+      const R = bottom.pop();
+      let Pk = 0; co.forEach((c) => (Pk = Pk * k + c));
+      output.textContent =
+        `P(x) = ${NotePlot.poly(co)},  divide by ${NotePlot.poly([1, -k])}\n\n` +
+        `${String(n(k)).padStart(4)} |${co.map(col).join('')}\n` +
+        `     |${mids.map((m) => (m === '' ? ' '.repeat(7) : col(m))).join('')}\n` +
+        `     ${'-'.repeat(7 * co.length + 1)}\n` +
+        `      ${bottom.map(col).join('')} |${col(R)}\n\n` +
+        `quotient  Q(x) = ${NotePlot.poly(bottom)}\n` +
+        `remainder R = ${n(R)}   and   P(${n(k)}) = ${n(Pk)}  (the same)`;
+    }
+    [pBox, kBox].forEach((el) => el.addEventListener('input', update));
+    update();
+  })();
+</script>

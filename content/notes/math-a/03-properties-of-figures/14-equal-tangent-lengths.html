@@ -1,0 +1,135 @@
+<!-- tags: Geometry -->
+<!-- =====================================================================
+     NOTE: Equal Tangent Lengths from a Point (接線の長さ)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     draggable-point helper static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Geometry">Equal Tangent Lengths from a Point</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Two tangents, same length</h2>
+    <p>A <strong>tangent</strong> touches a circle at exactly one point, and it is at right angles to the radius there.</p>
+    <p>From a point $P$ outside a circle you can draw two tangents, touching at $A$ and $B$. The distances $PA$ and $PB$ (the <strong>tangent lengths</strong>) are always equal.</p>
+  </section>
+
+  <!-- FORMULA: equal tangents and Pythagoras -->
+  <div class="note-formula">
+    <h3>Tangent lengths</h3>
+    <div class="formula-main">$$PA = PB = \sqrt{OP^2 - r^2}$$</div>
+    <p class="symbols">$O$: centre, $r$: radius. $OA \perp PA$, so $\triangle OAP$ is right-angled at $A$.</p>
+  </div>
+
+  <!-- PROOF: congruent right triangles -->
+  <div class="note-proof">
+    <ol>
+      <li>$\angle OAP = \angle OBP = 90°$ (tangent ⊥ radius).</li>
+      <li>$OA = OB$ (radii) and $OP$ is shared.</li>
+      <li>So $\triangle OAP \equiv \triangle OBP$ (right angle, hypotenuse and one side), and $PA = PB$.</li>
+      <li>Bonus: $\angle APO = \angle BPO$, so $PO$ bisects the angle between the tangents.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: drag P; code at the bottom -->
+  <div class="note-demo">
+    <h2>Drag $P$</h2>
+    <canvas id="tlCanvas"></canvas>
+    <div class="output table-text" id="tlOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A circle has radius 5 and $OP = 13$. Find the tangent length from $P$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$PA^2 = 13^2 - 5^2 = 144$</li>
+      </ol>
+      <p class="answer">$PA = PB = 12$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">A circle is inscribed in quadrilateral $ABCD$ (it touches all four sides). $AB = 6$, $BC = 7$, $CD = 8$. Find $DA$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Call the tangent lengths from the corners $a, b, c, d$. Each side is made of two of them:
+          $AB = a + b$, $BC = b + c$, $CD = c + d$, $DA = d + a$.</li>
+        <li>So $AB + CD = a + b + c + d = BC + DA$.</li>
+        <li>$6 + 8 = 7 + DA$</li>
+      </ol>
+      <p class="answer">$DA = 7$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Tangents $PA$, $PB$ meet at $\angle APB = 60°$. The radius is 3. Find $PA$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$PO$ bisects the angle, so $\angle APO = 30°$; $\triangle OAP$ is a $30°$-$60°$-$90°$ triangle.</li>
+        <li>$OA = 3$ is opposite $30°$, so $OP = 6$ and $PA = 3\sqrt{3}$.</li>
+      </ol>
+      <p class="answer">$PA = 3\sqrt{3}$</p>
+    </details>
+  </div>
+
+  <!-- TIP: tangent lengths in triangles -->
+  <div class="note-tip">
+    In a figure with an inscribed circle, label each corner's tangent length with one letter. Every side becomes a sum of two letters (see note 04, Example 3).
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Tangent ⊥ radius at the touching point.</li>
+      <li>From one outside point, the two tangent lengths are equal: $\sqrt{OP^2 - r^2}$.</li>
+      <li>Quadrilateral with an inscribed circle: $AB + CD = BC + DA$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Drag P" demo (the TRY IT block above).
+  // Finds the two touching points, draws the tangents and radii, and compares
+  // PA, PB with √(OP² − r²).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const G = window.NoteGeom;
+    const output = document.getElementById('tlOutput');
+    const O = [320, 170], r = 80;
+
+    G.board(document.getElementById('tlCanvas'), {
+      points: { O, P: [80, 140] },
+      fixed: ['O'],
+      draw(g, Pt) {
+        const { P } = Pt;
+        g.circle(O, r, '#334155');
+        g.dot(O, '#334155', 'O');
+        const touch = G.tangents(P, O, r);
+        if (touch.length < 2) { output.textContent = 'P is inside the circle: no tangents. Drag it outside.'; return; }
+        const [A, B] = touch;
+
+        g.seg(O, P, '#94a3b8', { dash: true });
+        g.seg(P, A, '#2563eb', { width: 3 }); g.seg(P, B, '#2563eb', { width: 3 });
+        g.seg(O, A, '#ea580c'); g.seg(O, B, '#ea580c');
+        g.right(A, O, P); g.right(B, O, P);
+        g.dot(A, '#0f172a', 'A'); g.dot(B, '#0f172a', 'B');
+
+        const op = G.dist(O, P);
+        output.textContent =
+          `PA = ${G.dist(P, A).toFixed(1)},  PB = ${G.dist(P, B).toFixed(1)}\n` +
+          `√(OP² − r²) = √(${op.toFixed(1)}² − ${r}²) = ${Math.sqrt(op * op - r * r).toFixed(1)}`;
+      },
+    });
+  })();
+</script>

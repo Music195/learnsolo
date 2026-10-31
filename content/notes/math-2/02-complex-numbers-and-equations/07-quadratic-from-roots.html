@@ -1,0 +1,137 @@
+<!-- tags: Complex Number and Equation -->
+<!-- =====================================================================
+     NOTE: Building a Quadratic Equation from Its Roots (2数を解とする2次方程式)
+     Uses the shared blocks from static/css/note-blocks.css.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Complex Number and Equation">Quadratic From Roots</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Need only the sum and the product</h2>
+    <p>The equation $(x - \alpha)(x - \beta) = 0$ has roots $\alpha$ and $\beta$. Expanding it, only $\alpha + \beta$ and $\alpha\beta$ appear,
+      so you never need the roots one by one.</p>
+    <p>Read backwards: two numbers with sum $p$ and product $q$ are the roots of $x^2 - px + q = 0$.</p>
+  </section>
+
+  <!-- FORMULA: equation from roots -->
+  <div class="note-formula">
+    <h3>Equation with roots $\alpha, \beta$</h3>
+    <div class="formula-main">$$x^2 - (\alpha + \beta)x + \alpha\beta = 0$$</div>
+    <p class="symbols">Any non-zero multiple also works; usually make the coefficients whole numbers.</p>
+  </div>
+
+  <!-- DEMO: build from sum and product; code at the bottom -->
+  <div class="note-demo">
+    <h2>Roots $p \pm q\sqrt{r}$ or $p \pm qi$</h2>
+    <div class="controls">
+      <label>$p$ = <input type="number" id="frP" value="1"></label>
+      <label>$q$ = <input type="number" id="frQ" value="2"></label>
+      <label>type <select id="frT"><option value="i">p ± q i</option><option value="r">p ± q√r</option></select></label>
+      <label>$r$ = <input type="number" id="frR" value="3" min="1"></label>
+    </div>
+    <div class="output table-text" id="frOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find a quadratic equation with roots $2 + \sqrt{3}$ and $2 - \sqrt{3}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Sum $4$, product $4 - 3 = 1$.</li>
+      </ol>
+      <p class="answer">$x^2 - 4x + 1 = 0$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find two numbers whose sum is 2 and product is 5.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>They are the roots of $x^2 - 2x + 5 = 0$.</li>
+        <li>$x = 1 \pm \sqrt{1 - 5} = 1 \pm 2i$.</li>
+      </ol>
+      <p class="answer">$1 + 2i$ and $1 - 2i$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">$\alpha, \beta$ are the roots of $x^2 - 3x + 1 = 0$. Find an equation whose roots are $\alpha^2$ and $\beta^2$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\alpha + \beta = 3$, $\alpha\beta = 1$.</li>
+        <li>New sum: $\alpha^2 + \beta^2 = 9 - 2 = 7$. New product: $(\alpha\beta)^2 = 1$.</li>
+      </ol>
+      <p class="answer">$x^2 - 7x + 1 = 0$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">$\alpha, \beta$ are the roots of $x^2 + px + q = 0$. Find an equation whose roots are $\alpha + 1$ and $\beta + 1$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\alpha + \beta = -p$, $\alpha\beta = q$.</li>
+        <li>New sum $-p + 2$; new product $\alpha\beta + (\alpha + \beta) + 1 = q - p + 1$.</li>
+      </ol>
+      <p class="answer">$x^2 + (p - 2)x + q - p + 1 = 0$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: sign -->
+  <div class="note-warning">
+    The middle term is <strong>minus</strong> the sum: roots $3$ and $-2$ give $x^2 - x - 6 = 0$, not $x^2 + x - 6 = 0$.
+  </div>
+
+  <!-- TIP: conjugate pairs -->
+  <div class="note-tip">
+    Pairs like $p \pm q\sqrt{r}$ or $p \pm qi$ always give a sum and product with no roots or $i$ left, so the equation has rational coefficients.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Roots $\alpha, \beta$ → $x^2 - (\alpha + \beta)x + \alpha\beta = 0$.</li>
+      <li>"Sum $p$, product $q$" → solve $x^2 - px + q = 0$.</li>
+      <li>New roots from old: compute the new sum and product with note 05.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Roots p ± q√r or p ± qi" demo (the TRY IT block above).
+  // sum = 2p; product = p² − q²r (for √r) or p² + q² (for i).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const ids = ['frP', 'frQ', 'frT', 'frR'];
+    const output = document.getElementById('frOutput');
+
+    function update() {
+      const p = parseFloat(document.getElementById('frP').value) || 0;
+      const q = parseFloat(document.getElementById('frQ').value) || 0;
+      const r = Math.max(1, parseFloat(document.getElementById('frR').value) || 1);
+      const isI = document.getElementById('frT').value === 'i';
+      const rootText = isI ? `${p} ± ${q}i` : `${p} ± ${q}√${r}`;
+      const sum = 2 * p, prod = isI ? p * p + q * q : p * p - q * q * r;
+      output.textContent =
+        `roots ${rootText}\n` +
+        `sum     = (${p} + …) + (${p} − …) = ${sum}\n` +
+        `product = ${p}² ${isI ? `+ ${q}²` : `− ${q}²·${r}`} = ${prod}\n` +
+        `equation: ${NotePlot.poly([1, -sum, prod])} = 0`;
+    }
+    ids.forEach((id) => document.getElementById(id).addEventListener('input', update));
+    update();
+  })();
+</script>

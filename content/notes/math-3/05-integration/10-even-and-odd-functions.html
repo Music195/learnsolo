@@ -1,0 +1,165 @@
+<!-- tags: Integration -->
+<!-- =====================================================================
+     NOTE: Definite Integrals of Even and Odd Functions (偶関数・奇関数の定積分)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Integration">Definite Integrals of Even and Odd Functions</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Symmetric limits: double it or drop it</h2>
+    <p>An <strong>even</strong> function ($f(-x) = f(x)$) is symmetric about the $y$-axis. Its left half matches its right half, so the integral over $[-a, a]$ is twice the integral over $[0, a]$.</p>
+    <p>An <strong>odd</strong> function ($f(-x) = -f(x)$) is symmetric about the origin. Its left half is the right half flipped below the axis, so the two parts cancel and the integral is $0$.</p>
+  </section>
+
+  <!-- FORMULA: even and odd -->
+  <div class="note-formula">
+    <h3>Integrals over $[-a, a]$</h3>
+    <div class="formula-main">$$f \text{ even: } \int_{-a}^{a} f(x)\,dx = 2\int_0^a f(x)\,dx, \qquad f \text{ odd: } \int_{-a}^{a} f(x)\,dx = 0$$</div>
+    <p class="symbols">Even: $x^2$, $x^4$, constants, $\cos x$, $|x|$. Odd: $x$, $x^3$, $\sin x$, $\tan x$. A polynomial splits into its even-power and odd-power terms.</p>
+  </div>
+
+  <!-- PROOF: substitute x = −t in the left half -->
+  <div class="note-proof">
+    <ol>
+      <li>Split: $\displaystyle\int_{-a}^a f\,dx = \int_{-a}^0 f(x)\,dx + \int_0^a f(x)\,dx$.</li>
+      <li>In the first part put $x = -t$, $dx = -dt$. Limits: $x$: $-a \to 0$ gives $t$: $a \to 0$.
+        So $\displaystyle\int_{-a}^0 f(x)\,dx = \int_a^0 f(-t)(-dt) = \int_0^a f(-t)\,dt$.</li>
+      <li>Even: $f(-t) = f(t)$, so the first part equals $\displaystyle\int_0^a f\,dt$ and the total is twice that.
+        Odd: $f(-t) = -f(t)$, so the first part equals $-\displaystyle\int_0^a f\,dt$ and the total is $0$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: left and right halves; code at the bottom -->
+  <div class="note-demo">
+    <h2>Left half (orange) and right half (blue) over $[-a, a]$</h2>
+    <div class="controls">
+      <label>$f(x)$ = <select id="eoF">
+        <option value="0">x² − 1 (even)</option>
+        <option value="1">x³ − 2x (odd)</option>
+        <option value="2">x sin x (even)</option>
+        <option value="3">x³ + x² (neither)</option>
+      </select></label>
+      <label>$a$ = <input type="range" id="eoA" min="0.2" max="2" step="0.05" value="1.6"></label>
+    </div>
+    <canvas id="eoCanvas"></canvas>
+    <div class="output table-text" id="eoOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Evaluate $\displaystyle\int_{-2}^{2} (x^3 + 3x^2 - 5x + 1)\,dx$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The odd terms $x^3$ and $-5x$ give $0$.</li>
+        <li>$2\displaystyle\int_0^2 (3x^2 + 1)\,dx = 2\Big[x^3 + x\Big]_0^2 = 2 \times 10$</li>
+      </ol>
+      <p class="answer">$20$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Evaluate $\displaystyle\int_{-\pi}^{\pi} (\sin x + \cos x)\,dx$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\sin x$ is odd, so its part is $0$.</li>
+        <li>$2\displaystyle\int_0^{\pi} \cos x\,dx = 2\Big[\sin x\Big]_0^{\pi} = 0$</li>
+      </ol>
+      <p class="answer">$0$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Evaluate $\displaystyle\int_{-1}^{1} \frac{x^3}{x^2 + 1}\,dx$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$f(-x) = \dfrac{-x^3}{x^2 + 1} = -f(x)$, so $f$ is odd.</li>
+      </ol>
+      <p class="answer">$0$ (no integration needed)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Evaluate $\displaystyle\int_{-1}^{1} (e^x + e^{-x})\,dx$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$e^x + e^{-x}$ is even.</li>
+        <li>$2\Big[e^x - e^{-x}\Big]_0^1 = 2\left(e - \dfrac{1}{e}\right)$</li>
+      </ol>
+      <p class="answer">$2e - \dfrac{2}{e}$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: symmetric limits only -->
+  <div class="note-warning">
+    These shortcuts need limits that are symmetric about $0$, like $[-a, a]$. Over $[0, a]$ or $[-1, 2]$ an odd function's integral is usually not $0$.
+  </div>
+
+  <!-- TIP: split a polynomial -->
+  <div class="note-tip">
+    Over $[-a, a]$, drop the odd-power terms of a polynomial straight away and double the integral of the rest over $[0, a]$. It saves work and avoids sign errors.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Even: $\int_{-a}^a = 2\int_0^a$.</li>
+      <li>Odd: $\int_{-a}^a = 0$.</li>
+      <li>Proof: substitute $x = -t$ in the left half.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Two halves" demo (the TRY IT block above).
+  // Orange: the signed area from −a to 0. Blue: the signed area from 0 to a.
+  // Even: the halves are equal. Odd: they are opposite, so they cancel.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const fBox = document.getElementById('eoF'), aBox = document.getElementById('eoA');
+    const output = document.getElementById('eoOutput');
+    const f3 = (v) => +v.toFixed(3);
+
+    // each function with an antiderivative
+    const FUNCS = [
+      { f: (x) => x * x - 1, F: (x) => x ** 3 / 3 - x },
+      { f: (x) => x ** 3 - 2 * x, F: (x) => x ** 4 / 4 - x * x },
+      { f: (x) => x * Math.sin(x), F: (x) => Math.sin(x) - x * Math.cos(x) },
+      { f: (x) => x ** 3 + x * x, F: (x) => x ** 4 / 4 + x ** 3 / 3 },
+    ];
+
+    const plot = NotePlot.graph(document.getElementById('eoCanvas'), {
+      x: [-2.5, 2.5], y: [-2, 3],
+      draw(g) {
+        const F = FUNCS[+fBox.value], a = +aBox.value;
+        g.fill(F.f, -a, 0, 'rgba(234, 88, 12, 0.25)');
+        g.fill(F.f, 0, a, 'rgba(37, 99, 235, 0.25)');
+        g.fn(F.f, '#334155');
+        g.vline(-a); g.vline(a);
+        const left = F.F(0) - F.F(-a), right = F.F(a) - F.F(0);
+        output.textContent =
+          `left half ${f3(left)},  right half ${f3(right)},  total ${f3(left + right)}\n` +
+          (Math.abs(left - right) < 1e-9 ? 'equal halves: total = 2 × right half'
+            : Math.abs(left + right) < 1e-9 ? 'opposite halves: total = 0'
+            : 'no symmetry: compute both halves');
+      },
+    });
+    fBox.addEventListener('change', plot.redraw);
+    aBox.addEventListener('input', plot.redraw);
+  })();
+</script>

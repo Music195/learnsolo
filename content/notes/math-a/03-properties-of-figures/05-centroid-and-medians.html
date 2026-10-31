@@ -1,0 +1,141 @@
+<!-- tags: Geometry -->
+<!-- =====================================================================
+     NOTE: Centroid and Medians (重心・中線)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     draggable-point helper static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Geometry">Centroid & Medians (重心・中線)</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>The balance point</h2>
+    <p>A <strong>median</strong> joins a corner to the midpoint of the opposite side. A triangle has three medians, and they always meet at one point $G$,
+      the <strong>centroid</strong>. A cardboard triangle balances on its centroid.</p>
+    <p>$G$ sits two thirds of the way along each median, measured from the corner.</p>
+  </section>
+
+  <!-- FORMULA: 2 : 1 and coordinates -->
+  <div class="note-formula">
+    <h3>Centroid divides each median 2 : 1</h3>
+    <div class="formula-main">$$AG : GL = BG : GM = CG : GN = 2 : 1$$</div>
+    <p class="symbols">$L$, $M$, $N$: midpoints of $BC$, $CA$, $AB$.</p>
+  </div>
+
+  <div class="note-formula">
+    <h3>Coordinates</h3>
+    <div class="formula-main">$$G\left(\frac{x_1 + x_2 + x_3}{3},\; \frac{y_1 + y_2 + y_3}{3}\right)$$</div>
+    <p class="symbols">The average of the three corners.</p>
+  </div>
+
+  <!-- PROOF: midpoint theorem -->
+  <div class="note-proof">
+    <ol>
+      <li>Let the medians $BM$ and $CN$ meet at $G$.</li>
+      <li>$N$, $M$ are midpoints of $AB$, $AC$, so by the midpoint theorem $NM \parallel BC$ and $NM = \dfrac{1}{2} BC$.</li>
+      <li>So $\triangle GMN \sim \triangle GBC$ with ratio $1 : 2$, giving $BG : GM = CG : GN = 2 : 1$.</li>
+      <li>The same argument shows median $AL$ cuts $BM$ at the point dividing it $2 : 1$, which is $G$ again. All three medians meet at $G$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: drag the corners; code at the bottom -->
+  <div class="note-demo">
+    <h2>Drag the corners</h2>
+    <p>The medians cut the triangle into six small triangles. Their areas are always equal.</p>
+    <canvas id="cgCanvas"></canvas>
+    <div class="output table-text" id="cgOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">The median $AL$ of $\triangle ABC$ has length 9. $G$ is the centroid. Find $AG$ and $GL$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$AG : GL = 2 : 1$, so $AG = 9 \times \dfrac{2}{3}$, $GL = 9 \times \dfrac{1}{3}$</li>
+      </ol>
+      <p class="answer">$AG = 6$, $GL = 3$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">The area of $\triangle ABC$ is 36 and $G$ is its centroid. Find the area of $\triangle GBC$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\triangle GBC$ and $\triangle ABC$ share the base $BC$.</li>
+        <li>$GL : AL = 1 : 3$, so the height from $G$ is $\dfrac{1}{3}$ of the height from $A$.</li>
+      </ol>
+      <p class="answer">$36 \times \dfrac{1}{3} = 12$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">$\triangle ABC$ has $A(1, 2)$ and centroid $G(4, 5)$. Find the midpoint $L$ of $BC$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$G$ is $\dfrac{2}{3}$ of the way from $A$ to $L$, so $L$ is $\dfrac{3}{2}$ of the way: $L = A + \dfrac{3}{2}(G - A)$</li>
+        <li>$G - A = (3, 3)$, so $L = (1 + 4.5,\; 2 + 4.5)$</li>
+      </ol>
+      <p class="answer">$L(5.5,\; 6.5)$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: which part is 2 -->
+  <div class="note-warning">
+    The <strong>longer</strong> part is next to the corner: $AG = 2 \times GL$, not the other way round.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Medians meet at the centroid $G$; $AG : GL = 2 : 1$.</li>
+      <li>$G$ = average of the three corners.</li>
+      <li>$\triangle GBC$, $\triangle GCA$, $\triangle GAB$ each have $\dfrac{1}{3}$ of the area; the six small triangles are equal.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Drag the corners" demo (the TRY IT block above).
+  // Draws the three medians, marks the centroid G, and shows the 2 : 1 ratios
+  // and the areas of the six small triangles.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const G = window.NoteGeom;
+    const output = document.getElementById('cgOutput');
+    const area = (p, q, r) => Math.abs(G.cross(p, q, r)) / 2;
+
+    G.board(document.getElementById('cgCanvas'), {
+      points: { A: [200, 40], B: [60, 300], C: [470, 260] },
+      draw(g, P) {
+        const { A, B, C } = P;
+        const L = G.mid(B, C), M = G.mid(C, A), N = G.mid(A, B);
+        const c = G.centroid(A, B, C);
+
+        // Six small triangles, alternating shades
+        [[A, N], [N, B], [B, L], [L, C], [C, M], [M, A]].forEach(([p, q], i) =>
+          g.poly([p, q, c], i % 2 ? 'rgba(13, 148, 136, 0.12)' : 'rgba(37, 99, 235, 0.10)'));
+        g.seg(A, B); g.seg(B, C); g.seg(C, A);
+        [[A, L], [B, M], [C, N]].forEach(([p, q]) => g.seg(p, q, '#7c3aed', { width: 1.5 }));
+        g.dot(L, '#475569', 'L'); g.dot(M, '#475569', 'M'); g.dot(N, '#475569', 'N');
+        g.dot(c, '#ea580c', 'G');
+
+        const six = [[A, N], [N, B], [B, L], [L, C], [C, M], [M, A]].map(([p, q]) => area(p, q, c).toFixed(0));
+        output.textContent =
+          `AG : GL = ${(G.dist(A, c) / G.dist(c, L)).toFixed(2)} : 1\n` +
+          `BG : GM = ${(G.dist(B, c) / G.dist(c, M)).toFixed(2)} : 1\n` +
+          `CG : GN = ${(G.dist(C, c) / G.dist(c, N)).toFixed(2)} : 1\n` +
+          `six small areas: ${six.join(', ')}`;
+      },
+    });
+  })();
+</script>

@@ -1,0 +1,144 @@
+<!-- tags: Geometry -->
+<!-- =====================================================================
+     NOTE: Incenter and Angle Bisectors (内心・内接円)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     draggable-point helper static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Geometry">Incenter & Angle Bisectors (内心・内接円)</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>One circle touching all three sides</h2>
+    <p>Every point on the bisector of an angle is the same distance from the two sides of that angle.</p>
+    <p>The three angle bisectors of a triangle meet at one point $I$, the <strong>incenter</strong>. $I$ is the same distance $r$ from all three
+      <strong>sides</strong>, so the circle with centre $I$ and radius $r$ (the <strong>incircle</strong>) touches every side.</p>
+  </section>
+
+  <!-- FORMULA: inradius and tangent lengths -->
+  <div class="note-formula">
+    <h3>Inradius from the area</h3>
+    <div class="formula-main">$$S = \frac{1}{2}\, r\,(a + b + c)$$</div>
+    <p class="symbols">$S$: area of the triangle. Split it into $\triangle IBC$, $\triangle ICA$, $\triangle IAB$, each with height $r$.</p>
+  </div>
+
+  <div class="note-formula">
+    <h3>Angle at the incenter</h3>
+    <div class="formula-main">$$\angle BIC = 90° + \frac{\angle A}{2}$$</div>
+    <p class="symbols">Because $\angle IBC + \angle ICB = \dfrac{\angle B + \angle C}{2} = \dfrac{180° - \angle A}{2}$.</p>
+  </div>
+
+  <!-- PROOF: why the three bisectors meet -->
+  <div class="note-proof">
+    <ol>
+      <li>Let the bisectors of $\angle A$ and $\angle B$ meet at $I$.</li>
+      <li>$I$ on the bisector of $\angle A$: same distance from $AB$ and $AC$. On the bisector of $\angle B$: same distance from $BA$ and $BC$.</li>
+      <li>So $I$ is the same distance from $CA$ and $CB$, which puts it on the bisector of $\angle C$. All three meet at $I$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: drag the corners; code at the bottom -->
+  <div class="note-demo">
+    <h2>Drag the corners</h2>
+    <canvas id="icCanvas"></canvas>
+    <div class="output table-text" id="icOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">$I$ is the incenter of $\triangle ABC$ and $\angle A = 70°$. Find $\angle BIC$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\angle B + \angle C = 110°$, so $\angle IBC + \angle ICB = 55°$</li>
+        <li>$\angle BIC = 180° - 55°$</li>
+      </ol>
+      <p class="answer">$125°$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find the inradius of the right triangle with sides 3, 4, 5.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Area $S = \dfrac{1}{2} \times 3 \times 4 = 6$</li>
+        <li>$6 = \dfrac{1}{2}\, r\, (3 + 4 + 5) = 6r$</li>
+      </ol>
+      <p class="answer">$r = 1$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">In $\triangle ABC$, $AB = 5$, $BC = 6$, $CA = 7$. The incircle touches $BC$ at $D$. Find $BD$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The two tangents from one corner are equal. Call them $x$ (from $A$), $y$ (from $B$), $z$ (from $C$).</li>
+        <li>$x + y = 5$, $\;y + z = 6$, $\;z + x = 7$. Adding: $x + y + z = 9$.</li>
+        <li>$BD = y = 9 - (z + x) = 9 - 7$</li>
+      </ol>
+      <p class="answer">$BD = 2$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: incenter vs circumcenter -->
+  <div class="note-warning">
+    Don't mix them up. <strong>Incenter</strong>: angle bisectors, equal distance to the <strong>sides</strong>, always inside.
+    <strong>Circumcenter</strong>: perpendicular bisectors, equal distance to the <strong>corners</strong>.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Incenter = where the angle bisectors meet; equal distance $r$ to all sides.</li>
+      <li>$S = \dfrac{1}{2} r (a + b + c)$.</li>
+      <li>$\angle BIC = 90° + \dfrac{\angle A}{2}$.</li>
+      <li>Tangents from the same corner are equal.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Drag the corners" demo (the TRY IT block above).
+  // Finds the incenter I, draws the angle bisectors and the incircle, and
+  // checks S = r(a + b + c)/2 and the angle BIC formula.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const G = window.NoteGeom;
+    const output = document.getElementById('icOutput');
+
+    G.board(document.getElementById('icCanvas'), {
+      points: { A: [200, 50], B: [70, 290], C: [450, 290] },
+      draw(g, P) {
+        const { A, B, C } = P;
+        const area = Math.abs(G.cross(A, B, C)) / 2;
+        if (area < 1) { output.textContent = 'The three points are in a line.'; return; }
+
+        const I = G.incenter(A, B, C);
+        const touch = [G.foot(I, B, C), G.foot(I, C, A), G.foot(I, A, B)];
+        const r = G.dist(I, touch[0]);
+
+        g.poly([A, B, C]);
+        g.circle(I, r, '#0d9488', { fill: 'rgba(13, 148, 136, 0.08)' });
+        g.seg(A, B); g.seg(B, C); g.seg(C, A);
+        [A, B, C].forEach((p) => g.seg(p, I, '#7c3aed', { width: 1.5 }));
+        touch.forEach((t) => g.seg(I, t, '#0d9488', { dash: true, width: 1.5 }));
+        g.dot(I, '#0d9488', 'I');
+
+        const a = G.dist(B, C), b = G.dist(C, A), c = G.dist(A, B);
+        output.textContent =
+          `r = ${r.toFixed(1)}   (same distance to all three sides)\n` +
+          `area = ${area.toFixed(0)},  r(a + b + c)/2 = ${(r * (a + b + c) / 2).toFixed(0)}\n` +
+          `∠BIC = ${G.angle(I, B, C).toFixed(1)}°,  90° + ∠A/2 = ${(90 + G.angle(A, B, C) / 2).toFixed(1)}°`;
+      },
+    });
+  })();
+</script>

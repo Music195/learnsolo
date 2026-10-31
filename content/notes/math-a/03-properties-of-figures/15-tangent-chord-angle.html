@@ -1,0 +1,135 @@
+<!-- tags: Geometry -->
+<!-- =====================================================================
+     NOTE: Angle Between a Tangent and a Chord (接弦定理)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     draggable-point helper static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Geometry">Angle Between Tangent and Chord</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>The tangent angle acts like an inscribed angle</h2>
+    <p>Draw the tangent at $A$ and a chord $AB$. The angle between them (on one side of $AB$) is equal to the inscribed angle $\angle ACB$
+      for any point $C$ on the arc on the <strong>other</strong> side of $AB$.</p>
+    <p>Think of it as an inscribed angle whose corner $C$ has slid all the way round to $A$.</p>
+  </section>
+
+  <!-- FORMULA: tangent-chord theorem -->
+  <div class="note-formula">
+    <h3>Tangent–chord angle</h3>
+    <div class="formula-main">$$\angle BAT = \angle ACB$$</div>
+    <p class="symbols">$AT$: tangent at $A$. $C$: on the arc $AB$ that is not inside $\angle BAT$.</p>
+  </div>
+
+  <!-- PROOF: diameter through A -->
+  <div class="note-proof">
+    <ol>
+      <li>Draw the diameter $AD$. The tangent is perpendicular to it: $\angle DAT = 90°$, so $\angle BAT = 90° - \angle DAB$.</li>
+      <li>$AD$ is a diameter, so $\angle ABD = 90°$, and in $\triangle ABD$: $\angle ADB = 90° - \angle DAB$.</li>
+      <li>So $\angle BAT = \angle ADB$, and $\angle ADB = \angle ACB$ (same arc $AB$).</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: drag points round the circle; code at the bottom -->
+  <div class="note-demo">
+    <h2>Drag $A$, $B$ or $C$ round the circle</h2>
+    <canvas id="tcCanvas"></canvas>
+    <div class="output table-text" id="tcOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">$\triangle ABC$ is inscribed in a circle and $AT$ is the tangent at $A$. The angle between $AT$ and $AB$ (on the side away from $C$) is $65°$, and $\angle BAC = 45°$. Find $\angle ACB$ and $\angle ABC$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Tangent–chord: $\angle ACB = 65°$</li>
+        <li>$\angle ABC = 180° - 45° - 65°$</li>
+      </ol>
+      <p class="answer">$\angle ACB = 65°$, $\angle ABC = 70°$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Tangents from $P$ touch the circle at $A$ and $B$, with $\angle APB = 80°$. $C$ is on the larger arc $AB$. Find $\angle ACB$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$PA = PB$, so $\angle PAB = \dfrac{180° - 80°}{2} = 50°$.</li>
+        <li>$\angle PAB$ is a tangent–chord angle, so $\angle ACB = \angle PAB$.</li>
+      </ol>
+      <p class="answer">$\angle ACB = 50°$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">In Example 2, let $D$ be on the smaller arc $AB$. Find $\angle ADB$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$ACBD$ is a cyclic quadrilateral with $C$, $D$ opposite.</li>
+        <li>$\angle ADB = 180° - 50°$</li>
+      </ol>
+      <p class="answer">$\angle ADB = 130°$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: which side -->
+  <div class="note-warning">
+    The tangent makes two angles with $AB$ (one on each side). Each one equals the inscribed angle on the arc <strong>across</strong> the chord from it.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Angle between tangent and chord = inscribed angle on the other side of the chord.</li>
+      <li>Proof: draw the diameter through the touching point.</li>
+      <li>Often combined with equal tangents (isosceles triangle $PAB$).</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Drag A, B or C" demo (the TRY IT block above).
+  // Draws the tangent at A, picks the tangent direction on the side of AB away
+  // from C, and compares that angle with the inscribed angle ACB.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const G = window.NoteGeom;
+    const output = document.getElementById('tcOutput');
+    const O = [260, 180], R = 120;
+    const keep = (p) => G.onCircle(p, O, R);
+    const at = (deg) => [O[0] + R * Math.cos(deg * Math.PI / 180), O[1] - R * Math.sin(deg * Math.PI / 180)];
+
+    G.board(document.getElementById('tcCanvas'), {
+      points: { A: at(-90), B: at(20), C: at(150) },
+      constrain: { A: keep, B: keep, C: keep },
+      draw(g, P) {
+        const { A, B, C } = P;
+        // Tangent at A: at right angles to OA. Choose the end on the far side of AB from C.
+        const dir = [-(A[1] - O[1]), A[0] - O[0]];
+        let T = [A[0] + dir[0], A[1] + dir[1]];
+        if (G.cross(A, B, T) * G.cross(A, B, C) > 0) T = [A[0] - dir[0], A[1] - dir[1]];
+
+        g.circle(O, R, '#94a3b8');
+        g.line(A, T, '#7c3aed');
+        g.seg(A, B, '#334155'); g.seg(C, A, '#2563eb'); g.seg(C, B, '#2563eb');
+        g.arc(A, B, T, '#7c3aed', 28);
+        g.arc(C, A, B, '#2563eb', 24);
+        g.dot(G.lerp(A, T, 0.6), '#7c3aed', 'T');
+
+        output.textContent =
+          `tangent–chord ∠BAT = ${G.angle(A, B, T).toFixed(1)}°\n` +
+          `inscribed     ∠ACB = ${G.angle(C, A, B).toFixed(1)}°`;
+      },
+    });
+  })();
+</script>

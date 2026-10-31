@@ -1,0 +1,132 @@
+<!-- tags: Expressions and Proof -->
+<!-- =====================================================================
+     NOTE: Adding and Subtracting Fractional Expressions (分数式の加法・減法)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     drawing helper static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Expressions and Proof">Addition & Subtraction of Fractional Expressions</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Common denominator, then add the numerators</h2>
+    <p>As with numbers, fractions can only be added when they have the same denominator. Factorise the denominators,
+      build the lowest common denominator, then add the numerators and simplify.</p>
+    <p>Working backwards, splitting one fraction into a difference of two (<strong>partial fractions</strong>) makes long sums cancel.</p>
+  </section>
+
+  <!-- FORMULA: addition and partial fractions -->
+  <div class="note-formula">
+    <h3>Adding and splitting</h3>
+    <div class="formula-main">$$\frac{A}{C} \pm \frac{B}{C} = \frac{A \pm B}{C}, \qquad \frac{A}{B} \pm \frac{C}{D} = \frac{AD \pm BC}{BD}$$</div>
+    <div class="formula-main">$$\frac{1}{k(k + 1)} = \frac{1}{k} - \frac{1}{k + 1}$$</div>
+  </div>
+
+  <!-- DEMO: telescoping sum; code at the bottom -->
+  <div class="note-demo">
+    <h2>$\dfrac{1}{1 \cdot 2} + \dfrac{1}{2 \cdot 3} + \cdots + \dfrac{1}{n(n + 1)}$ on the number line</h2>
+    <div class="controls">
+      <label>$n$ = <input type="range" id="faN" min="1" max="12" value="4"></label>
+    </div>
+    <canvas id="faCanvas"></canvas>
+    <div class="output table-text" id="faOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Calculate $\dfrac{x + 1}{x - 1} + \dfrac{x + 2}{x + 3}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\dfrac{(x + 1)(x + 3) + (x + 2)(x - 1)}{(x - 1)(x + 3)} = \dfrac{(x^2 + 4x + 3) + (x^2 + x - 2)}{(x - 1)(x + 3)}$.</li>
+      </ol>
+      <p class="answer">$\dfrac{2x^2 + 5x + 1}{(x - 1)(x + 3)}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Calculate $\dfrac{2}{x^2 - 1} - \dfrac{1}{x^2 - x}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Factorise: $\dfrac{2}{(x - 1)(x + 1)} - \dfrac{1}{x(x - 1)}$. Common denominator $x(x - 1)(x + 1)$.</li>
+        <li>Numerator: $2x - (x + 1) = x - 1$, which cancels with the denominator.</li>
+      </ol>
+      <p class="answer">$\dfrac{1}{x(x + 1)}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Calculate $\dfrac{1}{x(x + 1)} + \dfrac{1}{(x + 1)(x + 2)} + \dfrac{1}{(x + 2)(x + 3)}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Split each one: $\left(\dfrac{1}{x} - \dfrac{1}{x + 1}\right) + \left(\dfrac{1}{x + 1} - \dfrac{1}{x + 2}\right) + \left(\dfrac{1}{x + 2} - \dfrac{1}{x + 3}\right)$.</li>
+        <li>The middle terms cancel: $\dfrac{1}{x} - \dfrac{1}{x + 3}$.</li>
+      </ol>
+      <p class="answer">$\dfrac{3}{x(x + 3)}$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: brackets when subtracting -->
+  <div class="note-warning">
+    When subtracting, put the whole second numerator in brackets: $\dfrac{2x - (x + 1)}{\cdots}$, not $\dfrac{2x - x + 1}{\cdots}$.
+  </div>
+
+  <!-- TIP: lowest common denominator -->
+  <div class="note-tip">
+    Factorise the denominators first and use each factor once (Example 2 uses $x(x - 1)(x + 1)$, not $(x^2 - 1)(x^2 - x)$). The working stays smaller.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Factorise denominators → lowest common denominator → add numerators → simplify.</li>
+      <li>$\dfrac{1}{k(k + 1)} = \dfrac{1}{k} - \dfrac{1}{k + 1}$: sums of these cancel in a chain.</li>
+      <li>Brackets round the numerator you subtract.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Number line" demo (the TRY IT block above).
+  // The piece from 1/(k + 1) to 1/k has length 1/k − 1/(k + 1) = 1/(k(k + 1)).
+  // Laying the n pieces side by side covers 1/(n + 1) to 1, so the sum is n/(n + 1).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const nBox = document.getElementById('faN');
+    const output = document.getElementById('faOutput');
+    const L = 30, R = 490, X = (v) => L + v * (R - L); // 0 → L, 1 → R
+    const colors = ['#2563eb', '#0d9488', '#ea580c', '#7c3aed'];
+
+    const board = NoteGeom.board(document.getElementById('faCanvas'), {
+      points: {},
+      draw(g) {
+        const n = +nBox.value;
+        g.seg([L, 200], [R, 200], '#64748b');
+        g.text([X(0), 222], '0'); g.text([X(1), 222], '1');
+        for (let k = 1; k <= n; k++) {
+          const a = X(1 / (k + 1)), b = X(1 / k);
+          g.poly([[a, 150], [b, 150], [b, 190], [a, 190]], colors[k % 4]);
+          if (b - a > 40) g.text([(a + b) / 2, 132], `1/${k * (k + 1)}`, colors[k % 4]);
+          if (k <= 2 || k === n) g.text([a, 222], `1/${k + 1}`, '#64748b'); // skip labels that would overlap
+        }
+        g.seg([X(1 / (n + 1)), 260], [X(1), 260], '#0f172a', { width: 2 });
+        g.text([(X(1 / (n + 1)) + X(1)) / 2, 280], `total = 1 − 1/${n + 1} = ${n}/${n + 1}`);
+        const terms = [];
+        for (let k = 1; k <= Math.min(n, 4); k++) terms.push(`(1/${k} − 1/${k + 1})`);
+        output.textContent =
+          `sum = ${terms.join(' + ')}${n > 4 ? ' + …' : ''}\n` +
+          `    = 1 − 1/${n + 1} = ${n}/${n + 1}`;
+      },
+    });
+    nBox.addEventListener('input', board.redraw);
+  })();
+</script>

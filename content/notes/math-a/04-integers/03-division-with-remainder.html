@@ -1,0 +1,179 @@
+<!-- tags: Others -->
+<!-- =====================================================================
+     NOTE: Integer Division
+     Uses the shared blocks from static/css/note-blocks.css.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Others">Integer Division</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Quotient and remainder</h2>
+    <p>Dividing $17$ by $5$: $5$ fits into $17$ three times ($15$), with $2$ left over. So the quotient is $3$ and the remainder is $2$:</p>
+    <p>$$17 = 5 \times 3 + 2$$</p>
+    <p>This works for every integer, including negative ones, as long as the remainder is kept between $0$ and $b - 1$.</p>
+  </section>
+
+  <!-- FORMULA: the division theorem -->
+  <div class="note-formula">
+    <h3>Division with remainder</h3>
+    <div class="formula-main">$$a = bq + r, \qquad 0 \le r &lt; b$$</div>
+    <p class="symbols">
+      $a$ = number being divided (any integer)<br>
+      $b$ = divisor (a positive integer)<br>
+      $q$ = quotient, $\;r$ = remainder<br>
+      For each $a$ and $b$ there is exactly one such pair $q, r$.
+    </p>
+  </div>
+
+  <!-- WARNING: negative numbers -->
+  <div class="note-warning">
+    The remainder is <strong>never negative</strong>. Dividing $-17$ by $5$: $-17 = 5 \times (-3) - 2$ is <strong>not</strong> allowed
+    ($r = -2$). Go one step further: $-17 = 5 \times (-4) + 3$, so $q = -4$, $r = 3$.
+  </div>
+
+  <!-- DEMO: quotient and remainder with a picture; code at the bottom -->
+  <div class="note-demo">
+    <h2>Quotient and remainder calculator</h2>
+    <div class="controls">
+      <label>$a$ <input type="number" id="idA" value="17"></label>
+      <label>$b$ <input type="number" id="idB" value="5" min="1"></label>
+    </div>
+    <canvas id="idCanvas" width="520" height="120"></canvas>
+    <div class="output table-text" id="idOutput"></div>
+  </div>
+
+  <!-- CONCEPT: grouping integers by remainder -->
+  <section class="note-concept">
+    <h2>Every integer has a remainder type</h2>
+    <p>Divided by $b$, every integer leaves one of the remainders $0, 1, \dots, b - 1$. So every integer can be written in exactly one of $b$ forms.
+      For $b = 3$:</p>
+    <p>$$3k, \qquad 3k + 1, \qquad 3k + 2 \qquad (k \text{ an integer})$$</p>
+    <p>Checking each form separately is a standard way to prove facts about all integers (see Example 3).</p>
+  </section>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find the quotient and remainder when $-23$ is divided by $6$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Find the largest multiple of $6$ that is $\le -23$: $6 \times (-4) = -24$</li>
+        <li>$-23 = 6 \times (-4) + 1$, and $0 \le 1 &lt; 6$ ✔</li>
+      </ol>
+      <p class="answer">$q = -4$, $\;r = 1$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">When $a$ is divided by $7$ the remainder is $3$. Find the remainder when $2a + 5$ is divided by $7$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Write $a = 7k + 3$</li>
+        <li>$2a + 5 = 14k + 11 = 7(2k + 1) + 4$</li>
+      </ol>
+      <p class="answer">Remainder $4$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Show that $n^2$ divided by $3$ always leaves remainder $0$ or $1$ (never $2$).</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$n = 3k$: $\;n^2 = 9k^2 = 3(3k^2)$, remainder $0$</li>
+        <li>$n = 3k + 1$: $\;n^2 = 9k^2 + 6k + 1 = 3(3k^2 + 2k) + 1$, remainder $1$</li>
+        <li>$n = 3k + 2$: $\;n^2 = 9k^2 + 12k + 4 = 3(3k^2 + 4k + 1) + 1$, remainder $1$</li>
+      </ol>
+      <p class="answer">Every integer has one of these three forms, so the remainder is always $0$ or $1$.</p>
+    </details>
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$a = bq + r$ with $0 \le r &lt; b$; $q$ and $r$ are unique.</li>
+      <li>For negative $a$, the quotient goes down so the remainder stays $\ge 0$.</li>
+      <li>Split integers by remainder ($3k, 3k+1, 3k+2$) to prove things about all of them.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script>
+  // Quotient and remainder calculator (the TRY IT block above).
+  // Shows a = bq + r and draws a number line with jumps of size b.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const aInput = document.getElementById('idA');
+    const bInput = document.getElementById('idB');
+    const canvas = document.getElementById('idCanvas');
+    const ctx = canvas.getContext('2d');
+    const output = document.getElementById('idOutput');
+
+    // Draws 0 → bq in jumps of b (blue), then the remainder r (orange)
+    function drawNumberLine(a, b, q, r) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const lo = Math.min(0, b * q), hi = Math.max(0, a);
+      const scale = (canvas.width - 60) / Math.max(hi - lo, 1);
+      const x = (v) => 30 + (v - lo) * scale;
+      const y = 70;
+
+      // Axis
+      ctx.strokeStyle = '#475569';
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(10, y); ctx.lineTo(canvas.width - 10, y); ctx.stroke();
+
+      // One arc per jump of b (skip drawing if there are too many to see)
+      const step = q >= 0 ? 1 : -1;
+      if (Math.abs(q) <= 40) {
+        ctx.strokeStyle = '#2563eb';
+        for (let i = 0; i !== q; i += step) {
+          const from = x(i * b), to = x((i + step) * b);
+          ctx.beginPath();
+          ctx.arc((from + to) / 2, y, Math.abs(to - from) / 2, Math.PI, 0);
+          ctx.stroke();
+        }
+      }
+
+      // Remainder: thick orange segment from bq to a
+      ctx.strokeStyle = '#ea580c';
+      ctx.lineWidth = 6;
+      ctx.beginPath(); ctx.moveTo(x(b * q), y); ctx.lineTo(x(a), y); ctx.stroke();
+
+      // Labels for 0, bq and a
+      ctx.fillStyle = '#0f172a';
+      ctx.font = '14px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('0', x(0), y + 22);
+      if (b * q !== 0) ctx.fillText(`${b * q}`, x(b * q), y + 22);
+      if (a !== b * q) ctx.fillText(`${a}`, x(a), y + 40);
+    }
+
+    function update() {
+      const a = parseInt(aInput.value, 10);
+      const b = parseInt(bInput.value, 10);
+      if (isNaN(a) || isNaN(b) || b < 1) {
+        output.textContent = 'Please enter an integer a and a positive integer b.';
+        return;
+      }
+
+      // Math.floor rounds down even for negatives, which keeps 0 ≤ r < b
+      const q = Math.floor(a / b);
+      const r = a - b * q;
+
+      drawNumberLine(a, b, q, r);
+      output.textContent = `${a} = ${b} × (${q}) + ${r}\nquotient q = ${q}, remainder r = ${r}`;
+    }
+
+    aInput.addEventListener('input', update);
+    bInput.addEventListener('input', update);
+    update(); // show the default numbers straight away
+  })();
+</script>

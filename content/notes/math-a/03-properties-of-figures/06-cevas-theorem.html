@@ -1,0 +1,131 @@
+<!-- tags: Geometry -->
+<!-- =====================================================================
+     NOTE: Ceva's Theorem (チェバの定理)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     draggable-point helper static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Geometry">Ceva's Theorem (チェバの定理)</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Three lines through one point</h2>
+    <p>Pick a point $P$ inside $\triangle ABC$. The lines $AP$, $BP$, $CP$ hit the opposite sides at $D$ (on $BC$), $E$ (on $CA$) and $F$ (on $AB$).</p>
+    <p>Walk round the triangle $A \to F \to B \to D \to C \to E \to A$ and multiply the ratios of the pieces. You always get exactly 1.</p>
+  </section>
+
+  <!-- FORMULA: Ceva -->
+  <div class="note-formula">
+    <h3>Ceva's theorem</h3>
+    <div class="formula-main">$$\frac{AF}{FB} \cdot \frac{BD}{DC} \cdot \frac{CE}{EA} = 1$$</div>
+    <p class="symbols">Converse: if $D$, $E$, $F$ are on the sides and the product is 1, then $AD$, $BE$, $CF$ meet at one point.</p>
+  </div>
+
+  <!-- PROOF: area ratios -->
+  <div class="note-proof">
+    <ol>
+      <li>$\triangle APC$ and $\triangle BPC$ share the side $PC$. Their heights to line $PC$ are in the ratio $AF : FB$, so
+        $\dfrac{AF}{FB} = \dfrac{\triangle APC}{\triangle BPC}$.</li>
+      <li>In the same way, $\dfrac{BD}{DC} = \dfrac{\triangle APB}{\triangle APC}$ and $\dfrac{CE}{EA} = \dfrac{\triangle BPC}{\triangle APB}$.</li>
+      <li>Multiply: every area cancels, leaving 1.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: drag P and the corners; code at the bottom -->
+  <div class="note-demo">
+    <h2>Drag $P$ (or the corners)</h2>
+    <canvas id="cvCanvas"></canvas>
+    <div class="output table-text" id="cvOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">$AD$, $BE$, $CF$ meet at one point inside $\triangle ABC$. $AF : FB = 2 : 3$ and $BD : DC = 4 : 5$. Find $CE : EA$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\dfrac{2}{3} \cdot \dfrac{4}{5} \cdot \dfrac{CE}{EA} = 1$</li>
+        <li>$\dfrac{CE}{EA} = \dfrac{15}{8}$</li>
+      </ol>
+      <p class="answer">$CE : EA = 15 : 8$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">In $\triangle ABC$, $D$ is on $BC$ with $BD : DC = 2 : 1$, and $E$ is the midpoint of $CA$. $AD$ and $BE$ meet at $P$, and $CP$ meets $AB$ at $F$. Find $AF : FB$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\dfrac{AF}{FB} \cdot \dfrac{2}{1} \cdot \dfrac{1}{1} = 1$</li>
+      </ol>
+      <p class="answer">$AF : FB = 1 : 2$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Use Ceva's theorem to show that the three angle bisectors of a triangle meet at one point.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>With $a = BC$, $b = CA$, $c = AB$, the angle bisector theorem gives
+          $\dfrac{AF}{FB} = \dfrac{b}{a}$, $\;\dfrac{BD}{DC} = \dfrac{c}{b}$, $\;\dfrac{CE}{EA} = \dfrac{a}{c}$.</li>
+        <li>Product: $\dfrac{b}{a} \cdot \dfrac{c}{b} \cdot \dfrac{a}{c} = 1$</li>
+      </ol>
+      <p class="answer">By the converse of Ceva, the bisectors meet at one point (the incenter).</p>
+    </details>
+  </div>
+
+  <!-- TIP: the walking order -->
+  <div class="note-tip">
+    To get the order right, start at a corner and walk round the triangle: <strong>corner → point on side → corner → …</strong>
+    Each fraction is "the piece you just walked" over "the next piece".
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Lines from the corners through one point: $\dfrac{AF}{FB} \cdot \dfrac{BD}{DC} \cdot \dfrac{CE}{EA} = 1$.</li>
+      <li>Product 1 $\Rightarrow$ the three lines meet at one point (converse).</li>
+      <li>Proof idea: each ratio is a ratio of two triangle areas.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Drag P" demo (the TRY IT block above).
+  // Extends AP, BP, CP to the opposite sides and multiplies the three ratios.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const G = window.NoteGeom;
+    const output = document.getElementById('cvOutput');
+
+    G.board(document.getElementById('cvCanvas'), {
+      points: { A: [210, 40], B: [60, 300], C: [470, 300], P: [240, 210] },
+      draw(g, Pt) {
+        const { A, B, C, P } = Pt;
+        // P must be inside: it is on the same side of each edge as the opposite corner
+        const inside = [[A, B, C], [B, C, A], [C, A, B]].every(([p, q, r]) => G.cross(p, q, P) * G.cross(p, q, r) > 0);
+
+        g.poly([A, B, C]);
+        g.seg(A, B); g.seg(B, C); g.seg(C, A);
+        if (!inside) { output.textContent = 'Keep P inside the triangle.'; return; }
+
+        const D = G.intersect(A, P, B, C), E = G.intersect(B, P, C, A), F = G.intersect(C, P, A, B);
+        [[A, D], [B, E], [C, F]].forEach(([p, q]) => g.seg(p, q, '#7c3aed', { width: 1.5 }));
+        g.dot(D, '#0d9488', 'D'); g.dot(E, '#0d9488', 'E'); g.dot(F, '#0d9488', 'F');
+
+        const r1 = G.dist(A, F) / G.dist(F, B), r2 = G.dist(B, D) / G.dist(D, C), r3 = G.dist(C, E) / G.dist(E, A);
+        output.textContent =
+          `AF/FB = ${r1.toFixed(3)}\nBD/DC = ${r2.toFixed(3)}\nCE/EA = ${r3.toFixed(3)}\n` +
+          `product = ${(r1 * r2 * r3).toFixed(3)}`;
+      },
+    });
+  })();
+</script>

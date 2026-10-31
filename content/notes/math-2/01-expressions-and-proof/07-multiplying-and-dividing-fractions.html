@@ -1,0 +1,146 @@
+<!-- tags: Expressions and Proof -->
+<!-- =====================================================================
+     NOTE: Multiplying and Dividing Fractional Expressions (分数式の乗法・除法)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Expressions and Proof">Multiplication & Division of Fractional Expressions</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Factorise, then cancel factors</h2>
+    <p>Fractional expressions follow the rules for ordinary fractions. Factorise every numerator and denominator first; then cancel
+      <strong>factors</strong> that appear above and below. To divide, multiply by the reciprocal.</p>
+    <p>A fraction is undefined where its denominator is $0$. Those $x$ values stay excluded even after cancelling.</p>
+  </section>
+
+  <!-- FORMULA: multiplication and division -->
+  <div class="note-formula">
+    <h3>Rules</h3>
+    <div class="formula-main">$$\frac{A}{B} \times \frac{C}{D} = \frac{AC}{BD}, \qquad \frac{A}{B} \div \frac{C}{D} = \frac{A}{B} \times \frac{D}{C} = \frac{AD}{BC}$$</div>
+    <p class="symbols">$\dfrac{AC}{BC} = \dfrac{A}{B}$ (cancelling the common factor $C \ne 0$).</p>
+  </div>
+
+  <!-- DEMO: graph with holes; code at the bottom -->
+  <div class="note-demo">
+    <h2>$y = \dfrac{x^2 - 4}{x^2 - 9} \times \dfrac{x + 3}{x - 2}$ is $\dfrac{x + 2}{x - 3}$ with two holes. Drag $P$.</h2>
+    <canvas id="fmCanvas"></canvas>
+    <div class="output table-text" id="fmOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Simplify $\dfrac{x^2 - 4}{x^2 - 9} \times \dfrac{x + 3}{x - 2}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\dfrac{(x - 2)(x + 2)}{(x - 3)(x + 3)} \times \dfrac{x + 3}{x - 2}$.</li>
+        <li>Cancel $x - 2$ and $x + 3$.</li>
+      </ol>
+      <p class="answer">$\dfrac{x + 2}{x - 3}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Simplify $\dfrac{x^2 - 1}{x + 2} \div \dfrac{x - 1}{x}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\dfrac{(x - 1)(x + 1)}{x + 2} \times \dfrac{x}{x - 1}$.</li>
+        <li>Cancel $x - 1$.</li>
+      </ol>
+      <p class="answer">$\dfrac{x(x + 1)}{x + 2}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Simplify $\dfrac{x^2 + x - 2}{x^2 - 3x} \times \dfrac{x^2 - 9}{x^2 + 5x + 6}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\dfrac{(x + 2)(x - 1)}{x(x - 3)} \times \dfrac{(x + 3)(x - 3)}{(x + 2)(x + 3)}$.</li>
+        <li>Cancel $x + 2$, $x - 3$, $x + 3$.</li>
+      </ol>
+      <p class="answer">$\dfrac{x - 1}{x}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Simplify the complex fraction $\dfrac{1 - \frac{1}{x}}{x - \frac{1}{x}}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Multiply top and bottom by $x$: $\dfrac{x - 1}{x^2 - 1} = \dfrac{x - 1}{(x - 1)(x + 1)}$.</li>
+      </ol>
+      <p class="answer">$\dfrac{1}{x + 1}$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: cancel factors, not terms -->
+  <div class="note-warning">
+    Cancel <strong>factors</strong>, never single terms: $\dfrac{x + 2}{x + 3}$ cannot be simplified by "cancelling the $x$".
+  </div>
+
+  <!-- TIP: factorise first -->
+  <div class="note-tip">
+    Factorise everything before multiplying. Multiplying out first makes the cancelling much harder.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Factorise, cancel common factors, then multiply.</li>
+      <li>Division: multiply by the reciprocal.</li>
+      <li>Values that made any denominator $0$ stay excluded.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Two holes" demo (the TRY IT block above).
+  // Plots the simplified form (x + 2)/(x − 3); the original product is
+  // undefined at x = −3 and x = 2, shown as open circles. P follows the curve.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const output = document.getElementById('fmOutput');
+    const simple = (x) => (x + 2) / (x - 3);
+    const original = (x) => (x * x - 4) / (x * x - 9) * (x + 3) / (x - 2);
+    // keep P on screen: y stays within −6…8 for x ≤ 16/7 or x ≥ 26/7
+    const onCurve = ([x]) => {
+      let t = Math.max(-6, Math.min(8, x));
+      if (t > 16 / 7 && t < 26 / 7) t = t < 3 ? 16 / 7 : 26 / 7;
+      return [t, simple(t)];
+    };
+    const f = (v) => (Number.isFinite(v) ? (+v.toFixed(4)).toString() : 'undefined');
+
+    NotePlot.graph(document.getElementById('fmCanvas'), {
+      x: [-6, 8], y: [-6, 8],
+      points: { P: [0, simple(0)] },
+      constrain: { P: onCurve },
+      draw(g, Pt) {
+        g.vline(3);
+        g.hline(1);
+        g.fn(simple, '#2563eb', { to: 2.99 });
+        g.fn(simple, '#2563eb', { from: 3.01 });
+        g.hollow([-3, simple(-3)], '#ea580c');
+        g.hollow([2, simple(2)], '#ea580c');
+        const x = Pt.P[0];
+        output.textContent =
+          `x = ${x.toFixed(2)}\n` +
+          `original product = ${f(original(x))}\n` +
+          `(x + 2)/(x − 3)  = ${f(simple(x))}\n` +
+          `holes at x = −3 and x = 2 (denominators of the original are 0 there)`;
+      },
+    });
+  })();
+</script>

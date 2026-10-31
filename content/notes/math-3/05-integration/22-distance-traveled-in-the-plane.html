@@ -1,0 +1,171 @@
+<!-- tags: Integration -->
+<!-- =====================================================================
+     NOTE: Distance Travelled on the Coordinate Plane (平面上の点の移動距離)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Integration">Distance Traveled On the Coordinate Plane</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Add up the speed over time</h2>
+    <p>A point moves with $x = f(t)$, $y = g(t)$. Its speed is the length of the velocity vector, $|\vec{v}| = \sqrt{(x')^2 + (y')^2}$ (Applied Differentiation note 10).</p>
+    <p>Distance is speed × time for each small time step. Integrating the speed gives the total distance travelled along the path. This is usually more than the straight-line distance between the start and the end.</p>
+  </section>
+
+  <!-- FORMULA: distance travelled -->
+  <div class="note-formula">
+    <h3>From $t = a$ to $t = b$</h3>
+    <div class="formula-main">$$\text{distance} = \int_a^b |\vec{v}|\,dt = \int_a^b \sqrt{\left(\frac{dx}{dt}\right)^2 + \left(\frac{dy}{dt}\right)^2}\,dt$$</div>
+    <p class="symbols">The position at time $b$ is $\left(x(a) + \displaystyle\int_a^b x'\,dt,\; y(a) + \int_a^b y'\,dt\right)$, where each coordinate is integrated separately.</p>
+  </div>
+
+  <!-- PROOF: small steps -->
+  <div class="note-proof">
+    <ol>
+      <li>In a short time $\Delta t$ the point moves $\Delta x \approx x'\Delta t$ and $\Delta y \approx y'\Delta t$.</li>
+      <li>By Pythagoras that step has length $\sqrt{\Delta x^2 + \Delta y^2} \approx \sqrt{x'^2 + y'^2}\,\Delta t$.</li>
+      <li>Adding the steps and letting $\Delta t \to 0$ gives the integral.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: path travelled so far; code at the bottom -->
+  <div class="note-demo">
+    <h2>Distance along the path (dark blue) vs straight-line distance (dashed)</h2>
+    <div class="controls">
+      <label>motion <select id="dpP">
+        <option value="0">circle (2cos t, 2sin t)</option>
+        <option value="1">cycloid (t − sin t, 1 − cos t)</option>
+        <option value="2">astroid (2cos³t, 2sin³t)</option>
+      </select></label>
+      <label>time = <input type="range" id="dpT" min="0" max="1" step="0.005" value="0.4"></label>
+    </div>
+    <canvas id="dpCanvas"></canvas>
+    <div class="output table-text" id="dpOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">P moves with $(x, y) = (3\cos t, 3\sin t)$. Find the distance travelled from $t = 0$ to $t = \pi$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$|\vec{v}| = \sqrt{9\sin^2 t + 9\cos^2 t} = 3$.</li>
+        <li>$\displaystyle\int_0^{\pi} 3\,dt$</li>
+      </ol>
+      <p class="answer">$3\pi$ (half the circumference), though P ends only $6$ away from its start</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">P moves with $(x, y) = (t - \sin t, 1 - \cos t)$. Find the distance travelled from $t = 0$ to $t = 2\pi$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$|\vec{v}|^2 = (1 - \cos t)^2 + \sin^2 t = 2 - 2\cos t = 4\sin^2\dfrac{t}{2}$.</li>
+        <li>On $[0, 2\pi]$, $\sin\dfrac{t}{2} \ge 0$, so $|\vec{v}| = 2\sin\dfrac{t}{2}$.</li>
+        <li>$\displaystyle\int_0^{2\pi} 2\sin\frac{t}{2}\,dt = \Big[-4\cos\frac{t}{2}\Big]_0^{2\pi} = 4 + 4$</li>
+      </ol>
+      <p class="answer">$8$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">P moves with $(x, y) = (e^t\cos t, e^t\sin t)$. Find the distance travelled from $t = 0$ to $t = 1$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$x' = e^t(\cos t - \sin t)$, $y' = e^t(\sin t + \cos t)$.</li>
+        <li>$x'^2 + y'^2 = e^{2t}\{(\cos t - \sin t)^2 + (\sin t + \cos t)^2\} = 2e^{2t}$, so $|\vec{v}| = \sqrt{2}e^t$.</li>
+        <li>$\displaystyle\int_0^1 \sqrt{2}e^t\,dt$</li>
+      </ol>
+      <p class="answer">$\sqrt{2}(e - 1)$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">P starts at $(0, 0)$ with velocity $\vec{v} = (2t, 3t^2)$. Find its position and the distance travelled at $t = 2$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Position: $\left(\displaystyle\int_0^2 2t\,dt, \int_0^2 3t^2\,dt\right) = (4, 8)$.</li>
+        <li>$|\vec{v}| = \sqrt{4t^2 + 9t^4} = t\sqrt{4 + 9t^2}$ for $t \ge 0$.</li>
+        <li>Put $u = 4 + 9t^2$, $du = 18t\,dt$: $\displaystyle\frac{1}{18}\int_4^{40} \sqrt{u}\,du = \frac{1}{27}\left(40\sqrt{40} - 8\right)$.</li>
+      </ol>
+      <p class="answer">Position $(4, 8)$; distance $\dfrac{80\sqrt{10} - 8}{27} \approx 9.07$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: speed, not coordinates -->
+  <div class="note-warning">
+    Distance travelled is <strong>not</strong> $\int x'\,dt + \int y'\,dt$, and it is not the straight-line distance between the start and the end.
+    Integrate the length $\sqrt{x'^2 + y'^2}$, and take the square root of a perfect square with its correct sign.
+  </div>
+
+  <!-- TIP: simplify inside the root -->
+  <div class="note-tip">
+    Expand $x'^2 + y'^2$ and look for $\sin^2 + \cos^2 = 1$ or a perfect square. Most textbook problems are designed so the square root comes out cleanly.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Distance $= \int_a^b \sqrt{x'^2 + y'^2}\,dt$.</li>
+      <li>Position: integrate $x'$ and $y'$ separately.</li>
+      <li>$1 - \cos t = 2\sin^2\frac{t}{2}$ is the key step for cycloids.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Path travelled" demo (the TRY IT block above).
+  // The whole path is light blue, the part travelled so far is dark blue, and the
+  // dashed segment joins the start to P. The distance travelled is the integral of
+  // the speed, found here with thin time steps.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const pBox = document.getElementById('dpP'), tBox = document.getElementById('dpT');
+    const output = document.getElementById('dpOutput');
+    const f3 = (v) => +v.toFixed(3);
+    const T1 = 2 * Math.PI;
+
+    // each motion: position r(t) and velocity v(t) for 0 ≤ t ≤ 2π (the cycloid is shifted to fit)
+    const PATHS = [
+      { r: (t) => [2 * Math.cos(t), 2 * Math.sin(t)], v: (t) => [-2 * Math.sin(t), 2 * Math.cos(t)] },
+      { r: (t) => [t - Math.sin(t) - Math.PI, 1 - Math.cos(t) - 1], v: (t) => [1 - Math.cos(t), Math.sin(t)] },
+      { r: (t) => [2 * Math.cos(t) ** 3, 2 * Math.sin(t) ** 3], v: (t) => [-6 * Math.cos(t) ** 2 * Math.sin(t), 6 * Math.sin(t) ** 2 * Math.cos(t)] },
+    ];
+
+    const plot = NotePlot.graph(document.getElementById('dpCanvas'), {
+      x: [-3.875, 3.875], y: [-2.5, 2.5],
+      draw(g) {
+        const P = PATHS[+pBox.value], T = T1 * +tBox.value;
+        for (let i = 0; i < 240; i++) g.seg(P.r(T1 * i / 240), P.r(T1 * (i + 1) / 240), '#bfdbfe', { width: 3 });
+        let dist = 0;
+        const n = 600, h = T / n;
+        for (let i = 0; i < n; i++) {
+          g.seg(P.r(i * h), P.r((i + 1) * h), '#1d4ed8', { width: 4 });
+          dist += Math.hypot(...P.v((i + 0.5) * h)) * h;
+        }
+        const A = P.r(0), B = P.r(T);
+        g.seg(A, B, '#ea580c', { dash: true, width: 2 });
+        g.dot(A, '#334155', 'start'); g.dot(B, '#1d4ed8', 'P');
+        output.textContent =
+          `t = ${f3(T)}:  speed now ${f3(Math.hypot(...P.v(T)))}\n` +
+          `distance travelled ∫|v| dt = ${f3(dist)},   straight-line distance ${f3(Math.hypot(B[0] - A[0], B[1] - A[1]))}`;
+      },
+    });
+    pBox.addEventListener('change', plot.redraw);
+    tBox.addEventListener('input', plot.redraw);
+  })();
+</script>

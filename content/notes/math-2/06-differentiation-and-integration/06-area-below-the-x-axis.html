@@ -1,0 +1,135 @@
+<!-- tags: Integration -->
+<!-- =====================================================================
+     NOTE: Definite Integral and Area (2): parts below the x-axis (定積分と面積)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Integration">Definite Integral and Area 2</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Below the axis the integral is negative</h2>
+    <p>Where $f(x) &lt; 0$, the definite integral counts the region as <strong>negative</strong>. An area can't be negative, so flip the sign there by integrating $-f(x)$.</p>
+    <p>If the curve crosses the axis, split the interval at the crossing points and handle each piece separately.</p>
+  </section>
+
+  <!-- FORMULA: below axis and crossing -->
+  <div class="note-formula">
+    <h3>Area when $f(x) \le 0$ on $a \le x \le b$</h3>
+    <div class="formula-main">$$S = \int_a^b \{-f(x)\}\,dx = -\int_a^b f(x)\,dx$$</div>
+  </div>
+
+  <div class="note-formula">
+    <h3>Curve crosses the axis at $x = c$ (below, then above)</h3>
+    <div class="formula-main">$$S = -\int_a^c f(x)\,dx + \int_c^b f(x)\,dx$$</div>
+  </div>
+
+  <!-- DEMO: drag a and b; code at the bottom -->
+  <div class="note-demo">
+    <h2>$f(x) = x^2 - 1$: drag the ends $A$ and $B$</h2>
+    <p>Blue parts count $+$, orange parts count $-$ in the integral. The area counts both as $+$.</p>
+    <canvas id="a2Canvas"></canvas>
+    <div class="output table-text" id="a2Output"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find the area enclosed by $y = x^2 - 2x$ and the $x$-axis.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$x^2 - 2x = x(x - 2)$: meets the axis at $0, 2$, below it in between.</li>
+        <li>$S = -\displaystyle\int_0^2 (x^2 - 2x)\,dx = -\Big[\dfrac{x^3}{3} - x^2\Big]_0^2 = -\left(\dfrac{8}{3} - 4\right)$</li>
+      </ol>
+      <p class="answer">$\dfrac{4}{3}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find the area between $y = x^2 - 1$, the $x$-axis, $x = 0$ and $x = 2$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Below the axis for $0 \le x \le 1$, above for $1 \le x \le 2$. With $F(x) = \dfrac{x^3}{3} - x$: $F(0) = 0$, $F(1) = -\dfrac{2}{3}$, $F(2) = \dfrac{2}{3}$.</li>
+        <li>$S = -\{F(1) - F(0)\} + \{F(2) - F(1)\} = \dfrac{2}{3} + \dfrac{4}{3}$</li>
+      </ol>
+      <p class="answer">$S = 2$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Compare $\displaystyle\int_0^2 (x^2 - 1)\,dx$ with the area in Example 2.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\displaystyle\int_0^2 (x^2 - 1)\,dx = F(2) - F(0) = \dfrac{2}{3}$.</li>
+        <li>It is the area above ($\tfrac{4}{3}$) minus the area below ($\tfrac{2}{3}$).</li>
+      </ol>
+      <p class="answer">$\dfrac{2}{3} \ne 2$: the integral is not the area here</p>
+    </details>
+  </div>
+
+  <!-- WARNING: draw it -->
+  <div class="note-warning">
+    Always sketch the graph and find where it meets the $x$-axis before calculating an area. Integrating straight across a crossing point gives the wrong answer.
+  </div>
+
+  <!-- TIP: 1/6 -->
+  <div class="note-tip">
+    Region enclosed by $y = a(x - \alpha)(x - \beta)$ and the $x$-axis: $S = \dfrac{|a|(\beta - \alpha)^3}{6}$. Example 1: $\dfrac{1 \cdot 2^3}{6} = \dfrac{4}{3}$ ✓.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Below the axis: area $= -\displaystyle\int_a^b f(x)\,dx$.</li>
+      <li>Crossing the axis: split at the crossing points.</li>
+      <li>Integral = (area above) − (area below).</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Drag the ends" demo (the TRY IT block above).
+  // Splits [a, b] at x = −1 and x = 1 (where x² − 1 = 0), then compares the
+  // signed integral with the true area.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const output = document.getElementById('a2Output');
+    const f = (x) => x * x - 1, F = (x) => x ** 3 / 3 - x;
+    const onAxis = ([x]) => [Math.max(-2, Math.min(2, Math.round(x * 2) / 2)), 0];
+
+    NotePlot.graph(document.getElementById('a2Canvas'), {
+      x: [-2.5, 2.5], y: [-1.5, 3.5],
+      points: { A: [0, 0], B: [2, 0] },
+      constrain: { A: onAxis, B: onAxis },
+      draw(g, P) {
+        const a = Math.min(P.A[0], P.B[0]), b = Math.max(P.A[0], P.B[0]);
+        const cuts = [a, ...[-1, 1].filter((c) => c > a && c < b), b];
+        let signed = 0, area = 0;
+        const pieces = [];
+        for (let i = 0; i + 1 < cuts.length; i++) {
+          const lo = cuts[i], hi = cuts[i + 1], v = F(hi) - F(lo);
+          const below = f((lo + hi) / 2) < 0;
+          g.fill(f, lo, hi, below ? 'rgba(234, 88, 12, 0.25)' : 'rgba(37, 99, 235, 0.2)');
+          signed += v; area += Math.abs(v);
+          pieces.push(`[${lo}, ${hi}] ${below ? 'below' : 'above'}: ${v.toFixed(4)}`);
+        }
+        g.fn(f, '#2563eb');
+        output.textContent =
+          pieces.join('\n') + '\n' +
+          `integral ∫ from ${a} to ${b} = ${signed.toFixed(4)}\n` +
+          `area                  = ${area.toFixed(4)}`;
+      },
+    });
+  })();
+</script>

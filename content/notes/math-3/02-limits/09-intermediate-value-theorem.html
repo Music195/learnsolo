@@ -1,0 +1,195 @@
+<!-- tags: Limit -->
+<!-- =====================================================================
+     NOTE: Intermediate Value Theorem (中間値の定理)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Limit">Intermediate Value Theorem</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>An unbroken curve can't skip a height</h2>
+    <p>A function is <strong>continuous</strong> at $a$ when $\displaystyle\lim_{x \to a} f(x) = f(a)$, so its graph has no break there.
+      If the graph of $f$ on $[a, b]$ is one unbroken curve, it goes from height $f(a)$ to height $f(b)$ without lifting the pen.
+      So it must cross every height in between at least once.</p>
+  </section>
+
+  <!-- FORMULA: the theorem and the root version -->
+  <div class="note-formula">
+    <h3>Intermediate value theorem</h3>
+    <div class="formula-main">$$f \text{ continuous on } [a, b],\; f(a) \ne f(b),\; k \text{ between } f(a) \text{ and } f(b) \implies f(c) = k \text{ for some } a &lt; c &lt; b$$</div>
+  </div>
+
+  <div class="note-formula">
+    <h3>For equations</h3>
+    <div class="formula-main">$$f \text{ continuous on } [a, b],\; f(a)f(b) &lt; 0 \implies f(x) = 0 \text{ has a solution in } a &lt; x &lt; b$$</div>
+    <p class="symbols">Polynomials, $\sin x$, $\cos x$, $e^x$, $\log x$ and their sums, products and compositions are continuous wherever they are defined.</p>
+  </div>
+
+  <!-- PROOF: how to use it in an answer -->
+  <div class="note-proof">
+    <ol>
+      <li>Name the function and say it is continuous on the closed interval.</li>
+      <li>Work out $f(a)$ and $f(b)$ and show they have opposite signs (or that $k$ lies between them).</li>
+      <li>Conclude with the theorem: there is at least one $c$ with $a &lt; c &lt; b$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: choose f and a height k; code at the bottom -->
+  <div class="note-demo">
+    <h2>Every height $k$ between $f(a)$ and $f(b)$ is reached</h2>
+    <div class="controls">
+      <label>$f$ <select id="ivF">
+        <option value="0">x³ − 3x + 1 on [−2, 2]</option>
+        <option value="1">x³ + x − 1 on [0, 1]</option>
+        <option value="2">jump: −1 (x &lt; 0), 1 (x ≥ 0) on [−1, 1]</option>
+        <option value="3">1/x on [−1, 1]</option>
+      </select></label>
+      <label>height $k$ = <input type="range" id="ivK" min="-2" max="4" step="0.1" value="1"></label>
+    </div>
+    <canvas id="ivCanvas"></canvas>
+    <div class="output table-text" id="ivOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Show that $x^3 + x - 1 = 0$ has a solution in $0 &lt; x &lt; 1$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$f(x) = x^3 + x - 1$ is a polynomial, so it is continuous on $[0, 1]$.</li>
+        <li>$f(0) = -1 &lt; 0$, $f(1) = 1 &gt; 0$.</li>
+      </ol>
+      <p class="answer">By the theorem there is a solution in $0 &lt; x &lt; 1$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Show that $x = \cos x$ has a solution in $0 &lt; x &lt; \dfrac{\pi}{2}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Bring everything to one side: $f(x) = x - \cos x$, continuous on $\left[0, \dfrac{\pi}{2}\right]$.</li>
+        <li>$f(0) = -1 &lt; 0$, $f\left(\dfrac{\pi}{2}\right) = \dfrac{\pi}{2} &gt; 0$.</li>
+      </ol>
+      <p class="answer">There is a solution in $0 &lt; x &lt; \dfrac{\pi}{2}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Show that $e^x = x + 2$ has a solution in $0 &lt; x &lt; 2$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$f(x) = e^x - x - 2$ is continuous on $[0, 2]$.</li>
+        <li>$f(0) = 1 - 2 = -1 &lt; 0$, $f(2) = e^2 - 4 &gt; 0$ (since $e &gt; 2$ gives $e^2 &gt; 4$).</li>
+      </ol>
+      <p class="answer">There is a solution in $0 &lt; x &lt; 2$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">$f(x) = \dfrac{1}{x}$ has $f(-1) = -1 &lt; 0$ and $f(1) = 1 &gt; 0$. Why is there no solution of $\dfrac{1}{x} = 0$ in $-1 &lt; x &lt; 1$?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\dfrac{1}{x}$ is not defined at $x = 0$, so it is not continuous on $[-1, 1]$.</li>
+        <li>The graph jumps from $-\infty$ to $+\infty$ at $x = 0$ without crossing the $x$-axis, so the theorem does not apply.</li>
+      </ol>
+      <p class="answer">Continuity on the whole interval fails, so the theorem can't be used</p>
+    </details>
+  </div>
+
+  <!-- WARNING: what the theorem does not say -->
+  <div class="note-warning">
+    The theorem says "<strong>at least one</strong>" solution. There may be several (try $x^3 - 3x + 1$ with $k = 1$ in the demo). And $f(a)f(b) &gt; 0$ does <strong>not</strong> mean there is no solution:
+    $x^2 - x$ has $f(-1)f(2) &gt; 0$ but roots $0$ and $1$ inside.
+  </div>
+
+  <!-- TIP: bisection -->
+  <div class="note-tip">
+    To trap a solution more tightly, check the sign at the midpoint and keep the half where the sign still changes. Each step halves the interval.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Continuous on $[a, b]$ + $k$ between $f(a)$ and $f(b)$ $\Rightarrow$ $f(c) = k$ for some $a &lt; c &lt; b$.</li>
+      <li>For equations: $f(a)f(b) &lt; 0 \Rightarrow$ a root in $a &lt; x &lt; b$.</li>
+      <li>Always state continuity; it guarantees existence only, not the number of solutions.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Reach every height" demo (the TRY IT block above).
+  // Draws f on [a, b] and the line y = k, then searches for every c with f(c) = k
+  // (scan for a sign change of f − k, then halve the gap). At a jump the sign changes
+  // but f never equals k, so those candidates are thrown away.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const fBox = document.getElementById('ivF'), kBox = document.getElementById('ivK');
+    const output = document.getElementById('ivOutput');
+    const f3 = (v) => +v.toFixed(3);
+
+    // each function: formula, interval [a, b], and whether it is continuous there
+    const FUNCS = [
+      { f: (x) => x ** 3 - 3 * x + 1, a: -2, b: 2, cont: true },
+      { f: (x) => x ** 3 + x - 1, a: 0, b: 1, cont: true },
+      { f: (x) => (x < 0 ? -1 : 1), a: -1, b: 1, cont: false, why: 'it jumps at x = 0' },
+      { f: (x) => 1 / x, a: -1, b: 1, cont: false, why: 'it is undefined at x = 0' },
+    ];
+
+    function solutions(F, k) {
+      const out = [], steps = 2000, g = (x) => F.f(x) - k;
+      for (let i = 0; i < steps; i++) {
+        let lo = F.a + (F.b - F.a) * i / steps, hi = F.a + (F.b - F.a) * (i + 1) / steps;
+        if (g(lo) === 0) { out.push(lo); continue; }
+        if (Math.sign(g(lo)) === Math.sign(g(hi))) continue;
+        for (let j = 0; j < 50; j++) {
+          const mid = (lo + hi) / 2;
+          if (Math.sign(g(mid)) === Math.sign(g(lo))) lo = mid; else hi = mid;
+        }
+        if (Math.abs(g((lo + hi) / 2)) < 1e-6) out.push((lo + hi) / 2); // a real crossing, not a jump
+      }
+      if (g(F.b) === 0) out.push(F.b);
+      return out;
+    }
+
+    const plot = NotePlot.graph(document.getElementById('ivCanvas'), {
+      x: [-2.5, 2.5], y: [-3, 4.5],
+      draw(g) {
+        const F = FUNCS[+fBox.value], k = +(+kBox.value).toFixed(1);
+        const fa = F.f(F.a), fb = F.f(F.b);
+        g.band(Math.min(F.a, F.b), Math.max(F.a, F.b), 'rgba(13, 148, 136, 0.35)');
+        if (F.cont) g.fn(F.f, '#2563eb', { from: F.a, to: F.b });
+        else { // draw the two pieces separately so the break at x = 0 shows
+          g.fn(F.f, '#2563eb', { from: F.a, to: -1e-9 });
+          g.fn(F.f, '#2563eb', { from: 1e-9, to: F.b });
+        }
+        g.hline(k, '#ea580c', { width: 2 });
+        g.dot([F.a, fa], '#2563eb', 'f(a)'); g.dot([F.b, fb], '#2563eb', 'f(b)');
+        const cs = solutions(F, k);
+        cs.forEach((c) => g.dot([c, k], '#ea580c'));
+        const between = (k - fa) * (k - fb) < 0;
+        output.textContent =
+          `f(a) = ${f3(fa)},  f(b) = ${f3(fb)},  k = ${k} ${between ? 'is' : 'is not'} strictly between them\n` +
+          `f(c) = k at ${cs.length ? cs.map((c) => `c = ${f3(c)}`).join(', ') : 'no point'}\n` +
+          (F.cont ? 'f is continuous on [a, b]' + (between ? ': the theorem promises at least one c' : '')
+                  : `not continuous on [a, b] (${F.why}): the theorem does not apply`);
+      },
+    });
+    fBox.addEventListener('change', plot.redraw);
+    kBox.addEventListener('input', plot.redraw);
+  })();
+</script>

@@ -1,0 +1,165 @@
+<!-- tags: Differentiation -->
+<!-- =====================================================================
+     NOTE: Second Derivative Test for Extrema (第2次導関数と極値・最大最小)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Differentiation">Second Derivative Test for Extrema</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>A flat point in a bowl is a bottom</h2>
+    <p>Suppose $f'(a) = 0$, so the tangent is flat. If the curve is concave up there ($f''(a) &gt; 0$), the flat point sits at the bottom of a bowl: a local minimum.
+      If it is concave down ($f''(a) &lt; 0$), it is the top of a cap: a local maximum.</p>
+    <p>If $f''(a) = 0$ the test says nothing, so go back to the sign of $f'$.</p>
+  </section>
+
+  <!-- FORMULA: the test -->
+  <div class="note-formula">
+    <h3>When $f'(a) = 0$</h3>
+    <div class="formula-main">$$f''(a) &gt; 0 \Rightarrow \text{local min}, \qquad f''(a) &lt; 0 \Rightarrow \text{local max}, \qquad f''(a) = 0 \Rightarrow \text{no conclusion}$$</div>
+    <p class="symbols">Maximum and minimum on a closed interval $[p, q]$: compare the local extrema with the end values $f(p)$, $f(q)$.</p>
+  </div>
+
+  <!-- PROOF: why the test works -->
+  <div class="note-proof">
+    <ol>
+      <li>Let $f'(a) = 0$ and $f''(a) &gt; 0$. Since $f''$ is the derivative of $f'$, $f'$ is increasing near $a$.</li>
+      <li>So near $a$: $f'(x) &lt; f'(a) = 0$ to the left and $f'(x) &gt; 0$ to the right.</li>
+      <li>$f'$ goes from $-$ to $+$: a local minimum. The case $f''(a) &lt; 0$ is the mirror image.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: bowls and caps at critical points; code at the bottom -->
+  <div class="note-demo">
+    <h2>At each flat point: the matching bowl or cap (dashed)</h2>
+    <div class="controls">
+      <label>$f(x)$ = <select id="stF">
+        <option value="0">x³ − 3x</option>
+        <option value="1">x⁴ − 2x²</option>
+        <option value="2">x⁴</option>
+        <option value="3">x³</option>
+      </select></label>
+    </div>
+    <canvas id="stCanvas"></canvas>
+    <div class="output table-text" id="stOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find the local extrema of $f(x) = x^3 - 3x^2 - 9x + 5$ with the second derivative test.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$f'(x) = 3(x + 1)(x - 3)$: zero at $x = -1, 3$. $\;f''(x) = 6x - 6$.</li>
+        <li>$f''(-1) = -12 &lt; 0$: local max $f(-1) = 10$. $\;f''(3) = 12 &gt; 0$: local min $f(3) = -22$.</li>
+      </ol>
+      <p class="answer">Local max $10$ ($x = -1$), local min $-22$ ($x = 3$)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find the local extrema of $f(x) = x + \dfrac{1}{x}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$f'(x) = 1 - \dfrac{1}{x^2} = 0 \Rightarrow x = \pm 1$. $\;f''(x) = \dfrac{2}{x^3}$.</li>
+        <li>$f''(1) = 2 &gt; 0$: min $f(1) = 2$. $\;f''(-1) = -2 &lt; 0$: max $f(-1) = -2$.</li>
+      </ol>
+      <p class="answer">Local min $2$, local max $-2$ (the local max is smaller than the local min!)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Find the maximum and minimum of $f(x) = x^3 - 3x$ on $-2 \le x \le 3$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Local: $f(-1) = 2$ (max), $f(1) = -2$ (min).</li>
+        <li>Ends: $f(-2) = -2$, $f(3) = 18$.</li>
+        <li>Compare all four values.</li>
+      </ol>
+      <p class="answer">Maximum $18$ ($x = 3$); minimum $-2$ ($x = -2$ and $x = 1$)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Cut equal squares of side $x$ from the corners of a $12 \times 12$ sheet and fold up a box. Which $x$ gives the largest volume?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$V = x(12 - 2x)^2$ with $0 &lt; x &lt; 6$.</li>
+        <li>$V' = (12 - 2x)^2 - 4x(12 - 2x) = (12 - 2x)(12 - 6x)$, zero in range only at $x = 2$.</li>
+        <li>$V'' = 24x - 96$ (expand $V = 4x^3 - 48x^2 + 144x$), so $V''(2) = -48 &lt; 0$: a maximum.</li>
+      </ol>
+      <p class="answer">$x = 2$, volume $128$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: f'' = 0 -->
+  <div class="note-warning">
+    $f''(a) = 0$ does not mean "no extremum". $x^4$ has a minimum at $0$, $-x^4$ a maximum, and $x^3$ neither, yet all three have $f'(0) = f''(0) = 0$. Use the sign of $f'$ instead.
+  </div>
+
+  <!-- TIP: local vs absolute -->
+  <div class="note-tip">
+    For the maximum or minimum on an interval, list the candidates: local extrema inside, plus both ends. Then compare their values. A local maximum need not be the biggest value overall.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$f'(a) = 0$ and $f''(a) &gt; 0$: local min; $f''(a) &lt; 0$: local max.</li>
+      <li>$f''(a) = 0$: undecided; check the sign change of $f'$.</li>
+      <li>Max/min on $[p, q]$: compare local extrema with $f(p)$ and $f(q)$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Bowls and caps" demo (the TRY IT block above).
+  // At each x with f′(x) = 0, draws the parabola y = f(a) + ½f″(a)(x − a)²,
+  // which bends the same way as the curve there: a bowl means min, a cap means max.
+  // When f″(a) = 0 the parabola is flat and the test can't decide.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const fBox = document.getElementById('stF');
+    const output = document.getElementById('stOutput');
+    const f3 = (v) => +v.toFixed(3);
+
+    // each function: f, f″, its flat points, and the true answer at each (from the sign of f′)
+    const FUNCS = [
+      { f: (x) => x ** 3 - 3 * x, d2: (x) => 6 * x, crit: [-1, 1], truth: ['max', 'min'] },
+      { f: (x) => x ** 4 - 2 * x * x, d2: (x) => 12 * x * x - 4, crit: [-1, 0, 1], truth: ['min', 'max', 'min'] },
+      { f: (x) => x ** 4, d2: (x) => 12 * x * x, crit: [0], truth: ['min (f\' goes − → +)'] },
+      { f: (x) => x ** 3, d2: (x) => 6 * x, crit: [0], truth: ['neither (f\' ≥ 0 on both sides)'] },
+    ];
+
+    const plot = NotePlot.graph(document.getElementById('stCanvas'), {
+      x: [-2.5, 2.5], y: [-3, 3],
+      draw(g) {
+        const F = FUNCS[+fBox.value];
+        g.fn(F.f, '#2563eb');
+        const lines = F.crit.map((a, i) => {
+          const k = F.d2(a), color = k > 0 ? '#0d9488' : k < 0 ? '#ea580c' : '#475569';
+          g.fn((x) => F.f(a) + k / 2 * (x - a) ** 2, color, { width: 1.5, dash: true, from: a - 0.9, to: a + 0.9 });
+          g.dot([a, F.f(a)], color);
+          const test = k > 0 ? 'f\'\' > 0 → local min' : k < 0 ? 'f\'\' < 0 → local max' : 'f\'\' = 0 → test can\'t decide';
+          return `x = ${a}: f = ${f3(F.f(a))}, f'' = ${f3(k)}  ${test}   [actually: ${F.truth[i]}]`;
+        });
+        output.textContent = lines.join('\n');
+      },
+    });
+    fBox.addEventListener('change', plot.redraw);
+  })();
+</script>

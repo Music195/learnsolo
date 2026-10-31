@@ -1,0 +1,179 @@
+<!-- tags: Differentiation -->
+<!-- =====================================================================
+     NOTE: Parametric Derivatives (媒介変数で表された関数の導関数)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Differentiation">Parametric Derivatives</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Slope = vertical speed ÷ horizontal speed</h2>
+    <p>A curve given by $x = f(t)$, $y = g(t)$ is traced by a point moving with time $t$. At each moment it moves $\dfrac{dx}{dt}$ sideways and $\dfrac{dy}{dt}$ up per unit time.
+      The direction it moves in is the tangent, so the slope is the ratio of the two speeds.</p>
+  </section>
+
+  <!-- FORMULA: dy/dx and the second derivative -->
+  <div class="note-formula">
+    <h3>First derivative</h3>
+    <div class="formula-main">$$\frac{dy}{dx} = \frac{\;\dfrac{dy}{dt}\;}{\dfrac{dx}{dt}} = \frac{g'(t)}{f'(t)} \qquad (f'(t) \ne 0)$$</div>
+    <p class="symbols">$\dfrac{dx}{dt} = 0$ and $\dfrac{dy}{dt} \ne 0$: vertical tangent. $\;\dfrac{dy}{dt} = 0$ and $\dfrac{dx}{dt} \ne 0$: horizontal tangent.</p>
+  </div>
+
+  <div class="note-formula">
+    <h3>Second derivative</h3>
+    <div class="formula-main">$$\frac{d^2y}{dx^2} = \frac{d}{dt}\left(\frac{dy}{dx}\right) \Big/ \frac{dx}{dt}$$</div>
+    <p class="symbols">Differentiate $\dfrac{dy}{dx}$ (a function of $t$) with respect to $t$, then divide by $\dfrac{dx}{dt}$ again.</p>
+  </div>
+
+  <!-- PROOF: chain rule plus inverse rule -->
+  <div class="note-proof">
+    <ol>
+      <li>Where $f'(t) \ne 0$, $t$ can be seen as a function of $x$, and $\dfrac{dt}{dx} = 1 \Big/ \dfrac{dx}{dt}$ (inverse function rule).</li>
+      <li>Chain rule: $\dfrac{dy}{dx} = \dfrac{dy}{dt} \cdot \dfrac{dt}{dx} = \dfrac{dy}{dt} \Big/ \dfrac{dx}{dt}$.</li>
+      <li>Apply the same step to $\dfrac{dy}{dx}$ in place of $y$ to get $\dfrac{d^2y}{dx^2}$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: moving point with velocity; code at the bottom -->
+  <div class="note-demo">
+    <h2>The velocity arrow points along the tangent</h2>
+    <div class="controls">
+      <label>curve <select id="pdC">
+        <option value="0">x = t², y = t³</option>
+        <option value="1">ellipse x = 3cos t, y = 2sin t</option>
+        <option value="2">cycloid x = t − sin t, y = 1 − cos t</option>
+      </select></label>
+      <label>$t$ = <input type="range" id="pdT" min="0" max="1" step="0.005" value="0.7"></label>
+    </div>
+    <canvas id="pdCanvas"></canvas>
+    <div class="output table-text" id="pdOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">$x = t^2$, $y = t^3$. Find $\dfrac{dy}{dx}$ and $\dfrac{d^2y}{dx^2}$ ($t \ne 0$).</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\dfrac{dx}{dt} = 2t$, $\dfrac{dy}{dt} = 3t^2$, so $\dfrac{dy}{dx} = \dfrac{3t^2}{2t} = \dfrac{3}{2}t$.</li>
+        <li>$\dfrac{d}{dt}\left(\dfrac{3}{2}t\right) = \dfrac{3}{2}$; divide by $\dfrac{dx}{dt} = 2t$.</li>
+      </ol>
+      <p class="answer">$\dfrac{dy}{dx} = \dfrac{3}{2}t$, $\;\dfrac{d^2y}{dx^2} = \dfrac{3}{4t}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Ellipse $x = 3\cos t$, $y = 2\sin t$. Find $\dfrac{dy}{dx}$ and the tangent at $t = \dfrac{\pi}{4}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\dfrac{dy}{dx} = \dfrac{2\cos t}{-3\sin t}$ ($\sin t \ne 0$). At $t = \dfrac{\pi}{4}$ the slope is $-\dfrac{2}{3}$.</li>
+        <li>Point: $\left(\dfrac{3}{\sqrt{2}}, \sqrt{2}\right)$. Tangent: $y - \sqrt{2} = -\dfrac{2}{3}\left(x - \dfrac{3}{\sqrt{2}}\right)$.</li>
+      </ol>
+      <p class="answer">$\dfrac{dy}{dx} = -\dfrac{2\cos t}{3\sin t}$; tangent $y = -\dfrac{2}{3}x + 2\sqrt{2}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Cycloid $x = t - \sin t$, $y = 1 - \cos t$. Find $\dfrac{dy}{dx}$ and the slope at $t = \dfrac{\pi}{2}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\dfrac{dx}{dt} = 1 - \cos t$, $\dfrac{dy}{dt} = \sin t$, so $\dfrac{dy}{dx} = \dfrac{\sin t}{1 - \cos t}$ ($\cos t \ne 1$).</li>
+        <li>At $t = \dfrac{\pi}{2}$: $\dfrac{1}{1 - 0}$.</li>
+      </ol>
+      <p class="answer">$\dfrac{dy}{dx} = \dfrac{\sin t}{1 - \cos t}$; slope $1$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">$x = t^2 + 1$, $y = t^3 - t$. Find the tangent at $t = 1$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Point: $(2, 0)$. $\dfrac{dx}{dt} = 2t = 2$, $\dfrac{dy}{dt} = 3t^2 - 1 = 2$, so the slope is $1$.</li>
+      </ol>
+      <p class="answer">$y = x - 2$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: the second derivative trap -->
+  <div class="note-warning">
+    $\dfrac{d^2y}{dx^2}$ is <strong>not</strong> $\dfrac{d^2y}{dt^2} \Big/ \dfrac{d^2x}{dt^2}$. Differentiate $\dfrac{dy}{dx}$ with respect to $t$, then divide by $\dfrac{dx}{dt}$.
+  </div>
+
+  <!-- TIP: tangent lines -->
+  <div class="note-tip">
+    For a tangent at a given $t$: find the point $(x(t), y(t))$, find the slope from the formula, then use $y - y_1 = m(x - x_1)$. No need to eliminate $t$.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$\dfrac{dy}{dx} = \dfrac{dy/dt}{dx/dt}$.</li>
+      <li>$\dfrac{dx}{dt} = 0$: vertical tangent; $\dfrac{dy}{dt} = 0$: horizontal tangent.</li>
+      <li>$\dfrac{d^2y}{dx^2} = \dfrac{d}{dt}\left(\dfrac{dy}{dx}\right) \Big/ \dfrac{dx}{dt}$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Velocity and tangent" demo (the TRY IT block above).
+  // Draws the parametric curve, the point at time t, its velocity arrow
+  // (dx/dt, dy/dt) and the tangent line with slope (dy/dt)/(dx/dt).
+  // The slider runs from the start to the end of each curve's t-range.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const cBox = document.getElementById('pdC'), tBox = document.getElementById('pdT');
+    const output = document.getElementById('pdOutput');
+    const f3 = (v) => +v.toFixed(3);
+
+    // each curve: x(t), y(t), their derivatives, and the t-range to draw
+    const CURVES = [
+      { x: (t) => t * t, y: (t) => t ** 3, dx: (t) => 2 * t, dy: (t) => 3 * t * t, t0: -1.5, t1: 1.5 },
+      { x: (t) => 3 * Math.cos(t), y: (t) => 2 * Math.sin(t), dx: (t) => -3 * Math.sin(t), dy: (t) => 2 * Math.cos(t), t0: 0, t1: 2 * Math.PI },
+      { x: (t) => t - Math.sin(t), y: (t) => 1 - Math.cos(t), dx: (t) => 1 - Math.cos(t), dy: Math.sin, t0: 0, t1: 2 * Math.PI },
+    ];
+
+    const plot = NotePlot.graph(document.getElementById('pdCanvas'), {
+      x: [-3.5, 7], y: [-3, 3.8],
+      draw(g) {
+        const C = CURVES[+cBox.value];
+        const t = C.t0 + (C.t1 - C.t0) * +tBox.value;
+        // the curve as many short segments
+        for (let i = 0; i < 300; i++) {
+          const a = C.t0 + (C.t1 - C.t0) * i / 300, b = C.t0 + (C.t1 - C.t0) * (i + 1) / 300;
+          g.seg([C.x(a), C.y(a)], [C.x(b), C.y(b)], '#2563eb', { width: 3 });
+        }
+        const P = [C.x(t), C.y(t)], vx = C.dx(t), vy = C.dy(t);
+        let slopeText;
+        if (Math.abs(vx) < 1e-6 && Math.abs(vy) < 1e-6) slopeText = 'both speeds are 0: the point stops (a cusp), no slope';
+        else if (Math.abs(vx) < 1e-6) { g.vline(P[0], '#ea580c', { width: 2 }); slopeText = 'dx/dt = 0: vertical tangent'; }
+        else {
+          const m = vy / vx;
+          g.line(m, -1, P[1] - m * P[0], '#ea580c', { width: 2 });
+          slopeText = `dy/dx = ${f3(vy)} / ${f3(vx)} = ${f3(m)}` + (Math.abs(vy) < 1e-6 ? '  (horizontal tangent)' : '');
+        }
+        g.seg(P, [P[0] + 0.5 * vx, P[1] + 0.5 * vy], '#0d9488', { width: 3 }); // velocity arrow (half length)
+        g.dot([P[0] + 0.5 * vx, P[1] + 0.5 * vy], '#0d9488');
+        g.dot(P, '#2563eb', 'P');
+        output.textContent =
+          `t = ${f3(t)}:  P = (${f3(P[0])}, ${f3(P[1])})\n` +
+          `dx/dt = ${f3(vx)},  dy/dt = ${f3(vy)}  (teal arrow, drawn at half length)\n` + slopeText;
+      },
+    });
+    cBox.addEventListener('change', plot.redraw);
+    tBox.addEventListener('input', plot.redraw);
+  })();
+</script>

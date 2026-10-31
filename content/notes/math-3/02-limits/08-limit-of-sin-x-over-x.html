@@ -1,0 +1,155 @@
+<!-- tags: Limit -->
+<!-- =====================================================================
+     NOTE: Limit of sin x / x (三角関数と極限)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Limit">Limit of sin x / x</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>For a small angle, $\sin x$ and $x$ are almost equal</h2>
+    <p>Measure $x$ in radians. On the unit circle, $x$ is the length of an arc and $\sin x$ is the height of its end point.
+      For a tiny angle the arc is almost straight, so the two lengths are nearly the same and their ratio tends to $1$.</p>
+  </section>
+
+  <!-- FORMULA: the key limit -->
+  <div class="note-formula">
+    <h3>The key limit (radians)</h3>
+    <div class="formula-main">$$\lim_{x \to 0} \frac{\sin x}{x} = 1$$</div>
+    <p class="symbols">Rearranged forms: $\displaystyle\lim_{x \to 0} \frac{x}{\sin x} = 1$, $\;\displaystyle\lim_{x \to 0} \frac{\tan x}{x} = 1$, $\;\displaystyle\lim_{x \to 0} \frac{\sin kx}{kx} = 1$.</p>
+  </div>
+
+  <!-- PROOF: three areas and the squeeze theorem -->
+  <div class="note-proof">
+    <ol>
+      <li>Take $0 &lt; x &lt; \dfrac{\pi}{2}$, $O$ the centre, $A = (1, 0)$, $P$ on the unit circle at angle $x$, and $T = (1, \tan x)$ where line $OP$ meets the tangent at $A$.</li>
+      <li>$\triangle OAP \subset$ sector $OAP \subset \triangle OAT$, so the areas satisfy $\dfrac{1}{2}\sin x &lt; \dfrac{1}{2}x &lt; \dfrac{1}{2}\tan x$.</li>
+      <li>Divide by $\dfrac{1}{2}\sin x &gt; 0$: $1 &lt; \dfrac{x}{\sin x} &lt; \dfrac{1}{\cos x}$. Take reciprocals: $\cos x &lt; \dfrac{\sin x}{x} &lt; 1$.</li>
+      <li>$\cos x \to 1$, so the squeeze theorem gives the limit $1$ as $x \to +0$. Since $\dfrac{\sin(-x)}{-x} = \dfrac{\sin x}{x}$, the left side gives the same.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: slide the angle; code at the bottom -->
+  <div class="note-demo">
+    <h2>Triangle $OAP$ &lt; sector &lt; triangle $OAT$</h2>
+    <div class="controls">
+      <label>angle $x$ = <input type="range" id="sxX" min="0.05" max="1" step="0.01" value="0.8"></label>
+    </div>
+    <canvas id="sxCanvas"></canvas>
+    <div class="output table-text" id="sxOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find $\displaystyle\lim_{x \to 0} \frac{\sin 3x}{x}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Make the angle and the denominator match: $\dfrac{\sin 3x}{x} = 3 \cdot \dfrac{\sin 3x}{3x}$.</li>
+        <li>As $x \to 0$, $3x \to 0$, so $\dfrac{\sin 3x}{3x} \to 1$.</li>
+      </ol>
+      <p class="answer">$3$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find $\displaystyle\lim_{x \to 0} \frac{\sin 5x}{\sin 2x}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\dfrac{\sin 5x}{\sin 2x} = \dfrac{\sin 5x}{5x} \cdot \dfrac{2x}{\sin 2x} \cdot \dfrac{5}{2}$</li>
+        <li>$\to 1 \cdot 1 \cdot \dfrac{5}{2}$</li>
+      </ol>
+      <p class="answer">$\dfrac{5}{2}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Find $\displaystyle\lim_{x \to 0} \frac{1 - \cos x}{x^2}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Multiply top and bottom by $1 + \cos x$: $\dfrac{1 - \cos^2 x}{x^2(1 + \cos x)} = \left(\dfrac{\sin x}{x}\right)^2 \cdot \dfrac{1}{1 + \cos x}$.</li>
+        <li>$\to 1^2 \cdot \dfrac{1}{2}$</li>
+      </ol>
+      <p class="answer">$\dfrac{1}{2}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Find $\displaystyle\lim_{x \to \infty} x\sin\frac{1}{x}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Put $t = \dfrac{1}{x}$. As $x \to \infty$, $t \to +0$.</li>
+        <li>$x\sin\dfrac{1}{x} = \dfrac{\sin t}{t} \to 1$.</li>
+      </ol>
+      <p class="answer">$1$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: where x goes matters -->
+  <div class="note-warning">
+    The limit is $1$ only when the angle goes to $0$. For example $\displaystyle\lim_{x \to \infty} \frac{\sin x}{x} = 0$, because $|\sin x| \le 1$ while $x \to \infty$. The angle must also be in <strong>radians</strong>.
+  </div>
+
+  <!-- TIP: make the shapes match -->
+  <div class="note-tip">
+    Rewrite so that every $\sin(\square)$ sits over the <em>same</em> $\square$. Use $1 - \cos x$ with $1 + \cos x$ (or $1 - \cos x = 2\sin^2\frac{x}{2}$) to turn cosines into sines.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$\displaystyle\lim_{x \to 0} \frac{\sin x}{x} = 1$ (radians).</li>
+      <li>Proof: $\triangle OAP &lt;$ sector $&lt; \triangle OAT$, then squeeze.</li>
+      <li>Match angle and denominator: $\dfrac{\sin kx}{kx} \to 1$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Three areas" demo (the TRY IT block above).
+  // Shades triangle OAT (orange), the sector OAP (teal) and triangle OAP (blue),
+  // smallest on top, and prints the three areas and cos x < sin x / x < 1.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const xBox = document.getElementById('sxX');
+    const output = document.getElementById('sxOutput');
+    const f4 = (v) => +v.toFixed(4);
+
+    // is point (x, y) inside triangle O(0,0), A(1,0), Q(qx, qy)? (Q above the x-axis)
+    const inTri = (x, y, qx, qy) => y >= 0 && y * qx <= x * qy && (y * (1 - qx) <= (1 - x) * qy);
+
+    const plot = NotePlot.graph(document.getElementById('sxCanvas'), {
+      x: [-0.6, 2.19], y: [-0.15, 1.65],
+      draw(g) {
+        const t = +xBox.value, c = Math.cos(t), s = Math.sin(t), T = Math.tan(t);
+        g.region((x, y) => inTri(x, y, 1, T), 'rgba(234, 88, 12, 0.18)');
+        g.region((x, y) => y >= 0 && x * x + y * y <= 1 && Math.atan2(y, x) <= t, 'rgba(13, 148, 136, 0.25)');
+        g.region((x, y) => inTri(x, y, c, s), 'rgba(37, 99, 235, 0.3)');
+        g.circle([0, 0], 1, '#cbd5e1', { width: 1 });
+        g.seg([1, -0.15], [1, 1.65], '#94a3b8', { width: 1, dash: true }); // tangent at A
+        g.seg([0, 0], [1, T], '#475569', { width: 2 });
+        g.seg([c, s], [1, 0], '#2563eb', { width: 2 });
+        g.dot([0, 0], '#0f172a', 'O'); g.dot([1, 0], '#0f172a', 'A');
+        g.dot([c, s], '#2563eb', 'P'); g.dot([1, T], '#ea580c', 'T');
+        output.textContent =
+          `x = ${t}:  △OAP = ½ sin x = ${f4(s / 2)}  <  sector = ½ x = ${f4(t / 2)}  <  △OAT = ½ tan x = ${f4(T / 2)}\n` +
+          `cos x = ${f4(c)}  <  sin x / x = ${f4(s / t)}  <  1`;
+      },
+    });
+    xBox.addEventListener('input', plot.redraw);
+  })();
+</script>

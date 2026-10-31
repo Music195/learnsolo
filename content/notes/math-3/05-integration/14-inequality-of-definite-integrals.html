@@ -1,0 +1,160 @@
+<!-- tags: Integration -->
+<!-- =====================================================================
+     NOTE: Inequalities of Definite Integrals (定積分と不等式)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Integration">Inequality of Definite Integrals</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>A higher curve has more area</h2>
+    <p>If $f(x) \ge g(x)$ on $[a, b]$, the area under $f$ is at least the area under $g$. If the curves are continuous and differ somewhere, the inequality is strict.</p>
+    <p>This is how you compare a <em>sum</em> with an <em>integral</em>. Rectangles of height $\dfrac{1}{k}$ stand above the curve $y = \dfrac{1}{x}$ or below it. So $1 + \dfrac{1}{2} + \cdots + \dfrac{1}{n}$ can be squeezed between two logarithms.</p>
+  </section>
+
+  <!-- FORMULA: integral inequalities -->
+  <div class="note-formula">
+    <h3>$a &lt; b$, $f$ and $g$ continuous</h3>
+    <div class="formula-main">$$f(x) \ge g(x) \text{ on } [a, b] \;\Longrightarrow\; \int_a^b f(x)\,dx \ge \int_a^b g(x)\,dx$$</div>
+    <p class="symbols">Equality holds only if $f(x) = g(x)$ for every $x$ in $[a, b]$. Special case: $\left|\displaystyle\int_a^b f(x)\,dx\right| \le \displaystyle\int_a^b |f(x)|\,dx$.</p>
+  </div>
+
+  <!-- PROOF: the harmonic sum against log -->
+  <div class="note-proof">
+    <ol>
+      <li>On $k \le x \le k + 1$: $\dfrac{1}{x} \le \dfrac{1}{k}$, with equality only at $x = k$. So $\displaystyle\int_k^{k+1} \frac{dx}{x} &lt; \frac{1}{k}$.</li>
+      <li>Add for $k = 1, \ldots, n$: $\log(n + 1) = \displaystyle\int_1^{n+1} \frac{dx}{x} &lt; 1 + \frac{1}{2} + \cdots + \frac{1}{n}$.</li>
+      <li>In the same way, $\dfrac{1}{k} &lt; \displaystyle\int_{k-1}^{k} \frac{dx}{x}$ for $k \ge 2$, so $1 + \dfrac{1}{2} + \cdots + \dfrac{1}{n} &lt; 1 + \log n$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: rectangles above and below 1/x; code at the bottom -->
+  <div class="note-demo">
+    <h2>Rectangles of height $\frac{1}{k}$ versus the area under $y = \frac{1}{x}$</h2>
+    <div class="controls">
+      <label>$n$ = <input type="range" id="iqN" min="1" max="12" step="1" value="5"></label>
+      <label>rectangles <select id="iqS">
+        <option value="0">on [k, k + 1] (above the curve)</option>
+        <option value="1">on [k − 1, k] (below the curve)</option>
+      </select></label>
+    </div>
+    <canvas id="iqCanvas"></canvas>
+    <div class="output table-text" id="iqOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Show that $\dfrac{1}{2} &lt; \displaystyle\int_0^1 \frac{dx}{1 + x^2} &lt; 1$ without integrating.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>On $0 \le x \le 1$: $1 \le 1 + x^2 \le 2$, so $\dfrac{1}{2} \le \dfrac{1}{1 + x^2} \le 1$. Equality holds only at the ends.</li>
+        <li>Integrate over an interval of length $1$.</li>
+      </ol>
+      <p class="answer">Shown (the true value is $\dfrac{\pi}{4} \approx 0.785$)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Show that $\displaystyle\int_0^1 e^{x^2}\,dx &gt; \frac{4}{3}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$e^t \ge 1 + t$ for all $t$, with equality only at $t = 0$. Put $t = x^2$: $e^{x^2} \ge 1 + x^2$.</li>
+        <li>$\displaystyle\int_0^1 (1 + x^2)\,dx = \frac{4}{3}$, and the curves differ for $x \ne 0$.</li>
+      </ol>
+      <p class="answer">Shown ($e^{x^2}$ has no elementary antiderivative, so an inequality is the way to go)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Show that $1 + \dfrac{1}{2} + \cdots + \dfrac{1}{n} &gt; \log(n + 1)$, and deduce that $\displaystyle\sum_{k=1}^\infty \frac{1}{k}$ diverges.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>See the proof block: each $\dfrac{1}{k}$ is more than $\displaystyle\int_k^{k+1} \frac{dx}{x}$.</li>
+        <li>$\log(n + 1) \to \infty$, and the sum is bigger.</li>
+      </ol>
+      <p class="answer">The harmonic series diverges</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Show that $\displaystyle\int_0^{\frac{\pi}{2}} \sin^2 x\,dx &gt; \int_0^{\frac{\pi}{2}} \sin^3 x\,dx$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>On $\left[0, \dfrac{\pi}{2}\right]$, $0 \le \sin x \le 1$, so $\sin^3 x \le \sin^2 x$. Equality holds only where $\sin x$ is $0$ or $1$.</li>
+      </ol>
+      <p class="answer">Shown (values $\dfrac{\pi}{4} &gt; \dfrac{2}{3}$)</p>
+    </details>
+  </div>
+
+  <!-- WARNING: integral of a product -->
+  <div class="note-warning">
+    There is no rule like $\displaystyle\int fg = f(a)\int g + \ldots$. Only compare <em>whole integrands</em> point by point.
+    Also, the interval must run forwards ($a &lt; b$); if $a &gt; b$ the inequality flips.
+  </div>
+
+  <!-- TIP: draw it -->
+  <div class="note-tip">
+    For a sum against an integral, sketch the rectangles on the graph. The picture tells you which way the inequality goes and which interval to use, $[k, k + 1]$ or $[k - 1, k]$.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$f \ge g$ on $[a, b]$ $\Rightarrow$ $\int_a^b f \ge \int_a^b g$ (strict unless $f = g$ everywhere).</li>
+      <li>Bound the integrand first, then integrate the bounds.</li>
+      <li>$\log(n + 1) &lt; \displaystyle\sum_{k=1}^n \frac{1}{k} &lt; 1 + \log n$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Sum versus integral" demo (the TRY IT block above).
+  // Above: rectangles on [k, k + 1] with height 1/k, k = 1 … n; together they cover
+  // the area under 1/x from 1 to n + 1. Below: rectangles on [k − 1, k] with height 1/k,
+  // k = 2 … n, which fit under the curve from 1 to n.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const nBox = document.getElementById('iqN'), sBox = document.getElementById('iqS');
+    const output = document.getElementById('iqOutput');
+    const f4 = (v) => +v.toFixed(4);
+
+    const plot = NotePlot.graph(document.getElementById('iqCanvas'), {
+      x: [-0.3, 13.5], y: [-0.15, 1.3],
+      draw(g) {
+        const n = +nBox.value, below = sBox.value === '1';
+        let H = 0;
+        for (let k = 1; k <= n; k++) H += 1 / k;
+        const lo = 1, hi = below ? n : n + 1;
+        if (hi > lo) g.fill((x) => 1 / x, lo, hi, 'rgba(37, 99, 235, 0.22)');
+        for (let k = below ? 2 : 1; k <= n; k++) {
+          const x0 = below ? k - 1 : k;
+          g.poly([[x0, 0], [x0, 1 / k], [x0 + 1, 1 / k], [x0 + 1, 0]], 'rgba(234, 88, 12, 0.18)');
+          g.seg([x0, 1 / k], [x0 + 1, 1 / k], '#ea580c', { width: 2 });
+          g.seg([x0, 0], [x0, 1 / k], '#ea580c', { width: 1 }); g.seg([x0 + 1, 0], [x0 + 1, 1 / k], '#ea580c', { width: 1 });
+        }
+        g.fn((x) => 1 / x, '#2563eb', { from: 0.75 });
+        output.textContent = below
+          ? `1/2 + … + 1/${n} = ${f4(H - 1)}  <  log ${n} = ${f4(Math.log(n))}  (area under 1/x from 1 to ${n})\n` +
+            `so 1 + 1/2 + … + 1/${n} = ${f4(H)} < 1 + log ${n} = ${f4(1 + Math.log(n))}`
+          : `1 + 1/2 + … + 1/${n} = ${f4(H)}  >  log ${n + 1} = ${f4(Math.log(n + 1))}  (area under 1/x from 1 to ${n + 1})`;
+      },
+    });
+    nBox.addEventListener('input', plot.redraw);
+    sBox.addEventListener('change', plot.redraw);
+  })();
+</script>

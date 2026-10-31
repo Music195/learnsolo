@@ -1,0 +1,169 @@
+<!-- tags: Differentiation -->
+<!-- =====================================================================
+     NOTE: Mean Value Theorem (平均値の定理)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Differentiation">Mean Value Theorem</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Somewhere the tangent is parallel to the chord</h2>
+    <p>Draw the chord from $(a, f(a))$ to $(b, f(b))$. Its slope is the <strong>average</strong> rate of change.
+      If the curve is smooth in between, at some point $c$ the tangent has exactly that slope: the instantaneous rate equals the average rate.</p>
+    <p>Example: if you drive 120 km in 2 hours, at some moment your speedometer read exactly 60 km/h.</p>
+  </section>
+
+  <!-- FORMULA: the theorem -->
+  <div class="note-formula">
+    <h3>Mean value theorem</h3>
+    <div class="formula-main">$$\frac{f(b) - f(a)}{b - a} = f'(c), \qquad a &lt; c &lt; b$$</div>
+    <p class="symbols">Conditions: $f$ continuous on $[a, b]$ and differentiable on $a &lt; x &lt; b$. Then at least one such $c$ exists.
+      Equivalent form: $f(b) - f(a) = f'(c)(b - a)$.</p>
+  </div>
+
+  <!-- PROOF: idea via Rolle's theorem -->
+  <div class="note-proof">
+    <ol>
+      <li><strong>Rolle's theorem</strong>: if also $f(a) = f(b)$, then $f$ has a maximum or minimum inside $(a, b)$ (or is constant), and there $f'(c) = 0$.</li>
+      <li>In general, subtract the chord: $g(x) = f(x) - \dfrac{f(b) - f(a)}{b - a}(x - a)$. Then $g(a) = g(b) = f(a)$.</li>
+      <li>Rolle gives $g'(c) = 0$, i.e. $f'(c) = \dfrac{f(b) - f(a)}{b - a}$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: choose a, b; code at the bottom -->
+  <div class="note-demo">
+    <h2>Chord (orange) and the parallel tangents (teal)</h2>
+    <div class="controls">
+      <label>$f(x)$ = <select id="mvF">
+        <option value="0">x³ − 3x</option>
+        <option value="1">sin x + 1</option>
+        <option value="2">√(x + 3)</option>
+      </select></label>
+      <label>$a$ = <input type="range" id="mvA" min="-2.5" max="2.5" step="0.05" value="-1.5"></label>
+      <label>$b$ = <input type="range" id="mvB" min="-2.5" max="2.5" step="0.05" value="2"></label>
+    </div>
+    <canvas id="mvCanvas"></canvas>
+    <div class="output table-text" id="mvOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find $c$ in the mean value theorem for $f(x) = x^3$ on $[-1, 2]$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Average slope: $\dfrac{8 - (-1)}{2 - (-1)} = 3$.</li>
+        <li>$3c^2 = 3 \Rightarrow c = \pm 1$. Only $c = 1$ lies strictly between $-1$ and $2$.</li>
+      </ol>
+      <p class="answer">$c = 1$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">For $0 &lt; a &lt; b$, show $\dfrac{b - a}{b} &lt; \log b - \log a &lt; \dfrac{b - a}{a}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Mean value theorem for $\log x$ on $[a, b]$: $\dfrac{\log b - \log a}{b - a} = \dfrac{1}{c}$ with $a &lt; c &lt; b$.</li>
+        <li>$a &lt; c &lt; b \Rightarrow \dfrac{1}{b} &lt; \dfrac{1}{c} &lt; \dfrac{1}{a}$.</li>
+        <li>Multiply through by $b - a &gt; 0$.</li>
+      </ol>
+      <p class="answer">$\dfrac{b - a}{b} &lt; \log b - \log a &lt; \dfrac{b - a}{a}$ ✓</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Find $\displaystyle\lim_{x \to 0} \frac{e^{x} - e^{\sin x}}{x - \sin x}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Mean value theorem for $e^t$ between $\sin x$ and $x$: $\dfrac{e^x - e^{\sin x}}{x - \sin x} = e^c$ with $c$ between $\sin x$ and $x$.</li>
+        <li>As $x \to 0$, both $\sin x$ and $x$ go to $0$, so $c \to 0$ (squeezed).</li>
+      </ol>
+      <p class="answer">$e^0 = 1$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: conditions matter -->
+  <div class="note-warning">
+    Check the conditions. $f(x) = |x|$ on $[-1, 1]$ has average slope $0$, but no point has $f'(c) = 0$, because $|x|$ is not differentiable at $0$.
+  </div>
+
+  <!-- TIP: spotting MVT problems -->
+  <div class="note-tip">
+    A difference $f(b) - f(a)$ (like $\log b - \log a$, or $e^x - e^{\sin x}$) is a hint: turn it into $f'(c)(b - a)$, then bound $c$.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$\dfrac{f(b) - f(a)}{b - a} = f'(c)$ for some $a &lt; c &lt; b$.</li>
+      <li>Needs continuity on $[a, b]$ and differentiability inside.</li>
+      <li>Used for inequalities and limits: replace a difference by $f'(c)$ and squeeze $c$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Parallel tangent" demo (the TRY IT block above).
+  // Draws the chord from a to b, then finds every c in (a, b) with f′(c) equal
+  // to the chord's slope (scan for sign changes, then halve) and draws those tangents.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const fBox = document.getElementById('mvF'), aBox = document.getElementById('mvA'), bBox = document.getElementById('mvB');
+    const output = document.getElementById('mvOutput');
+    const f3 = (v) => +v.toFixed(3);
+
+    const FUNCS = [
+      { f: (x) => x ** 3 - 3 * x, d: (x) => 3 * x * x - 3 },
+      { f: (x) => Math.sin(x) + 1, d: Math.cos },
+      { f: (x) => Math.sqrt(x + 3), d: (x) => 1 / (2 * Math.sqrt(x + 3)) },
+    ];
+
+    // all c in (a, b) with d(c) = m
+    function findC(d, a, b, m) {
+      const out = [], n = 1000, g = (x) => d(x) - m;
+      for (let i = 0; i < n; i++) {
+        let lo = a + (b - a) * i / n, hi = a + (b - a) * (i + 1) / n;
+        if (Math.sign(g(lo)) === Math.sign(g(hi))) continue;
+        for (let k = 0; k < 50; k++) { const mid = (lo + hi) / 2; if (Math.sign(g(mid)) === Math.sign(g(lo))) lo = mid; else hi = mid; }
+        out.push((lo + hi) / 2);
+      }
+      return out;
+    }
+
+    const plot = NotePlot.graph(document.getElementById('mvCanvas'), {
+      x: [-3, 3], y: [-3, 3],
+      draw(g) {
+        const F = FUNCS[+fBox.value];
+        let a = +aBox.value, b = +bBox.value;
+        if (a > b) [a, b] = [b, a];
+        g.fn(F.f, '#2563eb', { from: -3 });
+        if (b - a < 0.1) { output.textContent = 'Move a and b further apart.'; return; }
+        const A = [a, F.f(a)], B = [b, F.f(b)], m = (B[1] - A[1]) / (b - a);
+        g.seg(A, B, '#ea580c', { width: 2 });
+        const cs = findC(F.d, a, b, m);
+        cs.forEach((c) => {
+          g.fn((x) => F.f(c) + m * (x - c), '#0d9488', { width: 1.5, dash: true });
+          g.dot([c, F.f(c)], '#0d9488');
+        });
+        g.dot(A, '#ea580c', 'A'); g.dot(B, '#ea580c', 'B');
+        output.textContent =
+          `chord slope (f(b) − f(a))/(b − a) = (${f3(B[1])} − ${f3(A[1])}) / ${f3(b - a)} = ${f3(m)}\n` +
+          `f'(c) = ${f3(m)} at ${cs.length ? cs.map((c) => `c = ${f3(c)}`).join(', ') : '— (a touching point the scan missed; nudge a or b)'}  (all strictly between a and b)`;
+      },
+    });
+    fBox.addEventListener('change', plot.redraw);
+    [aBox, bBox].forEach((el) => el.addEventListener('input', plot.redraw));
+  })();
+</script>

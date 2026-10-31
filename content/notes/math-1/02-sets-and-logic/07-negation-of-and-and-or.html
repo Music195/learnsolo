@@ -1,0 +1,138 @@
+<!-- tags: Set and Elements -->
+<!-- =====================================================================
+     NOTE: Negation of "and", "or", "all" and "some" (条件の否定)
+     Uses the shared blocks from static/css/note-blocks.css.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Set and Elements">Negation of "And" and "Or"</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Negating swaps "and" with "or"</h2>
+    <p>The negation of $p$ (written $\overline{p}$, "not $p$") is true exactly when $p$ is false.</p>
+    <p>"$p$ and $q$" fails as soon as <strong>one</strong> of them fails, so its negation is "not $p$ <strong>or</strong> not $q$".
+      This is De Morgan's law (note 05) in the language of conditions.</p>
+  </section>
+
+  <!-- FORMULA: De Morgan for conditions -->
+  <div class="note-formula">
+    <h3>De Morgan's laws for conditions</h3>
+    <div class="formula-main">$$\overline{p \text{ and } q} \iff \overline{p} \text{ or } \overline{q}, \qquad \overline{p \text{ or } q} \iff \overline{p} \text{ and } \overline{q}$$</div>
+  </div>
+
+  <div class="note-formula">
+    <h3>"All" and "some"</h3>
+    <div class="formula-main">$$\overline{\text{all } x \text{ satisfy } p} \iff \text{some } x \text{ does not satisfy } p, \qquad \overline{\text{some } x \text{ satisfies } p} \iff \text{all } x \text{ do not satisfy } p$$</div>
+    <p class="symbols">To deny "all", one exception is enough; to deny "some", you must rule out every case.</p>
+  </div>
+
+  <!-- DEMO: whole numbers 1–12; code at the bottom -->
+  <div class="note-demo">
+    <h2>$x = 1, \ldots, 12$: check both sides of De Morgan</h2>
+    <div class="controls">
+      <label>$p$: <select id="ngP"><option value="even">x is even</option><option value="gt5">x &gt; 5</option><option value="m3">x is a multiple of 3</option></select></label>
+      <label>$q$: <select id="ngQ"><option value="m3">x is a multiple of 3</option><option value="even">x is even</option><option value="gt5">x &gt; 5</option></select></label>
+    </div>
+    <div class="output table-text" id="ngOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Negate "$x &gt; 0$ and $y &gt; 0$" ($x, y$ real).</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>"and" becomes "or", and each part is negated: $\overline{x &gt; 0}$ is $x \le 0$.</li>
+      </ol>
+      <p class="answer">$x \le 0$ or $y \le 0$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Negate "$x = 1$ or $x = 2$".</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>"or" becomes "and".</li>
+      </ol>
+      <p class="answer">$x \ne 1$ and $x \ne 2$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Negate "$-1 &lt; x \le 3$".</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>It means "$x &gt; -1$ and $x \le 3$".</li>
+        <li>Negation: "$x \le -1$ or $x &gt; 3$".</li>
+      </ol>
+      <p class="answer">$x \le -1$ or $3 &lt; x$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Negate "For all real $x$, $x^2 &gt; 0$", and say which is true.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Negation: "For some real $x$, $x^2 \le 0$".</li>
+        <li>$x = 0$ gives $x^2 = 0$, so the negation is true and the original is false.</li>
+      </ol>
+      <p class="answer">"Some real $x$ has $x^2 \le 0$" (true)</p>
+    </details>
+  </div>
+
+  <!-- WARNING: negation of > -->
+  <div class="note-warning">
+    The negation of $x &gt; 0$ is $x \le 0$, not $x &lt; 0$. Don't lose the equals case.
+  </div>
+
+  <!-- TIP: sets -->
+  <div class="note-tip">
+    With truth sets: "$p$ and $q$" ↔ $P \cap Q$, "$p$ or $q$" ↔ $P \cup Q$, "not $p$" ↔ $\overline{P}$. So these laws are exactly $\overline{P \cap Q} = \overline{P} \cup \overline{Q}$ and $\overline{P \cup Q} = \overline{P} \cap \overline{Q}$.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>not (p and q) = (not p) or (not q).</li>
+      <li>not (p or q) = (not p) and (not q).</li>
+      <li>not (all) = some … not; not (some) = all … not.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script>
+  // "Check both sides of De Morgan" demo (the TRY IT block above).
+  // For each x from 1 to 12, works out p, q and both sides of each law,
+  // and lists the x values where each side is true (they should match).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const tests = { even: (x) => x % 2 === 0, gt5: (x) => x > 5, m3: (x) => x % 3 === 0 };
+    const pBox = document.getElementById('ngP'), qBox = document.getElementById('ngQ');
+    const output = document.getElementById('ngOutput');
+    const xs = Array.from({ length: 12 }, (_, i) => i + 1);
+    const list = (f) => '{' + xs.filter(f).join(', ') + '}';
+
+    function update() {
+      const p = tests[pBox.value], q = tests[qBox.value];
+      output.textContent =
+        `p true for           ${list(p)}\n` +
+        `q true for           ${list(q)}\n\n` +
+        `not (p and q)        ${list((x) => !(p(x) && q(x)))}\n` +
+        `(not p) or (not q)   ${list((x) => !p(x) || !q(x))}\n\n` +
+        `not (p or q)         ${list((x) => !(p(x) || q(x)))}\n` +
+        `(not p) and (not q)  ${list((x) => !p(x) && !q(x))}`;
+    }
+    [pBox, qBox].forEach((el) => el.addEventListener('input', update));
+    update();
+  })();
+</script>

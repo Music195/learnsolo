@@ -1,0 +1,136 @@
+<!-- tags: Algebra -->
+<!-- =====================================================================
+     NOTE: Absolute Value (絶対値)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     draggable-point helper static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Algebra">Absolute Value</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Distance from 0</h2>
+    <p>$|a|$ is the distance between $a$ and $0$ on the number line, so it is never negative: $|5| = 5$ and $|-5| = 5$.</p>
+    <p>More generally, $|a - b|$ is the distance between the points $a$ and $b$.</p>
+  </section>
+
+  <!-- FORMULA: definition -->
+  <div class="note-formula">
+    <h3>Definition</h3>
+    <div class="formula-main">$$|a| = \begin{cases} a & (a \ge 0) \\ -a & (a &lt; 0) \end{cases}$$</div>
+    <p class="symbols">If $a$ is negative, $-a$ is positive. For example $|-3| = -(-3) = 3$.</p>
+  </div>
+
+  <div class="note-formula">
+    <h3>Properties</h3>
+    <div class="formula-main">$$|a| \ge 0, \qquad |-a| = |a|, \qquad |ab| = |a||b|, \qquad |a|^2 = a^2$$</div>
+  </div>
+
+  <!-- DEMO: drag the two points; code at the bottom -->
+  <div class="note-demo">
+    <h2>Drag $a$ and $b$ along the number line</h2>
+    <canvas id="avCanvas"></canvas>
+    <div class="output table-text" id="avOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find $|-7| + |3 - 8| - |2|$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$7 + |-5| - 2 = 7 + 5 - 2$</li>
+      </ol>
+      <p class="answer">$10$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find $|\sqrt{2} - 2|$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\sqrt{2} \approx 1.41 &lt; 2$, so $\sqrt{2} - 2 &lt; 0$.</li>
+        <li>Negative inside, so take the negative: $-(\sqrt{2} - 2)$.</li>
+      </ol>
+      <p class="answer">$2 - \sqrt{2}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Write $|x - 3| + |x + 1|$ without absolute value signs when $-1 \le x &lt; 3$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$x - 3 &lt; 0$, so $|x - 3| = -(x - 3) = 3 - x$.</li>
+        <li>$x + 1 \ge 0$, so $|x + 1| = x + 1$.</li>
+        <li>Add: $(3 - x) + (x + 1)$.</li>
+      </ol>
+      <p class="answer">$4$ (the distance from $-1$ to $3$)</p>
+    </details>
+  </div>
+
+  <!-- WARNING: |−a| isn't always a -->
+  <div class="note-warning">
+    $|-a|$ is not always $a$. If $a = -2$, then $|-a| = |2| = 2 = -a$. Always ask: <strong>is the inside positive or negative?</strong>
+  </div>
+
+  <!-- TIP: where to split -->
+  <div class="note-tip">
+    The cases change where the inside equals $0$. For $|x - 3|$ split at $x = 3$; for $|2x + 1|$ split at $x = -\dfrac{1}{2}$.
+    Equations and inequalities with absolute values are in note 11.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$|a|$ = distance from $0$; $|a - b|$ = distance between $a$ and $b$.</li>
+      <li>Remove the bars: inside $\ge 0$ → keep, inside $&lt; 0$ → put a minus in front.</li>
+      <li>$|a| \ge 0$ always.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Drag a and b" demo (the TRY IT block above).
+  // Both points stay on the number line and snap to multiples of 0.5.
+  // Shows |a|, |b| and the distance |a − b|.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const G = window.NoteGeom;
+    const output = document.getElementById('avOutput');
+    const Y = 170, X0 = 260, U = 40;                  // 0 sits at x = 260, 1 unit = 40 px
+    const toNum = (p) => (p[0] - X0) / U;
+    const snap = (p) => [X0 + U * Math.max(-6, Math.min(6, Math.round(toNum(p) * 2) / 2)), Y];
+
+    G.board(document.getElementById('avCanvas'), {
+      points: { a: [X0 - 3 * U, Y], b: [X0 + 2 * U, Y] },
+      constrain: { a: snap, b: snap },
+      draw(g, P) {
+        g.seg([20, Y], [500, Y], '#334155');
+        for (let k = -6; k <= 6; k++) {
+          g.seg([X0 + k * U, Y - 6], [X0 + k * U, Y + 6], '#334155');
+          g.text([X0 + k * U, Y + 22], String(k), '#475569');
+        }
+        const a = toNum(P.a), b = toNum(P.b);
+        g.seg([X0, Y - 40], [P.a[0], Y - 40], '#2563eb', { width: 4 });   // |a|
+        g.seg([X0, Y - 70], [P.b[0], Y - 70], '#0d9488', { width: 4 });   // |b|
+        g.seg([P.a[0], Y + 50], [P.b[0], Y + 50], '#ea580c', { width: 4 }); // |a − b|
+        g.text([(X0 + P.a[0]) / 2, Y - 54], `|a| = ${Math.abs(a)}`, '#2563eb');
+        g.text([(X0 + P.b[0]) / 2, Y - 84], `|b| = ${Math.abs(b)}`, '#0d9488');
+        g.text([(P.a[0] + P.b[0]) / 2, Y + 66], `|a − b| = ${Math.abs(a - b)}`, '#ea580c');
+        output.textContent =
+          `a = ${a},  b = ${b}\n` +
+          `|a| = ${a >= 0 ? `${a}  (a ≥ 0, keep it)` : `−(${a}) = ${-a}  (a < 0, change the sign)`}\n` +
+          `|a − b| = |${a - b}| = ${Math.abs(a - b)} = distance between a and b`;
+      },
+    });
+  })();
+</script>

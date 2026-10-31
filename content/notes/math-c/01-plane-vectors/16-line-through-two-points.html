@@ -1,0 +1,150 @@
+<!-- tags: Vector -->
+<!-- =====================================================================
+     NOTE: Line Through Two Points (2 点を通る直線のベクトル方程式)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Vector">Vector Equation of a Line Through Two Points</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Mix A and B with weights that add to 1</h2>
+    <p>The line through A$(\vec{a})$ and B$(\vec{b})$ has direction $\vec{b} - \vec{a}$, so $\vec{p} = \vec{a} + t(\vec{b} - \vec{a}) = (1 - t)\vec{a} + t\vec{b}$. At $t = 0$ we are at A, at $t = 1$ at B.</p>
+    <p>Writing $s = 1 - t$: $\vec{p} = s\vec{a} + t\vec{b}$ with $s + t = 1$. If also $s \ge 0$ and $t \ge 0$, P stays on the <strong>segment</strong> AB.</p>
+  </section>
+
+  <!-- FORMULA: two forms -->
+  <div class="note-formula">
+    <h3>A$(\vec{a})$, B$(\vec{b})$, A ≠ B</h3>
+    <div class="formula-main">$$\vec{p} = (1 - t)\vec{a} + t\vec{b} \iff \vec{p} = s\vec{a} + t\vec{b}, \;\; s + t = 1$$</div>
+    <p class="symbols">Segment AB: $s + t = 1$, $s \ge 0$, $t \ge 0$. P divides AB internally in $t : (1 - t)$ when $0 &lt; t &lt; 1$.</p>
+  </div>
+
+  <!-- PROOF: from note 15 -->
+  <div class="note-proof">
+    <ol>
+      <li>The line passes through A with direction $\vec{d} = \overrightarrow{AB} = \vec{b} - \vec{a}$.</li>
+      <li>By note 15: $\vec{p} = \vec{a} + t(\vec{b} - \vec{a}) = (1 - t)\vec{a} + t\vec{b}$.</li>
+      <li>For $0 \le t \le 1$, $\overrightarrow{AP} = t\overrightarrow{AB}$ is a part of $\overrightarrow{AB}$, so P is on the segment.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: weights; code at the bottom -->
+  <div class="note-demo">
+    <h2>Drag A and B; change $t$: P $= (1 - t)$A $+ t$B (teal on the segment, red off it)</h2>
+    <div class="controls">
+      <label>$t$ = <input type="range" id="vwT" min="-1" max="2" step="0.05" value="0.3"></label>
+    </div>
+    <canvas id="vwCanvas"></canvas>
+    <div class="output table-text" id="vwOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Write the line through A$(2, 1)$ and B$(4, 3)$ in parametric form.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$(1 - t)(2, 1) + t(4, 3) = (2 + 2t, 1 + 2t)$.</li>
+      </ol>
+      <p class="answer">$x = 2 + 2t$, $y = 1 + 2t$ (that is, $y = x - 1$)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">A$(1, 2)$, B$(5, 4)$. Use $t$ to find the point dividing AB internally in $1 : 2$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\overrightarrow{AP} = \dfrac{1}{3}\overrightarrow{AB}$, so $t = \dfrac{1}{3}$.</li>
+        <li>$\dfrac{2}{3}(1, 2) + \dfrac{1}{3}(5, 4) = \left(\dfrac{7}{3}, \dfrac{8}{3}\right)$.</li>
+      </ol>
+      <p class="answer">$\left(\dfrac{7}{3}, \dfrac{8}{3}\right)$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Write P$(3, 2)$ as $s\vec{a} + t\vec{b}$ ($s + t = 1$) for A$(1, 1)$, B$(5, 3)$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$x$: $s + 5t = 3$; $y$: $s + 3t = 2$.</li>
+        <li>Subtract: $2t = 1$, so $t = \dfrac{1}{2}$, $s = \dfrac{1}{2}$ (and $s + t = 1$ ✓).</li>
+      </ol>
+      <p class="answer">$\vec{p} = \dfrac{1}{2}\vec{a} + \dfrac{1}{2}\vec{b}$: P is the midpoint of AB</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">O, A, B are not on one line. Describe the points P with $\overrightarrow{OP} = s\vec{a} + t\vec{b}$, $s + t = 2$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Divide the condition by $2$: $\dfrac{s}{2} + \dfrac{t}{2} = 1$.</li>
+        <li>Write $\overrightarrow{OP} = \dfrac{s}{2}(2\vec{a}) + \dfrac{t}{2}(2\vec{b})$: weights adding to $1$ on the points A$'(2\vec{a})$, B$'(2\vec{b})$.</li>
+      </ol>
+      <p class="answer">The line A$'$B$'$, where $\overrightarrow{OA'} = 2\vec{a}$ and $\overrightarrow{OB'} = 2\vec{b}$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: weights order -->
+  <div class="note-warning">
+    In $(1 - t)\vec{a} + t\vec{b}$, the weight on $\vec{b}$ is $t$: larger $t$ moves P towards B. Don't swap them.
+    The segment needs <strong>both</strong> $s \ge 0$ and $t \ge 0$, not just $s + t = 1$.
+  </div>
+
+  <!-- TIP: rescale the condition -->
+  <div class="note-tip">
+    For conditions like $s + t = 2$ or $2s + 3t = 1$, rescale so the new weights add to $1$, and absorb the factors into the vectors (Example 4).
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Line AB: $\vec{p} = (1 - t)\vec{a} + t\vec{b}$.</li>
+      <li>Same as $s\vec{a} + t\vec{b}$ with $s + t = 1$.</li>
+      <li>Segment AB: also $s, t \ge 0$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Weights" demo (the TRY IT block above).
+  // Drag A and B (half-grid). P = (1 − t)A + tB. The segment AB is dark; the rest of
+  // the line is grey. P is teal when 0 ≤ t ≤ 1 (on the segment) and red otherwise.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const tBox = document.getElementById('vwT');
+    const output = document.getElementById('vwOutput');
+    const f2 = (v) => +v.toFixed(2) || 0;
+    const half = ([x, y]) => [Math.round(x * 2) / 2, Math.round(y * 2) / 2];
+
+    const plot = NotePlot.graph(document.getElementById('vwCanvas'), {
+      x: [-6.2, 6.2], y: [-4, 4],
+      points: { A: [-3, -1.5], B: [2, 1] },
+      constrain: { A: half, B: half },
+      draw(g, P) {
+        const t = +tBox.value, s = f2(1 - t), A = P.A, B = P.B;
+        if (Math.hypot(B[0] - A[0], B[1] - A[1]) < 1e-9) { output.textContent = 'A and B must be different'; return; }
+        const Pt = [s * A[0] + t * B[0], s * A[1] + t * B[1]], on = t >= 0 && t <= 1;
+        g.line(B[1] - A[1], A[0] - B[0], B[0] * A[1] - A[0] * B[1], '#e2e8f0', { width: 2 });
+        g.seg(A, B, '#334155', { width: 3 });
+        g.dot(Pt, on ? '#0d9488' : '#dc2626', 'P');
+        output.textContent =
+          `P = ${s}A + ${t}B = (${Pt.map(f2).join(', ')}),   s + t = 1\n` +
+          (on ? `0 ≤ t ≤ 1: P is on segment AB (AP : PB = ${t} : ${s})` : `t ${t < 0 ? '< 0: beyond A' : '> 1: beyond B'}, on the line but off the segment`);
+      },
+    });
+    tBox.addEventListener('input', plot.redraw);
+  })();
+</script>

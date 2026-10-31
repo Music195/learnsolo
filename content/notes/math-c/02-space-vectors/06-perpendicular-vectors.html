@@ -1,0 +1,170 @@
+<!-- tags: Space Vector -->
+<!-- =====================================================================
+     NOTE: Perpendicular Condition for Space Vectors (空間ベクトルの垂直条件)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Space Vector">Perpendicular Condition For Vectors</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Right angle ⇔ dot product zero</h2>
+    <p>For nonzero vectors, $\vec{a} \cdot \vec{b} = |\vec{a}||\vec{b}|\cos\theta$ is $0$ exactly when $\cos\theta = 0$, that is, when $\theta = 90°$. So checking "perpendicular" (垂直) is one multiplication-and-add.</p>
+    <p>In space, a single vector has a whole <strong>plane</strong> of directions perpendicular to it, not just one line. That is why "find a vector perpendicular to $\vec{a}$" has many answers, and you need a second condition to pin one down.</p>
+  </section>
+
+  <!-- FORMULA: the condition -->
+  <div class="note-formula">
+    <h3>$\vec{a} = (a_1, a_2, a_3) \ne \vec{0}$, $\vec{b} = (b_1, b_2, b_3) \ne \vec{0}$</h3>
+    <div class="formula-main">$$\vec{a} \perp \vec{b} \iff \vec{a} \cdot \vec{b} = 0 \iff a_1b_1 + a_2b_2 + a_3b_3 = 0$$</div>
+    <p class="symbols">A vector perpendicular to both $\vec{a}$ and $\vec{b}$ (not parallel to each other): set $\vec{n} = (x, y, z)$ and solve $\vec{n} \cdot \vec{a} = 0$, $\vec{n} \cdot \vec{b} = 0$.</p>
+  </div>
+
+  <!-- PROOF: from the definition -->
+  <div class="note-proof">
+    <ol>
+      <li>$\vec{a} \cdot \vec{b} = |\vec{a}||\vec{b}|\cos\theta$ with $|\vec{a}| \ne 0$ and $|\vec{b}| \ne 0$.</li>
+      <li>So $\vec{a} \cdot \vec{b} = 0 \iff \cos\theta = 0 \iff \theta = 90°$ (for $0 \le \theta \le 180°$).</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: the plane of perpendicular directions; code at the bottom -->
+  <div class="note-demo">
+    <h2>All vectors perpendicular to $\vec{a} = (1, 1, 2)$ (blue) fill a plane</h2>
+    <div class="controls">
+      <label>turn $\vec{b}$ in the plane <input type="range" id="pcT" min="0" max="360" step="5" value="40"></label>
+      <label>tilt out of the plane <input type="range" id="pcK" min="-60" max="60" step="5" value="0"></label>
+      <label>turn view <input type="range" id="pcV" min="0" max="90" step="1" value="30"></label>
+    </div>
+    <canvas id="pcCanvas"></canvas>
+    <div class="output table-text" id="pcOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Are $\vec{a} = (1, 2, 3)$ and $\vec{b} = (2, -1, 0)$ perpendicular? And $\vec{c} = (2, 5, 3)$ and $\vec{d} = (4, -2, 1)$?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\vec{a} \cdot \vec{b} = 2 - 2 + 0 = 0$.</li>
+        <li>$\vec{c} \cdot \vec{d} = 8 - 10 + 3 = 1 \ne 0$.</li>
+      </ol>
+      <p class="answer">$\vec{a} \perp \vec{b}$; $\vec{c}$ and $\vec{d}$ are not perpendicular</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">$\vec{a} = (2, x, -1)$ and $\vec{b} = (x, 3, 4)$ are perpendicular. Find $x$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$2x + 3x - 4 = 0$.</li>
+      </ol>
+      <p class="answer">$x = \dfrac{4}{5}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Find a vector perpendicular to $\vec{v} = (3, 4, 5)$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>We need $3x + 4y + 5z = 0$. Choose $z = 0$: then $3x + 4y = 0$, e.g. $x = 4$, $y = -3$.</li>
+        <li>Check: $3 \cdot 4 + 4 \cdot (-3) + 5 \cdot 0 = 0$.</li>
+      </ol>
+      <p class="answer">e.g. $(4, -3, 0)$ (any nonzero solution of $3x + 4y + 5z = 0$ works)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Find the unit vectors perpendicular to both $\vec{a} = (1, 1, 0)$ and $\vec{b} = (0, 1, 1)$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\vec{n} = (x, y, z)$: $x + y = 0$ and $y + z = 0$, so $x = -y$, $z = -y$.</li>
+        <li>$\vec{n} = y(-1, 1, -1)$, and $|\vec{n}| = 1$ gives $3y^2 = 1$, $y = \pm\dfrac{1}{\sqrt{3}}$.</li>
+      </ol>
+      <p class="answer">$\pm\dfrac{1}{\sqrt{3}}(1, -1, 1)$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: zero vector, two answers -->
+  <div class="note-warning">
+    The test needs both vectors nonzero: $\vec{0} \cdot \vec{b} = 0$ always, but $\vec{0}$ has no direction.
+    When asked for a <strong>unit</strong> vector perpendicular to two vectors, there are always two answers, $\vec{e}$ and $-\vec{e}$.
+  </div>
+
+  <!-- TIP: choose a zero -->
+  <div class="note-tip">
+    To find just one perpendicular vector, set one component to $0$ and swap-and-negate the other two: for $(a_1, a_2, a_3)$, the vector $(a_2, -a_1, 0)$ always works (if it isn't $\vec{0}$).
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$\vec{a} \perp \vec{b} \iff a_1b_1 + a_2b_2 + a_3b_3 = 0$ (both nonzero).</li>
+      <li>Vectors perpendicular to one vector fill a plane.</li>
+      <li>Perpendicular to two vectors: solve two dot-product equations, then scale.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Perpendicular plane" demo (the TRY IT block above).
+  // Space is drawn by turning it about the z-axis ("turn view"), tilting it 20°
+  // and looking straight on. The faint grid is the plane through O perpendicular
+  // to a. u and w are two perpendicular unit vectors in that plane, so
+  // b = 2(cos t·u + sin t·w) stays in the plane; the tilt slider adds a part along a.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const boxes = ['pcT', 'pcK', 'pcV'].map((id) => document.getElementById(id));
+    const output = document.getElementById('pcOutput');
+    const f2 = (v) => +v.toFixed(2) || 0;
+    const par = (v) => (f2(v) < 0 ? `(${f2(v)})` : `${f2(v)}`); // wrap negatives: 1×(−0.34)
+    const A = [1, 1, 2];
+    const u = [1 / Math.SQRT2, -1 / Math.SQRT2, 0], w = [1 / Math.sqrt(3), 1 / Math.sqrt(3), -1 / Math.sqrt(3)]; // both ⊥ a, and u ⊥ w
+    const ea = A.map((c) => c / Math.sqrt(6));
+
+    // 3D point → 2D canvas point, for a view turned by az and tilted by el
+    const view = (az, el) => ([x, y, z]) => [-x * Math.sin(az) + y * Math.cos(az), -(x * Math.cos(az) + y * Math.sin(az)) * Math.sin(el) + z * Math.cos(el)];
+    function axes(g, V, L) {
+      [[[L, 0, 0], 'x'], [[0, L, 0], 'y'], [[0, 0, L], 'z']].forEach(([p, name]) => {
+        g.seg(V(p.map((c) => -c)), V(p), '#94a3b8', { width: 1.5 });
+        g.text(V(p.map((c) => c * 1.1)), name, '#64748b');
+      });
+    }
+    const inPlane = (s, t) => [0, 1, 2].map((k) => s * u[k] + t * w[k]);
+
+    const plot = NotePlot.graph(document.getElementById('pcCanvas'), {
+      x: [-5.4, 5.4], y: [-3.5, 3.5], plain: true,
+      draw(g) {
+        const [tDeg, kDeg, vw] = boxes.map((b) => +b.value), t = tDeg * Math.PI / 180, k = kDeg * Math.PI / 180;
+        const V = view(vw * Math.PI / 180, 20 * Math.PI / 180);
+        axes(g, V, 3.2);
+        for (let s = -2.5; s <= 2.5; s += 0.5) {
+          g.seg(V(inPlane(s, -2.5)), V(inPlane(s, 2.5)), '#e0f2fe', { width: 1 });
+          g.seg(V(inPlane(-2.5, s)), V(inPlane(2.5, s)), '#e0f2fe', { width: 1 });
+        }
+        const B = [0, 1, 2].map((i) => 2 * (Math.cos(k) * (Math.cos(t) * u[i] + Math.sin(t) * w[i]) + Math.sin(k) * ea[i]));
+        g.seg(V([0, 0, 0]), V(A), '#2563eb', { width: 3 }); g.dot(V(A), '#2563eb', 'a');
+        g.seg(V([0, 0, 0]), V(B), '#ea580c', { width: 3 }); g.dot(V(B), '#ea580c', 'b');
+        const dot = A[0] * B[0] + A[1] * B[1] + A[2] * B[2];
+        output.textContent =
+          `b = (${B.map(f2).join(', ')})\n` +
+          `a·b = 1×${par(B[0])} + 1×${par(B[1])} + 2×${par(B[2])} = ${f2(dot)}   ` +
+          (Math.abs(dot) < 0.005 ? '→ a ⊥ b' : '→ not perpendicular (b has left the plane)');
+      },
+    });
+    boxes.forEach((el) => el.addEventListener('input', plot.redraw));
+  })();
+</script>

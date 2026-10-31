@@ -1,0 +1,143 @@
+<!-- tags: Expressions and Proof -->
+<!-- =====================================================================
+     NOTE: Comparing by Squaring, and |a| + |b| ≥ |a + b| (平方の大小・絶対値と不等式)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     draggable-point helper static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Expressions and Proof">Square Inequalities</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Squaring keeps the order, if both sides are $\ge 0$</h2>
+    <p>Inequalities with $\sqrt{\phantom{a}}$ or $|\;|$ are awkward to compare directly. If both sides are <strong>not negative</strong>,
+      compare their squares instead: the larger square belongs to the larger number.</p>
+  </section>
+
+  <!-- FORMULA: square comparison -->
+  <div class="note-formula">
+    <h3>For $a \ge 0$, $b \ge 0$</h3>
+    <div class="formula-main">$$a &gt; b \iff a^2 &gt; b^2, \qquad a \ge b \iff a^2 \ge b^2$$</div>
+    <p class="symbols">For any real $a, b$: $a^2 \ge b^2 \iff |a| \ge |b|$, since $|a|^2 = a^2$.</p>
+  </div>
+
+  <div class="note-formula">
+    <h3>Triangle inequality</h3>
+    <div class="formula-main">$$|a| + |b| \ge |a + b| \qquad (= \text{ when } ab \ge 0)$$</div>
+  </div>
+
+  <!-- PROOF: triangle inequality -->
+  <div class="note-proof">
+    <ol>
+      <li>Both sides are $\ge 0$, so compare squares.</li>
+      <li>$(|a| + |b|)^2 - |a + b|^2 = (a^2 + 2|a||b| + b^2) - (a^2 + 2ab + b^2) = 2(|ab| - ab)$.</li>
+      <li>$|ab| \ge ab$ always, so the difference is $\ge 0$; it is $0$ when $|ab| = ab$, i.e. $ab \ge 0$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: right triangle; code at the bottom -->
+  <div class="note-demo">
+    <h2>$\sqrt{a} + \sqrt{b} &gt; \sqrt{a + b}$: two legs beat the hypotenuse</h2>
+    <canvas id="siCanvas"></canvas>
+    <div class="output table-text" id="siOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Which is larger, $\sqrt{3} + \sqrt{5}$ or $\sqrt{2} + \sqrt{6}$?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Both positive. Squares: $8 + 2\sqrt{15}$ and $8 + 2\sqrt{12}$.</li>
+        <li>$\sqrt{15} &gt; \sqrt{12}$.</li>
+      </ol>
+      <p class="answer">$\sqrt{3} + \sqrt{5}$ is larger.</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">$a &gt; 0$, $b &gt; 0$. Prove $\sqrt{a} + \sqrt{b} &gt; \sqrt{a + b}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Both sides positive. $(\sqrt{a} + \sqrt{b})^2 - (\sqrt{a + b})^2 = a + 2\sqrt{ab} + b - (a + b) = 2\sqrt{ab} &gt; 0$.</li>
+      </ol>
+      <p class="answer">Proved.</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Prove $\sqrt{2(a^2 + b^2)} \ge a + b$ for all real $a, b$. When is it an equality?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>If $a + b &lt; 0$, the left side ($\ge 0$) is bigger. Done.</li>
+        <li>If $a + b \ge 0$, both sides are $\ge 0$: $2(a^2 + b^2) - (a + b)^2 = (a - b)^2 \ge 0$.</li>
+        <li>Equality needs $a = b$ <strong>and</strong> $a + b \ge 0$.</li>
+      </ol>
+      <p class="answer">Proved; equality when $a = b \ge 0$.</p>
+    </details>
+  </div>
+
+  <!-- WARNING: negative sides -->
+  <div class="note-warning">
+    Squaring can reverse an inequality when a side is negative: $-3 &lt; 2$ but $(-3)^2 &gt; 2^2$. Check both sides are $\ge 0$ before squaring.
+  </div>
+
+  <!-- TIP: same constant -->
+  <div class="note-tip">
+    When the squares share a part (the $8$ in Example 1), compare only the parts that differ.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$a, b \ge 0$: $a &gt; b \iff a^2 &gt; b^2$.</li>
+      <li>Show both sides are $\ge 0$ before squaring.</li>
+      <li>$|a| + |b| \ge |a + b|$, equality when $ab \ge 0$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Two legs beat the hypotenuse" demo (the TRY IT block above).
+  // A right triangle with legs √a and √b has hypotenuse √(a + b) (Pythagoras),
+  // and a straight side is shorter than the way round two sides.
+  // Drag the corners; 60 pixels = 1 unit.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const output = document.getElementById('siOutput');
+    const O = [80, 300], U = 60;
+
+    NoteGeom.board(document.getElementById('siCanvas'), {
+      points: { A: [80 + 2 * U, 300], B: [80, 300 - 4 * U] },
+      constrain: {
+        A: (p) => [Math.max(O[0] + 8, Math.min(500, p[0])), O[1]],
+        B: (p) => [O[0], Math.max(20, Math.min(O[1] - 8, p[1]))],
+      },
+      draw(g, P) {
+        const { A, B } = P;
+        g.poly([O, A, B]);
+        g.seg(O, A, '#2563eb', { width: 4 });
+        g.seg(O, B, '#0d9488', { width: 4 });
+        g.seg(A, B, '#ea580c', { width: 4 });
+        g.right(O, A, B);
+        const ra = (A[0] - O[0]) / U, rb = (O[1] - B[1]) / U, a = ra * ra, b = rb * rb;
+        g.text([(O[0] + A[0]) / 2, O[1] + 16], '√a', '#2563eb');
+        g.text([O[0] - 18, (O[1] + B[1]) / 2], '√b', '#0d9488');
+        output.textContent =
+          `a = ${a.toFixed(2)}, b = ${b.toFixed(2)}\n` +
+          `√a + √b   = ${ra.toFixed(3)} + ${rb.toFixed(3)} = ${(ra + rb).toFixed(3)}\n` +
+          `√(a + b)  = ${Math.sqrt(a + b).toFixed(3)}   (the orange side)\n` +
+          `squares: ${((ra + rb) ** 2).toFixed(3)} vs ${(a + b).toFixed(3)}; difference 2√(ab) = ${(2 * ra * rb).toFixed(3)}`;
+      },
+    });
+  })();
+</script>

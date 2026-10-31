@@ -1,0 +1,153 @@
+<!-- tags: Complex Number and Equation -->
+<!-- =====================================================================
+     NOTE: Complex Numbers and Equality (複素数と相等)
+     Uses the shared blocks from static/css/note-blocks.css.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Complex Number and Equation">Complex Equality</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>A new number $i$ with $i^2 = -1$</h2>
+    <p>No real number squares to $-1$, so we add one: the <strong>imaginary unit</strong> $i$, with $i^2 = -1$.
+      A <strong>complex number</strong> is $a + bi$ with $a, b$ real: $a$ is the real part and $b$ the imaginary part.</p>
+    <p>Calculate exactly as with letters, then replace every $i^2$ by $-1$.</p>
+  </section>
+
+  <!-- FORMULA: equality and conjugate -->
+  <div class="note-formula">
+    <h3>Equality ($a, b, c, d$ real)</h3>
+    <div class="formula-main">$$a + bi = c + di \iff a = c \text{ and } b = d, \qquad a + bi = 0 \iff a = 0 \text{ and } b = 0$$</div>
+    <p class="symbols">One complex equation gives <strong>two</strong> real equations. The "real" condition matters: with complex $a, b$ this fails.</p>
+  </div>
+
+  <div class="note-formula">
+    <h3>Conjugate and division</h3>
+    <div class="formula-main">$$\overline{a + bi} = a - bi, \qquad (a + bi)(a - bi) = a^2 + b^2, \qquad \frac{c + di}{a + bi} = \frac{(c + di)(a - bi)}{a^2 + b^2}$$</div>
+    <p class="symbols">To divide, multiply top and bottom by the conjugate of the bottom, the same idea as rationalising.</p>
+  </div>
+
+  <!-- DEMO: arithmetic; code at the bottom -->
+  <div class="note-demo">
+    <h2>Calculate with $z = a + bi$ and $w = c + di$</h2>
+    <div class="controls">
+      <label>$a$ = <input type="number" id="ceA" value="1"></label>
+      <label>$b$ = <input type="number" id="ceB" value="2"></label>
+      <label>$c$ = <input type="number" id="ceC" value="2"></label>
+      <label>$d$ = <input type="number" id="ceD" value="-1"></label>
+    </div>
+    <div class="output table-text" id="ceOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Calculate $(2 + 3i)(1 - 2i)$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$2 - 4i + 3i - 6i^2 = 2 - i + 6$</li>
+      </ol>
+      <p class="answer">$8 - i$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Calculate $\dfrac{1 + 2i}{2 - i}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\dfrac{(1 + 2i)(2 + i)}{(2 - i)(2 + i)} = \dfrac{2 + i + 4i + 2i^2}{4 + 1} = \dfrac{5i}{5}$</li>
+      </ol>
+      <p class="answer">$i$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Find real $x, y$ with $(2x + 3) + (x + 2y)i = 7 + 5i$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Real parts: $2x + 3 = 7 \Rightarrow x = 2$.</li>
+        <li>Imaginary parts: $x + 2y = 5 \Rightarrow y = \dfrac{3}{2}$.</li>
+      </ol>
+      <p class="answer">$x = 2$, $y = \dfrac{3}{2}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Find real $x, y$ with $(x + yi)(2 - i) = 5$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Expand: $(2x + y) + (2y - x)i = 5$.</li>
+        <li>$2x + y = 5$ and $2y - x = 0$ give $x = 2$, $y = 1$.</li>
+      </ol>
+      <p class="answer">$x = 2$, $y = 1$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: real parts -->
+  <div class="note-warning">
+    Before comparing parts, write <strong>both sides</strong> in the form (real) + (real)$\,i$. And check that $x, y$ are stated to be real.
+  </div>
+
+  <!-- TIP: conjugate facts -->
+  <div class="note-tip">
+    $z + \overline{z} = 2a$ and $z\overline{z} = a^2 + b^2$ are always <strong>real</strong>. This is why multiplying by the conjugate clears $i$ from a denominator.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$i^2 = -1$; complex number $a + bi$ ($a, b$ real).</li>
+      <li>Equal ⟺ real parts equal and imaginary parts equal.</li>
+      <li>Divide by multiplying by the conjugate of the denominator.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script>
+  // "Calculate with z and w" demo (the TRY IT block above).
+  // Works out z + w, z − w, zw and z / w, showing the conjugate step for z / w.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const ids = ['ceA', 'ceB', 'ceC', 'ceD'];
+    const output = document.getElementById('ceOutput');
+    const n = (v) => +v.toFixed(4);
+    const par = (v) => (v < 0 ? `(${v})` : `${v}`);   // wrap negatives in brackets
+    // [re, im] → "3 − 2i"
+    const cx = ([re, im]) => {
+      re = n(re); im = n(im);
+      if (im === 0) return `${re}`;
+      const ip = Math.abs(im) === 1 ? 'i' : `${Math.abs(im)}i`;
+      return re === 0 ? (im < 0 ? `−${ip}` : ip) : `${re} ${im < 0 ? '−' : '+'} ${ip}`;
+    };
+
+    function update() {
+      const [a, b, c, d] = ids.map((id) => parseFloat(document.getElementById(id).value) || 0);
+      const z = [a, b], w = [c, d];
+      const prod = [a * c - b * d, a * d + b * c];
+      const m = c * c + d * d;
+      let text =
+        `z = ${cx(z)},  w = ${cx(w)}\n` +
+        `z + w = ${cx([a + c, b + d])}\n` +
+        `z − w = ${cx([a - c, b - d])}\n` +
+        `z w   = (${par(a)}·${par(c)} − ${par(b)}·${par(d)}) + (${par(a)}·${par(d)} + ${par(b)}·${par(c)})i = ${cx(prod)}\n`;
+      if (m === 0) text += 'z / w: cannot divide by 0';
+      else {
+        const top = [a * c + b * d, b * c - a * d];         // z × conjugate of w
+        text += `z / w = (z × (${cx([c, -d])})) / (${par(c)}² + ${par(d)}²) = (${cx(top)}) / ${m} = ${cx([top[0] / m, top[1] / m])}`;
+      }
+      output.textContent = text;
+    }
+    ids.forEach((id) => document.getElementById(id).addEventListener('input', update));
+    update();
+  })();
+</script>

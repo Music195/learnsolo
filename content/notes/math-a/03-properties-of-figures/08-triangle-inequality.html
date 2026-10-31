@@ -1,0 +1,163 @@
+<!-- tags: Geometry -->
+<!-- =====================================================================
+     NOTE: Triangle Inequality (side lengths)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     drawing helper static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Geometry">Triangle Side Length Inequality</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Two sides must reach further than the third</h2>
+    <p>Going straight from $B$ to $C$ is always shorter than going via $A$. So in any triangle, any two sides added together are
+      <strong>longer</strong> than the third side.</p>
+    <p>If two sides only add up to the third (or less), they lie flat or can't even meet: no triangle.</p>
+  </section>
+
+  <!-- FORMULA: the inequalities -->
+  <div class="note-formula">
+    <h3>Triangle inequality</h3>
+    <div class="formula-main">$$|b - c| &lt; a &lt; b + c$$</div>
+    <p class="symbols">Three lengths $a, b, c$ make a triangle exactly when this holds (and the same for each side).
+      Quick check: the <strong>longest</strong> side is less than the sum of the other two.</p>
+  </div>
+
+  <!-- PROOF: uses "larger angle faces longer side" (note 09) -->
+  <div class="note-proof">
+    <ol>
+      <li>Extend $BA$ past $A$ to $D$ with $AD = AC$. Then $\triangle ACD$ is isosceles, so $\angle ADC = \angle ACD$.</li>
+      <li>$\angle BCD = \angle BCA + \angle ACD &gt; \angle ACD = \angle BDC$.</li>
+      <li>In $\triangle BCD$ the larger angle faces the longer side (note 09), so $BD &gt; BC$.</li>
+      <li>$BD = BA + AD = AB + AC$, so $AB + AC &gt; BC$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: try three lengths; code at the bottom -->
+  <div class="note-demo">
+    <h2>Can these three lengths make a triangle?</h2>
+    <div class="controls">
+      <label>$a$ <input type="number" id="tiA" value="7" min="1" max="15"></label>
+      <label>$b$ <input type="number" id="tiB" value="5" min="1" max="15"></label>
+      <label>$c$ <input type="number" id="tiC" value="4" min="1" max="15"></label>
+    </div>
+    <canvas id="tiCanvas"></canvas>
+    <div class="output table-text" id="tiOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Which of these can be the sides of a triangle? (a) 3, 4, 8 &nbsp; (b) 5, 5, 10 &nbsp; (c) 4, 6, 9</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>(a) $3 + 4 = 7 &lt; 8$: no.</li>
+        <li>(b) $5 + 5 = 10$, not more than 10: no (the sides lie flat).</li>
+        <li>(c) $4 + 6 = 10 &gt; 9$: yes.</li>
+      </ol>
+      <p class="answer">Only (c)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Two sides of a triangle are 5 and 7. Find the possible lengths $x$ of the third side. How many are whole numbers?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$7 - 5 &lt; x &lt; 7 + 5$</li>
+        <li>Whole numbers: $3, 4, \dots, 11$</li>
+      </ol>
+      <p class="answer">$2 &lt; x &lt; 12$; 9 whole numbers</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">The lengths $2x - 1$, $x + 1$, $5$ are the sides of a triangle. Find the range of $x$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$(2x - 1) + (x + 1) &gt; 5 \Rightarrow x &gt; \dfrac{5}{3}$</li>
+        <li>$(x + 1) + 5 &gt; 2x - 1 \Rightarrow x &lt; 7$</li>
+        <li>$(2x - 1) + 5 &gt; x + 1 \Rightarrow x &gt; -3$ (already true). All lengths are then positive.</li>
+      </ol>
+      <p class="answer">$\dfrac{5}{3} &lt; x &lt; 7$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: equality is not allowed -->
+  <div class="note-warning">
+    The inequality is <strong>strict</strong>. $5, 5, 10$ is not a triangle: the two short sides lie flat on the long one.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$|b - c| &lt; a &lt; b + c$.</li>
+      <li>Quick test: longest side &lt; sum of the other two.</li>
+      <li>With unknowns, write all three inequalities and combine them.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Can these three lengths make a triangle?" demo (the TRY IT block above).
+  // Puts the longest length along the bottom. If the triangle exists it is drawn;
+  // otherwise the two shorter sides are laid along the bottom to show the gap.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const G = window.NoteGeom;
+    const inputs = ['tiA', 'tiB', 'tiC'].map((id) => document.getElementById(id));
+    const output = document.getElementById('tiOutput');
+    const unit = 30; // pixels per unit length
+
+    const board = G.board(document.getElementById('tiCanvas'), {
+      points: {},
+      draw(g) {
+        const [a, b, c] = inputs.map((el) => parseFloat(el.value));
+        if ([a, b, c].some((v) => isNaN(v) || v <= 0 || v > 15)) {
+          output.textContent = 'Choose lengths between 1 and 15.';
+          return;
+        }
+        // Longest side as the base, named so the labels stay correct
+        const sides = [['a', a], ['b', b], ['c', c]].sort((x, y) => y[1] - x[1]);
+        const [[nL, L], [nP, p], [nQ, q]] = sides;
+        const left = [260 - (L * unit) / 2, 280], right = [260 + (L * unit) / 2, 280];
+
+        g.seg(left, right, '#334155', { width: 3 });
+        g.text([260, 300], `${nL} = ${L}`);
+
+        if (p + q > L) {
+          // Third corner from the two lengths: p from the left end, q from the right end
+          const x = (L * L + p * p - q * q) / (2 * L);
+          const top = [left[0] + x * unit, 280 - Math.sqrt(p * p - x * x) * unit];
+          g.poly([left, right, top]);
+          g.seg(left, top, '#2563eb', { width: 3 });
+          g.seg(right, top, '#0d9488', { width: 3 });
+          g.text(G.lerp(left, top, 0.5).map((v, i) => v + (i ? 0 : -18)), `${nP} = ${p}`, '#2563eb');
+          g.text(G.lerp(right, top, 0.5).map((v, i) => v + (i ? 0 : 18)), `${nQ} = ${q}`, '#0d9488');
+        } else {
+          // Lay the two short sides flat from each end: they can't meet
+          g.seg(left, [left[0] + p * unit, 260], '#2563eb', { width: 3 });
+          g.seg(right, [right[0] - q * unit, 250], '#0d9488', { width: 3 });
+          g.text([left[0] + (p * unit) / 2, 240], `${nP} = ${p}`, '#2563eb');
+          g.text([right[0] - (q * unit) / 2, 228], `${nQ} = ${q}`, '#0d9488');
+        }
+
+        output.textContent =
+          `longest side ${nL} = ${L},  ${nP} + ${nQ} = ${p + q}\n` +
+          (p + q > L ? `${p + q} > ${L}: a triangle ✓`
+            : p + q === L ? `${p + q} = ${L}: the sides lie flat, no triangle`
+            : `${p + q} < ${L}: the sides can't meet (gap ${L - p - q}), no triangle`);
+      },
+    });
+
+    inputs.forEach((el) => el.addEventListener('input', board.redraw));
+  })();
+</script>

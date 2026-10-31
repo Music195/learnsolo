@@ -1,0 +1,143 @@
+<!-- tags: Exponent and Logarithm -->
+<!-- =====================================================================
+     NOTE: Properties of Logarithms (対数の性質)
+     Uses the shared blocks from static/css/note-blocks.css.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Exponent and Logarithm">Logarithm Properties</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Exponent laws, seen through logs</h2>
+    <p>Multiplying powers <strong>adds</strong> exponents, and logs are exponents. So the log of a product is the sum of the logs,
+      the log of a quotient is the difference, and the log of a power brings the power down in front.</p>
+  </section>
+
+  <!-- FORMULA: three rules -->
+  <div class="note-formula">
+    <h3>Rules ($a &gt; 0$, $a \ne 1$, $M, N &gt; 0$, $k$ real)</h3>
+    <div class="formula-main">$$\log_a MN = \log_a M + \log_a N, \qquad \log_a \frac{M}{N} = \log_a M - \log_a N, \qquad \log_a M^k = k\log_a M$$</div>
+  </div>
+
+  <!-- PROOF: product rule -->
+  <div class="note-proof">
+    <ol>
+      <li>Let $p = \log_a M$, $q = \log_a N$, so $M = a^p$, $N = a^q$.</li>
+      <li>$MN = a^p a^q = a^{p+q}$, so $\log_a MN = p + q$.</li>
+      <li>Similarly $\dfrac{M}{N} = a^{p-q}$ and $M^k = a^{kp}$ give the other two rules.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: check numerically; code at the bottom -->
+  <div class="note-demo">
+    <h2>Check the rules with numbers (base $a$)</h2>
+    <div class="controls">
+      <label>$a$ = <input type="number" id="lpA" value="2" min="0.01" step="any"></label>
+      <label>$M$ = <input type="number" id="lpM" value="12" min="0.0001" step="any"></label>
+      <label>$N$ = <input type="number" id="lpN" value="3" min="0.0001" step="any"></label>
+      <label>$k$ = <input type="number" id="lpK" value="2" step="any"></label>
+    </div>
+    <div class="output table-text" id="lpOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Calculate $\log_6 4 + \log_6 9$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\log_6 (4 \times 9) = \log_6 36$</li>
+      </ol>
+      <p class="answer">$2$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Calculate $2\log_3 6 - \log_3 4$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\log_3 6^2 - \log_3 4 = \log_3 \dfrac{36}{4} = \log_3 9$</li>
+      </ol>
+      <p class="answer">$2$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Calculate $\log_2 \sqrt{12} - \dfrac{1}{2}\log_2 3$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\dfrac{1}{2}\log_2 12 - \dfrac{1}{2}\log_2 3 = \dfrac{1}{2}\log_2 4$</li>
+      </ol>
+      <p class="answer">$1$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">With $\log_{10} 2 = a$ and $\log_{10} 3 = b$, write $\log_{10} 18$ and $\log_{10} 5$ in terms of $a, b$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$18 = 2 \cdot 3^2$: $\log_{10} 18 = a + 2b$.</li>
+        <li>$5 = \dfrac{10}{2}$: $\log_{10} 5 = 1 - a$.</li>
+      </ol>
+      <p class="answer">$a + 2b$; $\;1 - a$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: false rules -->
+  <div class="note-warning">
+    There is no rule for a sum: $\log_a (M + N) \ne \log_a M + \log_a N$. Also $(\log_a M)^2 \ne 2\log_a M$.
+  </div>
+
+  <!-- TIP: prime factors -->
+  <div class="note-tip">
+    Break numbers into primes ($18 = 2 \cdot 3^2$) and use the rules to write everything with $\log 2$, $\log 3$, … This is how log tables are used.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Product → sum, quotient → difference, power → multiply.</li>
+      <li>They come from the exponent laws.</li>
+      <li>No rule for $\log(M + N)$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script>
+  // "Check the rules with numbers" demo (the TRY IT block above).
+  // Computes both sides of each rule for the chosen M, N and k.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const ids = ['lpA', 'lpM', 'lpN', 'lpK'];
+    const output = document.getElementById('lpOutput');
+    const f = (v) => v.toFixed(5);
+
+    function update() {
+      const [a, M, N, k] = ids.map((id) => parseFloat(document.getElementById(id).value));
+      if (!(a > 0) || a === 1 || !(M > 0) || !(N > 0) || Number.isNaN(k)) {
+        output.textContent = 'Need a > 0, a ≠ 1, M > 0, N > 0.'; return;
+      }
+      const L = (x) => Math.log(x) / Math.log(a);
+      output.textContent =
+        `log(MN)  = log ${M * N}        = ${f(L(M * N))}\n` +
+        `log M + log N = ${f(L(M))} + ${f(L(N))} = ${f(L(M) + L(N))}\n\n` +
+        `log(M/N) = log ${+(M / N).toFixed(6)}  = ${f(L(M / N))}\n` +
+        `log M − log N = ${f(L(M))} − ${f(L(N))} = ${f(L(M) - L(N))}\n\n` +
+        `log M^k  = log ${+(M ** k).toPrecision(8)} = ${f(L(M ** k))}\n` +
+        `k log M  = ${k} × ${f(L(M))} = ${f(k * L(M))}\n\n` +
+        `but log(M + N) = ${f(L(M + N))}  ≠  log M + log N`;
+    }
+    ids.forEach((id) => document.getElementById(id).addEventListener('input', update));
+    update();
+  })();
+</script>

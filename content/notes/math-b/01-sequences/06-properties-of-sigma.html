@@ -1,0 +1,175 @@
+<!-- tags: Sequence -->
+<!-- =====================================================================
+     NOTE: Properties of Sigma (Σ)
+     Uses the shared blocks from static/css/note-blocks.css.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Sequence">Properties of Sigma (Σ)</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>What does $\Sigma$ mean?</h2>
+    <p>$\displaystyle\sum_{k=1}^{n} a_k$ is short for $a_1 + a_2 + \dots + a_n$: put $k = 1, 2, \dots, n$ into $a_k$ and add the results.</p>
+    <p>Because $\Sigma$ is just addition, it follows the normal rules of addition. Those rules let you break a
+      complicated sum into the standard sums $\sum 1$, $\sum k$, $\sum k^2$, $\sum k^3$.</p>
+  </section>
+
+  <!-- FORMULA: the two core properties -->
+  <div class="note-formula">
+    <h3>Split a sum or difference</h3>
+    <div class="formula-main">$$\sum_{k=1}^{n} (a_k \pm b_k) = \sum_{k=1}^{n} a_k \pm \sum_{k=1}^{n} b_k$$</div>
+    <p class="symbols">You can add the terms in any order, so the $a$'s and $b$'s can be summed separately.</p>
+  </div>
+
+  <div class="note-formula">
+    <h3>Take out a constant</h3>
+    <div class="formula-main">$$\sum_{k=1}^{n} c\,a_k = c \sum_{k=1}^{n} a_k$$</div>
+    <p class="symbols">$c$ must not depend on $k$. It is a common factor of every term.</p>
+  </div>
+
+  <!-- WARNING: things that look like properties but are false -->
+  <div class="note-warning">
+    These are <strong>not</strong> true in general:
+    $\displaystyle\sum a_k b_k \neq \Bigl(\sum a_k\Bigr)\Bigl(\sum b_k\Bigr)$ and
+    $\displaystyle\sum a_k^2 \neq \Bigl(\sum a_k\Bigr)^2$.
+    Expand the product first, then split the sum.
+  </div>
+
+  <!-- DEMO: calculator; its code is in the <script> at the bottom -->
+  <div class="note-demo">
+    <h2>Check “take out a constant”</h2>
+    <div class="controls">
+      <label>Terms
+        <select id="spPower">
+          <option value="1">k</option>
+          <option value="2">k²</option>
+          <option value="3">k³</option>
+        </select>
+      </label>
+      <label>$n$ <input type="number" id="spN" value="5" min="1"></label>
+      <label>Constant $c$ <input type="number" id="spC" value="2"></label>
+      <button type="button" id="spCalculate">Calculate</button>
+    </div>
+    <div class="output" id="spOutput"></div>
+  </div>
+
+  <!-- CONCEPT: other useful ways to rewrite a sum -->
+  <section class="note-concept">
+    <h2>More useful rewrites</h2>
+    <div class="note-grid">
+      <div>
+        <h3>Split at any point</h3>
+        <p>$$\sum_{k=1}^{n} a_k = \sum_{k=1}^{m} a_k + \sum_{k=m+1}^{n} a_k$$</p>
+      </div>
+      <div>
+        <h3>Shift the index</h3>
+        <p>$$\sum_{k=1}^{n} a_{k+m} = \sum_{k=m+1}^{n+m} a_k$$</p>
+      </div>
+      <div>
+        <h3>Reverse the order</h3>
+        <p>$$\sum_{k=1}^{n} a_k = \sum_{k=1}^{n} a_{n-k+1}$$</p>
+      </div>
+      <div>
+        <h3>Telescoping</h3>
+        <p>$$\sum_{k=1}^{n} (a_k - a_{k-1}) = a_n - a_0$$</p>
+        <p>All the middle terms cancel in pairs.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Calculate $\displaystyle\sum_{k=1}^{5} (3k + 2)$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Split the sum: $\;\displaystyle\sum (3k + 2) = 3\sum_{k=1}^{5} k + \sum_{k=1}^{5} 2$</li>
+        <li>$3 \times \dfrac{5 \times 6}{2} = 45$ and $2 \times 5 = 10$</li>
+      </ol>
+      <p class="answer">$45 + 10 = 55$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Write $\displaystyle\sum_{k=2}^{7} k^2$ using $\displaystyle\sum_{k=1}^{7} k^2$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The sum from $k = 1$ includes one extra term, $1^2$.</li>
+        <li>Remove it: $\;\displaystyle\sum_{k=2}^{7} k^2 = \sum_{k=1}^{7} k^2 - 1^2$</li>
+      </ol>
+      <p class="answer">$\displaystyle\sum_{k=2}^{7} k^2 = \sum_{k=1}^{7} k^2 - 1 = 140 - 1 = 139$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Show that $\displaystyle\sum_{k=1}^{n} (2k - 1) = n^2$ (the sum of the first $n$ odd numbers).</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Split the sum: $\;\displaystyle 2\sum_{k=1}^{n} k - \sum_{k=1}^{n} 1$</li>
+        <li>$= 2 \times \dfrac{n(n+1)}{2} - n = n^2 + n - n$</li>
+      </ol>
+      <p class="answer">$= n^2$</p>
+    </details>
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$\sum (a_k \pm b_k) = \sum a_k \pm \sum b_k$</li>
+      <li>$\sum c\,a_k = c \sum a_k$ when $c$ doesn't depend on $k$.</li>
+      <li>You can't split a product or a square of a sum; expand first.</li>
+      <li>Sums can be split, shifted, reversed and telescoped.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script>
+  // "Take out a constant" checker (the TRY IT block above).
+  // Shows that adding c·k^p term by term gives the same total as c × (sum of k^p).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const powerSelect = document.getElementById('spPower');
+    const nInput = document.getElementById('spN');
+    const cInput = document.getElementById('spC');
+    const output = document.getElementById('spOutput');
+
+    // Rounds away floating-point noise, e.g. 0.30000000000000004 -> 0.3
+    const tidy = (x) => Number(x.toFixed(6));
+    const powerLabel = { 1: 'k', 2: 'k²', 3: 'k³' };
+
+    function calculate() {
+      const p = Number(powerSelect.value);
+      const n = parseInt(nInput.value, 10);
+      const c = parseFloat(cInput.value);
+
+      if (isNaN(n) || n < 1 || isNaN(c)) {
+        output.textContent = 'Please enter a whole number n ≥ 1 and a number c.';
+        return;
+      }
+
+      // Add up the terms directly, both without and with the constant
+      let plain = 0;
+      let scaled = 0;
+      for (let k = 1; k <= n; k++) {
+        plain += Math.pow(k, p);
+        scaled += c * Math.pow(k, p);
+      }
+
+      const label = powerLabel[p];
+      output.textContent =
+        `Σ ${c}·${label} = ${tidy(scaled)}    and    ${c} × Σ ${label} = ${c} × ${plain} = ${tidy(c * plain)}`;
+    }
+
+    document.getElementById('spCalculate').addEventListener('click', calculate);
+    powerSelect.addEventListener('change', calculate);
+    calculate(); // show a result for the default values straight away
+  })();
+</script>

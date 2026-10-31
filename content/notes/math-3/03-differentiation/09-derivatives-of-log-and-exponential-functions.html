@@ -1,0 +1,172 @@
+<!-- tags: Differentiation -->
+<!-- =====================================================================
+     NOTE: Derivatives of Logarithmic and Exponential Functions (対数関数・指数関数の導関数)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Differentiation">Derivatives of Logarithmic and Exponential Functions</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>The base $e$ makes the slope equal the height</h2>
+    <p>For $y = a^x$, the slope at every point is the height times a fixed number that depends only on $a$. For $a = 2$ that number is about $0.69$; for $a = 3$, about $1.10$.
+      Somewhere in between it is exactly $1$, and that base is $e = 2.71828\ldots$. For $y = e^x$ the slope equals the height.</p>
+    <p>In Mathematics III, $\log x$ with no base means the <strong>natural logarithm</strong> $\log_e x$ (also written $\ln x$).</p>
+  </section>
+
+  <!-- FORMULA: the definition of e and the derivatives -->
+  <div class="note-formula">
+    <h3>The number $e$</h3>
+    <div class="formula-main">$$e = \lim_{h \to 0} (1 + h)^{\frac{1}{h}} = 2.71828\ldots$$</div>
+  </div>
+
+  <div class="note-formula">
+    <h3>Derivatives</h3>
+    <div class="formula-main">$$(\log x)' = \frac{1}{x}, \qquad (\log |x|)' = \frac{1}{x}, \qquad (\log_a x)' = \frac{1}{x\log a}$$</div>
+    <div class="formula-main">$$(e^x)' = e^x, \qquad (a^x)' = a^x\log a$$</div>
+    <p class="symbols">$a &gt; 0$, $a \ne 1$. With an inside function: $\{\log|f(x)|\}' = \dfrac{f'(x)}{f(x)}$, $\;\{e^{f(x)}\}' = e^{f(x)}f'(x)$.</p>
+  </div>
+
+  <!-- PROOF: log from the definition, then e^x as the inverse -->
+  <div class="note-proof">
+    <ol>
+      <li>$\dfrac{\log(x + h) - \log x}{h} = \dfrac{1}{h}\log\left(1 + \dfrac{h}{x}\right) = \dfrac{1}{x}\log\left(1 + \dfrac{h}{x}\right)^{\frac{x}{h}}$. Put $k = \dfrac{h}{x} \to 0$: this is $\dfrac{1}{x}\log(1 + k)^{\frac{1}{k}} \to \dfrac{1}{x}\log e = \dfrac{1}{x}$.</li>
+      <li>For $x &lt; 0$: $\log|x| = \log(-x)$, and the chain rule gives $\dfrac{-1}{-x} = \dfrac{1}{x}$.</li>
+      <li>$y = e^x \iff x = \log y$, so $\dfrac{dx}{dy} = \dfrac{1}{y}$ and $\dfrac{dy}{dx} = y = e^x$ (inverse function rule).</li>
+      <li>$a^x = e^{x\log a}$, so $(a^x)' = e^{x\log a} \cdot \log a = a^x\log a$. Similarly $\log_a x = \dfrac{\log x}{\log a}$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: slope ÷ height for a^x; code at the bottom -->
+  <div class="note-demo">
+    <h2>For $y = a^x$, slope ÷ height is the same everywhere</h2>
+    <div class="controls">
+      <label>base $a$ = <input type="range" id="elA" min="1.2" max="4" step="0.01" value="2"></label>
+      <label>$x$ = <input type="range" id="elX" min="-2" max="1.5" step="0.05" value="0.5"></label>
+    </div>
+    <canvas id="elCanvas"></canvas>
+    <div class="output table-text" id="elOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Differentiate $y = e^{2x}$ and $y = 2^x$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$(e^{2x})' = e^{2x} \cdot 2$</li>
+        <li>$(2^x)' = 2^x\log 2$</li>
+      </ol>
+      <p class="answer">$2e^{2x}$ and $2^x\log 2$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Differentiate $y = \log(x^2 + 1)$ and $y = \log|\cos x|$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\dfrac{(x^2 + 1)'}{x^2 + 1} = \dfrac{2x}{x^2 + 1}$</li>
+        <li>$\dfrac{(\cos x)'}{\cos x} = \dfrac{-\sin x}{\cos x}$</li>
+      </ol>
+      <p class="answer">$\dfrac{2x}{x^2 + 1}$ and $-\tan x$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Differentiate $y = x^2e^{-x}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Product rule: $y' = 2xe^{-x} + x^2 \cdot (-e^{-x})$</li>
+      </ol>
+      <p class="answer">$y' = x(2 - x)e^{-x}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Differentiate $y = x^x$ ($x &gt; 0$) by taking logarithms (対数微分法).</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Both sides are positive: $\log y = x\log x$.</li>
+        <li>Differentiate with respect to $x$: $\dfrac{y'}{y} = \log x + x \cdot \dfrac{1}{x} = \log x + 1$.</li>
+      </ol>
+      <p class="answer">$y' = x^x(\log x + 1)$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">Show that $(x^p)' = px^{p-1}$ for every real $p$ ($x &gt; 0$).</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$y = x^p$, so $\log y = p\log x$.</li>
+        <li>$\dfrac{y'}{y} = \dfrac{p}{x}$, so $y' = x^p \cdot \dfrac{p}{x}$.</li>
+      </ol>
+      <p class="answer">$y' = px^{p-1}$ ✓</p>
+    </details>
+  </div>
+
+  <!-- WARNING: a^x vs x^a, and the "only function" myth -->
+  <div class="note-warning">
+    $(2^x)' = 2^x\log 2$ (variable in the exponent), but $(x^2)' = 2x$ (variable in the base). Don't mix them up.
+    Also, $e^x$ is not the only function equal to its own derivative: $Ce^x$ is too, for any constant $C$.
+  </div>
+
+  <!-- TIP: logarithmic differentiation -->
+  <div class="note-tip">
+    For $x^x$, or a big product or quotient of powers, take $\log$ of both sides first. Products become sums and powers come down as factors, which makes differentiating much easier.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$(\log|x|)' = \dfrac{1}{x}$, $\;(\log|f|)' = \dfrac{f'}{f}$.</li>
+      <li>$(e^x)' = e^x$, $\;(a^x)' = a^x\log a$.</li>
+      <li>Variable in both base and exponent: take logs, then differentiate.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Slope ÷ height" demo (the TRY IT block above).
+  // Draws y = aˣ and its tangent at the chosen x. The ratio slope / height is
+  // log a whatever x is, and it equals 1 exactly when a = e.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const aBox = document.getElementById('elA'), xBox = document.getElementById('elX');
+    const output = document.getElementById('elOutput');
+    const f3 = (v) => +v.toFixed(3);
+
+    const plot = NotePlot.graph(document.getElementById('elCanvas'), {
+      x: [-3, 2.5], y: [-1, 5],
+      draw(g) {
+        const a = +aBox.value, x0 = +xBox.value;
+        g.fn((x) => Math.E ** x, '#cbd5e1', { width: 1.5, dash: true }); // eˣ for comparison
+        g.fn((x) => a ** x, '#2563eb');
+        const h = a ** x0, m = (a ** (x0 + 1e-6) - a ** (x0 - 1e-6)) / 2e-6;
+        g.fn((x) => h + m * (x - x0), '#ea580c', { width: 2 });
+        g.seg([x0, 0], [x0, h], '#0d9488', { width: 2 }); // the height
+        g.dot([x0, h], '#2563eb');
+        const near = Math.abs(a - Math.E) < 0.02;
+        output.textContent =
+          `height aˣ = ${f3(h)},  slope = ${f3(m)}\n` +
+          `slope ÷ height = ${f3(m / h)}   log a = ${f3(Math.log(a))}` +
+          (near ? '   ← a ≈ e: slope equals height' : `   (grey dashed: eˣ, where the ratio is 1)`);
+      },
+    });
+    [aBox, xBox].forEach((el) => el.addEventListener('input', plot.redraw));
+  })();
+</script>

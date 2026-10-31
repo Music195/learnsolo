@@ -1,0 +1,163 @@
+<!-- tags: Integration -->
+<!-- =====================================================================
+     NOTE: Area Bounded by x = g(y) (y で積分する面積)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Integration">Area Bounded by x = g(y)</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Slice sideways</h2>
+    <p>Some regions are easier to cut into <strong>horizontal</strong> strips. This happens when the curve is given as $x = g(y)$, or when the left and right edges stay the same all the way up but the top and bottom don't.</p>
+    <p>Each strip has length (right curve) − (left curve) and thickness $dy$. Integrate over $y$ from the bottom of the region to the top.</p>
+  </section>
+
+  <!-- FORMULA: integrating in y -->
+  <div class="note-formula">
+    <h3>$c \le y \le d$</h3>
+    <div class="formula-main">$$S = \int_c^d |g(y)|\,dy$$</div>
+    <div class="formula-main">$$S = \int_c^d \{(\text{right } x) - (\text{left } x)\}\,dy$$</div>
+    <p class="symbols">The first is the area between $x = g(y)$ and the $y$-axis. Limits are $y$-values: solve for where the curves meet in terms of $y$.</p>
+  </div>
+
+  <!-- PROOF: same idea with the axes swapped -->
+  <div class="note-proof">
+    <ol>
+      <li>Swap the roles of $x$ and $y$ (reflect in the line $y = x$). Reflection keeps areas.</li>
+      <li>After the swap, $x = g(y)$ becomes $y = g(x)$, and the strip is a usual vertical one.</li>
+      <li>So the earlier formulas hold with $x$ and $y$ exchanged.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: a horizontal strip; code at the bottom -->
+  <div class="note-demo">
+    <h2>Move the horizontal strip: length = right $x$ − left $x$</h2>
+    <div class="controls">
+      <label>region <select id="gyR">
+        <option value="0">x = 2y − y² and the y-axis</option>
+        <option value="1">y² = x and y = x − 2</option>
+        <option value="2">y = log x, y-axis, 0 ≤ y ≤ 1</option>
+      </select></label>
+      <label>strip height $y$ = <input type="range" id="gyY" min="0" max="1" step="0.01" value="0.4"></label>
+    </div>
+    <canvas id="gyCanvas"></canvas>
+    <div class="output table-text" id="gyOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find the area between $x = 2y - y^2$ and the $y$-axis.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$x = 0$ when $y = 0, 2$; between them $x \ge 0$.</li>
+        <li>$\displaystyle\int_0^2 (2y - y^2)\,dy = 4 - \frac{8}{3}$</li>
+      </ol>
+      <p class="answer">$\dfrac{4}{3}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find the area enclosed by $y^2 = x$ and $y = x - 2$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>In terms of $y$: left edge $x = y^2$, right edge $x = y + 2$. They meet where $y^2 = y + 2$, i.e. $y = -1, 2$.</li>
+        <li>$\displaystyle\int_{-1}^{2} (y + 2 - y^2)\,dy = \frac{1}{6}(2 - (-1))^3$</li>
+      </ol>
+      <p class="answer">$\dfrac{9}{2}$ (slicing vertically would need two separate integrals)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Find the area bounded by $y = \log x$, the $y$-axis, and the lines $y = 0$ and $y = 1$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$x = e^y$; strips run from the $y$-axis to $x = e^y$.</li>
+        <li>$\displaystyle\int_0^1 e^y\,dy = e - 1$</li>
+      </ol>
+      <p class="answer">$e - 1$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Find the area bounded by $y = \sqrt{x}$, the $y$-axis and the line $y = 2$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$x = y^2$ ($y \ge 0$), from the $y$-axis to the curve, $0 \le y \le 2$.</li>
+        <li>$\displaystyle\int_0^2 y^2\,dy = \frac{8}{3}$</li>
+      </ol>
+      <p class="answer">$\dfrac{8}{3}$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: limits in y -->
+  <div class="note-warning">
+    When you integrate in $y$, the limits must be $y$-values and the integrand must be written in $y$. Don't use the $x$-coordinates of the meeting points.
+  </div>
+
+  <!-- TIP: when to slice sideways -->
+  <div class="note-tip">
+    Slice sideways if vertical strips would change their top or bottom curve partway, as in Example 2. Also do it if $y = f(x)$ is hard to integrate but $x = g(y)$ is easy, as with $\log x$ and $e^y$.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$S = \int_c^d (\text{right} - \text{left})\,dy$.</li>
+      <li>Write each boundary as $x = g(y)$; limits are $y$-values.</li>
+      <li>Pick the direction that gives one simple integral.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Horizontal strip" demo (the TRY IT block above).
+  // Each region is given by its left and right edges as functions of y, for c ≤ y ≤ d.
+  // The slider picks a height between c and d (as a fraction 0–1); the teal segment
+  // is the strip there. Adding all such strip lengths × dy gives the area.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const rBox = document.getElementById('gyR'), yBox = document.getElementById('gyY');
+    const output = document.getElementById('gyOutput');
+    const f3 = (v) => +v.toFixed(3);
+
+    // each region: left(y), right(y), the y-range and the exact area
+    const REGIONS = [
+      { L: () => 0, R: (y) => 2 * y - y * y, c: 0, d: 2, area: '4/3', text: 'from x = 0 to x = 2y − y²' },
+      { L: (y) => y * y, R: (y) => y + 2, c: -1, d: 2, area: '9/2', text: 'from x = y² to x = y + 2' },
+      { L: () => 0, R: Math.exp, c: 0, d: 1, area: 'e − 1', text: 'from x = 0 to x = eʸ' },
+    ];
+    const integral = (h, a, b) => { let s = 0; const n = 1000, w = (b - a) / n; for (let i = 0; i < n; i++) s += h(a + (i + 0.5) * w); return s * w; };
+
+    const plot = NotePlot.graph(document.getElementById('gyCanvas'), {
+      x: [-1.5, 4.7], y: [-1.5, 2.5],
+      draw(g) {
+        const R = REGIONS[+rBox.value], y0 = R.c + (R.d - R.c) * +yBox.value;
+        const right = [], left = [];
+        for (let k = 0; k <= 120; k++) { const y = R.c + (R.d - R.c) * k / 120; right.push([R.R(y), y]); left.unshift([R.L(y), y]); }
+        g.poly([...right, ...left], 'rgba(37, 99, 235, 0.2)');
+        for (let k = 0; k < 120; k++) { g.seg(right[k], right[k + 1], '#2563eb'); g.seg(left[k], left[k + 1], '#ea580c'); }
+        g.seg([R.L(y0), y0], [R.R(y0), y0], '#0d9488', { width: 5 });
+        output.textContent =
+          `strip at y = ${f3(y0)}: ${R.text}, length ${f3(R.R(y0) - R.L(y0))}\n` +
+          `area = ∫ from ${R.c} to ${R.d} of (right − left) dy = ${f3(integral((y) => R.R(y) - R.L(y), R.c, R.d))} = ${R.area}`;
+      },
+    });
+    rBox.addEventListener('change', plot.redraw);
+    yBox.addEventListener('input', plot.redraw);
+  })();
+</script>

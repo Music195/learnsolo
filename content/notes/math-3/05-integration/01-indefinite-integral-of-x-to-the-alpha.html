@@ -1,0 +1,151 @@
+<!-- tags: Integration -->
+<!-- =====================================================================
+     NOTE: Indefinite Integrals of x^α (不定積分と xᵅ の積分)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Integration">Indefinite Integrals of x^α</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Differentiation run backwards</h2>
+    <p>$F(x)$ is an <strong>antiderivative</strong> (原始関数) of $f(x)$ if $F'(x) = f(x)$. Adding any constant keeps the derivative the same.
+      So the antiderivatives form a family $F(x) + C$, all vertical shifts of one curve. This family is the <strong>indefinite integral</strong> $\displaystyle\int f(x)\,dx$.</p>
+    <p>For powers: raise the power by $1$ and divide by the new power. The one exception is $\dfrac{1}{x}$, whose antiderivative is $\log|x|$.</p>
+  </section>
+
+  <!-- FORMULA: power rule for integrals -->
+  <div class="note-formula">
+    <h3>Powers of $x$ ($C$: constant of integration)</h3>
+    <div class="formula-main">$$\int x^\alpha\,dx = \frac{x^{\alpha+1}}{\alpha + 1} + C \;\; (\alpha \ne -1), \qquad \int \frac{1}{x}\,dx = \log|x| + C$$</div>
+    <p class="symbols">$\alpha$ may be any real number, e.g. $\sqrt{x} = x^{\frac{1}{2}}$, $\dfrac{1}{x^2} = x^{-2}$.</p>
+  </div>
+
+  <!-- PROOF: check by differentiating -->
+  <div class="note-proof">
+    <ol>
+      <li>$\left(\dfrac{x^{\alpha+1}}{\alpha + 1}\right)' = \dfrac{(\alpha + 1)x^\alpha}{\alpha + 1} = x^\alpha$. This needs $\alpha + 1 \ne 0$.</li>
+      <li>For $\alpha = -1$: $(\log|x|)' = \dfrac{1}{x}$ (Differentiation note 09).</li>
+      <li>If $F' = G' = f$, then $(F - G)' = 0$, so $F - G$ is a constant. That is why one constant $C$ covers <em>all</em> antiderivatives.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: the family F(x) + C; code at the bottom -->
+  <div class="note-demo">
+    <h2>The family $F(x) + C$: same slope at every $x$</h2>
+    <div class="controls">
+      <label>$f(x)$ = <select id="ixF">
+        <option value="0">x²</option>
+        <option value="1">√x</option>
+        <option value="2">1/x²</option>
+        <option value="3">1/x</option>
+      </select></label>
+      <label>$C$ = <input type="range" id="ixC" min="-2" max="2" step="0.1" value="0"></label>
+      <label>$x$ = <input type="range" id="ixX" min="0.3" max="2.5" step="0.05" value="1.2"></label>
+    </div>
+    <canvas id="ixCanvas"></canvas>
+    <div class="output table-text" id="ixOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find $\displaystyle\int x^5\,dx$ and $\displaystyle\int \frac{1}{x^3}\,dx$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\dfrac{x^6}{6} + C$</li>
+        <li>$\displaystyle\int x^{-3}\,dx = \frac{x^{-2}}{-2} + C$</li>
+      </ol>
+      <p class="answer">$\dfrac{x^6}{6} + C$ and $-\dfrac{1}{2x^2} + C$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find $\displaystyle\int \sqrt[3]{x^2}\,dx$ and $\displaystyle\int \frac{1}{\sqrt{x}}\,dx$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\displaystyle\int x^{\frac{2}{3}}\,dx = \frac{x^{\frac{5}{3}}}{\frac{5}{3}} + C = \frac{3}{5}x\sqrt[3]{x^2} + C$</li>
+        <li>$\displaystyle\int x^{-\frac{1}{2}}\,dx = \frac{x^{\frac{1}{2}}}{\frac{1}{2}} + C = 2\sqrt{x} + C$</li>
+      </ol>
+      <p class="answer">$\dfrac{3}{5}x\sqrt[3]{x^2} + C$ and $2\sqrt{x} + C$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Find $F(x)$ with $F'(x) = \dfrac{1}{x}$ ($x &gt; 0$) and $F(1) = 3$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$F(x) = \log x + C$, and $F(1) = 0 + C = 3$.</li>
+      </ol>
+      <p class="answer">$F(x) = \log x + 3$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: α = -1 and the constant -->
+  <div class="note-warning">
+    The power rule fails for $\alpha = -1$ (it would divide by $0$). Use $\log|x|$ instead. And never drop the $+ C$.
+  </div>
+
+  <!-- TIP: check by differentiating -->
+  <div class="note-tip">
+    You can always check an integral: differentiate your answer and see if you get the original function back.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$\displaystyle\int x^\alpha\,dx = \frac{x^{\alpha+1}}{\alpha+1} + C$ ($\alpha \ne -1$).</li>
+      <li>$\displaystyle\int \frac{dx}{x} = \log|x| + C$.</li>
+      <li>Rewrite roots and fractions as powers first.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Family of antiderivatives" demo (the TRY IT block above).
+  // Grey: several members F(x) + C of the family. Blue: the one for the chosen C.
+  // At the chosen x every member has the same slope, equal to f(x).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const fBox = document.getElementById('ixF'), cBox = document.getElementById('ixC'), xBox = document.getElementById('ixX');
+    const output = document.getElementById('ixOutput');
+    const f3 = (v) => +v.toFixed(3);
+
+    // each integrand with one antiderivative and its name
+    const FUNCS = [
+      { f: (x) => x * x, F: (x) => x ** 3 / 3, name: 'x³/3' },
+      { f: Math.sqrt, F: (x) => 2 / 3 * x ** 1.5, name: '(2/3)x√x' },
+      { f: (x) => 1 / (x * x), F: (x) => -1 / x, name: '−1/x' },
+      { f: (x) => 1 / x, F: Math.log, name: 'log x' },
+    ];
+
+    const plot = NotePlot.graph(document.getElementById('ixCanvas'), {
+      x: [-0.3, 3], y: [-3, 4],
+      draw(g) {
+        const F = FUNCS[+fBox.value], C = +cBox.value, x0 = +xBox.value;
+        for (let k = -2; k <= 2; k++) g.fn((x) => F.F(x) + k, '#e2e8f0', { width: 1.5, from: 0.05 });
+        g.fn(F.f, '#ea580c', { width: 2, dash: true, from: 0.05 });
+        g.fn((x) => F.F(x) + C, '#2563eb', { from: 0.05 });
+        const m = F.f(x0);
+        for (let k = -2; k <= 2; k++) g.fn((x) => F.F(x0) + k + m * (x - x0), '#0d9488', { width: 1, from: x0 - 0.3, to: x0 + 0.3 });
+        g.dot([x0, F.F(x0) + C], '#2563eb');
+        output.textContent =
+          `F(x) + C = ${F.name} ${C < 0 ? '−' : '+'} ${Math.abs(C)}   (orange dashed: f)\n` +
+          `slope at x = ${x0}: ${f3(m)} for every member of the family, = f(${x0})`;
+      },
+    });
+    fBox.addEventListener('change', plot.redraw);
+    [cBox, xBox].forEach((el) => el.addEventListener('input', plot.redraw));
+  })();
+</script>

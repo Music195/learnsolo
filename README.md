@@ -26,8 +26,14 @@ This project is built to act as a personal study companion, helping users struct
 ## 📂 Project Structure (Conceptual)
 
 ```text
-├── app.py                  # Core Flask application and routing logic
-├── templates/              # HTML templates for rendering the user interface
-├── static/                 # CSS stylesheets and interactive JavaScript files
-├── data/                   # Data stores or markdown files containing study notes
+├── app.py                  # Creates the Flask app and registers the routes
+├── content/                # All learning material, as HTML fragments
+│   ├── notes/              #   notes/<course>/<topic>/<nn-name>.html
+│   ├── practice/           #   practice sets, same course/topic folders as notes/
+│   └── past/               #   past question papers by exam (eju/, university/)
+├── routes/                 # home.py, notes.py, practice.py, past.py
+├── utils/                  # content_loader.py (reads content/), courses.py (display names)
+├── templates/              # Page templates (partials/ holds shared pieces)
+├── static/                 # css/, js/ (js/demos/ holds the demo helpers)
+├── docs/content-guide.md   # How to write notes, practice sets and past papers
 └── README.md               # Project documentation

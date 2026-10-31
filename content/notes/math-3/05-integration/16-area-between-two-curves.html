@@ -1,0 +1,197 @@
+<!-- tags: Integration -->
+<!-- =====================================================================
+     NOTE: Area Between Two Curves (2 曲線の間の面積)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Integration">Area Between Two Curves</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Top minus bottom</h2>
+    <p>Slice the region into thin vertical strips. Each strip has height (upper curve) − (lower curve), wherever the curves are, even below the axis. Integrate that height across the region.</p>
+    <p>The curves meet where $f(x) = g(x)$; these points are usually the limits. If the curves cross <em>inside</em> the interval, top and bottom swap there. Split at that point.</p>
+  </section>
+
+  <!-- FORMULA: area between curves -->
+  <div class="note-formula">
+    <h3>$f(x) \ge g(x)$ on $[a, b]$</h3>
+    <div class="formula-main">$$S = \int_a^b \{f(x) - g(x)\}\,dx, \qquad \text{in general } S = \int_a^b |f(x) - g(x)|\,dx$$</div>
+    <p class="symbols">For a parabola and a line, or two parabolas, meeting at $\alpha &lt; \beta$: $S = \dfrac{|a|}{6}(\beta - \alpha)^3$. Here $a$ is the $x^2$ coefficient of $f - g$.</p>
+  </div>
+
+  <!-- PROOF: why the axis doesn't matter -->
+  <div class="note-proof">
+    <ol>
+      <li>Shift both curves up by the same constant $c$ so they lie above the axis. The region keeps its area.</li>
+      <li>Then the area is (area under $f + c$) − (area under $g + c$) $= \displaystyle\int_a^b \{(f + c) - (g + c)\}\,dx$.</li>
+      <li>The $c$ cancels, leaving $\displaystyle\int_a^b (f - g)\,dx$, whatever the position of the axis.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: region between two curves; code at the bottom -->
+  <div class="note-demo">
+    <h2>Region between $f$ (blue) and $g$ (orange); colour shows which is on top</h2>
+    <div class="controls">
+      <label>curves <select id="abP">
+        <option value="0">f = x, g = x² − 2</option>
+        <option value="1">f = x³, g = x</option>
+        <option value="2">f = sin x, g = cos x</option>
+        <option value="3">f = √x, g = x²</option>
+      </select></label>
+    </div>
+    <canvas id="abCanvas"></canvas>
+    <div class="output table-text" id="abOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find the area between $y = x$ and $y = x^2 - 2$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Meet: $x^2 - 2 = x$, $(x - 2)(x + 1) = 0$, so $x = -1, 2$. The line is on top between them.</li>
+        <li>$\displaystyle\int_{-1}^{2} (x - x^2 + 2)\,dx = \frac{1}{6}(2 - (-1))^3$</li>
+      </ol>
+      <p class="answer">$\dfrac{9}{2}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find the total area enclosed by $y = x^3$ and $y = x$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Meet: $x^3 = x$, so $x = -1, 0, 1$.</li>
+        <li>On $[-1, 0]$, $x^3 \ge x$ (e.g. at $x = -\frac{1}{2}$: $-\frac{1}{8} &gt; -\frac{1}{2}$). On $[0, 1]$, $x \ge x^3$.</li>
+        <li>$\displaystyle\int_{-1}^0 (x^3 - x)\,dx + \int_0^1 (x - x^3)\,dx = \frac{1}{4} + \frac{1}{4}$</li>
+      </ol>
+      <p class="answer">$\dfrac{1}{2}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Find the area enclosed by $y = \sin x$ and $y = \cos x$ for $\dfrac{\pi}{4} \le x \le \dfrac{5\pi}{4}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>They meet at $\dfrac{\pi}{4}$ and $\dfrac{5\pi}{4}$, with $\sin x$ on top in between.</li>
+        <li>$\Big[-\cos x - \sin x\Big]_{\frac{\pi}{4}}^{\frac{5\pi}{4}} = \left(\dfrac{\sqrt{2}}{2} + \dfrac{\sqrt{2}}{2}\right) - \left(-\dfrac{\sqrt{2}}{2} - \dfrac{\sqrt{2}}{2}\right)$</li>
+      </ol>
+      <p class="answer">$2\sqrt{2}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Find the area between $y = \sqrt{x}$ and $y = x^2$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Meet at $x = 0, 1$. On $[0, 1]$, $\sqrt{x} \ge x^2$.</li>
+        <li>$\displaystyle\int_0^1 (\sqrt{x} - x^2)\,dx = \frac{2}{3} - \frac{1}{3}$</li>
+      </ol>
+      <p class="answer">$\dfrac{1}{3}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">Find the area between $y = e^x$, $y = e^{-x}$ and the line $x = 1$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>They meet at $x = 0$; on $[0, 1]$, $e^x \ge e^{-x}$.</li>
+        <li>$\Big[e^x + e^{-x}\Big]_0^1 = e + \dfrac{1}{e} - 2$</li>
+      </ol>
+      <p class="answer">$e + \dfrac{1}{e} - 2$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: curves that cross inside -->
+  <div class="note-warning">
+    If the curves cross inside the interval, $\displaystyle\int (f - g)$ over the whole interval lets the pieces cancel (Example 2 would give $0$). Split at every crossing.
+  </div>
+
+  <!-- TIP: test a point -->
+  <div class="note-tip">
+    To see which curve is on top, plug one $x$ from inside the piece into both functions. That is quicker than sketching.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Area $= \int (\text{top} - \text{bottom})\,dx$, wherever the axis is.</li>
+      <li>Limits: solve $f(x) = g(x)$.</li>
+      <li>Split where the curves cross; the 1/6 formula for parabolas.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Between two curves" demo (the TRY IT block above).
+  // Finds where f and g meet in the search range, then shades each piece between
+  // neighbouring meeting points: blue where f is on top, orange where g is on top.
+  // Each piece's area is ∫|f − g| over it.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const pBox = document.getElementById('abP');
+    const output = document.getElementById('abOutput');
+    const f3 = (v) => +v.toFixed(3);
+
+    // each pair with the range where meeting points are searched
+    const PAIRS = [
+      { f: (x) => x, g: (x) => x * x - 2, lo: -3, hi: 3 },
+      { f: (x) => x ** 3, g: (x) => x, lo: -1.5, hi: 1.5 },
+      { f: Math.sin, g: Math.cos, lo: 0, hi: 6 },
+      { f: Math.sqrt, g: (x) => x * x, lo: 0, hi: 2 },
+    ];
+    const integral = (h, a, b) => { let s = 0; const n = 1000, w = (b - a) / n; for (let i = 0; i < n; i++) s += h(a + (i + 0.5) * w); return s * w; };
+    // x-values where d(x) = 0 in [lo, hi], including an exact zero at a grid point
+    function roots(d, lo, hi) {
+      const out = [], n = 600;
+      for (let i = 0; i <= n; i++) {
+        let p = lo + (hi - lo) * i / n;
+        if (Math.abs(d(p)) < 1e-12) { out.push(p); continue; }
+        if (i === n) break;
+        let q = lo + (hi - lo) * (i + 1) / n;
+        if (d(p) * d(q) < 0) {
+          for (let k = 0; k < 40; k++) { const m = (p + q) / 2; if (d(p) * d(m) <= 0) q = m; else p = m; }
+          out.push((p + q) / 2);
+        }
+      }
+      return out;
+    }
+
+    const plot = NotePlot.graph(document.getElementById('abCanvas'), {
+      x: [-3.2, 6.4], y: [-3, 3],
+      draw(g) {
+        const P = PAIRS[+pBox.value], d = (x) => P.f(x) - P.g(x);
+        const r = roots(d, P.lo, P.hi), parts = [];
+        let total = 0;
+        for (let i = 0; i + 1 < r.length; i++) {
+          const a = r[i], b = r[i + 1], top = d((a + b) / 2) > 0;
+          const upper = [], lower = [];
+          for (let k = 0; k <= 100; k++) { const x = a + (b - a) * k / 100; upper.push([x, P.f(x)]); lower.unshift([x, P.g(x)]); }
+          g.poly([...upper, ...lower], top ? 'rgba(37, 99, 235, 0.25)' : 'rgba(234, 88, 12, 0.25)');
+          const s = Math.abs(integral(d, a, b));
+          parts.push(`[${f3(a)}, ${f3(b)}]: ${top ? 'f' : 'g'} on top, area ${f3(s)}`);
+          total += s;
+        }
+        g.fn(P.f, '#2563eb', { from: P.lo }); g.fn(P.g, '#ea580c', { from: P.lo });
+        r.forEach((x) => g.dot([x, P.f(x)], '#334155'));
+        output.textContent = `meet at x = ${r.map(f3).join(', ')}\n${parts.join('\n')}\ntotal area = ${f3(total)}`;
+      },
+    });
+    pBox.addEventListener('change', plot.redraw);
+  })();
+</script>

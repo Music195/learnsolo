@@ -1,0 +1,184 @@
+<!-- tags: Differentiation -->
+<!-- =====================================================================
+     NOTE: Sign of the Derivative and Monotonicity (関数の増減)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Differentiation">Sign of the Derivative and Monotonicity</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Positive slope means going up</h2>
+    <p>Where $f'(x) &gt; 0$ every tangent slopes upward, so the graph rises (the function is <strong>increasing</strong>). Where $f'(x) &lt; 0$ it falls (<strong>decreasing</strong>).</p>
+    <p>To see the whole picture, find where $f'(x) = 0$, check the sign of $f'$ in between, and record it in an <strong>increase/decrease table</strong> (増減表).</p>
+  </section>
+
+  <!-- FORMULA: the test -->
+  <div class="note-formula">
+    <h3>On an interval</h3>
+    <div class="formula-main">$$f'(x) &gt; 0 \Rightarrow f \text{ increasing}, \qquad f'(x) &lt; 0 \Rightarrow f \text{ decreasing}, \qquad f'(x) = 0 \text{ everywhere} \Rightarrow f \text{ constant}$$</div>
+    <p class="symbols">The converse can fail: $x^3$ is increasing everywhere although $f'(0) = 0$.</p>
+  </div>
+
+  <!-- PROOF: from the mean value theorem -->
+  <div class="note-proof">
+    <ol>
+      <li>Take any $x_1 &lt; x_2$ in the interval. By the mean value theorem, $f(x_2) - f(x_1) = f'(c)(x_2 - x_1)$ with $x_1 &lt; c &lt; x_2$.</li>
+      <li>If $f' &gt; 0$ throughout, then $f'(c) &gt; 0$ and $x_2 - x_1 &gt; 0$, so $f(x_2) &gt; f(x_1)$: increasing.</li>
+      <li>The same argument with $f' &lt; 0$ or $f' = 0$ gives decreasing or constant.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: auto increase/decrease table; code at the bottom -->
+  <div class="note-demo">
+    <h2>Rising parts in green, falling parts in red, and the table</h2>
+    <div class="controls">
+      <label>$f(x)$ = <select id="moF">
+        <option value="0">x³ − 3x</option>
+        <option value="1">x⁴ − 4x²</option>
+        <option value="2">x eˣ</option>
+        <option value="3">x³</option>
+      </select></label>
+    </div>
+    <canvas id="moCanvas"></canvas>
+    <div class="output table-text" id="moOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find where $f(x) = x^4 - 4x^2$ is increasing and decreasing.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$f'(x) = 4x^3 - 8x = 4x(x + \sqrt{2})(x - \sqrt{2})$, zero at $x = -\sqrt{2}, 0, \sqrt{2}$.</li>
+        <li>Signs of $f'$ from left to right: $-$, $+$, $-$, $+$ (test e.g. $x = -2, -1, 1, 2$).</li>
+        <li>Table: $f$ falls to $-4$ at $x = -\sqrt{2}$, rises to $0$ at $x = 0$, falls to $-4$ at $x = \sqrt{2}$, then rises.</li>
+      </ol>
+      <p class="answer">Decreasing on $x \le -\sqrt{2}$ and $0 \le x \le \sqrt{2}$; increasing on $-\sqrt{2} \le x \le 0$ and $x \ge \sqrt{2}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find where $f(x) = x - 2\sin x$ ($0 \le x \le 2\pi$) is increasing and decreasing.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$f'(x) = 1 - 2\cos x = 0 \Rightarrow \cos x = \dfrac{1}{2} \Rightarrow x = \dfrac{\pi}{3}, \dfrac{5\pi}{3}$.</li>
+        <li>$f' &lt; 0$ when $\cos x &gt; \dfrac{1}{2}$ (near $0$ and $2\pi$); $f' &gt; 0$ in between.</li>
+      </ol>
+      <p class="answer">Decreasing on $0 \le x \le \dfrac{\pi}{3}$ and $\dfrac{5\pi}{3} \le x \le 2\pi$; increasing on $\dfrac{\pi}{3} \le x \le \dfrac{5\pi}{3}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Show that $e^x \ge 1 + x$ for all real $x$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Let $g(x) = e^x - 1 - x$. Then $g'(x) = e^x - 1$: negative for $x &lt; 0$, zero at $0$, positive for $x &gt; 0$.</li>
+        <li>So $g$ decreases to $g(0) = 0$ and then increases: its smallest value is $0$.</li>
+      </ol>
+      <p class="answer">$g(x) \ge 0$, i.e. $e^x \ge 1 + x$ (equality only at $x = 0$)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">For which $a$ is $f(x) = x^3 + ax^2 + 3x$ increasing on all of $\mathbb{R}$?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Need $f'(x) = 3x^2 + 2ax + 3 \ge 0$ for all $x$, i.e. its discriminant is not positive.</li>
+        <li>$\dfrac{D}{4} = a^2 - 9 \le 0$</li>
+      </ol>
+      <p class="answer">$-3 \le a \le 3$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: zeros of f' are not automatically turning points -->
+  <div class="note-warning">
+    $f'(a) = 0$ does not mean the direction changes at $a$. Always check the sign on <strong>both</strong> sides. For $x^3$, $f' \ge 0$ on both sides of $0$, so it keeps rising.
+  </div>
+
+  <!-- TIP: factor f' -->
+  <div class="note-tip">
+    Factor $f'(x)$ fully. Then each factor's sign is easy to read, and the sign of $f'$ only changes at the roots of odd multiplicity.
+    Parts that are always positive, like $e^x$ or $x^2 + 1$, can be ignored when reading the sign.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$f' &gt; 0$: increasing; $f' &lt; 0$: decreasing (proof: mean value theorem).</li>
+      <li>Increase/decrease table: zeros of $f'$, sign of $f'$ between them, arrows for $f$.</li>
+      <li>Inequality $F(x) \ge 0$: find the minimum of $F$ with the table.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Increase/decrease table" demo (the TRY IT block above).
+  // Finds the zeros of f′ numerically, colours the curve green where f′ > 0 and
+  // red where f′ < 0, and prints the table: x row, sign of f′, arrows and values of f.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const fBox = document.getElementById('moF');
+    const output = document.getElementById('moOutput');
+    const f2 = (v) => String(+v.toFixed(2));
+
+    const FUNCS = [
+      { f: (x) => x ** 3 - 3 * x, d: (x) => 3 * x * x - 3 },
+      { f: (x) => x ** 4 - 4 * x * x, d: (x) => 4 * x ** 3 - 8 * x },
+      { f: (x) => x * Math.exp(x), d: (x) => (x + 1) * Math.exp(x) },
+      { f: (x) => x ** 3, d: (x) => 3 * x * x },
+    ];
+    const X0 = -3, X1 = 3;
+
+    // zeros of d in [X0, X1]: sign changes, plus points where |d| dips to 0 without crossing
+    function zeros(d) {
+      const z = [], n = 1200;
+      for (let i = 0; i < n; i++) {
+        let lo = X0 + (X1 - X0) * i / n, hi = lo + (X1 - X0) / n;
+        const mid = (lo + hi) / 2;
+        if (Math.sign(d(lo)) !== Math.sign(d(hi))) {
+          for (let k = 0; k < 50; k++) { const m = (lo + hi) / 2; if (Math.sign(d(m)) === Math.sign(d(lo))) lo = m; else hi = m; }
+          z.push((lo + hi) / 2);
+        } else if (Math.abs(d(mid)) < 1e-4) z.push(mid); // touches 0, e.g. 3x² at 0
+      }
+      return z.filter((v, i) => i === 0 || v - z[i - 1] > 0.02);
+    }
+
+    const plot = NotePlot.graph(document.getElementById('moCanvas'), {
+      x: [X0, X1], y: [-5, 5],
+      draw(g) {
+        const F = FUNCS[+fBox.value], z = zeros(F.d);
+        g.fn(F.f, '#16a34a', { width: 4 }); // green underneath …
+        const cuts = [X0, ...z, X1];
+        for (let i = 0; i + 1 < cuts.length; i++) {
+          const mid = (cuts[i] + cuts[i + 1]) / 2;
+          if (F.d(mid) < 0) g.fn(F.f, '#dc2626', { width: 4, from: cuts[i], to: cuts[i + 1] }); // … red on falling parts
+        }
+        z.forEach((x) => g.dot([x, F.f(x)], '#0f172a'));
+        // build the table as aligned columns
+        const cols = [['x', "f'", 'f']];
+        for (let i = 0; i + 1 < cuts.length; i++) {
+          const up = F.d((cuts[i] + cuts[i + 1]) / 2) > 0;
+          cols.push(['…', up ? '+' : '−', up ? '↗' : '↘']);
+          if (i + 2 < cuts.length) cols.push([f2(cuts[i + 1]), '0', f2(F.f(cuts[i + 1]))]);
+        }
+        const w = cols.map((c) => Math.max(...c.map((s) => s.length)));
+        output.textContent = [0, 1, 2].map((r) => cols.map((c, j) => c[r].padEnd(w[j])).join(' | ')).join('\n');
+      },
+    });
+    fBox.addEventListener('change', plot.redraw);
+  })();
+</script>

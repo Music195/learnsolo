@@ -1,0 +1,141 @@
+<!-- tags: Probability -->
+<!-- =====================================================================
+     NOTE: Addition Rule for Counting
+     Uses the shared blocks from static/css/note-blocks.css.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Probability">Addition Rule for Counting</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>"Either this case or that case"</h2>
+    <p>Split the problem into cases that <strong>can't happen at the same time</strong>. Count each case, then add.</p>
+    <p>Example: rolling two dice, how many ways give a sum of 5 or 6? A roll can't have sum 5 <em>and</em> sum 6, so
+      count each and add: $4 + 5 = 9$.</p>
+  </section>
+
+  <!-- FORMULA: the rule -->
+  <div class="note-formula">
+    <h3>Addition rule</h3>
+    <div class="formula-main">$$\text{case } A \text{ in } m \text{ ways},\;\; \text{case } B \text{ in } n \text{ ways},\;\; \text{never both} \;\Longrightarrow\; m + n \text{ ways}$$</div>
+    <p class="symbols">In set language: if $A \cap B = \varnothing$, then $n(A \cup B) = n(A) + n(B)$.</p>
+  </div>
+
+  <!-- WARNING: only for cases that can't overlap -->
+  <div class="note-warning">
+    Only add when the cases <strong>can't overlap</strong>. "Sum is even or a double" overlaps (e.g. $(2, 2)$ is both),
+    so plain adding counts it twice. Use $n(A \cup B) = n(A) + n(B) - n(A \cap B)$ from the previous note instead.
+  </div>
+
+  <!-- DEMO: two-dice grid; code at the bottom -->
+  <div class="note-demo">
+    <h2>Two dice: count the sums</h2>
+    <div class="controls">
+      <label>Sum is any of <input type="text" id="arSums" class="wide" value="5, 6"></label>
+    </div>
+    <div id="arGrid"></div>
+    <div class="output table-text" id="arOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Two dice are rolled. In how many ways is the sum a multiple of 5?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Possible sums are 2 to 12, so a multiple of 5 means sum $5$ or sum $10$. These cases can't happen together.</li>
+        <li>Sum 5: $(1,4), (2,3), (3,2), (4,1)$, so 4 ways</li>
+        <li>Sum 10: $(4,6), (5,5), (6,4)$, so 3 ways</li>
+      </ol>
+      <p class="answer">$4 + 3 = 7$ ways</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">A café has 3 sandwiches and 4 salads. You choose <strong>one</strong> item. How many choices are there?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The item is either a sandwich or a salad, never both.</li>
+      </ol>
+      <p class="answer">$3 + 4 = 7$ choices</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">How many 2-digit numbers have digits that add up to 4 or 5?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Digit sum 4 (first digit not 0): $13, 22, 31, 40$, so 4 numbers</li>
+        <li>Digit sum 5: $14, 23, 32, 41, 50$, so 5 numbers</li>
+      </ol>
+      <p class="answer">$4 + 5 = 9$</p>
+    </details>
+  </div>
+
+  <!-- TIP: addition vs multiplication -->
+  <div class="note-tip">
+    <strong>"or" (one case or another)</strong> → add. &nbsp; <strong>"and then" (one step followed by another)</strong> → multiply (next note).
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Split into cases that can't happen together, count each, then add.</li>
+      <li>If the cases can overlap, subtract the overlap.</li>
+      <li>"Or" → add; "and then" → multiply.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script>
+  // Two-dice grid (the TRY IT block above).
+  // Builds a 6×6 table of all rolls, highlights the chosen sums,
+  // and counts each sum separately before adding.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const sumsInput = document.getElementById('arSums');
+    const grid = document.getElementById('arGrid');
+    const output = document.getElementById('arOutput');
+
+    function update() {
+      // Read the chosen sums, keeping only 2 … 12, each once
+      const sums = [...new Set(sumsInput.value.split(',').map((s) => parseInt(s, 10)))]
+        .filter((s) => s >= 2 && s <= 12);
+
+      // Table: rows = first die, columns = second die, cell = sum
+      let html = '<table><tr><th>1st \\ 2nd</th>';
+      for (let b = 1; b <= 6; b++) html += `<th>${b}</th>`;
+      html += '</tr>';
+      for (let a = 1; a <= 6; a++) {
+        html += `<tr><th>${a}</th>`;
+        for (let b = 1; b <= 6; b++) {
+          const hit = sums.includes(a + b);
+          html += `<td class="${hit ? 'hit' : ''}">${a + b}</td>`;
+        }
+        html += '</tr>';
+      }
+      grid.innerHTML = html + '</table>';
+
+      if (sums.length === 0) {
+        output.textContent = 'Type one or more sums from 2 to 12, separated by commas.';
+        return;
+      }
+      // Ways to make sum s with two dice: 6 − |s − 7|
+      const ways = sums.map((s) => 6 - Math.abs(s - 7));
+      const total = ways.reduce((x, y) => x + y, 0);
+      output.textContent = sums.map((s, i) => `sum ${s}: ${ways[i]} ways`).join('\n') +
+        `\ntotal = ${ways.join(' + ')} = ${total}  (out of 36)`;
+    }
+
+    sumsInput.addEventListener('input', update);
+    update(); // show the default sums straight away
+  })();
+</script>

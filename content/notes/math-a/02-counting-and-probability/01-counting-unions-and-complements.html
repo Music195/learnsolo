@@ -1,0 +1,151 @@
+<!-- tags: Probability -->
+<!-- =====================================================================
+     NOTE: Counting Elements in Unions and Complements
+     Uses the shared blocks from static/css/note-blocks.css.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Probability">Counting Elements in Unions and Complements</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Don't count the overlap twice</h2>
+    <p>$n(A)$ means the <strong>number of elements</strong> in $A$. If you add $n(A)$ and $n(B)$, everything in both sets
+      is counted twice, so subtract it once.</p>
+    <p>Elements outside a set are counted by taking everything and removing what is inside.</p>
+  </section>
+
+  <!-- FORMULA: union, complement, three sets -->
+  <div class="note-formula">
+    <h3>Union of two sets</h3>
+    <div class="formula-main">$$n(A \cup B) = n(A) + n(B) - n(A \cap B)$$</div>
+    <p class="symbols">If $A \cap B = \varnothing$ (no overlap), this is just $n(A) + n(B)$.</p>
+  </div>
+
+  <div class="note-formula">
+    <h3>Complement</h3>
+    <div class="formula-main">$$n(\overline{A}) = n(U) - n(A)$$</div>
+  </div>
+
+  <div class="note-formula">
+    <h3>Union of three sets</h3>
+    <div class="formula-main">$$n(A \cup B \cup C) = n(A) + n(B) + n(C) - n(A \cap B) - n(B \cap C) - n(C \cap A) + n(A \cap B \cap C)$$</div>
+    <p class="symbols">Add the singles, subtract the pairs, add back the triple (it was added 3 times and subtracted 3 times).</p>
+  </div>
+
+  <!-- TIP: "neither" problems -->
+  <div class="note-tip">
+    "Neither $A$ nor $B$" is $\overline{A} \cap \overline{B} = \overline{A \cup B}$ (De Morgan), so
+    $\;n(\text{neither}) = n(U) - n(A \cup B)$.
+  </div>
+
+  <!-- DEMO: Venn diagram with counts in each region; code at the bottom -->
+  <div class="note-demo">
+    <h2>Fill in the Venn diagram</h2>
+    <div class="controls">
+      <label>$n(U)$ <input type="number" id="cuU" value="100" min="0"></label>
+      <label>$n(A)$ <input type="number" id="cuA" value="60" min="0"></label>
+      <label>$n(B)$ <input type="number" id="cuB" value="45" min="0"></label>
+      <label>$n(A \cap B)$ <input type="number" id="cuAB" value="20" min="0"></label>
+    </div>
+    <canvas id="cuCanvas"></canvas>
+    <div class="output table-text" id="cuOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">In a class of 30, 18 play soccer, 12 play basketball and 5 play both. How many play at least one? How many play neither?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$n(S \cup B) = 18 + 12 - 5 = 25$</li>
+        <li>$n(\text{neither}) = 30 - 25 = 5$</li>
+      </ol>
+      <p class="answer">25 play at least one; 5 play neither.</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">How many integers from 1 to 100 are divisible by 2 or 3?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Divisible by 2: $\lfloor 100/2 \rfloor = 50$. Divisible by 3: $\lfloor 100/3 \rfloor = 33$.</li>
+        <li>Divisible by both means divisible by 6: $\lfloor 100/6 \rfloor = 16$</li>
+        <li>$50 + 33 - 16 = 67$</li>
+      </ol>
+      <p class="answer">67</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">How many integers from 1 to 100 are divisible by 2, 3 or 5?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Singles: $50 + 33 + 20 = 103$</li>
+        <li>Pairs (divisible by 6, 15, 10): $16 + 6 + 10 = 32$</li>
+        <li>Triple (divisible by 30): $3$</li>
+        <li>$103 - 32 + 3 = 74$</li>
+      </ol>
+      <p class="answer">74</p>
+    </details>
+  </div>
+
+  <!-- WARNING: the most common mistake with this topic -->
+  <div class="note-warning">
+    $n(A \cap B)$ can't be bigger than $n(A)$ or $n(B)$, and $n(A \cup B)$ can't be bigger than $n(U)$.
+    If your numbers break these limits, re-read the problem.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$n(A \cup B) = n(A) + n(B) - n(A \cap B)$</li>
+      <li>$n(\overline{A}) = n(U) - n(A)$; "neither" $= n(U) - n(A \cup B)$.</li>
+      <li>Three sets: add singles, subtract pairs, add the triple.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/venn.js"></script>
+<script>
+  // "Fill in the Venn diagram" demo (the TRY IT block above).
+  // Works out the number in each of the 4 regions and writes it on the diagram.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const inputs = ['cuU', 'cuA', 'cuB', 'cuAB'].map((id) => document.getElementById(id));
+    const canvas = document.getElementById('cuCanvas');
+    const output = document.getElementById('cuOutput');
+
+    function update() {
+      const [u, a, b, ab] = inputs.map((input) => parseInt(input.value, 10));
+      if ([u, a, b, ab].some(isNaN)) {
+        output.textContent = 'Please fill in all four numbers.';
+        return;
+      }
+
+      const union = a + b - ab;
+      const counts = { onlyA: a - ab, both: ab, onlyB: b - ab, neither: u - union };
+
+      // Impossible inputs give a negative region; explain instead of drawing nonsense
+      if (Object.values(counts).some((x) => x < 0)) {
+        output.textContent = 'These numbers are impossible: n(A ∩ B) must be ≤ n(A) and ≤ n(B), and n(A ∪ B) must be ≤ n(U).';
+        return;
+      }
+
+      NoteVenn.draw(canvas, { A: [], B: [], counts, shade: (inA, inB) => inA || inB });
+      output.textContent =
+        `n(A ∪ B) = ${a} + ${b} − ${ab} = ${union}\n` +
+        `neither  = ${u} − ${union} = ${counts.neither}`;
+    }
+
+    inputs.forEach((input) => input.addEventListener('input', update));
+    update(); // draw the default numbers straight away
+  })();
+</script>

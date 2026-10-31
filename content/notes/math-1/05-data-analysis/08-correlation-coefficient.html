@@ -1,0 +1,136 @@
+<!-- tags: Data Analysis -->
+<!-- =====================================================================
+     NOTE: Correlation and the Correlation Coefficient (相関係数)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     draggable-point helper static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Data Analysis">Correlation Coefficient</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Do two things go up together?</h2>
+    <p>Plot pairs of data $(x, y)$ as a <strong>scatter plot</strong>. If the points drift up to the right, there is a <strong>positive correlation</strong>;
+      down to the right, a <strong>negative correlation</strong>; no direction, <strong>no correlation</strong>.</p>
+    <p>The <strong>correlation coefficient</strong> $r$ measures how close the points are to a straight line, from $-1$ to $1$.</p>
+  </section>
+
+  <!-- FORMULA: covariance and r -->
+  <div class="note-formula">
+    <h3>Covariance</h3>
+    <div class="formula-main">$$s_{xy} = \frac{(x_1 - \overline{x})(y_1 - \overline{y}) + \cdots + (x_n - \overline{x})(y_n - \overline{y})}{n}$$</div>
+    <p class="symbols">Positive when $x$ and $y$ are usually on the same side of their means.</p>
+  </div>
+
+  <div class="note-formula">
+    <h3>Correlation coefficient</h3>
+    <div class="formula-main">$$r = \frac{s_{xy}}{s_x\, s_y}, \qquad -1 \le r \le 1$$</div>
+    <p class="symbols">$s_x$, $s_y$: standard deviations. $r$ near $1$: strong positive; near $-1$: strong negative; near $0$: weak or none.</p>
+  </div>
+
+  <!-- DEMO: drag the points; code at the bottom -->
+  <div class="note-demo">
+    <h2>Drag the points</h2>
+    <p>Line them up, scatter them, or tilt them down and watch $r$.</p>
+    <canvas id="crCanvas"></canvas>
+    <div class="output table-text" id="crOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find $r$ for $x$: 1, 2, 3, 4, 5 and $y$: 2, 4, 5, 4, 5.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\overline{x} = 3$, $\overline{y} = 4$. Deviations: $x$: $-2, -1, 0, 1, 2$; $y$: $-2, 0, 1, 0, 1$.</li>
+        <li>Products: $4, 0, 0, 0, 2$, total $6$, so $s_{xy} = \dfrac{6}{5}$.</li>
+        <li>$s_x^2 = \dfrac{10}{5}$, $s_y^2 = \dfrac{6}{5}$.</li>
+        <li>$r = \dfrac{6/5}{\sqrt{10/5}\sqrt{6/5}} = \dfrac{6}{\sqrt{60}}$</li>
+      </ol>
+      <p class="answer">$r \approx 0.77$: a fairly strong positive correlation</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Which shows the stronger correlation: $r = 0.3$ or $r = -0.7$?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Strength is how close $|r|$ is to 1; the sign only gives the direction.</li>
+      </ol>
+      <p class="answer">$r = -0.7$ (a fairly strong negative correlation)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">In summer, ice cream sales and the number of drownings are positively correlated. Does ice cream cause drowning?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Both go up with hot weather, a third factor.</li>
+      </ol>
+      <p class="answer">No. Correlation shows the two move together, not that one causes the other.</p>
+    </details>
+  </div>
+
+  <!-- WARNING: correlation is not causation, and only straight lines -->
+  <div class="note-warning">
+    $r$ only measures <strong>straight-line</strong> patterns: points on a U-shaped curve can have $r \approx 0$ even though $y$ clearly depends on $x$.
+    And correlation never proves cause and effect.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$r = \dfrac{s_{xy}}{s_x s_y}$, always between $-1$ and $1$.</li>
+      <li>Sign = direction; $|r|$ = strength.</li>
+      <li>Draw the scatter plot too: one outlier can change $r$ a lot.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Drag the points" demo (the TRY IT block above).
+  // Eight draggable points; r is computed from their positions (screen y is
+  // flipped so "up" means larger y).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const G = window.NoteGeom;
+    const output = document.getElementById('crOutput');
+    const start = [[60, 280], [110, 250], [170, 230], [220, 180], [280, 170], [330, 120], [390, 110], [450, 60]];
+    const points = {};
+    start.forEach((p, i) => (points[String(i + 1)] = p));
+
+    G.board(document.getElementById('crCanvas'), {
+      points,
+      draw(g, P) {
+        const pts = Object.values(P).map(([x, y]) => [x, 340 - y]); // y up
+        const n = pts.length;
+        const mx = pts.reduce((s, p) => s + p[0], 0) / n, my = pts.reduce((s, p) => s + p[1], 0) / n;
+        let sxy = 0, sxx = 0, syy = 0;
+        pts.forEach(([x, y]) => { sxy += (x - mx) * (y - my); sxx += (x - mx) ** 2; syy += (y - my) ** 2; });
+
+        // Mean lines split the plot into four parts: points top-right and
+        // bottom-left push r up, the other two parts push it down
+        g.line([mx, 0], [mx, 340], '#cbd5e1', { dash: true, width: 1 });
+        g.line([0, 340 - my], [520, 340 - my], '#cbd5e1', { dash: true, width: 1 });
+        if (sxx > 0) { // best-fit line through the means
+          const slope = sxy / sxx;
+          g.line([mx, 340 - my], [mx + 100, 340 - (my + slope * 100)], '#ea580c', { width: 1.5 });
+        }
+
+        const r = sxx && syy ? sxy / Math.sqrt(sxx * syy) : 0;
+        const size = Math.abs(r);
+        const word = size >= 0.7 ? 'strong' : size >= 0.4 ? 'moderate' : size >= 0.2 ? 'weak' : 'almost no';
+        output.textContent = `r = ${r.toFixed(3)}  →  ${word} ${size >= 0.2 ? (r > 0 ? 'positive' : 'negative') + ' ' : ''}correlation`;
+      },
+    });
+  })();
+</script>

@@ -1,0 +1,170 @@
+<!-- tags: Integration -->
+<!-- =====================================================================
+     NOTE: Riemann Sums and the Definite Integral (区分求積法)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Integration">Riemann Sum and Definite Integral</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Many thin rectangles</h2>
+    <p>Cut $[a, b]$ into $n$ equal strips of width $\dfrac{b - a}{n}$, and replace each strip by a rectangle whose height is a value of $f$. Adding the rectangles gives an approximate area.</p>
+    <p>As $n \to \infty$ the rectangles fit the curve better and better, and the sum tends to the definite integral. Turned around, this lets you evaluate the limit of certain sums by integrating. This method is called 区分求積法.</p>
+  </section>
+
+  <!-- FORMULA: Riemann sums -->
+  <div class="note-formula">
+    <h3>Right-end heights ($k = 1, \ldots, n$) or left-end heights ($k = 0, \ldots, n - 1$)</h3>
+    <div class="formula-main">$$\lim_{n \to \infty} \frac{b - a}{n}\sum_{k=1}^{n} f\!\left(a + \frac{b - a}{n}k\right) = \int_a^b f(x)\,dx$$</div>
+    <div class="formula-main">$$\text{Most used: } \lim_{n \to \infty} \frac{1}{n}\sum_{k=1}^{n} f\!\left(\frac{k}{n}\right) = \lim_{n \to \infty} \frac{1}{n}\sum_{k=0}^{n-1} f\!\left(\frac{k}{n}\right) = \int_0^1 f(x)\,dx$$</div>
+  </div>
+
+  <!-- PROOF: how to spot the pattern -->
+  <div class="note-proof">
+    <ol>
+      <li>$\dfrac{1}{n}$ is the strip width ($dx$), and $\dfrac{k}{n}$ is the $x$-coordinate of the $k$-th right end.</li>
+      <li>So $\dfrac{1}{n}f\!\left(\dfrac{k}{n}\right)$ is the area of the $k$-th rectangle on $[0, 1]$.</li>
+      <li>For a continuous $f$, the gap between the rectangles and the curve goes to $0$ as $n \to \infty$. The sum then tends to $\displaystyle\int_0^1 f(x)\,dx$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: rectangles with n slider; code at the bottom -->
+  <div class="note-demo">
+    <h2>$n$ rectangles under $f$ on $[0, 1]$</h2>
+    <div class="controls">
+      <label>$f(x)$ = <select id="rsF">
+        <option value="0">x²</option>
+        <option value="1">√x</option>
+        <option value="2">1 / (1 + x)</option>
+      </select></label>
+      <label>heights <select id="rsH">
+        <option value="1">right ends</option>
+        <option value="0">left ends</option>
+        <option value="0.5">midpoints</option>
+      </select></label>
+      <label>$n$ = <input type="range" id="rsN" min="1" max="60" step="1" value="6"></label>
+    </div>
+    <canvas id="rsCanvas"></canvas>
+    <div class="output table-text" id="rsOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find $\displaystyle\lim_{n \to \infty} \frac{1}{n^3}(1^2 + 2^2 + \cdots + n^2)$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Rewrite as $\dfrac{1}{n}\displaystyle\sum_{k=1}^n \left(\frac{k}{n}\right)^2$, so $f(x) = x^2$.</li>
+        <li>$\displaystyle\int_0^1 x^2\,dx = \frac{1}{3}$</li>
+      </ol>
+      <p class="answer">$\dfrac{1}{3}$ (agrees with $\dfrac{n(n + 1)(2n + 1)}{6n^3} \to \dfrac{2}{6}$)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find $\displaystyle\lim_{n \to \infty} \left(\frac{1}{n + 1} + \frac{1}{n + 2} + \cdots + \frac{1}{2n}\right)$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\dfrac{1}{n + k} = \dfrac{1}{n} \cdot \dfrac{1}{1 + \frac{k}{n}}$, so the sum is $\dfrac{1}{n}\displaystyle\sum_{k=1}^n \frac{1}{1 + \frac{k}{n}}$.</li>
+        <li>$\displaystyle\int_0^1 \frac{dx}{1 + x} = \Big[\log(1 + x)\Big]_0^1$</li>
+      </ol>
+      <p class="answer">$\log 2$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Find $\displaystyle\lim_{n \to \infty} \frac{1}{n}\sum_{k=1}^{n} \sin\frac{k\pi}{n}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$f(x) = \sin \pi x$ on $[0, 1]$.</li>
+        <li>$\displaystyle\int_0^1 \sin\pi x\,dx = \Big[-\frac{\cos\pi x}{\pi}\Big]_0^1 = \frac{2}{\pi}$</li>
+      </ol>
+      <p class="answer">$\dfrac{2}{\pi}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Find $\displaystyle\lim_{n \to \infty} \frac{1}{n}\sum_{k=1}^{2n} \frac{k}{n}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$k$ runs to $2n$, so $\dfrac{k}{n}$ runs up to $2$: the interval is $[0, 2]$.</li>
+        <li>$\displaystyle\int_0^2 x\,dx = 2$</li>
+      </ol>
+      <p class="answer">$2$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: the interval -->
+  <div class="note-warning">
+    Look at the range of $\dfrac{k}{n}$ to find the interval. If $k$ goes up to $2n$, the interval is $[0, 2]$, not $[0, 1]$.
+    Also check that there is exactly one factor $\dfrac{1}{n}$ outside the sum.
+  </div>
+
+  <!-- TIP: factor out 1/n -->
+  <div class="note-tip">
+    Recipe: pull out $\dfrac{1}{n}$, then write each term using only $\dfrac{k}{n}$. Whatever function of $\dfrac{k}{n}$ remains is $f(x)$.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$\displaystyle\lim \frac{1}{n}\sum f\!\left(\frac{k}{n}\right) = \int_0^1 f(x)\,dx$.</li>
+      <li>$\dfrac{1}{n} \leftrightarrow dx$, $\;\dfrac{k}{n} \leftrightarrow x$.</li>
+      <li>Left ends, right ends or midpoints all give the same limit.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Rectangles" demo (the TRY IT block above).
+  // n rectangles of width 1/n. Each one's height is f at its right end, left end or
+  // midpoint (shift = 1, 0 or 0.5 of a strip). The sum of their areas approaches
+  // the exact integral as n grows.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const fBox = document.getElementById('rsF'), hBox = document.getElementById('rsH'), nBox = document.getElementById('rsN');
+    const output = document.getElementById('rsOutput');
+    const f5 = (v) => +v.toFixed(5);
+
+    // each function with its exact integral over [0, 1]
+    const FUNCS = [
+      { f: (x) => x * x, exact: 1 / 3, text: '1/3' },
+      { f: Math.sqrt, exact: 2 / 3, text: '2/3' },
+      { f: (x) => 1 / (1 + x), exact: Math.log(2), text: 'log 2' },
+    ];
+
+    const plot = NotePlot.graph(document.getElementById('rsCanvas'), {
+      x: [-0.15, 1.2], y: [-0.1, 1.15],
+      draw(g) {
+        const F = FUNCS[+fBox.value], shift = +hBox.value, n = +nBox.value;
+        let sum = 0;
+        for (let k = 0; k < n; k++) {
+          const x0 = k / n, x1 = (k + 1) / n, h = F.f((k + shift) / n);
+          sum += h / n;
+          g.poly([[x0, 0], [x0, h], [x1, h], [x1, 0]], 'rgba(234, 88, 12, 0.25)');
+          if (n <= 30) g.seg([x0, h], [x1, h], '#ea580c', { width: 1.5 });
+        }
+        g.fn(F.f, '#2563eb', { from: 0, to: 1 });
+        output.textContent =
+          `sum of ${n} rectangles = ${f5(sum)}\n` +
+          `∫ from 0 to 1 = ${F.text} = ${f5(F.exact)},   error ${f5(sum - F.exact)}`;
+      },
+    });
+    [fBox, hBox].forEach((el) => el.addEventListener('change', plot.redraw));
+    nBox.addEventListener('input', plot.redraw);
+  })();
+</script>

@@ -1,0 +1,165 @@
+<!-- tags: Integration -->
+<!-- =====================================================================
+     NOTE: Definite Integrals (定積分)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Integration">Definite Integrals</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>A number: the rise of the antiderivative</h2>
+    <p>The <strong>definite integral</strong> $\displaystyle\int_a^b f(x)\,dx$ is a number: $F(b) - F(a)$, for any antiderivative $F$. The constant $C$ cancels in the subtraction, so you can leave it out.</p>
+    <p>Geometrically, it is the <strong>signed area</strong> between $y = f(x)$ and the $x$-axis from $a$ to $b$. Parts above the axis count as positive and parts below as negative.</p>
+  </section>
+
+  <!-- FORMULA: definition -->
+  <div class="note-formula">
+    <h3>$F'(x) = f(x)$</h3>
+    <div class="formula-main">$$\int_a^b f(x)\,dx = \Big[F(x)\Big]_a^b = F(b) - F(a)$$</div>
+    <p class="symbols">$a$: lower limit, $b$: upper limit. The letter used for the variable doesn't matter: $\displaystyle\int_a^b f(x)\,dx = \int_a^b f(t)\,dt$.</p>
+  </div>
+
+  <!-- PROOF: why area = F(b) − F(a) -->
+  <div class="note-proof">
+    <ol>
+      <li>Let $S(x)$ be the area under $f$ from $a$ to $x$ (with $f \ge 0$). Widening by a thin strip adds $S(x + h) - S(x) \approx f(x)h$.</li>
+      <li>So $S'(x) = f(x)$: $S$ is an antiderivative of $f$, and $S(x) = F(x) + C$.</li>
+      <li>$S(a) = 0$ gives $C = -F(a)$. Then the area up to $b$ is $S(b) = F(b) - F(a)$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: area under f = rise of F; code at the bottom -->
+  <div class="note-demo">
+    <h2>Shaded signed area of $f$ (blue) = rise of $F$ (orange) from $a$ to $b$</h2>
+    <div class="controls">
+      <label>$f(x)$ = <select id="diF">
+        <option value="0">x² − 1</option>
+        <option value="1">cos x</option>
+        <option value="2">1/x</option>
+      </select></label>
+      <label>$a$ = <input type="range" id="diA" min="0.2" max="3" step="0.05" value="0.5"></label>
+      <label>$b$ = <input type="range" id="diB" min="0.2" max="3" step="0.05" value="2"></label>
+    </div>
+    <canvas id="diCanvas"></canvas>
+    <div class="output table-text" id="diOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Evaluate $\displaystyle\int_1^2 (3x^2 - 2x)\,dx$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\Big[x^3 - x^2\Big]_1^2 = (8 - 4) - (1 - 1)$</li>
+      </ol>
+      <p class="answer">$4$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Evaluate $\displaystyle\int_1^e \frac{1}{x}\,dx$ and $\displaystyle\int_0^{\frac{\pi}{2}} \sin x\,dx$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\Big[\log x\Big]_1^e = 1 - 0$</li>
+        <li>$\Big[-\cos x\Big]_0^{\frac{\pi}{2}} = 0 - (-1)$</li>
+      </ol>
+      <p class="answer">$1$ and $1$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Evaluate $\displaystyle\int_0^1 e^{2x}\,dx$ and $\displaystyle\int_1^4 \sqrt{x}\,dx$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\Big[\dfrac{e^{2x}}{2}\Big]_0^1 = \dfrac{e^2 - 1}{2}$</li>
+        <li>$\Big[\dfrac{2}{3}x^{\frac{3}{2}}\Big]_1^4 = \dfrac{2}{3}(8 - 1)$</li>
+      </ol>
+      <p class="answer">$\dfrac{e^2 - 1}{2}$ and $\dfrac{14}{3}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Evaluate $\displaystyle\int_0^{\pi} \cos x\,dx$, and explain the answer with the graph.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\Big[\sin x\Big]_0^{\pi} = 0 - 0 = 0$</li>
+        <li>On $\left[0, \dfrac{\pi}{2}\right]$, $\cos x$ is above the axis. On $\left[\dfrac{\pi}{2}, \pi\right]$ it is below, with the same area by symmetry. The two parts cancel.</li>
+      </ol>
+      <p class="answer">$0$ (signed area, not total area)</p>
+    </details>
+  </div>
+
+  <!-- WARNING: signed area -->
+  <div class="note-warning">
+    A definite integral is a <strong>signed</strong> area. If $f$ goes below the axis, $\displaystyle\int_a^b f\,dx$ is not the geometric area. Areas are handled in note 15.
+  </div>
+
+  <!-- TIP: brackets -->
+  <div class="note-tip">
+    Write the bracket $\Big[F(x)\Big]_a^b$ first, then substitute. Put $F(a)$ inside brackets so its minus sign is applied to every term.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$\displaystyle\int_a^b f\,dx = F(b) - F(a)$; no $+ C$ needed.</li>
+      <li>It is the signed area: above the axis positive, below negative.</li>
+      <li>The area function $S(x)$ has $S'(x) = f(x)$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Area = rise of F" demo (the TRY IT block above).
+  // The area between f and the axis is shaded blue where f > 0 and red where f < 0.
+  // The orange curve is an antiderivative F. The teal bar at x = b shows its rise
+  // F(b) − F(a), measured from the grey dashed level F(a).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const fBox = document.getElementById('diF'), aBox = document.getElementById('diA'), bBox = document.getElementById('diB');
+    const output = document.getElementById('diOutput');
+    const f3 = (v) => +v.toFixed(3);
+
+    // each integrand with an antiderivative and its name
+    const FUNCS = [
+      { f: (x) => x * x - 1, F: (x) => x ** 3 / 3 - x, name: 'x³/3 − x' },
+      { f: Math.cos, F: Math.sin, name: 'sin x' },
+      { f: (x) => 1 / x, F: Math.log, name: 'log x' },
+    ];
+
+    const plot = NotePlot.graph(document.getElementById('diCanvas'), {
+      x: [-0.3, 3.3], y: [-2, 4],
+      draw(g) {
+        const F = FUNCS[+fBox.value], a = +aBox.value, b = +bBox.value;
+        const lo = Math.min(a, b), hi = Math.max(a, b);
+        g.fill((x) => Math.max(F.f(x), 0), lo, hi, 'rgba(37, 99, 235, 0.22)');
+        g.fill((x) => Math.min(F.f(x), 0), lo, hi, 'rgba(220, 38, 38, 0.22)');
+        g.fn(F.f, '#2563eb', { from: 0.05 });
+        g.fn(F.F, '#ea580c', { width: 2, from: 0.05 });
+        g.seg([a, F.F(a)], [b, F.F(a)], '#94a3b8', { dash: true });
+        g.seg([b, F.F(a)], [b, F.F(b)], '#0d9488', { width: 4 });
+        g.dot([a, F.F(a)], '#ea580c'); g.dot([b, F.F(b)], '#ea580c');
+        output.textContent =
+          `F(x) = ${F.name}\n` +
+          `∫ from ${a} to ${b} = F(${b}) − F(${a}) = ${f3(F.F(b))} − ${f3(F.F(a))} = ${f3(F.F(b) - F.F(a))}` +
+          (a > b ? '\n(a > b: the integral changes sign)' : '');
+      },
+    });
+    fBox.addEventListener('change', plot.redraw);
+    [aBox, bBox].forEach((el) => el.addEventListener('input', plot.redraw));
+  })();
+</script>

@@ -1,0 +1,144 @@
+<!-- tags: Functions -->
+<!-- =====================================================================
+     NOTE: Graphs of Rational Functions (分数関数のグラフ)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Functions">Graph of a Rational Function</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>A moved hyperbola</h2>
+    <p>$y = \dfrac{k}{x}$ is a hyperbola with the two axes as asymptotes. $y = \dfrac{k}{x - p} + q$ is the same curve moved $p$ right and $q$ up,
+      so its asymptotes become $x = p$ and $y = q$.</p>
+    <p>For $k &gt; 0$ the two branches lie top-right and bottom-left of the asymptote cross; for $k &lt; 0$, top-left and bottom-right.</p>
+  </section>
+
+  <!-- FORMULA: standard form -->
+  <div class="note-formula">
+    <h3>$y = \dfrac{k}{x - p} + q$ ($k \ne 0$)</h3>
+    <div class="formula-main">$$\text{asymptotes } x = p,\; y = q, \qquad \text{domain } x \ne p, \qquad \text{range } y \ne q$$</div>
+    <p class="symbols">$y = \dfrac{ax + b}{cx + d}$: divide to bring it to this form, e.g. $\dfrac{2x + 1}{x - 1} = \dfrac{3}{x - 1} + 2$.</p>
+  </div>
+
+  <!-- PROOF: rewriting by division -->
+  <div class="note-proof">
+    <ol>
+      <li>$2x + 1 = 2(x - 1) + 3$, so $\dfrac{2x + 1}{x - 1} = \dfrac{2(x - 1) + 3}{x - 1} = 2 + \dfrac{3}{x - 1}$.</li>
+      <li>So it is $y = \dfrac{3}{x}$ moved $1$ right and $2$ up: asymptotes $x = 1$, $y = 2$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: sliders; code at the bottom -->
+  <div class="note-demo">
+    <h2>$y = \dfrac{k}{x - p} + q$ and the line $y = mx$</h2>
+    <div class="controls">
+      <label>$k$ = <input type="range" id="rfK" min="-4" max="4" step="0.5" value="3"></label>
+      <label>$p$ = <input type="range" id="rfP" min="-3" max="3" value="1"></label>
+      <label>$q$ = <input type="range" id="rfQ" min="-3" max="3" value="2"></label>
+      <label>$m$ = <input type="range" id="rfM" min="-2" max="2" step="0.5" value="1"></label>
+    </div>
+    <canvas id="rfCanvas"></canvas>
+    <div class="output table-text" id="rfOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find the asymptotes, domain and range of $y = \dfrac{-2}{x + 1} - 1$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$p = -1$, $q = -1$, $k = -2 &lt; 0$ (branches top-left and bottom-right).</li>
+      </ol>
+      <p class="answer">Asymptotes $x = -1$, $y = -1$; domain $x \ne -1$; range $y \ne -1$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find the asymptotes of $y = \dfrac{3x - 4}{x - 2}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$3x - 4 = 3(x - 2) + 2$, so $y = \dfrac{2}{x - 2} + 3$.</li>
+      </ol>
+      <p class="answer">$x = 2$, $y = 3$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Solve $\dfrac{3}{x - 1} + 2 &gt; x$ using the graphs.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Intersections: $3 + 2(x - 1) = x(x - 1)$ ($x \ne 1$), so $x^2 - 3x - 1 = 0$, $x = \dfrac{3 \pm \sqrt{13}}{2}$.</li>
+        <li>Left branch ($x &lt; 1$): far left the curve is near $y = 2$, above the line; it crosses at $x = \dfrac{3 - \sqrt{13}}{2} \approx -0.30$ and then drops to $-\infty$.</li>
+        <li>Right branch ($x &gt; 1$): starts at $+\infty$, above the line, until $x = \dfrac{3 + \sqrt{13}}{2} \approx 3.30$.</li>
+      </ol>
+      <p class="answer">$x &lt; \dfrac{3 - \sqrt{13}}{2}$, $\;1 &lt; x &lt; \dfrac{3 + \sqrt{13}}{2}$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: excluded value -->
+  <div class="note-warning">
+    When you clear the denominator to find intersections, remember $x \ne p$. And the asymptote $x = p$ splits the inequality: check each side separately.
+  </div>
+
+  <!-- TIP: sketch -->
+  <div class="note-tip">
+    Sketch order: draw the two asymptotes, decide the quadrants from the sign of $k$, then plot one point on each branch.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$y = \dfrac{k}{x - p} + q$: asymptotes $x = p$, $y = q$.</li>
+      <li>Rewrite $\dfrac{ax + b}{cx + d}$ by division.</li>
+      <li>Inequalities: intersections + graph, minding $x = p$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Hyperbola and line" demo (the TRY IT block above).
+  // Draws y = k/(x − p) + q (two branches), its asymptotes, and the line y = mx,
+  // marking where they meet: k + q(x − p) = mx(x − p).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const ids = ['rfK', 'rfP', 'rfQ', 'rfM'].map((id) => document.getElementById(id));
+    const output = document.getElementById('rfOutput');
+    const f3 = (v) => +v.toFixed(3);
+
+    const plot = NotePlot.graph(document.getElementById('rfCanvas'), {
+      x: [-7.75, 7.75], y: [-5, 5],
+      draw(g) {
+        const [k, p, q, m] = ids.map((b) => +b.value);
+        if (k === 0) { output.textContent = 'k = 0 is just the line y = q.'; return; }
+        const h = (x) => k / (x - p) + q;
+        g.vline(p, '#94a3b8'); g.hline(q, '#94a3b8');
+        g.fn(h, '#2563eb', { to: p - 0.01 });
+        g.fn(h, '#2563eb', { from: p + 0.01 });
+        g.fn((x) => m * x, '#ea580c', { width: 2 });
+        // mx² − (mp + q)x + (qp − k) = 0
+        const A = m, B = -(m * p + q), C = q * p - k;
+        let xs = [];
+        if (A === 0) xs = B !== 0 ? [-C / B] : [];
+        else { const D = B * B - 4 * A * C; if (D > 0) xs = [(-B - Math.sqrt(D)) / (2 * A), (-B + Math.sqrt(D)) / (2 * A)]; else if (D === 0) xs = [-B / (2 * A)]; }
+        xs = xs.filter((x) => Math.abs(x - p) > 1e-9);
+        xs.forEach((x) => g.dot([x, m * x], '#ea580c'));
+        output.textContent =
+          `asymptotes x = ${p}, y = ${q};  branches ${k > 0 ? 'top-right / bottom-left' : 'top-left / bottom-right'}\n` +
+          `meets y = ${NotePlot.poly([m, 0])} at ${xs.length ? xs.map((x) => `(${f3(x)}, ${f3(m * x)})`).join(', ') : 'no point'}`;
+      },
+    });
+    ids.forEach((el) => el.addEventListener('input', plot.redraw));
+  })();
+</script>

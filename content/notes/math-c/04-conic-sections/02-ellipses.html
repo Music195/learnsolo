@@ -1,0 +1,157 @@
+<!-- tags: Conic Sections -->
+<!-- =====================================================================
+     NOTE: Ellipse: Basic Properties (楕円)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Conic Sections">Ellipse: Basic Properties</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>A constant sum of two distances</h2>
+    <p>Fix two points F and F′ (the <strong>foci</strong>). The points P with $PF + PF'$ equal to a fixed constant form an <strong>ellipse</strong> (楕円).
+      You can draw one with a loop of string around two pins.</p>
+    <p>An ellipse is also a circle stretched in one direction. The longer axis is the major axis (長軸), and the foci lie on it.</p>
+  </section>
+
+  <!-- FORMULA: standard form -->
+  <div class="note-formula">
+    <h3>$a &gt; b &gt; 0$: foci on the $x$-axis</h3>
+    <div class="formula-main">$$\frac{x^2}{a^2} + \frac{y^2}{b^2} = 1$$</div>
+    <div class="formula-main">$$\text{foci } (\pm\sqrt{a^2 - b^2},\, 0), \qquad PF + PF' = 2a$$</div>
+    <p class="symbols">Major axis $2a$, minor axis $2b$, vertices $(\pm a, 0)$, $(0, \pm b)$.
+      If $b &gt; a &gt; 0$, the foci are $(0, \pm\sqrt{b^2 - a^2})$ and $PF + PF' = 2b$.</p>
+  </div>
+
+  <!-- PROOF: from PF + PF' = 2a -->
+  <div class="note-proof">
+    <ol>
+      <li>Foci $F(c, 0)$, $F'(-c, 0)$ with $a &gt; c &gt; 0$. Write $\sqrt{(x + c)^2 + y^2} = 2a - \sqrt{(x - c)^2 + y^2}$ and square both sides.</li>
+      <li>The squares cancel, leaving $a\sqrt{(x - c)^2 + y^2} = a^2 - cx$. Squaring again gives $(a^2 - c^2)x^2 + a^2y^2 = a^2(a^2 - c^2)$.</li>
+      <li>Put $b^2 = a^2 - c^2$ and divide by $a^2b^2$: $\dfrac{x^2}{a^2} + \dfrac{y^2}{b^2} = 1$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: drag P along the ellipse; code at the bottom -->
+  <div class="note-demo">
+    <h2>Drag $P$: the sum $PF + PF'$ never changes</h2>
+    <div class="controls">
+      <label>$a$ = <input type="range" id="elA" min="1" max="5" step="0.1" value="4"></label>
+      <label>$b$ = <input type="range" id="elB" min="1" max="3.5" step="0.1" value="2.5"></label>
+    </div>
+    <canvas id="elCanvas"></canvas>
+    <div class="output table-text" id="elOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">For $\dfrac{x^2}{25} + \dfrac{y^2}{16} = 1$, find the foci, the vertices and the lengths of the axes.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$a = 5$, $b = 4$, $\sqrt{25 - 16} = 3$.</li>
+      </ol>
+      <p class="answer">Foci $(\pm 3, 0)$; vertices $(\pm 5, 0)$, $(0, \pm 4)$; major axis $10$, minor axis $8$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find the ellipse with foci $(0, \pm 2)$ for which $PF + PF' = 8$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Foci on the $y$-axis, so the major axis is vertical: $2b = 8$, $b = 4$.</li>
+        <li>$b^2 - a^2 = 2^2$, so $a^2 = 12$.</li>
+      </ol>
+      <p class="answer">$\dfrac{x^2}{12} + \dfrac{y^2}{16} = 1$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">The circle $x^2 + y^2 = 9$ is squashed vertically by a factor $\dfrac{2}{3}$. Find the resulting curve.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>A point $(s, t)$ on the circle moves to $(x, y) = \left(s, \dfrac{2}{3}t\right)$, so $s = x$, $t = \dfrac{3}{2}y$.</li>
+        <li>$x^2 + \dfrac{9}{4}y^2 = 9$</li>
+      </ol>
+      <p class="answer">$\dfrac{x^2}{9} + \dfrac{y^2}{4} = 1$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Is the point $(3, 2)$ inside, on, or outside $\dfrac{x^2}{9} + \dfrac{y^2}{4} = 1$?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\dfrac{9}{9} + \dfrac{4}{4} = 2 &gt; 1$.</li>
+      </ol>
+      <p class="answer">Outside (less than $1$: inside; equal: on the curve)</p>
+    </details>
+  </div>
+
+  <!-- WARNING: minus for the foci -->
+  <div class="note-warning">
+    For an ellipse the focus distance is $\sqrt{a^2 - b^2}$ (bigger minus smaller), not $\sqrt{a^2 + b^2}$; the plus sign belongs to the hyperbola.
+    The foci are on the <strong>longer</strong> axis, so check whether $a$ or $b$ is bigger first.
+  </div>
+
+  <!-- TIP: parametric form -->
+  <div class="note-tip">
+    Points of the ellipse can be written $(a\cos\theta, b\sin\theta)$. This is the circle's parametrisation stretched, and it is the easiest way to handle a general point on the ellipse.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Ellipse: $PF + PF' = $ constant ($2 \times$ semi-major axis).</li>
+      <li>$\dfrac{x^2}{a^2} + \dfrac{y^2}{b^2} = 1$ ($a &gt; b$): foci $(\pm\sqrt{a^2 - b^2}, 0)$.</li>
+      <li>A circle stretched or squashed in one direction is an ellipse.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Constant sum" demo (the TRY IT block above).
+  // P is kept on the ellipse at (a cos θ, b sin θ), where θ comes from the drag
+  // position. The foci are on the longer axis; the orange and teal segments are
+  // PF and PF′, and their sum stays equal to the major axis.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const aBox = document.getElementById('elA'), bBox = document.getElementById('elB');
+    const output = document.getElementById('elOutput');
+    const f3 = (v) => +v.toFixed(3);
+    const onCurve = ([x, y]) => { const a = +aBox.value, b = +bBox.value, t = Math.atan2(y / b, x / a); return [a * Math.cos(t), b * Math.sin(t)]; };
+
+    const plot = NotePlot.graph(document.getElementById('elCanvas'), {
+      x: [-7.75, 7.75], y: [-5, 5],
+      points: { P: [2, 2.165] },
+      constrain: { P: onCurve },
+      draw(g, pts) {
+        const a = +aBox.value, b = +bBox.value, P = pts.P;
+        const c = Math.sqrt(Math.abs(a * a - b * b));
+        const [F, F2] = a >= b ? [[c, 0], [-c, 0]] : [[0, c], [0, -c]];
+        let prev = [a, 0];
+        for (let i = 1; i <= 160; i++) { const t = i * Math.PI / 80, cur = [a * Math.cos(t), b * Math.sin(t)]; g.seg(prev, cur, '#2563eb'); prev = cur; }
+        const d1 = Math.hypot(P[0] - F[0], P[1] - F[1]), d2 = Math.hypot(P[0] - F2[0], P[1] - F2[1]);
+        g.seg(P, F, '#ea580c', { width: 3 }); g.seg(P, F2, '#0d9488', { width: 3 });
+        g.dot(F, '#ea580c', 'F'); g.dot(F2, '#0d9488', "F'");
+        output.textContent =
+          `x²/${f3(a * a)} + y²/${f3(b * b)} = 1:  foci ${a >= b ? `(±${f3(c)}, 0)` : `(0, ±${f3(c)})`}\n` +
+          `PF = ${f3(d1)},  PF' = ${f3(d2)},  PF + PF' = ${f3(d1 + d2)} = 2 × ${f3(Math.max(a, b))}`;
+      },
+    });
+    // new a or b: put P back onto the new ellipse
+    [aBox, bBox].forEach((el) => el.addEventListener('input', () => plot.move('P', onCurve(plot.points.P))));
+  })();
+</script>

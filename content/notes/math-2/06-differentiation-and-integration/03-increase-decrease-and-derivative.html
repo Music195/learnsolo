@@ -1,0 +1,138 @@
+<!-- tags: Differentiation -->
+<!-- =====================================================================
+     NOTE: Increase, Decrease and Extreme Values (関数の増減と極値)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Differentiation">Monotonicity and Derivative Sign</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>The sign of $f'$ tells you uphill or downhill</h2>
+    <p>Where the slope $f'(x)$ is positive the graph goes up; where it is negative it goes down.
+      Where $f'$ changes from $+$ to $-$ the graph has a peak, a <strong>local maximum</strong> (極大). From $-$ to $+$ gives a valley, a <strong>local minimum</strong> (極小).</p>
+  </section>
+
+  <!-- FORMULA: increase/decrease -->
+  <div class="note-formula">
+    <h3>On an interval</h3>
+    <div class="formula-main">$$f'(x) &gt; 0 \Rightarrow f \text{ increasing}, \qquad f'(x) &lt; 0 \Rightarrow f \text{ decreasing}$$</div>
+    <p class="symbols">Method: solve $f'(x) = 0$, make a sign table (増減表) for $f'$, read off increasing/decreasing and the local max/min.</p>
+  </div>
+
+  <!-- DEMO: cubic with sign table; code at the bottom -->
+  <div class="note-demo">
+    <h2>$f(x) = x^3 + bx^2 + cx$: change $b$ and $c$</h2>
+    <div class="controls">
+      <label>$b$ = <input type="range" id="mnB" min="-3" max="3" step="0.5" value="0"></label>
+      <label>$c$ = <input type="range" id="mnC" min="-4" max="3" step="0.5" value="-3"></label>
+    </div>
+    <canvas id="mnCanvas"></canvas>
+    <div class="output table-text" id="mnOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find the intervals of increase/decrease and the extreme values of $f(x) = x^3 - 3x^2 + 2$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$f'(x) = 3x^2 - 6x = 3x(x - 2)$, zero at $x = 0, 2$.</li>
+        <li>Sign of $f'$: $+$ for $x &lt; 0$, $-$ for $0 &lt; x &lt; 2$, $+$ for $x &gt; 2$.</li>
+        <li>$f(0) = 2$ (peak), $f(2) = -2$ (valley).</li>
+      </ol>
+      <p class="answer">Increasing for $x \le 0$, $x \ge 2$; decreasing for $0 \le x \le 2$. Local max $2$ ($x = 0$), local min $-2$ ($x = 2$).</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find the maximum and minimum of $f(x) = x^3 - 3x$ on $-2 \le x \le 3$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$f'(x) = 3(x + 1)(x - 1)$: local max $f(-1) = 2$, local min $f(1) = -2$.</li>
+        <li>Ends: $f(-2) = -2$, $f(3) = 18$.</li>
+        <li>Compare all four values.</li>
+      </ol>
+      <p class="answer">Maximum $18$ ($x = 3$); minimum $-2$ ($x = -2, 1$)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Find $a$ so that $f(x) = x^3 + ax^2 + 3x$ is always increasing.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Need $f'(x) = 3x^2 + 2ax + 3 \ge 0$ for every $x$.</li>
+        <li>The parabola must not dip below the axis: $\dfrac{D}{4} = a^2 - 9 \le 0$.</li>
+      </ol>
+      <p class="answer">$-3 \le a \le 3$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: f' = 0 is not enough -->
+  <div class="note-warning">
+    $f'(a) = 0$ alone doesn't mean an extreme value. For $f(x) = x^3$, $f'(0) = 0$ but $f'$ is positive on both sides, so there is no max or min. The sign must <strong>change</strong>.
+  </div>
+
+  <!-- TIP: on an interval -->
+  <div class="note-tip">
+    For the maximum/minimum on an interval, compare the local extremes inside it with the values at the two ends.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$f' &gt; 0$ up, $f' &lt; 0$ down.</li>
+      <li>$+ \to -$: local max; $- \to +$: local min.</li>
+      <li>Always make the sign table.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Change b and c" demo (the TRY IT block above).
+  // Blue: f(x) = x³ + bx² + cx. Grey dashed: f'(x) = 3x² + 2bx + c.
+  // Prints the sign table and marks local max (orange) and min (green).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const bBox = document.getElementById('mnB'), cBox = document.getElementById('mnC');
+    const output = document.getElementById('mnOutput');
+    const n = (v) => +v.toFixed(3);
+
+    const plot = NotePlot.graph(document.getElementById('mnCanvas'), {
+      x: [-4, 4], y: [-6, 6],
+      draw(g) {
+        const b = +bBox.value, c = +cBox.value;
+        const f = (x) => x ** 3 + b * x * x + c * x, df = (x) => 3 * x * x + 2 * b * x + c;
+        g.fn(df, '#94a3b8', { width: 2, dash: true });
+        g.fn(f, '#2563eb');
+        const D = 4 * b * b - 12 * c;                  // discriminant of f'
+        let table;
+        if (D > 1e-9) {
+          const x1 = (-2 * b - Math.sqrt(D)) / 6, x2 = (-2 * b + Math.sqrt(D)) / 6;
+          g.dot([x1, f(x1)], '#ea580c', 'max'); g.dot([x2, f(x2)], '#0d9488', 'min');
+          table =
+            `x     |  …   ${n(x1)}   …   ${n(x2)}   …\n` +
+            `f'(x) |  +     0     −     0     +\n` +
+            `f(x)  |  ↗  ${n(f(x1))}  ↘  ${n(f(x2))}  ↗\n` +
+            `local max ${n(f(x1))} at x = ${n(x1)},  local min ${n(f(x2))} at x = ${n(x2)}`;
+        } else {
+          table = `f'(x) = ${NotePlot.poly([3, 2 * b, c])} ≥ 0 for every x (D/4 = ${n(D / 4)} ≤ 0)\n` +
+                  'f is always increasing: no local max or min';
+        }
+        output.textContent = `f(x) = ${NotePlot.poly([1, b, c, 0])},  f'(x) = ${NotePlot.poly([3, 2 * b, c])}\n\n${table}`;
+      },
+    });
+    [bBox, cBox].forEach((el) => el.addEventListener('input', plot.redraw));
+  })();
+</script>

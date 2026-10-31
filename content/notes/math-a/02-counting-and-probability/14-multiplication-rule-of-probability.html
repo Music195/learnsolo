@@ -1,0 +1,170 @@
+<!-- tags: Probability -->
+<!-- =====================================================================
+     NOTE: Multiplication Rule of Probability (conditional probability)
+     Uses the shared blocks from static/css/note-blocks.css.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Probability">Multiplication Rule of Probability</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Probability once you know something happened</h2>
+    <p>$P_A(B)$ (also written $P(B \mid A)$) is the probability of $B$ <strong>given that $A$ has happened</strong>.
+      Knowing $A$ shrinks the set of possible outcomes to $A$ itself, so we count $B$ only inside $A$.</p>
+    <p>Example: a bag has 5 red and 3 white balls. Take one red ball out. Now 4 of the 7 remaining are red,
+      so $P(\text{2nd red} \mid \text{1st red}) = \dfrac{4}{7}$.</p>
+  </section>
+
+  <!-- FORMULA: conditional probability and multiplication rule -->
+  <div class="note-formula">
+    <h3>Conditional probability</h3>
+    <div class="formula-main">$$P_A(B) = \frac{P(A \cap B)}{P(A)} = \frac{n(A \cap B)}{n(A)}$$</div>
+  </div>
+
+  <div class="note-formula">
+    <h3>Multiplication rule</h3>
+    <div class="formula-main">$$P(A \cap B) = P(A) \times P_A(B)$$</div>
+    <p class="symbols">If $A$ doesn't affect $B$ (independent), $P_A(B) = P(B)$ and this becomes $P(A)\,P(B)$ from note 12.</p>
+  </div>
+
+  <!-- DEMO: drawing two balls without replacement; code at the bottom -->
+  <div class="note-demo">
+    <h2>Two draws without replacement</h2>
+    <div class="controls">
+      <label>Red balls <input type="number" id="mrRed" value="5" min="0" max="20"></label>
+      <label>White balls <input type="number" id="mrWhite" value="3" min="0" max="20"></label>
+    </div>
+    <canvas id="mrCanvas" width="520" height="240"></canvas>
+    <div class="output table-text" id="mrOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Two cards are drawn one after another, without replacement, from 52. Find the probability that both are hearts.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$P(\text{1st heart}) = \dfrac{13}{52}$</li>
+        <li>Given the first was a heart, 12 hearts remain among 51: $\dfrac{12}{51}$</li>
+        <li>$\dfrac{13}{52} \times \dfrac{12}{51} = \dfrac{1}{4} \times \dfrac{4}{17}$</li>
+      </ol>
+      <p class="answer">$\dfrac{1}{17}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">There are 10 lottery tickets and 3 are winners. A draws one, then B draws one (no replacement). Find the probability that B wins.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>A wins, then B wins: $\dfrac{3}{10} \times \dfrac{2}{9} = \dfrac{6}{90}$</li>
+        <li>A loses, then B wins: $\dfrac{7}{10} \times \dfrac{3}{9} = \dfrac{21}{90}$</li>
+        <li>Add the two paths: $\dfrac{27}{90}$</li>
+      </ol>
+      <p class="answer">$\dfrac{3}{10}$, the same as A's chance. Order of drawing doesn't matter.</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">In a class of 40, 25 are in a club; 15 of the club members are girls. A student picked at random is in a club. Find the probability that the student is a girl.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>We know the student is in a club, so only the 25 club members count.</li>
+        <li>$P_{\text{club}}(\text{girl}) = \dfrac{n(\text{club} \cap \text{girl})}{n(\text{club})} = \dfrac{15}{25}$</li>
+      </ol>
+      <p class="answer">$\dfrac{3}{5}$</p>
+    </details>
+  </div>
+
+  <!-- TIP: tree diagrams -->
+  <div class="note-tip">
+    Draw a tree. Write the <strong>conditional</strong> probability on each second-level branch, multiply along each path, and add the paths you want.
+  </div>
+
+  <!-- WARNING: P_A(B) vs P_B(A) -->
+  <div class="note-warning">
+    $P_A(B)$ and $P_B(A)$ are different. "Girl, given club" divides by the club members; "club, given girl" divides by the girls.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$P_A(B) = \dfrac{P(A \cap B)}{P(A)}$: count $B$ inside $A$ only.</li>
+      <li>$P(A \cap B) = P(A)\, P_A(B)$.</li>
+      <li>Without replacement: update the counts after each draw.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script>
+  // "Two draws without replacement" demo (the TRY IT block above).
+  // Tree diagram: the second-level probabilities change depending on the first
+  // draw, because one ball has already been removed from the bag.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const redInput = document.getElementById('mrRed');
+    const whiteInput = document.getElementById('mrWhite');
+    const canvas = document.getElementById('mrCanvas');
+    const ctx = canvas.getContext('2d');
+    const output = document.getElementById('mrOutput');
+
+    // Line with a fraction label at its middle
+    function branch(x1, y1, x2, y2, label, color) {
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+      ctx.fillStyle = color;
+      ctx.font = '13px sans-serif';
+      ctx.textAlign = 'center';
+      // label above an upward branch, below a downward one, so it never sits on the line
+      ctx.fillText(label, (x1 + x2) / 2, (y1 + y2) / 2 + (y2 > y1 ? 16 : -6));
+    }
+
+    function update() {
+      const red = parseInt(redInput.value, 10);
+      const white = parseInt(whiteInput.value, 10);
+      const total = red + white;
+      if (isNaN(red) || isNaN(white) || red < 0 || white < 0 || total < 2 || red > 20 || white > 20) {
+        output.textContent = 'Use 0–20 balls of each colour, at least 2 in total.';
+        return;
+      }
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const firsts = [
+        { name: 'R', count: red, y: 60, left: { R: red - 1, W: white } },
+        { name: 'W', count: white, y: 180, left: { R: red, W: white - 1 } },
+      ];
+      const paths = {};
+
+      firsts.forEach((f) => {
+        branch(20, 120, 200, f.y, `${f.name}: ${f.count}/${total}`, '#2563eb');
+        [{ name: 'R', dy: -28 }, { name: 'W', dy: 28 }].forEach((s) => {
+          const num = f.left[s.name];
+          branch(200, f.y, 360, f.y + s.dy, `${s.name}: ${num}/${total - 1}`, '#7c3aed');
+          const top = f.count * num, bottom = total * (total - 1);
+          paths[f.name + s.name] = { top, bottom };
+          ctx.fillStyle = '#0f172a';
+          ctx.textAlign = 'left';
+          ctx.fillText(`${f.name}${s.name} = ${top}/${bottom}`, 370, f.y + s.dy + 4);
+        });
+      });
+
+      const bottom = total * (total - 1);
+      output.textContent =
+        `P(both red)     = ${red}/${total} × ${red - 1}/${total - 1} = ${paths.RR.top}/${bottom} ≈ ${(paths.RR.top / bottom).toFixed(4)}\n` +
+        `P(2nd is red)   = (${paths.RR.top} + ${paths.WR.top})/${bottom} ≈ ${((paths.RR.top + paths.WR.top) / bottom).toFixed(4)}` +
+        `   (same as ${red}/${total} ≈ ${(red / total).toFixed(4)})`;
+    }
+
+    redInput.addEventListener('input', update);
+    whiteInput.addEventListener('input', update);
+    update(); // draw the default tree straight away
+  })();
+</script>

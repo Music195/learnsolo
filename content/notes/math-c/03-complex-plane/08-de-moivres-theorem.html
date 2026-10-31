@@ -1,0 +1,153 @@
+<!-- tags: Complex Plane -->
+<!-- =====================================================================
+     NOTE: De Moivre's Theorem (ド・モアブルの定理)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Complex Plane">De Moivre's Theorem</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Powers: the angle is multiplied by $n$</h2>
+    <p>Multiplying by $\cos\theta + i\sin\theta$ turns by $\theta$, so multiplying by it $n$ times turns by $n\theta$. That is <strong>De Moivre's theorem</strong> (ド・モアブルの定理).</p>
+    <p>With a modulus $r$, the powers $z, z^2, z^3, \ldots$ turn by $\theta$ each step while their distance from O is multiplied by $r$. They spiral outwards if $r &gt; 1$, stay on a circle if $r = 1$, and spiral in if $r &lt; 1$.</p>
+  </section>
+
+  <!-- FORMULA: De Moivre -->
+  <div class="note-formula">
+    <h3>$n$: any integer</h3>
+    <div class="formula-main">$$(\cos\theta + i\sin\theta)^n = \cos n\theta + i\sin n\theta$$</div>
+    <div class="formula-main">$$\{r(\cos\theta + i\sin\theta)\}^n = r^n(\cos n\theta + i\sin n\theta)$$</div>
+  </div>
+
+  <!-- PROOF: induction and negative powers -->
+  <div class="note-proof">
+    <ol>
+      <li>$n = 1$ is clear. If it holds for $n = k$, then $(\cos\theta + i\sin\theta)^{k+1} = (\cos k\theta + i\sin k\theta)(\cos\theta + i\sin\theta) = \cos(k + 1)\theta + i\sin(k + 1)\theta$ by note 05.
+        So it holds for all $n \ge 1$ (mathematical induction).</li>
+      <li>$n = 0$: both sides are $1$.</li>
+      <li>$n = -m$ ($m \ge 1$): $\dfrac{1}{\cos m\theta + i\sin m\theta} = \cos(-m\theta) + i\sin(-m\theta)$ by the quotient rule.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: the spiral of powers; code at the bottom -->
+  <div class="note-demo">
+    <h2>The powers $z^0, z^1, \ldots, z^n$ of $z = r(\cos\theta + i\sin\theta)$</h2>
+    <div class="controls">
+      <label>$r$ = <input type="range" id="dmR" min="0.8" max="1.25" step="0.01" value="1.1"></label>
+      <label>$\theta$ = <input type="range" id="dmT" min="0" max="180" step="5" value="30">°</label>
+      <label>$n$ = <input type="range" id="dmN" min="1" max="24" step="1" value="12"></label>
+    </div>
+    <canvas id="dmCanvas"></canvas>
+    <div class="output table-text" id="dmOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Compute $(1 + \sqrt{3}i)^6$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$1 + \sqrt{3}i = 2\left(\cos\dfrac{\pi}{3} + i\sin\dfrac{\pi}{3}\right)$.</li>
+        <li>Sixth power: $2^6(\cos 2\pi + i\sin 2\pi) = 64$.</li>
+      </ol>
+      <p class="answer">$64$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Compute $(1 - i)^{-8}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$1 - i = \sqrt{2}\left\{\cos\left(-\dfrac{\pi}{4}\right) + i\sin\left(-\dfrac{\pi}{4}\right)\right\}$.</li>
+        <li>Power $-8$: $(\sqrt{2})^{-8}(\cos 2\pi + i\sin 2\pi) = \dfrac{1}{16}$.</li>
+      </ol>
+      <p class="answer">$\dfrac{1}{16}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Express $\cos 3\theta$ and $\sin 3\theta$ in terms of $\cos\theta$ and $\sin\theta$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Write $c = \cos\theta$, $s = \sin\theta$. Expand $(c + is)^3 = c^3 + 3ic^2s - 3cs^2 - is^3$.</li>
+        <li>By De Moivre this equals $\cos 3\theta + i\sin 3\theta$. Compare the real parts, and the imaginary parts.</li>
+        <li>Real: $c^3 - 3c(1 - c^2) = 4c^3 - 3c$. Imaginary: $3(1 - s^2)s - s^3 = 3s - 4s^3$.</li>
+      </ol>
+      <p class="answer">$\cos 3\theta = 4\cos^3\theta - 3\cos\theta$, $\;\sin 3\theta = 3\sin\theta - 4\sin^3\theta$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Find the smallest positive integer $n$ for which $(\sqrt{3} + i)^n$ is real.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\sqrt{3} + i = 2\left(\cos\dfrac{\pi}{6} + i\sin\dfrac{\pi}{6}\right)$, so the $n$-th power has argument $\dfrac{n\pi}{6}$.</li>
+        <li>It is real when $\sin\dfrac{n\pi}{6} = 0$, i.e. $n$ is a multiple of $6$.</li>
+      </ol>
+      <p class="answer">$n = 6$ (value $-64$)</p>
+    </details>
+  </div>
+
+  <!-- WARNING: integer n, polar form first -->
+  <div class="note-warning">
+    De Moivre's theorem is for <strong>integer</strong> $n$. It is not a formula for roots like $z^{\frac{1}{3}}$; roots are handled in note 09.
+    Always rewrite the number in polar form first. Don't apply the theorem to $(a + bi)^n$ directly.
+  </div>
+
+  <!-- TIP: multiple angle formulas -->
+  <div class="note-tip">
+    Expanding $(\cos\theta + i\sin\theta)^n$ with the binomial theorem and comparing parts gives the $n$-fold angle formulas. It is easier than repeating the addition formulas.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$(\cos\theta + i\sin\theta)^n = \cos n\theta + i\sin n\theta$ for every integer $n$.</li>
+      <li>$z^n$: modulus $r^n$, argument $n\theta$.</li>
+      <li>Polar form first, then the power, then back to $a + bi$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Spiral of powers" demo (the TRY IT block above).
+  // Plots 1, z, z², …, zⁿ joined in order: each step turns by θ and multiplies
+  // the distance from O by r. The readout gives zⁿ from De Moivre's formula.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const rBox = document.getElementById('dmR'), tBox = document.getElementById('dmT'), nBox = document.getElementById('dmN');
+    const output = document.getElementById('dmOutput');
+    const f3 = (v) => +v.toFixed(3);
+
+    const plot = NotePlot.graph(document.getElementById('dmCanvas'), {
+      x: [-6.2, 6.2], y: [-4, 4],
+      draw(g) {
+        const r = +rBox.value, deg = +tBox.value, t = deg * Math.PI / 180, n = +nBox.value;
+        g.circle([0, 0], 1, '#e2e8f0', { width: 1.5 });
+        const pt = (k) => [r ** k * Math.cos(k * t), r ** k * Math.sin(k * t)];
+        for (let k = 0; k < n; k++) g.seg(pt(k), pt(k + 1), '#93c5fd', { width: 2 });
+        for (let k = 0; k <= n; k++) g.dot(pt(k), k === n ? '#ea580c' : '#2563eb', k === 0 ? '1' : k === 1 ? 'z' : k === n ? `z^${n}` : '');
+        const zn = pt(n);
+        const a = (n * deg) % 360;
+        output.textContent =
+          `zⁿ = ${f3(r)}^${n} (cos ${n * deg}° + i sin ${n * deg}°)\n` +
+          `   = ${f3(r ** n)} (cos ${a}° + i sin ${a}°) = ${f3(zn[0]) || 0} ${f3(zn[1]) < 0 ? '−' : '+'} ${Math.abs(f3(zn[1]))}i`;
+      },
+    });
+    [rBox, tBox, nBox].forEach((el) => el.addEventListener('input', plot.redraw));
+  })();
+</script>

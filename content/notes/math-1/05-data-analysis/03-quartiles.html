@@ -1,0 +1,131 @@
+<!-- tags: Data Analysis -->
+<!-- =====================================================================
+     NOTE: Quartiles (四分位数)
+     Uses the shared blocks from static/css/note-blocks.css.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Data Analysis">Quartiles</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Cut the ordered data into four</h2>
+    <p>The median $Q_2$ splits the ordered data into a <strong>lower half</strong> and an <strong>upper half</strong>.
+      The median of the lower half is the <strong>first quartile</strong> $Q_1$; the median of the upper half is the <strong>third quartile</strong> $Q_3$.</p>
+    <p>Roughly a quarter of the data is below $Q_1$, a quarter between each pair of quartiles, and a quarter above $Q_3$.</p>
+  </section>
+
+  <!-- FORMULA: how to split -->
+  <div class="note-formula">
+    <h3>Finding $Q_1$, $Q_2$, $Q_3$</h3>
+    <div class="formula-main">$$\underbrace{\;x_1 \cdots\;}_{\text{lower half} \to Q_1}\;\; Q_2 \;\;\underbrace{\;\cdots x_n\;}_{\text{upper half} \to Q_3}$$</div>
+    <p class="symbols">If $n$ is odd, the median itself belongs to <strong>neither</strong> half. If $n$ is even, the data splits exactly in two.</p>
+  </div>
+
+  <div class="note-formula">
+    <h3>Interquartile range</h3>
+    <div class="formula-main">$$\text{IQR} = Q_3 - Q_1$$</div>
+    <p class="symbols">The width of the middle half of the data (see note 05).</p>
+  </div>
+
+  <!-- DEMO: type data; code at the bottom -->
+  <div class="note-demo">
+    <h2>Quartile finder</h2>
+    <div class="controls">
+      <label>Data <input type="text" id="qtData" class="wide" value="12, 7, 15, 9, 21, 18, 13"></label>
+    </div>
+    <div class="output table-text" id="qtOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1 ($n$ odd)</h3>
+    <p class="question">Find the quartiles of 12, 7, 15, 9, 21, 18, 13.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>In order: 7, 9, 12, <strong>13</strong>, 15, 18, 21. $Q_2 = 13$.</li>
+        <li>Lower half 7, 9, 12 → $Q_1 = 9$. Upper half 15, 18, 21 → $Q_3 = 18$.</li>
+      </ol>
+      <p class="answer">$Q_1 = 9$, $Q_2 = 13$, $Q_3 = 18$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2 ($n$ even)</h3>
+    <p class="question">Find the quartiles of 4, 7, 2, 9, 5, 8, 10, 6.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>In order: 2, 4, 5, 6 | 7, 8, 9, 10. $Q_2 = \dfrac{6 + 7}{2} = 6.5$.</li>
+        <li>Lower half 2, 4, 5, 6 → $Q_1 = 4.5$. Upper half 7, 8, 9, 10 → $Q_3 = 8.5$.</li>
+      </ol>
+      <p class="answer">$Q_1 = 4.5$, $Q_2 = 6.5$, $Q_3 = 8.5$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Find $Q_1$, $Q_3$ and the IQR of 3, 7, 9, 12, 15, 18.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Lower half 3, 7, 9 → $Q_1 = 7$. Upper half 12, 15, 18 → $Q_3 = 15$.</li>
+        <li>IQR $= 15 - 7$</li>
+      </ol>
+      <p class="answer">$Q_1 = 7$, $Q_3 = 15$, IQR $= 8$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: other methods -->
+  <div class="note-warning">
+    Spreadsheets and some textbooks use other quartile rules and can give slightly different numbers. In Japanese high school maths, use the halves method above.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$Q_2$ = median; $Q_1$, $Q_3$ = medians of the lower and upper halves.</li>
+      <li>$n$ odd: leave the median out of both halves.</li>
+      <li>IQR $= Q_3 - Q_1$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script>
+  // "Quartile finder" demo (the TRY IT block above).
+  // Sorts the data, splits it into halves (the median is left out when n is odd),
+  // and takes the median of each half.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const input = document.getElementById('qtData');
+    const output = document.getElementById('qtOutput');
+
+    const median = (arr) => {
+      const n = arr.length;
+      return n % 2 ? arr[(n - 1) / 2] : (arr[n / 2 - 1] + arr[n / 2]) / 2;
+    };
+
+    function update() {
+      const data = input.value.split(/[\s,、]+/).filter((s) => s !== '').map(Number).sort((a, b) => a - b);
+      if (data.length < 2 || data.some(isNaN)) { output.textContent = 'Type at least two numbers separated by commas.'; return; }
+
+      const n = data.length, half = Math.floor(n / 2);
+      const lower = data.slice(0, half);
+      const upper = data.slice(n - half); // skips the middle value when n is odd
+      const q1 = median(lower), q2 = median(data), q3 = median(upper);
+
+      output.textContent =
+        `sorted:     ${data.join(', ')}\n` +
+        `lower half: ${lower.join(', ')}  →  Q1 = ${q1}\n` +
+        `median:     Q2 = ${q2}${n % 2 ? '  (left out of both halves)' : ''}\n` +
+        `upper half: ${upper.join(', ')}  →  Q3 = ${q3}\n` +
+        `IQR = ${q3} − ${q1} = ${Number((q3 - q1).toFixed(3))}`;
+    }
+
+    input.addEventListener('input', update);
+    update(); // show the default data straight away
+  })();
+</script>

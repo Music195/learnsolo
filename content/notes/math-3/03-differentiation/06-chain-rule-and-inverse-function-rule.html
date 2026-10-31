@@ -1,0 +1,169 @@
+<!-- tags: Differentiation -->
+<!-- =====================================================================
+     NOTE: Chain Rule and Inverse Function Rule (合成関数・逆関数の微分法)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Differentiation">Chain Rule and Inverse Function Rule for Derivatives</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Rates multiply along a chain</h2>
+    <p>In $y = (x^2 - 1)^2$ there is an inner function $u = x^2 - 1$ and an outer function $y = u^2$.
+      Suppose $u$ changes $\dfrac{du}{dx}$ times as fast as $x$, and $y$ changes $\dfrac{dy}{du}$ times as fast as $u$.
+      Then $y$ changes $\dfrac{dy}{du} \cdot \dfrac{du}{dx}$ times as fast as $x$.</p>
+    <p>For an inverse function the roles of $x$ and $y$ swap, so the rate becomes its reciprocal.</p>
+  </section>
+
+  <!-- FORMULA: chain rule -->
+  <div class="note-formula">
+    <h3>Chain rule (合成関数の微分法)</h3>
+    <div class="formula-main">$$\frac{dy}{dx} = \frac{dy}{du} \cdot \frac{du}{dx}, \qquad \{f(g(x))\}' = f'(g(x))\,g'(x)$$</div>
+    <p class="symbols">Most used case: $\{(g(x))^n\}' = n(g(x))^{n-1}g'(x)$.</p>
+  </div>
+
+  <!-- FORMULA: inverse function rule -->
+  <div class="note-formula">
+    <h3>Inverse function rule (逆関数の微分法)</h3>
+    <div class="formula-main">$$\frac{dy}{dx} = \frac{1}{\dfrac{dx}{dy}} \qquad \left(\frac{dx}{dy} \ne 0\right)$$</div>
+    <p class="symbols">Use it when $x$ is easy to write in terms of $y$, e.g. $y = \sqrt[3]{x} \iff x = y^3$.</p>
+  </div>
+
+  <!-- PROOF: why the rates multiply -->
+  <div class="note-proof">
+    <ol>
+      <li>Let $x$ change by $\Delta x$; then $u$ changes by $\Delta u$ and $y$ by $\Delta y$. If $\Delta u \ne 0$: $\dfrac{\Delta y}{\Delta x} = \dfrac{\Delta y}{\Delta u} \cdot \dfrac{\Delta u}{\Delta x}$.</li>
+      <li>As $\Delta x \to 0$, $\Delta u \to 0$ too ($u$ is continuous), so the two fractions tend to $\dfrac{dy}{du}$ and $\dfrac{du}{dx}$.</li>
+      <li>Inverse: $\dfrac{\Delta y}{\Delta x} = 1 \Big/ \dfrac{\Delta x}{\Delta y}$, and let $\Delta y \to 0$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: chain rule numbers; code at the bottom -->
+  <div class="note-demo">
+    <h2>$\dfrac{dy}{dx} = \dfrac{dy}{du} \cdot \dfrac{du}{dx}$ at a point</h2>
+    <div class="controls">
+      <label>$y$ = <select id="crF">
+        <option value="0">(x² − 1)²: u = x² − 1, y = u²</option>
+        <option value="1">1/(x² + 1): u = x² + 1, y = 1/u</option>
+        <option value="2">(1 − x)³: u = 1 − x, y = u³</option>
+      </select></label>
+      <label>$x$ = <input type="range" id="crX" min="-2" max="2" step="0.05" value="1.2"></label>
+    </div>
+    <canvas id="crCanvas"></canvas>
+    <div class="output table-text" id="crOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Differentiate $y = (x^2 + 3x + 1)^5$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$u = x^2 + 3x + 1$, $y = u^5$: $\dfrac{dy}{du} = 5u^4$, $\dfrac{du}{dx} = 2x + 3$.</li>
+      </ol>
+      <p class="answer">$y' = 5(x^2 + 3x + 1)^4(2x + 3)$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Differentiate $y = \dfrac{1}{(2x - 1)^3}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$y = (2x - 1)^{-3}$, so $y' = -3(2x - 1)^{-4} \cdot 2$.</li>
+      </ol>
+      <p class="answer">$y' = -\dfrac{6}{(2x - 1)^4}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Use the inverse function rule to differentiate $y = \sqrt[3]{x}$ ($x \ne 0$).</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$x = y^3$, so $\dfrac{dx}{dy} = 3y^2$.</li>
+        <li>$\dfrac{dy}{dx} = \dfrac{1}{3y^2} = \dfrac{1}{3\left(\sqrt[3]{x}\right)^2}$</li>
+      </ol>
+      <p class="answer">$y' = \dfrac{1}{3\sqrt[3]{x^2}}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">On the circle $x^2 + y^2 = 25$, find $\dfrac{dy}{dx}$ and the slope of the tangent at $(3, 4)$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Differentiate both sides with respect to $x$. Since $y$ depends on $x$, the chain rule gives $(y^2)' = 2y\dfrac{dy}{dx}$.</li>
+        <li>$2x + 2y\dfrac{dy}{dx} = 0$, so $\dfrac{dy}{dx} = -\dfrac{x}{y}$ ($y \ne 0$).</li>
+      </ol>
+      <p class="answer">$\dfrac{dy}{dx} = -\dfrac{x}{y}$; slope $-\dfrac{3}{4}$ at $(3, 4)$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: don't forget the inner derivative -->
+  <div class="note-warning">
+    The most common slip is dropping the inner derivative: $\{(2x - 1)^3\}' = 3(2x - 1)^2 \cdot 2$, not $3(2x - 1)^2$.
+  </div>
+
+  <!-- TIP: outside in -->
+  <div class="note-tip">
+    Work from the outside in: differentiate the outer function and leave the inside unchanged, then multiply by the derivative of the inside. Repeat if the inside is itself a composite.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$\{f(g(x))\}' = f'(g(x))g'(x)$; $\;\dfrac{dy}{dx} = \dfrac{dy}{du}\dfrac{du}{dx}$.</li>
+      <li>$\dfrac{dy}{dx} = 1 \Big/ \dfrac{dx}{dy}$.</li>
+      <li>Equations in $x$ and $y$: differentiate both sides, treating $y$ as a function of $x$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Rates multiply" demo (the TRY IT block above).
+  // At the chosen x: inner value u = g(x) and rate du/dx, outer rate dy/du at that u.
+  // Their product is the slope of y = f(g(x)), drawn as the orange tangent.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const fBox = document.getElementById('crF'), xBox = document.getElementById('crX');
+    const output = document.getElementById('crOutput');
+    const f3 = (v) => +v.toFixed(3);
+
+    // each composite: inner g and g′, outer f and f′ (as functions of u)
+    const CHAINS = [
+      { g: (x) => x * x - 1, dg: (x) => 2 * x, f: (u) => u * u, df: (u) => 2 * u },
+      { g: (x) => x * x + 1, dg: (x) => 2 * x, f: (u) => 1 / u, df: (u) => -1 / (u * u) },
+      { g: (x) => 1 - x, dg: () => -1, f: (u) => u ** 3, df: (u) => 3 * u * u },
+    ];
+
+    const plot = NotePlot.graph(document.getElementById('crCanvas'), {
+      x: [-2.6, 2.6], y: [-3, 4],
+      draw(g) {
+        const C = CHAINS[+fBox.value], x0 = +xBox.value;
+        const y = (x) => C.f(C.g(x));
+        g.fn(C.g, '#94a3b8', { width: 1.5, dash: true }); // the inner function u = g(x)
+        g.fn(y, '#2563eb');
+        const u0 = C.g(x0), dudx = C.dg(x0), dydu = C.df(u0), slope = dydu * dudx;
+        g.fn((x) => y(x0) + slope * (x - x0), '#ea580c', { width: 2, from: x0 - 1, to: x0 + 1 });
+        g.dot([x0, u0], '#94a3b8'); g.dot([x0, y(x0)], '#ea580c');
+        output.textContent =
+          `u = g(${x0}) = ${f3(u0)},  du/dx = ${f3(dudx)}  (grey dashed curve is u)\n` +
+          `dy/du at u = ${f3(u0)}: ${f3(dydu)}\n` +
+          `dy/dx = ${f3(dydu)} × ${f3(dudx)} = ${f3(slope)}  (slope of the orange tangent)`;
+      },
+    });
+    fBox.addEventListener('change', plot.redraw);
+    xBox.addEventListener('input', plot.redraw);
+  })();
+</script>

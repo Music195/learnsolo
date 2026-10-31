@@ -1,0 +1,149 @@
+<!-- tags: Complex Number and Equation -->
+<!-- =====================================================================
+     NOTE: Quadratic Formula with Complex Solutions (解の公式と虚数解)
+     Uses the shared blocks from static/css/note-blocks.css.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Complex Number and Equation">Quadratic Formula</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Every quadratic equation now has solutions</h2>
+    <p>In Mathematics 1, a negative number under the root meant "no real solution". With complex numbers, $\sqrt{-16} = 4i$, so the same formula
+      gives two <strong>imaginary solutions</strong> (虚数解). They always come as a conjugate pair $p \pm qi$ when $a, b, c$ are real.</p>
+  </section>
+
+  <!-- FORMULA: quadratic formula -->
+  <div class="note-formula">
+    <h3>Quadratic formula ($a, b, c$ real, $a \ne 0$)</h3>
+    <div class="formula-main">$$ax^2 + bx + c = 0 \iff x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$$</div>
+    <p class="symbols">With $b = 2b'$: $x = \dfrac{-b' \pm \sqrt{b'^2 - ac}}{a}$. If $b^2 - 4ac &lt; 0$, write $\sqrt{b^2 - 4ac} = \sqrt{4ac - b^2}\;i$.</p>
+  </div>
+
+  <!-- DEMO: solver; code at the bottom -->
+  <div class="note-demo">
+    <h2>Solve $ax^2 + bx + c = 0$</h2>
+    <div class="controls">
+      <label>$a$ = <input type="number" id="cqA" value="1"></label>
+      <label>$b$ = <input type="number" id="cqB" value="2"></label>
+      <label>$c$ = <input type="number" id="cqC" value="5"></label>
+    </div>
+    <div class="output table-text" id="cqOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Solve $x^2 + 2x + 5 = 0$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$b' = 1$: $x = -1 \pm \sqrt{1 - 5} = -1 \pm \sqrt{-4}$</li>
+      </ol>
+      <p class="answer">$x = -1 \pm 2i$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Solve $2x^2 - 2x + 1 = 0$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$b' = -1$: $x = \dfrac{1 \pm \sqrt{1 - 2}}{2} = \dfrac{1 \pm i}{2}$</li>
+      </ol>
+      <p class="answer">$x = \dfrac{1 \pm i}{2}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Solve $3x^2 + 2x + 1 = 0$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$b' = 1$: $x = \dfrac{-1 \pm \sqrt{1 - 3}}{3} = \dfrac{-1 \pm \sqrt{2}\,i}{3}$</li>
+      </ol>
+      <p class="answer">$x = \dfrac{-1 \pm \sqrt{2}\,i}{3}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Solve $x^4 - x^2 - 6 = 0$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Let $t = x^2$: $t^2 - t - 6 = 0 \Rightarrow (t - 3)(t + 2) = 0$.</li>
+        <li>$x^2 = 3 \Rightarrow x = \pm\sqrt{3}$; $\;x^2 = -2 \Rightarrow x = \pm\sqrt{2}\,i$.</li>
+      </ol>
+      <p class="answer">$x = \pm\sqrt{3}, \pm\sqrt{2}\,i$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: simplify -->
+  <div class="note-warning">
+    Write answers in the form $p + qi$: $\dfrac{-4 \pm 6i}{2} = -2 \pm 3i$. Divide both the real and imaginary parts.
+  </div>
+
+  <!-- TIP: check -->
+  <div class="note-tip">
+    Check with note 05: the two solutions must add to $-\dfrac{b}{a}$ and multiply to $\dfrac{c}{a}$. For Example 1: $(-1 + 2i) + (-1 - 2i) = -2$ ✓ and $(-1)^2 + 2^2 = 5$ ✓.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>The same formula; a negative under the root gives $\pm$ an imaginary part.</li>
+      <li>Real coefficients → imaginary solutions come as $p \pm qi$.</li>
+      <li>Substitute $t = x^2$ for $x^4 + \ldots$ equations.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script>
+  // "Solve ax² + bx + c = 0" demo (the TRY IT block above).
+  // Exact answer (p ± q√r i or real) for whole-number inputs, plus decimals.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const ids = ['cqA', 'cqB', 'cqC'];
+    const output = document.getElementById('cqOutput');
+    const gcd = (x, y) => (y === 0 ? Math.abs(x) : gcd(y, x % y));
+    // √n = k√m with m square-free
+    function simplifyRoot(n) {
+      let k = 1, m = n;
+      for (let f = 2; f * f <= m; f++) while (m % (f * f) === 0) { m /= f * f; k *= f; }
+      return [k, m];
+    }
+
+    function update() {
+      const [a, b, c] = ids.map((id) => parseInt(document.getElementById(id).value));
+      if ([a, b, c].some(Number.isNaN) || a === 0) { output.textContent = 'Enter whole numbers with a ≠ 0.'; return; }
+      const D = b * b - 4 * a * c;
+      const [k, m] = simplifyRoot(Math.abs(D));
+      let top = -b, q = k, den = 2 * a;
+      const g = gcd(gcd(top, q), den) * Math.sign(den);
+      top /= g; q = Math.abs(q / g); den /= g;
+      const unit = D < 0 ? 'i' : '';
+      const coef = q !== 1 ? q : m === 1 && !unit ? '1' : '';     // hide a 1 in front of √m or i
+      const rootTxt = `${coef}${m === 1 ? '' : '√' + m}${unit}`;
+      const body = D === 0 ? `${top}` : `${top === 0 ? '' : top + ' '}± ${rootTxt}`;
+      let exact = den === 1 ? body : `(${body}) / ${den}`;
+      if (D >= 0 && m === 1) {                                        // rational solutions: list them
+        const frac = (p, d) => { const h = gcd(p, d) * Math.sign(d); return d / h === 1 ? `${p / h}` : `${p / h}/${d / h}`; };
+        exact = D === 0 ? frac(-b, 2 * a) : `${frac(-b + k, 2 * a)},  ${frac(-b - k, 2 * a)}`;
+      }
+      const re = -b / (2 * a), im = Math.sqrt(Math.abs(D)) / Math.abs(2 * a);
+      output.textContent =
+        `D = ${b}² − 4·(${a})·(${c}) = ${D}   →  ${D > 0 ? 'two real solutions' : D === 0 ? 'one repeated real solution' : 'two imaginary solutions'}\n` +
+        `x = (${-b} ± √(${D})) / ${2 * a}${D < 0 ? `   with √(${D}) = √${-D} i` : ''}\n` +
+        `x = ${exact}\n` +
+        (D < 0 ? `≈ ${re.toFixed(4)} ± ${im.toFixed(4)}i` : `≈ ${(re + im * Math.sign(a)).toFixed(4)}${D > 0 ? ', ' + (re - im * Math.sign(a)).toFixed(4) : ''}`);
+    }
+    ids.forEach((id) => document.getElementById(id).addEventListener('input', update));
+    update();
+  })();
+</script>

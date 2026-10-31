@@ -1,0 +1,144 @@
+<!-- tags: Vector -->
+<!-- =====================================================================
+     NOTE: Area of a Triangle from Vectors (ベクトルと三角形の面積)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Vector">Triangle Area with Vectors</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>$\frac{1}{2}ab\sin C$, written with vectors</h2>
+    <p>The area of triangle OAB is $\dfrac{1}{2}|\vec{a}||\vec{b}|\sin\theta$. Since $\sin^2\theta = 1 - \cos^2\theta$ and $\cos\theta$ comes from the dot product, the area can be written with $|\vec{a}|$, $|\vec{b}|$ and $\vec{a} \cdot \vec{b}$ only.</p>
+    <p>In components the square root disappears and the area is $\dfrac{1}{2}|a_1b_2 - a_2b_1|$: cross-multiply, subtract, take the absolute value, halve.</p>
+  </section>
+
+  <!-- FORMULA: two forms -->
+  <div class="note-formula">
+    <h3>Triangle with sides $\overrightarrow{OA} = \vec{a} = (a_1, a_2)$, $\overrightarrow{OB} = \vec{b} = (b_1, b_2)$</h3>
+    <div class="formula-main">$$S = \frac{1}{2}\sqrt{|\vec{a}|^2|\vec{b}|^2 - (\vec{a} \cdot \vec{b})^2} = \frac{1}{2}|a_1b_2 - a_2b_1|$$</div>
+    <p class="symbols">For any triangle ABC, use $\vec{a} = \overrightarrow{AB}$ and $\vec{b} = \overrightarrow{AC}$.</p>
+  </div>
+
+  <!-- PROOF: from sin -->
+  <div class="note-proof">
+    <ol>
+      <li>$S = \dfrac{1}{2}|\vec{a}||\vec{b}|\sin\theta$, and $\sin\theta \ge 0$, so $S = \dfrac{1}{2}\sqrt{|\vec{a}|^2|\vec{b}|^2(1 - \cos^2\theta)} = \dfrac{1}{2}\sqrt{|\vec{a}|^2|\vec{b}|^2 - (\vec{a} \cdot \vec{b})^2}$.</li>
+      <li>In components: $(a_1^2 + a_2^2)(b_1^2 + b_2^2) - (a_1b_1 + a_2b_2)^2 = a_1^2b_2^2 - 2a_1a_2b_1b_2 + a_2^2b_1^2 = (a_1b_2 - a_2b_1)^2$.</li>
+      <li>So $S = \dfrac{1}{2}\sqrt{(a_1b_2 - a_2b_1)^2} = \dfrac{1}{2}|a_1b_2 - a_2b_1|$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: area; code at the bottom -->
+  <div class="note-demo">
+    <h2>Drag A, B and C: the area of triangle ABC both ways</h2>
+    <canvas id="vtCanvas"></canvas>
+    <div class="output table-text" id="vtOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find the area of triangle OAB with A$(3, 4)$, B$(6, 1)$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\dfrac{1}{2}|3 \cdot 1 - 4 \cdot 6| = \dfrac{1}{2}|-21|$.</li>
+      </ol>
+      <p class="answer">$\dfrac{21}{2}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find the area of triangle ABC with A$(1, 1)$, B$(4, 2)$, C$(2, 5)$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\overrightarrow{AB} = (3, 1)$, $\overrightarrow{AC} = (1, 4)$.</li>
+        <li>$\dfrac{1}{2}|3 \cdot 4 - 1 \cdot 1|$</li>
+      </ol>
+      <p class="answer">$\dfrac{11}{2}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">$|\vec{a}| = 2$, $|\vec{b}| = 3$, $\vec{a} \cdot \vec{b} = 3$. Find the area of the triangle formed by $\vec{a}$ and $\vec{b}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\dfrac{1}{2}\sqrt{4 \cdot 9 - 9} = \dfrac{1}{2}\sqrt{27}$.</li>
+      </ol>
+      <p class="answer">$\dfrac{3\sqrt{3}}{2}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Find the area of the parallelogram with sides $\vec{a} = (4, 2)$ and $\vec{b} = (1, 5)$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The parallelogram is two copies of the triangle: area $= |a_1b_2 - a_2b_1| = |20 - 2|$.</li>
+      </ol>
+      <p class="answer">$18$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: absolute value, same start -->
+  <div class="note-warning">
+    Don't forget the absolute value: $a_1b_2 - a_2b_1$ is negative when $\vec{b}$ is clockwise from $\vec{a}$.
+    Take both vectors from the <strong>same vertex</strong>, such as $\overrightarrow{AB}$ and $\overrightarrow{AC}$. The angle $\theta$ in $\frac{1}{2}|\vec{a}||\vec{b}|\sin\theta$ is the angle at that vertex.
+  </div>
+
+  <!-- TIP: which formula -->
+  <div class="note-tip">
+    Components known → use $\dfrac{1}{2}|a_1b_2 - a_2b_1|$. Only lengths and a dot product known → use the square-root form.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$S = \dfrac{1}{2}\sqrt{|\vec{a}|^2|\vec{b}|^2 - (\vec{a} \cdot \vec{b})^2}$.</li>
+      <li>$S = \dfrac{1}{2}|a_1b_2 - a_2b_1|$ in components.</li>
+      <li>$S = 0$ exactly when A, B, C are on one line.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Triangle area" demo (the TRY IT block above).
+  // Drag A, B and C (half-grid). a = AB (blue) and b = AC (orange) both start at A.
+  // The readout computes the area from the components and from |a|, |b| and a·b.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const output = document.getElementById('vtOutput');
+    const f3 = (v) => +v.toFixed(3) || 0;
+    const par = (v) => (v < 0 ? `(${v})` : `${v}`); // wrap negatives: 2×(−1)
+    const half = ([x, y]) => [Math.round(x * 2) / 2, Math.round(y * 2) / 2];
+
+    NotePlot.graph(document.getElementById('vtCanvas'), {
+      x: [-6.2, 6.2], y: [-4, 4],
+      points: { A: [-3, -2], B: [3, -1], C: [-1, 2.5] },
+      constrain: { A: half, B: half, C: half },
+      draw(g, P) {
+        const A = P.A, a = [P.B[0] - A[0], P.B[1] - A[1]], b = [P.C[0] - A[0], P.C[1] - A[1]];
+        g.poly([A, P.B, P.C], 'rgba(13, 148, 136, 0.15)');
+        g.seg(P.B, P.C, '#94a3b8', { width: 2 });
+        g.seg(A, P.B, '#2563eb', { width: 3 }); g.seg(A, P.C, '#ea580c', { width: 3 });
+        const det = a[0] * b[1] - a[1] * b[0], aa = a[0] * a[0] + a[1] * a[1], bb = b[0] * b[0] + b[1] * b[1], ab = a[0] * b[0] + a[1] * b[1];
+        output.textContent =
+          `a = AB = (${a.join(', ')}),  b = AC = (${b.join(', ')})\n` +
+          `½|a1·b2 − a2·b1| = ½|${par(a[0])}×${par(b[1])} − ${par(a[1])}×${par(b[0])}| = ½|${det}| = ${Math.abs(det) / 2}\n` +
+          `½√(|a|²|b|² − (a·b)²) = ½√(${aa}×${bb} − ${par(ab)}²) = ${f3(Math.sqrt(Math.max(0, aa * bb - ab * ab)) / 2)}`;
+      },
+    });
+  })();
+</script>

@@ -1,0 +1,163 @@
+<!-- tags: Set and Elements -->
+<!-- =====================================================================
+     NOTE: Intersection and Union
+     Uses the shared blocks from static/css/note-blocks.css.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Set and Elements">Intersection and Union of Sets</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Combining two sets</h2>
+    <p>The <strong>intersection</strong> $A \cap B$ keeps only the elements that are in <strong>both</strong> sets.</p>
+    <p>The <strong>union</strong> $A \cup B$ collects every element that is in <strong>at least one</strong> of the sets.</p>
+  </section>
+
+  <!-- FORMULA: definitions -->
+  <div class="note-formula">
+    <h3>Intersection ("and")</h3>
+    <div class="formula-main">$$A \cap B = \{\,x \mid x \in A \text{ and } x \in B\,\}$$</div>
+  </div>
+
+  <div class="note-formula">
+    <h3>Union ("or")</h3>
+    <div class="formula-main">$$A \cup B = \{\,x \mid x \in A \text{ or } x \in B\,\}$$</div>
+    <p class="symbols">In maths "or" includes "both".</p>
+  </div>
+
+  <!-- TIP: remembering the symbols -->
+  <div class="note-tip">
+    $\cup$ looks like a cup that holds <strong>everything</strong> (union).
+    $\cap$ is the cup turned upside down, holding only what is <strong>shared</strong> (intersection).
+  </div>
+
+  <!-- DEMO: Venn diagram with intersection/union shading; code at the bottom -->
+  <div class="note-demo">
+    <h2>Intersection and union explorer</h2>
+    <div class="controls">
+      <label>$A$ <input type="text" id="iuA" class="wide" value="1, 2, 3, 4, 5"></label>
+      <label>$B$ <input type="text" id="iuB" class="wide" value="3, 4, 5, 6, 7"></label>
+    </div>
+    <div class="controls choices">
+      <button type="button" data-op="intersect" class="active">$A \cap B$</button>
+      <button type="button" data-op="union">$A \cup B$</button>
+    </div>
+    <canvas id="iuCanvas"></canvas>
+    <div class="output" id="iuOutput"></div>
+  </div>
+
+  <!-- CONCEPT: rules that intersection and union follow -->
+  <section class="note-concept">
+    <h2>Rules</h2>
+    <table>
+      <tr><th>Rule</th><th>Intersection</th><th>Union</th></tr>
+      <tr><td>Order doesn't matter</td><td>$A \cap B = B \cap A$</td><td>$A \cup B = B \cup A$</td></tr>
+      <tr><td>Grouping doesn't matter</td><td>$(A \cap B) \cap C = A \cap (B \cap C)$</td><td>$(A \cup B) \cup C = A \cup (B \cup C)$</td></tr>
+      <tr><td>Distributive</td><td>$A \cap (B \cup C) = (A \cap B) \cup (A \cap C)$</td><td>$A \cup (B \cap C) = (A \cup B) \cap (A \cup C)$</td></tr>
+      <tr><td>With $\varnothing$ and $U$</td><td>$A \cap \varnothing = \varnothing,\ \ A \cap U = A$</td><td>$A \cup \varnothing = A,\ \ A \cup U = U$</td></tr>
+      <tr><td>When $A \subset B$</td><td>$A \cap B = A$</td><td>$A \cup B = B$</td></tr>
+    </table>
+  </section>
+
+  <!-- WARNING: the most common mistake with this topic -->
+  <div class="note-warning">
+    Write each element <strong>once</strong> in a union: $\{1, 2, 3\} \cup \{3, 4\} = \{1, 2, 3, 4\}$, not $\{1, 2, 3, 3, 4\}$.
+    And if two sets share nothing, the intersection is $\varnothing$; don't leave it blank.
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">$A = \{2, 4, 6, 8, 10\}$, $B = \{1, 3, 5, 7, 9\}$. Find $A \cap B$ and $A \cup B$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$A$ is even numbers, $B$ is odd numbers: nothing is in both.</li>
+        <li>Together they contain every number from 1 to 10.</li>
+      </ol>
+      <p class="answer">$A \cap B = \varnothing$, $\;A \cup B = \{1, 2, 3, \dots, 10\}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">$C$ = the vowels $\{a, e, i, o, u\}$, $D$ = the letters of "mathematics". Find $C \cap D$ and $C \cup D$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Letters of "mathematics", each once: $D = \{m, a, t, h, e, i, c, s\}$</li>
+        <li>Vowels that appear in $D$: $a, e, i$</li>
+        <li>All letters from either set: $a, c, e, h, i, m, o, s, t, u$</li>
+      </ol>
+      <p class="answer">$C \cap D = \{a, e, i\}$, $\;C \cup D = \{a, c, e, h, i, m, o, s, t, u\}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Check $A \cap (B \cup C) = (A \cap B) \cup (A \cap C)$ for $A = \{1, 2, 3, 4\}$, $B = \{2, 3, 5, 6\}$, $C = \{3, 4, 7, 8\}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Left side: $B \cup C = \{2, 3, 4, 5, 6, 7, 8\}$, so $A \cap (B \cup C) = \{2, 3, 4\}$</li>
+        <li>Right side: $A \cap B = \{2, 3\}$, $A \cap C = \{3, 4\}$, so their union is $\{2, 3, 4\}$</li>
+      </ol>
+      <p class="answer">Both sides equal $\{2, 3, 4\}$. ✔</p>
+    </details>
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$A \cap B$: in both. $\;A \cup B$: in at least one.</li>
+      <li>Both operations ignore order and grouping, and each distributes over the other.</li>
+      <li>If $A \subset B$, then $A \cap B = A$ and $A \cup B = B$.</li>
+      <li>No common elements means $A \cap B = \varnothing$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/venn.js"></script>
+<script>
+  // Intersection and union explorer (the TRY IT block above).
+  // The two buttons choose which region is shaded; typing in A or B redraws.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const aInput = document.getElementById('iuA');
+    const bInput = document.getElementById('iuB');
+    const canvas = document.getElementById('iuCanvas');
+    const output = document.getElementById('iuOutput');
+    let op = 'intersect'; // which operation is currently shown
+
+    // What each button shades and computes
+    const operations = {
+      intersect: { name: 'A ∩ B', shade: (a, b) => a && b, result: NoteVenn.intersect },
+      union:     { name: 'A ∪ B', shade: (a, b) => a || b, result: NoteVenn.union },
+    };
+
+    function update() {
+      const A = NoteVenn.parse(aInput.value);
+      const B = NoteVenn.parse(bInput.value);
+      const { name, shade, result } = operations[op];
+
+      NoteVenn.draw(canvas, { A, B, shade });
+      output.textContent = `${name} = ${NoteVenn.format(result(A, B))}`;
+    }
+
+    document.querySelectorAll('.note-demo .choices button').forEach((button) => {
+      button.addEventListener('click', () => {
+        op = button.dataset.op;
+        // Fill in the chosen button, outline the other
+        document.querySelectorAll('.note-demo .choices button')
+          .forEach((b) => b.classList.toggle('active', b === button));
+        update();
+      });
+    });
+    aInput.addEventListener('input', update);
+    bInput.addEventListener('input', update);
+    update(); // draw the default sets straight away
+  })();
+</script>

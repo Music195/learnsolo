@@ -1,0 +1,187 @@
+<!-- tags: Integration -->
+<!-- =====================================================================
+     NOTE: Area Bounded by a Curve y = f(x) (曲線と x 軸の間の面積)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Integration">Area Bounded by Curve y = f(x)</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Area is never negative</h2>
+    <p>The integral counts parts below the $x$-axis as negative. An <strong>area</strong> must count every part as positive, so integrate $|f(x)|$ instead.</p>
+    <p>In practice: find where the curve crosses the axis, split the interval there, and integrate each piece with the sign that makes it positive.</p>
+  </section>
+
+  <!-- FORMULA: area between the curve and the x-axis -->
+  <div class="note-formula">
+    <h3>Area between $y = f(x)$ and the $x$-axis, $a \le x \le b$</h3>
+    <div class="formula-main">$$S = \int_a^b |f(x)|\,dx: \qquad f \ge 0 \text{ gives } S = \int_a^b f(x)\,dx, \qquad f \le 0 \text{ gives } S = -\int_a^b f(x)\,dx$$</div>
+  </div>
+
+  <!-- PROOF: the method -->
+  <div class="note-proof">
+    <ol>
+      <li>Solve $f(x) = 0$ to find the crossing points between $a$ and $b$.</li>
+      <li>On each piece, check the sign of $f$ (sketch the graph or test one point).</li>
+      <li>Add $\displaystyle\int f$ for pieces above the axis and $-\displaystyle\int f$ for pieces below.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: pieces of area between zeros; code at the bottom -->
+  <div class="note-demo">
+    <h2>Each piece between crossings counted as a positive area</h2>
+    <div class="controls">
+      <label>$f(x)$ = <select id="acF">
+        <option value="0">x³ − 3x</option>
+        <option value="1">x² − 2x</option>
+        <option value="2">sin x</option>
+        <option value="3">log x</option>
+      </select></label>
+      <label>$a$ = <input type="range" id="acA" min="-3" max="4" step="0.05" value="-1.8"></label>
+      <label>$b$ = <input type="range" id="acB" min="-3" max="4" step="0.05" value="1.8"></label>
+    </div>
+    <canvas id="acCanvas"></canvas>
+    <div class="output table-text" id="acOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find the area between $y = x^2 - 2x$ and the $x$-axis.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Crossings: $x(x - 2) = 0$, so $x = 0, 2$. Between them the curve is below the axis.</li>
+        <li>$S = -\displaystyle\int_0^2 (x^2 - 2x)\,dx = -\Big[\frac{x^3}{3} - x^2\Big]_0^2 = -\left(\frac{8}{3} - 4\right)$</li>
+      </ol>
+      <p class="answer">$\dfrac{4}{3}$ (or by the 1/6 formula: $\dfrac{1}{6}(2 - 0)^3$)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find the total area enclosed by $y = x^3 - 3x$ and the $x$-axis.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Crossings: $x(x^2 - 3) = 0$, so $x = -\sqrt{3}, 0, \sqrt{3}$.</li>
+        <li>The function is odd, so the two loops have equal area. On $[0, \sqrt{3}]$ the curve is below the axis:
+          $-\displaystyle\int_0^{\sqrt{3}} (x^3 - 3x)\,dx = -\Big[\frac{x^4}{4} - \frac{3x^2}{2}\Big]_0^{\sqrt{3}} = -\left(\frac{9}{4} - \frac{9}{2}\right) = \frac{9}{4}$.</li>
+        <li>Total: $2 \times \dfrac{9}{4}$.</li>
+      </ol>
+      <p class="answer">$\dfrac{9}{2}$ (but $\displaystyle\int_{-\sqrt{3}}^{\sqrt{3}} (x^3 - 3x)\,dx = 0$)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Find the area between $y = \sin x$ ($0 \le x \le 2\pi$) and the $x$-axis.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\displaystyle\int_0^{\pi} \sin x\,dx - \int_{\pi}^{2\pi} \sin x\,dx = 2 - (-2)$</li>
+      </ol>
+      <p class="answer">$4$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Find the area bounded by $y = \log x$, the $x$-axis and the line $x = e$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\log x = 0$ at $x = 1$, and $\log x \ge 0$ on $[1, e]$.</li>
+        <li>$\displaystyle\int_1^e \log x\,dx = \Big[x\log x - x\Big]_1^e = 0 - (-1)$</li>
+      </ol>
+      <p class="answer">$1$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: don't integrate straight across a crossing -->
+  <div class="note-warning">
+    Integrating straight across a crossing point lets the parts above and below the axis cancel. You get the signed area, not the area. Always find the zeros first.
+  </div>
+
+  <!-- TIP: the 1/6 formula -->
+  <div class="note-tip">
+    A parabola $y = a(x - \alpha)(x - \beta)$ and the axis enclose area $\dfrac{|a|}{6}(\beta - \alpha)^3$. It saves a lot of arithmetic.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Area $= \int_a^b |f(x)|\,dx$.</li>
+      <li>Split at the zeros of $f$; flip the sign on pieces below the axis.</li>
+      <li>Sketch first: a picture shows which pieces are below the axis.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Pieces of area" demo (the TRY IT block above).
+  // Finds where f crosses the axis between a and b (sign changes on a fine grid,
+  // then halving the gap). Each piece is shaded blue (above) or red (below) and
+  // its area |F(right) − F(left)| is listed.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const fBox = document.getElementById('acF'), aBox = document.getElementById('acA'), bBox = document.getElementById('acB');
+    const output = document.getElementById('acOutput');
+    const f3 = (v) => +v.toFixed(3);
+
+    // each function with an antiderivative and the smallest x it is defined at
+    const FUNCS = [
+      { f: (x) => x ** 3 - 3 * x, F: (x) => x ** 4 / 4 - 1.5 * x * x, min: -Infinity },
+      { f: (x) => x * x - 2 * x, F: (x) => x ** 3 / 3 - x * x, min: -Infinity },
+      { f: Math.sin, F: (x) => -Math.cos(x), min: -Infinity },
+      { f: Math.log, F: (x) => x * Math.log(x) - x, min: 0.05 },
+    ];
+    // zeros of f strictly between a and b
+    function zeros(f, a, b) {
+      const out = [], n = 400;
+      for (let i = 0; i < n; i++) {
+        let p = a + (b - a) * i / n, q = a + (b - a) * (i + 1) / n;
+        if (f(p) === 0 && i > 0) out.push(p);
+        else if (f(p) * f(q) < 0) {
+          for (let k = 0; k < 40; k++) { const m = (p + q) / 2; if (f(p) * f(m) <= 0) q = m; else p = m; }
+          out.push((p + q) / 2);
+        }
+      }
+      return out;
+    }
+
+    const plot = NotePlot.graph(document.getElementById('acCanvas'), {
+      x: [-3.2, 4.2], y: [-2.5, 2.5],
+      draw(g) {
+        const F = FUNCS[+fBox.value];
+        const a = Math.max(Math.min(+aBox.value, +bBox.value), F.min), b = Math.max(+aBox.value, +bBox.value, F.min);
+        const cuts = [a, ...zeros(F.f, a, b), b];
+        let total = 0;
+        const parts = [];
+        for (let i = 0; i + 1 < cuts.length; i++) {
+          const p = cuts[i], q = cuts[i + 1];
+          if (q - p < 1e-9) continue;
+          const val = F.F(q) - F.F(p);
+          g.fill(F.f, p, q, val >= 0 ? 'rgba(37, 99, 235, 0.25)' : 'rgba(220, 38, 38, 0.25)');
+          parts.push(`${f3(Math.abs(val))}${val < 0 ? ' (below)' : ''}`);
+          total += Math.abs(val);
+        }
+        g.fn(F.f, '#334155', { from: Math.max(F.min, -3.2) });
+        cuts.slice(1, -1).forEach((z) => g.dot([z, 0], '#334155'));
+        output.textContent =
+          `crossings: ${cuts.slice(1, -1).map(f3).join(', ') || 'none'}\n` +
+          `pieces: ${parts.join(' + ') || '0'}\n` +
+          `area = ${f3(total)},   signed integral ∫ₐᵇ f = ${f3(F.F(b) - F.F(a))}`;
+      },
+    });
+    fBox.addEventListener('change', plot.redraw);
+    [aBox, bBox].forEach((el) => el.addEventListener('input', plot.redraw));
+  })();
+</script>

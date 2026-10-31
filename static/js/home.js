@@ -1,7 +1,7 @@
 /* =====================================================================
-   home.js — scripts for the home page (templates/index.html)
+   home.js — scripts for the home page (templates/home.html)
    ---------------------------------------------------------------------
-   1. Hero demo: drag P along y = x²/2 (uses note_plot.js)
+   1. Hero demo: drag P along y = x²/2 (uses demos/plot.js)
    2. Subject tabs: show one subject's courses at a time
    The floating bar (menu + search) is in floatbar.js.
    Each part is wrapped in a function so names can't clash.

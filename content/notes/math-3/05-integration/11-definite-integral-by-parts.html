@@ -1,0 +1,154 @@
+<!-- tags: Integration -->
+<!-- =====================================================================
+     NOTE: Definite Integrals by Parts (定積分の部分積分法)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Integration">Definite Integral: Integration by Parts</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Evaluate the $fg$ part straight away</h2>
+    <p>Integration by parts with limits gives a bracket $\Big[f(x)g(x)\Big]_a^b$ and a new integral. Evaluate the bracket as a number at once; often one end gives $0$.</p>
+    <p>Using parts repeatedly gives a <strong>reduction formula</strong>, which links $I_n$ to $I_{n-2}$. The classic case is $\displaystyle\int_0^{\frac{\pi}{2}} \sin^n x\,dx$.</p>
+  </section>
+
+  <!-- FORMULA: parts with limits -->
+  <div class="note-formula">
+    <h3>Parts with limits</h3>
+    <div class="formula-main">$$\int_a^b f(x)\,g'(x)\,dx = \Big[f(x)\,g(x)\Big]_a^b - \int_a^b f'(x)\,g(x)\,dx$$</div>
+    <div class="formula-main">$$I_n = \int_0^{\frac{\pi}{2}} \sin^n x\,dx: \qquad I_n = \frac{n - 1}{n}I_{n-2} \;\;(n \ge 2), \quad I_0 = \frac{\pi}{2}, \quad I_1 = 1$$</div>
+  </div>
+
+  <!-- PROOF: the reduction formula -->
+  <div class="note-proof">
+    <ol>
+      <li>Write $\sin^n x = \sin^{n-1}x \cdot \sin x$. Differentiate $\sin^{n-1}x$ and integrate $\sin x$ to $-\cos x$.</li>
+      <li>$I_n = \Big[-\sin^{n-1}x\cos x\Big]_0^{\frac{\pi}{2}} + (n - 1)\displaystyle\int_0^{\frac{\pi}{2}} \sin^{n-2}x\cos^2 x\,dx$. The bracket is $0$ at both ends.</li>
+      <li>Use $\cos^2 x = 1 - \sin^2 x$: $I_n = (n - 1)(I_{n-2} - I_n)$, so $nI_n = (n - 1)I_{n-2}$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: sin^n x and the reduction formula; code at the bottom -->
+  <div class="note-demo">
+    <h2>Area under $\sin^n x$ on $\left[0, \frac{\pi}{2}\right]$</h2>
+    <div class="controls">
+      <label>$n$ = <input type="range" id="wpN" min="0" max="12" step="1" value="4"></label>
+    </div>
+    <canvas id="wpCanvas"></canvas>
+    <div class="output table-text" id="wpOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Evaluate $\displaystyle\int_0^1 x e^x\,dx$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\Big[x e^x\Big]_0^1 - \displaystyle\int_0^1 e^x\,dx = e - (e - 1)$</li>
+      </ol>
+      <p class="answer">$1$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Evaluate $\displaystyle\int_1^e \log x\,dx$ and $\displaystyle\int_1^e x\log x\,dx$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\Big[x\log x - x\Big]_1^e = (e - e) - (0 - 1) = 1$</li>
+        <li>$\Big[\dfrac{x^2}{2}\log x\Big]_1^e - \displaystyle\int_1^e \frac{x^2}{2} \cdot \frac{1}{x}\,dx = \frac{e^2}{2} - \Big[\frac{x^2}{4}\Big]_1^e = \frac{e^2}{2} - \frac{e^2 - 1}{4}$</li>
+      </ol>
+      <p class="answer">$1$ and $\dfrac{e^2 + 1}{4}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Evaluate $\displaystyle\int_0^{\pi} x\sin x\,dx$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\Big[-x\cos x\Big]_0^{\pi} + \displaystyle\int_0^{\pi} \cos x\,dx = \pi + 0$</li>
+      </ol>
+      <p class="answer">$\pi$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Use the reduction formula to find $\displaystyle\int_0^{\frac{\pi}{2}} \sin^5 x\,dx$ and $\displaystyle\int_0^{\frac{\pi}{2}} \sin^6 x\,dx$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$I_5 = \dfrac{4}{5} \cdot \dfrac{2}{3} \cdot I_1 = \dfrac{8}{15}$</li>
+        <li>$I_6 = \dfrac{5}{6} \cdot \dfrac{3}{4} \cdot \dfrac{1}{2} \cdot I_0 = \dfrac{15}{48} \cdot \dfrac{\pi}{2}$</li>
+      </ol>
+      <p class="answer">$\dfrac{8}{15}$ and $\dfrac{5\pi}{32}$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: bracket limits -->
+  <div class="note-warning">
+    The bracket $\Big[fg\Big]_a^b$ needs <strong>both</strong> limits. Don't evaluate it at $b$ only. And the new integral keeps the same limits.
+  </div>
+
+  <!-- TIP: make the bracket vanish -->
+  <div class="note-tip">
+    For $\displaystyle\int_\alpha^\beta (x - \alpha)(x - \beta)\,dx$, differentiating $(x - \alpha)$ gives a bracket that is $0$ at both ends.
+    The result is $-\dfrac{(\beta - \alpha)^3}{6}$, the well-known "1/6 formula".
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$\int_a^b fg' = \Big[fg\Big]_a^b - \int_a^b f'g$.</li>
+      <li>Choose $f$, $g$ so the bracket is simple (often $0$ at an end).</li>
+      <li>$I_n = \dfrac{n - 1}{n}I_{n-2}$ for $\int_0^{\pi/2}\sin^n x\,dx$ (the same holds for $\cos^n x$).</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Reduction formula" demo (the TRY IT block above).
+  // Shades the area under sinⁿx for 0 ≤ x ≤ π/2 and compares a direct numerical
+  // value with the chain Iₙ = (n−1)/n · Iₙ₋₂ that integration by parts gives.
+  // The grey dashed curve is sinⁿ⁻²x, whose area is Iₙ₋₂.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const nBox = document.getElementById('wpN');
+    const output = document.getElementById('wpOutput');
+    const f5 = (v) => +v.toFixed(5);
+
+    const plot = NotePlot.graph(document.getElementById('wpCanvas'), {
+      x: [-0.2, 2], y: [-0.15, 1.2],
+      draw(g) {
+        const n = +nBox.value, f = (x) => Math.sin(x) ** n;
+        g.fill(f, 0, Math.PI / 2, 'rgba(37, 99, 235, 0.22)');
+        if (n >= 2) g.fn((x) => Math.sin(x) ** (n - 2), '#94a3b8', { width: 2, dash: true, from: 0, to: Math.PI / 2 });
+        g.fn(f, '#2563eb', { from: 0, to: Math.PI / 2 });
+        g.vline(Math.PI / 2);
+        // numerical area (midpoint rule)
+        let area = 0;
+        const m = 2000, h = Math.PI / 2 / m;
+        for (let i = 0; i < m; i++) area += f((i + 0.5) * h) * h;
+        // reduction chain down to I₀ or I₁
+        let I = n % 2 ? 1 : Math.PI / 2;
+        const steps = [];
+        for (let k = n % 2 ? 3 : 2; k <= n; k += 2) { I *= (k - 1) / k; steps.push(`${k - 1}/${k}`); }
+        output.textContent =
+          `numerical area = ${f5(area)}\n` +
+          `formula: I_${n} = ${steps.length ? steps.reverse().join(' · ') + ' · ' : ''}${n % 2 ? '1' : 'π/2'} = ${f5(I)}`;
+      },
+    });
+    nBox.addEventListener('input', plot.redraw);
+  })();
+</script>

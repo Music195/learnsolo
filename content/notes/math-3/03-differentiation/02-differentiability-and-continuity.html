@@ -1,0 +1,156 @@
+<!-- tags: Differentiation -->
+<!-- =====================================================================
+     NOTE: Differentiability and Continuity (微分可能性と連続性)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Differentiation">Differentiability and Continuity</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>No break, and no sharp corner</h2>
+    <p><strong>Continuous</strong> at $a$: the graph has no break there, so $\displaystyle\lim_{x \to a} f(x) = f(a)$.</p>
+    <p><strong>Differentiable</strong> at $a$: the graph has a single tangent there, so $f'(a)$ exists as a finite number.
+      The slopes from the right and from the left must agree.</p>
+    <p>Differentiable is the stronger condition. A corner like $|x|$ at $0$ is continuous but has two different one-sided slopes, so it is not differentiable.</p>
+  </section>
+
+  <!-- FORMULA: the relationship -->
+  <div class="note-formula">
+    <h3>The one-way implication</h3>
+    <div class="formula-main">$$f \text{ differentiable at } a \implies f \text{ continuous at } a$$</div>
+    <p class="symbols">The converse is false. To test differentiability, compare $\displaystyle\lim_{h \to +0} \frac{f(a + h) - f(a)}{h}$ with $\displaystyle\lim_{h \to -0} \frac{f(a + h) - f(a)}{h}$.</p>
+  </div>
+
+  <!-- PROOF: differentiable implies continuous -->
+  <div class="note-proof">
+    <ol>
+      <li>For $h \ne 0$: $f(a + h) - f(a) = \dfrac{f(a + h) - f(a)}{h} \cdot h$.</li>
+      <li>As $h \to 0$ the fraction tends to $f'(a)$ (a finite number) and $h \to 0$, so the product tends to $f'(a) \cdot 0 = 0$.</li>
+      <li>So $\displaystyle\lim_{h \to 0} f(a + h) = f(a)$, which means $f$ is continuous at $a$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: slopes from both sides at x = 0; code at the bottom -->
+  <div class="note-demo">
+    <h2>Slopes from the right and from the left at $x = 0$</h2>
+    <div class="controls">
+      <label>$f(x)$ = <select id="dcF">
+        <option value="0">x²</option>
+        <option value="1">|x|</option>
+        <option value="2">x|x|</option>
+        <option value="3">∛x</option>
+        <option value="4">x (x ≥ 0), x + 1 (x &lt; 0)</option>
+      </select></label>
+      <label>$h$ = <input type="range" id="dcH" min="0.02" max="1.5" step="0.01" value="1"></label>
+    </div>
+    <canvas id="dcCanvas"></canvas>
+    <div class="output table-text" id="dcOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Is $f(x) = |x - 1|$ continuous at $x = 1$? Differentiable?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\displaystyle\lim_{x \to 1} |x - 1| = 0 = f(1)$, so it is continuous.</li>
+        <li>Right: $\dfrac{|h|}{h} = 1$ for $h &gt; 0$. Left: $\dfrac{|h|}{h} = -1$ for $h &lt; 0$. They differ.</li>
+      </ol>
+      <p class="answer">Continuous but not differentiable at $x = 1$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Is $f(x) = x|x|$ differentiable at $x = 0$?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\dfrac{f(h) - f(0)}{h} = \dfrac{h|h|}{h} = |h| \to 0$ from both sides.</li>
+      </ol>
+      <p class="answer">Yes, $f'(0) = 0$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">$f(x) = x^2$ for $x \le 1$ and $f(x) = ax + b$ for $x &gt; 1$. Find $a$, $b$ so that $f$ is differentiable at $x = 1$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Differentiable needs continuous first: the right-hand limit $a + b$ must equal $f(1) = 1$.</li>
+        <li>The slopes must match: $x^2$ has slope $2$ at $x = 1$ and the line has slope $a$, so $a = 2$.</li>
+        <li>Then $b = 1 - a = -1$.</li>
+      </ol>
+      <p class="answer">$a = 2$, $b = -1$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: vertical tangent -->
+  <div class="note-warning">
+    $\sqrt[3]{x}$ at $0$ has a tangent line, but it is <strong>vertical</strong>: the difference quotient $\dfrac{\sqrt[3]{h}}{h} = \dfrac{1}{\sqrt[3]{h^2}} \to \infty$. An infinite slope is not a derivative, so it is not differentiable there.
+  </div>
+
+  <!-- TIP: glued functions -->
+  <div class="note-tip">
+    For a function glued together from two pieces, check in order: (1) the pieces meet (continuity), (2) their slopes at the join agree (differentiability).
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Differentiable $\Rightarrow$ continuous, but not the other way round.</li>
+      <li>Not differentiable at: jumps, corners ($|x|$), vertical tangents ($\sqrt[3]{x}$).</li>
+      <li>Differentiable at $a$ $\iff$ right and left slope limits exist and are equal.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Slopes from both sides" demo (the TRY IT block above).
+  // Orange: secant from (0, f(0)) to (h, f(h)). Teal: secant to (−h, f(−h)).
+  // As h shrinks, the two slopes approach the right and left derivatives.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const fBox = document.getElementById('dcF'), hBox = document.getElementById('dcH');
+    const output = document.getElementById('dcOutput');
+    const f3 = (v) => (Math.abs(v) > 1e4 ? (v > 0 ? 'huge +' : 'huge −') : +v.toFixed(3));
+
+    // each function: formula, the one-sided slope limits, continuity at 0, and the verdict
+    const FUNCS = [
+      { f: (x) => x * x, right: '0', left: '0', cont: true, verdict: 'equal slopes: differentiable, f\'(0) = 0' },
+      { f: (x) => Math.abs(x), right: '1', left: '−1', cont: true, verdict: 'a corner: continuous but NOT differentiable' },
+      { f: (x) => x * Math.abs(x), right: '0', left: '0', cont: true, verdict: 'equal slopes: differentiable, f\'(0) = 0' },
+      { f: Math.cbrt, right: '∞', left: '∞', cont: true, verdict: 'vertical tangent: continuous but NOT differentiable' },
+      { f: (x) => (x >= 0 ? x : x + 1), right: '1', left: '−∞', cont: false, verdict: 'a jump: not continuous, so not differentiable' },
+    ];
+
+    const plot = NotePlot.graph(document.getElementById('dcCanvas'), {
+      x: [-3.1, 3.1], y: [-2, 2.5],
+      draw(g) {
+        const k = +fBox.value, F = FUNCS[k], h = +hBox.value;
+        if (k === 4) { g.fn(F.f, '#2563eb', { to: -1e-9 }); g.fn(F.f, '#2563eb', { from: 0 }); g.hollow([0, 1], '#2563eb'); }
+        else g.fn(F.f, '#2563eb');
+        const O = [0, F.f(0)], R = [h, F.f(h)], L = [-h, F.f(-h)];
+        const sR = (R[1] - O[1]) / h, sL = (L[1] - O[1]) / -h;
+        g.fn((x) => O[1] + sR * x, '#ea580c', { width: 2, from: 0 });
+        g.fn((x) => O[1] + sL * x, '#0d9488', { width: 2, to: 0 });
+        g.dot(O, '#2563eb'); g.dot(R, '#ea580c'); g.dot(L, '#0d9488');
+        output.textContent =
+          `right: (f(h) − f(0)) / h = ${f3(sR)}   → ${F.right}\n` +
+          `left:  (f(−h) − f(0)) / (−h) = ${f3(sL)}   → ${F.left}\n` +
+          `${F.cont ? 'continuous at 0' : 'not continuous at 0'}; ${F.verdict}`;
+      },
+    });
+    fBox.addEventListener('change', plot.redraw);
+    hBox.addEventListener('input', plot.redraw);
+  })();
+</script>

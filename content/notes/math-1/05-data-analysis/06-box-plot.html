@@ -1,0 +1,154 @@
+<!-- tags: Data Analysis -->
+<!-- =====================================================================
+     NOTE: Box Plot (箱ひげ図)
+     Uses the shared blocks from static/css/note-blocks.css.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Data Analysis">Box Plot</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Five numbers in one picture</h2>
+    <p>A <strong>box plot</strong> (box-and-whisker plot) draws the <strong>five-number summary</strong>: minimum, $Q_1$, median, $Q_3$, maximum.</p>
+    <p>The <strong>box</strong> runs from $Q_1$ to $Q_3$ with a line at the median, so it holds the middle half of the data. The <strong>whiskers</strong> reach out to the minimum and maximum.
+      Each of the four parts contains about a quarter of the data.</p>
+  </section>
+
+  <!-- FORMULA: outlier rule -->
+  <div class="note-formula">
+    <h3>Outliers (外れ値)</h3>
+    <div class="formula-main">$$x &lt; Q_1 - 1.5 \times \text{IQR} \quad\text{or}\quad x &gt; Q_3 + 1.5 \times \text{IQR}$$</div>
+    <p class="symbols">Such values are drawn as separate dots, and the whiskers stop at the most extreme values that are not outliers.</p>
+  </div>
+
+  <!-- DEMO: type data; code at the bottom -->
+  <div class="note-demo">
+    <h2>Box plot maker</h2>
+    <div class="controls">
+      <label>Data <input type="text" id="bpData" class="wide" value="2, 5, 7, 8, 10, 12, 15, 18, 20, 35"></label>
+    </div>
+    <canvas id="bpCanvas" width="520" height="140"></canvas>
+    <div class="output table-text" id="bpOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find the five-number summary of 3, 7, 8, 12, 15, 18, 22.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Median 12. Lower half 3, 7, 8 → $Q_1 = 7$. Upper half 15, 18, 22 → $Q_3 = 18$.</li>
+      </ol>
+      <p class="answer">min 3, $Q_1 = 7$, median 12, $Q_3 = 18$, max 22</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Is 50 an outlier in 1, 3, 5, 7, 9, 11, 13, 50?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$Q_1 = \dfrac{3 + 5}{2} = 4$, $Q_3 = \dfrac{11 + 13}{2} = 12$, IQR $= 8$.</li>
+        <li>Upper limit: $12 + 1.5 \times 8 = 24$, and $50 &gt; 24$.</li>
+      </ol>
+      <p class="answer">Yes. The right whisker stops at 13 and 50 is drawn as a dot.</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A = 2, 4, 6, 8, 10 and B = 1, 3, 7, 9, 15. Which has the larger IQR?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>A: lower half 2, 4 → $Q_1 = 3$; upper half 8, 10 → $Q_3 = 9$. IQR $= 6$.</li>
+        <li>B: lower half 1, 3 → $Q_1 = 2$; upper half 9, 15 → $Q_3 = 12$. IQR $= 10$.</li>
+      </ol>
+      <p class="answer">B (10 against 6)</p>
+    </details>
+  </div>
+
+  <!-- TIP: reading box plots -->
+  <div class="note-tip">
+    A box plot hides individual values but shows shape: a long right whisker or a median near $Q_1$ means the data is stretched towards large values.
+    Several box plots side by side make groups easy to compare.
+  </div>
+
+  <!-- WARNING: equal parts are equal counts -->
+  <div class="note-warning">
+    A longer part does <strong>not</strong> contain more data. Each of the four parts holds about a quarter of the values; a long part just means those values are spread out.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Box plot = min, $Q_1$, median, $Q_3$, max.</li>
+      <li>Box length = IQR; each part ≈ a quarter of the data.</li>
+      <li>Outliers: beyond $1.5 \times$ IQR from the box.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script>
+  // "Box plot maker" demo (the TRY IT block above).
+  // Finds the quartiles (halves method), marks outliers with the 1.5 × IQR rule,
+  // and draws the box plot on a number line.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const input = document.getElementById('bpData');
+    const canvas = document.getElementById('bpCanvas');
+    const ctx = canvas.getContext('2d');
+    const output = document.getElementById('bpOutput');
+    const round = (v) => Number(v.toFixed(3));
+
+    const median = (arr) => {
+      const n = arr.length;
+      return n % 2 ? arr[(n - 1) / 2] : (arr[n / 2 - 1] + arr[n / 2]) / 2;
+    };
+
+    function update() {
+      const data = input.value.split(/[\s,、]+/).filter((s) => s !== '').map(Number).sort((a, b) => a - b);
+      if (data.length < 2 || data.some(isNaN)) { output.textContent = 'Type at least two numbers separated by commas.'; return; }
+
+      const n = data.length, half = Math.floor(n / 2);
+      const q1 = median(data.slice(0, half)), q2 = median(data), q3 = median(data.slice(n - half));
+      const iqr = q3 - q1, lowFence = q1 - 1.5 * iqr, highFence = q3 + 1.5 * iqr;
+      const inside = data.filter((v) => v >= lowFence && v <= highFence);
+      const outliers = data.filter((v) => v < lowFence || v > highFence);
+      const wLo = inside[0], wHi = inside[inside.length - 1];
+
+      const lo = data[0], hi = data[n - 1], span = hi - lo || 1;
+      const x = (v) => 30 + ((v - lo) / span) * (canvas.width - 60);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 2;
+      // whiskers
+      ctx.beginPath(); ctx.moveTo(x(wLo), 55); ctx.lineTo(x(q1), 55); ctx.moveTo(x(q3), 55); ctx.lineTo(x(wHi), 55);
+      ctx.moveTo(x(wLo), 45); ctx.lineTo(x(wLo), 65); ctx.moveTo(x(wHi), 45); ctx.lineTo(x(wHi), 65); ctx.stroke();
+      // box and median
+      ctx.fillStyle = 'rgba(37, 99, 235, 0.15)';
+      ctx.fillRect(x(q1), 35, x(q3) - x(q1), 40);
+      ctx.strokeRect(x(q1), 35, x(q3) - x(q1), 40);
+      ctx.strokeStyle = '#ea580c'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(x(q2), 35); ctx.lineTo(x(q2), 75); ctx.stroke();
+      // outliers
+      ctx.fillStyle = '#dc2626';
+      outliers.forEach((v) => { ctx.beginPath(); ctx.arc(x(v), 55, 5, 0, Math.PI * 2); ctx.fill(); });
+      // labels
+      ctx.fillStyle = '#0f172a'; ctx.font = '12px sans-serif'; ctx.textAlign = 'center';
+      [wLo, q1, q2, q3, wHi].forEach((v, i) => ctx.fillText(String(round(v)), x(v), i % 2 ? 20 : 95));
+
+      output.textContent =
+        `min ${lo},  Q1 ${round(q1)},  median ${round(q2)},  Q3 ${round(q3)},  max ${hi}\n` +
+        `IQR = ${round(iqr)};  outlier limits ${round(lowFence)} and ${round(highFence)}\n` +
+        (outliers.length ? `outliers: ${outliers.join(', ')} (red dots)` : 'no outliers');
+    }
+
+    input.addEventListener('input', update);
+    update(); // show the default data straight away
+  })();
+</script>

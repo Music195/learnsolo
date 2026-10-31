@@ -1,0 +1,133 @@
+<!-- tags: Geometry -->
+<!-- =====================================================================
+     NOTE: Angle Bisector Theorem in a Triangle
+     Uses the shared blocks from static/css/note-blocks.css and the
+     draggable-point helper static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Geometry">Angle Bisector Theorem in a Triangle</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>The bisector splits the opposite side in the ratio of the sides</h2>
+    <p>Draw the line that cuts $\angle A$ of $\triangle ABC$ exactly in half. It meets $BC$ at a point $D$.
+      $D$ is closer to the end of the <strong>shorter</strong> side: the two pieces of $BC$ are in the same ratio as $AB$ and $AC$.</p>
+  </section>
+
+  <!-- FORMULA: the theorem -->
+  <div class="note-formula">
+    <h3>Angle bisector theorem</h3>
+    <div class="formula-main">$$BD : DC = AB : AC$$</div>
+    <p class="symbols">$AD$ bisects $\angle A$, $D$ on $BC$. So $BD = BC \times \dfrac{AB}{AB + AC}$.</p>
+  </div>
+
+  <!-- PROOF: parallel line through C -->
+  <div class="note-proof">
+    <ol>
+      <li>Through $C$ draw a line parallel to $AD$. It meets line $BA$ (extended past $A$) at $E$.</li>
+      <li>$\angle ACE = \angle CAD$ (alternate angles) and $\angle AEC = \angle BAD$ (corresponding angles).</li>
+      <li>$\angle BAD = \angle CAD$, so $\angle ACE = \angle AEC$: $\triangle ACE$ is isosceles and $AE = AC$.</li>
+      <li>Since $AD \parallel EC$, the line $AD$ cuts $BE$ and $BC$ in the same ratio: $BD : DC = BA : AE = AB : AC$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: drag the corners; code at the bottom -->
+  <div class="note-demo">
+    <h2>Drag the corners</h2>
+    <canvas id="abCanvas"></canvas>
+    <div class="output table-text" id="abOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">In $\triangle ABC$, $AB = 8$, $AC = 6$, $BC = 7$. The bisector of $\angle A$ meets $BC$ at $D$. Find $BD$ and $DC$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$BD : DC = 8 : 6 = 4 : 3$</li>
+        <li>$BD = 7 \times \dfrac{4}{7} = 4$, $\;DC = 7 \times \dfrac{3}{7} = 3$</li>
+      </ol>
+      <p class="answer">$BD = 4$, $DC = 3$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">In $\triangle ABC$, $AB = 5$, $AC = 4$, $BC = 6$. The bisector of $\angle A$ meets $BC$ at $D$. Find $BD$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$BD : DC = 5 : 4$, so $BD = 6 \times \dfrac{5}{9}$</li>
+      </ol>
+      <p class="answer">$BD = \dfrac{10}{3}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">In $\triangle ABC$, $AB = 6$, $BC = 5$, $CA = 4$. The bisector of $\angle A$ meets $BC$ at $D$, and $I$ is the incenter. Find $AI : ID$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$BD : DC = 6 : 4$, so $BD = 5 \times \dfrac{6}{10} = 3$</li>
+        <li>$I$ lies on $AD$ and $BI$ bisects $\angle B$. In $\triangle ABD$, use the theorem again:
+          $AI : ID = BA : BD = 6 : 3$</li>
+      </ol>
+      <p class="answer">$AI : ID = 2 : 1$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: which sides go where -->
+  <div class="note-warning">
+    Match the pieces to the sides that <strong>touch</strong> them: $BD$ goes with $AB$ (both touch $B$), $DC$ goes with $AC$ (both touch $C$).
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$AD$ bisects $\angle A$ $\Rightarrow$ $BD : DC = AB : AC$.</li>
+      <li>$BD = BC \times \dfrac{AB}{AB + AC}$.</li>
+      <li>Proof idea: a parallel line makes an isosceles triangle.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Drag the corners" demo (the TRY IT block above).
+  // Draws the bisector of angle A, finds where it meets BC, and compares
+  // BD : DC with AB : AC as you move the triangle.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const G = window.NoteGeom;
+    const output = document.getElementById('abOutput');
+
+    G.board(document.getElementById('abCanvas'), {
+      points: { A: [190, 50], B: [60, 290], C: [470, 290] },
+      draw(g, P) {
+        const { A, B, C } = P;
+        const ab = G.dist(A, B), ac = G.dist(A, C);
+        const D = G.divide(B, C, ab, ac); // the point the theorem predicts
+
+        g.poly([A, B, C]);
+        g.seg(A, B); g.seg(B, C); g.seg(C, A);
+        g.seg(A, D, '#7c3aed');
+        g.arc(A, B, D, '#ea580c', 26);
+        g.arc(A, D, C, '#ea580c', 32);
+        g.seg(B, D, '#2563eb', { width: 4 });
+        g.seg(D, C, '#0d9488', { width: 4 });
+        g.dot(D, '#7c3aed', 'D');
+
+        const bd = G.dist(B, D), dc = G.dist(D, C);
+        output.textContent =
+          `∠BAD = ${G.angle(A, B, D).toFixed(1)}°,  ∠DAC = ${G.angle(A, D, C).toFixed(1)}°\n` +
+          `BD : DC = ${bd.toFixed(1)} : ${dc.toFixed(1)} = ${(bd / dc).toFixed(3)}\n` +
+          `AB : AC = ${ab.toFixed(1)} : ${ac.toFixed(1)} = ${(ab / ac).toFixed(3)}`;
+      },
+    });
+  })();
+</script>

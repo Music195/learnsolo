@@ -7,7 +7,8 @@
      2. "I got it" / "Review later" buttons, shown once the student has
         checked an answer or opened the solution
    Progress is saved on this device (localStorage) and shown in the
-   header as "Solved 2 of 5".
+   header as "Solved 2 of 5". When a set is renamed, its progress moves
+   with it (see data-moved-from below).
    ===================================================================== */
 (function () {
   const main = document.getElementById('noteContent');
@@ -15,6 +16,21 @@
   if (!main || !problems.length) return;
 
   const KEY = 'practice:' + main.dataset.practice;
+
+  // A renamed set lists its earlier paths in data-moved-from="old|older":
+  // carry any progress saved under them over to the new path, once.
+  const article = main.querySelector('[data-moved-from]');
+  if (article && localStorage.getItem(KEY) === null) {
+    for (const old of article.dataset.movedFrom.split('|')) {
+      const value = localStorage.getItem('practice:' + old);
+      if (value !== null) {
+        localStorage.setItem(KEY, value);
+        localStorage.removeItem('practice:' + old);
+        break;
+      }
+    }
+  }
+
   let saved = {};
   try { saved = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { saved = {}; }
 

@@ -1,0 +1,165 @@
+<!-- tags: Integration -->
+<!-- =====================================================================
+     NOTE: Definite Integrals by Substitution (定積分の置換積分法)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Integration">Definite Integral: Substitution Method</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Change the variable, and change the limits with it</h2>
+    <p>Substitution works the same way as in note 05, with one extra step: the limits belong to the old variable, so convert them too.
+      Then you never need to go back to $x$; just evaluate in the new variable.</p>
+    <p>For $\sqrt{a^2 - x^2}$, put $x = a\sin\theta$; for $\dfrac{1}{x^2 + a^2}$, put $x = a\tan\theta$. Both turn the expression into a simple trig one.</p>
+  </section>
+
+  <!-- FORMULA: substitution with limits -->
+  <div class="note-formula">
+    <h3>$x = g(t)$, with $a = g(\alpha)$ and $b = g(\beta)$</h3>
+    <div class="formula-main">$$\int_a^b f(x)\,dx = \int_\alpha^\beta f(g(t))\,g'(t)\,dt$$</div>
+    <p class="symbols">Make a small table of the limits: $x$: $a \to b$ becomes $t$: $\alpha \to \beta$.</p>
+  </div>
+
+  <!-- PROOF: from the indefinite case -->
+  <div class="note-proof">
+    <ol>
+      <li>Let $F' = f$. By the chain rule, $\{F(g(t))\}' = f(g(t))\,g'(t)$.</li>
+      <li>So $\displaystyle\int_\alpha^\beta f(g(t))g'(t)\,dt = F(g(\beta)) - F(g(\alpha)) = F(b) - F(a)$.</li>
+      <li>And $F(b) - F(a) = \displaystyle\int_a^b f(x)\,dx$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: two different shapes with the same area; code at the bottom -->
+  <div class="note-demo">
+    <h2>Blue (in $x$, from $0$ to $b$) and orange (in $u$, from $g(0)$ to $g(b)$) have equal area</h2>
+    <div class="controls">
+      <label>integral <select id="dsF">
+        <option value="0">2x cos(x²), u = x²</option>
+        <option value="1">sin x cos x, u = sin x</option>
+        <option value="2">x / (x² + 1), u = x² + 1</option>
+      </select></label>
+      <label>$b$ = <input type="range" id="dsB" min="0.2" max="1.7" step="0.02" value="1.2"></label>
+    </div>
+    <canvas id="dsCanvas"></canvas>
+    <div class="output table-text" id="dsOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Evaluate $\displaystyle\int_0^1 x(x^2 + 1)^3\,dx$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$u = x^2 + 1$, $du = 2x\,dx$. Limits: $x$: $0 \to 1$ gives $u$: $1 \to 2$.</li>
+        <li>$\displaystyle\frac{1}{2}\int_1^2 u^3\,du = \frac{1}{2}\Big[\frac{u^4}{4}\Big]_1^2 = \frac{1}{8}(16 - 1)$</li>
+      </ol>
+      <p class="answer">$\dfrac{15}{8}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Evaluate $\displaystyle\int_0^1 \sqrt{1 - x^2}\,dx$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$x = \sin\theta$, $dx = \cos\theta\,d\theta$. Limits: $x$: $0 \to 1$ gives $\theta$: $0 \to \dfrac{\pi}{2}$.</li>
+        <li>On that range $\cos\theta \ge 0$, so $\sqrt{1 - \sin^2\theta} = \cos\theta$.</li>
+        <li>$\displaystyle\int_0^{\frac{\pi}{2}} \cos^2\theta\,d\theta = \Big[\frac{\theta}{2} + \frac{\sin 2\theta}{4}\Big]_0^{\frac{\pi}{2}} = \frac{\pi}{4}$</li>
+      </ol>
+      <p class="answer">$\dfrac{\pi}{4}$ (a quarter of the unit circle's area, as expected)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Evaluate $\displaystyle\int_0^1 \frac{1}{x^2 + 1}\,dx$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$x = \tan\theta$, $dx = \dfrac{d\theta}{\cos^2\theta}$. Limits: $\theta$: $0 \to \dfrac{\pi}{4}$.</li>
+        <li>$\tan^2\theta + 1 = \dfrac{1}{\cos^2\theta}$, so the integrand becomes $\cos^2\theta \cdot \dfrac{1}{\cos^2\theta} = 1$.</li>
+        <li>$\displaystyle\int_0^{\frac{\pi}{4}} 1\,d\theta$</li>
+      </ol>
+      <p class="answer">$\dfrac{\pi}{4}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Evaluate $\displaystyle\int_1^e \frac{(\log x)^2}{x}\,dx$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$u = \log x$, $du = \dfrac{dx}{x}$. Limits: $u$: $0 \to 1$.</li>
+        <li>$\displaystyle\int_0^1 u^2\,du = \frac{1}{3}$</li>
+      </ol>
+      <p class="answer">$\dfrac{1}{3}$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: forgetting to change the limits -->
+  <div class="note-warning">
+    The most common mistake is to change the variable but keep the old limits. If you do switch back to $x$ instead, then use the original limits. Never mix the two.
+  </div>
+
+  <!-- TIP: standard substitutions -->
+  <div class="note-tip">
+    $\sqrt{a^2 - x^2}$: $x = a\sin\theta$. $\;\dfrac{1}{x^2 + a^2}$: $x = a\tan\theta$. Pick the $\theta$-range so that $\cos\theta \ge 0$; then the square root simplifies without a sign problem.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$x = g(t)$: change $dx$ to $g'(t)\,dt$ and the limits to $\alpha$, $\beta$.</li>
+      <li>Then evaluate in $t$; no need to go back to $x$.</li>
+      <li>$\displaystyle\int_0^a \sqrt{a^2 - x^2}\,dx = \frac{\pi a^2}{4}$ (a quarter circle).</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Equal areas" demo (the TRY IT block above).
+  // Blue: y = f(g(x))·g′(x) on [0, b]. Orange: y = f(u) on [g(0), g(b)], drawn on the
+  // same axes with u read along the horizontal axis. The shapes differ, but the
+  // substitution formula says the (signed) areas are equal.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const fBox = document.getElementById('dsF'), bBox = document.getElementById('dsB');
+    const output = document.getElementById('dsOutput');
+    const f4 = (v) => +v.toFixed(4);
+
+    // each example: the x-integrand h, the inner function g and the u-integrand f
+    const CASES = [
+      { h: (x) => 2 * x * Math.cos(x * x), g: (x) => x * x, f: Math.cos, name: 'cos u' },
+      { h: (x) => Math.sin(x) * Math.cos(x), g: Math.sin, f: (u) => u, name: 'u' },
+      { h: (x) => x / (x * x + 1), g: (x) => x * x + 1, f: (u) => 1 / (2 * u), name: '1/(2u)' },
+    ];
+    const integral = (f, a, b) => { let s = 0; const n = 2000, h = (b - a) / n; for (let i = 0; i < n; i++) s += f(a + (i + 0.5) * h); return s * h; };
+
+    const plot = NotePlot.graph(document.getElementById('dsCanvas'), {
+      x: [-0.3, 4.2], y: [-1.6, 2],
+      draw(g) {
+        const C = CASES[+fBox.value], b = +bBox.value, u0 = C.g(0), u1 = C.g(b);
+        g.fill(C.f, u0, u1, 'rgba(234, 88, 12, 0.22)');
+        g.fill(C.h, 0, b, 'rgba(37, 99, 235, 0.25)');
+        g.fn(C.f, '#ea580c', { width: 2, from: 0.05 });
+        g.fn(C.h, '#2563eb', { from: 0, to: 1.8 });
+        g.vline(b, '#2563eb'); g.vline(u1, '#ea580c');
+        output.textContent =
+          `x from 0 to ${b}  →  u from ${f4(u0)} to ${f4(u1)}\n` +
+          `blue ∫ h(x) dx = ${f4(integral(C.h, 0, b))},   orange ∫ ${C.name} du = ${f4(integral(C.f, u0, u1))}`;
+      },
+    });
+    fBox.addEventListener('change', plot.redraw);
+    bBox.addEventListener('input', plot.redraw);
+  })();
+</script>

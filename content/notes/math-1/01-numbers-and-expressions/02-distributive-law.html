@@ -1,0 +1,135 @@
+<!-- tags: Algebra -->
+<!-- =====================================================================
+     NOTE: Distributive Law (分配法則)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     drawing helper static/js/demos/geom.js (no draggable points here).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Algebra">Distributive Law</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Multiply every term inside the brackets</h2>
+    <p>A number in front of brackets multiplies <strong>each</strong> term inside. Think of a rectangle of height $a$ and width $b + c$:
+      its area $a(b + c)$ is the same as the two pieces $ab$ and $ac$ added together.</p>
+  </section>
+
+  <!-- FORMULA: distributive law -->
+  <div class="note-formula">
+    <h3>Distributive law</h3>
+    <div class="formula-main">$$a(b + c) = ab + ac, \qquad (a + b)(c + d) = ac + ad + bc + bd$$</div>
+    <p class="symbols">Two brackets: every term of the first times every term of the second (here $2 \times 2 = 4$ products).</p>
+  </div>
+
+  <!-- DEMO: rectangle model; code at the bottom -->
+  <div class="note-demo">
+    <h2>Area model for $(a + b)(c + d)$</h2>
+    <div class="controls">
+      <label>$a$ = <input type="number" id="dlA" value="4" min="0" max="9"></label>
+      <label>$b$ = <input type="number" id="dlB" value="2" min="0" max="9"></label>
+      <label>$c$ = <input type="number" id="dlC" value="5" min="0" max="9"></label>
+      <label>$d$ = <input type="number" id="dlD" value="3" min="0" max="9"></label>
+    </div>
+    <canvas id="dlCanvas"></canvas>
+    <div class="output table-text" id="dlOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Expand $-3x(2x - 5)$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$(-3x)(2x) + (-3x)(-5)$</li>
+      </ol>
+      <p class="answer">$-6x^2 + 15x$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Expand $(2x + 3)(x - 4)$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$2x \cdot x + 2x \cdot (-4) + 3 \cdot x + 3 \cdot (-4) = 2x^2 - 8x + 3x - 12$</li>
+        <li>Collect like terms.</li>
+      </ol>
+      <p class="answer">$2x^2 - 5x - 12$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Expand $(x + 2)(x^2 - 3x + 1)$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$x(x^2 - 3x + 1) + 2(x^2 - 3x + 1) = x^3 - 3x^2 + x + 2x^2 - 6x + 2$</li>
+      </ol>
+      <p class="answer">$x^3 - x^2 - 5x + 2$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: signs -->
+  <div class="note-warning">
+    A minus sign in front multiplies every term: $-(x - 3) = -x + 3$, not $-x - 3$.
+  </div>
+
+  <!-- TIP: count the products -->
+  <div class="note-tip">
+    Before collecting, count your products: a 2-term bracket times a 3-term bracket must give $2 \times 3 = 6$ products.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$a(b + c) = ab + ac$.</li>
+      <li>Two brackets: every term times every term, then collect like terms.</li>
+      <li>Read backwards, it is factorisation: $ab + ac = a(b + c)$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Area model" demo (the TRY IT block above).
+  // A rectangle (a + b) tall and (c + d) wide, split into four coloured parts
+  // whose areas are ac, ad, bc, bd.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const G = window.NoteGeom;
+    const ids = ['dlA', 'dlB', 'dlC', 'dlD'];
+    const output = document.getElementById('dlOutput');
+    const colors = ['rgba(37,99,235,0.25)', 'rgba(13,148,136,0.25)', 'rgba(234,88,12,0.25)', 'rgba(124,58,237,0.25)'];
+
+    const board = G.board(document.getElementById('dlCanvas'), {
+      points: {},
+      draw(g) {
+        const [a, b, c, d] = ids.map((id) => Math.max(0, parseFloat(document.getElementById(id).value) || 0));
+        if (a + b === 0 || c + d === 0) { output.textContent = 'Make both sides bigger than 0.'; return; }
+        const k = Math.min(400 / (c + d), 260 / (a + b));          // pixels per unit
+        const x0 = 260 - k * (c + d) / 2, y0 = 40;
+        const xs = [x0, x0 + k * c, x0 + k * (c + d)], ys = [y0, y0 + k * a, y0 + k * (a + b)];
+        const names = [['ac', a * c], ['ad', a * d], ['bc', b * c], ['bd', b * d]];
+        for (let i = 0; i < 2; i++) for (let j = 0; j < 2; j++) {
+          const [nm, val] = names[2 * i + j];
+          g.poly([[xs[j], ys[i]], [xs[j + 1], ys[i]], [xs[j + 1], ys[i + 1]], [xs[j], ys[i + 1]]], colors[2 * i + j]);
+          if (val > 0) g.text([(xs[j] + xs[j + 1]) / 2, (ys[i] + ys[i + 1]) / 2], `${nm} = ${val}`);
+        }
+        xs.forEach((x) => g.seg([x, ys[0]], [x, ys[2]]));   // grid lines
+        ys.forEach((y) => g.seg([xs[0], y], [xs[2], y]));
+        g.text([(xs[0] + xs[1]) / 2, y0 - 12], 'c', '#2563eb'); g.text([(xs[1] + xs[2]) / 2, y0 - 12], 'd', '#2563eb');
+        g.text([x0 - 14, (ys[0] + ys[1]) / 2], 'a', '#2563eb'); g.text([x0 - 14, (ys[1] + ys[2]) / 2], 'b', '#2563eb');
+        output.textContent =
+          `(a + b)(c + d) = ${a + b} × ${c + d} = ${(a + b) * (c + d)}\n` +
+          `ac + ad + bc + bd = ${a * c} + ${a * d} + ${b * c} + ${b * d} = ${a * c + a * d + b * c + b * d}`;
+      },
+    });
+    ids.forEach((id) => document.getElementById(id).addEventListener('input', board.redraw));
+  })();
+</script>

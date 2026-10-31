@@ -1,21 +1,13 @@
-from flask import Blueprint, render_template, request, Response, redirect, url_for, jsonify
-from utils.note_loader import (
-    get_notes_list, 
-    load_note_content, 
-    get_folders_and_subfolders, 
-    get_notes_with_titles,
-    NoteNotFound
-)
-from utils.practice_loader import get_practice_sets, get_past_papers
-import requests
-import os
+from flask import Blueprint, render_template, request, url_for
+from utils.content_loader import get_notes_with_titles, get_practice_sets, load_note, ContentNotFound
+from utils.courses import course_name, topic_name
 
 notes_bp = Blueprint("notes", __name__)
 
-# STEP 5: Navigation helper
-# ------------------------
-# Computes previous and next note paths
-# so route and templates stay simple.
+
+# Navigation helper
+# -----------------
+# Computes previous and next note paths so route and templates stay simple.
 def build_nav_links(notes_list, current_note):
     if current_note not in notes_list:
         return {"prev": None, "next": None}
@@ -28,153 +20,39 @@ def build_nav_links(notes_list, current_note):
     }
 
 
-# Home page helpers
-# -----------------
-# Group the notes into subjects → courses → topics for the home page.
-# Folder names stay as they are on disk; these maps only change
-# what the home page shows.
-
-# Subjects in tab order. A course folder belongs to the subject its
-# name starts with ("Mathematics 1" → Mathematics, "Physics Basic" →
-# Physics). A subject with no notes yet shows as "Coming soon".
-# A folder that matches none of these gets its own tab, named after
-# the folder's first word.
-SUBJECTS = [
-    {"name": "Mathematics", "icon": "fa-square-root-variable"},
-    {"name": "Physics", "icon": "fa-atom"},
-]
-COURSE_NAMES = {
-    "Mathematics 1": "Math I", "Mathematics 2": "Math II", "Mathematics 3": "Math III",
-    "Mathematics A": "Math A", "Mathematics B": "Math B", "Mathematics C": "Math C",
-}
-TOPIC_NAMES = {
-    "Quardratic Function": "Quadratic Function",  # folder name has a typo
-    "Other": "Integers",                          # divisibility, gcd, congruence
-    "Parabola": "Conic Sections",                 # also covers ellipses and hyperbolas
-}
-
-def build_courses(notes_list):
-    courses = {}
-    for path in notes_list:  # already sorted, so the first note seen is note 01
-        parts = path.split("/")
-        if len(parts) < 3:
-            continue
-        course = courses.setdefault(parts[0], {
-            "folder": parts[0], "name": COURSE_NAMES.get(parts[0], parts[0]),
-            "first": path, "count": 0, "topics": {},
-        })
-        course["count"] += 1
-        course["topics"].setdefault(parts[1], {
-            "name": TOPIC_NAMES.get(parts[1], parts[1]), "first": path,
-        })
-    for course in courses.values():
-        course["topics"] = list(course["topics"].values())
-    return list(courses.values())
-
-
-def build_subjects(courses):
-    subjects = [dict(s, courses=[]) for s in SUBJECTS]
-    for course in courses:
-        subject = next((s for s in subjects if course["folder"].startswith(s["name"])), None)
-        if subject is None:  # a new subject not listed in SUBJECTS
-            subject = {"name": course["folder"].split()[0], "icon": "fa-book", "courses": []}
-            subjects.append(subject)
-        subject["courses"].append(course)
-    for subject in subjects:
-        subject["count"] = sum(c["count"] for c in subject["courses"])
-    return subjects
-
-
-# One entry per note for the search box: title, link and "Math I · Vector"
-def build_search_index():
-    index = []
-    for note in get_notes_with_titles():
-        parts = note["path"].split("/")
-        where = " · ".join(
-            [COURSE_NAMES.get(parts[0], parts[0])] +
-            ([TOPIC_NAMES.get(parts[1], parts[1])] if len(parts) > 2 else [])
-        )
-        index.append({
-            "title": note["title"], "where": where,
-            "url": url_for("notes.view_note", note_path=note["path"]),
-        })
-    # Practice sets too, e.g. "Math C · Vector · Practice"
-    for practice in get_practice_sets():
-        parts = practice["path"].split("/")
-        index.append({
-            "title": "Practice: " + practice["title"],
-            "where": " · ".join([COURSE_NAMES.get(parts[0], parts[0]), TOPIC_NAMES.get(parts[1], parts[1]), "Practice"]),
-            "url": url_for("problems.practice", practice_path=practice["path"]),
-        })
-    # Past questions, e.g. "EJU Past Questions · Past question"
-    for paper in get_past_papers():
-        index.append({
-            "title": "Past question: " + paper["title"],
-            "where": paper["path"].split("/")[0] + " · Past question",
-            "url": url_for("problems.past", past_path=paper["path"]),
-        })
-    return index
-
-
-@notes_bp.route("/")
-def index():
-    courses = build_courses(get_notes_list())
-    stats = {
-        "notes": sum(c["count"] for c in courses),
-        "courses": len(courses),
-        "topics": sum(len(c["topics"]) for c in courses),
-    }
-    return render_template("index.html", subjects=build_subjects(courses), stats=stats)
-
-
-# The search box in the floating bar loads this once, when it is first used,
-# so pages don't have to carry the whole list of notes.
-@notes_bp.route("/search-index.json")
-def search_index():
-    return jsonify(build_search_index())
-
-
-# Note page helper: "where you are" for the floating bar and the note header,
-# e.g. Math C › Vector · 17 of 17, with links to the course and topic.
+# "Where you are" for the floating bar and the note header,
+# e.g. Math C › Plane Vectors · 17 of 17, with links to the course and topic.
 def build_location(notes_list, note_path):
     parts = note_path.split("/")
     folder = note_path.rsplit("/", 1)[0]
     siblings = [p for p in notes_list if p.rsplit("/", 1)[0] == folder]
     course_first = next(p for p in notes_list if p.startswith(parts[0] + "/"))
     return {
-        "course": COURSE_NAMES.get(parts[0], parts[0]),
+        "course": course_name(parts[0]),
         "course_first": course_first,
-        "topic": TOPIC_NAMES.get(parts[1], parts[1]) if len(parts) > 2 else None,
+        "topic": topic_name(parts[1]) if len(parts) > 2 else None,
         "topic_first": siblings[0],
         "index": siblings.index(note_path) + 1,
         "total": len(siblings),
     }
 
-@notes_bp.route("/note/<path:note_path>")
+
+@notes_bp.route("/notes/<path:note_path>")
 def view_note(note_path):
     notes_meta = get_notes_with_titles()
     notes_list = [n["path"] for n in notes_meta]
-    folders, _ = get_folders_and_subfolders(notes_list)
 
-    if note_path not in notes_list:
+    if note_path not in notes_list:  # also blocks paths like ../
+        return "<h1>Note not found</h1>", 404
+
+    try:
+        content = load_note(note_path)
+    except ContentNotFound:
         return "<h1>Note not found</h1>", 404
 
     nav = build_nav_links(notes_list, note_path)
 
-    # STEP 4: Route-level error handling
-    # --------------------------------
-    # Catch NoteNotFound here to:
-    # - return proper HTTP 404
-    # - keep utils framework-agnostic
-    # - allow future response changes (JSON, custom page)
-
-    try:
-        content = load_note_content(note_path)
-    except NoteNotFound:
-        return "<h1>Note not found</h1>", 404
-
-
-    # Titles come from each note's <h1 class="note-title"> (see note_loader.py)
+    # Titles come from each note's <h1 class="note-title"> (see content_loader.py)
     titles = {n["path"]: n["title"] for n in notes_meta}
     # Previous / next cards: the title, and the course · topic shown under it
     for key in ("prev", "next"):
@@ -185,41 +63,55 @@ def view_note(note_path):
                 "where": " · ".join(filter(None, [location["course"], location["topic"]])),
             }
 
+    # Sidebar dropdowns: every course, and the display name of every folder
+    courses = sorted({p.split("/")[0] for p in notes_list})
+    topics = {p.split("/")[1] for p in notes_list if p.count("/") >= 2}
+
     return render_template(
         "note.html",
         note_path=note_path,
         notes_meta=notes_meta,
         nav=nav,
         content=content,
-        folders=folders,
+        folders=courses,
         note_title=titles[note_path],
         location=build_location(notes_list, note_path),
-        display_names={"courses": COURSE_NAMES, "topics": TOPIC_NAMES},
+        display_names={"courses": {c: course_name(c) for c in courses},
+                       "topics": {t: topic_name(t) for t in topics}},
         show_topics=True,
-        # Practice sets for this note's topic, shown as cards after the note
-        practice=[s for s in get_practice_sets() if s["path"].rsplit("/", 1)[0] == note_path.rsplit("/", 1)[0]],
+        practice=build_practice(note_path),
     )
 
+
+# Practice after a note: the set that practises this note, then the topic's
+# other sets. The main set is the first concept set whose problems link to
+# the note; if none does, the topic's first set.
+def build_practice(note_path):
+    folder = note_path.rsplit("/", 1)[0]
+    sets = [s for s in get_practice_sets() if s["path"].rsplit("/", 1)[0] == folder]
+    if not sets:
+        return None
+    main = next((s for s in sets if not s["review"] and note_path in s["notes"]), sets[0])
+    return {"main": main, "more": [s for s in sets if s is not main], "topic": topic_name(folder.split("/")[-1])}
+
+
+# PDF viewer (for PDFs on Google Drive)
+# -------------------------------------
 @notes_bp.route("/proxy-pdf")
 def proxy_pdf():
     from utils.google_drive import fetch_pdf
     return fetch_pdf()
 
+
 @notes_bp.route("/viewer")
 def viewer():
     """
-    WHY:
-    - Renders custom PDF viewer UI
-    - Does NOT stream PDF data
-    -Receives a PDF URL and passes it to the template
+    Renders the PDF viewer page. It does not stream the PDF itself:
+    it passes the PDF URL to the template, which loads it through /proxy-pdf.
     """
-    
     pdf_url = request.args.get("file")
-    
+
     if not pdf_url:
         return "<h1>No PDF specified</h1>", 400
-    
-    return render_template (
-        "viewer.html",
-        file_url=pdf_url
-    )
+
+    return render_template("pdf-viewer.html", file_url=pdf_url)

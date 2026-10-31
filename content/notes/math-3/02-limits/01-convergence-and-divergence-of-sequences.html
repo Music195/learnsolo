@@ -1,0 +1,168 @@
+<!-- tags: Limit -->
+<!-- =====================================================================
+     NOTE: Convergence and Divergence of Sequences (数列の収束・発散)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Limit">Convergence and Divergence of Sequences</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Where does the sequence end up?</h2>
+    <p>Look at the terms $a_1, a_2, a_3, \dots$ as $n$ gets larger and larger. If they get as close as you like to one number $\alpha$,
+      the sequence <strong>converges</strong> to $\alpha$, and $\alpha$ is its <strong>limit</strong>.</p>
+    <p>If not, it <strong>diverges</strong>. This happens in three ways: it grows without bound ($+\infty$), falls without bound ($-\infty$),
+      or <strong>oscillates</strong> (vibrates and never settles).</p>
+  </section>
+
+  <!-- FORMULA: the four outcomes -->
+  <div class="note-formula">
+    <h3>The four possible outcomes</h3>
+    <div class="formula-main">$$\text{converges: } \lim_{n \to \infty} a_n = \alpha$$</div>
+    <div class="formula-main">$$\text{diverges: } \lim_{n \to \infty} a_n = \infty, \qquad \lim_{n \to \infty} a_n = -\infty, \qquad \text{or oscillates}$$</div>
+    <p class="symbols">Basic facts: $\displaystyle\lim_{n \to \infty} \frac{1}{n} = 0$, $\;\displaystyle\lim_{n \to \infty} \frac{1}{n^k} = 0$ ($k &gt; 0$), $\;\displaystyle\lim_{n \to \infty} n^k = \infty$ ($k &gt; 0$).</p>
+  </div>
+
+  <!-- PROOF: why dividing by the top power works -->
+  <div class="note-proof">
+    <ol>
+      <li>For a fraction like $\dfrac{3n + 1}{2n - 1}$, both top and bottom go to $\infty$, so you can't read off the limit yet.</li>
+      <li>Divide top and bottom by the highest power in the <strong>denominator</strong> ($n$): $\dfrac{3 + \frac{1}{n}}{2 - \frac{1}{n}}$.</li>
+      <li>Now every $\dfrac{1}{n}$ goes to $0$, leaving $\dfrac{3}{2}$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: choose a sequence and how many terms to plot; code at the bottom -->
+  <div class="note-demo">
+    <h2>Plot the terms $(n, a_n)$</h2>
+    <div class="controls">
+      <label>$a_n$ = <select id="sqSeq">
+        <option value="0">1/n</option>
+        <option value="1">(3n + 1)/(2n − 1)</option>
+        <option value="2">(−1)ⁿ/n</option>
+        <option value="3">√n</option>
+        <option value="4">2 − √n</option>
+        <option value="5">(−1)ⁿ</option>
+      </select></label>
+      <label>terms $N$ = <input type="range" id="sqN" min="1" max="30" value="15"></label>
+    </div>
+    <canvas id="sqCanvas"></canvas>
+    <div class="output table-text" id="sqOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find $\displaystyle\lim_{n \to \infty} \frac{3n + 1}{2n - 1}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Divide top and bottom by $n$: $\dfrac{3 + \frac{1}{n}}{2 - \frac{1}{n}} \to \dfrac{3 + 0}{2 - 0}$.</li>
+      </ol>
+      <p class="answer">$\dfrac{3}{2}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find $\displaystyle\lim_{n \to \infty} \frac{2n^2 - 1}{n + 3}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Divide top and bottom by $n$: $\dfrac{2n - \frac{1}{n}}{1 + \frac{3}{n}}$.</li>
+        <li>The top goes to $\infty$ and the bottom to $1$.</li>
+      </ol>
+      <p class="answer">$\infty$ (diverges to positive infinity)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Does $a_n = \dfrac{(-1)^n}{\sqrt{n}}$ converge?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The signs alternate, but the size is $|a_n| = \dfrac{1}{\sqrt{n}}$, which goes to $0$.</li>
+        <li>So the terms crowd in on $0$ from both sides (the odd terms from below, the even terms from above).</li>
+      </ol>
+      <p class="answer">Yes: $\displaystyle\lim_{n \to \infty} \frac{(-1)^n}{\sqrt{n}} = 0$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Find $\displaystyle\lim_{n \to \infty} \left(\sqrt{n + 1} - \sqrt{n}\right)$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>It is "$\infty - \infty$", so rewrite it. Multiply top and bottom by $\sqrt{n + 1} + \sqrt{n}$:</li>
+        <li>$\dfrac{(n + 1) - n}{\sqrt{n + 1} + \sqrt{n}} = \dfrac{1}{\sqrt{n + 1} + \sqrt{n}}$, and the bottom goes to $\infty$.</li>
+      </ol>
+      <p class="answer">$0$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: indeterminate forms -->
+  <div class="note-warning">
+    $\dfrac{\infty}{\infty}$ and $\infty - \infty$ have no fixed value. For example, $n^2 - n \to \infty$ but $(n + 1) - n \to 1$. Rewrite first (divide, or rationalise), then take the limit.
+  </div>
+
+  <!-- TIP: oscillating but converging -->
+  <div class="note-tip">
+    A changing sign does not mean divergence. $(-1)^n$ oscillates, but $\dfrac{(-1)^n}{n}$ converges to $0$, because the size of the terms shrinks to $0$.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Converge to $\alpha$, diverge to $\pm\infty$, or oscillate.</li>
+      <li>Fractions: divide top and bottom by the highest power in the denominator.</li>
+      <li>Differences of roots: multiply by the conjugate $\sqrt{A} + \sqrt{B}$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Plot the terms" demo (the TRY IT block above).
+  // Plots the first N terms of the chosen sequence as dots (n, aₙ),
+  // with a dashed line at the limit when there is one.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const seqBox = document.getElementById('sqSeq'), nBox = document.getElementById('sqN');
+    const output = document.getElementById('sqOutput');
+    const f3 = (v) => +v.toFixed(3);
+    const sub = (n) => String(n).replace(/\d/g, (d) => '₀₁₂₃₄₅₆₇₈₉'[d]); // 15 → ₁₅
+
+    // each sequence: formula, its limit (a number, or null), and what happens in words
+    const SEQS = [
+      { a: (n) => 1 / n, lim: 0, says: 'converges to 0' },
+      { a: (n) => (3 * n + 1) / (2 * n - 1), lim: 1.5, says: 'converges to 3/2' },
+      { a: (n) => (-1) ** n / n, lim: 0, says: 'converges to 0 (from both sides)' },
+      { a: (n) => Math.sqrt(n), lim: null, says: 'diverges to +∞ (slowly, but without bound)' },
+      { a: (n) => 2 - Math.sqrt(n), lim: null, says: 'diverges to −∞' },
+      { a: (n) => (-1) ** n, lim: null, says: 'oscillates between −1 and 1: no limit' },
+    ];
+
+    const plot = NotePlot.graph(document.getElementById('sqCanvas'), {
+      x: [-1.5, 31], y: [-4, 6],
+      draw(g) {
+        const s = SEQS[+seqBox.value], N = +nBox.value;
+        if (s.lim !== null) g.hline(s.lim, '#ea580c');
+        for (let n = 1; n <= N; n++) g.dot([n, s.a(n)], '#2563eb');
+        const first = [1, 2, 3, 4, 5].map((n) => f3(s.a(n))).join(', ');
+        output.textContent =
+          `first terms: ${first}, …\n` +
+          `a${sub(N)} = ${f3(s.a(N))}\n` +
+          `as n → ∞ it ${s.says}`;
+      },
+    });
+    seqBox.addEventListener('change', plot.redraw);
+    nBox.addEventListener('input', plot.redraw);
+  })();
+</script>

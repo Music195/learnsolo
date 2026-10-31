@@ -1,0 +1,153 @@
+<!-- tags: Expressions and Proof -->
+<!-- =====================================================================
+     NOTE: Arithmetic Mean ≥ Geometric Mean (相加平均と相乗平均)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     draggable-point helper static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Expressions and Proof">AM-GM Inequality</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Sum fixed → product is largest when equal</h2>
+    <p>For positive $a$ and $b$, the <strong>arithmetic mean</strong> $\dfrac{a + b}{2}$ is never less than the <strong>geometric mean</strong> $\sqrt{ab}$.</p>
+    <p>Its main use: when a product such as $x \cdot \dfrac{9}{x}$ is constant, the sum $x + \dfrac{9}{x}$ has a minimum, reached when the two parts are equal.</p>
+  </section>
+
+  <!-- FORMULA: AM-GM -->
+  <div class="note-formula">
+    <h3>For $a &gt; 0$, $b &gt; 0$</h3>
+    <div class="formula-main">$$\frac{a + b}{2} \ge \sqrt{ab} \quad\iff\quad a + b \ge 2\sqrt{ab}$$</div>
+    <p class="symbols">Equality only when $a = b$.</p>
+  </div>
+
+  <!-- PROOF: a square -->
+  <div class="note-proof">
+    <ol>
+      <li>$a + b - 2\sqrt{ab} = (\sqrt{a})^2 - 2\sqrt{a}\sqrt{b} + (\sqrt{b})^2 = (\sqrt{a} - \sqrt{b})^2 \ge 0$.</li>
+      <li>Equality when $\sqrt{a} = \sqrt{b}$, i.e. $a = b$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: semicircle picture; code at the bottom -->
+  <div class="note-demo">
+    <h2>Drag $C$: radius = AM, half-chord = GM</h2>
+    <canvas id="amCanvas"></canvas>
+    <div class="output table-text" id="amOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">$x &gt; 0$. Find the minimum of $x + \dfrac{9}{x}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$x + \dfrac{9}{x} \ge 2\sqrt{x \cdot \dfrac{9}{x}} = 6$.</li>
+        <li>Equality when $x = \dfrac{9}{x}$, i.e. $x = 3$ (positive), so $6$ is actually reached.</li>
+      </ol>
+      <p class="answer">Minimum $6$ (at $x = 3$)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">$x &gt; 1$. Find the minimum of $x + \dfrac{1}{x - 1}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Make the product constant: $(x - 1) + \dfrac{1}{x - 1} + 1$, with $x - 1 &gt; 0$.</li>
+        <li>$\ge 2\sqrt{1} + 1 = 3$; equality when $x - 1 = 1$.</li>
+      </ol>
+      <p class="answer">Minimum $3$ (at $x = 2$)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">$a &gt; 0$, $b &gt; 0$. Find the minimum of $\left(a + \dfrac{1}{b}\right)\left(b + \dfrac{4}{a}\right)$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Expand first: $ab + 4 + 1 + \dfrac{4}{ab} = ab + \dfrac{4}{ab} + 5$.</li>
+        <li>$ab + \dfrac{4}{ab} \ge 2\sqrt{4} = 4$, equality when $ab = 2$.</li>
+      </ol>
+      <p class="answer">Minimum $9$ (when $ab = 2$)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">A rectangle has perimeter $20$. Find its largest possible area.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Sides $x, y &gt; 0$ with $x + y = 10$. AM-GM: $\sqrt{xy} \le 5$, so $xy \le 25$.</li>
+        <li>Equality when $x = y = 5$.</li>
+      </ol>
+      <p class="answer">$25$ (a $5 \times 5$ square)</p>
+    </details>
+  </div>
+
+  <!-- WARNING: equality must be possible -->
+  <div class="note-warning">
+    Check that equality can really happen. In Example 3, using AM-GM on each bracket separately gives
+    $\ge 2\sqrt{\dfrac{a}{b}} \cdot 2\sqrt{\dfrac{4b}{a}} = 8$, but equality would need $ab = 1$ and $ab = 4$ at once. So $8$ is never reached; the true minimum is $9$.
+  </div>
+
+  <!-- TIP: when to use it -->
+  <div class="note-tip">
+    Look for two positive parts whose <strong>product</strong> is constant, such as $x$ and $\dfrac{k}{x}$. Then their sum is at least $2\sqrt{k}$.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$a, b &gt; 0$: $a + b \ge 2\sqrt{ab}$, equality when $a = b$.</li>
+      <li>Product constant → sum has a minimum.</li>
+      <li>Always check the equality case is possible.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Semicircle" demo (the TRY IT block above).
+  // C splits the diameter into a = AC and b = CB. The radius is (a + b)/2 (AM);
+  // the perpendicular from C to the circle has length √(ab) (GM), and it can
+  // never be longer than a radius.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const output = document.getElementById('amOutput');
+    const A = [60, 300], B = [460, 300], O = [260, 300], R = 200, U = 40; // 40 pixels = 1 unit
+
+    NoteGeom.board(document.getElementById('amCanvas'), {
+      points: { C: [140, 300] },
+      constrain: { C: (p) => [Math.max(A[0] + 4, Math.min(B[0] - 4, p[0])), 300] },
+      draw(g, P) {
+        const { C } = P;
+        const h = Math.sqrt((C[0] - A[0]) * (B[0] - C[0]));
+        const D = [C[0], C[1] - h], T = [O[0], O[1] - R];
+        g.circle(O, R, '#cbd5e1');
+        g.poly([[A[0], 300], [B[0], 300], [B[0], 330], [A[0], 330]], 'white'); // hide the lower half
+        g.seg(A, C, '#2563eb', { width: 4 });
+        g.seg(C, B, '#0d9488', { width: 4 });
+        g.seg(O, T, '#ea580c', { width: 3 });
+        g.seg(C, D, '#7c3aed', { width: 3 });
+        g.seg(A, D, '#94a3b8', { dash: true }); g.seg(D, B, '#94a3b8', { dash: true });
+        g.right(D, A, B);
+        g.dot(O, '#0f172a', 'O'); g.dot(D, '#7c3aed', 'D');
+        g.text([(A[0] + C[0]) / 2, 318], 'a', '#2563eb'); g.text([(C[0] + B[0]) / 2, 318], 'b', '#0d9488');
+        const a = (C[0] - A[0]) / U, b = (B[0] - C[0]) / U;
+        output.textContent =
+          `a = ${a.toFixed(2)}, b = ${b.toFixed(2)}\n` +
+          `AM = (a + b)/2 = ${((a + b) / 2).toFixed(3)}   (orange radius)\n` +
+          `GM = √(ab)     = ${Math.sqrt(a * b).toFixed(3)}   (purple CD; ∠ADB = 90°, so CD² = AC·CB)\n` +
+          (Math.abs(a - b) < 0.05 ? 'a = b: CD is a radius, AM = GM' : 'AM > GM');
+      },
+    });
+  })();
+</script>

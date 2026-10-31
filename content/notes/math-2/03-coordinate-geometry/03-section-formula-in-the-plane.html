@@ -1,0 +1,141 @@
+<!-- tags: Figures and Equations -->
+<!-- =====================================================================
+     NOTE: Internal and External Division in the Plane (内分点・外分点)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Figures and Equations">Section Formula in 2D</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Use the number-line formula twice</h2>
+    <p>Drop $A$, $P$, $B$ onto the $x$-axis: the ratio $AP : PB$ stays the same (parallel lines cut segments in equal ratios).
+      So the $x$-coordinate of $P$ comes from the number-line formula (note 01), and the same for $y$.</p>
+  </section>
+
+  <!-- FORMULA: section formula -->
+  <div class="note-formula">
+    <h3>$A(x_1, y_1)$, $B(x_2, y_2)$, ratio $m : n$</h3>
+    <div class="formula-main">$$\text{internal: } \left(\frac{nx_1 + mx_2}{m + n},\; \frac{ny_1 + my_2}{m + n}\right)$$</div>
+    <div class="formula-main">$$\text{external: } \left(\frac{-nx_1 + mx_2}{m - n},\; \frac{-ny_1 + my_2}{m - n}\right)$$</div>
+    <p class="symbols">Midpoint: $\left(\dfrac{x_1 + x_2}{2}, \dfrac{y_1 + y_2}{2}\right)$.</p>
+  </div>
+
+  <!-- PROOF: projection -->
+  <div class="note-proof">
+    <ol>
+      <li>Let $A'$, $P'$, $B'$ be the feet of the perpendiculars from $A$, $P$, $B$ to the $x$-axis.</li>
+      <li>$AA'$, $PP'$, $BB'$ are parallel, so $A'P' : P'B' = AP : PB = m : n$.</li>
+      <li>By note 01, $P'$ is at $\dfrac{nx_1 + mx_2}{m + n}$. The $y$-coordinate works the same way with the $y$-axis.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: drag A and B; code at the bottom -->
+  <div class="note-demo">
+    <h2>Drag $A$ and $B$; choose the ratio</h2>
+    <div class="controls">
+      <label>$m$ = <input type="range" id="sfM" min="1" max="5" value="2"></label>
+      <label>$n$ = <input type="range" id="sfN" min="1" max="5" value="1"></label>
+    </div>
+    <canvas id="sfCanvas"></canvas>
+    <div class="output table-text" id="sfOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">$A(2, 2)$, $B(8, 7)$. Find the points dividing $AB$ internally and externally in the ratio $2 : 1$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Internal: $\left(\dfrac{2 + 16}{3}, \dfrac{2 + 14}{3}\right) = \left(6, \dfrac{16}{3}\right)$.</li>
+        <li>External: $\left(\dfrac{-2 + 16}{1}, \dfrac{-2 + 14}{1}\right) = (14, 12)$.</li>
+      </ol>
+      <p class="answer">$\left(6, \dfrac{16}{3}\right)$ and $(14, 12)$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">$A(1, 3)$, $B(5, 7)$. Find the point dividing $AB$ externally in the ratio $1 : 3$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\left(\dfrac{-3 \cdot 1 + 1 \cdot 5}{1 - 3}, \dfrac{-3 \cdot 3 + 1 \cdot 7}{1 - 3}\right) = \left(\dfrac{2}{-2}, \dfrac{-2}{-2}\right)$.</li>
+      </ol>
+      <p class="answer">$(-1, 1)$ (beyond $A$, since $m &lt; n$)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">$M(3, -1)$ is the midpoint of $AB$ and $A(1, 4)$. Find $B$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\dfrac{1 + x}{2} = 3$, $\dfrac{4 + y}{2} = -1$.</li>
+      </ol>
+      <p class="answer">$B(5, -6)$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: crossing over -->
+  <div class="note-warning">
+    $n$ multiplies the coordinates of $A$ and $m$ those of $B$. Check with a sketch: for $2 : 1$ internal, the point must be closer to $B$.
+  </div>
+
+  <!-- TIP: external -->
+  <div class="note-tip">
+    External division = internal division with $n$ replaced by $-n$. One formula covers both.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Internal: $\left(\dfrac{nx_1 + mx_2}{m + n}, \dfrac{ny_1 + my_2}{m + n}\right)$.</li>
+      <li>External: replace $n$ by $-n$.</li>
+      <li>Each coordinate is worked out separately.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Ratio" demo (the TRY IT block above).
+  // P divides AB internally in m : n; Q externally (when m ≠ n).
+  // A and B snap to whole numbers.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const mBox = document.getElementById('sfM'), nBox = document.getElementById('sfN');
+    const output = document.getElementById('sfOutput');
+    const snap = ([x, y]) => [Math.round(x), Math.round(y)];
+    const f = (v) => +v.toFixed(3);
+    const pt = (p) => `(${f(p[0])}, ${f(p[1])})`;
+
+    const plot = NotePlot.graph(document.getElementById('sfCanvas'), {
+      x: [-7.75, 7.75], y: [-5, 5],
+      points: { A: [-4, -2], B: [1, 1] },
+      constrain: { A: snap, B: snap },
+      draw(g, Pt) {
+        const m = +mBox.value, n = +nBox.value, { A, B } = Pt;
+        const P = [(n * A[0] + m * B[0]) / (m + n), (n * A[1] + m * B[1]) / (m + n)];
+        g.seg(A, B, '#2563eb', { width: 4 });
+        g.dot(P, '#0d9488', 'P');
+        let ext = 'm = n: no external division point';
+        if (m !== n) {
+          const Q = [(-n * A[0] + m * B[0]) / (m - n), (-n * A[1] + m * B[1]) / (m - n)];
+          g.seg(m > n ? B : A, Q, '#94a3b8', { dash: true });
+          g.dot(Q, '#ea580c', 'Q');
+          ext = `Q (external ${m} : ${n}) = ${pt(Q)}`;
+        }
+        output.textContent = `A = ${pt(A)}, B = ${pt(B)}\nP (internal ${m} : ${n}) = ${pt(P)}\n${ext}`;
+      },
+    });
+    [mBox, nBox].forEach((el) => el.addEventListener('input', plot.redraw));
+  })();
+</script>

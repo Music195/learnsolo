@@ -1,0 +1,104 @@
+<!-- =====================================================================
+     PRACTICE: /practice
+     One tab per course; each topic is a card listing its practice sets in
+     order: the concept sets, then the topic review (routes/practice.py).
+     "Solved n of m" comes from the progress saved on this device
+     (static/js/practice-list.js). Past questions are linked at the end.
+     Same look as the note pages: floating bar, purple header, white cards.
+     ===================================================================== -->
+{% extends "base.html" %}
+
+{% block title %}Practice · Learn Solo{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="/static/css/floatbar.css">
+<!-- Page, purple header and colours, shared with the note pages -->
+<link rel="stylesheet" href="/static/css/note-page.css">
+<link rel="stylesheet" href="/static/css/practice-list.css">
+{% endblock %}
+
+{% block body %}
+{% include "partials/floatbar.html" %}
+
+<!-- HEADER -->
+<header class="note-header">
+    <div class="note-header-inner">
+        <p class="note-chips"><a href="{{ url_for('home.index') }}"><i class="fas fa-house"></i> Home</a></p>
+        <h1>Practice</h1>
+        <p class="hub-lead">
+            Problem sets for every topic, from basic questions up to exam-style ones.
+            Each topic has concept sets for a few notes at a time, then a topic review.
+            Every problem has a hint, a full solution and an answer check, and your progress is saved on this device.
+        </p>
+    </div>
+</header>
+
+<main class="hub-content">
+    <!-- COURSE TABS -->
+    <div class="hub-tabs" role="tablist" aria-label="Courses">
+        {% for course in courses %}
+        <button class="hub-tab" role="tab" id="tab-{{ course.folder }}" data-course="{{ course.folder }}"
+                aria-controls="panel-{{ course.folder }}" aria-selected="{{ 'true' if loop.first else 'false' }}">
+            {{ course.name }}
+        </button>
+        {% endfor %}
+    </div>
+
+    <!-- ONE PANEL PER COURSE: a card per topic -->
+    {% for course in courses %}
+    <section class="hub-panel" role="tabpanel" id="panel-{{ course.folder }}" aria-labelledby="tab-{{ course.folder }}"
+             {{ 'hidden' if not loop.first }}>
+        {% for topic in course.topics %}
+        <article class="topic-card">
+            <header class="topic-head">
+                <span class="topic-num">{{ loop.index }}</span>
+                <div class="topic-text">
+                    <h2>{{ topic.name }}</h2>
+                    <!-- "Solved n of m" for the whole topic is filled in by practice-list.js -->
+                    <p class="topic-meta">
+                        {{ topic.sets|length }} set{{ 's' if topic.sets|length != 1 }} · {{ topic.count }} problems
+                        <span class="topic-solved" hidden></span>
+                    </p>
+                </div>
+                <a class="topic-notes" href="{{ url_for('notes.view_note', note_path=topic.notes_first) }}">
+                    <i class="fas fa-book-open"></i> Notes
+                </a>
+            </header>
+            <ol class="set-list">
+                {% for s in topic.sets %}
+                <li>
+                    <a class="set-row{{ ' is-review' if s.review }}" href="{{ url_for('practice.view_set', practice_path=s.path) }}"
+                       data-practice="{{ s.path }}" data-moved-from="{{ s.moved_from or '' }}" data-count="{{ s.count }}">
+                        <span class="set-num">{% if s.review %}<i class="fas fa-layer-group"></i>{% else %}{{ loop.index }}{% endif %}</span>
+                        <span class="set-text">
+                            <strong>{{ s.title }}</strong>
+                            <span>
+                                {% if s.review %}<em class="set-badge">Topic review</em> The whole topic
+                                {% elif s.covers %}Covers notes {{ s.covers }}{% endif %}
+                                · {{ s.count }} problem{{ 's' if s.count != 1 }}
+                            </span>
+                        </span>
+                        <span class="set-progress" hidden></span>
+                    </a>
+                </li>
+                {% endfor %}
+            </ol>
+        </article>
+        {% endfor %}
+    </section>
+    {% endfor %}
+
+    <!-- PAST QUESTIONS -->
+    <a class="hub-past" href="{{ url_for('past.index') }}">
+        <span class="hub-past-icon"><i class="fas fa-file-pen"></i></span>
+        <span class="hub-past-text">
+            <strong>Past questions</strong>
+            <span>EJU-style and university exam problems, to test yourself across topics.</span>
+        </span>
+        <span class="hub-past-go">Open <i class="fas fa-arrow-right"></i></span>
+    </a>
+</main>
+
+<script src="/static/js/floatbar.js"></script>
+<script src="/static/js/practice-list.js"></script>
+{% endblock %}

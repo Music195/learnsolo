@@ -1,0 +1,147 @@
+<!-- tags: Exponent and Logarithm -->
+<!-- =====================================================================
+     NOTE: Change of Base and Common Logarithms (底の変換公式・常用対数)
+     Uses the shared blocks from static/css/note-blocks.css.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Exponent and Logarithm">Logarithm Change of Base</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Any log can be written with any base</h2>
+    <p>The rules in note 06 need a common base. The change-of-base formula converts $\log_a b$ to any base $c$ you like.
+      Base 10 (the <strong>common logarithm</strong>, 常用対数) is especially useful for counting digits of huge numbers.</p>
+  </section>
+
+  <!-- FORMULA: change of base -->
+  <div class="note-formula">
+    <h3>Change of base ($a, c &gt; 0$; $a, c \ne 1$; $b &gt; 0$)</h3>
+    <div class="formula-main">$$\log_a b = \frac{\log_c b}{\log_c a}$$</div>
+    <p class="symbols">Consequences: $\log_a b = \dfrac{1}{\log_b a}$ and $\log_a b \cdot \log_b c = \log_a c$.</p>
+  </div>
+
+  <div class="note-formula">
+    <h3>Number of digits</h3>
+    <div class="formula-main">$$N \text{ has } k \text{ digits} \iff 10^{k-1} \le N &lt; 10^k \iff k - 1 \le \log_{10} N &lt; k$$</div>
+    <p class="symbols">Values to know: $\log_{10} 2 \approx 0.3010$, $\;\log_{10} 3 \approx 0.4771$.</p>
+  </div>
+
+  <!-- PROOF: change of base -->
+  <div class="note-proof">
+    <ol>
+      <li>Let $p = \log_a b$, so $a^p = b$.</li>
+      <li>Take $\log_c$ of both sides: $p\log_c a = \log_c b$.</li>
+      <li>$a \ne 1$, so $\log_c a \ne 0$; divide: $p = \dfrac{\log_c b}{\log_c a}$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: digits; code at the bottom -->
+  <div class="note-demo">
+    <h2>How many digits does $a^n$ have?</h2>
+    <div class="controls">
+      <label>$a$ = <input type="number" id="cbA" value="2" min="2" max="99"></label>
+      <label>$n$ = <input type="number" id="cbN" value="50" min="1" max="500"></label>
+    </div>
+    <div class="output table-text" id="cbOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Calculate $\log_4 8$ and $\log_2 3 \cdot \log_3 8$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\log_4 8 = \dfrac{\log_2 8}{\log_2 4} = \dfrac{3}{2}$.</li>
+        <li>$\log_2 3 \cdot \dfrac{\log_2 8}{\log_2 3} = \log_2 8$.</li>
+      </ol>
+      <p class="answer">$\dfrac{3}{2}$, $\;3$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Calculate $(\log_2 9 + \log_4 3)(\log_3 4 + \log_9 2)$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>In base 2 and 3: $\log_2 9 = 2\log_2 3$, $\log_4 3 = \dfrac{1}{2}\log_2 3$, so the first bracket is $\dfrac{5}{2}\log_2 3$.</li>
+        <li>$\log_3 4 = 2\log_3 2$, $\log_9 2 = \dfrac{1}{2}\log_3 2$, so the second is $\dfrac{5}{2}\log_3 2$.</li>
+        <li>$\log_2 3 \cdot \log_3 2 = 1$.</li>
+      </ol>
+      <p class="answer">$\dfrac{25}{4}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">How many digits does $2^{50}$ have? ($\log_{10} 2 = 0.3010$)</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\log_{10} 2^{50} = 50 \times 0.3010 = 15.05$.</li>
+        <li>$15 \le 15.05 &lt; 16$, so $10^{15} \le 2^{50} &lt; 10^{16}$.</li>
+      </ol>
+      <p class="answer">16 digits</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Find $\log_{10} 12$ and $\log_{10} 5$ using $\log_{10} 2 = 0.3010$, $\log_{10} 3 = 0.4771$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\log_{10} 12 = 2\log_{10} 2 + \log_{10} 3 = 0.6020 + 0.4771$.</li>
+        <li>$\log_{10} 5 = 1 - \log_{10} 2$.</li>
+      </ol>
+      <p class="answer">$1.0791$; $\;0.6990$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: digits off by one -->
+  <div class="note-warning">
+    $\log_{10} N = 15.05$ means 16 digits, not 15. The number of digits is (whole-number part) + 1.
+  </div>
+
+  <!-- TIP: same base -->
+  <div class="note-tip">
+    With mixed bases, change everything to the smallest base that appears (usually 2 or 3), then use the rules from note 06.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$\log_a b = \dfrac{\log_c b}{\log_c a}$.</li>
+      <li>$\log_a b \cdot \log_b a = 1$.</li>
+      <li>Digits of $N$: $\lfloor \log_{10} N \rfloor + 1$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script>
+  // "How many digits" demo (the TRY IT block above).
+  // Uses log10(aⁿ) = n·log10 a to predict the digit count, then checks it
+  // against the exact number computed with BigInt.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const aBox = document.getElementById('cbA'), nBox = document.getElementById('cbN');
+    const output = document.getElementById('cbOutput');
+
+    function update() {
+      const a = parseInt(aBox.value), nn = parseInt(nBox.value);
+      if (!(a >= 2 && a <= 99 && nn >= 1 && nn <= 500)) { output.textContent = 'Choose 2 ≤ a ≤ 99 and 1 ≤ n ≤ 500.'; return; }
+      const L = nn * Math.log10(a);
+      const exact = (BigInt(a) ** BigInt(nn)).toString();
+      output.textContent =
+        `log₁₀ ${a}^${nn} = ${nn} × log₁₀ ${a} = ${nn} × ${Math.log10(a).toFixed(4)} = ${L.toFixed(4)}\n` +
+        `${Math.floor(L)} ≤ ${L.toFixed(4)} < ${Math.floor(L) + 1}  →  ${Math.floor(L) + 1} digits\n` +
+        `check: ${a}^${nn} = ${exact.length > 40 ? exact.slice(0, 20) + '…' + exact.slice(-10) : exact}  (${exact.length} digits)`;
+    }
+    [aBox, nBox].forEach((el) => el.addEventListener('input', update));
+    update();
+  })();
+</script>

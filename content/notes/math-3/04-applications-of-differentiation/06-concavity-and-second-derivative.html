@@ -1,0 +1,151 @@
+<!-- tags: Differentiation -->
+<!-- =====================================================================
+     NOTE: Sign of the Second Derivative and Concavity (曲線の凹凸)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Differentiation">Sign of the Second Derivative and Concavity</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Is the slope getting steeper or flatter?</h2>
+    <p>If $f''(x) &gt; 0$, the slope $f'$ is increasing. The curve bends upward like a bowl: <strong>concave up</strong> (下に凸). Every tangent lies below the curve.</p>
+    <p>If $f''(x) &lt; 0$, the slope is decreasing. The curve bends downward like a cap: <strong>concave down</strong> (上に凸). Every tangent lies above the curve.</p>
+  </section>
+
+  <!-- FORMULA: the test -->
+  <div class="note-formula">
+    <h3>On an interval</h3>
+    <div class="formula-main">$$f''(x) &gt; 0 \Rightarrow \text{concave up (下に凸)}, \qquad f''(x) &lt; 0 \Rightarrow \text{concave down (上に凸)}$$</div>
+    <p class="symbols">Concave up: the chord between two points lies above the curve; the tangent lies below. Concave down: the other way round.</p>
+  </div>
+
+  <!-- PROOF: tangent below a concave-up curve -->
+  <div class="note-proof">
+    <ol>
+      <li>Let $f'' &gt; 0$ and compare $f$ with its tangent at $a$: $g(x) = f(x) - \{f(a) + f'(a)(x - a)\}$.</li>
+      <li>$g'(x) = f'(x) - f'(a)$. Since $f'' &gt; 0$, $f'$ is increasing, so $g' &lt; 0$ for $x &lt; a$ and $g' &gt; 0$ for $x &gt; a$.</li>
+      <li>So $g$ has its minimum $g(a) = 0$ at $a$: $g(x) \ge 0$, meaning the curve is above the tangent.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: tangent below/above; code at the bottom -->
+  <div class="note-demo">
+    <h2>Concave up parts in blue, concave down parts in orange</h2>
+    <div class="controls">
+      <label>$f(x)$ = <select id="ccF">
+        <option value="0">x³ − 3x² + 2</option>
+        <option value="1">sin x</option>
+        <option value="2">2e^(−x²)</option>
+      </select></label>
+      <label>tangent at $x$ = <input type="range" id="ccX" min="-3" max="3" step="0.05" value="-0.5"></label>
+    </div>
+    <canvas id="ccCanvas"></canvas>
+    <div class="output table-text" id="ccOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find where $f(x) = x^3 - 3x^2 + 2$ is concave up and concave down.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$f'(x) = 3x^2 - 6x$, $\;f''(x) = 6x - 6 = 6(x - 1)$.</li>
+        <li>$f'' &lt; 0$ for $x &lt; 1$ and $f'' &gt; 0$ for $x &gt; 1$.</li>
+      </ol>
+      <p class="answer">Concave down for $x &lt; 1$, concave up for $x &gt; 1$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find the concavity of $f(x) = \log x$ and of $f(x) = e^{-x}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$(\log x)'' = -\dfrac{1}{x^2} &lt; 0$ for all $x &gt; 0$.</li>
+        <li>$(e^{-x})'' = e^{-x} &gt; 0$ for all $x$.</li>
+      </ol>
+      <p class="answer">$\log x$ is concave down everywhere; $e^{-x}$ is concave up everywhere</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Show that $\sin x \ge \dfrac{2}{\pi}x$ for $0 \le x \le \dfrac{\pi}{2}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$(\sin x)'' = -\sin x \le 0$ on this interval, so $y = \sin x$ is concave down there.</li>
+        <li>For a concave-down curve, the chord lies below the curve. The chord from $(0, 0)$ to $\left(\dfrac{\pi}{2}, 1\right)$ is $y = \dfrac{2}{\pi}x$.</li>
+      </ol>
+      <p class="answer">$\sin x \ge \dfrac{2}{\pi}x$ on $\left[0, \dfrac{\pi}{2}\right]$ ✓</p>
+    </details>
+  </div>
+
+  <!-- WARNING: concave up ≠ increasing -->
+  <div class="note-warning">
+    Concavity says nothing about up or down movement. $e^{-x}$ is <strong>decreasing</strong> but concave up. The sign of $f'$ gives increasing/decreasing; the sign of $f''$ gives the bending.
+  </div>
+
+  <!-- TIP: words in Japanese textbooks -->
+  <div class="note-tip">
+    Japanese textbooks say 下に凸 ("bulging downward") for $f'' &gt; 0$, the bowl shape. Picture where the bulge points: down for a bowl.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$f'' &gt; 0$: concave up (下に凸), tangents below the curve.</li>
+      <li>$f'' &lt; 0$: concave down (上に凸), tangents above the curve.</li>
+      <li>Concavity gives chord/tangent inequalities.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Concavity" demo (the TRY IT block above).
+  // Colours the curve by the sign of f″ and draws the tangent at the chosen x.
+  // In a blue (concave-up) part the tangent sits below the curve; in orange, above.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const fBox = document.getElementById('ccF'), xBox = document.getElementById('ccX');
+    const output = document.getElementById('ccOutput');
+    const f3 = (v) => +v.toFixed(3);
+
+    const FUNCS = [
+      { f: (x) => x ** 3 - 3 * x * x + 2, d: (x) => 3 * x * x - 6 * x, d2: (x) => 6 * x - 6 },
+      { f: Math.sin, d: Math.cos, d2: (x) => -Math.sin(x) },
+      { f: (x) => 2 * Math.exp(-x * x), d: (x) => -4 * x * Math.exp(-x * x), d2: (x) => (8 * x * x - 4) * Math.exp(-x * x) },
+    ];
+
+    const plot = NotePlot.graph(document.getElementById('ccCanvas'), {
+      x: [-3.2, 3.2], y: [-2.5, 3],
+      draw(g) {
+        const F = FUNCS[+fBox.value], x0 = +xBox.value;
+        // colour each small piece of the curve by the sign of f″ at its middle
+        for (let i = 0; i < 400; i++) {
+          const a = -3.2 + 6.4 * i / 400, b = a + 6.4 / 400;
+          g.seg([a, F.f(a)], [b, F.f(b)], F.d2((a + b) / 2) >= 0 ? '#2563eb' : '#ea580c', { width: 3 });
+        }
+        const y0 = F.f(x0), m = F.d(x0), k = F.d2(x0);
+        g.fn((x) => y0 + m * (x - x0), '#475569', { width: 1.5, dash: true });
+        g.dot([x0, y0], '#0f172a');
+        output.textContent =
+          `x = ${x0}:  f''(x) = ${f3(k)}\n` +
+          (Math.abs(k) < 1e-3 ? `f'' ≈ 0 here: a possible inflection point`
+            : k > 0 ? 'f\'\' > 0: concave up (下に凸), the tangent lies below the curve'
+            : 'f\'\' < 0: concave down (上に凸), the tangent lies above the curve');
+      },
+    });
+    fBox.addEventListener('change', plot.redraw);
+    xBox.addEventListener('input', plot.redraw);
+  })();
+</script>

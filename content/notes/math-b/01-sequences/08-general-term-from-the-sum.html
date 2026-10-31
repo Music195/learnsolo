@@ -1,0 +1,163 @@
+<!-- tags: Sequence -->
+<!-- =====================================================================
+     NOTE: Sequence Sum and General Term
+     Uses the shared blocks from static/css/note-blocks.css.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Sequence">Sequence Sum and General Term</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Going from the sum back to the terms</h2>
+    <p>$S_n$ is the running total of the first $n$ terms: $\;S_n = a_1 + a_2 + \dots + a_n$.</p>
+    <p>$S_n$ and $S_{n-1}$ contain the same terms except the last one, $a_n$. So subtracting them leaves just $a_n$.
+      This lets you find the general term when you are only given a formula for the sum.</p>
+  </section>
+
+  <!-- FORMULA: key formulas -->
+  <div class="note-formula">
+    <h3>Terms from the sum</h3>
+    <div class="formula-main">$$a_1 = S_1, \qquad a_n = S_n - S_{n-1} \quad (n \geq 2)$$</div>
+    <p class="symbols">
+      $S_n$ = sum of the first $n$ terms<br>
+      $a_n$ = the $n$th term
+    </p>
+  </div>
+
+  <!-- WARNING: the most common mistake with this topic -->
+  <div class="note-warning">
+    $S_{n-1}$ doesn't exist when $n = 1$, so $a_n = S_n - S_{n-1}$ only gives the terms from $n = 2$ onwards.
+    Find $a_1 = S_1$ separately and check whether it fits the same formula. Sometimes it doesn't (see Example 2).
+  </div>
+
+  <!-- DEMO: explorer; its code is in the <script> at the bottom -->
+  <div class="note-demo">
+    <h2>Running Total Explorer</h2>
+    <div class="controls">
+      <label>Sequence
+        <select id="sgType">
+          <option value="odd">Odd numbers 2n − 1</option>
+          <option value="square">Squares n²</option>
+          <option value="custom">Type my own</option>
+        </select>
+      </label>
+      <label>Terms <input type="text" id="sgCustom" class="wide" value="3, 3, 5, 7, 9"></label>
+      <button type="button" id="sgCalculate">Show sums</button>
+    </div>
+    <div class="output table-text" id="sgOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">The sum of the first $n$ terms is $S_n = n^2 + n$. Find the general term $a_n$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$a_1 = S_1 = 1 + 1 = 2$</li>
+        <li>For $n \geq 2$: $\;a_n = (n^2 + n) - \bigl\{(n-1)^2 + (n-1)\bigr\} = 2n$</li>
+        <li>Check $n = 1$: $\;2 \times 1 = 2 = a_1$ ✔</li>
+      </ol>
+      <p class="answer">$a_n = 2n$ (true for all $n \geq 1$)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">The sum of the first $n$ terms is $S_n = n^2 + 2$. Find the general term $a_n$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$a_1 = S_1 = 1 + 2 = 3$</li>
+        <li>For $n \geq 2$: $\;a_n = (n^2 + 2) - \bigl\{(n-1)^2 + 2\bigr\} = 2n - 1$</li>
+        <li>Check $n = 1$: $\;2 \times 1 - 1 = 1 \neq 3$ ✘ The first term does not fit.</li>
+      </ol>
+      <p class="answer">$a_1 = 3$, and $a_n = 2n - 1$ for $n \geq 2$. The sequence is $3, 3, 5, 7, 9, \dots$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Find the running totals $S_n$ of the odd numbers $1, 3, 5, 7, 9, \dots$</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Add one term at a time using $S_n = S_{n-1} + a_n$: $\;1,\; 1 + 3 = 4,\; 4 + 5 = 9,\; 9 + 7 = 16,\; 16 + 9 = 25$</li>
+        <li>These are the square numbers. Check with the formula: $\;\displaystyle\sum_{k=1}^{n} (2k - 1) = n^2$</li>
+      </ol>
+      <p class="answer">$S_n = n^2$</p>
+    </details>
+  </div>
+
+  <!-- TIP: when the constant term matters -->
+  <div class="note-tip">
+    Quick check: if $S_n$ is a polynomial in $n$ with <strong>no constant term</strong> (like $n^2 + n$), the formula
+    for $a_n$ also works for $n = 1$. A constant term (like the $+2$ in $n^2 + 2$) breaks the first term.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$a_1 = S_1$ and $a_n = S_n - S_{n-1}$ for $n \geq 2$.</li>
+      <li>Always check whether $a_1$ fits the formula for $a_n$; if not, state it separately.</li>
+      <li>Going the other way, $S_n = S_{n-1} + a_n$ builds the running total.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script>
+  // Running Total Explorer (the TRY IT block above).
+  // Shows each term, its running total S_n, and how S_n − S_(n−1) gives the term back.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const typeSelect = document.getElementById('sgType');
+    const customInput = document.getElementById('sgCustom');
+    const output = document.getElementById('sgOutput');
+
+    // Preset sequences (first 6 terms)
+    const presets = {
+      odd: (n) => 2 * n - 1,
+      square: (n) => n * n,
+    };
+
+    // Reads the chosen sequence as a list of numbers
+    function getTerms() {
+      if (typeSelect.value === 'custom') {
+        return customInput.value.split(',').map((s) => parseFloat(s.trim()));
+      }
+      const terms = [];
+      for (let n = 1; n <= 6; n++) terms.push(presets[typeSelect.value](n));
+      return terms;
+    }
+
+    function calculate() {
+      // Only show the text box when "Type my own" is selected
+      customInput.parentElement.style.display = typeSelect.value === 'custom' ? '' : 'none';
+
+      const terms = getTerms();
+      if (terms.length < 2 || terms.some(isNaN)) {
+        output.textContent = 'Please type at least 2 numbers separated by commas.';
+        return;
+      }
+
+      // Running totals: S_1, S_2, ...
+      const sums = [];
+      terms.reduce((total, t) => { sums.push(Number((total + t).toFixed(6))); return total + t; }, 0);
+
+      const lines = terms.map((t, i) => {
+        const n = i + 1;
+        const back = n === 1 ? `a_1 = S_1 = ${sums[0]}` : `a_${n} = S_${n} − S_${n - 1} = ${sums[i]} − ${sums[i - 1]} = ${t}`;
+        // padEnd keeps the columns lined up when numbers have more digits
+        return `n = ${n}:  ${`S_${n} = ${sums[i]}`.padEnd(14)}${back}`;
+      });
+      output.textContent = lines.join('\n');
+    }
+
+    document.getElementById('sgCalculate').addEventListener('click', calculate);
+    typeSelect.addEventListener('change', calculate);
+    calculate(); // show a result for the default choice straight away
+  })();
+</script>

@@ -1,0 +1,162 @@
+<!-- tags: Space Vector -->
+<!-- =====================================================================
+     NOTE: Components of a Vector Between Two Points (2 点を結ぶベクトルの成分)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Space Vector">Component Representation of Vector Operations</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>End minus start</h2>
+    <p>The vector $\overrightarrow{AB}$ says how to walk from A to B: so far along $x$, so far along $y$, so far along $z$. Each step is (B's coordinate) − (A's coordinate).</p>
+    <p>Its length is the distance AB. So the distance formula in space is just $|\overrightarrow{AB}|$ written out.</p>
+  </section>
+
+  <!-- FORMULA: AB and its length -->
+  <div class="note-formula">
+    <h3>A$(a_1, a_2, a_3)$, B$(b_1, b_2, b_3)$</h3>
+    <div class="formula-main">$$\overrightarrow{AB} = (b_1 - a_1,\; b_2 - a_2,\; b_3 - a_3)$$</div>
+    <div class="formula-main">$$\text{AB} = |\overrightarrow{AB}| = \sqrt{(b_1 - a_1)^2 + (b_2 - a_2)^2 + (b_3 - a_3)^2}$$</div>
+  </div>
+
+  <!-- PROOF: from position vectors -->
+  <div class="note-proof">
+    <ol>
+      <li>$\overrightarrow{OA} = (a_1, a_2, a_3)$ and $\overrightarrow{OB} = (b_1, b_2, b_3)$.</li>
+      <li>Going O → A → B is the same as O → B: $\overrightarrow{OA} + \overrightarrow{AB} = \overrightarrow{OB}$.</li>
+      <li>So $\overrightarrow{AB} = \overrightarrow{OB} - \overrightarrow{OA}$, computed component by component.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: walking from A to B; code at the bottom -->
+  <div class="note-demo">
+    <h2>From A$(1, -1, 0)$ to B: one step along each axis</h2>
+    <div class="controls">
+      <label>$x$-step = <input type="range" id="crX" min="-3" max="3" step="0.5" value="-2"></label>
+      <label>$y$-step = <input type="range" id="crY" min="-3" max="3" step="0.5" value="3"></label>
+      <label>$z$-step = <input type="range" id="crZ" min="-2" max="3" step="0.5" value="2"></label>
+      <label>turn view <input type="range" id="crV" min="0" max="90" step="1" value="30"></label>
+    </div>
+    <canvas id="crCanvas"></canvas>
+    <div class="output table-text" id="crOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A$(1, 2, 3)$, B$(4, -1, 2)$. Find $\overrightarrow{AB}$ and AB.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\overrightarrow{AB} = (3, -3, -1)$.</li>
+        <li>$\sqrt{9 + 9 + 1}$</li>
+      </ol>
+      <p class="answer">$(3, -3, -1)$, AB $= \sqrt{19}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">A$(1, 0, 2)$, B$(3, 1, 0)$, C$(2, 4, 1)$. Find D so that ABCD is a parallelogram.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\overrightarrow{AD} = \overrightarrow{BC} = (-1, 3, 1)$.</li>
+        <li>D $=$ A $+ (-1, 3, 1)$.</li>
+      </ol>
+      <p class="answer">D$(0, 3, 3)$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Find the point P on the $x$-axis that is equally far from A$(1, 2, 3)$ and B$(3, 0, -1)$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>P$(x, 0, 0)$: $(x - 1)^2 + 4 + 9 = (x - 3)^2 + 0 + 1$.</li>
+        <li>$-2x + 14 = -6x + 10$, so $4x = -4$.</li>
+      </ol>
+      <p class="answer">P$(-1, 0, 0)$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Show that A$(1, 1, 0)$, B$(0, 1, 1)$, C$(1, 0, 1)$ form an equilateral triangle.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\overrightarrow{AB} = (-1, 0, 1)$, $\overrightarrow{BC} = (1, -1, 0)$, $\overrightarrow{CA} = (0, 1, -1)$.</li>
+        <li>Each has length $\sqrt{2}$.</li>
+      </ol>
+      <p class="answer">AB = BC = CA $= \sqrt{2}$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: order -->
+  <div class="note-warning">
+    $\overrightarrow{AB}$ is B − A, not A − B. The wrong order gives $\overrightarrow{BA} = -\overrightarrow{AB}$, the same length but the opposite direction.
+  </div>
+
+  <!-- TIP: parallelogram -->
+  <div class="note-tip">
+    "ABCD is a parallelogram" is the same as $\overrightarrow{AD} = \overrightarrow{BC}$ (or $\overrightarrow{AB} = \overrightarrow{DC}$). Keep the letters in cyclic order and the condition writes itself.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$\overrightarrow{AB} = \overrightarrow{OB} - \overrightarrow{OA}$: end minus start.</li>
+      <li>AB $= |\overrightarrow{AB}|$.</li>
+      <li>Parallelogram ABCD: $\overrightarrow{AD} = \overrightarrow{BC}$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "End minus start" demo (the TRY IT block above).
+  // Space is drawn by turning it about the z-axis ("turn view"), tilting it 20°
+  // and looking straight on. The coloured path walks from A to B: first along x
+  // (blue), then y (orange), then z (teal). The grey arrow is AB itself.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const boxes = ['crX', 'crY', 'crZ', 'crV'].map((id) => document.getElementById(id));
+    const output = document.getElementById('crOutput');
+    const f3 = (v) => +v.toFixed(3);
+    const A = [1, -1, 0];
+
+    // 3D point → 2D canvas point, for a view turned by az and tilted by el
+    const view = (az, el) => ([x, y, z]) => [-x * Math.sin(az) + y * Math.cos(az), -(x * Math.cos(az) + y * Math.sin(az)) * Math.sin(el) + z * Math.cos(el)];
+    function axes(g, V, L) {
+      [[[L, 0, 0], 'x'], [[0, L, 0], 'y'], [[0, 0, L], 'z']].forEach(([p, name]) => {
+        g.seg(V(p.map((c) => -c)), V(p), '#94a3b8', { width: 1.5 });
+        g.text(V(p.map((c) => c * 1.1)), name, '#64748b');
+      });
+    }
+
+    const plot = NotePlot.graph(document.getElementById('crCanvas'), {
+      x: [-5.4, 5.4], y: [-3.5, 3.5], plain: true,
+      draw(g) {
+        const [dx, dy, dz, vw] = boxes.map((b) => +b.value);
+        const V = view(vw * Math.PI / 180, 20 * Math.PI / 180);
+        axes(g, V, 3.2);
+        const P1 = [A[0] + dx, A[1], A[2]], P2 = [A[0] + dx, A[1] + dy, A[2]], B = [A[0] + dx, A[1] + dy, A[2] + dz];
+        g.seg(V(A), V(P1), '#2563eb', { width: 3 }); g.seg(V(P1), V(P2), '#ea580c', { width: 3 }); g.seg(V(P2), V(B), '#0d9488', { width: 3 });
+        g.seg(V(A), V(B), '#475569', { width: 2, dash: true });
+        g.dot(V(A), '#334155', 'A'); g.dot(V(B), '#334155', 'B');
+        output.textContent =
+          `A(1, −1, 0),  B(${B.map((c) => +c.toFixed(2)).join(', ')})\n` +
+          `AB = B − A = (${dx}, ${dy}, ${dz}),   |AB| = √${dx * dx + dy * dy + dz * dz} = ${f3(Math.hypot(dx, dy, dz))}`;
+      },
+    });
+    boxes.forEach((el) => el.addEventListener('input', plot.redraw));
+  })();
+</script>

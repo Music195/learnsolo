@@ -1,0 +1,132 @@
+<!-- tags: Geometry -->
+<!-- =====================================================================
+     NOTE: Angles and Opposite Sides in a Triangle
+     Uses the shared blocks from static/css/note-blocks.css and the
+     draggable-point helper static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Geometry">Triangle Angle-Side Relationship</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Bigger angle, longer side opposite</h2>
+    <p>Open an angle wider and the side across from it gets longer. In any triangle, the <strong>largest angle faces the longest side</strong>
+      and the smallest angle faces the shortest side. It works in both directions.</p>
+    <p>Write $a = BC$, $b = CA$, $c = AB$: side $a$ is opposite $\angle A$, and so on.</p>
+  </section>
+
+  <!-- FORMULA: the relationship -->
+  <div class="note-formula">
+    <h3>Angle–side relationship</h3>
+    <div class="formula-main">$$b &gt; c \iff \angle B &gt; \angle C$$</div>
+    <p class="symbols">And equal sides $\iff$ equal angles (isosceles triangle).</p>
+  </div>
+
+  <!-- PROOF: cut off an isosceles triangle -->
+  <div class="note-proof">
+    <ol>
+      <li>Suppose $AC &gt; AB$. Mark $D$ on $AC$ with $AD = AB$. Then $\triangle ABD$ is isosceles: $\angle ABD = \angle ADB$.</li>
+      <li>$\angle ADB$ is an exterior angle of $\triangle BCD$, so $\angle ADB &gt; \angle ACB$.</li>
+      <li>$\angle ABC &gt; \angle ABD = \angle ADB &gt; \angle ACB$, so $\angle B &gt; \angle C$.</li>
+      <li>Converse: if $\angle B &gt; \angle C$, then $b = c$ would give $\angle B = \angle C$ and $b &lt; c$ would give $\angle B &lt; \angle C$. Both are impossible, so $b &gt; c$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: drag the corners; code at the bottom -->
+  <div class="note-demo">
+    <h2>Drag the corners</h2>
+    <p>Each side has the same colour as the angle opposite it.</p>
+    <canvas id="asCanvas"></canvas>
+    <div class="output table-text" id="asOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">In $\triangle ABC$, $\angle A = 40°$, $\angle B = 60°$, $\angle C = 80°$. Order the sides from shortest to longest.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\angle A &lt; \angle B &lt; \angle C$, so the opposite sides are in the same order.</li>
+      </ol>
+      <p class="answer">$a &lt; b &lt; c$, i.e. $BC &lt; CA &lt; AB$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">In $\triangle XYZ$, $XY = 5$, $YZ = 7$, $ZX = 8$. Which angle is largest, and which is smallest?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Longest side $ZX = 8$ is opposite $\angle Y$.</li>
+        <li>Shortest side $XY = 5$ is opposite $\angle Z$.</li>
+      </ol>
+      <p class="answer">Largest $\angle Y$, smallest $\angle Z$ (order $\angle Y &gt; \angle X &gt; \angle Z$)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">An isosceles triangle has base angles of $50°$. Is the base longer or shorter than the equal sides?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The top angle is $180° - 2 \times 50° = 80°$.</li>
+        <li>The base faces the $80°$ angle; each equal side faces a $50°$ angle.</li>
+      </ol>
+      <p class="answer">The base is longer.</p>
+    </details>
+  </div>
+
+  <!-- WARNING: opposite, not next to -->
+  <div class="note-warning">
+    Use the side <strong>opposite</strong> the angle, not a side touching it. $\angle A$ goes with $BC$, the only side that doesn't touch $A$.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Largest angle ↔ longest side; smallest angle ↔ shortest side.</li>
+      <li>Works both ways; equal angles ↔ equal sides.</li>
+      <li>Used to prove the triangle inequality (note 08).</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Drag the corners" demo (the TRY IT block above).
+  // Colours each side like its opposite angle and lists them in order of size,
+  // so you can see the two orders always match.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const G = window.NoteGeom;
+    const output = document.getElementById('asOutput');
+    const colors = { A: '#2563eb', B: '#0d9488', C: '#ea580c' };
+
+    G.board(document.getElementById('asCanvas'), {
+      points: { A: [150, 60], B: [70, 290], C: [460, 260] },
+      draw(g, P) {
+        const { A, B, C } = P;
+        g.poly([A, B, C], 'rgba(148, 163, 184, 0.10)');
+        // side a = BC (opposite A), b = CA, c = AB
+        g.seg(B, C, colors.A, { width: 4 });
+        g.seg(C, A, colors.B, { width: 4 });
+        g.seg(A, B, colors.C, { width: 4 });
+        g.arc(A, B, C, colors.A, 24); g.arc(B, C, A, colors.B, 24); g.arc(C, A, B, colors.C, 24);
+
+        const rows = [
+          ['A', G.angle(A, B, C), 'a = BC', G.dist(B, C)],
+          ['B', G.angle(B, C, A), 'b = CA', G.dist(C, A)],
+          ['C', G.angle(C, A, B), 'c = AB', G.dist(A, B)],
+        ].sort((x, y) => y[1] - x[1]);
+        output.textContent = 'largest angle first:\n' + rows.map(([n, ang, side, len]) =>
+          `∠${n} = ${ang.toFixed(1).padStart(5)}°   opposite ${side} = ${len.toFixed(0)}`).join('\n');
+      },
+    });
+  })();
+</script>

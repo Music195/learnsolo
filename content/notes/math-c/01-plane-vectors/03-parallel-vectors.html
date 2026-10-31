@@ -1,0 +1,169 @@
+<!-- tags: Vector -->
+<!-- =====================================================================
+     NOTE: Condition for Parallel Vectors (ベクトルの平行条件)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Vector">Vector Parallel Condition</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Parallel means "a real multiple"</h2>
+    <p>Two nonzero vectors are <strong>parallel</strong> (平行, $\vec{a} \parallel \vec{b}$) when they point the same way or exactly opposite ways. That happens exactly when one is a real multiple of the other: $\vec{b} = k\vec{a}$.</p>
+    <p>In components, $(b_1, b_2) = k(a_1, a_2)$ means the components are in the same ratio. Cross-multiplying removes $k$ and gives the handy test $a_1b_2 - a_2b_1 = 0$.</p>
+  </section>
+
+  <!-- FORMULA: parallel condition -->
+  <div class="note-formula">
+    <h3>$\vec{a} = (a_1, a_2) \ne \vec{0}$, $\vec{b} = (b_1, b_2) \ne \vec{0}$</h3>
+    <div class="formula-main">$$\vec{a} \parallel \vec{b} \iff \vec{b} = k\vec{a} \text{ for some real } k \iff a_1b_2 - a_2b_1 = 0$$</div>
+    <p class="symbols">$k &gt; 0$: same direction. $k &lt; 0$: opposite direction.</p>
+  </div>
+
+  <!-- PROOF: the cross-multiplied test -->
+  <div class="note-proof">
+    <ol>
+      <li>If $\vec{b} = k\vec{a}$, then $a_1b_2 - a_2b_1 = a_1(ka_2) - a_2(ka_1) = 0$.</li>
+      <li>Conversely, let $a_1b_2 = a_2b_1$ with $a_1 \ne 0$. Put $k = \dfrac{b_1}{a_1}$; then $b_1 = ka_1$ and $b_2 = \dfrac{a_2b_1}{a_1} = ka_2$.</li>
+      <li>(If $a_1 = 0$, then $a_2 \ne 0$; use $k = \dfrac{b_2}{a_2}$ the same way.)</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: parallel check; code at the bottom -->
+  <div class="note-demo">
+    <h2>Drag the tips of $\vec{a}$ (blue) and $\vec{b}$ (orange); $\vec{b}$ snaps onto the line of $\vec{a}$ when close</h2>
+    <canvas id="vpCanvas"></canvas>
+    <div class="output table-text" id="vpOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Which are parallel? (i) $(2, 3)$ and $(4, 6)$ (ii) $(1, -2)$ and $(-3, 6)$ (iii) $(1, 2)$ and $(2, 3)$</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>(i) $2 \cdot 6 - 3 \cdot 4 = 0$: parallel, $(4, 6) = 2(2, 3)$.</li>
+        <li>(ii) $1 \cdot 6 - (-2)(-3) = 0$: parallel, $(-3, 6) = -3(1, -2)$.</li>
+        <li>(iii) $1 \cdot 3 - 2 \cdot 2 = -1 \ne 0$: not parallel.</li>
+      </ol>
+      <p class="answer">(i) and (ii)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">$\vec{a} = (x, 3)$ and $\vec{b} = (2, -1)$ are parallel. Find $x$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$x \cdot (-1) - 3 \cdot 2 = 0$.</li>
+      </ol>
+      <p class="answer">$x = -6$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Find the unit vectors parallel to $\vec{a} = (3, -4)$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$|\vec{a}| = 5$; parallel unit vectors are $\pm\dfrac{\vec{a}}{5}$.</li>
+      </ol>
+      <p class="answer">$\left(\dfrac{3}{5}, -\dfrac{4}{5}\right)$ and $\left(-\dfrac{3}{5}, \dfrac{4}{5}\right)$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">$\vec{a} = (1, 2)$, $\vec{b} = (1, -1)$, $\vec{c} = (3, 1)$. Find $t$ so that $\vec{a} + t\vec{b}$ is parallel to $\vec{c}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\vec{a} + t\vec{b} = (1 + t, 2 - t)$.</li>
+        <li>$(1 + t) \cdot 1 - (2 - t) \cdot 3 = 0$, so $4t - 5 = 0$.</li>
+      </ol>
+      <p class="answer">$t = \dfrac{5}{4}$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: zero components -->
+  <div class="note-warning">
+    The ratio test $\dfrac{b_1}{a_1} = \dfrac{b_2}{a_2}$ breaks when a component is $0$. Use $a_1b_2 - a_2b_1 = 0$ or $\vec{b} = k\vec{a}$ instead; neither divides.
+    Also remember the opposite direction: "parallel unit vectors" means two answers, $\pm$.
+  </div>
+
+  <!-- TIP: cross-multiply -->
+  <div class="note-tip">
+    $a_1b_2 - a_2b_1$ is "cross-multiply and subtract", the same as checking two fractions are equal. It will come back for triangle areas (note 11).
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$\vec{a} \parallel \vec{b} \iff \vec{b} = k\vec{a}$ (nonzero vectors).</li>
+      <li>Component test: $a_1b_2 - a_2b_1 = 0$.</li>
+      <li>Parallel unit vectors: $\pm\dfrac{\vec{a}}{|\vec{a}|}$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Parallel?" demo (the TRY IT block above).
+  // a and b start at O; drag their tips A and B (half-grid). The grey line is the
+  // line through O along a. B snaps onto it when within 0.3, so parallel cases are
+  // easy to hit. The readout shows the test a1·b2 − a2·b1 and k when it exists.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const output = document.getElementById('vpOutput');
+    const f2 = (v) => +v.toFixed(2) || 0;
+    const par = (v) => (v < 0 ? `(${v})` : `${v}`); // wrap negatives: 2×(−1)
+    const half = ([x, y]) => [Math.round(x * 2) / 2, Math.round(y * 2) / 2];
+    // arrow from p to q: a segment plus a small head
+    function arrow(g, p, q, color, width = 3) {
+      const d = [q[0] - p[0], q[1] - p[1]], L = Math.hypot(...d);
+      g.seg(p, q, color, { width });
+      if (L < 1e-9) return;
+      const u = [d[0] / L * 0.3, d[1] / L * 0.3];
+      g.seg(q, [q[0] - u[0] - u[1] * 0.6, q[1] - u[1] + u[0] * 0.6], color, { width: 3 });
+      g.seg(q, [q[0] - u[0] + u[1] * 0.6, q[1] - u[1] - u[0] * 0.6], color, { width: 3 });
+    }
+    let plot;
+    // B snaps onto the line of a when close (exact projection), else to the half-grid
+    function snapB(p) {
+      const a = plot ? plot.points.A : null, L = a ? Math.hypot(...a) : 0;
+      if (L > 1e-9) {
+        const e = [a[0] / L, a[1] / L], along = p[0] * e[0] + p[1] * e[1];
+        if (Math.abs(-p[0] * e[1] + p[1] * e[0]) < 0.3) return [along * e[0], along * e[1]];
+      }
+      return half(p);
+    }
+
+    plot = NotePlot.graph(document.getElementById('vpCanvas'), {
+      x: [-6.2, 6.2], y: [-4, 4],
+      points: { A: [2, 1], B: [-3, 2] },
+      constrain: { A: half, B: snapB },
+      draw(g, P) {
+        const a = P.A, b = P.B, det = f2(a[0] * b[1] - a[1] * b[0]);
+        if (Math.hypot(...a) > 1e-9) g.line(a[1], -a[0], 0, '#e2e8f0', { width: 2 });
+        arrow(g, [0, 0], a, '#2563eb'); arrow(g, [0, 0], b, '#ea580c');
+        let verdict = 'not parallel';
+        if (Math.hypot(...a) < 1e-9 || Math.hypot(...b) < 1e-9) verdict = 'a zero vector has no direction';
+        else if (Math.abs(det) < 0.01) {
+          const k = f2(Math.abs(a[0]) > 1e-9 ? b[0] / a[0] : b[1] / a[1]);
+          verdict = `parallel: b = ${k}a  (${k > 0 ? 'same' : 'opposite'} direction)`;
+        }
+        output.textContent =
+          `a = (${a.join(', ')}),  b = (${b.map(f2).join(', ')})\n` +
+          `a1·b2 − a2·b1 = ${par(a[0])}×${par(f2(b[1]))} − ${par(a[1])}×${par(f2(b[0]))} = ${det}  → ${verdict}`;
+      },
+    });
+  })();
+</script>

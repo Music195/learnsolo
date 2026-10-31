@@ -1,0 +1,129 @@
+<!-- tags: Geometry -->
+<!-- =====================================================================
+     NOTE: Properties of a Cyclic Quadrilateral (円に内接する四角形)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     draggable-point helper static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Geometry">Properties of a Cyclic Quadrilateral</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Opposite angles share the whole circle</h2>
+    <p>A <strong>cyclic quadrilateral</strong> has all four corners on one circle. $\angle A$ looks at arc $BCD$ and $\angle C$ looks at arc $BAD$.
+      Together those two arcs make the whole circle, so the two angles add up to half of $360°$.</p>
+  </section>
+
+  <!-- FORMULA: the two properties -->
+  <div class="note-formula">
+    <h3>Cyclic quadrilateral $ABCD$</h3>
+    <div class="formula-main">$$\angle A + \angle C = 180°, \qquad \angle B + \angle D = 180°$$</div>
+    <p class="symbols">Equivalently: the exterior angle at a corner equals the interior angle at the opposite corner, e.g. $\angle DCE = \angle A$ when $BC$ is extended to $E$.</p>
+  </div>
+
+  <!-- PROOF: central angles add to 360 -->
+  <div class="note-proof">
+    <ol>
+      <li>Let $O$ be the centre. The central angles of arc $BCD$ and arc $BAD$ add up to $360°$.</li>
+      <li>By the inscribed angle theorem, $\angle A$ is half the central angle of arc $BCD$, and $\angle C$ is half the central angle of arc $BAD$.</li>
+      <li>So $\angle A + \angle C = \dfrac{1}{2} \times 360° = 180°$.</li>
+      <li>Exterior angle: $\angle DCE = 180° - \angle BCD = \angle A$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: drag the corners round the circle; code at the bottom -->
+  <div class="note-demo">
+    <h2>Drag the corners round the circle</h2>
+    <p>Keep them in the order $A, B, C, D$ round the circle.</p>
+    <canvas id="cqCanvas"></canvas>
+    <div class="output table-text" id="cqOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">$ABCD$ is cyclic with $\angle A = 65°$ and $\angle B = 75°$. Find $\angle C$ and $\angle D$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\angle C = 180° - 65°$, $\;\angle D = 180° - 75°$</li>
+      </ol>
+      <p class="answer">$\angle C = 115°$, $\angle D = 105°$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">$ABCD$ is cyclic and $BC$ is extended past $C$ to $E$. $\angle BAD = 80°$. Find $\angle DCE$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The exterior angle at $C$ equals the opposite interior angle $\angle A$.</li>
+      </ol>
+      <p class="answer">$\angle DCE = 80°$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">$ABCD$ is cyclic with $\angle ABC = 100°$ and $\angle ACD = 30°$. Find $\angle CAD$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\angle ADC = 180° - 100° = 80°$ (opposite angles)</li>
+        <li>In $\triangle ACD$: $\angle CAD = 180° - 80° - 30°$</li>
+      </ol>
+      <p class="answer">$\angle CAD = 70°$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: opposite, not neighbouring -->
+  <div class="note-warning">
+    Only <strong>opposite</strong> angles ($A$ and $C$, or $B$ and $D$) add to $180°$. Neighbouring angles like $A$ and $B$ don't.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Cyclic quadrilateral: opposite angles add to $180°$.</li>
+      <li>Exterior angle = opposite interior angle.</li>
+      <li>Proof: the two opposite angles look at arcs that make the whole circle.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Drag the corners round the circle" demo (the TRY IT block above).
+  // The corners are kept on the circle; the four angles and the two
+  // opposite-angle sums are shown.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const G = window.NoteGeom;
+    const output = document.getElementById('cqOutput');
+    const O = [260, 170], R = 140;
+    const keep = (p) => G.onCircle(p, O, R);
+    const at = (deg) => [O[0] + R * Math.cos(deg * Math.PI / 180), O[1] - R * Math.sin(deg * Math.PI / 180)];
+
+    G.board(document.getElementById('cqCanvas'), {
+      points: { A: at(130), B: at(215), C: at(300), D: at(20) },
+      constrain: { A: keep, B: keep, C: keep, D: keep },
+      draw(g, P) {
+        const { A, B, C, D } = P;
+        g.circle(O, R, '#94a3b8');
+        g.poly([A, B, C, D]);
+        g.seg(A, B); g.seg(B, C); g.seg(C, D); g.seg(D, A);
+        g.arc(A, D, B, '#2563eb'); g.arc(C, B, D, '#2563eb');
+        g.arc(B, A, C, '#ea580c'); g.arc(D, C, A, '#ea580c');
+
+        const a = G.angle(A, D, B), b = G.angle(B, A, C), c = G.angle(C, B, D), d = G.angle(D, C, A);
+        output.textContent =
+          `∠A = ${a.toFixed(1)}°, ∠C = ${c.toFixed(1)}°   ∠A + ∠C = ${(a + c).toFixed(1)}°\n` +
+          `∠B = ${b.toFixed(1)}°, ∠D = ${d.toFixed(1)}°   ∠B + ∠D = ${(b + d).toFixed(1)}°`;
+      },
+    });
+  })();
+</script>

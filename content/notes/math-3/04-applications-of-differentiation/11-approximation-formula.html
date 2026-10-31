@@ -1,0 +1,165 @@
+<!-- tags: Differentiation -->
+<!-- =====================================================================
+     NOTE: Approximation Formula (近似式)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Differentiation">Approximation Formula</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Near the touching point, the tangent is almost the curve</h2>
+    <p>Close to $x = a$, the curve and its tangent line are hard to tell apart. So for a small step $h$, use the tangent's height instead of the true value: $f(a + h) \approx f(a) + f'(a)h$.</p>
+    <p>The error is roughly proportional to $h^2$. Halve the step and the error drops to about a quarter.</p>
+  </section>
+
+  <!-- FORMULA: the approximations -->
+  <div class="note-formula">
+    <h3>When $|h|$ (or $|x|$) is small</h3>
+    <div class="formula-main">$$f(a + h) \approx f(a) + f'(a)h, \qquad f(x) \approx f(0) + f'(0)x, \qquad \Delta y \approx y'\,\Delta x$$</div>
+    <p class="symbols">Near $x = 0$: $(1 + x)^p \approx 1 + px$, $\;\sin x \approx x$, $\;\tan x \approx x$, $\;e^x \approx 1 + x$, $\;\log(1 + x) \approx x$ ($x$ in radians).</p>
+  </div>
+
+  <!-- PROOF: from the definition of the derivative -->
+  <div class="note-proof">
+    <ol>
+      <li>$f'(a) = \displaystyle\lim_{h \to 0} \frac{f(a + h) - f(a)}{h}$, so for small $h$: $\dfrac{f(a + h) - f(a)}{h} \approx f'(a)$.</li>
+      <li>Multiply by $h$: $f(a + h) - f(a) \approx f'(a)h$.</li>
+      <li>With $a = 0$, $h = x$: e.g. $f(x) = (1 + x)^p$ gives $f(0) = 1$, $f'(0) = p$, so $(1 + x)^p \approx 1 + px$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: curve vs tangent near 0; code at the bottom -->
+  <div class="note-demo">
+    <h2>Curve (blue) vs tangent at $0$ (orange): the gap is the error</h2>
+    <div class="controls">
+      <label>$f(x)$ = <select id="apF">
+        <option value="0">√(1 + x)</option>
+        <option value="1">eˣ</option>
+        <option value="2">sin x</option>
+        <option value="3">log(1 + x)</option>
+      </select></label>
+      <label>$x$ = <input type="range" id="apX" min="-0.8" max="1.5" step="0.01" value="0.6"></label>
+    </div>
+    <canvas id="apCanvas"></canvas>
+    <div class="output table-text" id="apOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Estimate $\sqrt{9.1}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$f(x) = \sqrt{x}$, $a = 9$, $h = 0.1$: $f(9) = 3$, $f'(9) = \dfrac{1}{2\sqrt{9}} = \dfrac{1}{6}$.</li>
+        <li>$\sqrt{9.1} \approx 3 + \dfrac{0.1}{6}$</li>
+      </ol>
+      <p class="answer">$\approx 3.017$ (true value $3.0166\ldots$)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Estimate $\sin 31°$ (use $\sqrt{3} \approx 1.732$, $\pi \approx 3.14$).</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Work in radians: $31° = \dfrac{\pi}{6} + \dfrac{\pi}{180}$, with $h = \dfrac{\pi}{180}$.</li>
+        <li>$\sin 31° \approx \sin\dfrac{\pi}{6} + \cos\dfrac{\pi}{6} \cdot \dfrac{\pi}{180} = 0.5 + 0.866 \times 0.01744$.</li>
+      </ol>
+      <p class="answer">$\approx 0.515$ (true value $0.5150\ldots$)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A sphere's radius grows from $10$ cm to $10.2$ cm. Estimate the increase in volume.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$V = \dfrac{4}{3}\pi r^3$, $V' = 4\pi r^2$.</li>
+        <li>$\Delta V \approx V'(10)\,\Delta r = 400\pi \times 0.2$</li>
+      </ol>
+      <p class="answer">$\approx 80\pi \approx 251$ cm³</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">A cube's side is measured with a relative error of $1\%$. About what relative error does that give in its volume?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$V = x^3$, $\Delta V \approx 3x^2\,\Delta x$, so $\dfrac{\Delta V}{V} \approx 3\dfrac{\Delta x}{x}$.</li>
+      </ol>
+      <p class="answer">About $3\%$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: small steps and radians -->
+  <div class="note-warning">
+    The approximation is only good for <strong>small</strong> $h$. Choose $a$ so that $f(a)$ and $f'(a)$ are known exactly and $a + h$ is close by. For trig functions, $h$ must be in radians: $1° = \dfrac{\pi}{180}$.
+  </div>
+
+  <!-- TIP: (1 + x)^p covers a lot -->
+  <div class="note-tip">
+    $(1 + x)^p \approx 1 + px$ covers roots and reciprocals: $\sqrt{1 + x} \approx 1 + \dfrac{x}{2}$, $\;\dfrac{1}{1 + x} \approx 1 - x$. Rewrite the number in the form $(1 + \text{small})^p$ first, e.g. $\sqrt{4.08} = 2\sqrt{1.02} \approx 2.02$.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$f(a + h) \approx f(a) + f'(a)h$: the tangent line used as an estimate.</li>
+      <li>Near $0$: $(1 + x)^p \approx 1 + px$, $\sin x \approx x$, $e^x \approx 1 + x$, $\log(1 + x) \approx x$.</li>
+      <li>Small changes: $\Delta y \approx y'\Delta x$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Tangent as an estimate" demo (the TRY IT block above).
+  // Orange: the tangent at 0, y = f(0) + f′(0)x. At the chosen x the teal segment
+  // is the error between the curve and the tangent. Error ÷ x² stays roughly
+  // constant for small x, so the error shrinks like x².
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const fBox = document.getElementById('apF'), xBox = document.getElementById('apX');
+    const output = document.getElementById('apOutput');
+    const f4 = (v) => +v.toFixed(4);
+
+    // each function with f(0), f′(0) and the formula text of its approximation
+    const FUNCS = [
+      { f: (x) => Math.sqrt(1 + x), f0: 1, d0: 0.5, name: '√(1 + x) ≈ 1 + x/2' },
+      { f: Math.exp, f0: 1, d0: 1, name: 'eˣ ≈ 1 + x' },
+      { f: Math.sin, f0: 0, d0: 1, name: 'sin x ≈ x' },
+      { f: (x) => Math.log(1 + x), f0: 0, d0: 1, name: 'log(1 + x) ≈ x' },
+    ];
+
+    const plot = NotePlot.graph(document.getElementById('apCanvas'), {
+      x: [-1, 1.8], y: [-1, 3],
+      draw(g) {
+        const F = FUNCS[+fBox.value], x0 = +xBox.value;
+        const L = (x) => F.f0 + F.d0 * x;
+        g.fn(F.f, '#2563eb', { from: -0.99 });
+        g.fn(L, '#ea580c', { width: 2 });
+        const tv = F.f(x0), av = L(x0);
+        g.seg([x0, tv], [x0, av], '#0d9488', { width: 3 });
+        g.dot([x0, tv], '#2563eb'); g.dot([x0, av], '#ea580c');
+        const err = Math.abs(tv - av);
+        output.textContent =
+          `${F.name}\n` +
+          `x = ${x0}:  true ${f4(tv)},  estimate ${f4(av)},  error ${f4(err)}` +
+          (Math.abs(x0) >= 0.05 ? `,  error ÷ x² = ${f4(err / (x0 * x0))}` : '');
+      },
+    });
+    fBox.addEventListener('change', plot.redraw);
+    xBox.addEventListener('input', plot.redraw);
+  })();
+</script>

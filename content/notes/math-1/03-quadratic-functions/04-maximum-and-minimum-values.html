@@ -1,0 +1,142 @@
+<!-- tags: Quadratic Functions -->
+<!-- =====================================================================
+     NOTE: Maximum and Minimum of a Quadratic Function (2次関数の最大・最小)
+     Uses the shared blocks from static/css/note-blocks.css and the
+     graph helper static/js/demos/plot.js (built on demos/geom.js).
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Quadratic Functions">Maximum and Minimum of y = a(x − p)² + q</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Look at the vertex, then at the ends</h2>
+    <p>On all real $x$, a parabola opening upward has a lowest point (the vertex) but no highest point; one opening downward is the other way round.</p>
+    <p>If $x$ is limited to an interval, the extreme values occur at the vertex (if it is inside the interval) or at the ends of the interval.</p>
+  </section>
+
+  <!-- FORMULA: extreme values -->
+  <div class="note-formula">
+    <h3>For $y = a(x - p)^2 + q$ (all real $x$)</h3>
+    <div class="formula-main">$$a &gt; 0: \text{ minimum } q \text{ at } x = p, \text{ no maximum} \qquad a &lt; 0: \text{ maximum } q \text{ at } x = p, \text{ no minimum}$$</div>
+    <p class="symbols">With a limited domain $\alpha \le x \le \beta$: compare the vertex (if $\alpha \le p \le \beta$) and the two ends $x = \alpha$, $x = \beta$.</p>
+  </div>
+
+  <!-- DEMO: drag the domain ends; code at the bottom -->
+  <div class="note-demo">
+    <h2>$y = x^2 - 4x + 1$: drag the ends $L$ and $R$ of the domain</h2>
+    <canvas id="mmCanvas"></canvas>
+    <div class="output table-text" id="mmOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find the maximum or minimum of $y = -2x^2 + 4x + 1$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$y = -2(x - 1)^2 + 3$; $a &lt; 0$ so the vertex is the highest point.</li>
+      </ol>
+      <p class="answer">Maximum $3$ at $x = 1$; no minimum</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find the maximum and minimum of $y = x^2 - 4x + 1$ for $0 \le x \le 3$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$y = (x - 2)^2 - 3$. The vertex $x = 2$ is inside the domain → minimum $-3$.</li>
+        <li>Ends: $y(0) = 1$, $y(3) = -2$. The end farther from the axis, $x = 0$, gives the maximum.</li>
+      </ol>
+      <p class="answer">Maximum $1$ ($x = 0$), minimum $-3$ ($x = 2$)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Find the maximum and minimum of $y = x^2 - 4x + 1$ for $3 \le x \le 5$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The vertex $x = 2$ is <strong>outside</strong> the domain; on $3 \le x \le 5$ the graph only rises.</li>
+        <li>$y(3) = -2$, $\;y(5) = 6$.</li>
+      </ol>
+      <p class="answer">Maximum $6$ ($x = 5$), minimum $-2$ ($x = 3$)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">A rectangle has perimeter 20 cm. What is its largest possible area?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Width $x$, height $10 - x$, with $0 &lt; x &lt; 10$. Area $S = x(10 - x) = -(x - 5)^2 + 25$.</li>
+        <li>The vertex $x = 5$ is in the domain.</li>
+      </ol>
+      <p class="answer">$25\ \text{cm}^2$ (a $5 \times 5$ square)</p>
+    </details>
+  </div>
+
+  <!-- WARNING: vertex outside -->
+  <div class="note-warning">
+    The vertex value is only an answer if the vertex is <strong>inside</strong> the domain. Always draw the graph with the domain marked.
+  </div>
+
+  <!-- TIP: distance from the axis -->
+  <div class="note-tip">
+    For $a &gt; 0$ the maximum on an interval is at the end <strong>farther</strong> from the axis $x = p$. For $a &lt; 0$ it's the minimum that's there.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Complete the square to find the vertex.</li>
+      <li>All real $x$: only one of max/min exists.</li>
+      <li>Limited domain: check the vertex (if inside) and both ends.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Drag the ends L and R" demo (the TRY IT block above).
+  // L and R stay on the x-axis (snapping to 0.5). The part of the parabola
+  // over L ≤ x ≤ R is drawn thick, with its highest and lowest points marked.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const output = document.getElementById('mmOutput');
+    const f = (x) => x * x - 4 * x + 1;
+    const onAxis = ([x]) => [Math.max(-1.5, Math.min(5.5, Math.round(x * 2) / 2)), 0];
+
+    NotePlot.graph(document.getElementById('mmCanvas'), {
+      x: [-2, 6], y: [-4, 8],
+      points: { L: [0, 0], R: [3, 0] },
+      constrain: { L: onAxis, R: onAxis },
+      draw(g, P) {
+        const lo = Math.min(P.L[0], P.R[0]), hi = Math.max(P.L[0], P.R[0]);
+        g.fn(f, '#cbd5e1', { width: 2 });
+        g.vline(2, '#94a3b8');
+        g.fn(f, '#2563eb', { from: lo, to: hi, width: 4 });
+        g.vline(lo, '#cbd5e1'); g.vline(hi, '#cbd5e1');
+
+        // Candidates: both ends, plus the vertex if it is inside
+        const cand = [lo, hi].concat(lo <= 2 && 2 <= hi ? [2] : []);
+        const xMax = cand.reduce((m, x) => (f(x) > f(m) ? x : m));
+        const xMin = cand.reduce((m, x) => (f(x) < f(m) ? x : m));
+        g.dot([xMax, f(xMax)], '#ea580c', 'max');
+        g.dot([xMin, f(xMin)], '#0d9488', 'min');
+        output.textContent =
+          `y = (x − 2)² − 3 on ${lo} ≤ x ≤ ${hi}\n` +
+          `vertex x = 2 is ${cand.length === 3 ? 'INSIDE' : 'outside'} the domain\n` +
+          `maximum ${f(xMax)} at x = ${xMax},  minimum ${f(xMin)} at x = ${xMin}`;
+      },
+    });
+  })();
+</script>
