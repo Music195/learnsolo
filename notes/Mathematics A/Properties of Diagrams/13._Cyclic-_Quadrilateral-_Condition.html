@@ -1,690 +1,133 @@
-<!DOCTYPE html>
 <!-- tags: Geometry -->
-<html lang="en">
- <head>
-  <meta charset="utf-8"/>
-  <title>
-   Condition for a Quadrilateral to be Cyclic
-  </title>
-  <script>
-   MathJax = {
-            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
-            svg: {fontCache: 'global'}
-        };
-  </script>
-  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
-  </script>
-  <link href="/static/notes_style.css" rel="stylesheet"/>
-  <style>
+<!-- =====================================================================
+     NOTE: Condition for a Quadrilateral to be Cyclic (四角形が円に内接する条件)
+     Uses the shared blocks from static/css/note_blocks.css and the
+     draggable-point helper static/js/note_geom.js.
+     Do not add a <style> block here; change note_blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
 
-    /* Gradient backgrounds for theorem statements */
-    .theorem-statement {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 20px;
-      border-radius: 10px;
-      margin: 20px 0;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      border-left: 5px solid #ff6b6b;
-    }
+  <h1 class="note-title" data-topic="Geometry">Condition for a Quadrilateral to be Cyclic</h1>
 
-    .theorem-statement h2 {
-      margin: 0 0 10px 0;
-      font-size: 1.5em;
-      color: #fff;
-    }
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Check the angles to know the circle exists</h2>
+    <p>Note 12 says: on a circle → opposite angles add to $180°$. The converse is also true. If a (convex) quadrilateral has one pair of
+      opposite angles adding to $180°$, a circle passes through all four corners.</p>
+  </section>
 
-    .interactive-demo::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="20" cy="20" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="80" r="1" fill="rgba(255,255,255,0.1)"/></svg>');
-      opacity: 0.1;
-    }
-
-    .demo-title {
-      color: white;
-      font-size: 1.3em;
-      font-weight: bold;
-      margin-bottom: 15px;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    }
-
-    /* Canvas styling */
-    #cyclicConditionCanvas {
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-      display: block;
-      margin: 0 auto;
-    }
-
-    /* Control panel */
-    .control-panel {
-      background: rgba(255,255,255,0.9);
-      border-radius: 10px;
-      padding: 15px;
-      margin-top: 15px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .control-group input[type="range"] {
-      width: 120px;
-      height: 6px;
-      border-radius: 3px;
-      background: #ddd;
-      outline: none;
-    }
-
-    .control-group input[type="range"]::-webkit-slider-thumb {
-      appearance: none;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: #f5576c;
-      cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    }
-
-    .angle-display {
-      font-size: 1.1em;
-      font-weight: bold;
-      color: #333;
-      background: rgba(255,255,255,0.8);
-      padding: 5px 10px;
-      border-radius: 5px;
-      margin-top: 5px;
-    }
-
-    /* Status indicator */
-    .status-indicator {
-      margin-top: 15px;
-      padding: 10px;
-      border-radius: 8px;
-      text-align: center;
-      font-weight: bold;
-      font-size: 1.1em;
-    }
-
-    .cyclic {
-      background: linear-gradient(135deg, #4CAF50, #45a049);
-      color: white;
-    }
-
-    .not-cyclic {
-      background: linear-gradient(135deg, #f44336, #d32f2f);
-      color: white;
-    }
-
-    /* Proof steps styling */
-    .proof-steps {
-      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-      border-radius: 10px;
-      padding: 20px;
-      margin: 20px 0;
-    }
-
-    .proof-step {
-      background: white;
-      border-radius: 8px;
-      padding: 15px;
-      margin: 10px 0;
-      border-left: 4px solid #74b9ff;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-
-    .proof-step h4 {
-      margin: 0 0 8px 0;
-      color: #2d3436;
-      font-size: 1.1em;
-    }
-
-    .proof-step .math {
-      color: #0984e3;
-      font-weight: bold;
-    }
-
-    /* Examples section */
-    .examples-section {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 25px;
-      border-radius: 15px;
-      margin: 20px 0;
-    }
-
-    .example .calculation {
-      background: rgba(255,255,255,0.2);
-      padding: 10px;
-      border-radius: 5px;
-      margin: 10px 0;
-      font-family: 'Courier New', monospace;
-    }
-
-    /* Applications section */
-    .applications {
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-      color: white;
-      padding: 25px;
-      border-radius: 15px;
-      margin: 20px 0;
-    }
-
-    .application {
-      background: rgba(255,255,255,0.1);
-      border-radius: 10px;
-      padding: 20px;
-      margin: 15px 0;
-      backdrop-filter: blur(10px);
-    }
-
-    /* Practice problems */
-    .practice-problems {
-      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-      color: white;
-      padding: 25px;
-      border-radius: 15px;
-      margin: 20px 0;
-    }
-
-    .problem {
-      background: rgba(255,255,255,0.1);
-      border-radius: 10px;
-      padding: 20px;
-      margin: 15px 0;
-      backdrop-filter: blur(10px);
-    }
-
-    .problem .solution {
-      background: rgba(255,255,255,0.2);
-      border-radius: 8px;
-      padding: 15px;
-      margin-top: 15px;
-      display: none;
-    }
-
-    .problem .solution.show {
-      display: block;
-    }
-
-    .solution-toggle {
-      background: #ff6b6b;
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-      margin-top: 10px;
-      transition: background 0.3s;
-    }
-
-    .solution-toggle:hover {
-      background: #ff5252;
-    }
-
-    .takeaway {
-      background: rgba(255,255,255,0.1);
-      border-radius: 10px;
-      padding: 15px;
-      margin: 10px 0;
-      backdrop-filter: blur(10px);
-      border-left: 4px solid #ffeaa7;
-    }
-  </style>
- </head>
- <body>
-  <div class="fancy-title" data-topic="Geometry">
-   Condition for a Quadrilateral to be Cyclic
+  <!-- FORMULA: three tests -->
+  <div class="note-formula">
+    <h3>$ABCD$ is cyclic if any one of these holds</h3>
+    <div class="formula-main">$$\angle A + \angle C = 180° \quad\text{or}\quad \angle DCE = \angle A \quad\text{or}\quad \angle ADB = \angle ACB$$</div>
+    <p class="symbols">2nd: exterior angle at $C$ ($BC$ extended to $E$) equals the opposite interior angle.
+      3rd: two corners on the same side of $AB$ see it at equal angles (note 11).</p>
   </div>
 
-  <div class="theorem-statement">
-   <h2>🔍 Converse Theorem: Cyclic Quadrilateral Condition</h2>
-   <p>A quadrilateral is cyclic if and only if:</p>
-   <ul>
-    <li><strong>Condition 1:</strong> The sum of one pair of opposite angles equals $180^\circ$</li>
-    <li><strong>Condition 2:</strong> An interior angle equals the exterior angle of its opposite angle</li>
-   </ul>
-   <p><em>These conditions provide the converse of the cyclic quadrilateral properties and allow us to determine if any quadrilateral can be inscribed in a circle.</em></p>
+  <!-- PROOF: reduce to the converse of the inscribed angle theorem -->
+  <div class="note-proof">
+    <ol>
+      <li>Suppose $\angle A + \angle C = 180°$. Draw the circle through $A$, $B$, $D$, and pick any point $C'$ on its arc on the other side of $BD$ from $A$.</li>
+      <li>$ABC'D$ is cyclic, so $\angle BC'D = 180° - \angle A = \angle BCD$.</li>
+      <li>$C$ and $C'$ are on the same side of $BD$ and see it at the same angle, so by the converse of the inscribed angle theorem, $C$ is on the circle too.</li>
+    </ol>
   </div>
 
-  <div class="interactive-demo">
-   <div class="demo-title">🎯 Interactive Cyclic Condition Tester</div>
-   <canvas id="cyclicConditionCanvas" width="600" height="400"></canvas>
-
-   <div class="control-panel">
-    <div class="control-group">
-     <label for="pointAX">Point A X:</label>
-     <input type="range" id="pointAX" min="50" max="150" value="80">
-     <span class="angle-display" id="pointAXValue">80</span>
-    </div>
-    <div class="control-group">
-     <label for="pointAY">Point A Y:</label>
-     <input type="range" id="pointAY" min="50" max="150" value="80">
-     <span class="angle-display" id="pointAYValue">80</span>
-    </div>
-    <div class="control-group">
-     <label for="pointBX">Point B X:</label>
-     <input type="range" id="pointBX" min="200" max="300" value="250">
-     <span class="angle-display" id="pointBXValue">250</span>
-    </div>
-    <div class="control-group">
-     <label for="pointBY">Point B Y:</label>
-     <input type="range" id="pointBY" min="200" max="300" value="250">
-     <span class="angle-display" id="pointBYValue">250</span>
-    </div>
-    <div class="control-group">
-     <label for="pointCX">Point C X:</label>
-     <input type="range" id="pointCX" min="400" max="500" value="450">
-     <span class="angle-display" id="pointCXValue">450</span>
-    </div>
-    <div class="control-group">
-     <label for="pointCY">Point C Y:</label>
-     <input type="range" id="pointCY" min="50" max="150" value="120">
-     <span class="angle-display" id="pointCYValue">120</span>
-    </div>
-    <div class="control-group">
-     <label for="pointDX">Point D X:</label>
-     <input type="range" id="pointDX" min="50" max="150" value="120">
-     <span class="angle-display" id="pointDXValue">120</span>
-    </div>
-    <div class="control-group">
-     <label for="pointDY">Point D Y:</label>
-     <input type="range" id="pointDY" min="250" max="350" value="300">
-     <span class="angle-display" id="pointDYValue">300</span>
-    </div>
-   </div>
-
-   <div style="margin-top: 15px; color: white; font-weight: bold;">
-    <div>∠A + ∠C = <span id="angleASum" style="color: #ffeaa7;">180°</span></div>
-    <div>∠B + ∠D = <span id="angleBSum" style="color: #ffeaa7;">180°</span></div>
-    <div style="margin-top: 10px; font-size: 0.9em;">
-     Ext∠A = ∠C: <span id="extAngleA" style="color: #a8edea;">--°</span> |
-     Ext∠C = ∠A: <span id="extAngleC" style="color: #a8edea;">--°</span> |
-     Ext∠B = ∠D: <span id="extAngleB" style="color: #a8edea;">--°</span> |
-     Ext∠D = ∠B: <span id="extAngleD" style="color: #a8edea;">--°</span>
-    </div>
-   </div>
-
-   <div id="cyclicStatus" class="status-indicator cyclic">
-    ✅ This quadrilateral is cyclic!
-   </div>
+  <!-- DEMO: drag any corner; code at the bottom -->
+  <div class="note-demo">
+    <h2>Drag any corner</h2>
+    <p>The circle goes through $A$, $B$, $D$. When $\angle A + \angle C = 180°$, $C$ lands on it.</p>
+    <canvas id="ccqCanvas"></canvas>
+    <div class="output table-text" id="ccqOutput"></div>
   </div>
 
-  <div class="proof-steps">
-   <h3>🔍 Proof of Cyclic Condition</h3>
-
-   <div class="proof-step">
-    <h4>Converse of Opposite Angles Property</h4>
-    <p>If ∠A + ∠C = 180° in quadrilateral ABCD, then ABCD is cyclic.</p>
-    <p>Construct circle through points A, B, C. Since ∠ABC + ∠ADC = 180°,</p>
-    <p>∠ABC = ∠ADC, so point D must lie on the circle (inscribed angle theorem).</p>
-    <div class="math">
-     ∠ABC + ∠ADC = 180°<br>
-     ∠ABC = ∠ADC<br>
-     ∴ Point D lies on the circumcircle of ABC
-    </div>
-   </div>
-
-   <div class="proof-step">
-    <h4>Converse of Interior-Exterior Angle Property</h4>
-    <p>If an interior angle equals the exterior angle of its opposite angle,</p>
-    <p>then the quadrilateral is cyclic.</p>
-    <p>This follows from the relationship between inscribed and exterior angles.</p>
-    <div class="math">
-     ∠ABC = Ext∠ADC<br>
-     ∴ ABCD is cyclic
-    </div>
-   </div>
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Quadrilateral $ABCD$ has $\angle A = 70°$, $\angle B = 80°$, $\angle C = 110°$, $\angle D = 100°$. Is it cyclic? What about $70°, 80°, 90°, 120°$?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>First: $\angle A + \angle C = 70° + 110° = 180°$ → cyclic.</li>
+        <li>Second: $70° + 90° = 160° \neq 180°$ → not cyclic.</li>
+      </ol>
+      <p class="answer">The first is cyclic; the second is not.</p>
+    </details>
   </div>
 
-  <div class="examples-section">
-   <h3>📚 Detailed Examples</h3>
-
-   <div class="example">
-    <h4>Example 1: Using Opposite Angles</h4>
-    <p>In quadrilateral ABCD, ∠A = 70° and ∠C = 110°. Is ABCD cyclic?</p>
-    <div class="calculation">
-     ∠A + ∠C = 70° + 110° = 180°<br>
-     Since opposite angles sum to 180°, ABCD is cyclic ✓
-    </div>
-    <p><strong>Conclusion:</strong> Yes, the quadrilateral is cyclic.</p>
-   </div>
-
-   <div class="example">
-    <h4>Example 2: Using Exterior Angles</h4>
-    <p>In quadrilateral PQRS, ∠P = 45° and the exterior angle at R is 45°. Is PQRS cyclic?</p>
-    <div class="calculation">
-     Interior ∠P = 45°<br>
-     Exterior ∠R = 45°<br>
-     Since ∠P equals Ext∠R, PQRS is cyclic ✓
-    </div>
-    <p><strong>Conclusion:</strong> Yes, the quadrilateral is cyclic.</p>
-   </div>
-
-   <div class="example">
-    <h4>Example 3: Non-Cyclic Quadrilateral</h4>
-    <p>In quadrilateral WXYZ, ∠W = 60°, ∠Y = 80°. Is WXYZ cyclic?</p>
-    <div class="calculation">
-     ∠W + ∠Y = 60° + 80° = 140° ≠ 180°<br>
-     Since opposite angles don't sum to 180°, WXYZ is not cyclic ✗
-    </div>
-    <p><strong>Conclusion:</strong> No, the quadrilateral is not cyclic.</p>
-   </div>
-
-   <div class="example">
-    <h4>Example 4: Coordinate Verification</h4>
-    <p>Points A(0,0), B(4,0), C(4,3), D(0,3). Is ABCD cyclic?</p>
-    <div class="calculation">
-     ∠A = ∠D = 90° (right angles)<br>
-     ∠A + ∠C = 90° + 90° = 180° ✓<br>
-     Circumcircle center: (2, 1.5), radius: √(2² + 1.5²) = √6.25 ≈ 2.5
-    </div>
-    <p><strong>Verification:</strong> Rectangle is cyclic with circumcircle center at centroid.</p>
-   </div>
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Show that an isosceles trapezoid ($AD \parallel BC$, $AB = DC$) is always cyclic.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>An isosceles trapezoid has equal base angles: $\angle B = \angle C$.</li>
+        <li>$AD \parallel BC$, so $\angle A + \angle B = 180°$ (co-interior angles).</li>
+        <li>Replace $\angle B$ with $\angle C$: $\angle A + \angle C = 180°$.</li>
+      </ol>
+      <p class="answer">Opposite angles add to $180°$, so it is cyclic.</p>
+    </details>
   </div>
 
-  <div class="applications">
-   <h3>🚀 Real-World Applications</h3>
-
-   <div class="application">
-    <h4>Geometric Construction</h4>
-    <p>Using cyclic conditions to construct quadrilaterals with specific angle properties for architectural and engineering designs.</p>
-   </div>
-
-   <div class="application">
-    <h4>Surveying and Mapping</h4>
-    <p>Determining if measured quadrilateral plots can be inscribed in circles for accurate land surveying calculations.</p>
-   </div>
-
-   <div class="application">
-    <h4>Computer Graphics</h4>
-    <p>Testing cyclic conditions in polygon rendering algorithms to ensure geometric accuracy in 3D modeling and animation.</p>
-   </div>
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">In $\triangle ABC$, the altitudes $AD$ and $BE$ meet at $H$. Show that $C$, $D$, $H$, $E$ are on one circle.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>In quadrilateral $CDHE$: $\angle HDC = 90°$ and $\angle HEC = 90°$.</li>
+        <li>These are opposite angles and add to $180°$.</li>
+      </ol>
+      <p class="answer">$CDHE$ is cyclic (the circle has diameter $CH$).</p>
+    </details>
   </div>
 
-  <div class="practice-problems">
-   <h3>✏️ Practice Problems</h3>
-
-   <div class="problem">
-    <h4>Problem 1</h4>
-    <p>In quadrilateral ABCD, ∠A = 65° and ∠C = 115°. Is ABCD cyclic?</p>
-    <button class="solution-toggle" onclick="toggleSolution(1)">Show Solution</button>
-    <div class="solution" id="solution1">
-     <p>∠A + ∠C = 65° + 115° = 180°</p>
-     <p>Since opposite angles sum to 180°, ABCD is cyclic.</p>
-    </div>
-   </div>
-
-   <div class="problem">
-    <h4>Problem 2</h4>
-    <p>In quadrilateral PQRS, ∠P = 40° and ∠R = 50°. Is PQRS cyclic?</p>
-    <button class="solution-toggle" onclick="toggleSolution(2)">Show Solution</button>
-    <div class="solution" id="solution2">
-     <p>∠P + ∠R = 40° + 50° = 90° ≠ 180°</p>
-     <p>Since opposite angles don't sum to 180°, PQRS is not cyclic.</p>
-    </div>
-   </div>
-
-   <div class="problem">
-    <h4>Problem 3</h4>
-    <p>In quadrilateral WXYZ, ∠W = 55° and the exterior angle at Y is 55°. Is WXYZ cyclic?</p>
-    <button class="solution-toggle" onclick="toggleSolution(3)">Show Solution</button>
-    <div class="solution" id="solution3">
-     <p>Interior ∠W = 55° equals exterior ∠Y = 55°</p>
-     <p>Since an interior angle equals the exterior angle of its opposite angle, WXYZ is cyclic.</p>
-    </div>
-   </div>
-
-   <div class="problem">
-    <h4>Problem 4</h4>
-    <p>Points A(1,1), B(5,1), C(5,4), D(1,4) form a rectangle. Is ABCD cyclic?</p>
-    <button class="solution-toggle" onclick="toggleSolution(4)">Show Solution</button>
-    <div class="solution" id="solution4">
-     <p>All angles are 90°</p>
-     <p>∠A + ∠C = 90° + 90° = 180°</p>
-     <p>Since opposite angles sum to 180°, ABCD is cyclic.</p>
-    </div>
-   </div>
-
-   <div class="problem">
-    <h4>Problem 5</h4>
-    <p>In quadrilateral ABCD, ∠A = 70°, ∠B = 80°, ∠C = 90°, ∠D = 120°. Is ABCD cyclic?</p>
-    <button class="solution-toggle" onclick="toggleSolution(5)">Show Solution</button>
-    <div class="solution" id="solution5">
-     <p>Check opposite angles: ∠A + ∠C = 70° + 90° = 160° ≠ 180°</p>
-     <p>∠B + ∠D = 80° + 120° = 200° ≠ 180°</p>
-     <p>Since neither pair of opposite angles sums to 180°, ABCD is not cyclic.</p>
-    </div>
-   </div>
+  <!-- TIP: right angles -->
+  <div class="note-tip">
+    Two right angles at opposite corners are the most common way this appears in problems (altitudes, perpendiculars).
   </div>
 
-  <div class="key-takeaways">
-   <h3>🎯 Key Takeaways</h3>
-
-   <div class="takeaway">
-    <strong>Opposite Angles Test:</strong> If the sum of one pair of opposite angles equals 180°, the quadrilateral is cyclic.
-   </div>
-
-   <div class="takeaway">
-    <strong>Interior-Exterior Angle Test:</strong> If an interior angle equals the exterior angle of its opposite angle, the quadrilateral is cyclic.
-   </div>
-
-   <div class="takeaway">
-    <strong>Converse Relationship:</strong> These conditions are both necessary and sufficient for a quadrilateral to be cyclic.
-   </div>
-
-   <div class="takeaway">
-    <strong>Verification Method:</strong> Always check if opposite angles sum to 180° first, as this is often the easiest condition to verify.
-   </div>
-
-   <div class="takeaway">
-    <strong>Practical Application:</strong> Use these conditions to determine if measured quadrilaterals in surveying or construction can be inscribed in circles.
-   </div>
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>One pair of opposite angles adding to $180°$ → cyclic.</li>
+      <li>Exterior angle = opposite interior angle → cyclic.</li>
+      <li>Equal angles on the same side of a side → cyclic (note 11).</li>
+    </ul>
   </div>
 
-  <script>
-   // Interactive Canvas Demonstration
-   const canvas = document.getElementById('cyclicConditionCanvas');
-   const ctx = canvas.getContext('2d');
+</article>
 
-   // Control elements
-   const controls = {
-    ax: document.getElementById('pointAX'),
-    ay: document.getElementById('pointAY'),
-    bx: document.getElementById('pointBX'),
-    by: document.getElementById('pointBY'),
-    cx: document.getElementById('pointCX'),
-    cy: document.getElementById('pointCY'),
-    dx: document.getElementById('pointDX'),
-    dy: document.getElementById('pointDY')
-   };
+<script src="/static/js/note_geom.js"></script>
+<script>
+  // "Drag any corner" demo (the TRY IT block above).
+  // Draws the circle through A, B, D and shows the opposite-angle sums,
+  // and whether C is inside, on or outside that circle.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const G = window.NoteGeom;
+    const output = document.getElementById('ccqOutput');
 
-   // Display elements
-   const displays = {
-    ax: document.getElementById('pointAXValue'),
-    ay: document.getElementById('pointAYValue'),
-    bx: document.getElementById('pointBXValue'),
-    by: document.getElementById('pointBYValue'),
-    cx: document.getElementById('pointCXValue'),
-    cy: document.getElementById('pointCYValue'),
-    dx: document.getElementById('pointDXValue'),
-    dy: document.getElementById('pointDYValue'),
-    angleASum: document.getElementById('angleASum'),
-    angleBSum: document.getElementById('angleBSum'),
-    extAngleA: document.getElementById('extAngleA'),
-    extAngleC: document.getElementById('extAngleC'),
-    extAngleB: document.getElementById('extAngleB'),
-    extAngleD: document.getElementById('extAngleD')
-   };
+    G.board(document.getElementById('ccqCanvas'), {
+      points: { A: [150, 70], B: [110, 250], C: [350, 290], D: [400, 110] },
+      draw(g, P) {
+        const { A, B, C, D } = P;
+        const O = G.circumcenter(A, B, D);
+        if (O) g.circle(O, G.dist(O, A), '#94a3b8', { dash: true });
+        g.poly([A, B, C, D]);
+        g.seg(A, B); g.seg(B, C); g.seg(C, D); g.seg(D, A);
+        g.arc(A, D, B, '#2563eb'); g.arc(C, B, D, '#2563eb');
 
-   const statusIndicator = document.getElementById('cyclicStatus');
-
-   // Update display values
-   Object.keys(controls).forEach(key => {
-    controls[key].addEventListener('input', () => {
-     displays[key].textContent = controls[key].value;
-     drawQuadrilateral();
+        const a = G.angle(A, D, B), b = G.angle(B, A, C), c = G.angle(C, B, D), d = G.angle(D, C, A);
+        let where = '';
+        if (O) {
+          const gap = G.dist(O, C) - G.dist(O, A);
+          where = Math.abs(gap) < 3 ? 'C is on the circle: cyclic ✓' : gap < 0 ? 'C is inside the circle' : 'C is outside the circle';
+        }
+        output.textContent =
+          `∠A + ∠C = ${a.toFixed(1)}° + ${c.toFixed(1)}° = ${(a + c).toFixed(1)}°\n` +
+          `∠B + ∠D = ${b.toFixed(1)}° + ${d.toFixed(1)}° = ${(b + d).toFixed(1)}°\n` + where;
+      },
     });
-   });
-
-   function calculateAngle(p1, p2, p3) {
-    const v1 = { x: p1.x - p2.x, y: p1.y - p2.y };
-    const v2 = { x: p3.x - p2.x, y: p3.y - p2.y };
-
-    const dot = v1.x * v2.x + v1.y * v2.y;
-    const mag1 = Math.sqrt(v1.x * v1.x + v1.y * v1.y);
-    const mag2 = Math.sqrt(v2.x * v2.x + v2.y * v2.y);
-
-    const cosAngle = dot / (mag1 * mag2);
-    const angle = Math.acos(Math.max(-1, Math.min(1, cosAngle)));
-    return (angle * 180) / Math.PI;
-   }
-
-   function isCyclic(points) {
-    const angleA = calculateAngle(points.D, points.A, points.B);
-    const angleB = calculateAngle(points.A, points.B, points.C);
-    const angleC = calculateAngle(points.B, points.C, points.D);
-    const angleD = calculateAngle(points.C, points.D, points.A);
-
-    const sum1 = Math.round(angleA + angleC);
-    const sum2 = Math.round(angleB + angleD);
-
-    // Check if either pair sums to approximately 180°
-    return Math.abs(sum1 - 180) < 5 || Math.abs(sum2 - 180) < 5;
-   }
-
-   function drawQuadrilateral() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    const points = {
-     A: { x: parseInt(controls.ax.value), y: parseInt(controls.ay.value) },
-     B: { x: parseInt(controls.bx.value), y: parseInt(controls.by.value) },
-     C: { x: parseInt(controls.cx.value), y: parseInt(controls.cy.value) },
-     D: { x: parseInt(controls.dx.value), y: parseInt(controls.dy.value) }
-    };
-
-    // Calculate angles
-    const angleA = calculateAngle(points.D, points.A, points.B);
-    const angleB = calculateAngle(points.A, points.B, points.C);
-    const angleC = calculateAngle(points.B, points.C, points.D);
-    const angleD = calculateAngle(points.C, points.D, points.A);
-
-    // Check if cyclic
-    const cyclic = isCyclic(points);
-
-    // Draw circumcircle if cyclic
-    if (cyclic) {
-     const circumcircle = calculateCircumcircle(points.A, points.B, points.C, points.D);
-     if (circumcircle) {
-      ctx.beginPath();
-      ctx.arc(circumcircle.x, circumcircle.y, circumcircle.r, 0, 2 * Math.PI);
-      ctx.strokeStyle = '#4CAF50';
-      ctx.lineWidth = 3;
-      ctx.stroke();
-     }
-    }
-
-    // Draw quadrilateral
-    ctx.beginPath();
-    ctx.moveTo(points.A.x, points.A.y);
-    ctx.lineTo(points.B.x, points.B.y);
-    ctx.lineTo(points.C.x, points.C.y);
-    ctx.lineTo(points.D.x, points.D.y);
-    ctx.closePath();
-    ctx.strokeStyle = cyclic ? '#4CAF50' : '#f44336';
-    ctx.lineWidth = 3;
-    ctx.stroke();
-
-    // Draw points
-    Object.keys(points).forEach(label => {
-     const point = points[label];
-     ctx.beginPath();
-     ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI);
-     ctx.fillStyle = cyclic ? '#4CAF50' : '#f44336';
-     ctx.fill();
-     ctx.fillStyle = '#fff';
-     ctx.font = 'bold 14px Arial';
-     ctx.textAlign = 'center';
-     ctx.fillText(label, point.x, point.y - 10);
-    });
-
-    // Draw angle arcs
-    drawAngleArc(points.D, points.A, points.B, angleA, '#ff6b6b');
-    drawAngleArc(points.A, points.B, points.C, angleB, '#4facfe');
-    drawAngleArc(points.B, points.C, points.D, angleC, '#ff6b6b');
-    drawAngleArc(points.C, points.D, points.A, angleD, '#4facfe');
-
-    // Update angle displays
-    displays.angleASum.textContent = Math.round(angleA + angleC) + '°';
-    displays.angleBSum.textContent = Math.round(angleB + angleD) + '°';
-
-    // Calculate and display exterior angles
-    displays.extAngleA.textContent = Math.round(angleC) + '°';
-    displays.extAngleC.textContent = Math.round(angleA) + '°';
-    displays.extAngleB.textContent = Math.round(angleD) + '°';
-    displays.extAngleD.textContent = Math.round(angleB) + '°';
-
-    // Update status indicator
-    if (cyclic) {
-     statusIndicator.textContent = '✅ This quadrilateral is cyclic!';
-     statusIndicator.className = 'status-indicator cyclic';
-    } else {
-     statusIndicator.textContent = '❌ This quadrilateral is not cyclic!';
-     statusIndicator.className = 'status-indicator not-cyclic';
-    }
-   }
-
-   function drawAngleArc(p1, vertex, p2, angle, color) {
-    const radius = 25;
-    const startAngle = Math.atan2(p1.y - vertex.y, p1.x - vertex.x);
-    const endAngle = Math.atan2(p2.y - vertex.y, p2.x - vertex.x);
-
-    ctx.beginPath();
-    ctx.arc(vertex.x, vertex.y, radius, startAngle, endAngle);
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 2;
-    ctx.stroke();
-
-    // Angle label
-    const midAngle = (startAngle + endAngle) / 2;
-    const labelRadius = radius + 15;
-    const labelX = vertex.x + labelRadius * Math.cos(midAngle);
-    const labelY = vertex.y + labelRadius * Math.sin(midAngle);
-
-    ctx.fillStyle = color;
-    ctx.font = 'bold 12px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText(Math.round(angle) + '°', labelX, labelY);
-   }
-
-   function calculateCircumcircle(A, B, C, D) {
-    // Calculate circumcircle using intersection of perpendicular bisectors
-    const midAB = { x: (A.x + B.x) / 2, y: (A.y + B.y) / 2 };
-    const midCD = { x: (C.x + D.x) / 2, y: (C.y + D.y) / 2 };
-
-    // Simplified calculation - in practice, would use proper geometric methods
-    const centerX = (A.x + B.x + C.x + D.x) / 4;
-    const centerY = (A.y + B.y + C.y + D.y) / 4;
-    const radius = Math.sqrt((A.x - centerX) ** 2 + (A.y - centerY) ** 2);
-
-    return { x: centerX, y: centerY, r: radius };
-   }
-
-   function toggleSolution(problemNumber) {
-    const solution = document.getElementById('solution' + problemNumber);
-    solution.classList.toggle('show');
-   }
-
-   // Initial draw
-   drawQuadrilateral();
-  </script>
- </body>
-</html>
+  })();
+</script>

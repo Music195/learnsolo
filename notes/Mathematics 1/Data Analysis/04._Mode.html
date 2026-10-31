@@ -1,371 +1,131 @@
-<div class="fancy-title" data-topic="Data Analysis">
-    Mode
-</div>
+<!-- tags: Data Analysis -->
+<!-- =====================================================================
+     NOTE: Mode (最頻値)
+     Uses the shared blocks from static/css/note_blocks.css.
+     Do not add a <style> block here; change note_blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
 
-<div class="math-foundation">
-    <h3>Mathematical Foundation</h3>
-    <p>The mode is the value that appears most frequently in a dataset. It represents the most common or typical
-        value in the data distribution. Unlike mean and median, the mode can be used with both numerical and
-        categorical data. A dataset may have no mode, one mode (unimodal), two modes (bimodal), or multiple
-        modes (multimodal).</p>
+  <h1 class="note-title" data-topic="Data Analysis">Mode</h1>
 
-    <div class="formula-block">
-        <strong>Mode Definition:</strong>
-        <ul>
-            <li>The value(s) with the highest frequency in a dataset</li>
-            <li>For grouped data: The class interval with the highest frequency</li>
-            <li>Can be calculated for any data type (nominal, ordinal, interval, ratio)</li>
-        </ul>
-        <strong>Types of Mode:</strong>
-        <ul>
-            <li><strong>Unimodal:</strong> One value appears most frequently</li>
-            <li><strong>Bimodal:</strong> Two values appear most frequently (with same highest frequency)</li>
-            <li><strong>Multimodal:</strong> Three or more values appear most frequently</li>
-            <li><strong>No mode:</strong> All values appear with equal frequency</li>
-        </ul>
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>The most common value</h2>
+    <p>The <strong>mode</strong> is the value that appears <strong>most often</strong>. Count how many times each value appears and pick the biggest count.</p>
+    <p>There can be more than one mode if two values tie. The mode also works for non-numbers, like the most popular shoe size or colour.</p>
+  </section>
+
+  <!-- FORMULA: grouped data -->
+  <div class="note-formula">
+    <h3>Mode of grouped data</h3>
+    <div class="formula-main">$$\text{mode} = \text{class value of the class with the highest frequency}$$</div>
+    <p class="symbols">The <strong>class value</strong> (階級値) is the middle of the class: for 20–30 it is 25.</p>
+  </div>
+
+  <!-- DEMO: type data; code at the bottom -->
+  <div class="note-demo">
+    <h2>Frequency chart</h2>
+    <div class="controls">
+      <label>Data <input type="text" id="moData" class="wide" value="5, 7, 5, 8, 7, 9, 5, 7"></label>
     </div>
-</div>
+    <canvas id="moCanvas" width="520" height="200"></canvas>
+    <div class="output table-text" id="moOutput"></div>
+  </div>
 
-<div class="interactive-demo">
-    <h3>Interactive Mode Calculator</h3>
-    <div class="demo-controls">
-        <div class="control-group">
-            <label for="mode-data-input">Data Values (comma-separated):</label>
-            <textarea id="mode-data-input" placeholder="e.g., 2, 3, 3, 4, 5, 3, 6">2, 3, 3, 4, 5, 3, 6</textarea>
-        </div>
-        <button id="btn-mode" class="btn-style">
-            Calculate
-        </button>
-    </div>
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find the mode of 12, 15, 18, 15, 20, 15, 22.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>15 appears 3 times; every other value once.</li>
+      </ol>
+      <p class="answer">Mode $= 15$</p>
+    </details>
+  </div>
 
-    <div class="data-visualization" id="data-viz">
-        <h4>Data Frequency Visualization</h4>
-        <div id="sorted-mode-data" class="data-points"></div>
-    </div>
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find the mode of 5, 7, 5, 8, 7, 9, 5, 7.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>5 and 7 both appear 3 times; 8 and 9 once.</li>
+      </ol>
+      <p class="answer">Two modes: 5 and 7</p>
+    </details>
+  </div>
 
-    <div class="demo-output" id="mode-demo-output">
-        <div class="summary">
-            <div class="item highlight">
-                <div class="value">3</div>
-                <div class="label">Mode</div>
-            </div>
-            <div class="item">
-                <div class="value">Uinmodal</div>
-                <div class="label">Mode Type</div>
-            </div>
-        </div>
-    </div>
-</div>
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Scores: 10–20 (5 students), 20–30 (12), 30–40 (8), 40–50 (6). Find the mode.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The class 20–30 has the highest frequency, 12.</li>
+        <li>Its class value is $\dfrac{20 + 30}{2}$.</li>
+      </ol>
+      <p class="answer">Mode $= 25$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: frequency vs value -->
+  <div class="note-warning">
+    The mode is the <strong>value</strong>, not its count. In Example 1 the mode is 15, not 3.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Mode = most frequent value (there may be several).</li>
+      <li>Grouped data: the class value of the most frequent class.</li>
+      <li>Mean, median and mode are the three "typical values" (代表値).</li>
+    </ul>
+  </div>
+
+</article>
 
 <script>
-    (() => {
+  // "Frequency chart" demo (the TRY IT block above).
+  // Counts each value, draws a bar per value, and highlights the mode(s).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const input = document.getElementById('moData');
+    const canvas = document.getElementById('moCanvas');
+    const ctx = canvas.getContext('2d');
+    const output = document.getElementById('moOutput');
 
-        // Checking numeric array 
-        function readNumericArray(id) {
-            const el = document.getElementById(id);
-            if (!el) throw new Error(`${id} not found`);
-            if (!el.value.trim()) throw new Error(`${id} is empty`);
+    function update() {
+      const data = input.value.split(/[\s,、]+/).filter((s) => s !== '');
+      if (data.length === 0) { output.textContent = 'Type values separated by commas.'; return; }
 
-            const arr = el.value
-                .split(",")
-                .map(v => Number(v.trim()))
-                .filter(v => !Number.isNaN(v));
+      // Count each value; numbers are listed in numeric order, words alphabetically
+      const counts = {};
+      data.forEach((v) => (counts[v] = (counts[v] || 0) + 1));
+      const keys = Object.keys(counts).sort((a, b) => (isNaN(a) || isNaN(b) ? a.localeCompare(b) : a - b));
+      const top = Math.max(...Object.values(counts));
+      const modes = keys.filter((k) => counts[k] === top);
 
-            if (arr.length ===0) {
-                throw new Error(`${id} contains no valid numbers`);
-            }
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const w = Math.min(60, (canvas.width - 40) / keys.length);
+      ctx.font = '13px sans-serif'; ctx.textAlign = 'center';
+      keys.forEach((k, i) => {
+        const h = (counts[k] / top) * (canvas.height - 50);
+        const x = 20 + i * w;
+        ctx.fillStyle = counts[k] === top ? '#ea580c' : '#94a3b8';
+        ctx.fillRect(x + 3, canvas.height - 25 - h, w - 6, h);
+        ctx.fillStyle = '#0f172a';
+        ctx.fillText(k, x + w / 2, canvas.height - 8);
+        ctx.fillText(String(counts[k]), x + w / 2, canvas.height - 30 - h);
+      });
 
-            return arr;
-        };
-        // Checking div element
-        function readDivElement (id) {
-            const el = document.getElementById(id);
-            if(!el) throw new Error (`${id} not found`);
-            return el;
-        }
+      output.textContent =
+        `${modes.length === 1 ? 'mode' : 'modes'}: ${modes.join(', ')}  (each appears ${top} time${top > 1 ? 's' : ''})` +
+        (modes.length === keys.length && keys.length > 1 ? '\nevery value appears equally often: no single typical value' : '');
+    }
 
-        //computing mode
-        function mode(values) {
-            if (values.length === 0) {
-                return { frequencyMap: new Map(), maxFreq: 0, modes: [] };
-            }
-
-            const freq = new Map(); // Map store key data value pair
-
-            values.forEach(v => {
-                freq.set(v, (freq.get(v) || 0) + 1);
-            });
-
-            const maxFreq = Math.max(...freq.values());
-
-            if (maxFreq === 1) {
-                return { frequencyMap: freq, maxFreq, modes: [] };
-            };
-
-            const modes = [...freq.entries()]             //convert map to array
-                .filter(([_, count]) => count === maxFreq)    //Keep only values that appear most often
-                .map(([value]) => value)                      //Extract just the value (ignore count)
-                .sort((a, b) => a - b);
-
-            return { frequencyMap: freq, maxFreq, modes };
-
-        };
-
-
-        function calculateMode() {
-            
-            let values;
-            try {
-                values = readNumericArray('mode-data-input');
-            } catch (e) {
-                console.warn (e.message);
-                return;
-            }
-
-            if (values.length === 0) {
-                alert('Please enter valid numerical data.');
-                return;
-            }
-
-            const { frequencyMap, maxFreq, modes } = mode(values);
-            console.log('Modes:', modes, 'Max Frequency:', maxFreq, 'Frequency Map:', frequencyMap);
-
-            // Convert Map to sorted arrays (KEEP pairing)
-            const entries = [...frequencyMap.entries()]
-                .sort((a, b) => a[0] - b[0]);
-            console.log('Sorted Entries:', entries);
-
-            // Determine mode type
-            let modeType = 'No mode';
-
-            if (modes.length === 1) modeType = 'Unimodal';
-            else if (modes.length === 2) modeType = 'Bimodal';
-            else if (modes.length > 2) modeType = 'Multimodal';
-
-            // Update visualization
-            console.log('Updating visualization with entries:', entries, 'and modes:', modes);
-            updateModeViz(entries, modes);
-            console.log('Visualization updated.');
-            // Update output
-            let output;
-            
-            try {
-                output = readDivElement('mode-demo-output');
-            } catch (e) {
-                console.warn(e.message);
-                return;
-            }
-            output.innerHTML = `
-                <div class="summary">
-                    <div class="item highlight">
-                        <div class="value">${modes.length > 0 ? modes.join(', ') + ` (appears ${maxFreq} time${maxFreq > 1 ? 's' : ''})` : 'No mode'}</div>
-                        <div class="label">Mode</div>
-                    </div>
-                    <div class="item">
-                        <div class="value">${modeType}</div>
-                        <div class="label">Mode Type</div>
-                    </div>
-                </div>`;
-
-            // Re-render MathJax
-            if (window.MathJax && MathJax.typesetPromise) {
-                MathJax.typesetPromise([output]);
-            };
-        };
-
-        function updateModeViz(entries, modes) {
-            let container;
-            try {
-                container = readDivElement('sorted-mode-data');
-            } catch (e) {
-                console.warn(e.message);
-                return;
-            };
-
-            // Clear previous content
-            container.innerHTML = '';
-
-            console.log('Rendering data points for visualization...');
-            console.log('Entries:', entries);
-
-            // Create data items
-            entries.forEach(([value, count]) => {
-                const item = document.createElement('div');
-                item.className = 'data-point';
-                if (modes.includes(value)) {
-                    item.classList.add('mode');
-                }
-                item.textContent = value;
-
-                // Add frequency count
-                const freqDiv = document.createElement('div');
-                freqDiv.className = 'frequency-count';
-                freqDiv.textContent = count;
-                item.appendChild(freqDiv);
-
-                container.appendChild(item);
-            });
-        };
-        document.addEventListener('DOMContentLoaded', () => {
-            const btn = document.getElementById('btn-mode');
-            if (!btn) return;
-
-            // Run once on page load
-            calculateMode();
-
-            // Also run on every button click
-            btn.addEventListener('click', () => {
-                calculateMode();
-            });
-        });
-    }) ();
+    input.addEventListener('input', update);
+    update(); // show the default data straight away
+  })();
 </script>
-
-<div class="worked-example">
-    <h4>Worked Example 1: Finding Mode in Raw Data</h4>
-    <p>Find the mode of: 12, 15, 18, 15, 20, 15, 22</p>
-    <p><strong>Solution:</strong></p>
-    <p>Values: 12, 15, 18, 15, 20, 15, 22</p>
-    <p>Frequency: 12(1), 15(3), 18(1), 20(1), 22(1)</p>
-    <p>Mode = 15 (appears most frequently)</p>
-</div>
-
-<div class="worked-example">
-    <h4>Worked Example 2: Bimodal Data</h4>
-    <p>Find the mode of: 5, 7, 5, 8, 7, 9, 5, 7</p>
-    <p><strong>Solution:</strong></p>
-    <p>Values: 5, 7, 5, 8, 7, 9, 5, 7</p>
-    <p>Frequency: 5(3), 7(3), 8(1), 9(1)</p>
-    <p>Modes = 5 and 7 (both appear 3 times)</p>
-</div>
-
-<div class="worked-example">
-    <h4>Worked Example 3: No Mode</h4>
-    <p>Find the mode of: 2, 3, 4, 5, 6</p>
-    <p><strong>Solution:</strong></p>
-    <p>All values appear exactly once with equal frequency.</p>
-    <p>No mode exists.</p>
-</div>
-
-<div class="worked-example">
-    <h4>Worked Example 4: Mode in Grouped Data</h4>
-    <p>Find the modal class for the following frequency distribution:</p>
-    <table style="border-collapse: collapse; margin: 10px auto;">
-        <tr>
-            <th style="border: 1px solid #000; padding: 5px;">Class</th>
-            <th style="border: 1px solid #000; padding: 5px;">Frequency</th>
-        </tr>
-        <tr>
-            <td style="border: 1px solid #000; padding: 5px;">10-20</td>
-            <td style="border: 1px solid #000; padding: 5px;">5</td>
-        </tr>
-        <tr>
-            <td style="border: 1px solid #000; padding: 5px;">20-30</td>
-            <td style="border: 1px solid #000; padding: 5px;">12</td>
-        </tr>
-        <tr>
-            <td style="border: 1px solid #000; padding: 5px;">30-40</td>
-            <td style="border: 1px solid #000; padding: 5px;">8</td>
-        </tr>
-        <tr>
-            <td style="border: 1px solid #000; padding: 5px;">40-50</td>
-            <td style="border: 1px solid #000; padding: 5px;">6</td>
-        </tr>
-    </table>
-    <p><strong>Solution:</strong></p>
-    <p>The class 20-30 has the highest frequency (12).</p>
-    <p>Modal class = 20-30</p>
-</div>
-
-<div style="margin: 30px 0;">
-    <strong>Advantages of Mode:</strong>
-    <ul>
-        <li>Can be used for all data types (nominal, ordinal, interval, ratio)</li>
-        <li>Not affected by extreme values (outliers)</li>
-        <li>Easy to understand and calculate</li>
-        <li>Useful for categorical data where mean/median don't apply</li>
-    </ul>
-</div>
-
-<div style="margin: 30px 0;">
-    <strong>Limitations of Mode:</strong>
-    <ul>
-        <li>May not exist (no mode) or may have multiple modes</li>
-        <li>Doesn't use all data values in calculation</li>
-        <li>Can be misleading with small datasets</li>
-        <li>Not suitable for mathematical operations</li>
-    </ul>
-</div>
-
-<h3>Practice Problems</h3>
-
-<div class="practice-problem">
-    <strong>Problem 1:</strong> Find the mode of: 8, 12, 8, 15, 8, 20, 12
-    <br><button class="btn-style" onclick="toggleSolution(1)">Show Solution</button>
-    <div class="solution" id="solution1">
-        <strong>Solution:</strong><br>
-        Frequency: 8(3), 12(2), 15(1), 20(1)<br>
-        Mode = 8
-    </div>
-</div>
-
-<div class="practice-problem">
-    <strong>Problem 2:</strong> Find the mode of: 3, 6, 9, 3, 6, 12, 3, 6
-    <br><button class="btn-style" onclick="toggleSolution(2)">Show Solution</button>
-    <div class="solution" id="solution2">
-        <strong>Solution:</strong><br>
-        Frequency: 3(3), 6(3), 9(1), 12(1)<br>
-        Modes = 3 and 6 (bimodal)
-    </div>
-</div>
-
-<div class="practice-problem">
-    <strong>Problem 3:</strong> Find the mode of: 1, 2, 3, 4
-    <br><button class="btn-style" onclick="toggleSolution(3)">Show Solution</button>
-    <div class="solution" id="solution3">
-        <strong>Solution:</strong><br>
-        All values appear once with equal frequency.<br>
-        No mode
-    </div>
-</div>
-
-<div class="practice-problem">
-    <strong>Problem 4:</strong> In a class of 25 students, the modes of test scores are 85 and 90. What does
-    this indicate?
-    <br><button class="btn-style" onclick="toggleSolution(4)">Show Solution</button>
-    <div class="solution" id="solution4">
-        <strong>Solution:</strong><br>
-        The data is bimodal - both 85 and 90 appear with the highest frequency (same number of students got each
-        score).
-    </div>
-</div>
-
-<div class="practice-problem">
-    <strong>Problem 5:</strong> Find the modal class for scores: 0-10(2), 10-20(5), 20-30(8), 30-40(12),
-    40-50(6), 50-60(3)
-    <br><button class="btn-style" onclick="toggleSolution(5)">Show Solution</button>
-    <div class="solution" id="solution5">
-        <strong>Solution:</strong><br>
-        The class 30-40 has the highest frequency (12 students).<br>
-        Modal class = 30-40
-    </div>
-</div>
-
-<div class="key-takeaways">
-    <h3>Key Takeaways</h3>
-    <ul>
-        <li><strong>Definition:</strong> Mode is the value that appears most frequently in a dataset.</li>
-        <li><strong>Types:</strong> Unimodal (one mode), bimodal (two modes), multimodal (multiple modes), or no
-            mode.</li>
-        <li><strong>Calculation:</strong> Count frequency of each value; mode(s) have the highest frequency.
-        </li>
-        <li><strong>Grouped Data:</strong> Modal class is the class interval with highest frequency.</li>
-        <li><strong>Robustness:</strong> Unlike mean, mode is not affected by extreme values or outliers.</li>
-        <li><strong>Applications:</strong> Best for categorical data, finding most common values, market
-            research, quality control.</li>
-        <li><strong>Limitations:</strong> May not exist, doesn't utilize all data, can be unstable with small
-            samples.</li>
-        <li><strong>Comparison:</strong> Mode shows central tendency based on frequency, complementing mean
-            (balance point) and median (middle value).</li>
-    </ul>
-</div>

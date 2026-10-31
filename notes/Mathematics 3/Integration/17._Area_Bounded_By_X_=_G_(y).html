@@ -1,341 +1,163 @@
-<!DOCTYPE html>
-<!-- tags: Integration, Area, Curve, Definite Integral -->
-<html lang="en">
- <head>
-  <meta charset="utf-8"/>
-  <title>
-   Area Bounded by x = g(y)
-  </title>
-  <script>
-   MathJax = {
-            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
-            svg: {fontCache: 'global'}
-        };
-  </script>
-  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
-  </script>
-  <link href="/static/notes_style.css" rel="stylesheet"/>
-  <style>
-   .solution-btn {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 14px;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: background-color 0.3s;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    overflow: hidden;
-   }
-   .solution-btn:hover {
-    background-color: #45a049;
-   }
-   .problem-item {
-    margin-bottom: 20px;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    overflow: hidden;
-   }
-   .highlight-box {
-    background-color: #e8f5e8;
-    border: 1px solid #4CAF50;
-    border-radius: 5px;
-    padding: 15px;
-    margin: 15px 0;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    overflow: hidden;
-   }
-   .section {
-    margin-bottom: 30px;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    overflow: hidden;
-   }
-  </style>
- </head>
- <body>
-  <div class="fancy-title" data-topic="Integration">
-   Area Bounded by x = g(y)
+<!-- tags: Integration -->
+<!-- =====================================================================
+     NOTE: Area Bounded by x = g(y) (y で積分する面積)
+     Uses the shared blocks from static/css/note_blocks.css and the
+     graph helper static/js/note_plot.js (built on note_geom.js).
+     Do not add a <style> block here; change note_blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Integration">Area Bounded by x = g(y)</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Slice sideways</h2>
+    <p>Some regions are easier to cut into <strong>horizontal</strong> strips. This happens when the curve is given as $x = g(y)$, or when the left and right edges stay the same all the way up but the top and bottom don't.</p>
+    <p>Each strip has length (right curve) − (left curve) and thickness $dy$. Integrate over $y$ from the bottom of the region to the top.</p>
+  </section>
+
+  <!-- FORMULA: integrating in y -->
+  <div class="note-formula">
+    <h3>$c \le y \le d$</h3>
+    <div class="formula-main">$$S = \int_c^d |g(y)|\,dy$$</div>
+    <div class="formula-main">$$S = \int_c^d \{(\text{right } x) - (\text{left } x)\}\,dy$$</div>
+    <p class="symbols">The first is the area between $x = g(y)$ and the $y$-axis. Limits are $y$-values: solve for where the curves meet in terms of $y$.</p>
   </div>
-  <div class="container">
-   <div class="main-content">
-    <div class="section">
-     <h2>Area Bounded by x = g(y)</h2>
-     <p>When curves are expressed as functions of y rather than x, we need a different approach to find areas. This occurs when the curve is vertical or nearly vertical, making horizontal strips more appropriate than vertical strips.</p>
-     
-     <div class="highlight-box">
-      <strong>When to Use This Method:</strong>
-      <p>Use integration with respect to y when the region is more naturally described by horizontal strips, or when the boundaries are expressed as functions of y. This is particularly useful for regions bounded by vertical lines or curves that are steep.</p>
-     </div>
-    </div>
 
-    <div class="section">
-     <h2>Basic Formula</h2>
-     <div class="highlight-box">
-      <strong>Standard Case:</strong> If g(y) ≥ 0 for all y in [c, d], the area S bounded by x = g(y), the y-axis, and the lines y = c, y = d is:
-      <p>\( S = \int_c^d g(y) \, dy \)</p>
-      
-      <strong>Horizontal Strips Method:</strong>
-      <p>The area can be thought of as a collection of horizontal strips, each of width g(y) and height dy.</p>
-      <p>Each strip contributes an area of g(y) dy to the total area.</p>
-     </div>
-     
-     <h3>Comparison with Vertical Strips</h3>
-     <div class="highlight-box">
-      <p><strong>Vertical strips:</strong> Area = ∫ [f(x) - g(x)] dx (integrate with respect to x)</p>
-      <p><strong>Horizontal strips:</strong> Area = ∫ [f(y) - g(y)] dy (integrate with respect to y)</p>
-      
-      <p>The choice depends on which variable is easier to express the boundaries in terms of.</p>
-     </div>
-    </div>
-
-    <div class="section">
-     <h2>General Case: Area Between Two Curves</h2>
-     <div class="highlight-box">
-      <p>The area between x = f(y) and x = g(y) from y = c to y = d is:</p>
-      <p>\( S = \int_c^d |f(y) - g(y)| \, dy \)</p>
-      
-      <p>If f(y) ≥ g(y) on [c, d]:</p>
-      <p>\( S = \int_c^d (f(y) - g(y)) \, dy \)</p>
-     </div>
-     
-     <h3>When to Switch to dy Integration</h3>
-     <div class="highlight-box">
-      <ul>
-       <li>When curves are expressed as x = f(y)</li>
-       <li>When vertical strips would require splitting the region</li>
-       <li>When the region has vertical boundaries</li>
-       <li>When dx integration leads to more complex expressions</li>
-       <li>When the curve is nearly vertical</li>
-      </ul>
-     </div>
-    </div>
-
-    <div class="section">
-     <h2>Examples</h2>
-     
-     <h3>Example 1: Simple Case</h3>
-     <p>Find the area bounded by x = y², the y-axis, and y = 1, y = 2.</p>
-     
-     <div class="highlight-box">
-      <strong>Solution:</strong>
-      <p>The curve x = y² is a parabola opening to the right. Since y² ≥ 0, the area is:</p>
-      <p>\( S = \int_1^2 y^2 \, dy = \left[ \frac{y^3}{3} \right]_1^2 = \frac{8}{3} - \frac{1}{3} = \frac{7}{3} \)</p>
-      <p>The area is 7/3 square units.</p>
-     </div>
-     
-     <h3>Example 2: Between Two Curves</h3>
-     <p>Find the area between x = y² and x = y + 2 from y = 0 to y = 2.</p>
-     
-     <div class="highlight-box">
-      <strong>Solution:</strong>
-      <p>First, find which curve is to the right: at y = 1, y² = 1, y + 2 = 3, so x = y + 2 is farther right.</p>
-      <p>Area = \( \int_0^2 ((y + 2) - y^2) \, dy = \int_0^2 (y + 2 - y^2) \, dy \)</p>
-      <p>\( = \left[ \frac{y^2}{2} + 2y - \frac{y^3}{3} \right]_0^2 = \left( \frac{4}{2} + 4 - \frac{8}{3} \right) - 0 = \left(2 + 4 - \frac{8}{3}\right) = 6 - \frac{8}{3} = \frac{10}{3} \)</p>
-     </div>
-     
-     <h3>Example 3: Region Bounded by Vertical Lines</h3>
-     <p>Find the area of the region bounded by y = x², y = 4, and the y-axis.</p>
-     
-     <div class="highlight-box">
-      <strong>Solution:</strong>
-      <p>This region is bounded by y = x² (parabola), y = 4 (horizontal line), and x = 0 (y-axis).</p>
-      <p>Express in terms of y: for each y from 0 to 4, x goes from 0 to √y.</p>
-      <p>Area = \( \int_0^4 \sqrt{y} \, dy = \int_0^4 y^{1/2} \, dy = \left[ \frac{2}{3} y^{3/2} \right]_0^4 = \frac{2}{3} (8) = \frac{16}{3} \)</p>
-     </div>
-    </div>
-
-    <div class="section">
-     <h2>Visual Guide</h2>
-     <p>The canvas below demonstrates areas bounded by curves expressed as functions of y:</p>
-     <canvas id="horizontalAreaCanvas" width="600" height="350" style="border: 1px solid #ccc; margin: 20px 0;"></canvas>
-     <p>The visualization shows horizontal strips and how they contribute to the total area.</p>
-    </div>
-
-    <div class="section">
-     <h2>Practice Problems</h2>
-     
-     <div class="problem-item">
-      <h3>Problem 1</h3>
-      <p>Find the area bounded by x = √y, the y-axis, and y = 4.</p>
-      <button class="solution-btn" onclick="toggleSolution(1)">Show Solution</button>
-      <div class="solution" id="solution-1" style="display: none;">
-       <strong>Solution:</strong>
-       <p>The curve x = √y is the upper half of a parabola. Area = \( \int_0^4 \sqrt{y} \, dy = \int_0^4 y^{1/2} \, dy \)</p>
-       <p>\( = \left[ \frac{2}{3} y^{3/2} \right]_0^4 = \frac{2}{3} (8) = \frac{16}{3} \)</p>
-      </div>
-     </div>
-     
-     <div class="problem-item">
-      <h3>Problem 2</h3>
-      <p>Find the area between x = y² and x = 2y from y = 0 to y = 2.</p>
-      <button class="solution-btn" onclick="toggleSolution(2)">Show Solution</button>
-      <div class="solution" id="solution-2" style="display: none;">
-       <strong>Solution:</strong>
-       <p>At y = 1: y² = 1, 2y = 2, so x = 2y is farther right.</p>
-       <p>Area = \( \int_0^2 (2y - y^2) \, dy = \left[ y^2 - \frac{y^3}{3} \right]_0^2 = (4 - \frac{8}{3}) - 0 = \frac{12}{3} - \frac{8}{3} = \frac{4}{3} \)</p>
-      </div>
-     </div>
-     
-     <div class="problem-item">
-      <h3>Problem 3</h3>
-      <p>Find the area of the region bounded by y = x², x = 0, and y = 1.</p>
-      <button class="solution-btn" onclick="toggleSolution(3)">Show Solution</button>
-      <div class="solution" id="solution-3" style="display: none;">
-       <strong>Solution:</strong>
-       <p>The region is bounded by the parabola y = x², the y-axis x = 0, and the line y = 1.</p>
-       <p>For each y from 0 to 1, x goes from 0 to √y.</p>
-       <p>Area = \( \int_0^1 \sqrt{y} \, dy = \left[ \frac{2}{3} y^{3/2} \right]_0^1 = \frac{2}{3} \)</p>
-      </div>
-     </div>
-    </div>
-
-    <div class="section">
-     <h2>Key Takeaways</h2>
-     <div class="key-takeaways">
-      <ul>
-       <li>Use dy integration when curves are expressed as x = f(y)</li>
-       <li>Horizontal strips: each contributes width × dy to the area</li>
-       <li>Area = ∫ g(y) dy when bounded by x = g(y), y-axis, y = c, y = d</li>
-       <li>Between curves: Area = ∫ |f(y) - g(y)| dy</li>
-       <li>Switch to dy when dx integration is difficult or complex</li>
-       <li>Vertical boundaries often suggest dy integration</li>
-       <li>Sketch the region to determine appropriate integration variable</li>
-       <li>Both dx and dy methods give the same result for the same region</li>
-      </ul>
-     </div>
-    </div>
-   </div>
+  <!-- PROOF: same idea with the axes swapped -->
+  <div class="note-proof">
+    <ol>
+      <li>Swap the roles of $x$ and $y$ (reflect in the line $y = x$). Reflection keeps areas.</li>
+      <li>After the swap, $x = g(y)$ becomes $y = g(x)$, and the strip is a usual vertical one.</li>
+      <li>So the earlier formulas hold with $x$ and $y$ exchanged.</li>
+    </ol>
   </div>
- </body>
-</html>
+
+  <!-- DEMO: a horizontal strip; code at the bottom -->
+  <div class="note-demo">
+    <h2>Move the horizontal strip: length = right $x$ − left $x$</h2>
+    <div class="controls">
+      <label>region <select id="gyR">
+        <option value="0">x = 2y − y² and the y-axis</option>
+        <option value="1">y² = x and y = x − 2</option>
+        <option value="2">y = log x, y-axis, 0 ≤ y ≤ 1</option>
+      </select></label>
+      <label>strip height $y$ = <input type="range" id="gyY" min="0" max="1" step="0.01" value="0.4"></label>
+    </div>
+    <canvas id="gyCanvas"></canvas>
+    <div class="output table-text" id="gyOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find the area between $x = 2y - y^2$ and the $y$-axis.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$x = 0$ when $y = 0, 2$; between them $x \ge 0$.</li>
+        <li>$\displaystyle\int_0^2 (2y - y^2)\,dy = 4 - \frac{8}{3}$</li>
+      </ol>
+      <p class="answer">$\dfrac{4}{3}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find the area enclosed by $y^2 = x$ and $y = x - 2$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>In terms of $y$: left edge $x = y^2$, right edge $x = y + 2$. They meet where $y^2 = y + 2$, i.e. $y = -1, 2$.</li>
+        <li>$\displaystyle\int_{-1}^{2} (y + 2 - y^2)\,dy = \frac{1}{6}(2 - (-1))^3$</li>
+      </ol>
+      <p class="answer">$\dfrac{9}{2}$ (slicing vertically would need two separate integrals)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Find the area bounded by $y = \log x$, the $y$-axis, and the lines $y = 0$ and $y = 1$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$x = e^y$; strips run from the $y$-axis to $x = e^y$.</li>
+        <li>$\displaystyle\int_0^1 e^y\,dy = e - 1$</li>
+      </ol>
+      <p class="answer">$e - 1$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Find the area bounded by $y = \sqrt{x}$, the $y$-axis and the line $y = 2$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$x = y^2$ ($y \ge 0$), from the $y$-axis to the curve, $0 \le y \le 2$.</li>
+        <li>$\displaystyle\int_0^2 y^2\,dy = \frac{8}{3}$</li>
+      </ol>
+      <p class="answer">$\dfrac{8}{3}$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: limits in y -->
+  <div class="note-warning">
+    When you integrate in $y$, the limits must be $y$-values and the integrand must be written in $y$. Don't use the $x$-coordinates of the meeting points.
+  </div>
+
+  <!-- TIP: when to slice sideways -->
+  <div class="note-tip">
+    Slice sideways if vertical strips would change their top or bottom curve partway, as in Example 2. Also do it if $y = f(x)$ is hard to integrate but $x = g(y)$ is easy, as with $\log x$ and $e^y$.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$S = \int_c^d (\text{right} - \text{left})\,dy$.</li>
+      <li>Write each boundary as $x = g(y)$; limits are $y$-values.</li>
+      <li>Pick the direction that gives one simple integral.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/note_geom.js"></script>
+<script src="/static/js/note_plot.js"></script>
 <script>
-function toggleSolution(problemNumber) {
-  const solution = document.getElementById(`solution-${problemNumber}`);
-  const button = solution.previousElementSibling;
-  
-  if (solution.style.display === 'none') {
-    solution.style.display = 'block';
-    button.textContent = 'Hide Solution';
-  } else {
-    solution.style.display = 'none';
-    button.textContent = 'Show Solution';
-  }
-}
+  // "Horizontal strip" demo (the TRY IT block above).
+  // Each region is given by its left and right edges as functions of y, for c ≤ y ≤ d.
+  // The slider picks a height between c and d (as a fraction 0–1); the teal segment
+  // is the strip there. Adding all such strip lengths × dy gives the area.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const rBox = document.getElementById('gyR'), yBox = document.getElementById('gyY');
+    const output = document.getElementById('gyOutput');
+    const f3 = (v) => +v.toFixed(3);
 
-function drawHorizontalAreaVisualization() {
-  const canvas = document.getElementById('horizontalAreaCanvas');
-  const ctx = canvas.getContext('2d');
-  const width = canvas.width;
-  const height = canvas.height;
-  
-  // Clear canvas
-  ctx.clearRect(0, 0, width, height);
-  
-  // Set up coordinate system
-  const margin = 50;
-  const plotWidth = width - 2 * margin;
-  const plotHeight = height - 2 * margin;
-  
-  // Draw axes
-  ctx.strokeStyle = '#333';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(margin, margin);
-  ctx.lineTo(margin, height - margin);
-  ctx.lineTo(width - margin, height - margin);
-  ctx.stroke();
-  
-  // Draw grid
-  ctx.strokeStyle = '#ddd';
-  ctx.lineWidth = 1;
-  for (let i = 1; i < 8; i++) {
-    const x = margin + (i * plotWidth) / 8;
-    const y = margin + (i * plotHeight) / 8;
-    
-    ctx.beginPath();
-    ctx.moveTo(x, margin);
-    ctx.lineTo(x, height - margin);
-    ctx.stroke();
-    
-    ctx.beginPath();
-    ctx.moveTo(margin, y);
-    ctx.lineTo(width - margin, y);
-    ctx.stroke();
-  }
-  
-  // Draw function x = y² (horizontal strips)
-  const points = [];
-  for (let i = 0; i <= 100; i++) {
-    const y = (i / 100) * 2; // y from 0 to 2
-    const canvasY = height - margin - (y / 2) * plotHeight;
-    const x = y * y; // x = y²
-    const canvasX = margin + (x / 4) * plotWidth;
-    points.push({x: canvasX, y: canvasY, fx: x, fy: y});
-  }
-  
-  // Draw the curve
-  ctx.strokeStyle = '#2196f3';
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  points.forEach((point, i) => {
-    if (i === 0) ctx.moveTo(point.x, point.y);
-    else ctx.lineTo(point.x, point.y);
-  });
-  ctx.stroke();
-  
-  // Draw horizontal strips
-  ctx.strokeStyle = '#ff6b6b';
-  ctx.lineWidth = 1;
-  for (let i = 10; i <= 90; i += 10) {
-    const y = height - margin - (i / 100) * plotHeight;
-    const stripWidth = points[Math.floor(i)].x - margin;
-    
-    // Draw strip line
-    ctx.beginPath();
-    ctx.moveTo(margin, y);
-    ctx.lineTo(points[Math.floor(i)].x, y);
-    ctx.stroke();
-    
-    // Fill strip area
-    ctx.fillStyle = 'rgba(255, 107, 107, 0.2)';
-    ctx.fillRect(margin, y - 2, stripWidth, 4);
-  }
-  
-  // Fill area under curve
-  ctx.fillStyle = 'rgba(33, 150, 243, 0.3)';
-  ctx.beginPath();
-  ctx.moveTo(margin, height - margin);
-  points.forEach(point => ctx.lineTo(point.x, point.y));
-  ctx.lineTo(width - margin, height - margin);
-  ctx.closePath();
-  ctx.fill();
-  
-  // Add labels
-  ctx.fillStyle = '#333';
-  ctx.font = '14px Arial';
-  ctx.fillText('x = y²', width - 80, 60);
-  ctx.fillText('Horizontal strips', width - 120, 80);
-  ctx.fillText('Area = ∫ y² dy', width - 110, 100);
-  ctx.fillText('from 0 to 2', width - 100, 120);
-  
-  // Add axis labels
-  ctx.fillText('x', width - 20, height - 20);
-  ctx.fillText('y', 20, 30);
-}
+    // each region: left(y), right(y), the y-range and the exact area
+    const REGIONS = [
+      { L: () => 0, R: (y) => 2 * y - y * y, c: 0, d: 2, area: '4/3', text: 'from x = 0 to x = 2y − y²' },
+      { L: (y) => y * y, R: (y) => y + 2, c: -1, d: 2, area: '9/2', text: 'from x = y² to x = y + 2' },
+      { L: () => 0, R: Math.exp, c: 0, d: 1, area: 'e − 1', text: 'from x = 0 to x = eʸ' },
+    ];
+    const integral = (h, a, b) => { let s = 0; const n = 1000, w = (b - a) / n; for (let i = 0; i < n; i++) s += h(a + (i + 0.5) * w); return s * w; };
 
-// Initialize visualization when page loads
-document.addEventListener('DOMContentLoaded', function() {
-  drawHorizontalAreaVisualization();
-});
+    const plot = NotePlot.graph(document.getElementById('gyCanvas'), {
+      x: [-1.5, 4.7], y: [-1.5, 2.5],
+      draw(g) {
+        const R = REGIONS[+rBox.value], y0 = R.c + (R.d - R.c) * +yBox.value;
+        const right = [], left = [];
+        for (let k = 0; k <= 120; k++) { const y = R.c + (R.d - R.c) * k / 120; right.push([R.R(y), y]); left.unshift([R.L(y), y]); }
+        g.poly([...right, ...left], 'rgba(37, 99, 235, 0.2)');
+        for (let k = 0; k < 120; k++) { g.seg(right[k], right[k + 1], '#2563eb'); g.seg(left[k], left[k + 1], '#ea580c'); }
+        g.seg([R.L(y0), y0], [R.R(y0), y0], '#0d9488', { width: 5 });
+        output.textContent =
+          `strip at y = ${f3(y0)}: ${R.text}, length ${f3(R.R(y0) - R.L(y0))}\n` +
+          `area = ∫ from ${R.c} to ${R.d} of (right − left) dy = ${f3(integral((y) => R.R(y) - R.L(y), R.c, R.d))} = ${R.area}`;
+      },
+    });
+    rBox.addEventListener('change', plot.redraw);
+    yBox.addEventListener('input', plot.redraw);
+  })();
 </script>

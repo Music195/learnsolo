@@ -1,534 +1,137 @@
-<div class="fancy-title" data-topic="Data Analysis">
-    Quartile Range &amp; Deviation
-</div>
+<!-- tags: Data Analysis -->
+<!-- =====================================================================
+     NOTE: Interquartile Range and Quartile Deviation (四分位範囲・四分位偏差)
+     Uses the shared blocks from static/css/note_blocks.css.
+     Do not add a <style> block here; change note_blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
 
+  <h1 class="note-title" data-topic="Data Analysis">Quartile Range & Deviation</h1>
 
-<div class="math-foundation">
-    <h3>Mathematical Foundation</h3>
-    <p><strong>Quartile range and quartile deviation </strong>describe how spread out the central portion of a dataset
-        is.
-        Instead of being influenced by extreme values, they focus on the middle 50% of the data—where typical
-        observations lie.
-        By measuring the width (IQR) and half-width (quartile deviation) of this central region,
-        these measures provide <em>a stable and reliable view of variability, especially when outliers would distort
-            other measures of spread</em>.</p>
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>How spread out is the middle half?</h2>
+    <p>The <strong>range</strong> (max − min) uses only the two most extreme values, so one odd value can make it huge.</p>
+    <p>The <strong>interquartile range</strong> looks only at the middle half of the data, between $Q_1$ and $Q_3$, so extreme values hardly affect it.</p>
+  </section>
 
-    <div class="formula-block">
-        <strong>Quartile Range:</strong>
-        <div style="font-size: 1.2em; margin: 10px 0;">
-            \( QR = Q_3 - Q_1 \)
-        </div>
-        <p>The difference between the third and first quartiles, representing the spread of the middle 50% of
-            data.</p>
+  <!-- FORMULA: range, IQR, quartile deviation -->
+  <div class="note-formula">
+    <h3>Measures of spread</h3>
+    <div class="formula-main">$$\text{range} = \max - \min, \qquad \text{IQR} = Q_3 - Q_1, \qquad \text{quartile deviation} = \frac{Q_3 - Q_1}{2}$$</div>
+    <p class="symbols">IQR: interquartile range (四分位範囲). Quartile deviation (四分位偏差) is half of it.</p>
+  </div>
 
-        <strong>Quartile Deviation:</strong>
-        <div style="font-size: 1.2em; margin: 10px 0;">
-            \( QD = \dfrac{Q_3 - Q_1}{2} = \dfrac{QR}{2} \)
-        </div>
-        <p>Half of the quartile range, measuring the average deviation from the median within the interquartile
-            range.</p>
+  <!-- DEMO: type data; code at the bottom -->
+  <div class="note-demo">
+    <h2>Range vs IQR</h2>
+    <p>Add a very large value and watch which measure jumps.</p>
+    <div class="controls">
+      <label>Data <input type="text" id="qrData" class="wide" value="1, 3, 5, 7, 9, 11, 13, 50"></label>
     </div>
-</div>
+    <canvas id="qrCanvas" width="520" height="120"></canvas>
+    <div class="output table-text" id="qrOutput"></div>
+  </div>
 
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find the IQR and quartile deviation of 5, 8, 12, 15, 18, 20, 22.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$n = 7$, median 15 (left out). Lower half 5, 8, 12 → $Q_1 = 8$. Upper half 18, 20, 22 → $Q_3 = 20$.</li>
+        <li>IQR $= 20 - 8 = 12$</li>
+      </ol>
+      <p class="answer">IQR $= 12$, quartile deviation $= 6$</p>
+    </details>
+  </div>
 
-<div class="interactive-demo">
-    <h3>Interactive Quartile Range Calculator</h3>
-    <div class="demo-controls">
-        <div class="control-group">
-            <label for="quartileRD-data-input">Data Values (comma-separated):</label>
-            <textarea id="quartilerange-data-input"
-                placeholder="e.g., 2, 6, 8, 9, 13, 16, 19, 21, 29, 40">2, 6, 8, 9, 13, 16, 19, 21, 29, 40</textarea>
-        </div>
-        <button class="btn-style" id="btn-quartile-rd"> Calculate </button>
-    </div>
-    <div class="data-visualization" id="data-viz">
-        <h4>Data Visualization</h4>
-        <div id="sorted-quartileRD-data" class="data-points"></div>
-        <div class="row">
-            <canvas id="quartileRD-canvas"></canvas>
-        </div>
-    </div>
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find the IQR and quartile deviation of 3, 7, 9, 12, 15, 18.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$n = 6$. Lower half 3, 7, 9 → $Q_1 = 7$. Upper half 12, 15, 18 → $Q_3 = 15$.</li>
+      </ol>
+      <p class="answer">IQR $= 8$, quartile deviation $= 4$</p>
+    </details>
+  </div>
 
-    <div class="demo-output" id="quartile-rd-demo-output">
-        <div class="summary">
-            <div class="item">
-                <div class="value">13</div>
-                <div class="label">Quartile Range (QR)</div>
-            </div>
-            <div class="item">
-                <div class="value">6.5</div>
-                <div class="label">Quartile Deviation (QD)</div>
-            </div>
-            <div class="item">
-                <div class="value">27</div>
-                <div class="label">Total Range</div>
-            </div>
-        </div>
-    </div>
-</div>
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">For 1, 3, 5, 7, 9, 11, 100, compare the range and the IQR.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Range $= 100 - 1 = 99$.</li>
+        <li>Lower half 1, 3, 5 → $Q_1 = 3$. Upper half 9, 11, 100 → $Q_3 = 11$. IQR $= 8$.</li>
+      </ol>
+      <p class="answer">Range 99, IQR 8. The single value 100 blows up the range but barely changes the IQR.</p>
+    </details>
+  </div>
+
+  <!-- WARNING: Q3 - Q1, not the halves -->
+  <div class="note-warning">
+    Find $Q_1$ and $Q_3$ correctly first (note 03): when $n$ is odd, the median is left out of both halves.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>IQR $= Q_3 - Q_1$: spread of the middle half.</li>
+      <li>Quartile deviation $= \dfrac{Q_3 - Q_1}{2}$.</li>
+      <li>Range reacts strongly to extreme values; the IQR doesn't.</li>
+    </ul>
+  </div>
+
+</article>
 
 <script>
-    (() => {
-        const STYLE = {
-            boxHeightRatio: 0.25,
-            dotOffsetRatio: 0.05,
-            lineWidthRatio: 0.006,
-            fontRatio: 0.07
-        };
+  // "Range vs IQR" demo (the TRY IT block above).
+  // Finds the quartiles with the halves method, then draws the whole range and
+  // the middle half (Q1 to Q3) on one number line.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const input = document.getElementById('qrData');
+    const canvas = document.getElementById('qrCanvas');
+    const ctx = canvas.getContext('2d');
+    const output = document.getElementById('qrOutput');
+    const round = (v) => Number(v.toFixed(3));
 
-        function getInputData(id) {
-            const inputElement = document.getElementById(id);
-            if (!inputElement) return;
-            const input = inputElement.value;
-            if (!input) return;  // Only check if empty
-            const values = input.split(',').map(x => parseFloat(x.trim())).filter(x => !isNaN(x));
-            if (values.length < 4) return; // Check number of valid numbers
-            return values;
-        };
+    const median = (arr) => {
+      const n = arr.length;
+      return n % 2 ? arr[(n - 1) / 2] : (arr[n / 2 - 1] + arr[n / 2]) / 2;
+    };
 
+    function update() {
+      const data = input.value.split(/[\s,、]+/).filter((s) => s !== '').map(Number).sort((a, b) => a - b);
+      if (data.length < 2 || data.some(isNaN)) { output.textContent = 'Type at least two numbers separated by commas.'; return; }
 
-        // Checking numeric array 
-        function readNumericArray(id) {
-            const el = document.getElementById(id);
-            if (!el) throw new Error(`${id} not found`);
-            if (!el.value.trim()) throw new Error(`${id} is empty`);
+      const n = data.length, half = Math.floor(n / 2);
+      const q1 = median(data.slice(0, half)), q3 = median(data.slice(n - half));
+      const lo = data[0], hi = data[n - 1], span = hi - lo || 1;
+      const x = (v) => 30 + ((v - lo) / span) * (canvas.width - 60);
 
-            const arr = el.value
-                .split(",")
-                .map(v => Number(v.trim()))
-                .filter(v => !Number.isNaN(v));
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = 'rgba(234, 88, 12, 0.18)'; // the middle half
+      ctx.fillRect(x(q1), 30, x(q3) - x(q1), 40);
+      ctx.strokeStyle = '#475569'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(x(lo), 50); ctx.lineTo(x(hi), 50); ctx.stroke();
+      ctx.fillStyle = '#2563eb';
+      data.forEach((v) => { ctx.beginPath(); ctx.arc(x(v), 50, 5, 0, Math.PI * 2); ctx.fill(); });
+      ctx.fillStyle = '#0f172a'; ctx.font = '13px sans-serif'; ctx.textAlign = 'center';
+      [[lo, 'min'], [q1, 'Q1'], [q3, 'Q3'], [hi, 'max']].forEach(([v, name], i) =>
+        ctx.fillText(`${name} ${round(v)}`, x(v), i % 3 ? 20 : 95));
 
-            if (arr.length ===0) {
-                throw new Error(`${id} contains no valid numbers`);
-            }
+      output.textContent =
+        `range = ${round(hi)} − ${round(lo)} = ${round(hi - lo)}\n` +
+        `IQR   = ${round(q3)} − ${round(q1)} = ${round(q3 - q1)}\n` +
+        `quartile deviation = ${round((q3 - q1) / 2)}`;
+    }
 
-            return arr;
-        }
-
-        // Checking div element
-        function readDivElement (id) {
-            const el = document.getElementById(id);
-            if(!el) throw new Error (`${id} not found`);
-            return el;
-        }
-
-        function drawQuartileRD() {
-            const values = getInputData('quartilerange-data-input');
-            // Copy and Sort datas
-            const quartileRDSorted = values ? [...values].sort((a, b) => a - b) : [];
-
-            if (quartileRDSorted.length < 4) return; // Need at least 4 values for quartiles
-
-            //quartilesRD is called from notes_demos.js which is global and not module
-            const { Q1, Q2, Q3 } = quartiles(quartileRDSorted);
-
-            // Blank canvas sheet
-            const canvas = document.getElementById("quartileRD-canvas");
-            if (!canvas) return;
-            const { ctx, width, height, dpr } = setupCanvas(canvas, 0.3);
-            if (!ctx) return;
-
-            //Layout decision
-            const margin = { left: 70, right: 70, top: width / 50, bottom: 60 };
-
-            const axisY = height * 0.8; //axis at the bottom
-            const dotY = axisY - height / 8; //dots slightly above
-            const boxH = height * STYLE.boxHeightRatio; // Box height
-            const boxY = dotY - boxH - height / 20;  // Box even higher
-
-            //Mapping data to pixels
-            const minX = Math.min(...quartileRDSorted); //minimum value of data
-            const maxX = Math.max(...quartileRDSorted); //maximum value of data
-
-            const range = maxX - minX;
-            const pad = range === 0 ? Math.abs(maxX || 1) * 0.1 : range * 0.08 //Handles constant data
-            const xMin = minX - pad;  // shift minimum value to the right
-            const xMax = maxX + pad; // shift maximum value to the left 
-
-
-            //Scaling the real data to css coordinates
-            // function xScale(x) {
-            //     const denom = (xMax - xMin) || 1;
-            //     const t = (x - xMin) / denom; // ration of x position (normalized between 0 and 1)according to data domain
-            //     return margin.left + t * (width - margin.left - margin.right); // return value of drawing width according to t ratio
-            // }
-
-            //Convert quartile values into pixel x positions
-            const xQ1 = xScale(Q1, xMin, xMax, width, margin.left, margin.right);
-            const xQ2 = xScale(Q2, xMin, xMax, width, margin.left, margin.right);
-            const xQ3 = xScale(Q3, xMin, xMax, width, margin.left, margin.right);
-
-            //Render the diagram
-
-            //Clear the canvas as canvas does not auto-clear.
-            ctx.clearRect(0, 0, width, height);
-
-            drawTitle(ctx,
-                width / 2,
-                axisY - height / 2.5 - boxH,
-                "Quartiles focus on the middle 50% (the “main body”) of the data",
-                height / 13,
-                "#111"
-            );
-
-            drawDesc(ctx,
-                xQ1,
-                boxY - height / 10,
-                `Q1 = ${Q1}`,
-                height / 16,
-                "#333"
-            );
-
-            drawDesc(ctx,
-                xQ2,
-                boxY - height / 6.7,
-                `Median = ${Q2}`,
-                height / 16,
-                "#333"
-            );
-
-            drawDesc(
-                ctx,
-                xQ3,
-                boxY - height / 10,
-                `Q3 = ${Q3}`,
-                height / 16,
-                "#333"
-            );
-
-            drawBox(
-                ctx,
-                xQ1,
-                boxY,
-                xQ3 - xQ1,
-                boxH,
-                height * STYLE.lineWidthRatio
-            );
-
-            // Draw middle line of box
-            drawLine(ctx,
-                xQ2,
-                boxY,
-                xQ2,
-                boxY + boxH,
-                null,
-                height * STYLE.lineWidthRatio,
-                "rgba(30, 90, 200, 1)"
-            );
-
-            // Draw three dashed line at Q1, Q2, Q3
-            drawLine(ctx, xQ1, boxY - margin.top / 2, xQ1, axisY, [4, 6], 1, "#999");
-            drawLine(ctx, xQ2, boxY - margin.top / 2, xQ2, axisY, [4, 6], 1, "#999");
-            drawLine(ctx, xQ3, boxY - margin.top / 2, xQ3, axisY, [4, 6], 1, "#999");
-
-            const brY = dotY + margin.top;
-            //Horizontal bracket line
-            drawLine(ctx, xQ1, brY, xQ3, brY, null, 2, "rgba(30,90,200,1)");
-            //right cap
-            drawLine(ctx, xQ3, brY - 8, xQ3, brY + 8, null, 2, "rgba(30,90,200,1)");
-            //left cap
-            drawLine(ctx, xQ1, brY - 8, xQ1, brY + 8, null, 2, "rgba(30,90,200,1)");
-
-            quartileRDSorted.forEach(v =>
-                drawDot(
-                    ctx,
-                    xScale(v, xMin, xMax, width, margin.left, margin.right),
-                    dotY,
-                    height / 100,
-                    null,
-                    "red"
-                )
-            );
-
-            drawLine(
-                ctx,
-                margin.left,
-                axisY,
-                width - margin.right,
-                axisY,
-                null,
-                height / 300,
-                "#333"
-            );
-
-            drawDesc(
-                ctx,
-                width / 2,
-                axisY + height / 10,
-                "Outliers can exist far away, but IQR stays focused on the central half.",
-                height / 14,
-                "#000000ff"
-            );
-        };
-
-        
-        function calculateQuartileRD() {
-    
-            let values;
-            try {
-                values = readNumericArray('quartilerange-data-input');
-            } catch (e) {
-                console.warn (e.message);
-                return;
-            }
-
-            if (values.length === 0) {
-                alert('Please enter valid numerical data.');
-                return;
-            }
-
-
-            if (values.length < 4) {
-                alert('Please enter at least 4 values to calculate quartiles.');
-                return;
-            }
-
-            // Sort the values
-            const quartileRDSorted = [...values].sort((a, b) => a - b);
-            const n = quartileRDSorted.length;
-            const { Q1, Q2, Q3 } = quartiles(quartileRDSorted);
-
-            updateQuartileRDViz(quartileRDSorted);
-
-
-            const qr = Q3 - Q1;
-            const qd = qr / 2;
-            const totalRange = quartileRDSorted[n - 1] - quartileRDSorted[0];
-            const median = n % 2 === 1 ? quartileRDSorted[Math.floor(n / 2)] : (quartileRDSorted[n / 2 - 1] + quartileRDSorted[n / 2]) / 2;
-
-            // Update output
-            
-            let output;
-            
-            try {
-                output = readDivElement('quartile-rd-demo-output');
-            } catch (e) {
-                console.warn(e.message);
-                return;
-            }
-            output.innerHTML =
-                `<div class="summary">
-                    <div class="item">
-                        <div class="value">${qr.toFixed(1)}</div>
-                        <div class="label">Quartile Range (QR)</div>
-                    </div>
-                    <div class="item">
-                        <div class="value">${qd.toFixed(1)}</div>
-                        <div class="label">Quartile Deviation (QD)</div>
-                    </div>
-                    <div class="item">
-                        <div class="value">${totalRange.toFixed(1)}</div>
-                        <div class="label">Total Range</div>
-                    </div>
-                </div>`;
-
-            // Re-render MathJax
-            if (window.MathJax && MathJax.typesetPromise) {
-                MathJax.typesetPromise([output]);
-            }
-        };
-
-        function updateQuartileRDViz(quartileRDSorted) {
-
-            let container;
-            try {
-                container = readDivElement('sorted-quartileRD-data');
-            } catch (e) {
-                console.warn(e.message);
-                return;
-            };
-
-            // Clear previous content
-            container.innerHTML = '';
-
-            // Create data items
-            quartileRDSorted.forEach(value => {
-                const item = document.createElement('div');
-                item.className = 'data-point';
-                item.textContent = value;
-                container.appendChild(item);
-            });
-        }
-        
-        document.addEventListener('DOMContentLoaded', () => {
-            const btn = document.getElementById('btn-quartile-rd');
-            if (!btn) return;
-
-            // Run once on page load
-            calculateQuartileRD();
-            drawQuartileRD();
-
-            // Also run on every button click
-            btn.addEventListener('click', () => {
-                calculateQuartileRD();
-                drawQuartileRD();
-            });
-        });
-    }) ();
+    input.addEventListener('input', update);
+    update(); // show the default data straight away
+  })();
 </script>
-
-<div class="worked-example">
-    <h4>Worked Example 1: Basic Calculation</h4>
-    <p>For the data: 5, 8, 12, 15, 18, 20, 22, find the quartile range and quartile deviation.</p>
-    <p><strong>Solution:</strong></p>
-    <p>Sorted: 5, 8, 12, 15, 18, 20, 22</p>
-    <p>Q₁ position = (7+1)/4 = 2nd value = 8</p>
-    <p>Q₃ position = 3(7+1)/4 = 6th value = 20</p>
-    <p>Quartile Range = 20 - 8 = 12</p>
-    <p>Quartile Deviation = 12/2 = 6</p>
-</div>
-
-<div class="worked-example">
-    <h4>Worked Example 2: Even Number of Values</h4>
-    <p>For the data: 3, 7, 9, 12, 15, 18, find QR and QD.</p>
-    <p><strong>Solution:</strong></p>
-    <p>Sorted: 3, 7, 9, 12, 15, 18</p>
-    <p>Q₁ = (7+9)/2 = 8</p>
-    <p>Q₃ = (15+18)/2 = 16.5</p>
-    <p>Quartile Range = 16.5 - 8 = 8.5</p>
-    <p>Quartile Deviation = 8.5/2 = 4.25</p>
-</div>
-
-<div class="worked-example">
-    <h4>Worked Example 3: Comparison with Range</h4>
-    <p>Data: 1, 3, 5, 7, 9, 11, 13, 50</p>
-    <p><strong>Solution:</strong></p>
-    <p>Sorted: 1, 3, 5, 7, 9, 11, 13, 50</p>
-    <p>Q₁ = (3+5)/2 = 4</p>
-    <p>Q₃ = (11+13)/2 = 12</p>
-    <p>Quartile Range = 12 - 4 = 8</p>
-    <p>Total Range = 50 - 1 = 49</p>
-    <p>The outlier (50) greatly affects the range but has minimal impact on the quartile range.</p>
-</div>
-
-<div style="margin: 30px 0;">
-    <strong>Applications of Quartile Range and Deviation:</strong>
-    <ul>
-        <li><strong>Outlier Detection:</strong> Values beyond Q₃ + 1.5×QR are potential outliers</li>
-        <li><strong>Data Spread Analysis:</strong> Understanding variability in the central data</li>
-        <li><strong>Box Plot Construction:</strong> QR forms the length of the box in box plots</li>
-        <li><strong>Robust Statistics:</strong> Less affected by extreme values than range or standard deviation
-        </li>
-        <li><strong>Quality Control:</strong> Monitoring process variability in manufacturing</li>
-    </ul>
-</div>
-
-<div class="comparison-table">
-    <h4>Measures of Dispersion Comparison</h4>
-    <table>
-        <tr>
-            <th>Measure</th>
-            <th>Formula</th>
-            <th>Affected by Outliers?</th>
-            <th>Use Case</th>
-        </tr>
-        <tr>
-            <td>Range</td>
-            <td>Maximum - Minimum</td>
-            <td>Highly affected</td>
-            <td>Quick spread estimate</td>
-        </tr>
-        <tr class="highlight">
-            <td>Quartile Range</td>
-            <td>Q₃ - Q₁</td>
-            <td>Moderately affected</td>
-            <td>Middle 50% spread</td>
-        </tr>
-        <tr>
-            <td>Quartile Deviation</td>
-            <td>(Q₃ - Q₁)/2</td>
-            <td>Moderately affected</td>
-            <td>Average deviation from median</td>
-        </tr>
-        <tr>
-            <td>Variance</td>
-            <td>Sum of squared deviations</td>
-            <td>Highly affected</td>
-            <td>Statistical analysis</td>
-        </tr>
-        <tr>
-            <td>Standard Deviation</td>
-            <td>Square root of variance</td>
-            <td>Highly affected</td>
-            <td>Statistical analysis</td>
-        </tr>
-    </table>
-</div>
-
-<h3>Practice Problems</h3>
-
-<div class="practice-problem">
-    <strong>Problem 1:</strong> For data: 4, 7, 9, 12, 15, 18, 20, find the quartile range and quartile
-    deviation.
-    <br><button class="btn-style" onclick="toggleSolution(1)">Show Solution</button>
-    <div class="solution" id="solution1">
-        <strong>Solution:</strong><br>
-        Sorted: 4, 7, 9, 12, 15, 18, 20<br>
-        Q₁ = (7+9)/2 = 8<br>
-        Q₃ = (15+18)/2 = 16.5<br>
-        QR = 16.5 - 8 = 8.5<br>
-        QD = 8.5/2 = 4.25
-    </div>
-</div>
-
-<div class="practice-problem">
-    <strong>Problem 2:</strong> Data: 2, 5, 8, 10, 12, 15, 18. Find QR and QD.
-    <br><button class="btn-style" onclick="toggleSolution(2)">Show Solution</button>
-    <div class="solution" id="solution2">
-        <strong>Solution:</strong><br>
-        Sorted: 2, 5, 8, 10, 12, 15, 18<br>
-        Q₁ position = (8+1)/4 = 2.25th → (5+8)/2 = 6.5<br>
-        Q₃ position = 3(8+1)/4 = 6.75th → (15+18)/2 = 16.5<br>
-        QR = 16.5 - 6.5 = 10<br>
-        QD = 10/2 = 5
-    </div>
-</div>
-
-<div class="practice-problem">
-    <strong>Problem 3:</strong> If Q₁ = 25 and Q₃ = 75, what are the QR and QD?
-    <br><button class="btn-style" onclick="toggleSolution(3)">Show Solution</button>
-    <div class="solution" id="solution3">
-        <strong>Solution:</strong><br>
-        QR = 75 - 25 = 50<br>
-        QD = 50/2 = 25
-    </div>
-</div>
-
-<div class="practice-problem">
-    <strong>Problem 4:</strong> Data with outlier: 1, 3, 5, 7, 9, 11, 100. Compare range vs quartile range.
-    <br><button class="btn-style" onclick="toggleSolution(4)">Show Solution</button>
-    <div class="solution" id="solution4">
-        <strong>Solution:</strong><br>
-        Sorted: 1, 3, 5, 7, 9, 11, 100<br>
-        Range = 100 - 1 = 99<br>
-        Q₁ = (3+5)/2 = 4<br>
-        Q₃ = (9+11)/2 = 10<br>
-        QR = 10 - 4 = 6<br>
-        The outlier inflates the range by 99-6 = 93 units!
-    </div>
-</div>
-
-<div class="practice-problem">
-    <strong>Problem 5:</strong> Quartile deviation is 8. What is the quartile range?
-    <br><button class="btn-style" onclick="toggleSolution(5)">Show Solution</button>
-    <div class="solution" id="solution5">
-        <strong>Solution:</strong><br>
-        QD = QR/2, so QR = 2 × QD = 2 × 8 = 16
-    </div>
-</div>
-
-<div class="key-takeaways">
-    <h3>Key Takeaways</h3>
-    <ul>
-        <li><strong>Quartile Range:</strong> Q₃ - Q₁, measures spread of middle 50% of data.</li>
-        <li><strong>Quartile Deviation:</strong> (Q₃ - Q₁)/2, average deviation from median within IQR.</li>
-        <li><strong>Robustness:</strong> Less affected by outliers than range or standard deviation.</li>
-        <li><strong>Interpretation:</strong> Larger values indicate greater variability in central data.</li>
-        <li><strong>Relationship:</strong> Quartile deviation is exactly half of the quartile range.</li>
-        <li><strong>Box Plots:</strong> Quartile range determines the length of the box in box plot diagrams.
-        </li>
-        <li><strong>Outlier Detection:</strong> Used in statistical methods to identify unusual observations.
-        </li>
-        <li><strong>Comparison:</strong> More reliable than range for datasets with extreme values.</li>
-    </ul>
-</div>

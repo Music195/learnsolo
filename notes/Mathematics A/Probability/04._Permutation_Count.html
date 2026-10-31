@@ -1,550 +1,154 @@
-<!DOCTYPE html>
 <!-- tags: Probability -->
-<html lang="en">
- <head>
-  <meta charset="utf-8"/>
-  <title>
-   Counting Permutations
-  </title>
-  <script>
-   MathJax = {
-            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
-            svg: {fontCache: 'global'}
-        };
-  </script>
-  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
-  </script>
-  <link href="/static/notes_style.css" rel="stylesheet"/>
-  <style>
-    
-    /* Rule card styling */
-    .rule-card {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 20px;
-      border-radius: 12px;
-      margin: 15px 0;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      border: 2px solid rgba(255,255,255,0.2);
-    }
-    
-    .rule-card h3 {
-      margin-top: 0;
-      font-size: 1.3em;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-    }
-    
-    .rule-card .formula {
-      font-size: 1.4em;
-      font-weight: bold;
-      background: rgba(255,255,255,0.2);
-      padding: 10px;
-      border-radius: 8px;
-      margin: 10px 0;
-      text-align: center;
-    }
-    
-    .demo-input {
-      padding: 10px;
-      font-size: 16px;
-      border: 2px solid #007acc;
-      border-radius: 6px;
-      margin: 10px;
-      width: 120px;
-    }
-    
-    .demo-button {
-      background: #007acc;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 16px;
-      margin: 10px;
-      transition: background 0.3s;
-    }
-    
-    .demo-button:hover {
-      background: #0056b3;
-    }
-    
-    .demo-result {
-      font-size: 18px;
-      font-weight: bold;
-      margin: 15px 0;
-      min-height: 30px;
-    }
-    
-    /* Problem items styling */
-    .problem-item {
-      background: #fff3cd;
-      border: 2px solid #ffc107;
-      border-radius: 8px;
-      padding: 15px;
-      margin: 15px 0;
-      position: relative;
-    }
-    
-    .problem-item .problem-number {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      background: #ffc107;
-      color: #000;
-      padding: 2px 8px;
-      border-radius: 12px;
-      font-weight: bold;
-      font-size: 0.9em;
-    }
-    
-    .problem-item .problem-content {
-      margin-left: 60px;
-    }
-    
-    /* Solution button styling */
-    .solution-button {
-      background: #28a745;
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px;
-      margin: 10px 0;
-      transition: background 0.3s;
-    }
-    
-    .solution-button:hover {
-      background: #218838;
-    }
-    
-    .solution-content {
-      background: #d4edda;
-      border: 1px solid #c3e6cb;
-      border-radius: 6px;
-      padding: 15px;
-      margin: 10px 0;
-      display: none;
-    }
-    
-    /* Canvas visualization styling */
-    .visualization-container {
-      text-align: center;
-      margin: 20px 0;
-    }
-    
-    #permutationCanvas {
-      border: 2px solid #007acc;
-      border-radius: 8px;
-      background: white;
-      max-width: 100%;
-      height: auto;
-    }
-    
-    /* Section styling */
-    .section {
-      margin: 30px 0;
-      padding: 20px;
-      background: #f8f9fa;
-      border-radius: 8px;
-      border-left: 4px solid #007acc;
-    }
-    
-    .section h2 {
-      color: #007acc;
-      margin-top: 0;
-      font-size: 1.5em;
-    }
-    
-    /* Enhanced math styling */
-    .math {
-      font-family: 'Times New Roman', serif;
-    }
-    
-    .blue { color: #007bff; }
-    .green { color: #28a745; }
-    .red { color: #dc3545; }
-    .orange { color: #fd7e14; }
-    .purple { color: #6f42c1; }
-    
-    /* Permutation specific */
-    .permutation-types {
-      display: flex;
-      gap: 20px;
-      margin: 20px 0;
-    }
-    
-    .permutation-type {
-      flex: 1;
-      background: #e9ecef;
-      padding: 15px;
-      border-radius: 8px;
-      border-left: 4px solid #007acc;
-    }
-    
-    .permutation-type h4 {
-      margin-top: 0;
-      color: #007acc;
-    }
-    
-    .calculation-steps {
-      background: #f8f9fa;
-      border-radius: 8px;
-      padding: 15px;
-      margin: 15px 0;
-      font-family: monospace;
-      font-size: 16px;
-    }
-    
-    .calculation-step {
-      margin: 8px 0;
-      padding: 5px;
-      background: white;
-      border-radius: 4px;
-      border-left: 3px solid #007acc;
-    }
-    
-    .permutation-tree {
-      text-align: center;
-      margin: 20px 0;
-      font-family: monospace;
-      font-size: 14px;
-    }
-    
-    .tree-level {
-      display: inline-block;
-      margin: 5px 10px;
-      padding: 8px;
-      background: #e9ecef;
-      border-radius: 6px;
-      min-width: 60px;
-    }
-    
-    .tree-arrow {
-      font-size: 20px;
-      color: #007acc;
-      margin: 0 5px;
-    }
-    
-    .factorial-explanation {
-      background: #fff3cd;
-      border: 2px solid #ffc107;
-      border-radius: 8px;
-      padding: 15px;
-      margin: 15px 0;
-    }
-  </style>
- </head>
- <body>
-  <div class="fancy-title" data-topic="Probability">
-   Counting Permutations
+<!-- =====================================================================
+     NOTE: Counting Permutations
+     Uses the shared blocks from static/css/note_blocks.css.
+     Do not add a <style> block here; change note_blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Probability">Counting Permutations</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Arranging in order</h2>
+    <p>A <strong>permutation</strong> is an arrangement where <strong>order matters</strong>: ABC and BAC are different.</p>
+    <p>Arranging 3 of the 4 letters A, B, C, D: 4 choices for the 1st place, then 3 left for the 2nd, then 2 for the 3rd.
+      By the multiplication rule there are $4 \times 3 \times 2 = 24$ arrangements.</p>
+  </section>
+
+  <!-- FORMULA: nPr and n! -->
+  <div class="note-formula">
+    <h3>Arrange $r$ of $n$ different things</h3>
+    <div class="formula-main">$${}_n\mathrm{P}_r = \underbrace{n(n-1)(n-2)\cdots(n-r+1)}_{r \text{ factors}} = \frac{n!}{(n-r)!}$$</div>
+    <p class="symbols">Start at $n$ and multiply $r$ numbers, counting down.</p>
   </div>
-  <div class="container">
-   <div class="main-content">
-    
-    <div class="section">
-     <h2>Core Concept</h2>
-     <p>A <strong>permutation</strong> is an arrangement of objects in a specific order. The number of permutations tells us how many different ways we can arrange items from a set, where the order matters.</p>
-     
-     <div class="rule-card">
-      <h3>Permutation Formula</h3>
-      <div class="formula">
-       $^nP_r = \frac{n!}{(n-r)!} = n(n-1)(n-2)\cdots(n-r+1)$
-      </div>
-      <p><em>Where n is the total number of items and r is the number of items to arrange</em></p>
-     </div>
-    </div>
-    
-    <div class="section">
-     <h2>Types of Permutations</h2>
-     <div class="permutation-types">
-      <div class="permutation-type">
-       <h4>All Permutations</h4>
-       <p>Arranging all n distinct objects: $^nP_n = n!$</p>
-       <div class="formula">$^nP_n = n! = n(n-1)\cdots(2)(1)$</div>
-      </div>
-      
-      <div class="permutation-type">
-       <h4>Partial Permutations</h4>
-       <p>Arranging r objects from n distinct objects: $^nP_r$</p>
-       <div class="formula">$^nP_r = \frac{n!}{(n-r)!}$</div>
-      </div>
-     </div>
-    </div>
-    
-    <div class="section">
-     <h2>Visual Guide</h2>
-     <div class="permutation-tree">
-      <div class="tree-level">4 items<br><span class="highlight">A B C D</span></div>
-      <div class="tree-arrow">→</div>
-      <div class="tree-level">Choose 1st<br><span class="highlight">4 choices</span></div>
-      <div class="tree-arrow">→</div>
-      <div class="tree-level">Choose 2nd<br><span class="highlight">3 choices</span></div>
-      <div class="tree-arrow">→</div>
-      <div class="tree-level">Choose 3rd<br><span class="highlight">2 choices</span></div>
-      <div class="tree-arrow">→</div>
-      <div class="tree-level">Total<br><span class="highlight">24 permutations</span></div>
-     </div>
-     
-     <div class="visualization-container">
-      <canvas id="permutationCanvas" width="600" height="350"></canvas>
-      <p><em>Interactive visualization showing permutation arrangements</em></p>
-     </div>
-    </div>
-    
-    <div class="section">
-     <h2>Interactive Demo</h2>
-     <div class="interactive-demo">
-      <h3>Permutation Calculator</h3>
-      <p>Calculate the number of permutations:</p>
-      <input type="number" id="totalItemsInput" class="demo-input" placeholder="Total items (n)" min="1">
-      <input type="number" id="selectItemsInput" class="demo-input" placeholder="Items to arrange (r)" min="1">
-      <br>
-      <button id="calculateBtn" class="demo-button">Calculate Permutations</button>
-      <div id="demoResult" class="demo-result"></div>
-      <div id="calculationSteps" class="calculation-steps" style="display: none;"></div>
-     </div>
-    </div>
-    
-    <div class="section">
-     <h2>Detailed Examples</h2>
-     
-     <h3>Example 1: Arranging Books</h3>
-     <p>How many ways can you arrange 3 books out of 5 on a shelf?</p>
-     <div class="calculation-steps">
-      <div class="calculation-step">n = 5 books total, r = 3 books to arrange</div>
-      <div class="calculation-step">Formula: $^5P_3 = \frac{5!}{(5-3)!} = \frac{5!}{2!}$</div>
-      <div class="calculation-step">Calculation: $^5P_3 = 5 × 4 × 3 = 60$</div>
-      <div class="calculation-step">Multiplication rule: 5 × 4 × 3 = 60 ways</div>
-     </div>
-     
-     <h3>Example 2: Race Finishes</h3>
-     <p>In a race with 8 runners, how many ways can the top 3 finish?</p>
-     <div class="calculation-steps">
-      <div class="calculation-step">n = 8 runners, r = 3 podium positions</div>
-      <div class="calculation-step">Formula: $^8P_3 = 8 × 7 × 6 = 336$</div>
-      <div class="calculation-step">This gives the number of ordered triples (1st, 2nd, 3rd place)</div>
-     </div>
-     
-     <h3>Example 3: Password Arrangements</h3>
-     <p>How many 4-letter passwords can be formed from the letters A, B, C, D, E?</p>
-     <div class="calculation-steps">
-      <div class="calculation-step">n = 5 letters, r = 4 positions</div>
-      <div class="calculation-step">Formula: $^5P_4 = 5 × 4 × 3 × 2 = 120$</div>
-      <div class="calculation-step">Note: Each password uses 4 distinct letters in order</div>
-     </div>
-    </div>
-    
-    <div class="factorial-explanation">
-     <h4>Understanding Factorials in Permutations</h4>
-     <p>The permutation formula $^nP_r = \frac{n!}{(n-r)!}$ comes from the multiplication rule:</p>
-     <ul>
-      <li>First position: n choices</li>
-      <li>Second position: n-1 choices</li>
-      <li>Third position: n-2 choices</li>
-      <li>...</li>
-      <li>r-th position: n-r+1 choices</li>
-     </ul>
-     <p>This gives: n(n-1)(n-2)...(n-r+1) = $\frac{n!}{(n-r)!}$</p>
-    </div>
-    
-    <div class="section">
-     <h2>Applications</h2>
-     <ul>
-      <li><strong>Racing:</strong> Determining finish order possibilities</li>
-      <li><strong>Seating Arrangements:</strong> Arranging people in rows or circles</li>
-      <li><strong>Password Generation:</strong> Creating unique password combinations</li>
-      <li><strong>Tournament Scheduling:</strong> Arranging match sequences</li>
-      <li><strong>DNA Sequencing:</strong> Counting possible genetic arrangements</li>
-      <li><strong>Queue Management:</strong> Ordering service sequences</li>
-     </ul>
-    </div>
-    
-    <div class="section">
-     <h2>Practice Problems</h2>
-     
-     <div class="problem-item">
-      <div class="problem-number">1</div>
-      <div class="problem-content">
-       <p>How many ways can 4 people be seated in a row if there are 6 people available?</p>
-       <button class="solution-button" onclick="toggleSolution(1)">Show Solution</button>
-       <div class="solution-content" id="solution1">
-        <p>This is a permutation problem: arranging 4 people out of 6.</p>
-        <p>$^6P_4 = 6 × 5 × 4 × 3 = 360$ ways</p>
-        <p>Formula: $^6P_4 = \frac{6!}{(6-4)!} = \frac{720}{2} = 360$</p>
-       </div>
-      </div>
-     </div>
-     
-     <div class="problem-item">
-      <div class="problem-number">2</div>
-      <div class="problem-content">
-       <p>In how many ways can the letters of the word "MATH" be arranged?</p>
-       <button class="solution-button" onclick="toggleSolution(2)">Show Solution</button>
-       <div class="solution-content" id="solution2">
-        <p>All letters are distinct, so we arrange all 4 letters.</p>
-        <p>$^4P_4 = 4! = 4 × 3 × 2 × 1 = 24$ ways</p>
-        <p>This gives all possible arrangements of the letters.</p>
-       </div>
-      </div>
-     </div>
-     
-     <div class="problem-item">
-      <div class="problem-number">3</div>
-      <div class="problem-content">
-       <p>A president, vice-president, and secretary are to be chosen from 10 candidates. How many ways can this be done?</p>
-       <button class="solution-button" onclick="toggleSolution(3)">Show Solution</button>
-       <div class="solution-content" id="solution3">
-        <p>This requires arranging 3 people out of 10 in specific positions.</p>
-        <p>$^{10}P_3 = 10 × 9 × 8 = 720$ ways</p>
-        <p>The order matters: president, vice-president, secretary are distinct roles.</p>
-       </div>
-      </div>
-     </div>
-     
-     <div class="problem-item">
-      <div class="problem-number">4</div>
-      <div class="problem-content">
-       <p>How many 3-digit numbers can be formed from digits 1, 2, 3, 4, 5 without repetition?</p>
-       <button class="solution-button" onclick="toggleSolution(4)">Show Solution</button>
-       <div class="solution-content" id="solution4">
-        <p>This is arranging 3 digits out of 5, where order matters.</p>
-        <p>$^5P_3 = 5 × 4 × 3 = 60$ different 3-digit numbers</p>
-        <p>Note: Numbers like 123, 132, 213, etc. are all different.</p>
-       </div>
-      </div>
-     </div>
-    </div>
-    
-    <div class="key-takeaways">
-     <h3>Key Takeaways</h3>
-     <ul>
-      <li><strong>Permutations</strong> count arrangements where order matters</li>
-      <li>The formula $^nP_r = \frac{n!}{(n-r)!}$ gives the number of ways to arrange r items from n distinct items</li>
-      <li>For arranging all items, use $^nP_n = n!$</li>
-      <li>The multiplication rule shows why: n choices for first position, (n-1) for second, etc.</li>
-      <li>Permutations differ from combinations because order matters in permutations</li>
-      <li>Common applications include seating arrangements, race finishes, and password generation</li>
-     </ul>
-    </div>
-    
-   </div>
+
+  <div class="note-formula">
+    <h3>Arrange all $n$</h3>
+    <div class="formula-main">$${}_n\mathrm{P}_n = n! = n(n-1)\cdots 2 \cdot 1$$</div>
+    <p class="symbols">By definition $0! = 1$, so that ${}_n\mathrm{P}_n = \dfrac{n!}{0!}$ still works.</p>
   </div>
-  
-  <script>
-   // Interactive canvas visualization
-   const canvas = document.getElementById('permutationCanvas');
-   const ctx = canvas.getContext('2d');
-   
-   function drawPermutationVisualization() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    // Draw items
-    const items = ['A', 'B', 'C', 'D'];
-    const colors = ['#007acc', '#28a745', '#ffc107', '#dc3545'];
-    
-    // Draw original set
-    ctx.font = '16px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText('Original Set: {A, B, C, D}', 300, 30);
-    
-    // Draw permutation steps
-    for (let i = 0; i < 4; i++) {
-     const x = 100 + i * 120;
-     const y = 100;
-     
-     // Position circle
-     ctx.strokeStyle = '#007acc';
-     ctx.lineWidth = 2;
-     ctx.beginPath();
-     ctx.arc(x, y, 25, 0, 2 * Math.PI);
-     ctx.stroke();
-     
-     // Position label
-     ctx.fillStyle = '#000';
-     ctx.fillText(`Position ${i+1}`, x, y - 35);
-     
-     // Choices remaining
-     ctx.fillText(`${4-i} choices`, x, y + 45);
-     
-     if (i < 3) {
-      // Arrow to next position
-      ctx.strokeStyle = '#007acc';
-      ctx.beginPath();
-      ctx.moveTo(x + 25, y);
-      ctx.lineTo(x + 95, y);
-      ctx.stroke();
-      
-      // Arrowhead
-      ctx.beginPath();
-      ctx.moveTo(x + 95, y);
-      ctx.lineTo(x + 85, y - 5);
-      ctx.lineTo(x + 85, y + 5);
-      ctx.closePath();
-      ctx.fillStyle = '#007acc';
-      ctx.fill();
-     }
+
+  <!-- DEMO: list all the arrangements; code at the bottom -->
+  <div class="note-demo">
+    <h2>See every arrangement</h2>
+    <div class="controls">
+      <label>$n$ things <input type="number" id="pcN" value="4" min="1" max="8"></label>
+      <label>arrange $r$ <input type="number" id="pcR" value="2" min="0" max="8"></label>
+    </div>
+    <div class="output table-text" id="pcOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">From 10 candidates, choose a president, a vice-president and a secretary. How many ways?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The three roles are different, so order matters.</li>
+        <li>${}_{10}\mathrm{P}_3 = 10 \times 9 \times 8$</li>
+      </ol>
+      <p class="answer">$720$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">How many 3-digit <strong>even</strong> numbers can be made from the digits $1, 2, 3, 4, 5$ without repeating a digit?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Fill the restricted place first. Units digit: $2$ or $4$, so 2 choices</li>
+        <li>The other two places use 2 of the remaining 4 digits: ${}_4\mathrm{P}_2 = 12$</li>
+      </ol>
+      <p class="answer">$2 \times 12 = 24$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">5 people stand in a row. In how many arrangements are A and B next to each other?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Tie A and B together as one block. Now arrange 4 items (the block + 3 people): $4! = 24$</li>
+        <li>Inside the block, A and B can be AB or BA: $2! = 2$</li>
+      </ol>
+      <p class="answer">$24 \times 2 = 48$</p>
+    </details>
+  </div>
+
+  <!-- TIP: dealing with conditions -->
+  <div class="note-tip">
+    With a condition, <strong>place the restricted items first</strong> (Example 2), or <strong>tie items that must be together into one block</strong> (Example 3).
+    For "not next to each other", subtract: total − together.
+  </div>
+
+  <!-- WARNING: the most common mistake with this topic -->
+  <div class="note-warning">
+    Permutations are for <strong>different</strong> items where <strong>order matters</strong>.
+    If order doesn't matter (choosing a team), use combinations; if items repeat (letters of "BANANA"), see the note on identical items.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>${}_n\mathrm{P}_r = n(n-1)\cdots(n-r+1) = \dfrac{n!}{(n-r)!}$; $\;{}_n\mathrm{P}_n = n!$; $\;0! = 1$.</li>
+      <li>Place restricted items first; tie "together" items into a block.</li>
+      <li>"Not together" = total − together.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script>
+  // "See every arrangement" demo (the TRY IT block above).
+  // Uses letters A, B, C, ... for the n things and lists each ordered choice of r.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const nInput = document.getElementById('pcN');
+    const rInput = document.getElementById('pcR');
+    const output = document.getElementById('pcOutput');
+
+    // All ordered selections of r items from the list, built one place at a time
+    function arrangements(items, r) {
+      if (r === 0) return [[]];
+      const result = [];
+      items.forEach((item, i) => {
+        const rest = items.filter((_, j) => j !== i);
+        arrangements(rest, r - 1).forEach((tail) => result.push([item, ...tail]));
+      });
+      return result;
     }
-    
-    // Show calculation
-    ctx.fillStyle = '#000';
-    ctx.font = '18px Arial';
-    ctx.fillText('4 × 3 × 2 × 1 = 24 permutations', 300, 200);
-    
-    // Show one example permutation
-    ctx.fillText('Example: A B C D', 300, 230);
-    ctx.fillText('Other arrangements: A B D C, A C B D, etc.', 300, 250);
-   }
-   
-   // Interactive calculator
-   document.getElementById('calculateBtn').addEventListener('click', function() {
-    const n = parseInt(document.getElementById('totalItemsInput').value);
-    const r = parseInt(document.getElementById('selectItemsInput').value);
-    
-    if (n < r || n < 1 || r < 1) {
-     document.getElementById('demoResult').innerHTML = '<span style="color: red;">Invalid input: n ≥ r ≥ 1</span>';
-     return;
+
+    function update() {
+      const n = parseInt(nInput.value, 10);
+      const r = parseInt(rInput.value, 10);
+      if (isNaN(n) || isNaN(r) || n < 1 || n > 8 || r < 0 || r > n) {
+        output.textContent = 'Please choose 1 ≤ n ≤ 8 and 0 ≤ r ≤ n.';
+        return;
+      }
+
+      const letters = 'ABCDEFGH'.slice(0, n).split('');
+      // The formula: n × (n−1) × ... (r factors)
+      const factors = Array.from({ length: r }, (_, i) => n - i);
+      const count = factors.reduce((x, y) => x * y, 1);
+      const working = r === 0 ? '1' : factors.join(' × ');
+
+      const lines = [`${n}P${r} = ${working} = ${count}`];
+      if (count <= 120) {
+        const list = arrangements(letters, r).map((a) => a.join(''));
+        // 10 per line so the list is easy to scan
+        for (let i = 0; i < list.length; i += 10) lines.push(list.slice(i, i + 10).join('  '));
+      } else {
+        lines.push('(too many to list; try smaller numbers)');
+      }
+      output.textContent = lines.join('\n');
     }
-    
-    let result = 1;
-    let calculation = '';
-    for (let i = 0; i < r; i++) {
-     const factor = n - i;
-     result *= factor;
-     calculation += (i > 0 ? ' × ' : '') + factor;
-    }
-    
-    const resultDiv = document.getElementById('demoResult');
-    const stepsDiv = document.getElementById('calculationSteps');
-    
-    resultDiv.innerHTML = `<span class="highlight">$^{n}P_{${r}} = ${result}</span>`;
-    
-    stepsDiv.style.display = 'block';
-    stepsDiv.innerHTML = `
-     <div class="calculation-step">Total items (n): ${n}</div>
-     <div class="calculation-step">Items to arrange (r): ${r}</div>
-     <div class="calculation-step">Calculation: ${calculation} = ${result}</div>
-     <div class="calculation-step">Formula: $^{n}P_{${r}} = \\frac{${n}!}{(${n}-${r})!} = ${result}</div>
-    `;
-   });
-   
-   // Solution toggle function
-   function toggleSolution(problemNumber) {
-    const solution = document.getElementById('solution' + problemNumber);
-    const button = solution.previousElementSibling;
-    
-    if (solution.style.display === 'none' || solution.style.display === '') {
-     solution.style.display = 'block';
-     button.textContent = 'Hide Solution';
-    } else {
-     solution.style.display = 'none';
-     button.textContent = 'Show Solution';
-    }
-   }
-   
-   // Initialize visualization
-   drawPermutationVisualization();
-  </script>
- </body>
-</html>
+
+    nInput.addEventListener('input', update);
+    rInput.addEventListener('input', update);
+    update(); // show the default numbers straight away
+  })();
+</script>

@@ -1,448 +1,156 @@
-<!DOCTYPE html>
-<!-- tags: Mathematics -->
-<html lang="en">
- <head>
-  <meta charset="utf-8"/>
-  <title>
-   Properties of Definite Integrals
-  </title>
-  <script>
-   MathJax = {
-            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
-            svg: {fontCache: 'global'}
-        };
-  </script>
-  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
-  </script>
-  <link href="/static/notes_style.css" rel="stylesheet"/>
-  <style>
-   .solution-btn {
-     background-color: #4CAF50;
-     color: white;
-     border: none;
-     padding: 8px 16px;
-     text-align: center;
-     text-decoration: none;
-     display: inline-block;
-     font-size: 14px;
-     margin: 10px 0;
-     cursor: pointer;
-     border-radius: 4px;
-     transition: background-color 0.3s;
-   }
-   
-   .solution-btn:hover {
-     background-color: #45a049;
-   }
-   
-   .problem-item {
-     margin-bottom: 20px;
-     padding: 15px;
-     border: 1px solid #ddd;
-     border-radius: 8px;
-   }
-  </style>
- </head>
- <body>
-  <div class="fancy-title" data-topic="Integration">
-   Properties of Definite Integrals
+<!-- tags: Integration -->
+<!-- =====================================================================
+     NOTE: Properties of Definite Integrals (定積分の性質)
+     Uses the shared blocks from static/css/note_blocks.css and the
+     graph helper static/js/note_plot.js (built on note_geom.js).
+     Do not add a <style> block here; change note_blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Integration">Properties of Definite Integrals</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Areas add up, and direction matters</h2>
+    <p>Definite integrals split like indefinite ones: constant factors come out and sums split.
+      You can also split the <em>interval</em>: the integral from $a$ to $c$ equals the integral from $a$ to $b$ plus the one from $b$ to $c$.</p>
+    <p>Going backwards, from $b$ down to $a$, flips the sign. This is how integrals of $|f(x)|$ are handled: split at the points where $f$ changes sign.</p>
+  </section>
+
+  <!-- FORMULA: the properties -->
+  <div class="note-formula">
+    <h3>Properties ($k$, $l$: constants)</h3>
+    <div class="formula-main">$$\int_a^b \{kf(x) + lg(x)\}\,dx = k\int_a^b f(x)\,dx + l\int_a^b g(x)\,dx$$</div>
+    <div class="formula-main">$$\int_a^a f(x)\,dx = 0, \qquad \int_b^a f(x)\,dx = -\int_a^b f(x)\,dx$$</div>
+    <div class="formula-main">$$\int_a^b f(x)\,dx + \int_b^c f(x)\,dx = \int_a^c f(x)\,dx$$</div>
+    <p class="symbols">The last one holds for any order of $a$, $b$, $c$, even if $b$ is not between $a$ and $c$.</p>
   </div>
-   <div class="container">
-    <div class="main-content">
-     <div class="section">
-      <h2>Properties of Definite Integrals</h2>
-      <p>Definite integrals have several important properties that make them easier to evaluate and manipulate. These properties follow directly from the definition of the definite integral and the properties of limits.</p>
-      
-      <div class="highlight-box">
-       <strong>Why Properties Matter:</strong>
-       <p>These properties allow us to break down complex integrals into simpler parts, combine integrals, and evaluate integrals more efficiently without always finding antiderivatives.</p>
-      </div>
-     </div>
 
-     <div class="section">
-      <h2>Property 1: Constant Multiple Rule</h2>
-      <div class="highlight-box">
-       <strong>Property:</strong> \( \int_a^b k f(x) \, dx = k \int_a^b f(x) \, dx \) where k is a constant
-       
-       <strong>Proof:</strong> Let F(x) be an antiderivative of f(x). Then:
-       <p>\( \int_a^b k f(x) \, dx = [k F(x)]_a^b = k F(b) - k F(a) = k(F(b) - F(a)) = k \int_a^b f(x) \, dx \)</p>
-      </div>
-      
-      <p><strong>Example:</strong> \( \int_0^2 3x^2 \, dx = 3 \int_0^2 x^2 \, dx = 3 \left[ \frac{x^3}{3} \right]_0^2 = 3( \frac{8}{3} - 0) = 8 \)</p>
-     </div>
+  <!-- PROOF: from F(b) − F(a) -->
+  <div class="note-proof">
+    <ol>
+      <li>$\displaystyle\int_a^a f\,dx = F(a) - F(a) = 0$, and $\displaystyle\int_b^a f\,dx = F(a) - F(b) = -\{F(b) - F(a)\}$.</li>
+      <li>$\{F(b) - F(a)\} + \{F(c) - F(b)\} = F(c) - F(a)$: the middle terms cancel.</li>
+      <li>Linearity: $kF + lG$ is an antiderivative of $kf + lg$ (note 02).</li>
+    </ol>
+  </div>
 
-     <div class="section">
-      <h2>Property 2: Sum and Difference Rules</h2>
-      <div class="highlight-box">
-       <strong>Addition:</strong> \( \int_a^b [f(x) + g(x)] \, dx = \int_a^b f(x) \, dx + \int_a^b g(x) \, dx \)
-       
-       <strong>Subtraction:</strong> \( \int_a^b [f(x) - g(x)] \, dx = \int_a^b f(x) \, dx - \int_a^b g(x) \, dx \)
-       
-       <strong>Proof:</strong> Let F(x) and G(x) be antiderivatives of f(x) and g(x) respectively:
-       <p>\( \int_a^b [f(x) + g(x)] \, dx = [F(x) + G(x)]_a^b = (F(b) + G(b)) - (F(a) + G(a)) = (F(b) - F(a)) + (G(b) - G(a)) \)</p>
-      </div>
-      
-      <p><strong>Example:</strong> \( \int_1^3 (x^2 + 2x - 1) \, dx = \int_1^3 x^2 \, dx + \int_1^3 2x \, dx - \int_1^3 1 \, dx \)</p>
-      <p>\( = \left[ \frac{x^3}{3} \right]_1^3 + 2\left[ \frac{x^2}{2} \right]_1^3 - \left[ x \right]_1^3 = (9 - \frac{1}{3}) + (9 - \frac{1}{2}) - (3 - 1) = \frac{26}{3} + \frac{17}{2} - 2 \)</p>
-     </div>
-
-     <div class="section">
-      <h2>Property 3: Zero Width Interval</h2>
-      <div class="highlight-box">
-       <strong>Property:</strong> \( \int_a^a f(x) \, dx = 0 \)
-       
-       <strong>Intuition:</strong> The integral represents the signed area between the curve and x-axis over [a, a]. Since there's no width, there's no area.
-       
-       <strong>Proof:</strong> \( \int_a^a f(x) \, dx = F(a) - F(a) = 0 \) where F is an antiderivative of f.
-      </div>
-     </div>
-
-     <div class="section">
-      <h2>Property 4: Reversal of Limits</h2>
-      <div class="highlight-box">
-       <strong>Property:</strong> \( \int_b^a f(x) \, dx = -\int_a^b f(x) \, dx \)
-       
-       <strong>Proof:</strong> \( \int_b^a f(x) \, dx = F(a) - F(b) = -(F(b) - F(a)) = -\int_a^b f(x) \, dx \)
-      </div>
-      
-      <p><strong>Example:</strong> If \( \int_1^3 x \, dx = 4 \), then \( \int_3^1 x \, dx = -4 \)</p>
-     </div>
-
-     <div class="section">
-      <h2>Property 5: Additivity over Intervals</h2>
-      <div class="highlight-box">
-       <strong>Property:</strong> \( \int_a^b f(x) \, dx = \int_a^c f(x) \, dx + \int_c^b f(x) \, dx \) for any c between a and b
-       
-       <strong>Proof:</strong> \( \int_a^b f(x) \, dx = F(b) - F(a) \)
-       <p>\( \int_a^c f(x) \, dx + \int_c^b f(x) \, dx = (F(c) - F(a)) + (F(b) - F(c)) = F(b) - F(a) \)</p>
-      </div>
-      
-      <p><strong>Example:</strong> \( \int_0^4 x^2 \, dx = \int_0^2 x^2 \, dx + \int_2^4 x^2 \, dx \)</p>
-     </div>
-
-     <div class="section">
-      <h2>Additional Properties</h2>
-      <div class="highlight-box">
-       <strong>Inequality Properties:</strong>
-       <ul>
-        <li>If f(x) ≥ g(x) on [a, b], then \( \int_a^b f(x) \, dx ≥ \int_a^b g(x) \, dx \)</li>
-        <li>If m ≤ f(x) ≤ M on [a, b], then m(b-a) ≤ \( \int_a^b f(x) \, dx \) ≤ M(b-a)</li>
-        <li>\( \left| \int_a^b f(x) \, dx \right| ≤ \int_a^b |f(x)| \, dx \)</li>
-       </ul>
-      </div>
-     </div>
-
-     <div class="section">
-      <h2>Visual Guide</h2>
-      <p>The properties of definite integrals can be visualized geometrically, showing how integrals combine and relate to each other.</p>
-      <canvas id="propertiesCanvas" width="600" height="400" style="border: 1px solid #ccc; margin: 20px auto; display: block;"></canvas>
-     </div>
-
-     <div class="section">
-      <h2>Examples Using Properties</h2>
-      
-      <div class="example">
-       <h3>Example 1: Combining Properties</h3>
-       <p>Evaluate \( \int_0^2 (3x^2 - 4x + 1) \, dx \) using properties.</p>
-       <div class="steps">
-        <p>Use sum/difference and constant multiple rules:</p>
-        <p>\( \int_0^2 (3x^2 - 4x + 1) \, dx = 3\int_0^2 x^2 \, dx - 4\int_0^2 x \, dx + \int_0^2 1 \, dx \)</p>
-        <p>\( = 3\left[ \frac{x^3}{3} \right]_0^2 - 4\left[ \frac{x^2}{2} \right]_0^2 + \left[ x \right]_0^2 \)</p>
-        <p>\( = 3( \frac{8}{3} - 0) - 4( \frac{4}{2} - 0) + (2 - 0) = 8 - 4(2) + 2 = 8 - 8 + 2 = 2 \)</p>
-       </div>
-      </div>
-
-      <div class="example">
-       <h3>Example 2: Additivity Property</h3>
-       <p>Given \( \int_0^1 f(x) \, dx = 3 \) and \( \int_1^3 f(x) \, dx = 7 \), find \( \int_0^3 f(x) \, dx \).</p>
-       <div class="steps">
-        <p>Using additivity: \( \int_0^3 f(x) \, dx = \int_0^1 f(x) \, dx + \int_1^3 f(x) \, dx = 3 + 7 = 10 \)</p>
-       </div>
-      </div>
-
-      <div class="example">
-       <h3>Example 3: Reversal of Limits</h3>
-       <p>If \( \int_2^5 f(x) \, dx = 12 \), find \( \int_5^2 f(x) \, dx \).</p>
-       <div class="steps">
-        <p>Using reversal: \( \int_5^2 f(x) \, dx = -\int_2^5 f(x) \, dx = -12 \)</p>
-       </div>
-      </div>
-     </div>
-
-     <div class="section">
-      <h2>Practice Problems</h2>
-      <div class="practice-problem">
-       <div class="problem-item">
-        <p><strong>1.</strong> Given \( \int_0^2 f(x) \, dx = 5 \) and \( \int_2^4 f(x) \, dx = 8 \), find \( \int_0^4 f(x) \, dx \).</p>
-        <button class="solution-btn" onclick="toggleSolution(1)">Show Solution</button>
-        <div id="solution-1" class="solution" style="display: none;">
-         <p><strong>Solution:</strong></p>
-         <p>Using additivity over intervals: \( \int_0^4 f(x) \, dx = \int_0^2 f(x) \, dx + \int_2^4 f(x) \, dx = 5 + 8 = 13 \)</p>
-        </div>
-       </div>
-
-       <div class="problem-item">
-        <p><strong>2.</strong> Evaluate \( \int_1^1 2x \, dx \) using properties.</p>
-        <button class="solution-btn" onclick="toggleSolution(2)">Show Solution</button>
-        <div id="solution-2" class="solution" style="display: none;">
-         <p><strong>Solution:</strong></p>
-         <p>Using zero width interval property: \( \int_1^1 2x \, dx = 0 \)</p>
-        </div>
-       </div>
-
-       <div class="problem-item">
-        <p><strong>3.</strong> If \( \int_3^7 f(x) \, dx = 12 \), find \( \int_7^3 f(x) \, dx \).</p>
-        <button class="solution-btn" onclick="toggleSolution(3)">Show Solution</button>
-        <div id="solution-3" class="solution" style="display: none;">
-         <p><strong>Solution:</strong></p>
-         <p>Using reversal of limits: \( \int_7^3 f(x) \, dx = -\int_3^7 f(x) \, dx = -12 \)</p>
-        </div>
-       </div>
-
-       <div class="problem-item">
-        <p><strong>4.</strong> Evaluate \( \int_0^3 4x^2 \, dx \) using the constant multiple property.</p>
-        <button class="solution-btn" onclick="toggleSolution(4)">Show Solution</button>
-        <div id="solution-4" class="solution" style="display: none;">
-         <p><strong>Solution:</strong></p>
-         <p>\( \int_0^3 4x^2 \, dx = 4 \int_0^3 x^2 \, dx = 4 \left[ \frac{x^3}{3} \right]_0^3 = 4 \cdot \frac{27}{3} = 4 \cdot 9 = 36 \)</p>
-        </div>
-       </div>
-
-       <div class="problem-item">
-        <p><strong>5.</strong> Simplify \( \int_2^5 (f(x) + g(x) - h(x)) \, dx \) using properties.</p>
-        <button class="solution-btn" onclick="toggleSolution(5)">Show Solution</button>
-        <div id="solution-5" class="solution" style="display: none;">
-         <p><strong>Solution:</strong></p>
-         <p>Using sum and difference rules: \( \int_2^5 f(x) \, dx + \int_2^5 g(x) \, dx - \int_2^5 h(x) \, dx \)</p>
-        </div>
-       </div>
-
-       <div class="problem-item">
-        <p><strong>6.</strong> Given \( \int_0^1 f(x) \, dx = 3 \), \( \int_1^2 f(x) \, dx = 5 \), and \( \int_2^3 f(x) \, dx = 2 \), find \( \int_0^3 f(x) \, dx \).</p>
-        <button class="solution-btn" onclick="toggleSolution(6)">Show Solution</button>
-        <div id="solution-6" class="solution" style="display: none;">
-         <p><strong>Solution:</strong></p>
-         <p>Using additivity multiple times: \( \int_0^3 f(x) \, dx = \int_0^1 f(x) \, dx + \int_1^2 f(x) \, dx + \int_2^3 f(x) \, dx = 3 + 5 + 2 = 10 \)</p>
-        </div>
-       </div>
-      </div>
-     </div>
-
-     <div class="section">
-      <h2>Key Takeaways</h2>
-      <div class="key-takeaways">
-       <ul>
-        <li>Constant multiple: \( \int_a^b k f(x) \, dx = k \int_a^b f(x) \, dx \)</li>
-        <li>Sum/difference: \( \int_a^b [f(x) \pm g(x)] \, dx = \int_a^b f(x) \, dx \pm \int_a^b g(x) \, dx \)</li>
-        <li>Zero width: \( \int_a^a f(x) \, dx = 0 \)</li>
-        <li>Reversal: \( \int_b^a f(x) \, dx = -\int_a^b f(x) \, dx \)</li>
-        <li>Additivity: \( \int_a^b f(x) \, dx = \int_a^c f(x) \, dx + \int_c^b f(x) \, dx \)</li>
-        <li>Properties allow breaking complex integrals into simpler parts</li>
-        <li>All properties follow from the fundamental theorem of calculus</li>
-        <li>Properties work for any continuous functions on the interval</li>
-       </ul>
-      </div>
-     </div>
+  <!-- DEMO: split the interval at b; code at the bottom -->
+  <div class="note-demo">
+    <h2>$\displaystyle\int_a^b + \int_b^c = \int_a^c$ for $f(x) = 1 + \sin 2x$</h2>
+    <div class="controls">
+      <label>$a$ = <input type="range" id="dpA" min="-3" max="3" step="0.05" value="-2"></label>
+      <label>$b$ = <input type="range" id="dpB" min="-3" max="3" step="0.05" value="0.5"></label>
+      <label>$c$ = <input type="range" id="dpC" min="-3" max="3" step="0.05" value="2.5"></label>
     </div>
-   </div>
-  <script>
-   // Canvas visualization for definite integral properties
-   const canvas = document.getElementById('propertiesCanvas');
-   const ctx = canvas.getContext('2d');
-   
-   // Set up coordinate system
-   const width = canvas.width;
-   const height = canvas.height;
-   const centerX = width / 2;
-   const centerY = height / 2;
-   
-   // Scale factors
-   const scaleX = 40;
-   const scaleY = 40;
-   
-   function drawGrid() {
-    ctx.strokeStyle = '#e0e0e0';
-    ctx.lineWidth = 1;
-    
-    // Vertical lines
-    for (let x = centerX; x < width; x += scaleX) {
-     ctx.beginPath();
-     ctx.moveTo(x, 0);
-     ctx.lineTo(x, height);
-     ctx.stroke();
-    }
-    for (let x = centerX; x > 0; x -= scaleX) {
-     ctx.beginPath();
-     ctx.moveTo(x, 0);
-     ctx.lineTo(x, height);
-     ctx.stroke();
-    }
-    
-    // Horizontal lines
-    for (let y = centerY; y < height; y += scaleY) {
-     ctx.beginPath();
-     ctx.moveTo(0, y);
-     ctx.lineTo(width, y);
-     ctx.stroke();
-    }
-    for (let y = centerY; y > 0; y -= scaleY) {
-     ctx.beginPath();
-     ctx.moveTo(0, y);
-     ctx.lineTo(width, y);
-     ctx.stroke();
-    }
-   }
-   
-   function drawAxes() {
-    ctx.strokeStyle = '#000';
-    ctx.lineWidth = 2;
-    
-    // X-axis
-    ctx.beginPath();
-    ctx.moveTo(0, centerY);
-    ctx.lineTo(width, centerY);
-    ctx.stroke();
-    
-    // Y-axis
-    ctx.beginPath();
-    ctx.moveTo(centerX, 0);
-    ctx.lineTo(centerX, height);
-    ctx.stroke();
-    
-    // Axis labels
-    ctx.fillStyle = '#000';
-    ctx.font = '12px Arial';
-    ctx.textAlign = 'center';
-    
-    // X-axis labels
-    for (let i = -5; i <= 5; i++) {
-     if (i !== 0) {
-      const x = centerX + i * scaleX;
-      ctx.fillText(i.toString(), x, centerY + 15);
-     }
-    }
-    
-    // Y-axis labels
-    for (let i = -3; i <= 3; i++) {
-     if (i !== 0) {
-      const y = centerY - i * scaleY;
-      ctx.fillText(i.toString(), centerX - 15, y + 4);
-     }
-    }
-   }
-   
-   function plotFunction(func, color, label, a, b) {
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    
-    let firstPoint = true;
-    for (let x = a; x <= b; x += 0.1) {
-     const y = func(x);
-     const canvasX = centerX + x * scaleX;
-     const canvasY = centerY - y * scaleY;
-     
-     if (firstPoint) {
-      ctx.moveTo(canvasX, canvasY);
-      firstPoint = false;
-     } else {
-      ctx.lineTo(canvasX, canvasY);
-     }
-    }
-    ctx.stroke();
-    
-    // Add label
-    ctx.fillStyle = color;
-    ctx.font = '14px Arial';
-    ctx.textAlign = 'left';
-    ctx.fillText(label, 10, 30 + (color === '#ff6b6b' ? 0 : color === '#4ecdc4' ? 20 : 40));
-   }
-   
-   function fillArea(func, a, b, color) {
-    ctx.fillStyle = color;
-    ctx.beginPath();
-    
-    // Start from a
-    ctx.moveTo(centerX + a * scaleX, centerY);
-    
-    // Plot the function from a to b
-    for (let x = a; x <= b; x += 0.1) {
-     const y = func(x);
-     const canvasX = centerX + x * scaleX;
-     const canvasY = centerY - y * scaleY;
-     ctx.lineTo(canvasX, canvasY);
-    }
-    
-    // Close the path back to x-axis
-    ctx.lineTo(centerX + b * scaleX, centerY);
-    ctx.closePath();
-    ctx.fill();
-   }
-   
-   function drawPropertiesDemo() {
-    // Clear canvas
-    ctx.clearRect(0, 0, width, height);
-    
-    // Draw grid and axes
-    drawGrid();
-    drawAxes();
-    
-    // Define functions
-    const f = x => x * x - 2; // parabola
-    const g = x => x; // line
-    
-    // Plot functions
-    plotFunction(f, '#ff6b6b', 'f(x) = x² - 2', -3, 3);
-    plotFunction(g, '#4ecdc4', 'g(x) = x', -3, 3);
-    
-    // Fill areas to demonstrate properties
-    fillArea(f, 0, 2, 'rgba(255, 107, 107, 0.3)'); // Area for f from 0 to 2
-    fillArea(g, 0, 2, 'rgba(78, 205, 196, 0.3)'); // Area for g from 0 to 2
-    
-    // Draw vertical lines to show intervals
-    ctx.strokeStyle = '#333';
-    ctx.setLineDash([5, 5]);
-    ctx.beginPath();
-    ctx.moveTo(centerX + 0 * scaleX, centerY - f(0) * scaleY);
-    ctx.lineTo(centerX + 0 * scaleX, centerY);
-    ctx.moveTo(centerX + 2 * scaleX, centerY - f(2) * scaleY);
-    ctx.lineTo(centerX + 2 * scaleX, centerY);
-    ctx.stroke();
-    ctx.setLineDash([]);
-    
-    // Add labels
-    ctx.fillStyle = '#333';
-    ctx.font = '14px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText('a = 0', centerX + 0 * scaleX, centerY + 20);
-    ctx.fillText('b = 2', centerX + 2 * scaleX, centerY + 20);
-    
-    // Add integral notation
-    ctx.fillStyle = '#000';
-    ctx.font = '16px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText('Definite Integral Properties Demonstration', centerX, 20);
-    
-    ctx.font = '12px Arial';
-    ctx.fillText('∫₀² f(x) dx + ∫₀² g(x) dx = ∫₀² [f(x) + g(x)] dx', centerX, height - 30);
-   }
-   
-   // Solution toggle functionality
-   function toggleSolution(problemNumber) {
-    const solution = document.getElementById(`solution-${problemNumber}`);
-    const button = solution.previousElementSibling;
-    
-    if (solution.style.display === 'none') {
-     solution.style.display = 'block';
-     button.textContent = 'Hide Solution';
-    } else {
-     solution.style.display = 'none';
-     button.textContent = 'Show Solution';
-    }
-   }
-   
-   // Initialize visualization when page loads
-   window.addEventListener('load', drawPropertiesDemo);
-  </script>
- </body>
-</html>
+    <canvas id="dpCanvas"></canvas>
+    <div class="output table-text" id="dpOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">$\displaystyle\int_0^2 f(x)\,dx = 3$ and $\displaystyle\int_0^5 f(x)\,dx = 7$. Find $\displaystyle\int_5^2 f(x)\,dx$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\displaystyle\int_2^5 f\,dx = \int_0^5 f\,dx - \int_0^2 f\,dx = 4$.</li>
+        <li>Reversing the limits flips the sign.</li>
+      </ol>
+      <p class="answer">$-4$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Evaluate $\displaystyle\int_0^3 |x - 1|\,dx$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Split at $x = 1$: $\displaystyle\int_0^1 (1 - x)\,dx + \int_1^3 (x - 1)\,dx$.</li>
+        <li>$= \dfrac{1}{2} + \Big[\dfrac{x^2}{2} - x\Big]_1^3 = \dfrac{1}{2} + \left(\dfrac{3}{2} + \dfrac{1}{2}\right)$</li>
+      </ol>
+      <p class="answer">$\dfrac{5}{2}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Evaluate $\displaystyle\int_1^2 \frac{2x - 1}{x}\,dx + \int_1^2 \frac{1}{x}\,dx$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Same limits, so combine: $\displaystyle\int_1^2 \frac{2x - 1 + 1}{x}\,dx = \int_1^2 2\,dx$.</li>
+      </ol>
+      <p class="answer">$2$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Evaluate $\displaystyle\int_0^{\pi} |\cos x|\,dx$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\cos x \ge 0$ on $\left[0, \dfrac{\pi}{2}\right]$ and $\le 0$ on $\left[\dfrac{\pi}{2}, \pi\right]$.</li>
+        <li>$\Big[\sin x\Big]_0^{\frac{\pi}{2}} - \Big[\sin x\Big]_{\frac{\pi}{2}}^{\pi} = 1 - (0 - 1)$</li>
+      </ol>
+      <p class="answer">$2$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: |∫| vs ∫| | -->
+  <div class="note-warning">
+    $\displaystyle\int_a^b |f(x)|\,dx$ is <strong>not</strong> $\left|\displaystyle\int_a^b f(x)\,dx\right|$. You must split at the zeros of $f$ and remove the absolute value on each piece.
+  </div>
+
+  <!-- TIP: combine before computing -->
+  <div class="note-tip">
+    When two integrals have the same limits, or limits that join up, combine them first. The integrand often simplifies.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Linearity holds for definite integrals.</li>
+      <li>$\int_a^b + \int_b^c = \int_a^c$; swapping the limits flips the sign.</li>
+      <li>For $|f|$, split at the zeros of $f$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/note_geom.js"></script>
+<script src="/static/js/note_plot.js"></script>
+<script>
+  // "Split the interval" demo (the TRY IT block above).
+  // Blue: the part from a to b. Orange: the part from b to c. Each part is counted
+  // with a sign: positive when it runs left to right, negative when it runs right
+  // to left. If b lies outside [a, c], the extra piece is covered once forwards and
+  // once backwards, and those two cancel.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const aBox = document.getElementById('dpA'), bBox = document.getElementById('dpB'), cBox = document.getElementById('dpC');
+    const output = document.getElementById('dpOutput');
+    const f3 = (v) => +v.toFixed(3);
+    const f = (x) => 1 + Math.sin(2 * x), F = (x) => x - Math.cos(2 * x) / 2;
+    const I = (p, q) => F(q) - F(p);
+
+    const plot = NotePlot.graph(document.getElementById('dpCanvas'), {
+      x: [-3.3, 3.3], y: [-0.8, 2.6],
+      draw(g) {
+        const a = +aBox.value, b = +bBox.value, c = +cBox.value;
+        g.fill(f, Math.min(a, b), Math.max(a, b), 'rgba(37, 99, 235, 0.22)');
+        g.fill(f, Math.min(b, c), Math.max(b, c), 'rgba(234, 88, 12, 0.22)');
+        g.fn(f, '#334155');
+        g.vline(a); g.vline(b); g.vline(c);
+        g.text([a, -0.45], 'a', '#334155'); g.text([b, -0.45], 'b', '#334155'); g.text([c, -0.45], 'c', '#334155');
+        output.textContent =
+          `∫ from a to b = ${f3(I(a, b))} (blue)${a > b ? ', runs right to left' : ''}\n` +
+          `∫ from b to c = ${f3(I(b, c))} (orange)${b > c ? ', runs right to left' : ''}\n` +
+          `sum = ${f3(I(a, b) + I(b, c))} = ∫ from a to c = ${f3(I(a, c))}`;
+      },
+    });
+    [aBox, bBox, cBox].forEach((el) => el.addEventListener('input', plot.redraw));
+  })();
+</script>

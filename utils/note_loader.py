@@ -66,7 +66,7 @@ def _extract_note_title(note_path):
 
     # Try <div class="fancy-title"> or <h1 class="fancy-title">
     match = re.search(
-        r'<(?:div|h1)[^>]*class="[^"]*fancy-title[^"]*"[^>]*>(.*?)</(?:div|h1)>',
+        r'<(?:div|h1)[^>]*class="[^"]*(?:fancy|note)-title[^"]*"[^>]*>(.*?)</(?:div|h1)>',
         content,
         flags=re.IGNORECASE | re.DOTALL,
     )

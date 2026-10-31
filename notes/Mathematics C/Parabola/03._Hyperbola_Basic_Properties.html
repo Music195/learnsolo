@@ -1,747 +1,162 @@
-<!DOCTYPE html>
-<!-- tags: Hyperbola -->
-<html lang="en">
- <head>
-  <meta charset="utf-8"/>
-  <title>
-   Hyperbola: Basic Properties
-  </title>
-  <script>
-   MathJax = {
-            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
-            svg: {fontCache: 'global'}
-        };
-  </script>
-  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
-  </script>
-  <link href="/static/notes_style.css" rel="stylesheet"/>
-  <style>
+<!-- tags: Conic Sections -->
+<!-- =====================================================================
+     NOTE: Hyperbola: Basic Properties (双曲線)
+     Uses the shared blocks from static/css/note_blocks.css and the
+     graph helper static/js/note_plot.js (built on note_geom.js).
+     Do not add a <style> block here; change note_blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
 
-    .section {
-      margin-bottom: 40px;
-      background: rgba(255,255,255,0.9);
-      border-radius: 12px;
-      padding: 25px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    }
+  <h1 class="note-title" data-topic="Conic Sections">Hyperbola: Basic Properties</h1>
 
-    .section h2 {
-      color: #2c3e50;
-      border-bottom: 3px solid #3498db;
-      padding-bottom: 10px;
-      margin-bottom: 20px;
-      font-size: 1.8em;
-      font-weight: 600;
-    }
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>A constant difference of two distances</h2>
+    <p>Fix two foci F and F′. The points P where $|PF - PF'|$ equals a fixed constant form a <strong>hyperbola</strong> (双曲線).
+      It has two separate branches, one curving round each focus.</p>
+    <p>Far from the centre, each branch gets closer and closer to a pair of straight lines, the <strong>asymptotes</strong> (漸近線).</p>
+  </section>
 
-    .section h3 {
-      color: #34495e;
-      margin-bottom: 15px;
-      font-size: 1.4em;
-      font-weight: 500;
-    }
-
-    /* Law blocks with gradient backgrounds */
-    .law-block {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border-radius: 10px;
-      padding: 20px;
-      margin: 20px 0;
-      color: white;
-      box-shadow: 0 4px 15px rgba(102,126,234,0.3);
-    }
-
-    .law-eq {
-      font-size: 1.2em;
-      font-weight: bold;
-      margin-bottom: 15px;
-      text-align: center;
-      border-bottom: 2px solid rgba(255,255,255,0.3);
-      padding-bottom: 10px;
-    }
-
-    .law-block .math {
-      margin: 8px 0;
-      font-size: 1.1em;
-      line-height: 1.6;
-    }
-
-    /* Operation blocks */
-    .operation-block {
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-      border-radius: 10px;
-      padding: 20px;
-      margin: 20px 0;
-      color: white;
-      box-shadow: 0 4px 15px rgba(245,87,108,0.3);
-    }
-
-    .operation-block .formula {
-      background: rgba(255,255,255,0.9);
-      color: #333;
-      border-radius: 8px;
-      padding: 15px;
-      margin: 15px 0;
-      text-align: center;
-      font-size: 1.3em;
-      font-weight: bold;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-
-    /* Hint blocks */
-    .hint-block {
-      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-      border-radius: 10px;
-      padding: 20px;
-      margin: 20px 0;
-      color: white;
-      box-shadow: 0 4px 15px rgba(79,172,254,0.3);
-    }
-
-    .hint-block strong {
-      font-size: 1.2em;
-      display: block;
-      margin-bottom: 15px;
-      text-align: center;
-      border-bottom: 2px solid rgba(255,255,255,0.3);
-      padding-bottom: 10px;
-    }
-
-    .interactive-demo h3 {
-      color: #2c3e50;
-      margin-bottom: 20px;
-      text-align: center;
-      font-size: 1.5em;
-    }
-
-    .demo-input {
-      width: 80px;
-      padding: 8px 12px;
-      border: 2px solid #3498db;
-      border-radius: 6px;
-      font-size: 1em;
-      margin: 0 5px;
-      background: rgba(255,255,255,0.9);
-      color: #333;
-    }
-
-    .demo-input:focus {
-      outline: none;
-      border-color: #2980b9;
-      box-shadow: 0 0 5px rgba(52,152,219,0.5);
-    }
-
-    .demo-button {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 1em;
-      margin: 5px;
-      transition: all 0.3s ease;
-      box-shadow: 0 2px 10px rgba(102,126,234,0.3);
-    }
-
-    .demo-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(102,126,234,0.4);
-    }
-
-    .demo-result {
-      background: rgba(255,255,255,0.9);
-      border-radius: 8px;
-      padding: 15px;
-      margin-top: 15px;
-      font-family: 'Courier New', monospace;
-      font-size: 1em;
-      color: #333;
-      white-space: pre-line;
-      border: 1px solid #ddd;
-      min-height: 40px;
-    }
-
-    /* Problem items */
-    .problem-item {
-      background: rgba(255,255,255,0.95);
-      border-radius: 10px;
-      padding: 20px;
-      margin: 15px 0;
-      border-left: 5px solid #3498db;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-
-    .problem-number {
-      display: inline-block;
-      background: #3498db;
-      color: white;
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      text-align: center;
-      line-height: 30px;
-      font-weight: bold;
-      margin-right: 15px;
-      vertical-align: top;
-    }
-
-    .problem-content {
-      display: inline-block;
-      width: calc(100% - 50px);
-      vertical-align: top;
-    }
-
-    .solution-button {
-      background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
-      color: #333;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.9em;
-      margin: 10px 0;
-      transition: all 0.3s ease;
-      box-shadow: 0 2px 8px rgba(255,154,158,0.3);
-    }
-
-    .solution-button:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 3px 12px rgba(255,154,158,0.4);
-    }
-
-    .solution-content {
-      display: none;
-      margin-top: 15px;
-      padding: 15px;
-      background: rgba(240,240,240,0.8);
-      border-radius: 8px;
-      border: 1px solid #ddd;
-    }
-
-    .calculation-steps {
-      margin: 10px 0;
-    }
-
-    .calculation-step {
-      margin: 8px 0;
-      padding: 8px 12px;
-      background: rgba(255,255,255,0.7);
-      border-radius: 6px;
-      border-left: 3px solid #3498db;
-    }
-
-    .key-takeaways li:last-child {
-      border-bottom: none;
-    }
-
-    /* Enhanced canvas styling */
-    .hyperbola-canvas {
-      display: block;
-      margin: 20px auto;
-      border: 2px solid #3498db;
-      border-radius: 8px;
-      background: white;
-      box-shadow: 0 4px 15px rgba(52,152,219,0.2);
-    }
-
-    /* Formula boxes */
-    .formula-box {
-      background: rgba(255,255,255,0.9);
-      border-radius: 8px;
-      padding: 15px;
-      margin: 15px 0;
-      text-align: center;
-      font-size: 1.2em;
-      font-weight: bold;
-      color: #333;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-
-    /* Property lists */
-    .property-list {
-      background: rgba(255,255,255,0.9);
-      border-radius: 8px;
-      padding: 15px;
-      margin: 15px 0;
-      color: #333;
-    }
-
-    .property-list li {
-      margin: 8px 0;
-      padding: 5px 0;
-      border-bottom: 1px solid #eee;
-    }
-
-    .property-list li:last-child {
-      border-bottom: none;
-    }
-  </style>
- </head>
- <body>
-  <div class="fancy-title" data-topic="Hyperbola">
-   Hyperbola: Basic Properties
+  <!-- FORMULA: standard form -->
+  <div class="note-formula">
+    <h3>$a &gt; 0$, $b &gt; 0$: foci on the $x$-axis</h3>
+    <div class="formula-main">$$\frac{x^2}{a^2} - \frac{y^2}{b^2} = 1, \qquad \text{foci } (\pm\sqrt{a^2 + b^2},\, 0)$$</div>
+    <div class="formula-main">$$|PF - PF'| = 2a, \qquad \text{asymptotes } y = \pm\frac{b}{a}x$$</div>
+    <p class="symbols">Vertices $(\pm a, 0)$. $\;\dfrac{x^2}{a^2} - \dfrac{y^2}{b^2} = -1$ opens up and down, with foci $(0, \pm\sqrt{a^2 + b^2})$ and $|PF - PF'| = 2b$.</p>
   </div>
-  <div class="container">
-   <div class="main-content">
-    <div class="section">
-     <h2>Core Concept: Hyperbola</h2>
-     <p>A hyperbola is the set of all points in a plane such that the absolute difference of the distances to two fixed points (foci) is constant. It consists of two separate curves called branches and has two asymptotes that the branches approach but never touch.</p>
-     
-     <div class="operation-block">
-      <div class="formula">
-       Standard Equation: \( \frac{x^2}{a^2} - \frac{y^2}{b^2} = 1 \quad (a > 0, b > 0) \)
-      </div>
-      <div class="property-list">
-       <ul>
-        <li><strong>Center:</strong> Origin (0,0)</li>
-        <li><strong>Foci:</strong> (±c, 0) where c = √(a² + b²)</li>
-        <li><strong>Vertices:</strong> (±a, 0)</li>
-        <li><strong>Asymptotes:</strong> y = ±(b/a)x</li>
-        <li><strong>Eccentricity:</strong> e = c/a (> 1)</li>
-        <li><strong>Difference of focal distances:</strong> |PF₁ - PF₂| = 2a</li>
-       </ul>
-      </div>
-     </div>
-     
-     <div class="hint-block">
-      <strong>Fundamental Property</strong>
-      <p>For any point P on the hyperbola, |PF₁ - PF₂| = 2a (constant).</p>
-      <div class="math">Distance to F₁ - Distance to F₂ = ±2a</div>
-      <div class="math">Right branch: PF₁ - PF₂ = 2a</div>
-      <div class="math">Left branch: PF₂ - PF₁ = 2a</div>
-     </div>
+
+  <!-- PROOF: the asymptotes -->
+  <div class="note-proof">
+    <ol>
+      <li>The equation itself comes from $|PF - PF'| = 2a$ by squaring twice, as for the ellipse. This time $c^2 - a^2 = b^2$.</li>
+      <li>Solve for $y$: $y = \pm\dfrac{b}{a}x\sqrt{1 - \dfrac{a^2}{x^2}}$.</li>
+      <li>As $|x| \to \infty$, $\dfrac{a^2}{x^2} \to 0$, so the curve approaches $y = \pm\dfrac{b}{a}x$.
+        To sketch them, draw the box $|x| \le a$, $|y| \le b$; the asymptotes are its diagonals.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: drag P on either branch; code at the bottom -->
+  <div class="note-demo">
+    <h2>Drag $P$: the difference $|PF - PF'|$ never changes</h2>
+    <div class="controls">
+      <label>$a$ = <input type="range" id="hyA" min="0.5" max="3" step="0.1" value="2"></label>
+      <label>$b$ = <input type="range" id="hyB" min="0.5" max="3" step="0.1" value="1.5"></label>
     </div>
+    <canvas id="hyCanvas"></canvas>
+    <div class="output table-text" id="hyOutput"></div>
+  </div>
 
-    <div class="interactive-demo">
-      <h3>Interactive Hyperbola Explorer</h3>
-      <div style="margin: 20px 0;">
-        <div style="margin-bottom: 15px;">
-          <strong>Semi-transverse axis a:</strong> <input type="number" id="semiTransverse" value="3" step="0.1" class="demo-input" min="0.1" max="10">
-        </div>
-        <div style="margin-bottom: 15px;">
-          <strong>Semi-conjugate axis b:</strong> <input type="number" id="semiConjugate" value="2" step="0.1" class="demo-input" min="0.1" max="10">
-        </div>
-        <div style="margin-bottom: 15px;">
-          <strong>Test point (x,y):</strong> 
-          <input type="number" id="testX" value="4" step="0.1" class="demo-input">
-          <input type="number" id="testY" value="2" step="0.1" class="demo-input">
-        </div>
-      </div>
-      <button onclick="updateHyperbola()" class="demo-button">Update Hyperbola</button>
-      <button onclick="testPoint()" class="demo-button">Test Point</button>
-      <button onclick="showProperties()" class="demo-button">Show Properties</button>
-      <button onclick="resetCanvas()" class="demo-button">Reset View</button>
-      <div class="demo-result" id="hyperbolaResult"></div>
-      <canvas id="hyperbola-canvas" width="500" height="400" class="hyperbola-canvas"></canvas>
-    </div>
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">For $\dfrac{x^2}{9} - \dfrac{y^2}{16} = 1$, find the foci, vertices and asymptotes.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$a = 3$, $b = 4$, $\sqrt{9 + 16} = 5$.</li>
+      </ol>
+      <p class="answer">Foci $(\pm 5, 0)$; vertices $(\pm 3, 0)$; asymptotes $y = \pm\dfrac{4}{3}x$</p>
+    </details>
+  </div>
 
-    <div class="section">
-     <h2>Mathematical Foundation</h2>
-     
-     <div class="law-block">
-      <div class="law-eq">Focal Distance Property</div>
-      <div class="math">For point P(x,y) on hyperbola: |PF₁ - PF₂| = 2a</div>
-      <div class="math">F₁(c,0), F₂(-c,0), c = √(a² + b²)</div>
-      <div class="math">Distance PF₁ = √[(x-c)² + y²]</div>
-      <div class="math">Distance PF₂ = √[(x+c)² + y²]</div>
-      <div class="math">|√[(x-c)² + y²] - √[(x+c)² + y²]| = 2a</div>
-      <div class="math">After algebraic manipulation: x²/a² - y²/b² = 1</div>
-     </div>
-     
-     <div class="law-block">
-      <div class="law-eq">Asymptotes and Eccentricity</div>
-      <div class="math">Asymptotes: y = ±(b/a)x</div>
-      <div class="math">Eccentricity: e = c/a = √(1 + b²/a²) > 1</div>
-      <div class="math">e close to 1: branches close to asymptotes</div>
-      <div class="math">e large: branches far from asymptotes</div>
-      <div class="math">Linear eccentricity: c = ae</div>
-     </div>
-    </div>
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find the hyperbola with foci $(0, \pm 5)$ and vertices $(0, \pm 3)$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Opens up and down: $\dfrac{x^2}{a^2} - \dfrac{y^2}{b^2} = -1$ with $b = 3$.</li>
+        <li>$a^2 + b^2 = 25$, so $a^2 = 16$.</li>
+      </ol>
+      <p class="answer">$\dfrac{x^2}{16} - \dfrac{y^2}{9} = -1$</p>
+    </details>
+  </div>
 
-    <div class="section">
-      <h2>Worked Examples</h2>
-      <div class="problem-item">
-        <div class="problem-number">1</div>
-        <div class="problem-content">
-          <p>Find the foci, asymptotes, and eccentricity of hyperbola x²/9 - y²/16 = 1.</p>
-          <button class="solution-button" onclick="toggleSolution(1)">Show Solution</button>
-          <div class="solution-content" id="solution1">
-            <div class="calculation-steps">
-              <div class="calculation-step">Equation: x²/9 - y²/16 = 1</div>
-              <div class="calculation-step">a² = 9, b² = 16 ⇒ a = 3, b = 4</div>
-              <div class="calculation-step">c = √(a² + b²) = √(9 + 16) = √25 = 5</div>
-              <div class="calculation-step">Foci: (±5, 0)</div>
-              <div class="calculation-step">Asymptotes: y = ±(4/3)x</div>
-              <div class="calculation-step">Eccentricity: e = c/a = 5/3 ≈ 1.667</div>
-            </div>
-          </div>
-        </div>
-      </div>
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Find the hyperbola with foci $(\pm 4, 0)$ for which $|PF - PF'| = 4$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$2a = 4$, so $a = 2$; $b^2 = 4^2 - 2^2 = 12$.</li>
+      </ol>
+      <p class="answer">$\dfrac{x^2}{4} - \dfrac{y^2}{12} = 1$</p>
+    </details>
+  </div>
 
-      <div class="problem-item">
-        <div class="problem-number">2</div>
-        <div class="problem-content">
-          <p>Find the equation of hyperbola with foci (0,±5) and vertices (0,±3).</p>
-          <button class="solution-button" onclick="toggleSolution(2)">Show Solution</button>
-          <div class="solution-content" id="solution2">
-            <div class="calculation-steps">
-              <div class="calculation-step">Foci on y-axis: (0, ±5) ⇒ c = 5</div>
-              <div class="calculation-step">Vertices: (0, ±3) ⇒ a = 3</div>
-              <div class="calculation-step">b² = c² - a² = 25 - 9 = 16</div>
-              <div class="calculation-step">Equation: y²/9 - x²/16 = 1</div>
-              <div class="calculation-step">Eccentricity: e = c/a = 5/3 ≈ 1.667</div>
-            </div>
-          </div>
-        </div>
-      </div>
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">A hyperbola has asymptotes $y = \pm 2x$ and passes through $(1, 0)$. Find it.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$(1, 0)$ is a vertex on the $x$-axis, so $a = 1$; $\dfrac{b}{a} = 2$ gives $b = 2$.</li>
+      </ol>
+      <p class="answer">$x^2 - \dfrac{y^2}{4} = 1$</p>
+    </details>
+  </div>
 
-      <div class="problem-item">
-        <div class="problem-number">3</div>
-        <div class="problem-content">
-          <p>Test if point (5,3) lies on hyperbola x²/9 - y²/16 = 1.</p>
-          <button class="solution-button" onclick="toggleSolution(3)">Show Solution</button>
-          <div class="solution-content" id="solution3">
-            <div class="calculation-steps">
-              <div class="calculation-step">Point: (5,3), Equation: x²/9 - y²/16 = 1</div>
-              <div class="calculation-step">Left side: 25/9 - 9/16 = (400 - 81)/144 = 319/144 ≈ 2.215</div>
-              <div class="calculation-step">Right side: 1</div>
-              <div class="calculation-step">2.215 > 1, so point lies outside the hyperbola</div>
-              <div class="calculation-step">Distance to foci: F₁(5,0), F₂(-5,0)</div>
-              <div class="calculation-step">PF₁ = √[(5-5)² + 3²] = 3, PF₂ = √[(5+5)² + 3²] = √(100+9) = √109 ≈ 10.44</div>
-              <div class="calculation-step">|PF₁ - PF₂| = |3 - 10.44| = 7.44 > 2a = 6</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+  <!-- WARNING: plus, and which way it opens -->
+  <div class="note-warning">
+    For a hyperbola the focus distance is $\sqrt{a^2 + b^2}$ (plus). Here $a$ is not necessarily bigger than $b$.
+    The sign of the right-hand side ($+1$ or $-1$) tells you whether the curve opens left–right or up–down.
+  </div>
 
-    <div class="section">
-     <h2>Applications and Importance</h2>
-     <div class="law-block">
-      <div class="law-eq">Real-World Applications</div>
-      <ul style="color: white;">
-        <li><strong>Astronomy:</strong> Orbital paths of comets and some satellites</li>
-        <li><strong>Physics:</strong> Lenses and mirrors, wave propagation</li>
-        <li><strong>Engineering:</strong> Cooling towers, architectural design</li>
-        <li><strong>Navigation:</strong> LORAN navigation systems</li>
-        <li><strong>Electronics:</strong> Antenna design, signal processing</li>
-        <li><strong>Mathematics:</strong> Complex analysis, number theory</li>
-      </ul>
-     </div>
-    </div>
+  <!-- TIP: asymptotes quickly -->
+  <div class="note-tip">
+    To get the asymptotes, replace the $1$ on the right with $0$: $\dfrac{x^2}{a^2} - \dfrac{y^2}{b^2} = 0$ factorises into $\dfrac{x}{a} = \pm\dfrac{y}{b}$.
+  </div>
 
-    <div class="key-takeaways">
-      <h3>Key Takeaways</h3>
-      <ul>
-        <li>Hyperbola: set of points where |PF₁ - PF₂| = 2a (constant)</li>
-        <li>Standard form x²/a² - y²/b² = 1 has center at origin</li>
-        <li>Foci at (±c, 0), c = √(a² + b²)</li>
-        <li>Asymptotes y = ±(b/a)x approach but never touch branches</li>
-        <li>Eccentricity e = c/a > 1</li>
-        <li>Two separate branches opening left and right</li>
-        <li>Transverse axis along x-axis, conjugate axis along y-axis</li>
-      </ul>
-    </div>
-   </div>
-  <script>
-    let canvas = document.getElementById('hyperbola-canvas');
-    let ctx = canvas.getContext('2d');
-    let currentA = 3, currentB = 2;
-    let testPointX = 4, testPointY = 2;
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Hyperbola: $|PF - PF'| = $ constant.</li>
+      <li>$\dfrac{x^2}{a^2} - \dfrac{y^2}{b^2} = 1$: foci $(\pm\sqrt{a^2 + b^2}, 0)$, asymptotes $y = \pm\dfrac{b}{a}x$.</li>
+      <li>$= -1$: the same asymptotes, opening up and down.</li>
+    </ul>
+  </div>
 
-    function updateHyperbola() {
-      currentA = parseFloat(document.getElementById('semiTransverse').value);
-      currentB = parseFloat(document.getElementById('semiConjugate').value);
-      
-      if (isNaN(currentA) || isNaN(currentB) || currentA <= 0 || currentB <= 0) {
-        document.getElementById('hyperbolaResult').textContent = 'Error: Ensure a > 0 and b > 0';
-        return;
-      }
-      drawHyperbola();
-      document.getElementById('hyperbolaResult').textContent = `Hyperbola updated: x²/${currentA}² - y²/${currentB}² = 1`;
-    }
+</article>
 
-    function testPoint() {
-      testPointX = parseFloat(document.getElementById('testX').value);
-      testPointY = parseFloat(document.getElementById('testY').value);
-      
-      if (isNaN(testPointX) || isNaN(testPointY)) {
-        document.getElementById('hyperbolaResult').textContent = 'Error: Invalid point coordinates';
-        return;
-      }
+<script src="/static/js/note_geom.js"></script>
+<script src="/static/js/note_plot.js"></script>
+<script>
+  // "Constant difference" demo (the TRY IT block above).
+  // P is kept on x²/a² − y²/b² = 1: dragging chooses y, and the side of the drag
+  // chooses the branch, then x = ±a√(1 + y²/b²). The dashed lines are the
+  // asymptotes, the diagonals of the grey a-by-b box.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const aBox = document.getElementById('hyA'), bBox = document.getElementById('hyB');
+    const output = document.getElementById('hyOutput');
+    const f3 = (v) => +v.toFixed(3);
+    const onCurve = ([x, y]) => { const a = +aBox.value, b = +bBox.value; return [(x < 0 ? -1 : 1) * a * Math.sqrt(1 + y * y / (b * b)), y]; };
 
-      const leftSide = (testPointX * testPointX) / (currentA * currentA) - (testPointY * testPointY) / (currentB * currentB);
-      const isOnHyperbola = Math.abs(leftSide - 1) < 0.01;
-
-      // Calculate distances to foci
-      const c = Math.sqrt(currentA * currentA + currentB * currentB);
-      const distF1 = Math.sqrt((testPointX - c) * (testPointX - c) + testPointY * testPointY);
-      const distF2 = Math.sqrt((testPointX + c) * (testPointX + c) + testPointY * testPointY);
-      const diffDist = Math.abs(distF1 - distF2);
-
-      document.getElementById('hyperbolaResult').textContent = 
-        `Point (${testPointX}, ${testPointY}):\n\n` +
-        `Equation check: x²/a² - y²/b² = ${leftSide.toFixed(3)}\n` +
-        `Result: ${isOnHyperbola ? 'ON hyperbola ✓' : leftSide > 1 ? 'OUTSIDE hyperbola' : 'INSIDE hyperbola'}\n\n` +
-        `Distance to F₁: ${distF1.toFixed(3)}\n` +
-        `Distance to F₂: ${distF2.toFixed(3)}\n` +
-        `Difference: |PF₁ - PF₂| = ${diffDist.toFixed(3)} (should be ${2 * currentA} for points on hyperbola)`;
-      
-      drawHyperbola();
-    }
-
-    function showProperties() {
-      const c = Math.sqrt(currentA * currentA + currentB * currentB);
-      const e = c / currentA;
-      const asymptoteSlope = currentB / currentA;
-      
-      document.getElementById('hyperbolaResult').textContent = 
-        `Hyperbola Properties (a = ${currentA}, b = ${currentB}):\n\n` +
-        `Equation: x²/${currentA}² - y²/${currentB}² = 1\n` +
-        `Center: (0, 0)\n` +
-        `Foci: (±${c.toFixed(3)}, 0)\n` +
-        `Vertices: (±${currentA}, 0)\n` +
-        `Asymptotes: y = ±${asymptoteSlope.toFixed(3)}x\n` +
-        `Eccentricity: ${e.toFixed(3)}\n` +
-        `Transverse axis: ${2 * currentA}, Conjugate axis: ${2 * currentB}\n` +
-        `Latus rectum length: 2b²/a = ${2 * currentB * currentB / currentA}`;
-    }
-
-    function resetCanvas() {
-      document.getElementById('semiTransverse').value = 3;
-      document.getElementById('semiConjugate').value = 2;
-      document.getElementById('testX').value = 4;
-      document.getElementById('testY').value = 2;
-      currentA = 3;
-      currentB = 2;
-      testPointX = 4;
-      testPointY = 2;
-      drawHyperbola();
-      document.getElementById('hyperbolaResult').textContent = 'Canvas reset to default hyperbola x²/9 - y²/4 = 1';
-    }
-
-    function drawHyperbola() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      const centerX = canvas.width / 2;
-      const centerY = canvas.height / 2;
-      const scale = Math.min(25, canvas.width / (4 * currentA + 4), canvas.height / (4 * currentB + 4));
-      
-      // Draw axes
-      ctx.strokeStyle = '#ccc';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(0, centerY);
-      ctx.lineTo(canvas.width, centerY);
-      ctx.moveTo(centerX, 0);
-      ctx.lineTo(centerX, canvas.height);
-      ctx.stroke();
-      
-      // Draw grid
-      ctx.strokeStyle = '#f0f0f0';
-      ctx.lineWidth = 0.5;
-      for (let i = -10; i <= 10; i++) {
-        const x = centerX + i * scale;
-        const y = centerY + i * scale;
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, canvas.height);
-        ctx.moveTo(0, y);
-        ctx.lineTo(canvas.width, y);
-        ctx.stroke();
-      }
-      
-      // Draw asymptotes
-      const asymptoteSlope = currentB / currentA;
-      ctx.strokeStyle = '#e74c3c';
-      ctx.setLineDash([5, 5]);
-      ctx.lineWidth = 1;
-      
-      // Asymptote 1: y = (b/a)x
-      ctx.beginPath();
-      const x1 = -10;
-      const y1 = asymptoteSlope * x1;
-      const x2 = 10;
-      const y2 = asymptoteSlope * x2;
-      ctx.moveTo(centerX + x1 * scale, centerY - y1 * scale);
-      ctx.lineTo(centerX + x2 * scale, centerY - y2 * scale);
-      ctx.stroke();
-      
-      // Asymptote 2: y = -(b/a)x
-      ctx.beginPath();
-      ctx.moveTo(centerX + x1 * scale, centerY - (-y1) * scale);
-      ctx.lineTo(centerX + x2 * scale, centerY - (-y2) * scale);
-      ctx.stroke();
-      ctx.setLineDash([]);
-      
-      // Draw hyperbola branches
-      ctx.strokeStyle = '#3498db';
-      ctx.lineWidth = 2;
-      
-      // Right branch
-      ctx.beginPath();
-      let first = true;
-      for (let t = 1.1; t <= 8; t += 0.05) {
-        const x = currentA * t;
-        const y = currentB * Math.sqrt(t * t - 1);
-        const pixelX = centerX + x * scale;
-        const pixelY1 = centerY - y * scale;
-        const pixelY2 = centerY + y * scale;
-        
-        if (pixelX <= canvas.width && Math.abs(pixelY1 - centerY) <= canvas.height / 2) {
-          if (first) {
-            ctx.moveTo(pixelX, pixelY1);
-            first = false;
-          } else {
-            ctx.lineTo(pixelX, pixelY1);
+    const plot = NotePlot.graph(document.getElementById('hyCanvas'), {
+      x: [-7.75, 7.75], y: [-5, 5],
+      points: { P: [3, 1.5] },
+      constrain: { P: onCurve },
+      draw(g, pts) {
+        const a = +aBox.value, b = +bBox.value, c = Math.hypot(a, b), P = pts.P;
+        const box = [[-a, -b], [a, -b], [a, b], [-a, b]];
+        for (let i = 0; i < 4; i++) g.seg(box[i], box[(i + 1) % 4], '#cbd5e1', { width: 1.5 });
+        g.line(b, -a, 0, '#94a3b8', { dash: true, width: 1.5 });
+        g.line(b, a, 0, '#94a3b8', { dash: true, width: 1.5 });
+        for (const s of [1, -1]) {
+          for (let i = 0; i < 160; i++) {
+            const y1 = -5 + 10 * i / 160, y2 = -5 + 10 * (i + 1) / 160;
+            g.seg([s * a * Math.sqrt(1 + y1 * y1 / (b * b)), y1], [s * a * Math.sqrt(1 + y2 * y2 / (b * b)), y2], '#2563eb');
           }
         }
-      }
-      ctx.stroke();
-      
-      ctx.beginPath();
-      first = true;
-      for (let t = 8; t >= 1.1; t -= 0.05) {
-        const x = currentA * t;
-        const y = -currentB * Math.sqrt(t * t - 1);
-        const pixelX = centerX + x * scale;
-        const pixelY = centerY - y * scale;
-        
-        if (pixelX <= canvas.width && Math.abs(pixelY - centerY) <= canvas.height / 2) {
-          if (first) {
-            ctx.moveTo(pixelX, pixelY);
-            first = false;
-          } else {
-            ctx.lineTo(pixelX, pixelY);
-          }
-        }
-      }
-      ctx.stroke();
-      
-      // Left branch
-      ctx.beginPath();
-      first = true;
-      for (let t = -8; t <= -1.1; t -= 0.05) {
-        const x = currentA * t;
-        const y = currentB * Math.sqrt(t * t - 1);
-        const pixelX = centerX + x * scale;
-        const pixelY1 = centerY - y * scale;
-        const pixelY2 = centerY + y * scale;
-        
-        if (pixelX >= 0 && Math.abs(pixelY1 - centerY) <= canvas.height / 2) {
-          if (first) {
-            ctx.moveTo(pixelX, pixelY1);
-            first = false;
-          } else {
-            ctx.lineTo(pixelX, pixelY1);
-          }
-        }
-      }
-      ctx.stroke();
-      
-      ctx.beginPath();
-      first = true;
-      for (let t = -1.1; t >= -8; t += 0.05) {
-        const x = currentA * t;
-        const y = -currentB * Math.sqrt(t * t - 1);
-        const pixelX = centerX + x * scale;
-        const pixelY = centerY - y * scale;
-        
-        if (pixelX >= 0 && Math.abs(pixelY - centerY) <= canvas.height / 2) {
-          if (first) {
-            ctx.moveTo(pixelX, pixelY);
-            first = false;
-          } else {
-            ctx.lineTo(pixelX, pixelY);
-          }
-        }
-      }
-      ctx.stroke();
-      
-      // Draw foci
-      const c = Math.sqrt(currentA * currentA + currentB * currentB);
-      const focusX1 = centerX + c * scale;
-      const focusX2 = centerX - c * scale;
-      const focusY = centerY;
-      
-      ctx.fillStyle = '#e74c3c';
-      ctx.beginPath();
-      ctx.arc(focusX1, focusY, 4, 0, 2 * Math.PI);
-      ctx.arc(focusX2, focusY, 4, 0, 2 * Math.PI);
-      ctx.fill();
-      
-      // Draw vertices
-      ctx.fillStyle = '#27ae60';
-      ctx.beginPath();
-      ctx.arc(centerX + currentA * scale, centerY, 4, 0, 2 * Math.PI); // (a, 0)
-      ctx.arc(centerX - currentA * scale, centerY, 4, 0, 2 * Math.PI); // (-a, 0)
-      ctx.fill();
-      
-      // Draw center
-      ctx.fillStyle = '#f39c12';
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, 4, 0, 2 * Math.PI);
-      ctx.fill();
-      
-      // Draw test point
-      const testPixelX = centerX + testPointX * scale;
-      const testPixelY = centerY - testPointY * scale;
-      ctx.fillStyle = '#9b59b6';
-      ctx.beginPath();
-      ctx.arc(testPixelX, testPixelY, 5, 0, 2 * Math.PI);
-      ctx.fill();
-      
-      // Draw distance lines if point is visible
-      if (testPixelX >= 0 && testPixelX <= canvas.width && testPixelY >= 0 && testPixelY <= canvas.height) {
-        // Distance to foci
-        ctx.strokeStyle = '#95a5a6';
-        ctx.setLineDash([3, 3]);
-        ctx.beginPath();
-        ctx.moveTo(testPixelX, testPixelY);
-        ctx.lineTo(focusX1, focusY);
-        ctx.moveTo(testPixelX, testPixelY);
-        ctx.lineTo(focusX2, focusY);
-        ctx.stroke();
-        ctx.setLineDash([]);
-      }
-      
-      // Labels
-      ctx.fillStyle = '#333';
-      ctx.font = '12px Arial';
-      ctx.textAlign = 'center';
-      ctx.fillText('F₁', focusX1, focusY - 10);
-      ctx.fillText('F₂', focusX2, focusY - 10);
-      ctx.fillText('V₁', centerX + currentA * scale, centerY - 10);
-      ctx.fillText('V₂', centerX - currentA * scale, centerY - 10);
-      ctx.fillText('O', centerX, centerY - 10);
-      ctx.fillText('P', testPixelX, testPixelY - 10);
-    }
-
-    function toggleSolution(problemNumber) {
-      const solution = document.getElementById(`solution${problemNumber}`);
-      if (solution.style.display === 'block') {
-        solution.style.display = 'none';
-      } else {
-        solution.style.display = 'block';
-      }
-    }
-
-    // Initialize
-    drawHyperbola();
-
-    document.addEventListener("DOMContentLoaded", function() {
-        renderMathInElement(document.body, {
-            delimiters: [
-                {left: "$$", right: "$$", display: true},
-                {left: "\\(", right: "\\)", display: false},
-                {left: "\\[", right: "\\]", display: true}
-            ],
-            throwOnError: false
-        });
+        const F = [c, 0], F2 = [-c, 0];
+        const d1 = Math.hypot(P[0] - c, P[1]), d2 = Math.hypot(P[0] + c, P[1]);
+        g.seg(P, F, '#ea580c', { width: 3 }); g.seg(P, F2, '#0d9488', { width: 3 });
+        g.dot(F, '#ea580c', 'F'); g.dot(F2, '#0d9488', "F'");
+        output.textContent =
+          `x²/${f3(a * a)} − y²/${f3(b * b)} = 1:  foci (±${f3(c)}, 0),  asymptotes y = ±${f3(b / a)}x\n` +
+          `PF = ${f3(d1)},  PF' = ${f3(d2)},  |PF − PF'| = ${f3(Math.abs(d1 - d2))} = 2 × ${f3(a)}`;
+      },
     });
-  </script>
-   </div>
-  </div>
- </body>
-</html>
+    [aBox, bBox].forEach((el) => el.addEventListener('input', () => plot.move('P', onCurve(plot.points.P))));
+  })();
+</script>

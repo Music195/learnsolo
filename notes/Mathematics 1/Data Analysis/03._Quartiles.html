@@ -1,475 +1,131 @@
-<div class="fancy-title" data-topic="Data Analysis">
-    Quartiles
-</div>
+<!-- tags: Data Analysis -->
+<!-- =====================================================================
+     NOTE: Quartiles (四分位数)
+     Uses the shared blocks from static/css/note_blocks.css.
+     Do not add a <style> block here; change note_blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
 
-<div class="math-foundation">
-    <h3>Mathematical Foundation</h3>
-    <p>Quartiles are statistical measures that divide an ordered dataset into four equal parts, providing
-        insights into the distribution and spread of  They extend the concept of the median by
-        identifying the boundaries that separate the lowest 25%, middle 50%, and highest 25% of the 
-        Quartiles are essential for understanding data distribution, detecting outliers, and creating box
-        plots.</p>
+  <h1 class="note-title" data-topic="Data Analysis">Quartiles</h1>
 
-    <div class="formula-block">
-        <strong>Quartile Definitions:</strong>
-        <ul>
-            <li><strong>First Quartile (Q₁):</strong> 25th percentile - separates lowest 25% from upper 75%
-            </li>
-            <li><strong>Second Quartile (Q₂):</strong> 50th percentile - same as the median</li>
-            <li><strong>Third Quartile (Q₃):</strong> 75th percentile - separates lowest 75% from upper 25%
-            </li>
-        </ul>
-        <strong>Calculation Methods:</strong>
-        <ul>
-            <li><strong>Position Formula:</strong> Q_k position = k(n+1)/4 where k = 1, 2, 3</li>
-            <li><strong>Inclusive Method:</strong> Q₁ at position (n+1)/4, Q₃ at position 3(n+1)/4</li>
-            <li><strong>Exclusive Method:</strong> Q₁ at position (n+3)/4, Q₃ at position (3n+1)/4</li>
-        </ul>
-    </div>
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Cut the ordered data into four</h2>
+    <p>The median $Q_2$ splits the ordered data into a <strong>lower half</strong> and an <strong>upper half</strong>.
+      The median of the lower half is the <strong>first quartile</strong> $Q_1$; the median of the upper half is the <strong>third quartile</strong> $Q_3$.</p>
+    <p>Roughly a quarter of the data is below $Q_1$, a quarter between each pair of quartiles, and a quarter above $Q_3$.</p>
+  </section>
 
-    <div class="row">
-        <div class="canvas-box">
-            <canvas id="quartileCanvas3"></canvas>
-        </div>
-        <div class="canvas-box">
-            <canvas id="quartileCanvas4"></canvas>
-        </div>
-    </div>
-</div>
-<div class="interactive-demo">
-    <h3>Interactive Quartiles Calculator</h3>
-    <div class="demo-controls">
-        <div class="control-group">
-            <label for="quartile-data-input">Data Values (comma-separated):</label>
-            <textarea id="quartile-data-input"
-                placeholder="e.g., 2, 6, 8, 9, 13, 16, 19, 21, 29">2, 6, 8, 9, 13, 16, 19, 21, 29</textarea>
-        </div>
-        <button id="btn-quartile" class="btn-style">
-            Calculate
-        </button>
-    </div>
+  <!-- FORMULA: how to split -->
+  <div class="note-formula">
+    <h3>Finding $Q_1$, $Q_2$, $Q_3$</h3>
+    <div class="formula-main">$$\underbrace{\;x_1 \cdots\;}_{\text{lower half} \to Q_1}\;\; Q_2 \;\;\underbrace{\;\cdots x_n\;}_{\text{upper half} \to Q_3}$$</div>
+    <p class="symbols">If $n$ is odd, the median itself belongs to <strong>neither</strong> half. If $n$ is even, the data splits exactly in two.</p>
+  </div>
 
-    <div class="data-visualization" id="data-viz">
-        <h4>Data Visualization</h4>
-        <div id="sorted-quartile-data" class="data-points"></div>
-    </div>
+  <div class="note-formula">
+    <h3>Interquartile range</h3>
+    <div class="formula-main">$$\text{IQR} = Q_3 - Q_1$$</div>
+    <p class="symbols">The width of the middle half of the data (see note 05).</p>
+  </div>
 
-    <div class="demo-output" id="quartile-demo-output">
-        <div class="summary">
-            <div class="item">
-                <div class="value">8</div>
-                <div class="label">Q₁</div>
-            </div>
-            <div class="item">
-                <div class="value">16</div>
-                <div class="label">Q₂ (Median)</div>
-            </div>
-            <div class="item">
-                <div class="value">21</div>
-                <div class="label">Q₃</div>
-            </div>
-            <div class="item">
-                <div class="value">13</div>
-                <div class="label">IQR</div>
-            </div>
-        </div>
+  <!-- DEMO: type data; code at the bottom -->
+  <div class="note-demo">
+    <h2>Quartile finder</h2>
+    <div class="controls">
+      <label>Data <input type="text" id="qtData" class="wide" value="12, 7, 15, 9, 21, 18, 13"></label>
     </div>
-</div>
+    <div class="output table-text" id="qtOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1 ($n$ odd)</h3>
+    <p class="question">Find the quartiles of 12, 7, 15, 9, 21, 18, 13.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>In order: 7, 9, 12, <strong>13</strong>, 15, 18, 21. $Q_2 = 13$.</li>
+        <li>Lower half 7, 9, 12 → $Q_1 = 9$. Upper half 15, 18, 21 → $Q_3 = 18$.</li>
+      </ol>
+      <p class="answer">$Q_1 = 9$, $Q_2 = 13$, $Q_3 = 18$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2 ($n$ even)</h3>
+    <p class="question">Find the quartiles of 4, 7, 2, 9, 5, 8, 10, 6.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>In order: 2, 4, 5, 6 | 7, 8, 9, 10. $Q_2 = \dfrac{6 + 7}{2} = 6.5$.</li>
+        <li>Lower half 2, 4, 5, 6 → $Q_1 = 4.5$. Upper half 7, 8, 9, 10 → $Q_3 = 8.5$.</li>
+      </ol>
+      <p class="answer">$Q_1 = 4.5$, $Q_2 = 6.5$, $Q_3 = 8.5$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Find $Q_1$, $Q_3$ and the IQR of 3, 7, 9, 12, 15, 18.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Lower half 3, 7, 9 → $Q_1 = 7$. Upper half 12, 15, 18 → $Q_3 = 15$.</li>
+        <li>IQR $= 15 - 7$</li>
+      </ol>
+      <p class="answer">$Q_1 = 7$, $Q_3 = 15$, IQR $= 8$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: other methods -->
+  <div class="note-warning">
+    Spreadsheets and some textbooks use other quartile rules and can give slightly different numbers. In Japanese high school maths, use the halves method above.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$Q_2$ = median; $Q_1$, $Q_3$ = medians of the lower and upper halves.</li>
+      <li>$n$ odd: leave the median out of both halves.</li>
+      <li>IQR $= Q_3 - Q_1$.</li>
+    </ul>
+  </div>
+
+</article>
 
 <script>
-    (() => {
-        const colors =  {
-            blue: "#244ff9ff",
-            green: "#27ae60",
-            red: "#ff0505ff",
-            yellow: "#fff702ff",
-            orange: "#ffb300ff",
-            white: "#ffffff",
-        };
+  // "Quartile finder" demo (the TRY IT block above).
+  // Sorts the data, splits it into halves (the median is left out when n is odd),
+  // and takes the median of each half.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const input = document.getElementById('qtData');
+    const output = document.getElementById('qtOutput');
 
-        const quartileData1 = {
-            title: "When data size is 9",
-            numbers: [2, 6, 8, 9, 13, 16, 19, 21, 29],
-            q1: 7,
-            q2: 13,
-            q3: 20,
-        };
+    const median = (arr) => {
+      const n = arr.length;
+      return n % 2 ? arr[(n - 1) / 2] : (arr[n / 2 - 1] + arr[n / 2]) / 2;
+    };
 
-        const quartileData2 = {
-            title: "When data size is 8",
-            numbers: [2, 6, 8, 9, 13, 16, 19, 21],
-            q1: 6,
-            q2: 11,
-            q3: 19,
-        };
-        // Draw odd data quartile Diagram
-        function drawOddDataQuartile() {
-            const canvas = document.getElementById("quartileCanvas3");
-            if (!canvas) return; // Prevent error if canvas not found
-            const { ctx, width, height, dpr } = setupCanvas(canvas);
-            if (!ctx) return;
+    function update() {
+      const data = input.value.split(/[\s,、]+/).filter((s) => s !== '').map(Number).sort((a, b) => a - b);
+      if (data.length < 2 || data.some(isNaN)) { output.textContent = 'Type at least two numbers separated by commas.'; return; }
 
-            const count = quartileData1.numbers.length;
-            const spacing = Math.min(width / 10, 40); // Scale spacing, max 40
-            const startX = width / 2 - (spacing * (count - 1) / 2); // Center the 9 dots
-            const startY = height / 2;
+      const n = data.length, half = Math.floor(n / 2);
+      const lower = data.slice(0, half);
+      const upper = data.slice(n - half); // skips the middle value when n is odd
+      const q1 = median(lower), q2 = median(data), q3 = median(upper);
 
-            drawTitle(ctx, startX - spacing / 2.5, startY - spacing, quartileData1.title)
+      output.textContent =
+        `sorted:     ${data.join(', ')}\n` +
+        `lower half: ${lower.join(', ')}  →  Q1 = ${q1}\n` +
+        `median:     Q2 = ${q2}${n % 2 ? '  (left out of both halves)' : ''}\n` +
+        `upper half: ${upper.join(', ')}  →  Q3 = ${q3}\n` +
+        `IQR = ${q3} − ${q1} = ${Number((q3 - q1).toFixed(3))}`;
+    }
 
-            for (let i = 0; i < 9; i++) {
-
-
-                drawDot(ctx,
-                    startX + i * spacing,
-                    startY,
-                    spacing / 2.5,
-                    quartileData1.numbers[i].toString(),
-                    colors.blue
-                );
-            }
-            drawDesc(ctx, startX + spacing * 1.5, startY + spacing, `Q₁ = ${quartileData1.q1}`, 12, colors.orange);
-            drawArrow(ctx, startX * 2.6, startY + spacing / 2, spacing / 3);
-            drawDesc(ctx, startX + spacing * 4, startY + spacing, `Q₂ = ${quartileData1.q2}`, 12, colors.green);
-            drawArrow(ctx, startX + spacing * 4.1, startY + spacing / 2, spacing / 3);
-            drawDesc(ctx, startX + spacing * 6.5, startY + spacing, `Q₃ = ${quartileData1.q3}`, 12, colors.red);
-            drawArrow(ctx, startX + spacing * 6.6, startY + spacing / 2, spacing / 3);
-        }
-
-        // Draw even data quartile digram
-        function drawEvenDataQuartile() {
-            const canvas = document.getElementById("quartileCanvas4");
-            if (!canvas) return; // Prevent error if canvas not found
-  
-            const { ctx, width, height, dpr } = setupCanvas(canvas);
-            if (!ctx) return;
-
-            const count = quartileData2.numbers.length;
-            const spacing = Math.min(width / 10, 40); // Scale spacing, max 30
-            const startX = width / 2 - (spacing * (count - 1) / 2); // Center the 8 dots
-            const startY = height / 2;
-
-            drawTitle(ctx, startX - spacing / 2.5, startY - spacing, quartileData2.title)
-
-            for (let i = 0; i < 8; i++) {
-                drawDot(ctx,
-                    startX + i * spacing,
-                    startY,
-                    spacing / 2.5,
-                    quartileData2.numbers[i].toString(),
-                    colors.blue
-                );
-            }
-            drawDesc(ctx, startX * 1.7, startY + spacing, `Q₁ = ${quartileData2.q1}`, 12, colors.orange);
-            drawArrow(ctx, startX * 1.7, startY + spacing / 2, spacing / 3);
-            drawDesc(ctx, startX + spacing * 3.5, startY + spacing, `Q₂ = ${quartileData2.q2}`, 12, colors.green);
-            drawArrow(ctx, startX + spacing * 3.6, startY + spacing / 2, spacing / 3);
-            drawDesc(ctx, startX + spacing * 6, startY + spacing, `Q₃ = ${quartileData2.q3}`, 12, colors.red);
-            drawArrow(ctx, startX + spacing * 6.1, startY + spacing / 2, spacing / 3);
-        }
-        function setupCanvas(canvas, aspect = 0.6) {
-            if (!canvas) throw new Error("Canvas element not found");
-            const ctx = canvas.getContext("2d");
-            // Get the device pixel ratio
-            const dpr = window.devicePixelRatio || 1;
-
-            // CSS size (logical pixels) /coordinates
-            const rect = canvas.getBoundingClientRect();
-            const logicalWidth = rect.width;
-            const logicalHeight = rect.width * aspect;//Define my own css height related to css width
-
-            // BUFFER size (device pixels) /coordinates
-            canvas.width = Math.round(logicalWidth * dpr);
-            canvas.height = Math.round(logicalHeight * dpr);
-
-            // Match CSS height to logical height
-            canvas.style.height = logicalHeight + "px";
-
-            // Map logical pixels to buffer pixels
-            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);//  Draw using css coordinates but transform to device coordinates
-            ctx.imageSmoothingEnabled = false;
-
-            return {
-                ctx,
-                width: logicalWidth,
-                height: logicalHeight,
-                dpr
-            }; //return drawing context for drawing in CSS pixels 
-        }
-
-        function calculateQuartiles() {
-            
-            let values;
-            try {
-                values = readNumericArray('quartile-data-input');
-            } catch (e) {
-                console.warn (e.message);
-                return;
-            }
-
-            if (values.length < 4) {
-                alert('Please enter at least 4 values to calculate quartiles.');
-                return;
-            }
-
-            // Sort the values
-            const sorted = [...values].sort((a, b) => a - b);
-            const n = sorted.length;
-
-            // Calculate quartile positions
-            const q1Pos = (n + 1) / 4;
-            const q3Pos = 3 * (n + 1) / 4;
-
-            // Calculate quartiles
-            let q1, q2, q3;
-
-            if (n % 2 === 1) {
-                // Odd number of values
-                q2 = sorted[Math.floor(n / 2)];
-                q1 = getQuartileValue(sorted, q1Pos);
-                q3 = getQuartileValue(sorted, q3Pos);
-            } else {
-                // Even number of values
-                q2 = (sorted[n / 2 - 1] + sorted[n / 2]) / 2;
-                q1 = getQuartileValue(sorted, q1Pos);
-                q3 = getQuartileValue(sorted, q3Pos);
-            }
-
-            const iqr = q3 - q1;
-
-            // Update visualization
-            updateQuartileViz(sorted);
-
-            // Update output
-            let output;
-            
-            try {
-                output = readDivElement('quartile-demo-output');
-            } catch (e) {
-                console.warn(e.message);
-                return;
-            }
-
-            output.innerHTML = `
-                            <div class="summary">
-                            <div class="item">
-                                <div class="value">${q1}</div>
-                                <div class="label">Q₁</div>
-                            </div>
-                            <div class="item">
-                                <div class="value">${q2}</div>
-                                <div class="label">Q₂ (Median)</div>
-                            </div>
-                            <div class="item">
-                                <div class="value">${q3}</div>
-                                <div class="label">Q₃</div>
-                            </div>
-                            <div class="item">
-                                <div class="value">${iqr.toFixed(1)}</div>
-                                <div class="label">IQR</div>
-                            </div>
-                            </div>`;
-
-            // Re-render MathJax
-            if (window.MathJax && MathJax.typesetPromise) {
-                MathJax.typesetPromise([output]);
-            }
-        };
-
-        // can remove later 
-        function getQuartileValue(sorted, position) {
-            const n = sorted.length;
-            const lowerIndex = Math.floor(position) - 1; // Convert to 0-based index
-            const upperIndex = Math.ceil(position) - 1; // Convert to 0-based index
-
-            if (lowerIndex === upperIndex) {
-                return sorted[lowerIndex];
-            } else {
-                const lowerValue = sorted[lowerIndex];
-                const upperValue = sorted[upperIndex];
-                const fraction = position - Math.floor(position);
-                return lowerValue + fraction * (upperValue - lowerValue);
-            }
-        };
-
-        function updateQuartileViz(sorted) {
-
-            let container;
-            try {
-                container = readDivElement('sorted-quartile-data');
-            } catch (e) {
-                console.warn(e.message);
-                return;
-            };
-            // Clear previous content
-            container.innerHTML = '';
-
-            // Create data value elements
-            // Create data value elements
-            sorted.forEach((value) => {
-                const valueElement = document.createElement('div');
-                valueElement.className = 'data-point';
-                valueElement.textContent = value;
-
-                container.appendChild(valueElement);
-            });
-        };
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const btn = document.getElementById('btn-quartile');
-            if (!btn) return;
-
-            // Run once on page load
-            calculateQuartiles();
-            drawOddDataQuartile();
-            drawEvenDataQuartile();
-
-            // Also run on every button click
-            btn.addEventListener('click', () => {
-                calculateQuartiles();
-                drawOddDataQuartile();
-                drawEvenDataQuartile();
-            });
-        });
-
-    })();
+    input.addEventListener('input', update);
+    update(); // show the default data straight away
+  })();
 </script>
-
-<div class="worked-example">
-    <h4>Worked Example 1: Quartiles for Odd Number of Values</h4>
-    <p>Find the quartiles of: 12, 7, 15, 9, 21, 18, 13</p>
-    <p><strong>Solution:</strong></p>
-    <p>Step 1: Sort the data: 7, 9, 12, 13, 15, 18, 21</p>
-    <p>Step 2: n = 7, positions: Q₁ at (7+1)/4 = 2nd position, Q₃ at 3(7+1)/4 = 6th position</p>
-    <p>Step 3: Q₁ = 9, Q₂ = 13, Q₃ = 18</p>
-</div>
-
-<div class="worked-example">
-    <h4>Worked Example 2: Quartiles for Even Number of Values</h4>
-    <p>Find the quartiles of: 4, 7, 2, 9, 5, 8, 10, 6</p>
-    <p><strong>Solution:</strong></p>
-    <p>Step 1: Sort the data: 2, 4, 5, 6, 7, 8, 9, 10</p>
-    <p>Step 2: n = 8, positions: Q₁ at (8+1)/4 = 2.25th → average of 2nd and 3rd, Q₃ at 3(8+1)/4 = 6.75th →
-        average of 6th and 7th</p>
-    <p>Step 3: Q₁ = (4 + 5)/2 = 4.5, Q₂ = (6 + 7)/2 = 6.5, Q₃ = (8 + 9)/2 = 8.5</p>
-</div>
-
-<div class="worked-example">
-    <h4>Worked Example 3: Interquartile Range (IQR)</h4>
-    <p>For the data: 3, 7, 8, 12, 15, 18, 22, 25, find Q₁, Q₃, and IQR.</p>
-    <p><strong>Solution:</strong></p>
-    <p>Sorted: 3, 7, 8, 12, 15, 18, 22, 25</p>
-    <p>Q₁ = (7 + 8)/2 = 7.5, Q₃ = (18 + 22)/2 = 20</p>
-    <p>IQR = Q₃ - Q₁ = 20 - 7.5 = 12.5</p>
-</div>
-
-<div style="margin: 30px 0;">
-    <strong>Interquartile Range (IQR)</strong>
-    <p>The IQR measures the spread of the middle 50% of the data:</p>
-    <div class="formula-highlight"
-        style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 5px; padding: 10px; margin: 10px 0; font-weight: bold;">
-        IQR = Q₃ - Q₁
-    </div>
-    <p>The IQR is used to detect outliers and is more robust than the range since it excludes extreme
-        values.</p>
-</div>
-
-<div style="margin: 30px 0;">
-    <strong>Quartile Deviation</strong>
-    <p>The quartile deviation (or semi-interquartile range) is half of the IQR:</p>
-    <div class="formula-highlight"
-        style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 5px; padding: 10px; margin: 10px 0; font-weight: bold;">
-        Quartile Deviation = IQR / 2 = (Q₃ - Q₁) / 2
-    </div>
-    <p>This measures the average spread around the median.</p>
-</div>
-
-<div style="margin: 30px 0;">
-    <strong>Box Plot Construction</strong>
-    <p>Quartiles are used to construct box plots:</p>
-    <ul>
-        <li><strong>Minimum:</strong> Smallest value (or Q₁ - 1.5×IQR for outliers)</li>
-        <li><strong>Q₁:</strong> Bottom of box (25th percentile)</li>
-        <li><strong>Q₂ (Median):</strong> Line inside box (50th percentile)</li>
-        <li><strong>Q₃:</strong> Top of box (75th percentile)</li>
-        <li><strong>Maximum:</strong> Largest value (or Q₃ + 1.5×IQR for outliers)</li>
-    </ul>
-</div>
-
-<h3>Practice Problems</h3>
-
-<div class="practice-problem">
-    <strong>Problem 1:</strong> Find the quartiles of: 5, 8, 12, 15, 18, 20, 22
-    <br><button class="btn-style" onclick="toggleSolution(1)">Show Solution</button>
-    <div class="solution" id="solution1">
-        <strong>Solution:</strong><br>
-        Sorted: 5, 8, 12, 15, 18, 20, 22<br>
-        Q₁ position = (7+1)/4 = 2nd value = 8<br>
-        Q₂ = 15<br>
-        Q₃ position = 3(7+1)/4 = 6th value = 20
-    </div>
-</div>
-
-<div class="practice-problem">
-    <strong>Problem 2:</strong> Find the quartiles of: 3, 7, 9, 12, 15, 18
-    <br><button class="btn-style" onclick="toggleSolution(2)">Show Solution</button>
-    <div class="solution" id="solution2">
-        <strong>Solution:</strong><br>
-        Sorted: 3, 7, 9, 12, 15, 18<br>
-        Q₁ position = (6+1)/4 = 1.75th → average of 1st and 2nd = (3+7)/2 = 5<br>
-        Q₂ = (9+12)/2 = 10.5<br>
-        Q₃ position = 3(6+1)/4 = 5.25th → average of 5th and 6th = (15+18)/2 = 16.5
-    </div>
-</div>
-
-<div class="practice-problem">
-    <strong>Problem 3:</strong> For the data: 2, 5, 7, 8, 10, 12, 15, 18, find IQR and quartile deviation.
-    <br><button class="btn-style" onclick="toggleSolution(3)">Show Solution</button>
-    <div class="solution" id="solution3">
-        <strong>Solution:</strong><br>
-        Sorted: 2, 5, 7, 8, 10, 12, 15, 18<br>
-        Q₁ = (5+7)/2 = 6, Q₃ = (12+15)/2 = 13.5<br>
-        IQR = 13.5 - 6 = 7.5<br>
-        Quartile deviation = 7.5 / 2 = 3.75
-    </div>
-</div>
-
-<div class="practice-problem">
-    <strong>Problem 4:</strong> The quartiles of a dataset are Q₁ = 25, Q₃ = 75. Find the IQR.
-    <br><button class="btn-style" onclick="toggleSolution(4)">Show Solution</button>
-    <div class="solution" id="solution4">
-        <strong>Solution:</strong><br>
-        IQR = Q₃ - Q₁ = 75 - 25 = 50
-    </div>
-</div>
-
-<div class="practice-problem">
-    <strong>Problem 5:</strong> Find the quartiles of: 1, 3, 5, 7, 9, 11, 13, 15, 17
-    <br><button class="btn-style" onclick="toggleSolution(5)">Show Solution</button>
-    <div class="solution" id="solution5">
-        <strong>Solution:</strong><br>
-        Sorted: 1, 3, 5, 7, 9, 11, 13, 15, 17<br>
-        Q₁ position = (9+1)/4 = 2.5th → average of 2nd and 3rd = (3+5)/2 = 4<br>
-        Q₂ = 9<br>
-        Q₃ position = 3(9+1)/4 = 7.5th → average of 7th and 8th = (13+15)/2 = 14
-    </div>
-</div>
-
-<div class="key-takeaways">
-    <h3>Key Takeaways</h3>
-    <ul>
-        <li><strong>Definition:</strong> Quartiles divide ordered data into four equal parts: Q₁ (25th
-            percentile), Q₂ (50th percentile, median), Q₃ (75th percentile).</li>
-        <li><strong>Calculation:</strong> Position formulas: Q_k at k(n+1)/4 where k=1,2,3; for non-integer
-            positions, interpolate between values.</li>
-        <li><strong>IQR:</strong> Interquartile range (Q₃ - Q₁) measures the spread of the middle 50% of
-            data and is robust against outliers.</li>
-        <li><strong>Applications:</strong> Used in box plots, outlier detection, comparing data spread, and
-            understanding data distribution.</li>
-        <li><strong>Robustness:</strong> Quartiles are less affected by extreme values than the mean and
-            range, making them suitable for skewed </li>
-        <li><strong>Box Plot:</strong> Visual representation using quartiles: min, Q₁, median, Q₃, max (with
-            whiskers for outliers).</li>
-        <li><strong>Quartile Deviation:</strong> Half of IQR, measuring average spread around the median.
-        </li>
-    </ul>
-</div>

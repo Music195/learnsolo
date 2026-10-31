@@ -1,462 +1,136 @@
-<!DOCTYPE html>
 <!-- tags: Set and Elements -->
-<html lang="en">
- <head>
-  <meta charset="utf-8"/>
-  <title>
-   Proof by Contrapositive
-  </title>
-  <script>
-   MathJax = {
-            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
-            svg: {fontCache: 'global'}
-        };
-  </script>
-  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
-  </script>
-  <link href="/static/notes_style.css" rel="stylesheet"/>
-  <style>
-   .demo-input-group {
-    display: flex;
-    flex-direction: column;
-    min-width: 200px;
-   }
-   .demo-input-group label {
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #2c3e50;
-   }
-   .demo-input {
-    padding: 8px;
-    border: 2px solid #bdc3c7;
-    border-radius: 6px;
-    font-size: 14px;
-    transition: border-color 0.3s;
-   }
-   .demo-input:focus {
-    outline: none;
-    border-color: #3498db;
-   }
-   .demo-button {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: transform 0.2s;
-   }
-   .demo-button:hover {
-    transform: translateY(-2px);
-   }
-   .demo-result {
-    background: white;
-    border-radius: 8px;
-    padding: 15px;
-    margin-top: 15px;
-    border-left: 4px solid #3498db;
-   }
-   .solution-toggle {
-    background: #2c3e50;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    margin-top: 10px;
-    transition: background-color 0.3s;
-   }
-   .solution-toggle:hover {
-    background: #34495e;
-   }
-   .solution-content {
-    display: none;
-    background: rgba(255, 255, 255, 0.9);
-    color: #2c3e50;
-    padding: 15px;
-    border-radius: 8px;
-    margin-top: 10px;
-   }
-   .proof-methods {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 15px;
-    margin: 20px 0;
-   }
-   .proof-card {
-    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-    padding: 15px;
-    border-radius: 8px;
-    border-left: 4px solid #e67e22;
-   }
-   .proof-card h4 {
-    margin-top: 0;
-    color: #2c3e50;
-   }
-   .logic-verification {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-    margin: 15px 0;
-   }
-   .verification-card {
-    background: #f8f9fa;
-    padding: 15px;
-    border-radius: 8px;
-    border: 2px solid #dee2e6;
-    text-align: center;
-   }
-   .verification-card h4 {
-    margin-top: 0;
-    color: #2c3e50;
-   }
-   .math-orange {
-    color: #e67e22;
-    font-weight: bold;
-   }
-   .logic-diagram {
-    background: white;
-    border-radius: 8px;
-    padding: 15px;
-    margin: 15px 0;
-    border: 2px solid #ecf0f1;
-    text-align: center;
-   }
-   .logic-flow {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-    margin: 20px 0;
-    flex-wrap: wrap;
-   }
-   .logic-box {
-    background: #3498db;
-    color: white;
-    padding: 10px 15px;
-    border-radius: 8px;
-    font-weight: bold;
-    min-width: 100px;
-    text-align: center;
-   }
-   .logic-arrow {
-    font-size: 24px;
-    color: #2c3e50;
-   }
-   .logic-equivalent {
-    background: #27ae60;
-    color: white;
-    padding: 10px 15px;
-    border-radius: 8px;
-    font-weight: bold;
-    min-width: 100px;
-    text-align: center;
-   }
-   .proof-steps {
-    background: white;
-    border-radius: 8px;
-    padding: 15px;
-    margin: 15px 0;
-    border: 2px solid #ecf0f1;
-   }
-   .proof-step {
-    background: #f8f9fa;
-    padding: 10px;
-    margin: 5px 0;
-    border-radius: 6px;
-    border-left: 3px solid #3498db;
-   }
-   .proof-step strong {
-    color: #2c3e50;
-   }
-   .main-statement {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 20px;
-    border-radius: 12px;
-    margin: 20px 0;
-    text-align: center;
-    font-size: 1.2em;
-   }
-   .contrapositive {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    color: white;
-    padding: 20px;
-    border-radius: 12px;
-    margin: 20px 0;
-    text-align: center;
-    font-size: 1.1em;
-   }
-  </style>
- </head>
- <body>
-  <div class="fancy-title" data-topic="Set and Elements">
-   Proof by Contrapositive
-  </div>
-  <div class="container">
-   <div class="main-content">
-    <div class="section-title">
-     Proof by Contrapositive
-    </div>
+<!-- =====================================================================
+     NOTE: Proof by Contrapositive (対偶を利用した証明) and by Contradiction (背理法)
+     Uses the shared blocks from static/css/note_blocks.css.
+     Do not add a <style> block here; change note_blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
 
-    <div class="math-foundation">
-     <h3>Mathematical Foundations</h3>
-     <p>Proof by contrapositive is a powerful indirect proof technique. Since a conditional statement and its contrapositive are logically equivalent, proving one automatically proves the other. This method is particularly useful when the contrapositive is easier to prove.</p>
+  <h1 class="note-title" data-topic="Set and Elements">Proof by Contrapositive</h1>
 
-     <div class="proof-methods">
-      <div class="proof-card">
-       <h4>Direct Proof</h4>
-       <p>$p \Rightarrow q$</p>
-       <p>Assume p is true, prove q follows</p>
-       <p>Straightforward but sometimes difficult</p>
-       <p>Example: Prove properties directly</p>
-      </div>
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Prove the easier twin</h2>
+    <p>$p \Rightarrow q$ and its contrapositive $\overline{q} \Rightarrow \overline{p}$ are true or false together (note 08). So if the contrapositive is easier to prove, prove that instead.</p>
+    <p>This helps most when "not $q$" gives you something concrete to work with, for example "$n$ is odd" means $n = 2k + 1$.</p>
+  </section>
 
-      <div class="proof-card">
-       <h4>Proof by Contrapositive</h4>
-       <p>$\neg q \Rightarrow \neg p$</p>
-       <p>Assume ¬q is true, prove ¬p follows</p>
-       <p>Equivalent to direct proof</p>
-       <p>Often easier to apply</p>
-      </div>
-
-      <div class="proof-card">
-       <h4>Why It Works</h4>
-       <p>$p \Rightarrow q \equiv \neg q \Rightarrow \neg p$</p>
-       <p>Logically equivalent statements</p>
-       <p>Same truth value in all cases</p>
-       <p>Proving either proves both</p>
-      </div>
-
-      <div class="proof-card">
-       <h4>When to Use</h4>
-       <p>When contrapositive is easier to prove</p>
-       <p>When dealing with "if not A, then not B"</p>
-       <p>For irrationality proofs</p>
-       <p>For number theory theorems</p>
-      </div>
-     </div>
-    </div>
-
-    <div class="main-statement">
-     <strong>To prove the statement $p \Rightarrow q$,</strong>
-    </div>
-    <div class="contrapositive">
-     It is also sufficient to prove its contrapositive:
-     <br/>
-     <span>
-      <span class="math-orange">
-       $\overline{q}$
-      </span>
-      $\Rightarrow$
-      <span class="math-orange">
-       $\overline{p}$
-      </span>
-     </span>
-    </div>
-
-    <div class="interactive-demo">
-     <h3>Interactive Proof Builder</h3>
-     <p>Convert a statement to its contrapositive for proof by contrapositive.</p>
-
-     <div class="demo-controls">
-      <div class="demo-input-group">
-       <label for="original-p">If (hypothesis):</label>
-       <input type="text" id="original-p" class="demo-input" value="n is divisible by 6" placeholder="e.g., n is divisible by 6">
-      </div>
-      <div class="demo-input-group">
-       <label for="original-q">Then (conclusion):</label>
-       <input type="text" id="original-q" class="demo-input" value="n is divisible by 2" placeholder="e.g., n is divisible by 2">
-      </div>
-      <button onclick="buildContrapositive()" class="demo-button">Build Contrapositive</button>
-     </div>
-
-     <div class="logic-verification">
-      <div class="verification-card">
-       <h4>Original Statement</h4>
-       <p id="original-stmt">If n is divisible by 6, then n is divisible by 2</p>
-       <p><small>p → q</small></p>
-      </div>
-      <div class="verification-card">
-       <h4>Contrapositive</h4>
-       <p id="contra-stmt">If n is not divisible by 2, then n is not divisible by 6</p>
-       <p><small>¬q → ¬p</small></p>
-      </div>
-      <div class="verification-card">
-       <h4>Proof Strategy</h4>
-       <p id="proof-strategy">Assume n is not divisible by 2, prove n is not divisible by 6</p>
-       <p><small>How to prove</small></p>
-      </div>
-      <div class="verification-card">
-       <h4>Logical Basis</h4>
-       <p id="logical-basis">Equivalent statements</p>
-       <p><small>Why this works</small></p>
-      </div>
-     </div>
-
-     <div class="logic-diagram">
-      <h4>Proof Equivalence:</h4>
-      <div class="logic-flow">
-       <div class="logic-box" id="direct-box">Direct Proof</div>
-       <span class="logic-arrow">≡</span>
-       <div class="logic-equivalent" id="contra-box">Contrapositive Proof</div>
-       <span class="logic-arrow">Both prove</span>
-       <div class="logic-box" id="statement-box">p → q</div>
-      </div>
-     </div>
-    </div>
-
-    <div class="proof-steps">
-     <h4>Steps for Proof by Contrapositive</h4>
-     <div class="proof-step">
-      <strong>Step 1:</strong> Identify the original statement: "If P, then Q" or P → Q
-     </div>
-     <div class="proof-step">
-      <strong>Step 2:</strong> Write the contrapositive: "If not Q, then not P" or ¬Q → ¬P
-     </div>
-     <div class="proof-step">
-      <strong>Step 3:</strong> Assume ¬Q is true (assume the conclusion of contrapositive is false)
-     </div>
-     <div class="proof-step">
-      <strong>Step 4:</strong> Prove that ¬P must follow (prove the hypothesis of contrapositive is false)
-     </div>
-     <div class="proof-step">
-      <strong>Step 5:</strong> Conclude that the original statement P → Q is true
-     </div>
-    </div>
-
-    <div class="worked-example">
-     <h3>Worked Examples</h3>
-
-     <div style="margin-bottom: 20px;">
-      <h4>Example 1: Divisibility</h4>
-      <p><strong>Statement to prove:</strong> If n is divisible by 6, then n is divisible by 2</p>
-      <p><strong>Contrapositive:</strong> If n is not divisible by 2, then n is not divisible by 6</p>
-      <p><strong>Proof:</strong> Assume n is not divisible by 2. Since 6 = 2 × 3, any multiple of 6 must be a multiple of 2. Therefore, if n is not divisible by 2, n cannot be divisible by 6.</p>
-      <p><strong>Conclusion:</strong> The original statement is true ✓</p>
-     </div>
-
-     <div style="margin-bottom: 20px;">
-      <h4>Example 2: Irrational Numbers</h4>
-      <p><strong>Statement to prove:</strong> If √2 is rational, then it can be written as a fraction a/b in lowest terms</p>
-      <p><strong>Contrapositive:</strong> If √2 cannot be written as a fraction a/b in lowest terms, then √2 is irrational</p>
-      <p><strong>Proof:</strong> This is the famous proof that √2 is irrational. Assume √2 = a/b in lowest terms. Then a² = 2b², so a² is even, so a is even. Let a = 2c, then 4c² = 2b², so 2c² = b², so b² is even, so b is even. But this contradicts a/b being in lowest terms.</p>
-      <p><strong>Conclusion:</strong> √2 is irrational ✓</p>
-     </div>
-
-     <div style="margin-bottom: 20px;">
-      <h4>Example 3: Even and Odd</h4>
-      <p><strong>Statement to prove:</strong> If n² is even, then n is even</p>
-      <p><strong>Contrapositive:</strong> If n is odd, then n² is odd</p>
-      <p><strong>Proof:</strong> Assume n is odd. Then n = 2k + 1 for some integer k. Then n² = (2k + 1)² = 4k² + 4k + 1 = 2(2k² + 2k) + 1, which is odd.</p>
-      <p><strong>Conclusion:</strong> The original statement is true ✓</p>
-     </div>
-
-     <div style="margin-bottom: 20px;">
-      <h4>Example 4: Prime Numbers</h4>
-      <p><strong>Statement to prove:</strong> If 2ⁿ - 1 is prime, then n is prime</p>
-      <p><strong>Contrapositive:</strong> If n is composite, then 2ⁿ - 1 is composite</p>
-      <p><strong>Proof:</strong> Assume n is composite, say n = ab where 1 < a,b < n. Then 2ⁿ - 1 = 2^(ab) - 1 = (2^a - 1)(2^(a(b-1)) + 2^(a(b-2)) + ... + 2^a + 1), so it has factors other than 1 and itself.</p>
-      <p><strong>Conclusion:</strong> The original statement is true ✓</p>
-     </div>
-    </div>
-
-    <div class="practice-problem">
-     <h3>Practice Problems</h3>
-
-     <div style="margin-bottom: 20px;">
-      <h4>Problem 1</h4>
-      <p>Use proof by contrapositive to prove: If x² is irrational, then x is irrational</p>
-      <button onclick="toggleSolution('sol1')" class="solution-toggle">Show Solution</button>
-      <div id="sol1" class="solution-content">
-       <p><strong>Contrapositive:</strong> If x is rational, then x² is rational</p>
-       <p><strong>Proof:</strong> If x is rational, x = a/b where a,b are integers with no common factors. Then x² = a²/b², which is rational.</p>
-       <p><strong>Conclusion:</strong> The original statement is true.</p>
-      </div>
-     </div>
-
-     <div style="margin-bottom: 20px;">
-      <h4>Problem 2</h4>
-      <p>Prove by contrapositive: If n² is divisible by 3, then n is divisible by 3</p>
-      <button onclick="toggleSolution('sol2')" class="solution-toggle">Show Solution</button>
-      <div id="sol2" class="solution-content">
-       <p><strong>Contrapositive:</strong> If n is not divisible by 3, then n² is not divisible by 3</p>
-       <p><strong>Proof:</strong> If n is not divisible by 3, n = 3k + 1 or n = 3k + 2. In both cases, n² ≡ 1 mod 3, so not divisible by 3.</p>
-       <p><strong>Conclusion:</strong> The original statement is true.</p>
-      </div>
-     </div>
-
-     <div style="margin-bottom: 20px;">
-      <h4>Problem 3</h4>
-      <p>Use proof by contrapositive to show: If a and b are odd integers, then a + b is even</p>
-      <button onclick="toggleSolution('sol3')" class="solution-toggle">Show Solution</button>
-      <div id="sol3" class="solution-content">
-       <p><strong>Contrapositive:</strong> If a + b is odd, then a and b are not both odd</p>
-       <p><strong>Proof:</strong> If a + b is odd, then one of a or b must be even (since even + odd = odd).</p>
-       <p><strong>Conclusion:</strong> The original statement is true.</p>
-      </div>
-     </div>
-
-     <div style="margin-bottom: 20px;">
-      <h4>Problem 4</h4>
-      <p>Prove: If x ≤ 3, then x < 5</p>
-      <button onclick="toggleSolution('sol4')" class="solution-toggle">Show Solution</button>
-      <div id="sol4" class="solution-content">
-       <p><strong>Contrapositive:</strong> If x ≥ 5, then x > 3</p>
-       <p><strong>Proof:</strong> If x ≥ 5, then certainly x > 3.</p>
-       <p><strong>Conclusion:</strong> The original statement is true.</p>
-      </div>
-     </div>
-    </div>
-
-    <div class="key-takeaways">
-     <h3>Key Takeaways</h3>
-     <ul>
-      <li><strong>Logical equivalence:</strong> p → q ≡ ¬q → ¬p</li>
-      <li><strong>Proof method:</strong> Prove contrapositive instead of original statement</li>
-      <li><strong>When to use:</strong> When contrapositive is easier to prove or more intuitive</li>
-      <li><strong>Common applications:</strong> Divisibility proofs, irrationality proofs, number theory</li>
-      <li><strong>Steps:</strong> 1) Write contrapositive, 2) Assume ¬q, 3) Prove ¬p</li>
-      <li><strong>Advantage:</strong> Sometimes direct proof is difficult, but contrapositive is straightforward</li>
-      <li><strong>Validity:</strong> Proves the original statement with 100% certainty</li>
-      <li><strong>Indirect proof:</strong> One of the main indirect proof techniques in mathematics</li>
-     </ul>
-    </div>
-   </div>
+  <!-- FORMULA: method -->
+  <div class="note-formula">
+    <h3>Proof by contrapositive</h3>
+    <div class="formula-main">$$\text{to prove } p \Rightarrow q, \text{ prove } \overline{q} \Rightarrow \overline{p}$$</div>
+    <p class="symbols">Steps: (1) write the contrapositive, (2) assume $\overline{q}$, (3) show $\overline{p}$ follows, (4) conclude the original is true.</p>
   </div>
 
-  <script>
-   function buildContrapositive() {
-    const p = document.getElementById('original-p').value.trim();
-    const q = document.getElementById('original-q').value.trim();
+  <!-- DEMO: remainders mod 3; code at the bottom -->
+  <div class="note-demo">
+    <h2>Why "$n^2$ is a multiple of 3 ⇒ $n$ is a multiple of 3"</h2>
+    <p>Contrapositive: if $n$ is <strong>not</strong> a multiple of 3, then $n^2$ is not either. Check the remainders.</p>
+    <div class="controls">
+      <label>$n$ = <input type="range" id="pcN" min="1" max="30" value="7"></label>
+    </div>
+    <div class="output table-text" id="pcOutput"></div>
+  </div>
 
-    if (!p || !q) return;
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">For an integer $n$, prove: $n^2$ is even $\Rightarrow$ $n$ is even.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Contrapositive: $n$ is odd ⇒ $n^2$ is odd.</li>
+        <li>Let $n = 2k + 1$ ($k$ an integer). $n^2 = 4k^2 + 4k + 1 = 2(2k^2 + 2k) + 1$, which is odd.</li>
+        <li>The contrapositive is true, so the original is true.</li>
+      </ol>
+      <p class="answer">Proved ∎</p>
+    </details>
+  </div>
 
-    // Generate statements
-    const original = `If ${p}, then ${q}`;
-    const contrapositive = `If ${q.replace(/is /g, 'is not ').replace(/are /g, 'are not ').replace(/divisible/g, 'not divisible').replace(/even/g, 'odd').replace(/odd/g, 'even')}, then ${p.replace(/is /g, 'is not ').replace(/are /g, 'are not ').replace(/divisible/g, 'not divisible').replace(/even/g, 'odd').replace(/odd/g, 'even')}`;
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">For an integer $n$, prove: $n^2$ is a multiple of 3 $\Rightarrow$ $n$ is a multiple of 3.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Contrapositive: $n$ is not a multiple of 3 ⇒ $n^2$ is not a multiple of 3.</li>
+        <li>Then $n = 3k + 1$ or $n = 3k + 2$.</li>
+        <li>$(3k + 1)^2 = 3(3k^2 + 2k) + 1$ and $(3k + 2)^2 = 3(3k^2 + 4k + 1) + 1$: remainder 1 either way.</li>
+      </ol>
+      <p class="answer">Proved ∎</p>
+    </details>
+  </div>
 
-    const strategy = `Assume ${q.replace(/is /g, 'is not ').replace(/are /g, 'are not ').replace(/divisible/g, 'not divisible').replace(/even/g, 'odd').replace(/odd/g, 'even')}, prove ${p.replace(/is /g, 'is not ').replace(/are /g, 'are not ').replace(/divisible/g, 'not divisible').replace(/even/g, 'odd').replace(/odd/g, 'even')}`;
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">For real $x, y$, prove: $x + y &gt; 2 \Rightarrow x &gt; 1$ or $y &gt; 1$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Contrapositive: $x \le 1$ and $y \le 1$ ⇒ $x + y \le 2$.</li>
+        <li>Add the two inequalities: $x + y \le 1 + 1 = 2$.</li>
+      </ol>
+      <p class="answer">Proved ∎</p>
+    </details>
+  </div>
 
-    document.getElementById('original-stmt').textContent = original;
-    document.getElementById('contra-stmt').textContent = contrapositive;
-    document.getElementById('proof-strategy').textContent = strategy;
-    document.getElementById('logical-basis').textContent = 'Equivalent statements';
+  <div class="note-example">
+    <h3>Example 4 (proof by contradiction, 背理法)</h3>
+    <p class="question">Prove that $\sqrt{2}$ is irrational.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Suppose not: $\sqrt{2} = \dfrac{a}{b}$ with $a, b$ positive integers sharing no common factor.</li>
+        <li>Then $a^2 = 2b^2$, so $a^2$ is even, so $a$ is even (Example 1). Write $a = 2c$.</li>
+        <li>$4c^2 = 2b^2 \Rightarrow b^2 = 2c^2$, so $b$ is even too.</li>
+        <li>Now $a$ and $b$ share the factor 2, contradicting our assumption. So $\sqrt{2}$ is irrational.</li>
+      </ol>
+      <p class="answer">Proved ∎</p>
+    </details>
+  </div>
 
-    // Update equivalence indicators
-    document.getElementById('direct-box').className = 'logic-box';
-    document.getElementById('contra-box').className = 'logic-equivalent';
-    document.getElementById('statement-box').className = 'logic-box';
-   }
+  <!-- TIP: contrapositive vs contradiction -->
+  <div class="note-tip">
+    <strong>Contrapositive</strong>: prove a different statement, $\overline{q} \Rightarrow \overline{p}$.
+    <strong>Contradiction</strong>: assume the conclusion is false and reach something impossible.
+    Use contradiction for "is irrational", "there are infinitely many", "cannot be".
+  </div>
 
-   function toggleSolution(id) {
-    const element = document.getElementById(id);
-    element.style.display = element.style.display === 'none' ? 'block' : 'none';
-   }
+  <!-- WARNING: not the converse -->
+  <div class="note-warning">
+    Proving the <strong>converse</strong> $q \Rightarrow p$ or the <strong>inverse</strong> $\overline{p} \Rightarrow \overline{q}$ does not prove $p \Rightarrow q$. Only the contrapositive works.
+  </div>
 
-   // Initialize with default values
-   buildContrapositive();
-  </script>
- </body>
-</html>
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$p \Rightarrow q$ is proved by proving $\overline{q} \Rightarrow \overline{p}$.</li>
+      <li>"Not even" → $2k + 1$; "not a multiple of 3" → $3k + 1$ or $3k + 2$.</li>
+      <li>Irrationality and similar: use proof by contradiction.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script>
+  // "Remainders mod 3" demo (the TRY IT block above).
+  // Shows n = 3k + r and n² = 3m + s; when r is 1 or 2, s is always 1.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const box = document.getElementById('pcN');
+    const output = document.getElementById('pcOutput');
+
+    function update() {
+      const n = +box.value, r = n % 3, sq = n * n, s = sq % 3;
+      const rows = [];
+      for (let m = 1; m <= 9; m++) rows.push(`${m} = 3·${Math.floor(m / 3)} + ${m % 3},  ${m}² = ${String(m * m).padStart(2)} = 3·${Math.floor(m * m / 3)} + ${m * m % 3}`);
+      output.textContent =
+        `n = ${n} = 3·${Math.floor(n / 3)} + ${r}\n` +
+        `n² = ${sq} = 3·${Math.floor(sq / 3)} + ${s}\n` +
+        (r === 0 ? 'n is a multiple of 3, and so is n²' : `n is NOT a multiple of 3 (remainder ${r}), so n² has remainder 1: not a multiple of 3`) +
+        '\n\nPattern for n = 1 … 9:\n' + rows.join('\n');
+    }
+    box.addEventListener('input', update);
+    update();
+  })();
+</script>

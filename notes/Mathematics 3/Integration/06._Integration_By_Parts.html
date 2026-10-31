@@ -1,458 +1,183 @@
-<!DOCTYPE html>
-<!-- tags: Mathematics -->
-<html lang="en">
- <head>
-  <meta charset="utf-8"/>
-  <title>
-   Integration by Parts
-  </title>
-  <script>
-   MathJax = {
-            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
-            svg: {fontCache: 'global'}
-        };
-  </script>
-  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
-  </script>
-  <link href="/static/notes_style.css" rel="stylesheet"/>
-  <style>
-   .solution-btn {
-     background-color: #4CAF50;
-     color: white;
-     border: none;
-     padding: 8px 16px;
-     text-align: center;
-     text-decoration: none;
-     display: inline-block;
-     font-size: 14px;
-     margin: 10px 0;
-     cursor: pointer;
-     border-radius: 4px;
-     transition: background-color 0.3s;
-   }
-   
-   .solution-btn:hover {
-     background-color: #45a049;
-   }
-   
-   .problem-item {
-     margin-bottom: 20px;
-     padding: 15px;
-     border: 1px solid #ddd;
-     border-radius: 8px;
-   }
-  </style>
- </head>
- <body>
-  <div class="fancy-title" data-topic="Integration">
-   Integration by Parts
+<!-- tags: Integration -->
+<!-- =====================================================================
+     NOTE: Integration by Parts (部分積分法)
+     Uses the shared blocks from static/css/note_blocks.css and the
+     graph helper static/js/note_plot.js (built on note_geom.js).
+     Do not add a <style> block here; change note_blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Integration">Integration by Parts</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>The product rule run backwards</h2>
+    <p>Use this for a product of two different kinds of function, such as $x e^x$, $x\sin x$ or $\log x$ (that is, $1 \cdot \log x$).</p>
+    <p>Integrate one factor and differentiate the other. The goal is a new integral that is easier than the one you started with.</p>
+  </section>
+
+  <!-- FORMULA: parts -->
+  <div class="note-formula">
+    <h3>Integration by parts</h3>
+    <div class="formula-main">$$\int f(x)\,g'(x)\,dx = f(x)\,g(x) - \int f'(x)\,g(x)\,dx$$</div>
+    <p class="symbols">$f$: the factor to differentiate (it should get simpler). $g'$: the factor to integrate.</p>
   </div>
-   <div class="container">
-    <div class="main-content">
-     <div class="section">
-      <h2>What is Integration by Parts?</h2>
-      <p>Integration by parts is a technique that transforms the integral of a product of functions into a simpler form. It's based on the product rule for differentiation and is particularly useful when you have a product of functions where one is easily integrable and the other is easily differentiable.</p>
-      
-      <div class="highlight-box">
-       <strong>The Formula:</strong>
-       <p>\( \int u \, dv = uv - \int v \, du \)</p>
-       <p>Where u and v are functions of x, and du and dv are their differentials.</p>
-      </div>
-     </div>
 
-     <div class="section">
-      <h2>When to Use Integration by Parts</h2>
-      <p>Use integration by parts when you encounter:</p>
-      <ul>
-       <li>Products of functions: \( \int x \sin x \, dx \), \( \int x e^x \, dx \), \( \int x \ln x \, dx \)</li>
-       <li>Functions that don't fit other integration techniques</li>
-       <li>Definite integrals where the boundaries help simplify the result</li>
-       <li>Integrals involving inverse trigonometric functions</li>
-       <li>Integrals of the form \( \int P(x) e^{ax} \, dx \) or \( \int P(x) \sin(bx) \, dx \)</li>
-      </ul>
-     </div>
+  <!-- PROOF: from the product rule -->
+  <div class="note-proof">
+    <ol>
+      <li>Product rule: $\{f(x)g(x)\}' = f'(x)g(x) + f(x)g'(x)$.</li>
+      <li>Integrate both sides: $f(x)g(x) = \displaystyle\int f'(x)g(x)\,dx + \int f(x)g'(x)\,dx$.</li>
+      <li>Move one integral across to get the formula.</li>
+    </ol>
+  </div>
 
-     <div class="section">
-      <h2>How to Choose u and dv</h2>
-      <p>The key to successful integration by parts is choosing which part to differentiate and which to integrate. Use the LIATE mnemonic:</p>
-      
-      <div class="highlight-box">
-       <strong>LIATE Priority Order:</strong>
-       <ul>
-        <li><strong>L</strong>ogarithmic functions (ln x)</li>
-        <li><strong>I</strong>nverse trigonometric functions (arcsin x, arctan x)</li>
-        <li><strong>A</strong>lgebraic functions (polynomials)</li>
-        <li><strong>T</strong>rigonometric functions (sin x, cos x)</li>
-        <li><strong>E</strong>xponential functions (e^x)</li>
-       </ul>
-       <p>Choose u to be the function that appears first in LIATE, and dv to be the remaining part.</p>
-      </div>
-     </div>
-
-     <div class="section">
-      <h2>The Integration by Parts Process</h2>
-      <div class="highlight-box">
-       <strong>Step-by-Step Method:</strong>
-       <ol>
-        <li>Identify u and dv (using LIATE if helpful)</li>
-        <li>Compute du (differentiate u)</li>
-        <li>Compute v (integrate dv)</li>
-        <li>Apply the formula: \( \int u \, dv = uv - \int v \, du \)</li>
-        <li>If the new integral is more complicated, try again with different choices</li>
-        <li>Continue until you get an integral you can evaluate</li>
-       </ol>
-      </div>
-     </div>
-
-     <div class="section">
-      <h2>Visual Guide</h2>
-      <p>Integration by parts transforms the product of two functions into a different form that may be easier to integrate.</p>
-      <canvas id="partsCanvas" width="600" height="400" style="border: 1px solid #ccc; margin: 20px auto; display: block;"></canvas>
-     </div>
-
-     <div class="section">
-      <h2>Examples</h2>
-      
-      <div class="example">
-       <h3>Example 1: Basic Integration by Parts</h3>
-       <p>Find \( \int x e^x \, dx \)</p>
-       <div class="steps">
-        <p>Using LIATE: x is algebraic, e^x is exponential. Choose u = x (higher in LIATE), dv = e^x dx</p>
-        <p>Then: du = dx, v = ∫e^x dx = e^x</p>
-        <p>Formula: ∫u dv = uv - ∫v du = x e^x - ∫e^x dx = x e^x - e^x + C = e^x(x - 1) + C</p>
-       </div>
-      </div>
-
-      <div class="example">
-       <h3>Example 2: Logarithmic Function</h3>
-       <p>Find \( \int x \ln x \, dx \)</p>
-       <div class="steps">
-        <p>Using LIATE: ln x is logarithmic (highest priority). Choose u = ln x, dv = x dx</p>
-        <p>Then: du = (1/x) dx, v = ∫x dx = (1/2)x²</p>
-        <p>Formula: ∫u dv = uv - ∫v du = ln x · (1/2)x² - ∫(1/2)x² · (1/x) dx</p>
-        <p>= (1/2)x² ln x - (1/2)∫x dx = (1/2)x² ln x - (1/2)(1/2)x² + C = (1/2)x² ln x - (1/4)x² + C</p>
-       </div>
-      </div>
-
-      <div class="example">
-       <h3>Example 3: Trigonometric Functions</h3>
-       <p>Find \( \int x \sin x \, dx \)</p>
-       <div class="steps">
-        <p>Using LIATE: x is algebraic, sin x is trigonometric. Choose u = x, dv = sin x dx</p>
-        <p>Then: du = dx, v = ∫sin x dx = -cos x</p>
-        <p>Formula: ∫u dv = uv - ∫v du = x(-cos x) - ∫(-cos x) dx = -x cos x - ∫(-cos x) dx</p>
-        <p>= -x cos x + ∫cos x dx = -x cos x + sin x + C</p>
-       </div>
-      </div>
-
-      <div class="example">
-       <h3>Example 4: Definite Integral</h3>
-       <p>Find \( \int_0^1 x e^{2x} \, dx \)</p>
-       <div class="steps">
-        <p>Choose u = x, dv = e^{2x} dx</p>
-        <p>Then: du = dx, v = ∫e^{2x} dx = (1/2)e^{2x}</p>
-        <p>Formula: [uv]_0^1 - ∫v du from 0 to 1 = [(1/2)x e^{2x}]_0^1 - ∫(1/2)e^{2x} dx from 0 to 1</p>
-        <p>= [(1/2)(1)e^{2(1)} - (1/2)(0)e^{0}] - (1/2)[(1/2)e^{2x}]_0^1</p>
-        <p>= [(1/2)e^2 - 0] - (1/4)[e^{2x}]_0^1 = (1/2)e^2 - (1/4)(e^2 - e^0) = (1/2)e^2 - (1/4)e^2 + 1/4 = (1/4)e^2 + 1/4</p>
-       </div>
-      </div>
-
-      <div class="example">
-       <h3>Example 5: Multiple Applications</h3>
-       <p>Find \( \int x^2 e^x \, dx \)</p>
-       <div class="steps">
-        <p>This requires integration by parts twice. Choose u = x², dv = e^x dx</p>
-        <p>Then: du = 2x dx, v = e^x</p>
-        <p>Formula: ∫u dv = uv - ∫v du = x² e^x - ∫e^x · 2x dx = x² e^x - 2∫x e^x dx</p>
-        <p>Now integrate ∫x e^x dx again: u = x, dv = e^x dx → du = dx, v = e^x</p>
-        <p>= x² e^x - 2[x e^x - ∫e^x dx] = x² e^x - 2x e^x + 2 e^x + C = e^x(x² - 2x + 2) + C</p>
-       </div>
-      </div>
-     </div>
-
-     <div class="section">
-      <h2>Common Patterns and Tips</h2>
-      <div class="highlight-box">
-       <strong>Integration by Parts Patterns:</strong>
-       <ul>
-        <li>\( \int x^n e^{ax} \, dx \): Use parts n times, differentiating the polynomial</li>
-        <li>\( \int x^n \sin(ax) \, dx \), \( \int x^n \cos(ax) \, dx \): Similar to above</li>
-        <li>\( \int \ln(x) \, dx \): Choose u = ln x, dv = dx</li>
-        <li>\( \int \arcsin(x) \, dx \), \( \int \arctan(x) \, dx \): Use parts with u = arc function</li>
-        <li>Tabular method for multiple applications</li>
-       </ul>
-      </div>
-     </div>
-
-     <div class="section">
-      <h2>Applications</h2>
-      <ul>
-       <li><strong>Physics:</strong> Center of mass calculations, moment of inertia</li>
-       <li><strong>Probability:</strong> Expected values, variance calculations</li>
-       <li><strong>Engineering:</strong> Signal processing, control systems</li>
-       <li><strong>Economics:</strong> Consumer/producer surplus calculations</li>
-       <li><strong>Chemistry:</strong> Reaction rate analysis</li>
-      </ul>
-     </div>
-
-     <div class="section">
-      <h2>Practice Problems</h2>
-      <div class="practice-problem">
-       <div class="problem-item">
-        <p><strong>1.</strong> Find \( \int x \cos x \, dx \)</p>
-        <button class="solution-btn" onclick="toggleSolution(1)">Show Solution</button>
-        <div id="solution-1" class="solution" style="display: none;">
-         <p><strong>Solution:</strong></p>
-         <p>Choose u = x, dv = cos x dx</p>
-         <p>du = dx, v = ∫cos x dx = sin x</p>
-         <p>∫u dv = uv - ∫v du = x sin x - ∫sin x dx = x sin x - (-cos x) + C = x sin x + cos x + C</p>
-        </div>
-       </div>
-
-       <div class="problem-item">
-        <p><strong>2.</strong> Find \( \int \ln x \, dx \)</p>
-        <button class="solution-btn" onclick="toggleSolution(2)">Show Solution</button>
-        <div id="solution-2" class="solution" style="display: none;">
-         <p><strong>Solution:</strong></p>
-         <p>Choose u = ln x, dv = dx</p>
-         <p>du = (1/x) dx, v = x</p>
-         <p>∫u dv = uv - ∫v du = x ln x - ∫x · (1/x) dx = x ln x - ∫dx = x ln x - x + C</p>
-        </div>
-       </div>
-
-       <div class="problem-item">
-        <p><strong>3.</strong> Find \( \int x^2 \sin x \, dx \)</p>
-        <button class="solution-btn" onclick="toggleSolution(3)">Show Solution</button>
-        <div id="solution-3" class="solution" style="display: none;">
-         <p><strong>Solution:</strong></p>
-         <p>This requires parts twice. Choose u = x², dv = sin x dx</p>
-         <p>du = 2x dx, v = -cos x</p>
-         <p>∫u dv = uv - ∫v du = x²(-cos x) - ∫(-cos x)(2x) dx = -x² cos x + 2∫x cos x dx</p>
-         <p>Now ∫x cos x dx: u = x, dv = cos x dx → du = dx, v = sin x</p>
-         <p>= -x² cos x + 2[x sin x - ∫sin x dx] = -x² cos x + 2x sin x - 2(-cos x) + C = -x² cos x + 2x sin x + 2 cos x + C</p>
-        </div>
-       </div>
-
-       <div class="problem-item">
-        <p><strong>4.</strong> Find \( \int_0^{\pi/2} x \sin x \, dx \)</p>
-        <button class="solution-btn" onclick="toggleSolution(4)">Show Solution</button>
-        <div id="solution-4" class="solution" style="display: none;">
-         <p><strong>Solution:</strong></p>
-         <p>Choose u = x, dv = sin x dx</p>
-         <p>du = dx, v = -cos x</p>
-         <p>∫u dv = uv - ∫v du = [x(-cos x)]_0^{\pi/2} - ∫(-cos x) dx from 0 to π/2</p>
-         <p>= [-\frac{\pi}{2} cos(\frac{\pi}{2}) - (0)(-cos 0)] - [-sin x]_0^{\pi/2}</p>
-         <p>= [-\frac{\pi}{2}(0) - 0] - [-sin(\frac{\pi}{2}) - (-sin 0)] = 0 - [-1 - 0] = 0 - [-1] = 1</p>
-        </div>
-       </div>
-
-       <div class="problem-item">
-        <p><strong>5.</strong> Find \( \int e^x \sin x \, dx \)</p>
-        <button class="solution-btn" onclick="toggleSolution(5)">Show Solution</button>
-        <div id="solution-5" class="solution" style="display: none;">
-         <p><strong>Solution:</strong></p>
-         <p>This requires parts twice. Choose u = e^x, dv = sin x dx</p>
-         <p>du = e^x dx, v = -cos x</p>
-         <p>∫u dv = uv - ∫v du = e^x(-cos x) - ∫(-cos x)(e^x) dx = -e^x cos x + ∫e^x cos x dx</p>
-         <p>Now ∫e^x cos x dx: u = e^x, dv = cos x dx → du = e^x dx, v = sin x</p>
-         <p>= -e^x cos x + [e^x sin x - ∫sin x · e^x dx]</p>
-         <p>= -e^x cos x + e^x sin x - ∫e^x sin x dx</p>
-         <p>Notice we have ∫e^x sin x dx on both sides. Let I = ∫e^x sin x dx</p>
-         <p>Then I = -e^x cos x + e^x sin x - I</p>
-         <p>2I = e^x(sin x - cos x)</p>
-         <p>I = \frac{1}{2} e^x (sin x - cos x) + C</p>
-        </div>
-       </div>
-
-       <div class="problem-item">
-        <p><strong>6.</strong> Find \( \int \arcsin x \, dx \)</p>
-        <button class="solution-btn" onclick="toggleSolution(6)">Show Solution</button>
-        <div id="solution-6" class="solution" style="display: none;">
-         <p><strong>Solution:</strong></p>
-         <p>Choose u = arcsin x, dv = dx</p>
-         <p>du = \frac{1}{\sqrt{1-x^2}} dx, v = x</p>
-         <p>∫u dv = uv - ∫v du = x arcsin x - ∫x · \frac{1}{\sqrt{1-x^2}} dx</p>
-         <p>For ∫x / √(1-x²) dx, let w = 1-x², dw = -2x dx, so x dx = -dw/2</p>
-         <p>= x arcsin x - ∫ \frac{1}{\sqrt{w}} · (-\frac{1}{2}) dw = x arcsin x + \frac{1}{2} ∫ w^{-1/2} dw</p>
-         <p>= x arcsin x + \frac{1}{2} · 2 √w + C = x arcsin x + √(1-x²) + C</p>
-        </div>
-       </div>
-      </div>
-     </div>
-
-     <div class="section">
-      <h2>Key Takeaways</h2>
-      <div class="key-takeaways">
-       <ul>
-        <li>Integration by parts comes from the product rule: d(uv) = u dv + v du</li>
-        <li>Use LIATE to choose u: Logarithmic, Inverse trig, Algebraic, Trigonometric, Exponential</li>
-        <li>Choose u to be the function that simplifies when differentiated</li>
-        <li>Choose dv to be the part you know how to integrate</li>
-        <li>May need to apply the method multiple times</li>
-        <li>For definite integrals, apply boundaries after integration</li>
-        <li>Always check your answer by differentiating</li>
-        <li>Tabular method can help organize multiple applications</li>
-       </ul>
-      </div>
-     </div>
+  <!-- DEMO: the area picture of parts; code at the bottom -->
+  <div class="note-demo">
+    <h2>Area under the curve + area beside it = difference of two rectangles</h2>
+    <div class="controls">
+      <label>curve $v$ = <select id="ipC">
+        <option value="0">log u (from u = 1)</option>
+        <option value="1">√u (from u = 0)</option>
+        <option value="2">u²/2 (from u = 0)</option>
+      </select></label>
+      <label>right end $b$ = <input type="range" id="ipB" min="1.3" max="3.5" step="0.05" value="2.7"></label>
     </div>
-   </div>
-  <script>
-   // Canvas visualization for integration by parts
-   const canvas = document.getElementById('partsCanvas');
-   const ctx = canvas.getContext('2d');
-   
-   // Set up coordinate system
-   const width = canvas.width;
-   const height = canvas.height;
-   const centerX = width / 2;
-   const centerY = height / 2;
-   
-   // Scale factors
-   const scaleX = 50;
-   const scaleY = 50;
-   
-   function drawGrid() {
-    ctx.strokeStyle = '#e0e0e0';
-    ctx.lineWidth = 1;
-    
-    // Vertical lines
-    for (let x = centerX; x < width; x += scaleX) {
-     ctx.beginPath();
-     ctx.moveTo(x, 0);
-     ctx.lineTo(x, height);
-     ctx.stroke();
-    }
-    for (let x = centerX; x > 0; x -= scaleX) {
-     ctx.beginPath();
-     ctx.moveTo(x, 0);
-     ctx.lineTo(x, height);
-     ctx.stroke();
-    }
-    
-    // Horizontal lines
-    for (let y = centerY; y < height; y += scaleY) {
-     ctx.beginPath();
-     ctx.moveTo(0, y);
-     ctx.lineTo(width, y);
-     ctx.stroke();
-    }
-    for (let y = centerY; y > 0; y -= scaleY) {
-     ctx.beginPath();
-     ctx.moveTo(0, y);
-     ctx.lineTo(width, y);
-     ctx.stroke();
-    }
-   }
-   
-   function drawAxes() {
-    ctx.strokeStyle = '#000';
-    ctx.lineWidth = 2;
-    
-    // X-axis
-    ctx.beginPath();
-    ctx.moveTo(0, centerY);
-    ctx.lineTo(width, centerY);
-    ctx.stroke();
-    
-    // Y-axis
-    ctx.beginPath();
-    ctx.moveTo(centerX, 0);
-    ctx.lineTo(centerX, height);
-    ctx.stroke();
-    
-    // Axis labels
-    ctx.fillStyle = '#000';
-    ctx.font = '12px Arial';
-    ctx.textAlign = 'center';
-    
-    // X-axis labels
-    for (let i = -4; i <= 4; i++) {
-     if (i !== 0) {
-      const x = centerX + i * scaleX;
-      ctx.fillText(i.toString(), x, centerY + 15);
-     }
-    }
-    
-    // Y-axis labels
-    for (let i = -3; i <= 3; i++) {
-     if (i !== 0) {
-      const y = centerY - i * scaleY;
-      ctx.fillText(i.toString(), centerX - 15, y + 4);
-     }
-    }
-   }
-   
-   function plotFunction(func, color, label, offsetX = 0, offsetY = 0) {
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    
-    let firstPoint = true;
-    for (let x = -4; x <= 4; x += 0.1) {
-     const y = func(x);
-     const canvasX = centerX + (x + offsetX) * scaleX;
-     const canvasY = centerY - (y + offsetY) * scaleY;
-     
-     if (firstPoint) {
-      ctx.moveTo(canvasX, canvasY);
-      firstPoint = false;
-     } else {
-      ctx.lineTo(canvasX, canvasY);
-     }
-    }
-    ctx.stroke();
-    
-    // Add label
-    ctx.fillStyle = color;
-    ctx.font = '14px Arial';
-    ctx.textAlign = 'left';
-    ctx.fillText(label, 10, 30 + (color === '#ff6b6b' ? 0 : color === '#4ecdc4' ? 20 : 40));
-   }
-   
-   function drawPartsVisualization() {
-    // Clear canvas
-    ctx.clearRect(0, 0, width, height);
-    
-    // Draw grid and axes
-    drawGrid();
-    drawAxes();
-    
-    // Plot x * e^x (product that needs integration by parts)
-    plotFunction(x => x * Math.exp(x), '#ff6b6b', 'Original: x·eˣ');
-    
-    // Plot e^x (the antiderivative after parts)
-    plotFunction(x => Math.exp(x), '#4ecdc4', 'After parts: eˣ');
-    
-    // Plot x * e^x - e^x (the final result)
-    plotFunction(x => Math.exp(x) * (x - 1), '#45b7d1', 'Result: eˣ(x-1)');
-    
-    // Add explanatory text
-    ctx.fillStyle = '#000';
-    ctx.font = '16px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText('Integration by Parts Example: ∫x·eˣ dx', centerX, 20);
-    
-    ctx.font = '12px Arial';
-    ctx.fillText('Parts transforms the product into a simpler form', centerX, height - 30);
-   }
-   
-   // Solution toggle functionality
-   function toggleSolution(problemNumber) {
-    const solution = document.getElementById(`solution-${problemNumber}`);
-    const button = solution.previousElementSibling;
-    
-    if (solution.style.display === 'none') {
-     solution.style.display = 'block';
-     button.textContent = 'Hide Solution';
-    } else {
-     solution.style.display = 'none';
-     button.textContent = 'Show Solution';
-    }
-   }
-   
-   // Initialize visualization when page loads
-   window.addEventListener('load', drawPartsVisualization);
-  </script>
- </body>
-</html>
+    <canvas id="ipCanvas"></canvas>
+    <div class="output table-text" id="ipOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find $\displaystyle\int x e^x\,dx$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Differentiate $f = x$ ($f' = 1$); integrate $g' = e^x$ ($g = e^x$).</li>
+        <li>$x e^x - \displaystyle\int 1 \cdot e^x\,dx = x e^x - e^x + C$</li>
+      </ol>
+      <p class="answer">$(x - 1)e^x + C$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find $\displaystyle\int \log x\,dx$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Write it as $\displaystyle\int (x)' \log x\,dx$: integrate $1$, differentiate $\log x$.</li>
+        <li>$x\log x - \displaystyle\int x \cdot \frac{1}{x}\,dx = x\log x - x + C$</li>
+      </ol>
+      <p class="answer">$x\log x - x + C$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Find $\displaystyle\int x\cos x\,dx$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$f = x$, $g' = \cos x$, $g = \sin x$.</li>
+        <li>$x\sin x - \displaystyle\int \sin x\,dx = x\sin x + \cos x + C$</li>
+      </ol>
+      <p class="answer">$x\sin x + \cos x + C$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Find $\displaystyle\int x^2 e^x\,dx$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Once: $x^2 e^x - \displaystyle\int 2x e^x\,dx$.</li>
+        <li>Use Example 1: $\displaystyle\int 2xe^x\,dx = 2(x - 1)e^x + C$.</li>
+      </ol>
+      <p class="answer">$(x^2 - 2x + 2)e^x + C$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">Find $I = \displaystyle\int e^x \sin x\,dx$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Parts with $g' = e^x$: $I = e^x\sin x - \displaystyle\int e^x\cos x\,dx$.</li>
+        <li>Parts again: $\displaystyle\int e^x\cos x\,dx = e^x\cos x + \int e^x\sin x\,dx = e^x\cos x + I$.</li>
+        <li>So $I = e^x\sin x - e^x\cos x - I$, and $2I = e^x(\sin x - \cos x)$.</li>
+      </ol>
+      <p class="answer">$\dfrac{1}{2}e^x(\sin x - \cos x) + C$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: choosing the wrong factor -->
+  <div class="note-warning">
+    If the new integral is harder than the old one, you chose the wrong factor to differentiate.
+    For $x e^x$, differentiating $e^x$ instead of $x$ gives $\displaystyle\int \frac{x^2}{2}e^x\,dx$, which is worse.
+  </div>
+
+  <!-- TIP: which factor to differentiate -->
+  <div class="note-tip">
+    Differentiate the factor that gets simpler: $\log x$ first, then powers of $x$.
+    Integrate the factor that stays easy: $e^x$, $\sin x$, $\cos x$.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$\displaystyle\int f g' = fg - \int f' g$.</li>
+      <li>$\displaystyle\int \log x\,dx = x\log x - x + C$.</li>
+      <li>$x^n \times$(exp or trig): use parts $n$ times. $e^x \times$ trig: use parts twice and solve for $I$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/note_geom.js"></script>
+<script src="/static/js/note_plot.js"></script>
+<script>
+  // "Area picture" demo (the TRY IT block above).
+  // The curve v = φ(u) runs from (u₁, v₁) to (b, v(b)).
+  // Blue area (below the curve): ∫ v du. Orange area (left of the curve): ∫ u dv.
+  // Together they fill the big rectangle b·v(b) minus the small one u₁·v₁.
+  // That is ∫ v du + ∫ u dv = [uv], the parts formula.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const cBox = document.getElementById('ipC'), bBox = document.getElementById('ipB');
+    const output = document.getElementById('ipOutput');
+    const f3 = (v) => +v.toFixed(3);
+
+    // each curve: v(u), its inverse u(v), and the starting u
+    const CURVES = [
+      { v: Math.log, u: Math.exp, u1: 1, name: 'log u' },
+      { v: Math.sqrt, u: (v) => v * v, u1: 0, name: '√u' },
+      { v: (u) => u * u / 2, u: (v) => Math.sqrt(2 * v), u1: 0, name: 'u²/2' },
+    ];
+    // midpoint-rule integral of f from a to b
+    const integral = (f, a, b) => { let s = 0; const n = 2000, h = (b - a) / n; for (let i = 0; i < n; i++) s += f(a + (i + 0.5) * h); return s * h; };
+
+    const plot = NotePlot.graph(document.getElementById('ipCanvas'), {
+      x: [-0.5, 4], y: [-0.5, 6.5],
+      draw(g) {
+        const C = CURVES[+cBox.value], b = +bBox.value, v1 = C.v(C.u1), vb = C.v(b);
+        const curve = [];
+        for (let i = 0; i <= 120; i++) { const u = C.u1 + (b - C.u1) * i / 120; curve.push([u, C.v(u)]); }
+        g.poly([[C.u1, 0], ...curve, [b, 0]], 'rgba(37, 99, 235, 0.2)');
+        g.poly([[0, v1], ...curve, [0, vb]], 'rgba(234, 88, 12, 0.2)');
+        g.fn(C.v, '#334155', { from: Math.max(C.u1 - 0.5, 0.01) });
+        g.seg([0, vb], [b, vb], '#94a3b8', { dash: true }); g.seg([b, 0], [b, vb], '#94a3b8', { dash: true });
+        g.dot([b, vb], '#334155');
+        const blue = integral(C.v, C.u1, b), orange = integral(C.u, v1, vb);
+        output.textContent =
+          `v = ${C.name}:  blue ∫ v du = ${f3(blue)},  orange ∫ u dv = ${f3(orange)}\n` +
+          `sum = ${f3(blue + orange)} = b·v(b) − u₁·v₁ = ${f3(b * vb)} − ${f3(C.u1 * v1)}`;
+      },
+    });
+    cBox.addEventListener('change', plot.redraw);
+    bBox.addEventListener('input', plot.redraw);
+  })();
+</script>

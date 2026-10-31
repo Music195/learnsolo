@@ -1,339 +1,169 @@
-<!DOCTYPE html>
-<!-- tags: Mathematics -->
-<html lang="en">
- <head>
-  <meta charset="utf-8"/>
-  <title>
-   Chain Rule and Inverse Function Rule for Derivatives
-  </title>
-  <script>
-   MathJax = {
-            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
-            svg: {fontCache: 'global'}
-        };
-  </script>
-  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
-  </script>
-  <link href="/static/notes_style.css" rel="stylesheet"/>
- </head>
- <body>
-  <div class="fancy-title" data-topic="Mathematics">
-   Chain Rule and Inverse Function Rule for Derivatives
+<!-- tags: Differentiation -->
+<!-- =====================================================================
+     NOTE: Chain Rule and Inverse Function Rule (合成関数・逆関数の微分法)
+     Uses the shared blocks from static/css/note_blocks.css and the
+     graph helper static/js/note_plot.js (built on note_geom.js).
+     Do not add a <style> block here; change note_blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Differentiation">Chain Rule and Inverse Function Rule for Derivatives</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Rates multiply along a chain</h2>
+    <p>In $y = (x^2 - 1)^2$ there is an inner function $u = x^2 - 1$ and an outer function $y = u^2$.
+      Suppose $u$ changes $\dfrac{du}{dx}$ times as fast as $x$, and $y$ changes $\dfrac{dy}{du}$ times as fast as $u$.
+      Then $y$ changes $\dfrac{dy}{du} \cdot \dfrac{du}{dx}$ times as fast as $x$.</p>
+    <p>For an inverse function the roles of $x$ and $y$ swap, so the rate becomes its reciprocal.</p>
+  </section>
+
+  <!-- FORMULA: chain rule -->
+  <div class="note-formula">
+    <h3>Chain rule (合成関数の微分法)</h3>
+    <div class="formula-main">$$\frac{dy}{dx} = \frac{dy}{du} \cdot \frac{du}{dx}, \qquad \{f(g(x))\}' = f'(g(x))\,g'(x)$$</div>
+    <p class="symbols">Most used case: $\{(g(x))^n\}' = n(g(x))^{n-1}g'(x)$.</p>
   </div>
-  <div class="container">
-   <div class="main-content">
-    <div class="title">Chain Rule and Inverse Function Rule for Derivatives</div>
-    
-    <div class="formula-block">
-     <div style="font-size: 1.15em; color: #333; text-align: center; margin-bottom: 10px;">
-        The Chain Rule:
-     </div>
-     <div class="formula-math">
-        $$\dfrac{dy}{dx} = \dfrac{dy}{du} \cdot \dfrac{du}{dx}$$
-     </div>
-     <div style="text-align: center; margin-top: 10px;">
-        For composite functions: $\dfrac{d}{dx}[f(g(x))] = f'(g(x)) \cdot g'(x)$
-     </div>
-    </div>
 
-    <div style="margin: 30px 0;">
-     <strong>1. Understanding the Chain Rule</strong>
-     <div class="graybox">
-        <strong>Composite Function:</strong> $y = f(g(x))$<br>
-        Think of it as: $x \to u \to y$ where $u = g(x)$ and $y = f(u)$<br><br>
-        <strong>Chain Rule Intuition:</strong> The rate of change of y with respect to x is the rate of change of y with respect to u, multiplied by the rate of change of u with respect to x.
-     </div>
-    </div>
-
-    <div style="margin: 30px 0;">
-     <strong>2. Visual Understanding</strong>
-     <div style="text-align: center; margin: 15px 0;">
-        <canvas id="chainCanvas" width="700" height="400"></canvas>
-     </div>
-     <p style="text-align: center; font-style: italic;">Chain rule: f(g(x)) where f(u) = u² and g(x) = x + 1</p>
-    </div>
-
-    <div style="margin: 30px 0;">
-     <strong>3. Step-by-Step Examples</strong>
-     
-     <div class="graybox">
-        <strong>Example 1: Power Functions</strong><br>
-        Find $\dfrac{d}{dx}((x^2 + 3x + 1)^5)$<br><br>
-        <strong>Solution:</strong><br>
-        Let $u = x^2 + 3x + 1$, so $y = u^5$<br>
-        $\dfrac{du}{dx} = 2x + 3$<br>
-        $\dfrac{dy}{du} = 5u^4$<br><br>
-        $\dfrac{dy}{dx} = \dfrac{dy}{du} \cdot \dfrac{du}{dx} = 5u^4 \cdot (2x + 3) = 5(x^2 + 3x + 1)^4 \cdot (2x + 3)$
-     </div>
-
-     <div class="graybox" style="margin-top: 15px;">
-        <strong>Example 2: Trigonometric Functions</strong><br>
-        Find $\dfrac{d}{dx}(\sin(x^3 + 2x))$<br><br>
-        <strong>Solution:</strong><br>
-        Let $u = x^3 + 2x$, so $y = \sin u$<br>
-        $\dfrac{du}{dx} = 3x^2 + 2$<br>
-        $\dfrac{dy}{du} = \cos u$<br><br>
-        $\dfrac{dy}{dx} = \cos u \cdot (3x^2 + 2) = \cos(x^3 + 2x) \cdot (3x^2 + 2)$
-     </div>
-
-     <div class="graybox" style="margin-top: 15px;">
-        <strong>Example 3: Exponential Functions</strong><br>
-        Find $\dfrac{d}{dx}(e^{\sin x})$<br><br>
-        <strong>Solution:</strong><br>
-        Let $u = \sin x$, so $y = e^u$<br>
-        $\dfrac{du}{dx} = \cos x$<br>
-        $\dfrac{dy}{du} = e^u$<br><br>
-        $\dfrac{dy}{dx} = e^u \cdot \cos x = e^{\sin x} \cdot \cos x$
-     </div>
-    </div>
-
-    <div style="margin: 30px 0;">
-     <strong>4. Inverse Function Rule</strong>
-     <div class="graybox">
-        <strong>If $y = f(x)$ has an inverse function $x = f^{-1}(y)$, then:</strong><br>
-        $\dfrac{dx}{dy} = \dfrac{1}{\dfrac{dy}{dx}}$<br><br>
-        <strong>Alternative notation:</strong> $\dfrac{d}{dx}f^{-1}(x) = \dfrac{1}{f'(f^{-1}(x))}$<br><br>
-        <strong>Example:</strong> If $y = \sin x$, then $x = \arcsin y$<br>
-        $\dfrac{dx}{dy} = \dfrac{1}{\cos x} = \dfrac{1}{\sqrt{1 - \sin^2 x}} = \dfrac{1}{\sqrt{1 - y^2}}$
-     </div>
-    </div>
-
-    <div style="margin: 30px 0;">
-     <strong>5. Common Chain Rule Patterns</strong>
-     <div class="graybox">
-        <ul style="line-height: 1.8;">
-         <li><strong>Power of a function:</strong> $\dfrac{d}{dx}[u^n] = n u^{n-1} u'$</li>
-         <li><strong>Exponential:</strong> $\dfrac{d}{dx}[e^u] = e^u u'$</li>
-         <li><strong>Natural log:</strong> $\dfrac{d}{dx}[\ln u] = \dfrac{1}{u} u'$</li>
-         <li><strong>Trigonometric:</strong> $\dfrac{d}{dx}[\sin u] = \cos u \cdot u'$, $\dfrac{d}{dx}[\cos u] = -\sin u \cdot u'$</li>
-         <li><strong>General form:</strong> $\dfrac{d}{dx}[f(u)] = f'(u) \cdot u'$</li>
-        </ul>
-     </div>
-    </div>
-
-    <div style="margin: 30px 0;">
-     <strong>6. Multiple Chain Rules</strong>
-     <div class="graybox">
-        <strong>Three functions:</strong> $y = f(g(h(x)))$<br>
-        $\dfrac{dy}{dx} = f'(g(h(x))) \cdot g'(h(x)) \cdot h'(x)$<br><br>
-        <strong>Example:</strong> $\dfrac{d}{dx}(\sin(x^2 + 1))$<br>
-        $= \cos(x^2 + 1) \cdot 2x$
-     </div>
-    </div>
-
-    <div style="margin: 30px 0;">
-     <strong>7. Applications</strong>
-     <div class="graybox">
-        <strong>Physics:</strong> Related rates, velocity of moving objects with changing parameters
-     </div>
-     <div class="graybox" style="margin-top: 15px;">
-        <strong>Biology:</strong> Population growth models, enzyme kinetics
-     </div>
-     <div class="graybox" style="margin-top: 15px;">
-        <strong>Economics:</strong> Marginal functions with composite relationships
-     </div>
-    </div>
-
-    <div style="margin: 30px 0;">
-     <strong>8. Practice Problems</strong>
-     <div class="graybox">
-        <strong>Problem 1:</strong> Differentiate $(x^3 + 2x)^4$ using the chain rule.
-     </div>
-     <div class="graybox" style="margin-top: 15px;">
-        <strong>Problem 2:</strong> Find $\dfrac{d}{dx}[\ln(\cos x)]$.
-     </div>
-     <div class="graybox" style="margin-top: 15px;">
-        <strong>Problem 3:</strong> Use the inverse function rule to find $\dfrac{d}{dx}(\arctan x)$.
-     </div>
-    </div>
-
-    <div style="margin: 30px 0;">
-     <strong>9. Key Takeaways</strong>
-     <div class="graybox">
-        <ul style="line-height: 2;">
-         <li>Chain rule: derivative of composite is product of derivatives</li>
-         <li>Identify the "inside" function and "outside" function</li>
-         <li>Inverse function rule: reciprocal of original derivative</li>
-         <li>Multiple chain rules for deeply nested functions</li>
-         <li>Practice recognizing patterns to apply rules efficiently</li>
-         <li>Always check domain restrictions for inverse functions</li>
-        </ul>
-     </div>
-    </div>
-   </div>
+  <!-- FORMULA: inverse function rule -->
+  <div class="note-formula">
+    <h3>Inverse function rule (逆関数の微分法)</h3>
+    <div class="formula-main">$$\frac{dy}{dx} = \frac{1}{\dfrac{dx}{dy}} \qquad \left(\frac{dx}{dy} \ne 0\right)$$</div>
+    <p class="symbols">Use it when $x$ is easy to write in terms of $y$, e.g. $y = \sqrt[3]{x} \iff x = y^3$.</p>
   </div>
-  <script>
-   window.addEventListener('load', function() {
-      const canvas = document.getElementById('chainCanvas');
-      const ctx = canvas.getContext('2d');
-      const w = canvas.width;
-      const h = canvas.height;
-      const padding = 60;
-      const graphW = w - 2 * padding;
-      const graphH = h - 2 * padding;
-      const xMin = -2;
-      const xMax = 4;
-      const yMin = -1;
-      const yMax = 12;
 
-      // Clear canvas with white background
-      ctx.fillStyle = 'white';
-      ctx.fillRect(0, 0, w, h);
+  <!-- PROOF: why the rates multiply -->
+  <div class="note-proof">
+    <ol>
+      <li>Let $x$ change by $\Delta x$; then $u$ changes by $\Delta u$ and $y$ by $\Delta y$. If $\Delta u \ne 0$: $\dfrac{\Delta y}{\Delta x} = \dfrac{\Delta y}{\Delta u} \cdot \dfrac{\Delta u}{\Delta x}$.</li>
+      <li>As $\Delta x \to 0$, $\Delta u \to 0$ too ($u$ is continuous), so the two fractions tend to $\dfrac{dy}{du}$ and $\dfrac{du}{dx}$.</li>
+      <li>Inverse: $\dfrac{\Delta y}{\Delta x} = 1 \Big/ \dfrac{\Delta x}{\Delta y}$, and let $\Delta y \to 0$.</li>
+    </ol>
+  </div>
 
-      function toCanvasX(x) {
-         return padding + ((x - xMin) / (xMax - xMin)) * graphW;
-      }
+  <!-- DEMO: chain rule numbers; code at the bottom -->
+  <div class="note-demo">
+    <h2>$\dfrac{dy}{dx} = \dfrac{dy}{du} \cdot \dfrac{du}{dx}$ at a point</h2>
+    <div class="controls">
+      <label>$y$ = <select id="crF">
+        <option value="0">(x² − 1)²: u = x² − 1, y = u²</option>
+        <option value="1">1/(x² + 1): u = x² + 1, y = 1/u</option>
+        <option value="2">(1 − x)³: u = 1 − x, y = u³</option>
+      </select></label>
+      <label>$x$ = <input type="range" id="crX" min="-2" max="2" step="0.05" value="1.2"></label>
+    </div>
+    <canvas id="crCanvas"></canvas>
+    <div class="output table-text" id="crOutput"></div>
+  </div>
 
-      function toCanvasY(y) {
-         return h - padding - ((y - yMin) / (yMax - yMin)) * graphH;
-      }
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Differentiate $y = (x^2 + 3x + 1)^5$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$u = x^2 + 3x + 1$, $y = u^5$: $\dfrac{dy}{du} = 5u^4$, $\dfrac{du}{dx} = 2x + 3$.</li>
+      </ol>
+      <p class="answer">$y' = 5(x^2 + 3x + 1)^4(2x + 3)$</p>
+    </details>
+  </div>
 
-      // Draw background grid
-      ctx.save();
-      ctx.strokeStyle = '#f0f0f0';
-      ctx.lineWidth = 0.5;
-      for (let x = -2; x <= 4; x += 0.5) {
-         ctx.beginPath();
-         ctx.moveTo(toCanvasX(x), padding);
-         ctx.lineTo(toCanvasX(x), h - padding);
-         ctx.stroke();
-      }
-      for (let y = -1; y <= 12; y += 1) {
-         ctx.beginPath();
-         ctx.moveTo(padding, toCanvasY(y));
-         ctx.lineTo(w - padding, toCanvasY(y));
-         ctx.stroke();
-      }
-      ctx.restore();
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Differentiate $y = \dfrac{1}{(2x - 1)^3}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$y = (2x - 1)^{-3}$, so $y' = -3(2x - 1)^{-4} \cdot 2$.</li>
+      </ol>
+      <p class="answer">$y' = -\dfrac{6}{(2x - 1)^4}$</p>
+    </details>
+  </div>
 
-      // Draw axes
-      ctx.save();
-      ctx.strokeStyle = '#333';
-      ctx.lineWidth = 2;
-      // x-axis
-      ctx.beginPath();
-      ctx.moveTo(toCanvasX(xMin), toCanvasY(0));
-      ctx.lineTo(toCanvasX(xMax), toCanvasY(0));
-      ctx.stroke();
-      // y-axis
-      ctx.beginPath();
-      ctx.moveTo(toCanvasX(0), toCanvasY(yMin));
-      ctx.lineTo(toCanvasX(0), toCanvasY(yMax));
-      ctx.stroke();
-      ctx.restore();
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Use the inverse function rule to differentiate $y = \sqrt[3]{x}$ ($x \ne 0$).</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$x = y^3$, so $\dfrac{dx}{dy} = 3y^2$.</li>
+        <li>$\dfrac{dy}{dx} = \dfrac{1}{3y^2} = \dfrac{1}{3\left(\sqrt[3]{x}\right)^2}$</li>
+      </ol>
+      <p class="answer">$y' = \dfrac{1}{3\sqrt[3]{x^2}}$</p>
+    </details>
+  </div>
 
-      // Inner function: u = g(x) = x + 1
-      ctx.save();
-      ctx.strokeStyle = '#4caf50';
-      ctx.lineWidth = 3;
-      ctx.setLineDash([8, 4]);
-      ctx.beginPath();
-      for (let x = -2; x <= 4; x += 0.02) {
-         const u = x + 1;
-         if (x === -2) ctx.moveTo(toCanvasX(x), toCanvasY(u));
-         else ctx.lineTo(toCanvasX(x), toCanvasY(u));
-      }
-      ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.restore();
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">On the circle $x^2 + y^2 = 25$, find $\dfrac{dy}{dx}$ and the slope of the tangent at $(3, 4)$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Differentiate both sides with respect to $x$. Since $y$ depends on $x$, the chain rule gives $(y^2)' = 2y\dfrac{dy}{dx}$.</li>
+        <li>$2x + 2y\dfrac{dy}{dx} = 0$, so $\dfrac{dy}{dx} = -\dfrac{x}{y}$ ($y \ne 0$).</li>
+      </ol>
+      <p class="answer">$\dfrac{dy}{dx} = -\dfrac{x}{y}$; slope $-\dfrac{3}{4}$ at $(3, 4)$</p>
+    </details>
+  </div>
 
-      // Outer function: y = f(u) = u²
-      ctx.save();
-      ctx.strokeStyle = '#2196f3';
-      ctx.lineWidth = 3;
-      ctx.setLineDash([8, 4]);
-      ctx.beginPath();
-      for (let u = -1; u <= 5; u += 0.02) {
-         const y = u * u;
-         if (u === -1) ctx.moveTo(toCanvasX(u), toCanvasY(y));
-         else ctx.lineTo(toCanvasX(u), toCanvasY(y));
-      }
-      ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.restore();
+  <!-- WARNING: don't forget the inner derivative -->
+  <div class="note-warning">
+    The most common slip is dropping the inner derivative: $\{(2x - 1)^3\}' = 3(2x - 1)^2 \cdot 2$, not $3(2x - 1)^2$.
+  </div>
 
-      // Composite function: y = f(g(x)) = (x + 1)²
-      ctx.save();
-      ctx.strokeStyle = '#ff9800';
-      ctx.lineWidth = 4;
-      ctx.beginPath();
-      for (let x = -2; x <= 4; x += 0.02) {
-         const y = (x + 1) * (x + 1);
-         if (x === -2) ctx.moveTo(toCanvasX(x), toCanvasY(y));
-         else ctx.lineTo(toCanvasX(x), toCanvasY(y));
-      }
-      ctx.stroke();
-      ctx.restore();
+  <!-- TIP: outside in -->
+  <div class="note-tip">
+    Work from the outside in: differentiate the outer function and leave the inside unchanged, then multiply by the derivative of the inside. Repeat if the inside is itself a composite.
+  </div>
 
-      // Derivative of composite: d/dx[(x+1)²] = 2(x+1)
-      ctx.save();
-      ctx.strokeStyle = '#9c27b0';
-      ctx.lineWidth = 3;
-      ctx.setLineDash([12, 6]);
-      ctx.beginPath();
-      for (let x = -2; x <= 4; x += 0.02) {
-         const y = 2 * (x + 1);
-         if (x === -2) ctx.moveTo(toCanvasX(x), toCanvasY(y));
-         else ctx.lineTo(toCanvasX(x), toCanvasY(y));
-      }
-      ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.restore();
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$\{f(g(x))\}' = f'(g(x))g'(x)$; $\;\dfrac{dy}{dx} = \dfrac{dy}{du}\dfrac{du}{dx}$.</li>
+      <li>$\dfrac{dy}{dx} = 1 \Big/ \dfrac{dx}{dy}$.</li>
+      <li>Equations in $x$ and $y$: differentiate both sides, treating $y$ as a function of $x$.</li>
+    </ul>
+  </div>
 
-      // Point of interest at x = 1
-      const x_point = 1;
-      const u_point = x_point + 1; // g(1) = 2
-      const y_point = u_point * u_point; // f(2) = 4
-      const derivative_point = 2 * u_point; // f'(2) * g'(1) = 4 * 1 = 4
+</article>
 
-      // Mark the point on composite function
-      ctx.save();
-      ctx.fillStyle = '#ff9800';
-      ctx.beginPath();
-      ctx.arc(toCanvasX(x_point), toCanvasY(y_point), 6, 0, 2 * Math.PI);
-      ctx.fill();
-      ctx.strokeStyle = '#fff';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      ctx.restore();
+<script src="/static/js/note_geom.js"></script>
+<script src="/static/js/note_plot.js"></script>
+<script>
+  // "Rates multiply" demo (the TRY IT block above).
+  // At the chosen x: inner value u = g(x) and rate du/dx, outer rate dy/du at that u.
+  // Their product is the slope of y = f(g(x)), drawn as the orange tangent.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const fBox = document.getElementById('crF'), xBox = document.getElementById('crX');
+    const output = document.getElementById('crOutput');
+    const f3 = (v) => +v.toFixed(3);
 
-      // Labels
-      ctx.save();
-      ctx.font = 'bold 16px Arial';
-      
-      // Function labels
-      ctx.fillStyle = '#4caf50';
-      ctx.fillText('Inner: g(x) = x + 1', padding + 20, padding - 30);
-      ctx.fillStyle = '#2196f3';
-      ctx.fillText('Outer: f(u) = u²', padding + 20, padding - 10);
-      ctx.fillStyle = '#ff9800';
-      ctx.fillText('Composite: f(g(x)) = (x + 1)²', padding + 20, padding + 10);
-      ctx.fillStyle = '#9c27b0';
-      ctx.fillText('Derivative: 2(x + 1)', padding + 20, padding + 30);
-      
-      // Point information
-      ctx.font = '14px Arial';
-      ctx.fillStyle = '#333';
-      ctx.fillText(`At x = ${x_point}:`, w/2 + 50, h - 80);
-      ctx.fillText(`g(${x_point}) = ${u_point}`, w/2 + 50, h - 60);
-      ctx.fillText(`f(${u_point}) = ${y_point}`, w/2 + 50, h - 40);
-      ctx.fillText(`f'(g(${x_point})) × g'(${x_point}) = 2 × ${u_point} × 1 = ${derivative_point}`, w/2 + 50, h - 20);
-      
-      ctx.restore();
+    // each composite: inner g and g′, outer f and f′ (as functions of u)
+    const CHAINS = [
+      { g: (x) => x * x - 1, dg: (x) => 2 * x, f: (u) => u * u, df: (u) => 2 * u },
+      { g: (x) => x * x + 1, dg: (x) => 2 * x, f: (u) => 1 / u, df: (u) => -1 / (u * u) },
+      { g: (x) => 1 - x, dg: () => -1, f: (u) => u ** 3, df: (u) => 3 * u * u },
+    ];
 
-      // Legend
-      ctx.save();
-      ctx.font = '14px Arial';
-      ctx.fillStyle = '#4caf50';
-      ctx.fillText('--- Inner function: g(x)', padding, h - 50);
-      ctx.fillStyle = '#2196f3';
-      ctx.fillText('--- Outer function: f(u)', padding, h - 30);
-      ctx.fillStyle = '#ff9800';
-      ctx.fillText('— Composite: f(g(x))', padding, h - 10);
-      ctx.fillStyle = '#9c27b0';
-      ctx.fillText('--- Derivative', padding + 250, h - 50);
-      ctx.restore();
-   });
-  </script>
- </body>
-</html>
+    const plot = NotePlot.graph(document.getElementById('crCanvas'), {
+      x: [-2.6, 2.6], y: [-3, 4],
+      draw(g) {
+        const C = CHAINS[+fBox.value], x0 = +xBox.value;
+        const y = (x) => C.f(C.g(x));
+        g.fn(C.g, '#94a3b8', { width: 1.5, dash: true }); // the inner function u = g(x)
+        g.fn(y, '#2563eb');
+        const u0 = C.g(x0), dudx = C.dg(x0), dydu = C.df(u0), slope = dydu * dudx;
+        g.fn((x) => y(x0) + slope * (x - x0), '#ea580c', { width: 2, from: x0 - 1, to: x0 + 1 });
+        g.dot([x0, u0], '#94a3b8'); g.dot([x0, y(x0)], '#ea580c');
+        output.textContent =
+          `u = g(${x0}) = ${f3(u0)},  du/dx = ${f3(dudx)}  (grey dashed curve is u)\n` +
+          `dy/du at u = ${f3(u0)}: ${f3(dydu)}\n` +
+          `dy/dx = ${f3(dydu)} × ${f3(dudx)} = ${f3(slope)}  (slope of the orange tangent)`;
+      },
+    });
+    fBox.addEventListener('change', plot.redraw);
+    xBox.addEventListener('input', plot.redraw);
+  })();
+</script>

@@ -1,473 +1,135 @@
-<!DOCTYPE html>
 <!-- tags: Algebra -->
-<html lang="en">
- <head>
-  <meta charset="utf-8"/>
-  <title>
-   Distributive Law
-  </title>
-  <script>
-   MathJax = {
-            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
-            svg: {fontCache: 'global'}
-        };
-  </script>
-  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
-  </script>
-  <link href="/static/notes_style.css" rel="stylesheet"/>
-  <style>
-   .solution-button {
-    background: #007bff;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 10px;
-   }
-   .solution-button:hover {
-    background: #0056b3;
-   }
-   .distributive-calculator {
-    background: white;
-    border: 1px solid #ecf0f1;
-    border-radius: 8px;
-    padding: 20px;
-    margin: 20px 0;
-   }
-   .input-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-    margin-bottom: 20px;
-   }
-   .result-display {
-    background: #f8f9fa;
-    border-radius: 8px;
-    padding: 15px;
-    margin-top: 15px;
-   }
-   .result-item {
-    display: flex;
-    justify-content: space-between;
-    margin: 8px 0;
-    padding: 8px;
-    background: white;
-    border-radius: 5px;
-   }
-   .result-label {
-    font-weight: bold;
-    color: #2c3e50;
-   }
-   .result-value {
-    color: #3498db;
-    font-weight: bold;
-   }
-   .law-section {
-    background: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    padding: 20px;
-    margin: 20px 0;
-   }
-   .law-section h4 {
-    margin-top: 0;
-    color: #495057;
-   }
-   .law-item {
-    background: white;
-    border-radius: 8px;
-    padding: 15px;
-    margin: 10px 0;
-    border: 1px solid #ecf0f1;
-   }
-   .law-formula {
-    font-size: 1.2em;
-    font-weight: bold;
-    color: #2c3e50;
-    margin-bottom: 8px;
-   }
-   .law-explanation {
-    color: #666;
-    font-style: italic;
-   }
-   .visual-representation {
-    background: #fff3e0;
-    border: 1px solid #ffe0b2;
-    border-radius: 8px;
-    padding: 20px;
-    margin: 20px 0;
-   }
-   .visual-representation h4 {
-    margin-top: 0;
-    color: #e65100;
-   }
-   .distributive-diagram {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 20px 0;
-   }
-   .distributive-svg {
-    background: white;
-    border: 1px solid #ecf0f1;
-    border-radius: 8px;
-    padding: 20px;
-   }
-   @media (max-width: 768px) {
-    .input-grid {
-     grid-template-columns: 1fr;
-    }
-   }
-  </style>
- </head>
- <body>
-  <div class="fancy-title" data-topic="Algebra">
-   Distributive Law
+<!-- =====================================================================
+     NOTE: Distributive Law (分配法則)
+     Uses the shared blocks from static/css/note_blocks.css and the
+     drawing helper static/js/note_geom.js (no draggable points here).
+     Do not add a <style> block here; change note_blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Algebra">Distributive Law</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Multiply every term inside the brackets</h2>
+    <p>A number in front of brackets multiplies <strong>each</strong> term inside. Think of a rectangle of height $a$ and width $b + c$:
+      its area $a(b + c)$ is the same as the two pieces $ab$ and $ac$ added together.</p>
+  </section>
+
+  <!-- FORMULA: distributive law -->
+  <div class="note-formula">
+    <h3>Distributive law</h3>
+    <div class="formula-main">$$a(b + c) = ab + ac, \qquad (a + b)(c + d) = ac + ad + bc + bd$$</div>
+    <p class="symbols">Two brackets: every term of the first times every term of the second (here $2 \times 2 = 4$ products).</p>
   </div>
-  <div class="container">
-   <div class="main-content">
 
-    <div class="math-foundation">
-     <h3>Mathematical Foundation</h3>
-     <p>The distributive law is one of the fundamental properties of arithmetic and algebra. It describes how multiplication interacts with addition (and subtraction). This property allows us to "distribute" a factor across terms being added or subtracted, which is essential for expanding expressions, factoring, and solving equations. The distributive law is the basis for many algebraic techniques and is used extensively in mathematics.</p>
+  <!-- DEMO: rectangle model; code at the bottom -->
+  <div class="note-demo">
+    <h2>Area model for $(a + b)(c + d)$</h2>
+    <div class="controls">
+      <label>$a$ = <input type="number" id="dlA" value="4" min="0" max="9"></label>
+      <label>$b$ = <input type="number" id="dlB" value="2" min="0" max="9"></label>
+      <label>$c$ = <input type="number" id="dlC" value="5" min="0" max="9"></label>
+      <label>$d$ = <input type="number" id="dlD" value="3" min="0" max="9"></label>
     </div>
-
-    <div class="law-section">
-     <h4>The Distributive Laws</h4>
-
-     <div class="law-item">
-      <div class="law-formula">a(b + c) = ab + ac</div>
-      <div class="law-explanation">Multiply a factor by a sum: distribute the factor to each term in the sum.</div>
-     </div>
-
-     <div class="law-item">
-      <div class="law-formula">(a + b)c = ac + bc</div>
-      <div class="law-explanation">Multiply a sum by a factor: distribute the factor to each term in the sum.</div>
-     </div>
-
-     <div class="law-item">
-      <div class="law-formula">a(b - c) = ab - ac</div>
-      <div class="law-explanation">The distributive law also works with subtraction.</div>
-     </div>
-
-     <div class="law-item">
-      <div class="law-formula">(a - b)c = ac - bc</div>
-      <div class="law-explanation">Subtracting terms can also be distributed.</div>
-     </div>
-    </div>
-
-    <div class="visual-representation">
-     <h4>Visual Representation</h4>
-     <p>Consider a rectangle with width (a+b) and height c. The total area is c(a+b).</p>
-     <p>Geometrically, this area can be divided into two parts: a rectangle of area ac and another of area bc.</p>
-     <p>This visual approach shows why c(a+b) = ac + bc.</p>
-    </div>
-
-    <div class="distributive-diagram">
-     <div class="distributive-svg">
-      <svg height="200" viewbox="0 0 300 200" width="300">
-       <!-- Rectangle representing c(a+b) -->
-       <rect fill="#e3f2fd" height="150" stroke="#1976d2" stroke-width="2" width="250" x="20" y="20"/>
-       <!-- Vertical line dividing into a and b parts -->
-       <line stroke="#1976d2" stroke-dasharray="5,5" stroke-width="2" x1="120" x2="120" y1="20" y2="170"/>
-       <!-- Labels -->
-       <text fill="#1976d2" font-family="serif" font-size="16" x="60" y="15">a</text>
-       <text fill="#1976d2" font-family="serif" font-size="16" x="180" y="15">b</text>
-       <text fill="#1976d2" font-family="serif" font-size="16" x="5" y="110">c</text>
-       <!-- Area labels -->
-       <text fill="#43a047" font-family="serif" font-size="18" x="60" y="120">ac</text>
-       <text fill="#d32f2f" font-family="serif" font-size="18" x="180" y="120">bc</text>
-       <!-- Total area label -->
-       <text fill="#222" font-family="serif" font-size="20" text-anchor="middle" x="150" y="190">c(a+b) = ac + bc</text>
-       <!-- Arrows showing distribution -->
-       <polygon fill="#e65100" points="145,40 155,40 150,50"/>
-       <text fill="#e65100" font-family="serif" font-size="14" x="160" y="45">distribute</text>
-      </svg>
-     </div>
-    </div>
-
-    <div class="interactive-demo">
-     <h3>Interactive Distributive Calculator</h3>
-     <div class="distributive-calculator">
-      <div style="margin-bottom: 15px;">
-       <strong>Select operation:</strong>
-       <select id="distributive-operation" onchange="updateDistributiveInputs()" style="margin-left: 10px; padding: 5px;">
-        <option value="multiply-sum">Multiply: a(b + c)</option>
-        <option value="sum-multiply">(a + b)c</option>
-        <option value="multiply-difference">Multiply: a(b - c)</option>
-        <option value="difference-multiply">(a - b)c</option>
-       </select>
-      </div>
-
-      <div id="multiply-sum-inputs" class="input-grid">
-       <div class="control-group">
-        <label for="factor-a">Factor a:</label>
-        <input id="factor-a" placeholder="a" type="number" step="0.01">
-       </div>
-       <div class="control-group">
-        <label for="term-b">Term b:</label>
-        <input id="term-b" placeholder="b" type="number" step="0.01">
-       </div>
-       <div class="control-group">
-        <label for="term-c">Term c:</label>
-        <input id="term-c" placeholder="c" type="number" step="0.01">
-       </div>
-      </div>
-
-      <div id="sum-multiply-inputs" class="input-grid" style="display: none;">
-       <div class="control-group">
-        <label for="term-a-sum">Term a:</label>
-        <input id="term-a-sum" placeholder="a" type="number" step="0.01">
-       </div>
-       <div class="control-group">
-        <label for="term-b-sum">Term b:</label>
-        <input id="term-b-sum" placeholder="b" type="number" step="0.01">
-       </div>
-       <div class="control-group">
-        <label for="factor-c-sum">Factor c:</label>
-        <input id="factor-c-sum" placeholder="c" type="number" step="0.01">
-       </div>
-      </div>
-
-      <div id="multiply-diff-inputs" class="input-grid" style="display: none;">
-       <div class="control-group">
-        <label for="factor-a-diff">Factor a:</label>
-        <input id="factor-a-diff" placeholder="a" type="number" step="0.01">
-       </div>
-       <div class="control-group">
-        <label for="term-b-diff">Term b:</label>
-        <input id="term-b-diff" placeholder="b" type="number" step="0.01">
-       </div>
-       <div class="control-group">
-        <label for="term-c-diff">Term c:</label>
-        <input id="term-c-diff" placeholder="c" type="number" step="0.01">
-       </div>
-      </div>
-
-      <div id="diff-multiply-inputs" class="input-grid" style="display: none;">
-       <div class="control-group">
-        <label for="term-a-diff-m">Term a:</label>
-        <input id="term-a-diff-m" placeholder="a" type="number" step="0.01">
-       </div>
-       <div class="control-group">
-        <label for="term-b-diff-m">Term b:</label>
-        <input id="term-b-diff-m" placeholder="b" type="number" step="0.01">
-       </div>
-       <div class="control-group">
-        <label for="factor-c-diff-m">Factor c:</label>
-        <input id="factor-c-diff-m" placeholder="c" type="number" step="0.01">
-       </div>
-      </div>
-
-      <button onclick="calculateDistributive()" style="padding: 10px 20px; background: #27ae60; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">Calculate</button>
-      <div class="result-display" id="distributive-results" style="display: none;">
-       <h4>Result:</h4>
-       <div id="distributive-result-content"></div>
-      </div>
-     </div>
-    </div>
-
-    <div class="worked-example">
-     <h4>Worked Example 1: Basic Distribution</h4>
-     <p>Expand: 2(3 + 4)</p>
-     <p><strong>Solution:</strong></p>
-     <p>2(3 + 4) = 2×3 + 2×4 = 6 + 8 = 14</p>
-    </div>
-
-    <div class="worked-example">
-     <h4>Worked Example 2: Variable Distribution</h4>
-     <p>Expand: 3x(x + 2)</p>
-     <p><strong>Solution:</strong></p>
-     <p>3x(x + 2) = 3x×x + 3x×2 = 3x² + 6x</p>
-    </div>
-
-    <div class="worked-example">
-     <h4>Worked Example 3: With Subtraction</h4>
-     <p>Expand: 5(2x - 3)</p>
-     <p><strong>Solution:</strong></p>
-     <p>5(2x - 3) = 5×2x - 5×3 = 10x - 15</p>
-    </div>
-
-    <h3>Practice Problems</h3>
-
-    <div class="practice-problem">
-     <strong>Problem 1:</strong> Expand 4(2 + 3)
-     <br><button class="solution-button" onclick="toggleSolution(1)">Show Solution</button>
-     <div class="solution" id="solution1">
-      <strong>Solution:</strong><br>
-      4(2 + 3) = 4×2 + 4×3 = 8 + 12 = 20
-     </div>
-    </div>
-
-    <div class="practice-problem">
-     <strong>Problem 2:</strong> Expand 2x(x + 5)
-     <br><button class="solution-button" onclick="toggleSolution(2)">Show Solution</button>
-     <div class="solution" id="solution2">
-      <strong>Solution:</strong><br>
-      2x(x + 5) = 2x×x + 2x×5 = 2x² + 10x
-     </div>
-    </div>
-
-    <div class="practice-problem">
-     <strong>Problem 3:</strong> Expand 3(4x - 2)
-     <br><button class="solution-button" onclick="toggleSolution(3)">Show Solution</button>
-     <div class="solution" id="solution3">
-      <strong>Solution:</strong><br>
-      3(4x - 2) = 3×4x - 3×2 = 12x - 6
-     </div>
-    </div>
-
-    <div class="key-takeaways">
-     <h3>Key Takeaways</h3>
-     <ul>
-      <li><strong>Basic Law:</strong> a(b + c) = ab + ac - distribute multiplication over addition</li>
-      <li><strong>Reverse:</strong> (a + b)c = ac + bc - same law, different arrangement</li>
-      <li><strong>Subtraction:</strong> a(b - c) = ab - ac - works with subtraction too</li>
-      <li><strong>Multiple Terms:</strong> a(b + c + d) = ab + ac + ad - extends to multiple terms</li>
-      <li><strong>Variables:</strong> Applies to variables, numbers, and expressions</li>
-      <li><strong>Factoring:</strong> Reverse process: ab + ac = a(b + c)</li>
-      <li><strong>Geometric:</strong> Visual representation using area of rectangles</li>
-      <li><strong>Foundation:</strong> Basis for expanding brackets and factoring</li>
-      <li><strong>Operations:</strong> Essential for algebra, calculus, and equation solving</li>
-      <li><strong>Commutative:</strong> Order doesn't matter: a(b+c) = (b+c)a</li>
-     </ul>
-    </div>
-
-    <script>
-     function updateDistributiveInputs() {
-      const operation = document.getElementById('distributive-operation').value;
-      const multiplySum = document.getElementById('multiply-sum-inputs');
-      const sumMultiply = document.getElementById('sum-multiply-inputs');
-      const multiplyDiff = document.getElementById('multiply-diff-inputs');
-      const diffMultiply = document.getElementById('diff-multiply-inputs');
-
-      multiplySum.style.display = 'none';
-      sumMultiply.style.display = 'none';
-      multiplyDiff.style.display = 'none';
-      diffMultiply.style.display = 'none';
-
-      if (operation === 'multiply-sum') {
-       multiplySum.style.display = 'grid';
-      } else if (operation === 'sum-multiply') {
-       sumMultiply.style.display = 'grid';
-      } else if (operation === 'multiply-difference') {
-       multiplyDiff.style.display = 'grid';
-      } else if (operation === 'difference-multiply') {
-       diffMultiply.style.display = 'grid';
-      }
-     }
-
-     function calculateDistributive() {
-      const operation = document.getElementById('distributive-operation').value;
-      const resultsDiv = document.getElementById('distributive-results');
-      const resultContent = document.getElementById('distributive-result-content');
-
-      if (operation === 'multiply-sum') {
-       const a = parseFloat(document.getElementById('factor-a').value);
-       const b = parseFloat(document.getElementById('term-b').value);
-       const c = parseFloat(document.getElementById('term-c').value);
-
-       if (isNaN(a) || isNaN(b) || isNaN(c)) {
-        resultContent.innerHTML = '<p style="color: red;">Please enter valid values.</p>';
-        resultsDiv.style.display = 'block';
-        return;
-       }
-
-       const result1 = a * b;
-       const result2 = a * c;
-       const total = result1 + result2;
-
-       resultContent.innerHTML = `
-        <div class="result-item"><span class="result-label">Expression:</span> <span class="result-value">${a}(${b} + ${c})</span></div>
-        <div class="result-item"><span class="result-label">Distribution:</span> <span class="result-value">${a} × ${b} + ${a} × ${c}</span></div>
-        <div class="result-item"><span class="result-label">Calculation:</span> <span class="result-value">${result1} + ${result2}</span></div>
-        <div class="result-item"><span class="result-label">Result:</span> <span class="result-value">${total}</span></div>
-       `;
-
-      } else if (operation === 'sum-multiply') {
-       const a = parseFloat(document.getElementById('term-a-sum').value);
-       const b = parseFloat(document.getElementById('term-b-sum').value);
-       const c = parseFloat(document.getElementById('factor-c-sum').value);
-
-       if (isNaN(a) || isNaN(b) || isNaN(c)) {
-        resultContent.innerHTML = '<p style="color: red;">Please enter valid values.</p>';
-        resultsDiv.style.display = 'block';
-        return;
-       }
-
-       const result1 = a * c;
-       const result2 = b * c;
-       const total = result1 + result2;
-
-       resultContent.innerHTML = `
-        <div class="result-item"><span class="result-label">Expression:</span> <span class="result-value">(${a} + ${b})${c}</span></div>
-        <div class="result-item"><span class="result-label">Distribution:</span> <span class="result-value">${a} × ${c} + ${b} × ${c}</span></div>
-        <div class="result-item"><span class="result-label">Calculation:</span> <span class="result-value">${result1} + ${result2}</span></div>
-        <div class="result-item"><span class="result-label">Result:</span> <span class="result-value">${total}</span></div>
-       `;
-
-      } else if (operation === 'multiply-difference') {
-       const a = parseFloat(document.getElementById('factor-a-diff').value);
-       const b = parseFloat(document.getElementById('term-b-diff').value);
-       const c = parseFloat(document.getElementById('term-c-diff').value);
-
-       if (isNaN(a) || isNaN(b) || isNaN(c)) {
-        resultContent.innerHTML = '<p style="color: red;">Please enter valid values.</p>';
-        resultsDiv.style.display = 'block';
-        return;
-       }
-
-       const result1 = a * b;
-       const result2 = a * c;
-       const total = result1 - result2;
-
-       resultContent.innerHTML = `
-        <div class="result-item"><span class="result-label">Expression:</span> <span class="result-value">${a}(${b} - ${c})</span></div>
-        <div class="result-item"><span class="result-label">Distribution:</span> <span class="result-value">${a} × ${b} - ${a} × ${c}</span></div>
-        <div class="result-item"><span class="result-label">Calculation:</span> <span class="result-value">${result1} - ${result2}</span></div>
-        <div class="result-item"><span class="result-label">Result:</span> <span class="result-value">${total}</span></div>
-       `;
-
-      } else if (operation === 'difference-multiply') {
-       const a = parseFloat(document.getElementById('term-a-diff-m').value);
-       const b = parseFloat(document.getElementById('term-b-diff-m').value);
-       const c = parseFloat(document.getElementById('factor-c-diff-m').value);
-
-       if (isNaN(a) || isNaN(b) || isNaN(c)) {
-        resultContent.innerHTML = '<p style="color: red;">Please enter valid values.</p>';
-        resultsDiv.style.display = 'block';
-        return;
-       }
-
-       const result1 = a * c;
-       const result2 = b * c;
-       const total = result1 - result2;
-
-       resultContent.innerHTML = `
-        <div class="result-item"><span class="result-label">Expression:</span> <span class="result-value">(${a} - ${b})${c}</span></div>
-        <div class="result-item"><span class="result-label">Distribution:</span> <span class="result-value">${a} × ${c} - ${b} × ${c}</span></div>
-        <div class="result-item"><span class="result-label">Calculation:</span> <span class="result-value">${result1} - ${result2}</span></div>
-        <div class="result-item"><span class="result-label">Result:</span> <span class="result-value">${total}</span></div>
-       `;
-      }
-
-      resultsDiv.style.display = 'block';
-     }
-
-     function toggleSolution(num) {
-      const solution = document.getElementById('solution' + num);
-      if (solution.style.display === 'none' || solution.style.display === '') {
-       solution.style.display = 'block';
-      } else {
-       solution.style.display = 'none';
-      }
-     }
-
-     // Initialize
-     updateDistributiveInputs();
-    </script>
-   </div>
+    <canvas id="dlCanvas"></canvas>
+    <div class="output table-text" id="dlOutput"></div>
   </div>
- </body>
-</html>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Expand $-3x(2x - 5)$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$(-3x)(2x) + (-3x)(-5)$</li>
+      </ol>
+      <p class="answer">$-6x^2 + 15x$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Expand $(2x + 3)(x - 4)$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$2x \cdot x + 2x \cdot (-4) + 3 \cdot x + 3 \cdot (-4) = 2x^2 - 8x + 3x - 12$</li>
+        <li>Collect like terms.</li>
+      </ol>
+      <p class="answer">$2x^2 - 5x - 12$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Expand $(x + 2)(x^2 - 3x + 1)$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$x(x^2 - 3x + 1) + 2(x^2 - 3x + 1) = x^3 - 3x^2 + x + 2x^2 - 6x + 2$</li>
+      </ol>
+      <p class="answer">$x^3 - x^2 - 5x + 2$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: signs -->
+  <div class="note-warning">
+    A minus sign in front multiplies every term: $-(x - 3) = -x + 3$, not $-x - 3$.
+  </div>
+
+  <!-- TIP: count the products -->
+  <div class="note-tip">
+    Before collecting, count your products: a 2-term bracket times a 3-term bracket must give $2 \times 3 = 6$ products.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$a(b + c) = ab + ac$.</li>
+      <li>Two brackets: every term times every term, then collect like terms.</li>
+      <li>Read backwards, it is factorisation: $ab + ac = a(b + c)$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/note_geom.js"></script>
+<script>
+  // "Area model" demo (the TRY IT block above).
+  // A rectangle (a + b) tall and (c + d) wide, split into four coloured parts
+  // whose areas are ac, ad, bc, bd.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const G = window.NoteGeom;
+    const ids = ['dlA', 'dlB', 'dlC', 'dlD'];
+    const output = document.getElementById('dlOutput');
+    const colors = ['rgba(37,99,235,0.25)', 'rgba(13,148,136,0.25)', 'rgba(234,88,12,0.25)', 'rgba(124,58,237,0.25)'];
+
+    const board = G.board(document.getElementById('dlCanvas'), {
+      points: {},
+      draw(g) {
+        const [a, b, c, d] = ids.map((id) => Math.max(0, parseFloat(document.getElementById(id).value) || 0));
+        if (a + b === 0 || c + d === 0) { output.textContent = 'Make both sides bigger than 0.'; return; }
+        const k = Math.min(400 / (c + d), 260 / (a + b));          // pixels per unit
+        const x0 = 260 - k * (c + d) / 2, y0 = 40;
+        const xs = [x0, x0 + k * c, x0 + k * (c + d)], ys = [y0, y0 + k * a, y0 + k * (a + b)];
+        const names = [['ac', a * c], ['ad', a * d], ['bc', b * c], ['bd', b * d]];
+        for (let i = 0; i < 2; i++) for (let j = 0; j < 2; j++) {
+          const [nm, val] = names[2 * i + j];
+          g.poly([[xs[j], ys[i]], [xs[j + 1], ys[i]], [xs[j + 1], ys[i + 1]], [xs[j], ys[i + 1]]], colors[2 * i + j]);
+          if (val > 0) g.text([(xs[j] + xs[j + 1]) / 2, (ys[i] + ys[i + 1]) / 2], `${nm} = ${val}`);
+        }
+        xs.forEach((x) => g.seg([x, ys[0]], [x, ys[2]]));   // grid lines
+        ys.forEach((y) => g.seg([xs[0], y], [xs[2], y]));
+        g.text([(xs[0] + xs[1]) / 2, y0 - 12], 'c', '#2563eb'); g.text([(xs[1] + xs[2]) / 2, y0 - 12], 'd', '#2563eb');
+        g.text([x0 - 14, (ys[0] + ys[1]) / 2], 'a', '#2563eb'); g.text([x0 - 14, (ys[1] + ys[2]) / 2], 'b', '#2563eb');
+        output.textContent =
+          `(a + b)(c + d) = ${a + b} × ${c + d} = ${(a + b) * (c + d)}\n` +
+          `ac + ad + bc + bd = ${a * c} + ${a * d} + ${b * c} + ${b * d} = ${a * c + a * d + b * c + b * d}`;
+      },
+    });
+    ids.forEach((id) => document.getElementById(id).addEventListener('input', board.redraw));
+  })();
+</script>

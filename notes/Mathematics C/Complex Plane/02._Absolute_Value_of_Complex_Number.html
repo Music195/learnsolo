@@ -1,466 +1,154 @@
-<!DOCTYPE html>
 <!-- tags: Complex Plane -->
-<html lang="en">
- <head>
-  <meta charset="utf-8"/>
-  <title>
-   Absolute Value of a Complex Number
-  </title>
-  <script>
-   MathJax = {
-            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
-            svg: {fontCache: 'global'}
-        };
-  </script>
-  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
-  </script>
-  <link href="/static/notes_style.css" rel="stylesheet"/>
-  <style>
+<!-- =====================================================================
+     NOTE: Absolute Value of a Complex Number (複素数の絶対値)
+     Uses the shared blocks from static/css/note_blocks.css and the
+     graph helper static/js/note_plot.js (built on note_geom.js).
+     Do not add a <style> block here; change note_blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
 
-    .fancy-title[data-topic]::before {
-      content: attr(data-topic) " - ";
-      font-size: 0.8em;
-      opacity: 0.8;
-    }
+  <h1 class="note-title" data-topic="Complex Plane">Absolute Value of Complex Number</h1>
 
-    /* Section styling */
-    .section {
-      margin: 30px 0;
-      padding: 25px;
-      background: rgba(255,255,255,0.9);
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      word-wrap: break-word;
-      overflow-wrap: break-word;
-    }
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Absolute value = distance</h2>
+    <p>The <strong>absolute value</strong> (絶対値) $|z|$ is the distance from the origin to the point $z$. For a real number it is the usual absolute value.</p>
+    <p>More generally, $|\beta - \alpha|$ is the distance between the points A($\alpha$) and B($\beta$). So equations like $|z - \alpha| = r$ describe circles.</p>
+  </section>
 
-    .section h2 {
-      color: #2c3e50;
-      border-bottom: 3px solid #3498db;
-      padding-bottom: 10px;
-      margin-bottom: 20px;
-      font-size: 1.8em;
-      word-wrap: break-word;
-    }
-
-    .section h3 {
-      color: #34495e;
-      margin-top: 25px;
-      margin-bottom: 15px;
-      font-size: 1.4em;
-      word-wrap: break-word;
-    }
-
-    /* Formula box styling */
-    .formula-box {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 20px;
-      border-radius: 10px;
-      margin: 20px 0;
-      text-align: center;
-      box-shadow: 0 4px 15px rgba(102,126,234,0.3);
-      word-wrap: break-word;
-      overflow-wrap: break-word;
-    }
-
-    .formula-box h3 {
-      margin-top: 0;
-      color: white;
-      font-size: 1.3em;
-    }
-
-    .formula-box .math {
-      font-size: 1.6em;
-      margin: 15px 0;
-      display: block;
-    }
-
-    /* Law block styling */
-    .law-block {
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-      color: white;
-      padding: 20px;
-      border-radius: 10px;
-      margin: 20px 0;
-      box-shadow: 0 4px 15px rgba(245,87,108,0.3);
-      word-wrap: break-word;
-      overflow-wrap: break-word;
-    }
-
-    .law-eq {
-      font-weight: bold;
-      font-size: 1.2em;
-      margin-bottom: 10px;
-      text-align: center;
-    }
-
-    .law-block .math {
-      font-size: 1.4em;
-      margin: 10px 0;
-      display: block;
-      text-align: center;
-    }
-
-    .interactive-demo h3 {
-      margin-top: 0;
-      text-align: center;
-      font-size: 1.5em;
-    }
-
-    .demo-input {
-      padding: 8px 12px;
-      margin: 0 10px;
-      border: none;
-      border-radius: 5px;
-      font-size: 1em;
-      width: 80px;
-    }
-
-    .demo-button {
-      background: rgba(255,255,255,0.2);
-      color: white;
-      border: 2px solid white;
-      padding: 10px 20px;
-      border-radius: 25px;
-      cursor: pointer;
-      margin: 10px 5px;
-      font-size: 1em;
-      transition: all 0.3s ease;
-    }
-
-    .demo-button:hover {
-      background: white;
-      color: #4facfe;
-      transform: translateY(-2px);
-    }
-
-    .demo-result {
-      margin: 15px 0;
-      padding: 15px;
-      background: rgba(255,255,255,0.2);
-      border-radius: 8px;
-      font-size: 1.2em;
-      text-align: center;
-      min-height: 20px;
-    }
-
-    /* Problem styling */
-    .problem-item {
-      background: white;
-      border-radius: 10px;
-      padding: 20px;
-      margin: 20px 0;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      border-left: 5px solid #3498db;
-      word-wrap: break-word;
-      overflow-wrap: break-word;
-    }
-
-    .problem-number {
-      display: inline-block;
-      background: #3498db;
-      color: white;
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      text-align: center;
-      line-height: 30px;
-      font-weight: bold;
-      margin-right: 15px;
-    }
-
-    .problem-content {
-      display: inline-block;
-      width: calc(100% - 50px);
-      vertical-align: top;
-    }
-
-    .solution-button {
-      background: #27ae60;
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 20px;
-      cursor: pointer;
-      margin: 10px 0;
-      font-size: 0.9em;
-      transition: all 0.3s ease;
-    }
-
-    .solution-button:hover {
-      background: #229954;
-      transform: translateY(-1px);
-    }
-
-    .solution-content {
-      display: none;
-      margin-top: 15px;
-      padding: 15px;
-      background: #f8f9fa;
-      border-radius: 8px;
-      border-left: 4px solid #27ae60;
-    }
-
-    .calculation-steps {
-      margin: 10px 0;
-    }
-
-    .calculation-step {
-      margin: 8px 0;
-      padding: 8px;
-      background: white;
-      border-radius: 5px;
-      border: 1px solid #e9ecef;
-    }
-
-    .note-box::before {
-      content: "📝 Note";
-      font-weight: bold;
-      display: block;
-      margin-bottom: 10px;
-      color: #d63031;
-    }
-
-    .key-takeaways li::before {
-      content: "✓";
-      color: #27ae60;
-      font-weight: bold;
-      position: absolute;
-      left: 0;
-    }
-
-    .key-takeaways li:last-child {
-      border-bottom: none;
-    }
-
-    /* Operation block styling */
-    .operation-block {
-      background: rgba(255,255,255,0.9);
-      padding: 20px;
-      border-radius: 10px;
-      margin: 20px 0;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-
-    /* Hint block styling */
-    .hint-block {
-      background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
-      border: 2px solid #ff9800;
-      border-radius: 10px;
-      padding: 20px;
-      margin: 20px 0;
-    }
-
-    /* Math rendering improvements */
-    .math {
-      word-wrap: break-word;
-      overflow-wrap: break-word;
-    }
-  </style>
- </head>
- <body>
-  <div class="fancy-title" data-topic="Complex Plane">
-   Absolute Value of a Complex Number
-  </div>
-  <div class="container">
-   <div class="main-content">
-    <div class="section">
-     <h2>Core Concept: Modulus of Complex Numbers</h2>
-     <p>The absolute value (or modulus) of a complex number measures its distance from the origin in the complex plane. This geometric interpretation connects complex numbers to the familiar concept of distance in the real plane.</p>
-     
-     <div class="operation-block">
-      <p>
-       The absolute value of a complex number \( z = a + bi \) is:
-      </p>
-      <div class="math" style="font-size: 1.6em;">
-       |z| = |a + bi| = \sqrt{a^2 + b^2}
-      </div>
-     </div>
-     
-     <div class="hint-block">
-      <strong>
-       Key Properties:
-      </strong>
-      <ul>
-       <li>When z is real, |z| equals the absolute value of the real number</li>
-       <li>|z| ≥ 0 for all complex numbers</li>
-       <li>|z| = 0 only when z = 0</li>
-       <li>|z| represents distance from origin to point (a,b)</li>
-      </ul>
-     </div>
-    </div>
-
-    <div class="interactive-demo">
-      <h3>Interactive Modulus Calculator</h3>
-      <div style="margin: 20px 0;">
-        <label>Real part (a): <input type="number" id="realPart" value="3" step="0.5" class="demo-input"></label>
-        <label>Imaginary part (b): <input type="number" id="imagPart" value="4" step="0.5" class="demo-input"></label>
-      </div>
-      <button onclick="calculateModulus()" class="demo-button">Calculate |z|</button>
-      <button onclick="showGeometric()" class="demo-button">Show Geometric Meaning</button>
-      <div class="demo-result" id="modulusResult"></div>
-    </div>
-
-    <div class="section">
-     <h2>Properties of the Modulus</h2>
-     
-     <div class="law-block">
-      <div class="law-eq">Basic Properties</div>
-      <ul style="color: white;">
-        <li><strong>Non-negativity:</strong> |z| ≥ 0 for all z ∈ ℂ</li>
-        <li><strong>Zero case:</strong> |z| = 0 ⇔ z = 0</li>
-        <li><strong>Real restriction:</strong> For real z, |z| = |Re(z)|</li>
-        <li><strong>Pure imaginary:</strong> For pure imaginary z = bi, |z| = |b|</li>
-      </ul>
-     </div>
-     
-     <div class="law-block">
-      <div class="law-eq">Algebraic Properties</div>
-      <div class="math">|z₁z₂| = |z₁| × |z₂|</div>
-      <div class="math">|\frac{z₁}{z₂}| = \frac{|z₁|}{|z₂|} \quad (z₂ ≠ 0)</div>
-      <div class="math">|z^n| = |z|^n \quad (n ∈ ℕ)</div>
-     </div>
-    </div>
-
-    <div class="section">
-     <h2>Geometric Interpretation</h2>
-     <div class="note-box">
-      <strong>Distance from Origin:</strong> The modulus |z| represents the straight-line distance from the origin (0,0) to the point (a,b) in the complex plane. This is exactly the same as the distance formula in analytic geometry.
-     </div>
-     
-     <div class="note-box">
-      <strong>Circle Definition:</strong> The set of all complex numbers with modulus r forms a circle of radius r centered at the origin. This is fundamental for understanding complex number equations and inequalities.
-     </div>
-    </div>
-
-    <div class="section">
-      <h2>Worked Examples</h2>
-      <div class="problem-item">
-        <div class="problem-number">1</div>
-        <div class="problem-content">
-          <p>Find the modulus of z = 3 + 4i.</p>
-          <button class="solution-button" onclick="toggleSolution(1)">Show Solution</button>
-          <div class="solution-content" id="solution1">
-            <div class="calculation-steps">
-              <div class="calculation-step">z = 3 + 4i, so a = 3, b = 4</div>
-              <div class="calculation-step">|z| = √(a² + b²) = √(3² + 4²)</div>
-              <div class="calculation-step">|z| = √(9 + 16) = √25 = 5</div>
-              <div class="calculation-step">This is the famous 3-4-5 right triangle</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="problem-item">
-        <div class="problem-number">2</div>
-        <div class="problem-content">
-          <p>Find |z| for z = -2 - 3i.</p>
-          <button class="solution-button" onclick="toggleSolution(2)">Show Solution</button>
-          <div class="solution-content" id="solution2">
-            <div class="calculation-steps">
-              <div class="calculation-step">z = -2 - 3i, so a = -2, b = -3</div>
-              <div class="calculation-step">|z| = √(a² + b²) = √((-2)² + (-3)²)</div>
-              <div class="calculation-step">|z| = √(4 + 9) = √13 ≈ 3.606</div>
-              <div class="calculation-step">Note: Signs don't affect the modulus</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="problem-item">
-        <div class="problem-number">3</div>
-        <div class="problem-content">
-          <p>Find |z₁z₂| given |z₁| = 3 and |z₂| = 4.</p>
-          <button class="solution-button" onclick="toggleSolution(3)">Show Solution</button>
-          <div class="solution-content" id="solution3">
-            <div class="calculation-steps">
-              <div class="calculation-step">Property: |z₁z₂| = |z₁| × |z₂|</div>
-              <div class="calculation-step">|z₁z₂| = 3 × 4 = 12</div>
-              <div class="calculation-step">This property is very useful for complex multiplication</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-     <h2>Applications in Complex Analysis</h2>
-     <div class="law-block">
-      <div class="law-eq">Important Applications</div>
-      <ul style="color: white;">
-        <li><strong>Complex equations:</strong> |z - z₀| = r defines circles</li>
-        <li><strong>Inequalities:</strong> |z| < r defines disks</li>
-        <li><strong>Convergence:</strong> Complex series convergence tests</li>
-        <li><strong>Physics:</strong> Wave amplitudes, quantum mechanics</li>
-        <li><strong>Engineering:</strong> Signal processing, control systems</li>
-      </ul>
-     </div>
-    </div>
-
-    <div class="key-takeaways">
-      <h3>Key Takeaways</h3>
-      <ul>
-        <li>|z| = √(a² + b²) measures distance from origin</li>
-        <li>|z₁z₂| = |z₁| × |z₂| for multiplication</li>
-        <li>|\frac{z₁}{z₂}| = \frac{|z₁|}{|z₂|} for division</li>
-        <li>|z| ≥ 0 with equality only at z = 0</li>
-        <li>Geometric interpretation as distance in complex plane</li>
-        <li>Essential for complex equations and inequalities</li>
-      </ul>
-    </div>
-   </div>
+  <!-- FORMULA: absolute value -->
+  <div class="note-formula">
+    <h3>$z = a + bi$</h3>
+    <div class="formula-main">$$|z| = \sqrt{a^2 + b^2}, \qquad \text{AB} = |\beta - \alpha|, \qquad |z|^2 = z\overline{z}$$</div>
+    <p class="symbols">$|z| = r$: circle with centre O, radius $r$. $\;|z - \alpha| = r$: circle with centre $\alpha$. $\;|z - \alpha| = |z - \beta|$: perpendicular bisector of AB.</p>
   </div>
 
-  <script>
-    function calculateModulus() {
-      const a = parseFloat(document.getElementById('realPart').value) || 0;
-      const b = parseFloat(document.getElementById('imagPart').value) || 0;
-      
-      const modulus = Math.sqrt(a * a + b * b);
-      const distance = modulus.toFixed(3);
-      
-      document.getElementById('modulusResult').textContent = 
-        `z = ${a} + ${b}i | Modulus |z| = √(${a}² + ${b}²) = √${(a*a + b*b).toFixed(0)} = ${distance}`;
-    }
+  <!-- PROOF: distance -->
+  <div class="note-proof">
+    <ol>
+      <li>The point $(a, b)$ is at distance $\sqrt{a^2 + b^2}$ from O (Pythagoras).</li>
+      <li>$\beta - \alpha$ is the arrow from A to B moved to start at O. It has the same length as AB, so AB $= |\beta - \alpha|$.</li>
+      <li>$z\overline{z} = (a + bi)(a - bi) = a^2 - b^2i^2 = a^2 + b^2 = |z|^2$.</li>
+    </ol>
+  </div>
 
-    function showGeometric() {
-      const a = parseFloat(document.getElementById('realPart').value) || 0;
-      const b = parseFloat(document.getElementById('imagPart').value) || 0;
-      
-      const modulus = Math.sqrt(a * a + b * b);
-      const quadrant = 
-        a > 0 && b > 0 ? "first quadrant" :
-        a < 0 && b > 0 ? "second quadrant" :
-        a < 0 && b < 0 ? "third quadrant" :
-        a > 0 && b < 0 ? "fourth quadrant" : "on an axis";
-      
-      document.getElementById('modulusResult').textContent = 
-        `Geometric interpretation: Point (${a}, ${b}) is ${modulus.toFixed(2)} units from origin in the ${quadrant}`;
-    }
+  <!-- DEMO: distances and circles; code at the bottom -->
+  <div class="note-demo">
+    <h2>Drag $z$ and $\alpha$: $|z|$ (teal) and $|z - \alpha|$ (orange)</h2>
+    <div class="controls">
+      <label>draw the circle $|z - \alpha| = r$, $r$ = <input type="range" id="avR" min="0" max="3" step="0.1" value="2"></label>
+    </div>
+    <canvas id="avCanvas"></canvas>
+    <div class="output table-text" id="avOutput"></div>
+  </div>
 
-    function toggleSolution(problemNumber) {
-      const solution = document.getElementById(`solution${problemNumber}`);
-      if (solution.style.display === 'block') {
-        solution.style.display = 'none';
-      } else {
-        solution.style.display = 'block';
-      }
-    }
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find $|3 - 4i|$, $|-5i|$ and $|1 + \sqrt{3}i|$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\sqrt{9 + 16}$, $\;\sqrt{0 + 25}$, $\;\sqrt{1 + 3}$</li>
+      </ol>
+      <p class="answer">$5$, $5$, $2$</p>
+    </details>
+  </div>
 
-    // Initialize with default values
-    calculateModulus();
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find the distance between A($1 + 2i$) and B($4 - 2i$).</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$|\beta - \alpha| = |3 - 4i|$</li>
+      </ol>
+      <p class="answer">$5$</p>
+    </details>
+  </div>
 
-    document.addEventListener("DOMContentLoaded", function() {
-        renderMathInElement(document.body, {
-            delimiters: [
-                {left: "$$", right: "$$", display: true},
-                {left: "\\(", right: "\\)", display: false},
-                {left: "\\[", right: "\\]", display: true}
-            ],
-            throwOnError: false
-        });
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Describe the set of points $z$ with $|z - 2 + i| = 3$, and with $|z - 1| = |z + i|$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$|z - (2 - i)| = 3$: distance $3$ from $2 - i$.</li>
+        <li>Equal distances from $1$ and $-i$: the perpendicular bisector of the segment joining them. That is the line $y = -x$.</li>
+      </ol>
+      <p class="answer">Circle, centre $2 - i$, radius $3$; the line $y = -x$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Find the points $z$ with $|z - 3| = 2|z|$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Square and use $|w|^2 = w\overline{w}$: $(z - 3)(\overline{z} - 3) = 4z\overline{z}$.</li>
+        <li>$z\overline{z} - 3z - 3\overline{z} + 9 = 4z\overline{z}$, so $z\overline{z} + z + \overline{z} = 3$.</li>
+        <li>$(z + 1)(\overline{z} + 1) = 4$, i.e. $|z + 1|^2 = 4$.</li>
+      </ol>
+      <p class="answer">The circle with centre $-1$ and radius $2$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: b, not bi -->
+  <div class="note-warning">
+    $|a + bi| = \sqrt{a^2 + b^2}$, not $\sqrt{a^2 + (bi)^2}$. Use the real numbers $a$ and $b$.
+    And $|z - 2 + i|$ is centred at $2 - i$: rewrite it as $|z - (2 - i)|$ first.
+  </div>
+
+  <!-- TIP: square it -->
+  <div class="note-tip">
+    To work with $|\ |$ algebraically, square it and use $|w|^2 = w\overline{w}$. This avoids square roots and lets you collect terms in $z$ and $\overline{z}$.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$|a + bi| = \sqrt{a^2 + b^2}$; $|z|^2 = z\overline{z}$.</li>
+      <li>$|\beta - \alpha|$ = distance AB.</li>
+      <li>$|z - \alpha| = r$: circle. $|z - \alpha| = |z - \beta|$: perpendicular bisector.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/note_geom.js"></script>
+<script src="/static/js/note_plot.js"></script>
+<script>
+  // "Distance" demo (the TRY IT block above).
+  // z and α are draggable. Teal: from O to z, length |z|. Orange: from α to z,
+  // length |z − α|. Blue circle: every point at distance r from α, i.e. |z − α| = r.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const rBox = document.getElementById('avR');
+    const output = document.getElementById('avOutput');
+    const f3 = (v) => +v.toFixed(3);
+    const cx = ([a, b]) => {
+      const A = +a.toFixed(2), B = +b.toFixed(2), bi = Math.abs(B) === 1 ? 'i' : `${Math.abs(B)}i`;
+      if (B === 0) return `${A}`.replace('-', '−');
+      if (A === 0) return (B < 0 ? '−' : '') + bi;
+      return `${A} ${B < 0 ? '−' : '+'} ${bi}`.replace('-', '−');
+    };
+
+    const plot = NotePlot.graph(document.getElementById('avCanvas'), {
+      x: [-6.2, 6.2], y: [-4, 4],
+      points: { z: [3, 2], 'α': [-1, -1] },
+      draw(g, P) {
+        const z = P.z, a = P['α'], r = +rBox.value;
+        if (r > 0) g.circle(a, r, '#93c5fd', { width: 2 });
+        g.seg([0, 0], z, '#0d9488', { width: 3 });
+        g.seg(a, z, '#ea580c', { width: 3 });
+        const d = Math.hypot(z[0] - a[0], z[1] - a[1]);
+        output.textContent =
+          `z = ${cx(z)}:  |z| = ${f3(Math.hypot(...z))}\n` +
+          `z − α = ${cx([z[0] - a[0], z[1] - a[1]])}:  |z − α| = ${f3(d)}` +
+          (r > 0 ? `   (${Math.abs(d - r) < 0.05 ? 'on' : d < r ? 'inside' : 'outside'} the circle |z − α| = ${r})` : '');
+      },
     });
-  </script>
- </body>
-</html>
+    rBox.addEventListener('input', plot.redraw);
+  })();
+</script>

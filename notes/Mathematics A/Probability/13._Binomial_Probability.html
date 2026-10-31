@@ -1,537 +1,175 @@
-<!DOCTYPE html>
 <!-- tags: Probability -->
-<html lang="en">
- <head>
-  <meta charset="utf-8"/>
-  <title>
-   Probability in Repeated Trials (Binomial)
-  </title>
-  <script>
-   MathJax = {
-            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
-            svg: {fontCache: 'global'}
-        };
-  </script>
-  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
-  </script>
-  <link href="/static/notes_style.css" rel="stylesheet"/>
-  <style>
-   
-   /* Rule cards for formulas and concepts */
-   .rule-card {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    border: 2px solid #007acc;
-    border-radius: 12px;
-    padding: 20px;
-    margin: 20px 0;
-    box-shadow: 0 4px 8px rgba(0, 122, 204, 0.1);
-   }
-   
-   .rule-card h3 {
-    color: #007acc;
-    margin-top: 0;
-    font-size: 1.3em;
-   }
-   
-   .rule-card .formula {
-    background: white;
-    padding: 15px;
-    border-radius: 8px;
-    border: 1px solid #dee2e6;
-    margin: 10px 0;
-    font-size: 1.1em;
-    text-align: center;
-   }
-   
-   /* Binomial explanation */
-   .binomial-explanation {
-    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
-    border: 2px solid #ffc107;
-    border-radius: 12px;
-    padding: 20px;
-    margin: 20px 0;
-   }
-   
-   .binomial-explanation h4 {
-    color: #856404;
-    margin-top: 0;
-   }
-   
-   /* Binomial conditions */
-   .binomial-conditions {
-    background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
-    border: 2px solid #17a2b8;
-    border-radius: 12px;
-    padding: 20px;
-    margin: 20px 0;
-   }
-   
-   .binomial-conditions h4 {
-    color: #0c5460;
-    margin-top: 0;
-   }
-   
-   .binomial-conditions ul {
-    margin: 0;
-   }
-   
-   .binomial-conditions li {
-    margin: 8px 0;
-    padding: 8px;
-    background: white;
-    border-radius: 6px;
-    border-left: 4px solid #17a2b8;
-   }
-   
-   .interactive-demo h3 {
-    color: #28a745;
-    margin-top: 0;
-   }
-   
-   .demo-input {
-    padding: 8px 12px;
-    margin: 5px;
-    border: 2px solid #28a745;
-    border-radius: 6px;
-    font-size: 16px;
-    width: 100px;
-   }
-   
-   .demo-button {
-    background: #28a745;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 16px;
-    margin: 10px 0;
-   }
-   
-   .demo-button:hover {
-    background: #218838;
-   }
-   
-   .demo-result {
-    margin-top: 15px;
-    padding: 10px;
-    background: white;
-    border-radius: 6px;
-    border: 1px solid #dee2e6;
-    font-size: 18px;
-    font-weight: bold;
-    text-align: center;
-   }
-   
-   /* Problem items */
-   .problem-item {
-    background: white;
-    border: 2px solid #ffc107;
-    border-radius: 12px;
-    padding: 20px;
-    margin: 15px 0;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-   }
-   
-   .problem-number {
-    background: #ffc107;
-    color: #000;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    margin-right: 15px;
-   }
-   
-   .problem-content {
-    display: inline-block;
-    width: calc(100% - 50px);
-    vertical-align: top;
-   }
-   
-   .solution-button {
-    background: #007acc;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    margin: 10px 0;
-   }
-   
-   .solution-button:hover {
-    background: #0056b3;
-   }
-   
-   .solution-content {
-    background: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 6px;
-    padding: 15px;
-    margin-top: 10px;
-   }
-   
-   /* Calculation steps */
-   .calculation-steps {
-    background: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    padding: 15px;
-    margin: 10px 0;
-   }
-   
-   .calculation-step {
-    margin: 8px 0;
-    padding: 5px 0;
-    border-left: 3px solid #007acc;
-    padding-left: 15px;
-   }
-   
-   /* Visualization container */
-   .visualization-container {
-    text-align: center;
-    margin: 20px 0;
-   }
-   
-   .visualization-container canvas {
-    border: 2px solid #007acc;
-    border-radius: 8px;
-    background: white;
-   }
-  </style>
- </head>
- <body>
-  <div class="fancy-title" data-topic="Probability">
-   Probability in Repeated Trials (Binomial)
+<!-- =====================================================================
+     NOTE: Probability in Repeated Trials (Binomial)
+     Uses the shared blocks from static/css/note_blocks.css.
+     Do not add a <style> block here; change note_blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Probability">Probability in Repeated Trials (Binomial)</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Exactly $r$ successes in $n$ tries</h2>
+    <p>Repeat the same trial $n$ times, independently. Each time, "success" has probability $p$ and "failure" has probability $1 - p$.</p>
+    <p>One particular order, such as SSF (success, success, failure), has probability $p \cdot p \cdot (1-p)$.
+      Every order with 2 successes has the same probability, and there are ${}_3\mathrm{C}_2 = 3$ such orders (SSF, SFS, FSS).
+      So multiply the probability of one order by the number of orders.</p>
+  </section>
+
+  <!-- FORMULA: repeated-trials probability -->
+  <div class="note-formula">
+    <h3>Repeated trials</h3>
+    <div class="formula-main">$$P(\text{exactly } r \text{ successes}) = {}_n\mathrm{C}_r \; p^r \, (1-p)^{n-r}$$</div>
+    <p class="symbols">${}_n\mathrm{C}_r$: which $r$ of the $n$ tries are successes. $\;p^r$: those $r$ succeed. $\;(1-p)^{n-r}$: the rest fail.</p>
   </div>
-  <div class="container">
-   <div class="main-content">
-    
-    <div class="section">
-     <h2>Core Concept</h2>
-     <p><strong>Binomial probability</strong> deals with experiments that have a fixed number of independent trials, each with only two possible outcomes: success or failure. The binomial distribution gives the probability of getting exactly r successes in n trials.</p>
-     
-     <div class="rule-card">
-      <h3>Binomial Probability Formula</h3>
-      <div class="formula">
-       P(X = r) = C(n,r) × pʳ × (1-p)ⁿ⁻ʳ
-      </div>
-      <p><em>Where n = number of trials, r = number of successes, p = probability of success</em></p>
-     </div>
+
+  <!-- WARNING: when the formula applies -->
+  <div class="note-warning">
+    The formula needs the <strong>same</strong> $p$ every time and <strong>independent</strong> tries
+    (dice, coins, drawing <em>with</em> replacement). It does not apply to drawing without replacement.
+  </div>
+
+  <!-- DEMO: the whole distribution; code at the bottom -->
+  <div class="note-demo">
+    <h2>All the probabilities for $r = 0, 1, \dots, n$</h2>
+    <div class="controls">
+      <label>Tries $n$ <input type="number" id="biN" value="5" min="1" max="30"></label>
+      <label>Success chance $p$ <input type="number" id="biP" value="0.3333" step="0.05" min="0" max="1"></label>
+      <label>Successes $r$ <input type="number" id="biR" value="2" min="0" max="30"></label>
     </div>
-    
-    <div class="section">
-     <h2>Binomial Experiment Conditions</h2>
-     <div class="binomial-conditions">
-      <h4>Four Requirements for Binomial Experiments</h4>
-      <ol>
-       <li><strong>Fixed Number of Trials:</strong> The experiment is repeated n times</li>
-       <li><strong>Two Possible Outcomes:</strong> Each trial results in success (S) or failure (F)</li>
-       <li><strong>Constant Probability:</strong> P(S) = p remains the same for each trial</li>
-       <li><strong>Independent Trials:</strong> The outcome of one trial doesn't affect others</li>
+    <canvas id="biCanvas" width="520" height="220"></canvas>
+    <div class="output table-text" id="biOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A fair coin is tossed 5 times. Find the probability of exactly 3 heads.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$n = 5$, $r = 3$, $p = \dfrac{1}{2}$</li>
+        <li>${}_5\mathrm{C}_3 \left(\dfrac{1}{2}\right)^3 \left(\dfrac{1}{2}\right)^2 = 10 \times \dfrac{1}{32}$</li>
       </ol>
-     </div>
-    </div>
-    
-    <div class="section">
-     <h2>Understanding the Formula</h2>
-     <div class="binomial-explanation">
-      <h4>Breaking Down the Components</h4>
-      <ul>
-       <li><strong>C(n,r):</strong> Number of ways to choose r successes from n trials</li>
-       <li><strong>pʳ:</strong> Probability of getting r successes</li>
-       <li><strong>(1-p)ⁿ⁻ʳ:</strong> Probability of getting (n-r) failures</li>
-       <li><strong>Multiplication:</strong> All three components are multiplied together</li>
-      </ul>
-      
-      <h4>Why This Formula Works</h4>
-      <p>The formula combines counting principles with probability:</p>
-      <ul>
-       <li>Choose which r trials out of n will be successes: C(n,r) ways</li>
-       <li>Each success has probability p, each failure has probability (1-p)</li>
-       <li>Multiply the combinations by the probabilities of each specific sequence</li>
-      </ul>
-     </div>
-    </div>
-    
-    <div class="section">
-     <h2>Visual Guide</h2>
-     <div class="visualization-container">
-      <canvas id="binomialCanvas" width="600" height="350"></canvas>
-      <p><em>Interactive visualization of binomial probability distribution</em></p>
-     </div>
-    </div>
-    
-    <div class="section">
-     <h2>Interactive Demo</h2>
-     <div class="interactive-demo">
-      <h3>Binomial Probability Calculator</h3>
-      <p>Calculate binomial probabilities:</p>
-      <input type="number" id="trialsInput" class="demo-input" placeholder="n (trials)" min="1" max="20">
-      <input type="number" id="successesInput" class="demo-input" placeholder="r (successes)" min="0">
-      <input type="number" id="probInput" class="demo-input" placeholder="p (success prob)" min="0" max="1" step="0.01">
-      <br>
-      <button id="calculateBinomBtn" class="demo-button">Calculate Probability</button>
-      <div id="binomResult" class="demo-result"></div>
-      <div id="binomSteps" class="calculation-steps" style="display: none;"></div>
-     </div>
-    </div>
-    
-    <div class="section">
-     <h2>Detailed Examples</h2>
-     
-     <h3>Example 1: Coin Tosses</h3>
-     <p>What is the probability of getting exactly 3 heads in 5 tosses of a fair coin?</p>
-     <div class="calculation-steps">
-      <div class="calculation-step">n = 5 trials (tosses), r = 3 successes (heads), p = 0.5</div>
-      <div class="calculation-step">Formula: P(X=3) = C(5,3) × (0.5)³ × (0.5)⁵⁻³</div>
-      <div class="calculation-step">C(5,3) = 10</div>
-      <div class="calculation-step">Calculation: 10 × (0.5)³ × (0.5)² = 10 × 0.125 × 0.25 = 10 × 0.03125 = 0.3125</div>
-      <div class="calculation-step">So P(X=3) = 0.3125 or 31.25%</div>
-     </div>
-     
-     <h3>Example 2: Quality Control</h3>
-     <p>A factory produces items with 10% defect rate. What is the probability that exactly 2 out of 5 items are defective?</p>
-     <div class="calculation-steps">
-      <div class="calculation-step">n = 5 trials, r = 2 successes (defects), p = 0.10</div>
-      <div class="calculation-step">Formula: P(X=2) = C(5,2) × (0.10)² × (0.90)⁵⁻²</div>
-      <div class="calculation-step">C(5,2) = 10</div>
-      <div class="calculation-step">Calculation: 10 × (0.10)² × (0.90)³ = 10 × 0.01 × 0.729 = 10 × 0.00729 = 0.0729</div>
-      <div class="calculation-step">So P(X=2) = 0.0729 or 7.29%</div>
-     </div>
-     
-     <h3>Example 3: Multiple Choice Test</h3>
-     <p>A student guesses on a 10-question multiple choice test (4 options each). What is the probability of getting exactly 4 correct?</p>
-     <div class="calculation-steps">
-      <div class="calculation-step">n = 10 trials, r = 4 successes, p = 0.25 (1/4 chance per question)</div>
-      <div class="calculation-step">Formula: P(X=4) = C(10,4) × (0.25)⁴ × (0.75)⁶</div>
-      <div class="calculation-step">C(10,4) = 210</div>
-      <div class="calculation-step">Calculation: 210 × (0.25)⁴ × (0.75)⁶ = 210 × 0.00390625 × 0.177978515625 ≈ 210 × 0.0006958 ≈ 0.146</div>
-      <div class="calculation-step">So P(X=4) ≈ 0.146 or 14.6%</div>
-     </div>
-     
-     <h3>Example 4: Basketball Free Throws</h3>
-     <p>A basketball player has 80% free throw success rate. What is the probability of making exactly 7 out of 10 free throws?</p>
-     <div class="calculation-steps">
-      <div class="calculation-step">n = 10 trials, r = 7 successes, p = 0.80</div>
-      <div class="calculation-step">Formula: P(X=7) = C(10,7) × (0.80)⁷ × (0.20)³</div>
-      <div class="calculation-step">C(10,7) = 120</div>
-      <div class="calculation-step">Calculation: 120 × (0.80)⁷ × (0.20)³ = 120 × 0.2097152 × 0.008 = 120 × 0.0016777216 ≈ 0.201</div>
-      <div class="calculation-step">So P(X=7) ≈ 0.201 or 20.1%</div>
-     </div>
-    </div>
-    
-    <div class="section">
-     <h2>Applications</h2>
-     <ul>
-      <li><strong>Quality Control:</strong> Defect rates in manufacturing</li>
-      <li><strong>Medical Trials:</strong> Success rates of treatments</li>
-      <li><strong>Sports:</strong> Success rates in games (free throws, field goals)</li>
-      <li><strong>Survey Sampling:</strong> Yes/no responses in polls</li>
-      <li><strong>Computer Science:</strong> Success/failure of algorithms</li>
-      <li><strong>Finance:</strong> Investment success probabilities</li>
-      <li><strong>Education:</strong> Test question success rates</li>
-     </ul>
-    </div>
-    
-    <div class="section">
-     <h2>Practice Problems</h2>
-     
-     <div class="problem-item">
-      <div class="problem-number">1</div>
-      <div class="problem-content">
-       <p>What is the probability of getting exactly 4 heads in 6 tosses of a fair coin?</p>
-       <button class="solution-button" onclick="toggleSolution(1)">Show Solution</button>
-       <div class="solution-content" id="solution1">
-        <p>n=6, r=4, p=0.5</p>
-        <p>P(X=4) = C(6,4) × (0.5)⁴ × (0.5)² = 15 × 0.0625 × 0.25 = 15 × 0.015625 = 0.234375</p>
-        <p>23.44% probability</p>
-       </div>
-      </div>
-     </div>
-     
-     <div class="problem-item">
-      <div class="problem-number">2</div>
-      <div class="problem-content">
-       <p>A die is rolled 8 times. What is the probability of getting exactly 3 sixes?</p>
-       <button class="solution-button" onclick="toggleSolution(2)">Show Solution</button>
-       <div class="solution-content" id="solution2">
-        <p>n=8, r=3, p=1/6≈0.1667</p>
-        <p>P(X=3) = C(8,3) × (1/6)³ × (5/6)⁵ = 56 × 0.00463 × 0.40188 ≈ 56 × 0.00186 ≈ 0.104</p>
-        <p>10.4% probability</p>
-       </div>
-      </div>
-     </div>
-     
-     <div class="problem-item">
-      <div class="problem-number">3</div>
-      <div class="problem-content">
-       <p>A student has a 70% chance of answering a question correctly. What is the probability of getting exactly 8 out of 10 questions right?</p>
-       <button class="solution-button" onclick="toggleSolution(3)">Show Solution</button>
-       <div class="solution-content" id="solution3">
-        <p>n=10, r=8, p=0.7</p>
-        <p>P(X=8) = C(10,8) × (0.7)⁸ × (0.3)² = 45 × 0.057648 × 0.09 = 45 × 0.00518832 ≈ 0.233</p>
-        <p>23.3% probability</p>
-       </div>
-      </div>
-     </div>
-     
-     <div class="problem-item">
-      <div class="problem-number">4</div>
-      <div class="problem-content">
-       <p>In a survey, 40% of people prefer brand A. If 12 people are surveyed, what is the probability that exactly 5 prefer brand A?</p>
-       <button class="solution-button" onclick="toggleSolution(4)">Show Solution</button>
-       <div class="solution-content" id="solution4">
-        <p>n=12, r=5, p=0.4</p>
-        <p>P(X=5) = C(12,5) × (0.4)⁵ × (0.6)⁷ = 792 × 0.01024 × 0.017592 ≈ 792 × 0.00018 ≈ 0.143</p>
-        <p>14.3% probability</p>
-       </div>
-      </div>
-     </div>
-    </div>
-    
-    <div class="key-takeaways">
-     <h3>Key Takeaways</h3>
-     <ul>
-      <li><strong>Binomial Conditions:</strong> Fixed n trials, 2 outcomes, constant p, independent trials</li>
-      <li><strong>Formula:</strong> P(X=r) = C(n,r) × pʳ × (1-p)ⁿ⁻ʳ</li>
-      <li><strong>Components:</strong> Combinations × success probability × failure probability</li>
-      <li><strong>Applications:</strong> Quality control, surveys, sports, medical trials</li>
-      <li><strong>Mean:</strong> Expected value is np</li>
-      <li><strong>Variance:</strong> Spread is np(1-p)</li>
-      <li><strong>Symmetric:</strong> When p=0.5, distribution is symmetric</li>
-     </ul>
-    </div>
-    
-   </div>
+      <p class="answer">$\dfrac{5}{16}$</p>
+    </details>
   </div>
-  
-  <script>
-   // Interactive canvas visualization
-   const canvas = document.getElementById('binomialCanvas');
-   const ctx = canvas.getContext('2d');
-   
-   function drawBinomialVisualization() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    // Draw binomial distribution for n=5, p=0.5
-    const n = 5;
-    const p = 0.5;
-    const probabilities = [];
-    
-    function binomialCoeff(n, k) {
-     if (k > n) return 0;
-     let coeff = 1;
-     for (let i = 1; i <= k; i++) {
-      coeff *= (n - i + 1) / i;
-     }
-     return coeff;
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">A die is rolled 4 times. Find the probability that a number $\le 2$ appears exactly twice.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Success = 1 or 2, so $p = \dfrac{2}{6} = \dfrac{1}{3}$</li>
+        <li>${}_4\mathrm{C}_2 \left(\dfrac{1}{3}\right)^2 \left(\dfrac{2}{3}\right)^2 = 6 \times \dfrac{1}{9} \times \dfrac{4}{9}$</li>
+      </ol>
+      <p class="answer">$\dfrac{24}{81} = \dfrac{8}{27}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A die is rolled 5 times. Find the probability that a 6 appears at least 4 times.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>"At least 4" = exactly 4 or exactly 5 (mutually exclusive, so add)</li>
+        <li>Exactly 4: ${}_5\mathrm{C}_4 \left(\dfrac{1}{6}\right)^4 \dfrac{5}{6} = \dfrac{25}{7776}$</li>
+        <li>Exactly 5: $\left(\dfrac{1}{6}\right)^5 = \dfrac{1}{7776}$</li>
+      </ol>
+      <p class="answer">$\dfrac{26}{7776} = \dfrac{13}{3888}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">40% of people prefer brand A. If 12 people are asked, find the probability that exactly 5 prefer brand A.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$n = 12$, $r = 5$, $p = 0.4$</li>
+        <li>${}_{12}\mathrm{C}_5 = 792$, $\;0.4^5 = 0.01024$, $\;0.6^7 \approx 0.02799$</li>
+        <li>$792 \times 0.01024 \times 0.02799$</li>
+      </ol>
+      <p class="answer">$\approx 0.227$</p>
+    </details>
+  </div>
+
+  <!-- TIP: "at least" in repeated trials -->
+  <div class="note-tip">
+    For "at least once", don't add many cases. Use the complement: $1 - (1-p)^n$.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Exactly $r$ successes in $n$ independent tries: ${}_n\mathrm{C}_r\, p^r (1-p)^{n-r}$.</li>
+      <li>${}_n\mathrm{C}_r$ counts the orders; each order has the same probability.</li>
+      <li>"At least $k$": add the exact cases, or use the complement if that is shorter.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script>
+  // "All the probabilities" demo (the TRY IT block above).
+  // Draws a bar for every r from 0 to n using nCr p^r (1−p)^(n−r);
+  // the chosen r is highlighted and its working is shown below.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const nInput = document.getElementById('biN');
+    const pInput = document.getElementById('biP');
+    const rInput = document.getElementById('biR');
+    const canvas = document.getElementById('biCanvas');
+    const ctx = canvas.getContext('2d');
+    const output = document.getElementById('biOutput');
+
+    // nCr, built up step by step so it stays a whole number
+    function choose(n, r) {
+      let c = 1;
+      for (let i = 1; i <= r; i++) c = (c * (n - r + i)) / i;
+      return Math.round(c);
     }
-    
-    for (let r = 0; r <= n; r++) {
-     const prob = binomialCoeff(n, r) * Math.pow(p, r) * Math.pow(1-p, n-r);
-     probabilities.push(prob);
+
+    function update() {
+      const n = parseInt(nInput.value, 10);
+      const p = parseFloat(pInput.value);
+      const r = parseInt(rInput.value, 10);
+      if (isNaN(n) || n < 1 || n > 30 || isNaN(p) || p < 0 || p > 1 || isNaN(r) || r < 0 || r > n) {
+        output.textContent = 'Choose 1 ≤ n ≤ 30, 0 ≤ p ≤ 1 and 0 ≤ r ≤ n.';
+        return;
+      }
+
+      const probs = [];
+      for (let k = 0; k <= n; k++) probs.push(choose(n, k) * Math.pow(p, k) * Math.pow(1 - p, n - k));
+
+      // Bar chart, tallest bar fills the height
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const maxP = Math.max(...probs);
+      const barWidth = (canvas.width - 40) / (n + 1);
+      ctx.font = '12px sans-serif';
+      ctx.textAlign = 'center';
+      probs.forEach((v, k) => {
+        const h = maxP ? (v / maxP) * (canvas.height - 40) : 0;
+        const x = 20 + k * barWidth;
+        ctx.fillStyle = k === r ? '#ea580c' : '#94a3b8';
+        ctx.fillRect(x + 2, canvas.height - 20 - h, Math.max(barWidth - 4, 1), h);
+        if (n <= 20 || k % 2 === 0) {
+          ctx.fillStyle = '#0f172a';
+          ctx.fillText(String(k), x + barWidth / 2, canvas.height - 5);
+        }
+      });
+
+      output.textContent =
+        `P(exactly ${r}) = ${n}C${r} × ${p}^${r} × ${Number((1 - p).toFixed(4))}^${n - r}\n` +
+        `             = ${choose(n, r)} × ${Math.pow(p, r).toPrecision(4)} × ${Math.pow(1 - p, n - r).toPrecision(4)}\n` +
+        `             = ${probs[r].toFixed(4)}\n` +
+        `all bars add to ${probs.reduce((s, v) => s + v, 0).toFixed(4)}`;
     }
-    
-    // Draw bars
-    const barWidth = 40;
-    const maxHeight = 200;
-    const startX = 50;
-    
-    ctx.fillStyle = '#000';
-    ctx.font = '16px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText('Binomial Distribution: n=5, p=0.5', 300, 30);
-    
-    probabilities.forEach((prob, index) => {
-     const x = startX + index * (barWidth + 20);
-     const height = prob * maxHeight;
-     
-     // Draw bar
-     ctx.fillStyle = '#007acc';
-     ctx.fillRect(x, 320 - height, barWidth, height);
-     
-     // Draw outline
-     ctx.strokeStyle = '#0056b3';
-     ctx.lineWidth = 2;
-     ctx.strokeRect(x, 320 - height, barWidth, height);
-     
-     // Label
-     ctx.fillStyle = '#000';
-     ctx.fillText(index.toString(), x + barWidth/2, 340);
-     ctx.fillText(prob.toFixed(3), x + barWidth/2, 320 - height - 10);
-    });
-    
-    // Draw axes labels
-    ctx.fillText('Number of Successes (r)', 300, 370);
-    ctx.save();
-    ctx.translate(20, 200);
-    ctx.rotate(-Math.PI/2);
-    ctx.fillText('Probability', 0, 0);
-    ctx.restore();
-   }
-   
-   // Interactive binomial calculator
-   document.getElementById('calculateBinomBtn').addEventListener('click', function() {
-    const n = parseInt(document.getElementById('trialsInput').value);
-    const r = parseInt(document.getElementById('successesInput').value);
-    const p = parseFloat(document.getElementById('probInput').value);
-    
-    if (isNaN(n) || isNaN(r) || isNaN(p) || n < 1 || r < 0 || r > n || p < 0 || p > 1) {
-     document.getElementById('binomResult').innerHTML = '<span style="color: red;">Please enter valid values: n ≥ 1, 0 ≤ r ≤ n, 0 ≤ p ≤ 1</span>';
-     return;
-    }
-    
-    function binomialCoeff(n, k) {
-     if (k > n || k < 0) return 0;
-     let coeff = 1;
-     for (let i = 1; i <= k; i++) {
-      coeff *= (n - i + 1) / i;
-     }
-     return coeff;
-    }
-    
-    const combinations = binomialCoeff(n, r);
-    const successProb = Math.pow(p, r);
-    const failureProb = Math.pow(1 - p, n - r);
-    const result = combinations * successProb * failureProb;
-    
-    const resultDiv = document.getElementById('binomResult');
-    const stepsDiv = document.getElementById('binomSteps');
-    
-    resultDiv.innerHTML = `<span class="highlight">P(X = ${r}) = ${result.toFixed(6)}</span>`;
-    
-    stepsDiv.style.display = 'block';
-    stepsDiv.innerHTML = `
-     <div class="calculation-step">Parameters: n = ${n} trials, r = ${r} successes, p = ${p}</div>
-     <div class="calculation-step">C(${n},${r}) = ${combinations}</div>
-     <div class="calculation-step">pʳ = ${p}^${r} = ${successProb.toFixed(6)}</div>
-     <div class="calculation-step">(1-p)ⁿ⁻ʳ = ${1-p}^${n-r} = ${failureProb.toFixed(6)}</div>
-     <div class="calculation-step">Formula: P(X=${r}) = C(n,r) × pʳ × (1-p)ⁿ⁻ʳ</div>
-     <div class="calculation-step">Calculation: ${combinations} × ${successProb.toFixed(6)} × ${failureProb.toFixed(6)} = ${result.toFixed(6)}</div>
-     <div class="calculation-step">Percentage: ${(result * 100).toFixed(2)}%</div>
-    `;
-   });
-   
-   // Solution toggle function
-   function toggleSolution(problemNumber) {
-    const solution = document.getElementById('solution' + problemNumber);
-    const button = solution.previousElementSibling;
-    
-    if (solution.style.display === 'none' || solution.style.display === '') {
-     solution.style.display = 'block';
-     button.textContent = 'Hide Solution';
-    } else {
-     solution.style.display = 'none';
-     button.textContent = 'Show Solution';
-    }
-   }
-   
-   // Initialize visualization
-   drawBinomialVisualization();
-  </script>
- </body>
-</html>
+
+    [nInput, pInput, rInput].forEach((el) => el.addEventListener('input', update));
+    update(); // draw the default chart straight away
+  })();
+</script>

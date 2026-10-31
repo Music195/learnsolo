@@ -280,7 +280,13 @@ select:hover, select:focus {
     font-weight: 500;
 }
 
-/* Provides fixed-position navigation controls that remain accessible while reading notes, with subtle styling that doesn't distract */
+/* =====================================================================
+   Previous / next note buttons (fixed on the left and right edges)
+   ---------------------------------------------------------------------
+   The arrow is a Font Awesome icon inside the link (see note.html).
+   <a>    = a real link to another note
+   <span> = shown greyed-out when there is no previous / next note
+   ===================================================================== */
 .nav-buttons {
     position: fixed;
     top: 50%;
@@ -288,163 +294,69 @@ select:hover, select:focus {
     right: 0;
     transform: translateY(-50%);
     z-index: 1000;
-    pointer-events: none;
+    pointer-events: none; /* clicks pass through the empty space between the buttons */
 }
 
-.nav-buttons a, .nav-buttons span {
+#skip_backward, #skip_forward {
     pointer-events: auto;
     position: absolute;
     width: 48px;
-    height: 56px;
-    background: linear-gradient(145deg,
-        rgba(255, 255, 255, 0.95) 0%,
-        rgba(255, 255, 255, 0.9) 25%,
-        rgba(255, 255, 255, 0.85) 50%,
-        rgba(255, 255, 255, 0.8) 75%,
-        rgba(255, 255, 255, 0.75) 100%);
-    backdrop-filter: blur(8px) saturate(150%);
-    -webkit-backdrop-filter: blur(8px) saturate(150%);
-    border: 1px solid rgba(255, 255, 255, 1);
-    opacity: 1;
-    box-shadow:
-        0 8px 32px rgba(0, 0, 0, 0.08),
-        0 2px 16px rgba(0, 0, 0, 0.04),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.05);
-    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    height: 48px;
     display: flex;
     align-items: center;
     justify-content: center;
-    opacity: 0.1;
-    transform: scale(0.8) translateY(2px);
-    cursor: pointer;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid rgb(219, 57, 255);
+    color: rgb(170, 30, 210);
+    font-size: 18px;
+    text-decoration: none;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+    opacity: 0.85;
+    transition: transform 0.2s ease, opacity 0.2s ease, background 0.2s ease, color 0.2s ease;
 }
 
-.nav-buttons a:first-child::before,
-.nav-buttons span:first-child::before {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 0;
-    border-top: 4px solid transparent;
-    border-bottom: 4px solid transparent;
-    border-right: 6px solid rgba(255, 255, 255, 0.8);
-    left: 50%;
-    top: 50%;
-    transform: translate(-45%, -50%);
-    transition: all 0.3s ease;
-}
-
-.nav-buttons a:last-child::before,
-.nav-buttons span:last-child::before {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 0;
-    border-top: 4px solid transparent;
-    border-bottom: 4px solid transparent;
-    border-left: 6px solid rgba(255, 255, 255, 0.8);
-    right: 50%;
-    top: 50%;
-    transform: translate(45%, -50%);
-    transition: all 0.3s ease;
-}
-
-.nav-buttons a:first-child, .nav-buttons span:first-child {
-    left: 30px;
+#skip_backward {
+    left: 24px;
     animation: slideInLeft 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
-.nav-buttons a:last-child, .nav-buttons span:last-child {
-    right: 30px;
+#skip_forward {
+    right: 24px;
     animation: slideInRight 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
-.nav-buttons a:hover {
+/* Hover / keyboard focus: fill with colour and grow slightly */
+a#skip_backward:hover, a#skip_forward:hover,
+a#skip_backward:focus-visible, a#skip_forward:focus-visible {
     opacity: 1;
-    transform: scale(1.0) translateY(-1px);
-    background: linear-gradient(145deg,
-        rgba(255, 255, 255, 0.4) 0%,
-        rgba(255, 255, 255, 0.3) 25%,
-        rgba(255, 255, 255, 0.2) 50%,
-        rgba(255, 255, 255, 0.1) 75%,
-        rgba(255, 255, 255, 0.05) 100%);
-    box-shadow:
-        0 12px 40px rgba(255, 255, 255, 0.15),
-        0 4px 20px rgba(0, 0, 0, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.4),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    animation: gentlePulse 2s infinite ease-in-out;
+    background: rgb(219, 57, 255);
+    color: #fff;
+    transform: scale(1.08);
 }
 
-.nav-buttons a:hover::before,
-.nav-buttons span:hover::before {
-    border-left-color: rgba(255, 255, 255, 0.95);
-    border-right-color: rgba(255, 255, 255, 0.95);
-    transform: translate(-55%, -50%) scale(1.1);
+/* No previous / next note: faded and not clickable */
+span#skip_backward, span#skip_forward {
+    opacity: 0.25;
+    cursor: default;
+    box-shadow: none;
 }
 
-.nav-buttons a:hover::before {
-    transform: translate(-45%, -50%) scale(1.1);
-}
-
-.nav-buttons a:hover:last-child::before {
-    transform: translate(45%, -50%) scale(1.1);
-}
-
-.nav-buttons a:active {
-    transform: scale(0.98) translateY(0px);
-    transition: all 0.15s cubic-bezier(0.4, 0.0, 0.6, 1);
-    box-shadow:
-        0 8px 32px rgba(255, 255, 255, 0.12),
-        0 3px 16px rgba(0, 0, 0, 0.08),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.08);
-}
-
-.nav-buttons span:hover {
-    transform: none;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-}
-
-/* nav-buttons styles -contains necessary #skip_forward and #skip_backward */
-#skip_forward, #skip_backward {
-    min-width: 80px;
-    font-size: 20px;
-    font-weight: bold;
-    text-decoration: none;
-    text-align: center;
-    margin-bottom: 5px;
-    border-radius: 10px;
-    border: 2px solid rgb(219, 57, 255);
-    background-color: rgb(245, 176, 255);
-
-}
-
-/* Reason: Creates a subtle breathing animation for interactive elements to draw attention without being distracting */
-@keyframes gentlePulse {
-    0% {
-        box-shadow:
-            0 12px 40px rgba(255, 255, 255, 0.15),
-            0 4px 20px rgba(0, 0, 0, 0.1),
-            inset 0 1px 0 rgba(255, 255, 255, 0.4),
-            inset 0 -1px 0 rgba(0, 0, 0, 0.03);
+/* Small screens: smaller buttons side by side at the bottom centre, so they
+   don't cover the note text or the A+/A− buttons on the right */
+@media (max-width: 768px) {
+    .nav-buttons {
+        top: auto;
+        bottom: 16px;
+        transform: none;
     }
-    50% {
-        box-shadow:
-            0 14px 45px rgba(255, 255, 255, 0.2),
-            0 5px 22px rgba(0, 0, 0, 0.12),
-            inset 0 1px 0 rgba(255, 255, 255, 0.5),
-            inset 0 -1px 0 rgba(0, 0, 0, 0.02);
+    #skip_backward, #skip_forward {
+        width: 40px;
+        height: 40px;
+        font-size: 15px;
     }
-    100% {
-        box-shadow:
-            0 12px 40px rgba(255, 255, 255, 0.15),
-            0 4px 20px rgba(0, 0, 0, 0.1),
-            inset 0 1px 0 rgba(255, 255, 255, 0.4),
-            inset 0 -1px 0 rgba(0, 0, 0, 0.03);
-    }
+    #skip_backward { left: calc(50% - 48px); }
+    #skip_forward  { right: calc(50% - 48px); }
 }
 
 /* Reason: Provides smooth entrance animations for navigation elements, enhancing the perceived performance and polish */
@@ -640,11 +552,6 @@ select:hover, select:focus {
     
     .nav-section-title {
         font-size: 11px;
-    }
-    
-    .nav-buttons a, .nav-buttons span {
-        padding: 10px 20px;
-        font-size: 14px;
     }
     
     .note-content {

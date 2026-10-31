@@ -65,8 +65,9 @@ def view_note(note_path):
 
 
     # Extract title
-    title_match = re.search(r'<div class="fancy-title"[^>]*>([^<]+)</div>', content)
-    note_title = title_match.group(1) if title_match else "📚 View By Topics"
+    # Old notes use <div class="fancy-title">, converted notes use <h1 class="note-title">
+    title_match = re.search(r'<(?:div|h1) class="(?:fancy|note)-title"[^>]*>([^<]+)</(?:div|h1)>', content)
+    note_title = title_match.group(1).strip() if title_match else "📚 View By Topics"
 
     return render_template(
         "note.html",

@@ -1,533 +1,179 @@
-<!DOCTYPE html>
 <!-- tags: Others -->
-<html lang="en">
- <head>
-  <meta charset="utf-8"/>
-  <title>
-   Integer Division
-  </title>
-  <script>
-   MathJax = {
-            tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
-            svg: {fontCache: 'global'}
-        };
-  </script>
-  <script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
-  </script>
-  <link href="/static/notes_style.css" rel="stylesheet"/>
-  <style>
-    
-    /* Theorem box styling */
-    .theorem-box {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 20px;
-      border-radius: 12px;
-      margin: 15px 0;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      border: 2px solid rgba(255,255,255,0.2);
-    }
-    
-    .theorem-box h3 {
-      margin-top: 0;
-      font-size: 1.3em;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-    }
-    
-    .theorem-box .formula {
-      font-size: 1.4em;
-      font-weight: bold;
-      background: rgba(255,255,255,0.2);
-      padding: 10px;
-      border-radius: 8px;
-      margin: 10px 0;
-      text-align: center;
-    }
-    
-    .demo-input {
-      padding: 10px;
-      font-size: 16px;
-      border: 2px solid #007acc;
-      border-radius: 6px;
-      margin: 10px;
-      width: 150px;
-    }
-    
-    .demo-button {
-      background: #007acc;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 16px;
-      margin: 10px;
-      transition: background 0.3s;
-    }
-    
-    .demo-button:hover {
-      background: #0056b3;
-    }
-    
-    .demo-result {
-      font-size: 18px;
-      font-weight: bold;
-      margin: 15px 0;
-      min-height: 30px;
-    }
-    
-    /* Problem items styling */
-    .problem-item {
-      background: #fff3cd;
-      border: 2px solid #ffc107;
-      border-radius: 8px;
-      padding: 15px;
-      margin: 15px 0;
-      position: relative;
-    }
-    
-    .problem-item .problem-number {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      background: #ffc107;
-      color: #000;
-      padding: 2px 8px;
-      border-radius: 12px;
-      font-weight: bold;
-      font-size: 0.9em;
-    }
-    
-    .problem-item .problem-content {
-      margin-left: 60px;
-    }
-    
-    /* Solution button styling */
-    .solution-button {
-      background: #28a745;
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px;
-      margin: 10px 0;
-      transition: background 0.3s;
-    }
-    
-    .solution-button:hover {
-      background: #218838;
-    }
-    
-    .solution-content {
-      background: #d4edda;
-      border: 1px solid #c3e6cb;
-      border-radius: 6px;
-      padding: 15px;
-      margin: 10px 0;
-      display: none;
-    }
-    
-    /* Canvas visualization styling */
-    .visualization-container {
-      text-align: center;
-      margin: 20px 0;
-    }
-    
-    #divisionCanvas {
-      border: 2px solid #007acc;
-      border-radius: 8px;
-      background: white;
-      max-width: 100%;
-      height: auto;
-    }
-    
-    /* Section styling */
-    .section {
-      margin: 30px 0;
-      padding: 20px;
-      background: #f8f9fa;
-      border-radius: 8px;
-      border-left: 4px solid #007acc;
-    }
-    
-    .section h2 {
-      color: #007acc;
-      margin-top: 0;
-      font-size: 1.5em;
-    }
-    
-    /* Enhanced math styling */
-    .math {
-      font-family: 'Times New Roman', serif;
-    }
-    
-    .orange { color: #fd7e14; }
-    .blue { color: #007bff; }
-    .green { color: #28a745; }
-    .red { color: #dc3545; }
-    
-    /* Division visualization specific */
-    .division-steps {
-      background: #e9ecef;
-      border-radius: 8px;
-      padding: 15px;
-      margin: 15px 0;
-      font-family: monospace;
-      font-size: 16px;
-    }
-    
-    .division-step {
-      margin: 8px 0;
-      padding: 5px;
-      background: white;
-      border-radius: 4px;
-    }
-  </style>
- </head>
- <body>
-  <div class="fancy-title" data-topic="Others">
-   Integer Division
+<!-- =====================================================================
+     NOTE: Integer Division
+     Uses the shared blocks from static/css/note_blocks.css.
+     Do not add a <style> block here; change note_blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Others">Integer Division</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Quotient and remainder</h2>
+    <p>Dividing $17$ by $5$: $5$ fits into $17$ three times ($15$), with $2$ left over. So the quotient is $3$ and the remainder is $2$:</p>
+    <p>$$17 = 5 \times 3 + 2$$</p>
+    <p>This works for every integer, including negative ones, as long as the remainder is kept between $0$ and $b - 1$.</p>
+  </section>
+
+  <!-- FORMULA: the division theorem -->
+  <div class="note-formula">
+    <h3>Division with remainder</h3>
+    <div class="formula-main">$$a = bq + r, \qquad 0 \le r &lt; b$$</div>
+    <p class="symbols">
+      $a$ = number being divided (any integer)<br>
+      $b$ = divisor (a positive integer)<br>
+      $q$ = quotient, $\;r$ = remainder<br>
+      For each $a$ and $b$ there is exactly one such pair $q, r$.
+    </p>
   </div>
-  <div class="container">
-   <div class="main-content">
-    <div class="section">
-     <h2>Core Concept: Division Algorithm</h2>
-     <p>The Division Algorithm (also known as the Division Theorem) states that for any integer <strong>a</strong> and any positive integer <strong>b</strong>, there exist unique integers <strong>q</strong> (quotient) and <strong>r</strong> (remainder) such that:</p>
-     
-     <div class="theorem-box">
-      <h3>Division Algorithm Theorem</h3>
-      <div class="formula">
-       $a = bq + r,\quad 0 \leq r < b$
-      </div>
-      <p>Where:</p>
-      <ul style="color: white;">
-       <li><strong>a</strong> is the dividend</li>
-       <li><strong>b</strong> is the divisor (positive integer)</li>
-       <li><strong>q</strong> is the quotient</li>
-       <li><strong>r</strong> is the remainder (0 ≤ r < b)</li>
-      </ul>
-     </div>
-     
-     <p>This theorem guarantees that division with remainder is always possible and the result is unique.</p>
-    </div>
 
-    <div class="section">
-     <h2>Detailed Examples</h2>
-     
-     <h3>Example 1: Positive Numbers</h3>
-     <p>Divide 17 by 5:</p>
-     <div class="division-steps">
-      <div class="division-step">17 ÷ 5 = 3 (quotient) with remainder 2</div>
-      <div class="division-step">Check: 5 × 3 + 2 = 15 + 2 = 17 ✓</div>
-     </div>
-     
-     <h3>Example 2: Negative Dividend</h3>
-     <p>Divide -17 by 5:</p>
-     <div class="division-steps">
-      <div class="division-step">-17 ÷ 5 = -4 (quotient) with remainder 3</div>
-      <div class="division-step">Check: 5 × (-4) + 3 = -20 + 3 = -17 ✓</div>
-      <div class="division-step">Note: Remainder is always non-negative</div>
-     </div>
-     
-     <h3>Example 3: Exact Division</h3>
-     <p>Divide 24 by 6:</p>
-     <div class="division-steps">
-      <div class="division-step">24 ÷ 6 = 4 (quotient) with remainder 0</div>
-      <div class="division-step">Check: 6 × 4 + 0 = 24 ✓</div>
-     </div>
-    </div>
-
-    <div class="section">
-     <h2>Visual Guide</h2>
-     <div class="visualization-container">
-      <canvas id="divisionCanvas" width="800" height="500"></canvas>
-     </div>
-     <p>The visualization above demonstrates the Division Algorithm by showing how numbers are distributed along a number line and how quotients and remainders are determined.</p>
-    </div>
-
-    <div class="section">
-     <h2>Interactive Demo</h2>
-     <div class="interactive-demo">
-      <h3>Division Algorithm Calculator</h3>
-      <p>Enter dividend and divisor to see the quotient and remainder:</p>
-      <input type="number" id="dividend" class="demo-input" placeholder="Dividend (a)" value="17">
-      <input type="number" id="divisor" class="demo-input" placeholder="Divisor (b)" min="1" value="5">
-      <br>
-      <button onclick="calculateDivision()" class="demo-button">Calculate</button>
-      <div id="demoResult" class="demo-result"></div>
-      <div id="divisionSteps"></div>
-     </div>
-    </div>
-
-    <div class="section">
-     <h2>Applications</h2>
-     <ul>
-      <li><strong>Clock Arithmetic:</strong> Used in modular arithmetic and time calculations</li>
-      <li><strong>Computer Science:</strong> Essential for implementing division operations in programming</li>
-      <li><strong>Number Theory:</strong> Foundation for modular arithmetic and the study of remainders</li>
-      <li><strong>Cryptography:</strong> Used in RSA algorithm and other cryptographic systems</li>
-      <li><strong>Calendar Calculations:</strong> Determining days of the week, leap years, etc.</li>
-     </ul>
-    </div>
-
-    <div class="section">
-     <h2>Practice Problems</h2>
-     
-     <div class="problem-item">
-      <div class="problem-number">1</div>
-      <div class="problem-content">
-       <p>Find the quotient and remainder when 47 is divided by 8.</p>
-       <button class="solution-button" onclick="toggleSolution('sol1')">Show Solution</button>
-       <div id="sol1" class="solution-content">
-        <p>47 ÷ 8 = 5 (quotient) with remainder 7</p>
-        <p>Check: 8 × 5 + 7 = 40 + 7 = 47 ✓</p>
-       </div>
-      </div>
-     </div>
-     
-     <div class="problem-item">
-      <div class="problem-number">2</div>
-      <div class="problem-content">
-       <p>Find the quotient and remainder when -23 is divided by 6.</p>
-       <button class="solution-button" onclick="toggleSolution('sol2')">Show Solution</button>
-       <div id="sol2" class="solution-content">
-        <p>-23 ÷ 6 = -4 (quotient) with remainder 1</p>
-        <p>Check: 6 × (-4) + 1 = -24 + 1 = -23 ✓</p>
-       </div>
-      </div>
-     </div>
-     
-     <div class="problem-item">
-      <div class="problem-number">3</div>
-      <div class="problem-content">
-       <p>What is the remainder when 123 is divided by 13?</p>
-       <button class="solution-button" onclick="toggleSolution('sol3')">Show Solution</button>
-       <div id="sol3" class="solution-content">
-        <p>123 ÷ 13 = 9 (quotient) with remainder 6</p>
-        <p>Check: 13 × 9 + 6 = 117 + 6 = 123 ✓</p>
-        <p>The remainder is 6.</p>
-       </div>
-      </div>
-     </div>
-     
-     <div class="problem-item">
-      <div class="problem-number">4</div>
-      <div class="problem-content">
-       <p>Find integers q and r such that 89 = 11q + r, where 0 ≤ r < 11.</p>
-       <button class="solution-button" onclick="toggleSolution('sol4')">Show Solution</button>
-       <div id="sol4" class="solution-content">
-        <p>89 ÷ 11 = 8 (quotient) with remainder 1</p>
-        <p>So q = 8, r = 1</p>
-        <p>Check: 11 × 8 + 1 = 88 + 1 = 89 ✓</p>
-       </div>
-      </div>
-     </div>
-    </div>
-
-    <div class="key-takeaways">
-     <h3>Key Takeaways</h3>
-     <ul>
-      <li>The Division Algorithm works for any integer dividend and positive integer divisor</li>
-      <li>The remainder r is always non-negative and less than the divisor b</li>
-      <li>The quotient q can be positive, negative, or zero</li>
-      <li>This theorem is fundamental to modular arithmetic</li>
-      <li>The result is unique for each pair (a, b)</li>
-     </ul>
-    </div>
-   </div>
+  <!-- WARNING: negative numbers -->
+  <div class="note-warning">
+    The remainder is <strong>never negative</strong>. Dividing $-17$ by $5$: $-17 = 5 \times (-3) - 2$ is <strong>not</strong> allowed
+    ($r = -2$). Go one step further: $-17 = 5 \times (-4) + 3$, so $q = -4$, $r = 3$.
   </div>
-  <script>
-    function toggleSolution(id) {
-      const solution = document.getElementById(id);
-      const button = solution.previousElementSibling;
-      
-      if (solution.style.display === 'none' || solution.style.display === '') {
-        solution.style.display = 'block';
-        button.textContent = 'Hide Solution';
-      } else {
-        solution.style.display = 'none';
-        button.textContent = 'Show Solution';
+
+  <!-- DEMO: quotient and remainder with a picture; code at the bottom -->
+  <div class="note-demo">
+    <h2>Quotient and remainder calculator</h2>
+    <div class="controls">
+      <label>$a$ <input type="number" id="idA" value="17"></label>
+      <label>$b$ <input type="number" id="idB" value="5" min="1"></label>
+    </div>
+    <canvas id="idCanvas" width="520" height="120"></canvas>
+    <div class="output table-text" id="idOutput"></div>
+  </div>
+
+  <!-- CONCEPT: grouping integers by remainder -->
+  <section class="note-concept">
+    <h2>Every integer has a remainder type</h2>
+    <p>Divided by $b$, every integer leaves one of the remainders $0, 1, \dots, b - 1$. So every integer can be written in exactly one of $b$ forms.
+      For $b = 3$:</p>
+    <p>$$3k, \qquad 3k + 1, \qquad 3k + 2 \qquad (k \text{ an integer})$$</p>
+    <p>Checking each form separately is a standard way to prove facts about all integers (see Example 3).</p>
+  </section>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find the quotient and remainder when $-23$ is divided by $6$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Find the largest multiple of $6$ that is $\le -23$: $6 \times (-4) = -24$</li>
+        <li>$-23 = 6 \times (-4) + 1$, and $0 \le 1 &lt; 6$ ✔</li>
+      </ol>
+      <p class="answer">$q = -4$, $\;r = 1$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">When $a$ is divided by $7$ the remainder is $3$. Find the remainder when $2a + 5$ is divided by $7$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Write $a = 7k + 3$</li>
+        <li>$2a + 5 = 14k + 11 = 7(2k + 1) + 4$</li>
+      </ol>
+      <p class="answer">Remainder $4$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Show that $n^2$ divided by $3$ always leaves remainder $0$ or $1$ (never $2$).</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$n = 3k$: $\;n^2 = 9k^2 = 3(3k^2)$, remainder $0$</li>
+        <li>$n = 3k + 1$: $\;n^2 = 9k^2 + 6k + 1 = 3(3k^2 + 2k) + 1$, remainder $1$</li>
+        <li>$n = 3k + 2$: $\;n^2 = 9k^2 + 12k + 4 = 3(3k^2 + 4k + 1) + 1$, remainder $1$</li>
+      </ol>
+      <p class="answer">Every integer has one of these three forms, so the remainder is always $0$ or $1$.</p>
+    </details>
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$a = bq + r$ with $0 \le r &lt; b$; $q$ and $r$ are unique.</li>
+      <li>For negative $a$, the quotient goes down so the remainder stays $\ge 0$.</li>
+      <li>Split integers by remainder ($3k, 3k+1, 3k+2$) to prove things about all of them.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script>
+  // Quotient and remainder calculator (the TRY IT block above).
+  // Shows a = bq + r and draws a number line with jumps of size b.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const aInput = document.getElementById('idA');
+    const bInput = document.getElementById('idB');
+    const canvas = document.getElementById('idCanvas');
+    const ctx = canvas.getContext('2d');
+    const output = document.getElementById('idOutput');
+
+    // Draws 0 → bq in jumps of b (blue), then the remainder r (orange)
+    function drawNumberLine(a, b, q, r) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const lo = Math.min(0, b * q), hi = Math.max(0, a);
+      const scale = (canvas.width - 60) / Math.max(hi - lo, 1);
+      const x = (v) => 30 + (v - lo) * scale;
+      const y = 70;
+
+      // Axis
+      ctx.strokeStyle = '#475569';
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(10, y); ctx.lineTo(canvas.width - 10, y); ctx.stroke();
+
+      // One arc per jump of b (skip drawing if there are too many to see)
+      const step = q >= 0 ? 1 : -1;
+      if (Math.abs(q) <= 40) {
+        ctx.strokeStyle = '#2563eb';
+        for (let i = 0; i !== q; i += step) {
+          const from = x(i * b), to = x((i + step) * b);
+          ctx.beginPath();
+          ctx.arc((from + to) / 2, y, Math.abs(to - from) / 2, Math.PI, 0);
+          ctx.stroke();
+        }
       }
+
+      // Remainder: thick orange segment from bq to a
+      ctx.strokeStyle = '#ea580c';
+      ctx.lineWidth = 6;
+      ctx.beginPath(); ctx.moveTo(x(b * q), y); ctx.lineTo(x(a), y); ctx.stroke();
+
+      // Labels for 0, bq and a
+      ctx.fillStyle = '#0f172a';
+      ctx.font = '14px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('0', x(0), y + 22);
+      if (b * q !== 0) ctx.fillText(`${b * q}`, x(b * q), y + 22);
+      if (a !== b * q) ctx.fillText(`${a}`, x(a), y + 40);
     }
 
-    function drawDivisionVisualization() {
-      const canvas = document.getElementById('divisionCanvas');
-      const ctx = canvas.getContext('2d');
-      const width = canvas.width;
-      const height = canvas.height;
-      
-      // Clear canvas
-      ctx.clearRect(0, 0, width, height);
-      
-      // Set up coordinate system
-      const margin = 60;
-      const plotWidth = width - 2 * margin;
-      const plotHeight = height - 2 * margin;
-      const centerY = height / 2;
-      
-      // Draw background
-      ctx.fillStyle = '#f8f9fa';
-      ctx.fillRect(0, 0, width, height);
-      
-      // Draw number line
-      ctx.strokeStyle = '#333';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(margin, centerY);
-      ctx.lineTo(width - margin, centerY);
-      ctx.stroke();
-      
-      // Draw tick marks and labels
-      ctx.font = '12px Arial';
-      ctx.textAlign = 'center';
-      for (let i = -10; i <= 20; i += 2) {
-        const x = margin + ((i + 10) / 30) * plotWidth;
-        ctx.beginPath();
-        ctx.moveTo(x, centerY - 5);
-        ctx.lineTo(x, centerY + 5);
-        ctx.stroke();
-        ctx.fillText(i.toString(), x, centerY + 20);
-      }
-      
-      // Example: 17 ÷ 5
-      const dividend = 17;
-      const divisor = 5;
-      const quotient = Math.floor(dividend / divisor);
-      const remainder = dividend % divisor;
-      
-      // Draw dividend point
-      const dividendX = margin + ((dividend + 10) / 30) * plotWidth;
-      ctx.fillStyle = '#007acc';
-      ctx.beginPath();
-      ctx.arc(dividendX, centerY, 6, 0, 2 * Math.PI);
-      ctx.fill();
-      ctx.fillStyle = '#333';
-      ctx.fillText('17', dividendX, centerY - 15);
-      
-      // Draw multiples of divisor
-      ctx.fillStyle = '#28a745';
-      for (let i = 0; i <= quotient + 1; i++) {
-        const multiple = i * divisor;
-        const x = margin + ((multiple + 10) / 30) * plotWidth;
-        ctx.beginPath();
-        ctx.arc(x, centerY, 4, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.fillStyle = '#333';
-        ctx.fillText(`${multiple}`, x, centerY - 15);
-        ctx.fillStyle = '#28a745';
-      }
-      
-      // Draw the quotient * divisor point
-      const quotientMultipleX = margin + ((quotient * divisor + 10) / 30) * plotWidth;
-      ctx.fillStyle = '#ff9800';
-      ctx.beginPath();
-      ctx.arc(quotientMultipleX, centerY, 5, 0, 2 * Math.PI);
-      ctx.fill();
-      ctx.fillStyle = '#333';
-      ctx.fillText(`${quotient * divisor}`, quotientMultipleX, centerY - 15);
-      
-      // Draw arrows and labels
-      ctx.strokeStyle = '#007acc';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(dividendX, centerY - 30);
-      ctx.lineTo(quotientMultipleX, centerY - 30);
-      ctx.stroke();
-      
-      // Arrow head
-      ctx.beginPath();
-      ctx.moveTo(quotientMultipleX, centerY - 30);
-      ctx.lineTo(quotientMultipleX - 5, centerY - 25);
-      ctx.lineTo(quotientMultipleX - 5, centerY - 35);
-      ctx.closePath();
-      ctx.fillStyle = '#007acc';
-      ctx.fill();
-      
-      ctx.fillStyle = '#007acc';
-      ctx.font = '14px Arial';
-      ctx.fillText(`Remainder = ${remainder}`, (dividendX + quotientMultipleX) / 2, centerY - 40);
-      
-      // Legend
-      ctx.fillStyle = '#333';
-      ctx.font = '12px Arial';
-      ctx.textAlign = 'left';
-      ctx.fillText('Legend:', margin, height - 60);
-      ctx.fillText('• Dividend (17)', margin + 10, height - 45);
-      ctx.fillText('• Multiples of divisor (5)', margin + 10, height - 30);
-      ctx.fillText('• Quotient × divisor (15)', margin + 10, height - 15);
-      
-      // Draw colored dots for legend
-      ctx.fillStyle = '#007acc';
-      ctx.beginPath();
-      ctx.arc(margin, height - 47, 3, 0, 2 * Math.PI);
-      ctx.fill();
-      
-      ctx.fillStyle = '#28a745';
-      ctx.beginPath();
-      ctx.arc(margin, height - 32, 3, 0, 2 * Math.PI);
-      ctx.fill();
-      
-      ctx.fillStyle = '#ff9800';
-      ctx.beginPath();
-      ctx.arc(margin, height - 17, 3, 0, 2 * Math.PI);
-      ctx.fill();
-      
-      // Title
-      ctx.fillStyle = '#333';
-      ctx.font = '16px Arial';
-      ctx.textAlign = 'center';
-      ctx.fillText('Division Algorithm: 17 ÷ 5 = 3 with remainder 2', width/2, 30);
-    }
-
-    function calculateDivision() {
-      const dividendInput = document.getElementById('dividend');
-      const divisorInput = document.getElementById('divisor');
-      const result = document.getElementById('demoResult');
-      const steps = document.getElementById('divisionSteps');
-      
-      const dividend = parseInt(dividendInput.value);
-      const divisor = parseInt(divisorInput.value);
-      
-      if (isNaN(dividend) || isNaN(divisor) || divisor <= 0) {
-        result.textContent = 'Please enter valid numbers (divisor must be positive)';
-        result.style.color = '#f44336';
-        steps.innerHTML = '';
+    function update() {
+      const a = parseInt(aInput.value, 10);
+      const b = parseInt(bInput.value, 10);
+      if (isNaN(a) || isNaN(b) || b < 1) {
+        output.textContent = 'Please enter an integer a and a positive integer b.';
         return;
       }
-      
-      const quotient = Math.floor(dividend / divisor);
-      const remainder = dividend % divisor;
-      
-      // Display result
-      result.innerHTML = `<strong>${dividend} ÷ ${divisor} = ${quotient} with remainder ${remainder}</strong>`;
-      result.style.color = '#4caf50';
-      
-      // Display steps
-      steps.innerHTML = `
-        <div style="background: #e9ecef; padding: 15px; border-radius: 8px; margin-top: 10px;">
-          <h4>Division Steps:</h4>
-          <div style="font-family: monospace; font-size: 14px; line-height: 1.5;">
-            <div>• ${dividend} ÷ ${divisor} = ${quotient} (quotient)</div>
-            <div>• Remainder = ${dividend} - (${divisor} × ${quotient}) = ${dividend} - ${divisor * quotient} = ${remainder}</div>
-            <div>• Verification: ${divisor} × ${quotient} + ${remainder} = ${divisor * quotient} + ${remainder} = ${dividend} ✓</div>
-          </div>
-        </div>
-      `;
+
+      // Math.floor rounds down even for negatives, which keeps 0 ≤ r < b
+      const q = Math.floor(a / b);
+      const r = a - b * q;
+
+      drawNumberLine(a, b, q, r);
+      output.textContent = `${a} = ${b} × (${q}) + ${r}\nquotient q = ${q}, remainder r = ${r}`;
     }
 
-    // Initialize visualization when page loads
-    window.onload = function() {
-      drawDivisionVisualization();
-      
-      // Set up interactive demo
-      const dividendInput = document.getElementById('dividend');
-      const divisorInput = document.getElementById('divisor');
-      
-      dividendInput.addEventListener('input', calculateDivision);
-      divisorInput.addEventListener('input', calculateDivision);
-      calculateDivision(); // Initial calculation
-    };
-  </script>
- </body>
-</html>
+    aInput.addEventListener('input', update);
+    bInput.addEventListener('input', update);
+    update(); // show the default numbers straight away
+  })();
+</script>
