@@ -5,7 +5,7 @@ import re
 # Folders are lowercase-hyphen names with a number for the order, and the
 # same course/topic folders are used in content/notes and content/practice:
 #   content/notes/math-1/03-quadratic-functions/04-maximum-and-minimum-values.html
-#   content/practice/math-1/03-quadratic-functions/01-quadratic-functions-and-equations.html
+#   content/practice/math-1/03-quadratic-functions/01-graphs-and-vertex-form.html
 # Page titles come from each file's <h1>, not from these names.
 
 # Subjects in home-page tab order. A subject with no notes yet shows as
