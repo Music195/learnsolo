@@ -1,6 +1,6 @@
 // The live demo on the home page: drag P along y = x²/2.
 // The orange line is the tangent at P; its slope equals the x-coordinate of P.
-// It is drawn by NotePlot.graph from /static/js/demos/plot.js, the same
+// It is drawn by NotePlot.graph from /static/js/demos/plot.js (in public/), the same
 // helper the notes use (loaded in index.html).
 
 import { useEffect, useRef, useState } from 'react'

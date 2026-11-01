@@ -1,7 +1,7 @@
 # The address of each kind of page, in one place.
 #
-# These are plain strings rather than Flask's url_for(), because the React
-# frontend will use the very same addresses for its pages. Content paths are
+# These are plain strings rather than Flask's url_for(), because they are
+# the React frontend's addresses (frontend/src/App.jsx), not Flask routes. Content paths are
 # lowercase letters, numbers, hyphens and slashes, so they need no escaping.
 
 

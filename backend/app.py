@@ -2,14 +2,18 @@ from flask import Flask
 from config import Config
 from extensions import db, login_manager, migrate
 import models  # noqa: F401  (so Flask-Migrate sees the tables)
-from routes.home import home_bp
-from routes.notes import notes_bp
-from routes.practice import practice_bp
-from routes.past import past_bp
 from api import api_bp
+from frontend import frontend_bp
+
+# The whole site is two parts:
+#   /api/...         JSON: notes, practice, accounts, progress (api/)
+#   everything else  the React app, built into frontend/dist (frontend.py)
+
 
 def create_app():
-    app = Flask(__name__)
+    # static_folder=None: Flask's own /static/ folder is turned off.
+    # /static/... files now come from the React build (frontend.py).
+    app = Flask(__name__, static_folder=None)
     app.config.from_object(Config)
 
     # Database (models.py); `flask db ...` commands come from Flask-Migrate
@@ -32,12 +36,9 @@ def create_app():
     def unauthorized():
         return {"error": "login required"}, 401
 
-    # Register blueprints
-    app.register_blueprint(home_bp)       # home page and search
-    app.register_blueprint(notes_bp)      # /notes/... and the PDF viewer
-    app.register_blueprint(practice_bp)   # /practice/...
-    app.register_blueprint(past_bp)       # /past/...
-    app.register_blueprint(api_bp)        # /api/... JSON for the React frontend (api/)
+    # Register blueprints (groups of routes)
+    app.register_blueprint(api_bp)        # /api/...: JSON (api/)
+    app.register_blueprint(frontend_bp)   # every other address: the React app (frontend.py)
 
     # flask import-content: copy content/ into the database (importer.py)
     @app.cli.command("import-content")
@@ -58,9 +59,3 @@ if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     debug = os.environ.get("FLASK_DEBUG") == "1"
     app.run(host="0.0.0.0", port=port, debug=debug)
-    
-# STEP 2: Lazy loading + cache (Google Drive)
-# STEP 3: PDF proxy security
-# STEP 4: Error normalization
-# STEP 5: Navigation cleanup
-# STEP 6: Cache invalidation for notes (make caching safe)

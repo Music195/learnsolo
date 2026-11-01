@@ -1,8 +1,8 @@
 // The home page: hero, subject tabs with their courses, how a note works,
 // and links to the rest of the site.
 //
-// The data comes from /api/home (backend/services/home.py). The HTML and
-// class names match backend/templates/home.html, so home.css styles it.
+// The data comes from /api/home (backend/services/home.py). It is styled by
+// src/styles/home.css.
 
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'

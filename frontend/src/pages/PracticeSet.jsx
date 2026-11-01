@@ -3,7 +3,7 @@
 // problems in a white card, then "Review the notes" and the next set.
 //
 // The data comes from /api/practice/<path> (backend/services/practice.py).
-// The HTML matches backend/templates/practice.html, so the same CSS styles it.
+// It is styled by src/styles/practice.css.
 // The answer boxes and "I got it" buttons come from src/practice.js.
 
 import { useEffect, useRef, useState } from 'react'

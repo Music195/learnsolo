@@ -1,5 +1,4 @@
-// The interactive parts of a practice set (or past paper), moved over from
-// the old site's backend/static/js/practice.js.
+// The interactive parts of a practice set (or past paper).
 //
 // For every <section class="practice-problem"> in the set it adds:
 //   1. An answer box (only if the problem has data-answer) that checks
@@ -9,7 +8,7 @@
 // Progress is saved in this browser, or in your account (src/progress.js).
 //
 // This code changes the set's HTML directly with DOM functions
-// (createElement, addEventListener...), the way the old page did, rather
+// (createElement, addEventListener...) in plain JavaScript, rather
 // than with React: the set's HTML comes from a content file, so React
 // doesn't know what's inside it. PracticeSet.jsx calls setUpProblems()
 // once NoteContent has put the set on the page.

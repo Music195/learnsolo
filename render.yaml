@@ -1,11 +1,51 @@
+# Render "Blueprint": what Render builds and runs for this repo.
+# Render reads this file when you connect the repo (New → Blueprint), and
+# deploys again whenever main changes.
+
+databases:
+  # The PostgreSQL database: notes, practice sets, accounts and progress
+  - name: learnsolo-db
+    plan: free            # note: Render deletes free databases after 30 days (see docs/content-guide.md, section 10)
+    databaseName: learnsolo
+    user: learnsolo
+    ipAllowList: []       # [] = no access from the internet, only from the web service on Render
+
 services:
   - type: web
     name: learnsolo
     runtime: python
     plan: free
-    rootDir: backend
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
+
+    # Commands run from the repo root (content/ is needed too, not only backend/).
+    # 1. the Python packages   2. the React app, built into frontend/dist
+    buildCommand: >-
+      pip install -r backend/requirements.txt &&
+      cd frontend && npm ci && npm run build
+
+    # Each time the site starts:
+    #   flask db upgrade      makes any new tables/columns (migrations/)
+    #   flask import-content  copies content/ into the database (quick when nothing changed)
+    #   gunicorn              the web server: Flask answers /api/... and sends the React app
+    # (Render has a separate "pre-deploy command" for the first two, but only
+    # on paid plans, so they run here.)
+    startCommand: >-
+      cd backend &&
+      flask db upgrade &&
+      flask import-content &&
+      gunicorn app:app --bind 0.0.0.0:$PORT
+
     envVars:
-      - key: GOOGLE_CREDENTIALS_JSON
-        sync: false
+      # The database's address, filled in by Render from the database above
+      - key: DATABASE_URL
+        fromDatabase:
+          name: learnsolo-db
+          property: connectionString
+      # Signs the login cookies: Render makes a long random one, once
+      - key: SECRET_KEY
+        generateValue: true
+      # Login cookies only over https (the live site is https)
+      - key: SESSION_COOKIE_SECURE
+        value: "1"
+      # Vite 8 needs Node.js 20.19+ or 22.12+
+      - key: NODE_VERSION
+        value: "22"

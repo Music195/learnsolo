@@ -11,16 +11,17 @@ export default defineConfig({
     port: 5173,
 
     // The React app runs on :5173 and Flask on :5000. A request React makes to
-    // /api/... or /static/... arrives here first; "proxy" passes it on to Flask.
-    // So the browser only ever talks to one address, and in code we can write
+    // /api/... arrives here first; "proxy" passes it on to Flask. So the
+    // browser only ever talks to one address, and in code we can write
     // fetch('/api/home') without the Flask address.
+    // (On the live site Flask serves the React app too, so it's one address
+    // anyway; see backend/frontend.py.)
     proxy: {
       '/api': 'http://localhost:5000',
-      '/static': 'http://localhost:5000',
     },
-
-    // Allow importing files from the whole project, not just frontend/:
-    // the pages use the CSS in backend/static/css/ (see src/styles.js).
-    fs: { allow: ['..'] },
   },
+
+  // Files in public/ (favicon, /static/js/demos/...) are served as they are,
+  // at the same address, and copied into dist/ by `npm run build`.
+
 })

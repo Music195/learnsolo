@@ -13,7 +13,7 @@ from models import Note, ProblemSet
 # Error normalization
 # -------------------
 # Utils raise this instead of returning (html, status), so the routes
-# decide how to respond (404 page, JSON, ...).
+# decide how to respond (api/__init__.py answers with a JSON 404).
 class ContentNotFound(Exception):
     """Raised when a note or set is not in the database"""
     pass

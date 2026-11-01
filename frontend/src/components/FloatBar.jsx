@@ -1,6 +1,5 @@
 // The floating bar at the top of the page: logo, links and search.
-// The same HTML and class names as backend/templates/partials/floatbar.html,
-// so floatbar.css styles it. On phones, everything after the logo folds
+// Styled by src/styles/floatbar.css. On phones, everything after the logo folds
 // into the ☰ menu.
 //
 // Two versions, chosen by the props (the inputs a page passes in):
