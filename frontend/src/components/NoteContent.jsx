@@ -1,4 +1,4 @@
-// Shows the HTML of a note (or later a practice set) and makes it work:
+// Shows the HTML of a note, practice set or past paper and makes it work:
 // runs its <script> tags, which draw the TRY IT demos, and draws the
 // formulas with MathJax.
 //
@@ -51,8 +51,13 @@ async function runScripts(holder, isCancelled) {
   }
 }
 
-// Props: `html` is the note's HTML; `style` goes on <main> (the text size).
-export default function NoteContent({ html, style }) {
+// Props:
+//   html     the note's HTML
+//   style    goes on <main> (the text size)
+//   onReady  optional: called with the element holding the HTML once its
+//            scripts have run, before the formulas are drawn. Practice
+//            sets use it to add their answer boxes (src/practice.js).
+export default function NoteContent({ html, style, onReady }) {
   // useRef: holds the real <main> element once React has drawn it
   const ref = useRef(null)
 
@@ -67,13 +72,18 @@ export default function NoteContent({ html, style }) {
 
     let cancelled = false
     runScripts(holder, () => cancelled)
-      .then(() => { if (!cancelled) typeset(holder) })   // formulas last, after the demos wrote theirs
+      .then(() => {
+        if (cancelled) return
+        onReady?.(holder)    // ?.() calls it only if the page passed one
+        typeset(holder)      // formulas last, after the demos wrote theirs
+      })
       .catch((error) => console.error(error))
 
     return () => {
       cancelled = true
       holder.remove()
     }
+    // Only `html` is listed: a new onReady on every draw shouldn't rebuild the note
   }, [html])   // run again when the note changes
 
   // React only draws the empty <main>; the effect fills it.

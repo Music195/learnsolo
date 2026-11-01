@@ -213,7 +213,7 @@ content/practice/math-c/01-plane-vectors/02-dot-product.html   →   /practice/m
 - The set page (`templates/practice.html`) has the same floating bar, header and card as a note. The header shows "Solved 2 of 5"; "Practice" in the floating bar goes back to the practice page.
 - **At the end of a set**, the next card leads on in the practice page's order: **Next practice** (the next set in the topic), **Topic review**, then **Next topic** (the next topic's first set; after a course's last topic, the next course). The ← / → buttons follow the same order.
 - After each note, a **Practise this note** card opens the first concept set whose problems link to that note (via "Uses:"), and the topic's other sets are listed under it. The search box finds practice sets too.
-- Styles: `static/css/practice.css` (a set) and `static/css/practice-list.css` (the practice page). Scripts: `static/js/practice.js` and `static/js/practice-list.js`. Loader: `utils/content_loader.py`. Routes: `/practice` and `/practice/...` in `routes/practice.py`.
+- Styles: `static/css/practice.css` (a set) and `static/css/practice-list.css` (the practice page). Scripts: `static/js/practice.js` and `static/js/practice-list.js` (old site); in React, `frontend/src/practice.js`, `src/pages/PracticeList.jsx` and `src/pages/PracticeSet.jsx` (section 12). Loader: `utils/content_loader.py`. Routes: `/practice` and `/practice/...` in `routes/practice.py` and `api/content.py`.
 - A topic needs at least one note, because the header links back to the topic's notes. Sets in a topic without notes are left off the practice page.
 
 A practice file is a fragment like a note:
@@ -289,8 +289,8 @@ The site has no accounts. Everything a student does is kept in the browser's `lo
 
 | Key | Written by | What it holds |
 |---|---|---|
-| `practice:<path>` | `static/js/practice.js` | One practice set's progress, for example `practice:math-1/03-quadratic-functions/01-vertex-form`. It is a JSON map from problem number (from 0) to `"solved"` or `"review"`. Past papers use `practice:past/<path>`, for example `practice:past/eju/course-1/03-mock-paper`, so they never clash with a set |
-| `practice-hub:course` | `static/js/practice-list.js` | The course tab last opened on `/practice` |
+| `practice:<path>` | `static/js/practice.js`; React: `src/progress.js` | One practice set's progress, for example `practice:math-1/03-quadratic-functions/01-vertex-form`. It is a JSON map from problem number (from 0) to `"solved"` or `"review"`. Past papers use `practice:past/<path>`, for example `practice:past/eju/course-1/03-mock-paper`, so they never clash with a set |
+| `practice-hub:course` | `static/js/practice-list.js`; React: `src/pages/PracticeList.jsx` | The course tab last opened on `/practice` |
 | `past-tab:<exam>` | `static/js/practice-list.js` | The tab last opened on a past-question list, for example `past-tab:eju` |
 | `noteFontSize` | `static/js/note-page.js` | The A−/A+ text size, from 70 to 150 (%) |
 
@@ -361,7 +361,7 @@ Anything that doesn't exist answers `404` with `{"error": "not found"}`. The old
 
 ## 12. React frontend
 
-The site is moving from Flask templates to a React app in `frontend/`, one page at a time. So far React has the **home page** and the **note pages**; every other address (practice, past questions) sends the browser on to the same page on the Flask site.
+The site is moving from Flask templates to a React app in `frontend/`, one page at a time. So far React has the **home page**, the **note pages** and the **practice pages**; the past question pages still send the browser on to the same page on the Flask site.
 
 **Run it** (Flask must be running too, for the data):
 
@@ -385,6 +385,11 @@ npm run dev        # http://localhost:5173
 | `src/pages/Note.jsx` | A note page (`/notes/<path>`), from `/api/notes/<path>`: header, practice links, previous/next cards, text size, ← / → keys |
 | `src/components/NoteContent.jsx` | Shows a note's HTML, runs its `<script>` tags in order (loading helpers like `venn.js` once) and then draws its formulas |
 | `src/components/TopicsSidebar.jsx` | The Topics sidebar, from `/api/notes` |
+| `src/pages/PracticeList.jsx` | The practice hub (`/practice`), from `/api/practice`: course tabs (remembered; `#math-a` opens Math A) and "Solved n of m" per set and topic |
+| `src/pages/PracticeSet.jsx` | One practice set (`/practice/<path>`), from `/api/practice/<path>`: header with progress and "Start again", next set |
+| `src/practice.js` | Answer boxes and "I got it" / "Review later" buttons for each problem (moved from the old `static/js/practice.js`) |
+| `src/progress.js` | Reads and saves practice progress (`practice:<path>` in localStorage); the one place to change when progress moves to accounts |
+| `src/pageHooks.js` | Shared by notes and sets: text size, ← / → keys, page title, back to the top on a new page |
 | `src/components/LoadError.jsx` | "Not found" / "couldn't be loaded" messages |
 | `src/pages/OldSitePage.jsx` | Stand-in for pages not moved yet: opens them on :5000 |
 | `src/components/FloatBar.jsx`, `SearchBox.jsx` | The floating bar (home version, or note version with where-you-are, text size, previous/next and Topics) and its search box |

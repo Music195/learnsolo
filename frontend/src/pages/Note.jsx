@@ -7,69 +7,38 @@
 // styles it (note-page.css, note-blocks.css, practice.css).
 
 import { useCallback, useEffect, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router'
+import { Link, useParams } from 'react-router'
 import { useApi } from '../api.js'
+import { useArrowKeys, usePageTitle, useScrollToTop, useTextSize } from '../pageHooks.js'
 import FloatBar from '../components/FloatBar.jsx'
 import LoadError from '../components/LoadError.jsx'
 import NoteContent from '../components/NoteContent.jsx'
 import TopicsSidebar from '../components/TopicsSidebar.jsx'
 
-// Text size: 70%–150% in steps of 5%, remembered in the browser (localStorage)
-// under the same name the old site used, so a saved size carries over.
-const SIZE_KEY = 'noteFontSize'
-const clampSize = (size) => Math.min(Math.max(size, 70), 150)
-
 export default function Note() {
   // The route in App.jsx is "/notes/*"; useParams()['*'] is the part the *
   // matched, e.g. "math-1/03-quadratic-functions/05-quadratic-formula"
   const path = useParams()['*']
-  const navigate = useNavigate()
 
   const { data, error } = useApi(`/api/notes/${path}`)   // this note
   const sidebar = useApi('/api/notes').data              // every note, for the sidebar
 
   const [topicsOpen, setTopicsOpen] = useState(false)
-  // useState(() => ...) runs the function only once, for the first value
-  const [textSize, setTextSize] = useState(
-    () => clampSize(parseInt(localStorage.getItem(SIZE_KEY), 10) || 100),
-  )
+  const [textSize, changeTextSize] = useTextSize()      // see src/pageHooks.js
 
   // useCallback keeps the same function between draws, so the sidebar's
   // effect that uses it doesn't restart every time this page draws.
   const closeTopics = useCallback(() => setTopicsOpen(false), [])
 
-  function changeTextSize(step) {
-    const size = clampSize(textSize + 5 * step)
-    setTextSize(size)
-    localStorage.setItem(SIZE_KEY, size)
-  }
-
   // A new note: start at the top with the sidebar closed, as a new page would
-  useEffect(() => {
-    window.scrollTo(0, 0)
-    setTopicsOpen(false)
-  }, [path])
+  useScrollToTop(path)
+  useEffect(() => setTopicsOpen(false), [path])
 
-  // The browser tab's title, e.g. "Law of Sines · Math I · Learn Solo"
-  useEffect(() => {
-    if (data) document.title = `${data.note_title} · ${data.location.course} · Learn Solo`
-  }, [data])
+  // e.g. "Law of Sines · Math I · Learn Solo"
+  usePageTitle(data && `${data.note_title} · ${data.location.course} · Learn Solo`)
 
-  // ← / → keys go to the previous / next note.
-  // Ignored while typing or using a slider, so the demos' arrow keys still work.
-  useEffect(() => {
-    if (!data) return
-    function onKey(event) {
-      if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return
-      const el = document.activeElement
-      if (el && (el.isContentEditable || /^(INPUT|SELECT|TEXTAREA|BUTTON)$/.test(el.tagName))) return
-      if (topicsOpen) return
-      const link = { ArrowLeft: data.nav.prev, ArrowRight: data.nav.next }[event.key]
-      if (link) navigate(link.url)
-    }
-    document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
-  }, [data, topicsOpen, navigate])
+  // ← / → keys: previous / next note (not while the sidebar is open)
+  useArrowKeys(data?.nav, topicsOpen)
 
   if (error) return <LoadError error={error} what="note" />
   if (!data) return <p className="section">Loading…</p>
