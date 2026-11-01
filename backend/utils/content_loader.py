@@ -1,23 +1,13 @@
-import os
-import re
+from extensions import db
+from models import Note, ProblemSet
 
-# Reads the HTML files in content/ (format: docs/content-guide.md).
+# Reads notes, practice sets and past papers from the database. They get
+# there from content/ with `flask import-content` (importer.py).
 #
-#   content/notes/<course>/<topic>/<nn-name>.html      the notes
-#   content/practice/<course>/<topic>/<nn-name>.html   practice sets, same folders as the notes
-#   content/past/<category>/[<group>/]<nn-name>.html   past question papers
-#
-# A file's "path" is its place inside notes/, practice/ or past/ without
-# ".html", e.g. "math-1/03-quadratic-functions/05-quadratic-formula".
-# It is also the end of the page's URL (/notes/<path>).
-# The number prefixes make sorted paths follow the textbook order.
-
-# backend/utils/content_loader.py -> the project root, where content/ lives
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-CONTENT_FOLDER = os.path.join(PROJECT_ROOT, "content")
-NOTES_FOLDER = os.path.join(CONTENT_FOLDER, "notes")
-PRACTICE_FOLDER = os.path.join(CONTENT_FOLDER, "practice")
-PAST_FOLDER = os.path.join(CONTENT_FOLDER, "past")
+# A note's or set's "path" is its place inside content/notes/, practice/ or
+# past/ without ".html", e.g. "math-1/03-quadratic-functions/05-quadratic-formula".
+# It is also the end of the page's URL (/notes/<path>). Lists come back in
+# the order of the files' number prefixes.
 
 
 # Error normalization
@@ -25,122 +15,67 @@ PAST_FOLDER = os.path.join(CONTENT_FOLDER, "past")
 # Utils raise this instead of returning (html, status), so the routes
 # decide how to respond (404 page, JSON, ...).
 class ContentNotFound(Exception):
-    """Raised when a content file does not exist"""
+    """Raised when a note or set is not in the database"""
     pass
-
-
-def _file_path(folder, path):
-    return os.path.join(folder, *path.split("/")) + ".html"
-
-
-def _read(folder, path):
-    file = _file_path(folder, path)
-    if not os.path.exists(file):
-        raise ContentNotFound(path)
-    with open(file, "r", encoding="utf-8") as f:
-        return f.read()
-
-
-def _paths(folder):
-    """Every .html file in `folder` as a path, sorted."""
-    paths = []
-    for root, _, files in os.walk(folder):
-        for file in files:
-            if file.endswith(".html"):
-                rel = os.path.relpath(os.path.join(root, file), folder).replace("\\", "/")
-                paths.append(rel[:-5])
-    return sorted(paths)
-
-
-def _first(pattern, content):
-    match = re.search(pattern, content, re.S | re.I)
-    return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", match.group(1))).strip() if match else None
 
 
 # Notes
 # -----
-# Cached, and rebuilt when anything in the notes folder changes.
-_cache = {"mtime": None, "notes": None, "meta": None}
-
-
-def _notes_mtime():
-    try:
-        return max(os.path.getmtime(root) for root, _, _ in os.walk(NOTES_FOLDER))
-    except ValueError:
-        return 0
-
-
 def get_notes_with_titles():
     """[{"path", "title"}] for every note, in order."""
-    mtime = _notes_mtime()
-    if _cache["meta"] is None or mtime > _cache["mtime"]:
-        meta = []
-        for path in _paths(NOTES_FOLDER):
-            content = _read(NOTES_FOLDER, path)
-            # The note's <h1 class="note-title">, else its <title>, else the file name
-            title = (_first(r'<h1[^>]*class="[^"]*note-title[^"]*"[^>]*>(.*?)</h1>', content)
-                     or _first(r"<title[^>]*>(.*?)</title>", content)
-                     or path.rsplit("/", 1)[-1])
-            meta.append({"path": path, "title": title})
-        _cache.update(mtime=mtime, meta=meta, notes=[n["path"] for n in meta])
-    return _cache["meta"]
+    rows = db.session.execute(db.select(Note.path, Note.title).order_by(Note.position))
+    return [{"path": path, "title": title} for path, title in rows]
 
 
 def get_notes_list():
-    get_notes_with_titles()
-    return _cache["notes"]
-
-
-def refresh_notes_cache():
-    _cache.update(mtime=None, notes=None, meta=None)
+    return list(db.session.scalars(db.select(Note.path).order_by(Note.position)))
 
 
 def load_note(note_path):
-    return _read(NOTES_FOLDER, note_path)
+    html = db.session.scalar(db.select(Note.html).where(Note.path == note_path))
+    if html is None:
+        raise ContentNotFound(note_path)
+    return html
 
 
 # Practice sets and past papers
 # -----------------------------
-# Same file format; the folders are small, so they are read fresh each time.
-def get_sets(folder):
-    """Every set in `folder`, in order, as {"path", "title", "intro", "count", "notes", "covers", "moved_from", "review", "labels"}."""
-    sets = []
-    for path in _paths(folder):
-        content = _read(folder, path)
-        body = re.sub(r"<!--.*?-->", "", content, flags=re.S)
-        sets.append({
-            "path": path,
-            "title": _first(r'<h1[^>]*class="[^"]*practice-title[^"]*"[^>]*>(.*?)</h1>', content)
-                     or path.rsplit("/", 1)[-1],
-            # first sentence of the intro, for lists of sets
-            "intro": re.split(r"(?<=\.)\s", _first(r'<p class="practice-intro">(.*?)</p>', content) or "")[0],
-            # count problems outside comments (the file's top comment mentions the tag too)
-            "count": body.count('class="practice-problem"'),
-            # the notes its problems link to ("Uses: ..."), for "Practise this note"
-            "notes": sorted(set(re.findall(r'href="/notes/([^"#]+)"', body))),
-            # from the top comment, e.g. "01–05" or "05, 10 and 11" (concept sets only)
-            "covers": _first(r"covers notes ([^.\n]+)\.", content),
-            # earlier paths ("old|older"), where saved progress may still be
-            "moved_from": _first(r'data-moved-from="([^"]*)"', content),
-            # the last set of a topic, a mix of the whole topic
-            "review": path.endswith("-topic-review"),
-            # past papers: what each problem practises, from <span class="exam-label">I Q1 · Quadratics</span>
-            "labels": [l.split("·")[-1].strip() for l in re.findall(r'class="exam-label">([^<]*)<', body)],
-        })
-    return sets
+# Both are rows of problem_sets, told apart by kind ("practice" or "past").
+_SET_FIELDS = (ProblemSet.path, ProblemSet.title, ProblemSet.intro, ProblemSet.count,
+               ProblemSet.note_paths, ProblemSet.covers, ProblemSet.moved_from,
+               ProblemSet.is_review, ProblemSet.labels)
+
+
+def get_sets(kind):
+    """Every set of `kind`, in order, as {"path", "title", "intro", "count", "notes", "covers", "moved_from", "review", "labels"}."""
+    rows = db.session.execute(
+        db.select(*_SET_FIELDS).where(ProblemSet.kind == kind).order_by(ProblemSet.position))
+    return [{
+        "path": r.path, "title": r.title, "intro": r.intro, "count": r.count,
+        "notes": r.note_paths, "covers": r.covers, "moved_from": r.moved_from,
+        "review": r.is_review, "labels": r.labels,
+    } for r in rows]
+
+
+def _load_set(kind, path):
+    html = db.session.scalar(
+        db.select(ProblemSet.html).where(ProblemSet.kind == kind, ProblemSet.path == path))
+    if html is None:
+        raise ContentNotFound(path)
+    return html
 
 
 def get_practice_sets():
-    return get_sets(PRACTICE_FOLDER)
+    return get_sets("practice")
 
 
 def load_practice(practice_path):
-    return _read(PRACTICE_FOLDER, practice_path)
+    return _load_set("practice", practice_path)
 
 
 def get_past_papers():
-    return get_sets(PAST_FOLDER)
+    return get_sets("past")
 
 
 def load_past(past_path):
-    return _read(PAST_FOLDER, past_path)
+    return _load_set("past", past_path)

@@ -19,7 +19,7 @@ This project is built to act as a personal study companion, helping users struct
 
 * **Backend:** Python, Flask
 * **Frontend:** HTML5, CSS3, JavaScript
-* **Data Handling:** Python-based file/data structures to serve and organize dynamic notes.
+* **Database:** PostgreSQL via SQLAlchemy (Flask-SQLAlchemy, Flask-Migrate). Notes are written as HTML files in `content/` and imported with `flask import-content`.
 
 ---
 
@@ -28,8 +28,11 @@ This project is built to act as a personal study companion, helping users struct
 ```text
 ├── backend/                # The Flask app (run it from here)
 │   ├── app.py              #   Creates the Flask app and registers the routes
+│   ├── config.py           #   Settings from .env (DATABASE_URL, SECRET_KEY)
+│   ├── models.py           #   Database tables (SQLAlchemy); migrations/ holds their history
+│   ├── importer.py         #   flask import-content: copies content/ into the database
 │   ├── routes/             #   home.py, notes.py, practice.py, past.py
-│   ├── utils/              #   content_loader.py (reads content/), courses.py (display names)
+│   ├── utils/              #   content_loader.py (reads the database), courses.py (display names)
 │   ├── templates/          #   Page templates (partials/ holds shared pieces)
 │   ├── static/             #   css/, js/ (js/demos/ holds the demo helpers)
 │   └── requirements.txt    #   Python packages
@@ -50,6 +53,9 @@ This project is built to act as a personal study companion, helping users struct
 python -m venv venv && source venv/bin/activate
 pip install -r backend/requirements.txt
 cp .env.example .env          # then edit SECRET_KEY
-docker compose up -d          # PostgreSQL (not used by the app yet)
-cd backend && python app.py   # http://localhost:5000
+docker compose up -d          # PostgreSQL
+cd backend
+flask db upgrade              # create the tables
+flask import-content          # copy content/ into the database (again after editing content)
+python app.py                 # http://localhost:5000
 ```

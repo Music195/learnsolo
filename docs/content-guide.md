@@ -31,14 +31,19 @@ The floating bar at the top of every page has the search box, which finds notes,
 
 The app code lives in `backend/`, so every code path below (`app.py`, `routes/`, `utils/`, `templates/`, `static/`) is inside `backend/`. `content/` stays at the project root.
 
+Pages are served from a PostgreSQL database, not straight from the files. You still write content as HTML files in `content/`; `flask import-content` copies them into the database (section 10).
+
 | Part | Files | Job |
 |---|---|---|
-| App | `app.py` | Creates the Flask app and registers the four route files |
+| App | `app.py` | Creates the Flask app, connects the database, registers the four route files and the `flask import-content` command |
+| Settings | `config.py`, `.env` (project root) | `DATABASE_URL` and `SECRET_KEY`; copy `.env.example` to `.env` |
+| Database | `extensions.py`, `models.py`, `migrations/` | The tables (courses, topics, notes, problem_sets, users, progress) and their history for `flask db upgrade` |
+| Importing content | `importer.py` | Reads every file in `content/` (titles, covers, exam labels…) and adds, updates or removes rows to match |
 | Routes | `routes/home.py` | `/` (home page) and `/search-index.json` (the search box's list of every page) |
 | | `routes/notes.py` | `/notes/<path>`, plus the older Google Drive PDF viewer (`/viewer`, `/proxy-pdf`), which no page links to now |
 | | `routes/practice.py` | `/practice` (the hub) and `/practice/<path>` (one set, with next/previous) |
 | | `routes/past.py` | `/past`, `/past/<exam>` and `/past/<exam>/[<course>/]<paper>`; old paper addresses redirect to the new ones |
-| Reading content | `utils/content_loader.py` | Walks `content/`, reads titles, covers, exam labels and progress-related fields, and caches the lists |
+| Reading content | `utils/content_loader.py` | Reads notes, practice sets and past papers from the database for the routes |
 | Names | `utils/courses.py` | Display names: `math-1` → "Math I", topic name fixes, subjects, past-question categories (`eju` → "EJU Mock Papers", `course-1` → "Course 1 (Basic)") |
 | Google Drive | `utils/google_drive.py`, `utils/google_drive_link.py` | Only for the PDF viewer. They need `GOOGLE_CREDENTIALS_JSON` |
 | Templates | `templates/base.html` | The shared `<head>`: Bootstrap, Font Awesome, fonts |
@@ -76,7 +81,9 @@ A note file is not a full web page. It is a fragment of HTML that Flask reads fr
 ```
 content/notes/<course>/<topic>/<nn-name>.html   ← the note file (an HTML fragment)
         │
-utils/content_loader.py   finds every .html under content/notes/, reads each note's title
+flask import-content   importer.py reads each file and its title into the notes table
+        │
+utils/content_loader.py   gets the notes list and the note's HTML from the database
         │
 routes/notes.py        /notes/<path> → loads the file, works out where it sits
                        (Math C › Plane Vectors · 17 of 17) and the previous/next notes
@@ -87,7 +94,7 @@ templates/note.html    the shared page: floating bar, Topics sidebar, purple hea
 <main class="note-content">{{ content|safe }}</main>   ← the note is inserted here
 ```
 
-- **`utils/content_loader.py`** walks `content/notes/` and turns each file path into a URL path, for example `math-c/01-plane-vectors/17-line-perpendicular-to-a-vector`. The list is sorted, so the number at the start of each name sets the order of the previous/next buttons. The list is cached and rebuilt when the folder changes.
+- **`importer.py`** walks `content/notes/` and turns each file path into a URL path, for example `math-c/01-plane-vectors/17-line-perpendicular-to-a-vector`. The paths are sorted and the order is saved with each row, so the number at the start of each name sets the order of the previous/next buttons.
 - **The note's title** comes from `<h1 class="note-title">`, not from the filename. The loader reads it for the sidebar and search, and the route shows it in the purple header (the note's own `<h1>` is hidden by the CSS, so the title isn't shown twice). So the title can be longer than the filename (for example `02-graph-of-y-ax2` has the title "Graph Shape of y = ax²").
 - **Course and topic folders** (for example `math-c` / `01-plane-vectors`) become the Course and Topic dropdowns in the Topics sidebar.
 - **`templates/note.html`** loads MathJax with `$...$` as the maths delimiter, and loads `static/css/note-blocks.css` for the shared note design.
@@ -185,7 +192,7 @@ To start Physics, add notes like `content/notes/physics-basic/01-motion/01-veloc
 3. Change the tag, the title and the 8 blocks.
 4. Give the demo a new id prefix and rewrite its `draw()` function.
 
-The app finds the new file on its own; you don't need to register it anywhere.
+Then run `flask import-content` (section 10); you don't need to register the note anywhere else.
 
 ## 7. Practice sets
 
@@ -287,17 +294,28 @@ Because progress is stored under the set's path, renaming a set loses it unless 
 
 ## 10. Running and deploying
 
-**On your computer:**
+**On your computer** (from the project root, once):
 
 ```bash
-python -m venv venv && venv/bin/pip install -r requirements.txt   # once
-venv/bin/python app.py                                            # http://localhost:5000
-FLASK_DEBUG=1 venv/bin/python app.py                              # reloads when Python files change
+python -m venv venv && venv/bin/pip install -r backend/requirements.txt
+cp .env.example .env              # then set SECRET_KEY to a long random string
+docker compose up -d              # starts PostgreSQL (again after each reboot)
+cd backend
+../venv/bin/flask db upgrade      # creates the tables
+../venv/bin/flask import-content  # copies content/ into the database
 ```
 
-You don't need to restart after editing content. Every page is read from its file on each visit, and the notes list is rebuilt when a file is added, renamed or removed. If you change a note's `<h1>` title and the sidebar or search still shows the old one, restart the app.
+Then, from `backend/`:
 
-**On the web:** the site runs on Render, set up by `render.yaml`. Render installs `requirements.txt` and starts `gunicorn app:app`. It deploys again when `main` changes, so the usual flow is:
+```bash
+../venv/bin/python app.py         # http://localhost:5000 (reloads when Python files change, FLASK_DEBUG=1 in .env)
+```
+
+**After editing content**, run `../venv/bin/flask import-content` from `backend/` and refresh the page. It prints how many rows were added, updated and removed; running it twice in a row changes nothing. The app doesn't need a restart.
+
+**After changing `models.py`**, make a migration and apply it: `../venv/bin/flask db migrate -m "what changed"`, check the new file in `migrations/versions/`, then `../venv/bin/flask db upgrade`. Commit the migration file with the model change.
+
+**On the web:** the site runs on Render, set up by `render.yaml`. Render installs `backend/requirements.txt` and starts `gunicorn app:app` in `backend/`. The app now needs a `DATABASE_URL`, so the Render site won't start until a Render PostgreSQL database is set up (planned as the last step of the move to Flask API + React). It deploys again when `main` changes, so the usual flow is:
 
 1. Make a branch.
 2. Commit.
