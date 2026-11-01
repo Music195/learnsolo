@@ -19,7 +19,10 @@ def _build_credentials():
             scopes=['https://www.googleapis.com/auth/drive.readonly']
         )
 
-    SERVICE_ACCOUNT_FILE = './math-problems-468009-2dfd02b27bfc.json'
+    # Kept in the project root (git-ignored); found wherever the app is started from
+    SERVICE_ACCOUNT_FILE = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+        'math-problems-468009-2dfd02b27bfc.json')
     if os.path.exists(SERVICE_ACCOUNT_FILE):
         return service_account.Credentials.from_service_account_file(
             SERVICE_ACCOUNT_FILE,

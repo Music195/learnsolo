@@ -12,7 +12,9 @@ import re
 # It is also the end of the page's URL (/notes/<path>).
 # The number prefixes make sorted paths follow the textbook order.
 
-CONTENT_FOLDER = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "content")
+# backend/utils/content_loader.py -> the project root, where content/ lives
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+CONTENT_FOLDER = os.path.join(PROJECT_ROOT, "content")
 NOTES_FOLDER = os.path.join(CONTENT_FOLDER, "notes")
 PRACTICE_FOLDER = os.path.join(CONTENT_FOLDER, "practice")
 PAST_FOLDER = os.path.join(CONTENT_FOLDER, "past")

@@ -26,14 +26,30 @@ This project is built to act as a personal study companion, helping users struct
 ## 📂 Project Structure (Conceptual)
 
 ```text
-├── app.py                  # Creates the Flask app and registers the routes
+├── backend/                # The Flask app (run it from here)
+│   ├── app.py              #   Creates the Flask app and registers the routes
+│   ├── routes/             #   home.py, notes.py, practice.py, past.py
+│   ├── utils/              #   content_loader.py (reads content/), courses.py (display names)
+│   ├── templates/          #   Page templates (partials/ holds shared pieces)
+│   ├── static/             #   css/, js/ (js/demos/ holds the demo helpers)
+│   └── requirements.txt    #   Python packages
 ├── content/                # All learning material, as HTML fragments
 │   ├── notes/              #   notes/<course>/<topic>/<nn-name>.html
 │   ├── practice/           #   practice sets, same course/topic folders as notes/
 │   └── past/               #   past question papers by exam (eju/, university/)
-├── routes/                 # home.py, notes.py, practice.py, past.py
-├── utils/                  # content_loader.py (reads content/), courses.py (display names)
-├── templates/              # Page templates (partials/ holds shared pieces)
-├── static/                 # css/, js/ (js/demos/ holds the demo helpers)
+├── docker-compose.yml      # Local PostgreSQL (docker compose up -d)
+├── .env.example            # Copy to .env: DATABASE_URL, SECRET_KEY
 ├── docs/content-guide.md   # How the project fits together, and how to write notes, practice sets and past papers
 └── README.md               # Project documentation
+
+---
+
+## ▶️ Running locally
+
+```bash
+python -m venv venv && source venv/bin/activate
+pip install -r backend/requirements.txt
+cp .env.example .env          # then edit SECRET_KEY
+docker compose up -d          # PostgreSQL (not used by the app yet)
+cd backend && python app.py   # http://localhost:5000
+```
