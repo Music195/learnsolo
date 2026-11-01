@@ -358,3 +358,34 @@ Everything under `/api` returns JSON instead of a page. The React frontend will 
 | `/api/past/<exam>/[<course>/]<paper>` | one paper, like a set, plus `paper` (its category) |
 
 Anything that doesn't exist answers `404` with `{"error": "not found"}`. The old address of a renamed paper answers `404` with `{"error": "moved", "moved_to": "/past/..."}`.
+
+## 12. React frontend
+
+The site is moving from Flask templates to a React app in `frontend/`, one page at a time. So far React has the **home page**; every other address sends the browser on to the same page on the Flask site.
+
+**Run it** (Flask must be running too, for the data):
+
+```bash
+cd frontend
+npm install        # once
+npm run dev        # http://localhost:5173
+```
+
+`npm run dev` starts Vite, which shows changes as soon as you save a file. Requests to `/api/...` and `/static/...` are passed on to Flask on :5000 (`vite.config.js`).
+
+| File | Job |
+|---|---|
+| `index.html` | The one HTML page. Loads Bootstrap, Font Awesome, MathJax and the demo helpers (`/static/js/demos/`) once for every page |
+| `src/main.jsx` | Starts React and the router |
+| `src/App.jsx` | Which page component to show for which address. Add a `<Route>` here when a page moves to React |
+| `src/styles.js` | Imports the CSS, still from `backend/static/css/` so both sites look the same |
+| `src/api.js` | `fetchJson(url)` and the `useApi(url)` hook: load data from `/api/...` |
+| `src/mathjax.js` | `typeset(element)`: draw the `$...$` formulas inside an element, once |
+| `src/pages/Home.jsx` | The home page, from `/api/home` |
+| `src/pages/OldSitePage.jsx` | Stand-in for pages not moved yet: opens them on :5000 |
+| `src/components/FloatBar.jsx`, `SearchBox.jsx` | The floating bar and its search box |
+| `src/components/HeroDemo.jsx` | The draggable demo on the home page |
+
+The React pages use the same HTML and class names as the templates, so the same CSS styles them.
+
+**MathJax:** typeset each element only once. A drawn formula keeps a hidden MathML copy for screen readers, and this MathJax build reads MathML too, so typesetting the same element again draws every formula a second time inside the first. `typeset()` in `src/mathjax.js` remembers which elements it has done.
