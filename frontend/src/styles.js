@@ -14,3 +14,7 @@ import '../../backend/static/css/note-blocks.css'   // the 8 blocks inside a not
 import '../../backend/static/css/practice.css'      // practice sets, and the "Practise this note" cards
 import '../../backend/static/css/practice-list.css' // the practice hub, and tabs on the past paper lists
 import '../../backend/static/css/past.css'          // the past question lists
+
+// New for React (not used by the old pages): the log in / sign up pages
+// and the account button in the floating bar
+import './account.css'

@@ -122,7 +122,7 @@ function ExamPage({ folder }) {
   )
 }
 
-// One subfolder's papers, with the progress saved in this browser.
+// One subfolder's papers, with your saved progress.
 // Papers keep their progress under "past/<path>", apart from practice sets.
 function GroupCard({ group }) {
   const solved = group.papers.map((paper) => solvedCount(`past/${paper.path}`, paper.moved_from))

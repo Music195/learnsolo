@@ -1,6 +1,6 @@
 from flask import Flask
 from config import Config
-from extensions import db, migrate
+from extensions import db, login_manager, migrate
 import models  # noqa: F401  (so Flask-Migrate sees the tables)
 from routes.home import home_bp
 from routes.notes import notes_bp
@@ -15,6 +15,22 @@ def create_app():
     # Database (models.py); `flask db ...` commands come from Flask-Migrate
     db.init_app(app)
     migrate.init_app(app, db)
+
+    # Logins (api/auth.py): Flask-Login reads the user id from the login
+    # cookie and asks load_user() for that user, on every request.
+    if not app.config["SECRET_KEY"]:
+        raise RuntimeError("SECRET_KEY is not set: add a long random one to .env (see .env.example)")
+    login_manager.init_app(app)
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        return db.session.get(models.User, int(user_id))
+
+    # A route marked @login_required, visited without logging in: answer in
+    # JSON, as the rest of the API does, instead of redirecting to a login page.
+    @login_manager.unauthorized_handler
+    def unauthorized():
+        return {"error": "login required"}, 401
 
     # Register blueprints
     app.register_blueprint(home_bp)       # home page and search

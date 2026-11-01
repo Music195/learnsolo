@@ -33,6 +33,11 @@ def page_not_found(error):
     return error
 
 
-# Load the routes. This import is at the bottom because content.py needs
+# Requests that change something (log in, save progress) only accept a JSON
+# body. Together with the SameSite login cookie (config.py), that stops other
+# websites from sending them in your name: a browser won't send JSON or the
+# cookie to another site without this site agreeing, and it doesn't.
+
+# Load the routes. This import is at the bottom because the route files need
 # api_bp, which has to exist first.
-from api import content  # noqa: E402,F401
+from api import content, auth, progress  # noqa: E402,F401

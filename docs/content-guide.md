@@ -47,6 +47,7 @@ Pages are served from a PostgreSQL database, not straight from the files. You st
 | Reading content | `utils/content_loader.py` | Reads notes, practice sets and past papers from the database |
 | Page data | `services/home.py`, `notes.py`, `practice.py`, `past.py` | Works out what each page shows: lists, where a page sits, previous/next. Used by both the HTML routes and the API. `services/urls.py` builds page addresses |
 | JSON API | `api/__init__.py`, `api/content.py` | `/api/...`: the same data as JSON for the React frontend (section 11) |
+| Accounts | `api/auth.py`, `api/progress.py` | Sign up, log in and out (Flask-Login cookies), and each user's saved practice progress (sections 9 and 11) |
 | Tests | `tests/`, `pytest.ini` | `pytest` from `backend/` (section 10) |
 | Names | `utils/courses.py` | Display names: `math-1` → "Math I", topic name fixes, subjects, past-question categories (`eju` → "EJU Mock Papers", `course-1` → "Course 1 (Basic)") |
 | Google Drive | `utils/google_drive.py`, `utils/google_drive_link.py` | Only for the PDF viewer. They need `GOOGLE_CREDENTIALS_JSON` |
@@ -283,9 +284,16 @@ content/past/eju/course-1/03-mock-paper.html                       →   /past/e
 - Styles: `static/css/past.css` (the list pages), `static/css/practice-list.css` (the tabs on `/past/eju`) and `static/css/practice.css` (the paper itself, including `.exam-label`).
 - The search box lists EJU papers as "Past question: Mock Paper 3 · Course 1" with "EJU Mock Papers · Course 1 (Basic) · Past question" under it.
 
-## 9. What is saved on the device
+## 9. What is saved, and where
 
-The site has no accounts. Everything a student does is kept in the browser's `localStorage`, so it stays on that one device and browser:
+Anyone can make an account (`/signup`) or log in (`/login`) with the button at the right of the floating bar.
+
+- **Logged out**, everything a student does is kept in the browser's `localStorage`. It stays on that one device and browser.
+- **Logged in**, practice progress is saved to their account in the database (the `progress` table, one row per set per user), so it is the same on every device. `src/progress.js` loads it all once at log in and sends each change to `PUT /api/progress/<path>`.
+- **At log in or sign up**, progress saved in the browser is added to the account (`POST /api/progress/merge`) and then removed from the browser. Where both have the same set, they are combined problem by problem: "solved" in either place wins, so nothing is lost.
+- Tabs and text size always stay in the browser.
+
+The `localStorage` keys:
 
 | Key | Written by | What it holds |
 |---|---|---|
@@ -294,7 +302,9 @@ The site has no accounts. Everything a student does is kept in the browser's `lo
 | `past-tab:<exam>` | `static/js/practice-list.js`; React: `src/components/HubTabs.jsx` | The tab last opened on a past-question list, for example `past-tab:eju` |
 | `noteFontSize` | `static/js/note-page.js` | The A−/A+ text size, from 70 to 150 (%) |
 
-Because progress is stored under the set's path, renaming a set loses it unless you add `data-moved-from` (section 7).
+Progress is stored under the set's path, both in the browser and in accounts. Renaming a set loses it unless you add `data-moved-from` (section 7); the progress then moves to the new path the first time the set is opened.
+
+**Passwords** are never stored, only a hash of them (`werkzeug.security`), and the login cookie can't be read by JavaScript (HttpOnly). It is signed with `SECRET_KEY`, so keep that secret and long (`.env.example` shows how to make one).
 
 ## 10. Running and deploying
 
@@ -334,7 +344,7 @@ They create and use a separate `learnsolo_test` database, filled from `content/`
 3. Open a pull request.
 4. Merge into `main`.
 
-`GOOGLE_CREDENTIALS_JSON` is set in the Render dashboard, not in the repo, and only the PDF viewer needs it.
+`GOOGLE_CREDENTIALS_JSON` is set in the Render dashboard, not in the repo, and only the PDF viewer needs it. The live site also needs `SECRET_KEY` (a long random string) and `SESSION_COOKIE_SECURE=1` there, so login cookies are only sent over https.
 
 **Before merging**, open the pages you changed in the browser. For a practice set, also check:
 - every `data-answer` is accepted when typed in,
@@ -359,6 +369,24 @@ Everything under `/api` returns JSON instead of a page. The React frontend will 
 
 Anything that doesn't exist answers `404` with `{"error": "not found"}`. The old address of a renamed paper answers `404` with `{"error": "moved", "moved_to": "/past/..."}`.
 
+**Accounts** (`api/auth.py`). They send and receive JSON; mistakes answer with `{"error": "..."}`, a message to show the user.
+
+| Request | Does |
+|---|---|
+| `GET /api/auth/me` | `{"user": {"email"}}`, or `{"user": null}` when logged out |
+| `POST /api/auth/signup` `{"email", "password"}` | Makes an account and logs in (`201`). `400` for a bad email or a password under 8 characters, `409` if the email has an account |
+| `POST /api/auth/login` `{"email", "password"}` | Logs in, or `401` "Wrong email or password." (the same message whichever is wrong) |
+| `POST /api/auth/logout` | Logs out |
+
+**Progress** (`api/progress.py`), only when logged in; otherwise `401` `{"error": "login required"}`. A set's progress is the same map as in the browser, e.g. `{"0": "solved", "2": "review"}`.
+
+| Request | Does |
+|---|---|
+| `GET /api/progress` | `{"progress": {<path>: {...}}}`: every set with progress |
+| `PUT /api/progress/<path>` | Saves one set's progress (`{}` for "Start again") |
+| `DELETE /api/progress/<path>` | Forgets one set's progress |
+| `POST /api/progress/merge` `{"progress": {...}}` | Adds the browser's progress to the account ("solved" wins) and returns all of it |
+
 ## 12. React frontend
 
 The site has moved from Flask templates to a React app in `frontend/`: the home page, notes, practice and past questions are all React pages, and any other address shows "Page not found". The Flask templates still work on :5000 until the last step of the move removes them.
@@ -379,7 +407,9 @@ npm run dev        # http://localhost:5173
 | `src/main.jsx` | Starts React and the router |
 | `src/App.jsx` | Which page component to show for which address. Add a `<Route>` here when a page moves to React |
 | `src/styles.js` | Imports the CSS, still from `backend/static/css/` so both sites look the same |
-| `src/api.js` | `fetchJson(url)` and the `useApi(url)` hook: load data from `/api/...` |
+| `src/api.js` | `fetchJson(url)` and the `useApi(url)` hook: load data from `/api/...`; `sendJson(method, url, data)` sends data (log in, save progress) |
+| `src/auth.jsx` | `<AuthProvider>` and `useAuth()`: who is logged in, and `signup`, `login`, `logout`. Asks `/api/auth/me` when the site opens |
+| `src/pages/Account.jsx`, `src/account.css` | The `/login` and `/signup` pages (one form), and the account button's style. Afterwards you go back to the page you came from |
 | `src/mathjax.js` | `typeset(element)`: draw the `$...$` formulas inside an element, once |
 | `src/pages/Home.jsx` | The home page, from `/api/home` |
 | `src/pages/Note.jsx` | A note page (`/notes/<path>`), from `/api/notes/<path>`: header, practice links, previous/next cards, text size, ← / → keys |
@@ -388,17 +418,17 @@ npm run dev        # http://localhost:5173
 | `src/pages/PracticeList.jsx` | The practice hub (`/practice`), from `/api/practice`: course tabs (remembered; `#math-a` opens Math A) and "Solved n of m" per set and topic |
 | `src/pages/PracticeSet.jsx` | One practice set (`/practice/<path>`), from `/api/practice/<path>`: header with progress and "Start again", next set |
 | `src/practice.js` | Answer boxes and "I got it" / "Review later" buttons for each problem (moved from the old `static/js/practice.js`) |
-| `src/progress.js` | Reads and saves practice progress (`practice:<path>` in localStorage); the one place to change when progress moves to accounts |
+| `src/progress.js` | Reads and saves practice progress: in localStorage when logged out, in the account when logged in (section 9). Pages only use this file, so they don't need to know which |
 | `src/pageHooks.js` | Shared by notes and sets: text size, ← / → keys, page title, back to the top on a new page |
 | `src/components/LoadError.jsx` | "Not found" / "couldn't be loaded" messages |
 | `src/pages/PastList.jsx` | `/past` (a card per exam) and `/past/<exam>` (its papers; tabs per subfolder, remembered as `past-tab:<exam>`, `#course-2` opens Course 2), from `/api/past` and `/api/past/<exam>` |
 | `src/pages/PastPaper.jsx` | One paper (`/past/<exam>/[<course>/]<paper>`): works like a practice set, with progress under `past/<path>`. An old address of a renamed paper redirects to the new one |
 | `src/components/HubTabs.jsx` | The tabs and "Solved n of m" badges shared by the practice hub and the past paper lists |
 | `src/pages/NotFound.jsx` | "Page not found" for any other address |
-| `src/components/FloatBar.jsx`, `SearchBox.jsx` | The floating bar (home version, or note version with where-you-are, text size, previous/next and Topics) and its search box |
+| `src/components/FloatBar.jsx`, `SearchBox.jsx` | The floating bar (home version, or note version with where-you-are, text size, previous/next and Topics), its search box, and the "Log in" / "Log out" button |
 | `src/components/HeroDemo.jsx` | The draggable demo on the home page |
 
-The React pages use the same HTML and class names as the templates, so the same CSS styles them.
+The React pages use the same HTML and class names as the templates, so the same CSS styles them. Accounts are React only: the old Flask pages keep progress in the browser.
 
 **MathJax:** typeset each element only once. A drawn formula keeps a hidden MathML copy for screen readers, and this MathJax build reads MathML too, so typesetting the same element again draws every formula a second time inside the first. `typeset()` in `src/mathjax.js` remembers which elements it has done.
 

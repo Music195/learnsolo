@@ -20,6 +20,7 @@ This project is built to act as a personal study companion, helping users struct
 * **Backend:** Python, Flask
 * **Frontend:** React (Vite, React Router); the old Flask HTML templates are still there until the last step
 * **Database:** PostgreSQL via SQLAlchemy (Flask-SQLAlchemy, Flask-Migrate). Notes are written as HTML files in `content/` and imported with `flask import-content`.
+* **Accounts:** Flask-Login. Anyone can sign up; practice progress is then saved to the account instead of only in the browser.
 
 ---
 
@@ -33,6 +34,7 @@ This project is built to act as a personal study companion, helping users struct
 │   ├── importer.py         #   flask import-content: copies content/ into the database
 │   ├── routes/             #   HTML pages: home.py, notes.py, practice.py, past.py
 │   ├── api/                #   JSON API under /api, for the React frontend
+│   │                       #   (content.py, auth.py: accounts, progress.py: saved progress)
 │   ├── services/           #   The data behind each page, shared by routes/ and api/
 │   ├── tests/              #   Automatic tests (pytest)
 │   ├── utils/              #   content_loader.py (reads the database), courses.py (display names)
@@ -42,7 +44,7 @@ This project is built to act as a personal study companion, helping users struct
 ├── frontend/               # The React app (Vite), replacing the HTML pages one by one
 │   ├── index.html          #   The one page React draws into
 │   └── src/                #   main.jsx (start), App.jsx (which page for which address),
-│                           #   api.js, pages/, components/
+│                           #   api.js, auth.jsx (who is logged in), progress.js, pages/, components/
 ├── content/                # All learning material, as HTML fragments
 │   ├── notes/              #   notes/<course>/<topic>/<nn-name>.html
 │   ├── practice/           #   practice sets, same course/topic folders as notes/

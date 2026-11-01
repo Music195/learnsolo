@@ -5,8 +5,11 @@ import { useEffect, useState } from 'react'
 // fetchJson('/api/home') → a Promise of the JSON, as JavaScript objects.
 // fetch() only fails when there is no answer at all, so a 404 or 500 is
 // turned into an error here by hand.
-export async function fetchJson(url) {
-  const response = await fetch(url)
+//
+// `options` is passed on to fetch(): leave it out for a GET; sendJson()
+// below uses it to send data.
+export async function fetchJson(url, options) {
+  const response = await fetch(url, options)
   if (!response.ok) {
     const error = new Error(`${url} answered ${response.status}`)
     error.status = response.status   // e.g. 404, so pages can say "not found"
@@ -15,6 +18,17 @@ export async function fetchJson(url) {
     throw error
   }
   return response.json()
+}
+
+// Send data to the API, e.g. sendJson('POST', '/api/auth/login', { email, password }).
+// The data goes as JSON; the answer comes back as JSON too, or an error
+// like fetchJson's (error.body.error is the server's message).
+export function sendJson(method, url, data) {
+  return fetchJson(url, {
+    method,
+    headers: { 'Content-Type': 'application/json' },
+    body: data === undefined ? undefined : JSON.stringify(data),
+  })
 }
 
 // A "hook": a function components call to get something that changes over

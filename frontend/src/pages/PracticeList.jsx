@@ -1,13 +1,14 @@
 // The practice hub: /practice
 // One tab per course; each topic is a card listing its practice sets in
 // order (the concept sets, then the topic review), with "Solved 2 of 6"
-// from the progress saved in this browser. Past questions are linked at the end.
+// from your saved progress (src/progress.js). Past questions are linked at the end.
 //
 // The data comes from /api/practice (backend/services/practice.py). The
 // HTML matches backend/templates/practice-list.html (practice-list.css).
 
 import { Link } from 'react-router'
 import { useApi } from '../api.js'
+import { useAuth } from '../auth.jsx'
 import { solvedCount } from '../progress.js'
 import { usePageTitle } from '../pageHooks.js'
 import FloatBar from '../components/FloatBar.jsx'
@@ -19,6 +20,7 @@ const TAB_KEY = 'practice-hub:course'
 
 export default function PracticeList() {
   const { data, error } = useApi('/api/practice')
+  const { user } = useAuth()
   usePageTitle('Practice · Learn Solo')
 
   if (error) return <LoadError error={error} what="practice page" />
@@ -35,7 +37,8 @@ export default function PracticeList() {
           <p className="hub-lead">
             Problem sets for every topic, from basic questions up to exam-style ones.
             Each topic has concept sets for a few notes at a time, then a topic review.
-            Every problem has a hint, a full solution and an answer check, and your progress is saved on this device.
+            Every problem has a hint, a full solution and an answer check, and your progress is saved{' '}
+            {user ? 'to your account.' : <>on this device. <Link to="/login" state={{ from: '/practice' }}>Log in</Link> to keep it on every device.</>}
           </p>
         </div>
       </header>
@@ -69,7 +72,7 @@ function CourseTabs({ courses }) {
   )
 }
 
-// One topic: its sets, with the progress saved in this browser
+// One topic: its sets, with your saved progress
 function TopicCard({ topic, number }) {
   // Solved problems per set (null = not started), and the topic's total
   const solved = topic.sets.map((s) => solvedCount(s.path, s.moved_from))

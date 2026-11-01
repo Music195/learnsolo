@@ -1,5 +1,7 @@
 from datetime import datetime, timezone
 
+from flask_login import UserMixin
+
 from extensions import db
 
 # The database tables.
@@ -68,9 +70,11 @@ class ProblemSet(db.Model):
     position = db.Column(db.Integer, nullable=False)
 
 
-# Accounts and progress: the tables exist now, the pages that use them come later.
+# Accounts and progress: used by api/auth.py and api/progress.py.
 
-class User(db.Model):
+class User(UserMixin, db.Model):
+    """An account. UserMixin adds what Flask-Login needs (get_id, is_authenticated...).
+    The password itself is never stored, only a hash of it (api/auth.py)."""
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255), unique=True, nullable=False)

@@ -8,9 +8,11 @@
 //   <FloatBar location={...} nav={...} onTextSize={...} onTopics={...} topicsOpen={...} />
 //                                   note page: "where you are", search, text size,
 //                                   previous/next and the Topics button
+// Both end with the account button: "Log in", or "Log out" when logged in.
 
 import { useState } from 'react'
-import { Link } from 'react-router'
+import { Link, useLocation } from 'react-router'
+import { useAuth } from '../auth.jsx'
 import SearchBox from './SearchBox.jsx'
 
 export default function FloatBar({ location, nav, onTextSize, onTopics, topicsOpen }) {
@@ -75,6 +77,8 @@ export default function FloatBar({ location, nav, onTextSize, onTopics, topicsOp
               )}
             </>
           )}
+
+          <AccountButton onClick={closeMenu} />
         </div>
       </div>
     </nav>
@@ -113,5 +117,29 @@ function PagerButton({ link, label, icon, onClick }) {
           title={`${label}: ${link.title}`} aria-label={`${label}: ${link.title}`}>
       <i className={`fas ${icon}`}></i>
     </Link>
+  )
+}
+
+// "Log in" (a link to /login), or "Log out" when logged in.
+function AccountButton({ onClick }) {
+  const { user, logout } = useAuth()
+  const here = useLocation()
+
+  if (!user) {
+    // state: the log in page sends you back to this page afterwards
+    return (
+      <Link className="bar-btn bar-account" to="/login" onClick={onClick}
+            state={{ from: here.pathname + here.search + here.hash }}>
+        <i className="fas fa-user"></i> Log in
+      </Link>
+    )
+  }
+  return (
+    <button className="bar-btn bar-account" title={`Logged in as ${user.email}`}
+            onClick={() => { onClick(); logout() }}>
+      <i className="fas fa-right-from-bracket"></i> Log out
+      {/* The email is only shown in the phone menu, where there is room */}
+      <span className="bar-account-email">({user.email})</span>
+    </button>
   )
 }

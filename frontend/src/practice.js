@@ -6,7 +6,7 @@
 //      typed answers such as 45, 2√7, sqrt(28), 5/2 or 2.5
 //   2. "I got it" / "Review later" buttons, shown once the student has
 //      checked an answer or opened the solution
-// Progress is saved in this browser (src/progress.js).
+// Progress is saved in this browser, or in your account (src/progress.js).
 //
 // This code changes the set's HTML directly with DOM functions
 // (createElement, addEventListener...), the way the old page did, rather
