@@ -43,7 +43,11 @@ Pages are served from a PostgreSQL database, not straight from the files. You st
 | | `routes/notes.py` | `/notes/<path>`, plus the older Google Drive PDF viewer (`/viewer`, `/proxy-pdf`), which no page links to now |
 | | `routes/practice.py` | `/practice` (the hub) and `/practice/<path>` (one set, with next/previous) |
 | | `routes/past.py` | `/past`, `/past/<exam>` and `/past/<exam>/[<course>/]<paper>`; old paper addresses redirect to the new ones |
-| Reading content | `utils/content_loader.py` | Reads notes, practice sets and past papers from the database for the routes |
+| | | Each route gets its data from `services/` and fills in a template |
+| Reading content | `utils/content_loader.py` | Reads notes, practice sets and past papers from the database |
+| Page data | `services/home.py`, `notes.py`, `practice.py`, `past.py` | Works out what each page shows: lists, where a page sits, previous/next. Used by both the HTML routes and the API. `services/urls.py` builds page addresses |
+| JSON API | `api/__init__.py`, `api/content.py` | `/api/...`: the same data as JSON for the React frontend (section 11) |
+| Tests | `tests/`, `pytest.ini` | `pytest` from `backend/` (section 10) |
 | Names | `utils/courses.py` | Display names: `math-1` → "Math I", topic name fixes, subjects, past-question categories (`eju` → "EJU Mock Papers", `course-1` → "Course 1 (Basic)") |
 | Google Drive | `utils/google_drive.py`, `utils/google_drive_link.py` | Only for the PDF viewer. They need `GOOGLE_CREDENTIALS_JSON` |
 | Templates | `templates/base.html` | The shared `<head>`: Bootstrap, Font Awesome, fonts |
@@ -85,7 +89,7 @@ flask import-content   importer.py reads each file and its title into the notes 
         │
 utils/content_loader.py   gets the notes list and the note's HTML from the database
         │
-routes/notes.py        /notes/<path> → loads the file, works out where it sits
+routes/notes.py        /notes/<path> → services/notes.py loads the note, works out where it sits
                        (Math C › Plane Vectors · 17 of 17) and the previous/next notes
         │
 templates/note.html    the shared page: floating bar, Topics sidebar, purple header
@@ -315,6 +319,14 @@ Then, from `backend/`:
 
 **After changing `models.py`**, make a migration and apply it: `../venv/bin/flask db migrate -m "what changed"`, check the new file in `migrations/versions/`, then `../venv/bin/flask db upgrade`. Commit the migration file with the model change.
 
+**Tests**, from `backend/` (once: `../venv/bin/pip install -r requirements-dev.txt`):
+
+```bash
+../venv/bin/pytest          # every test; add -v to see each name
+```
+
+They create and use a separate `learnsolo_test` database, filled from `content/`, so your own database is never changed. Run them before opening a pull request.
+
 **On the web:** the site runs on Render, set up by `render.yaml`. Render installs `backend/requirements.txt` and starts `gunicorn app:app` in `backend/`. The app now needs a `DATABASE_URL`, so the Render site won't start until a Render PostgreSQL database is set up (planned as the last step of the move to Flask API + React). It deploys again when `main` changes, so the usual flow is:
 
 1. Make a branch.
@@ -328,3 +340,21 @@ Then, from `backend/`:
 - every `data-answer` is accepted when typed in,
 - the "Uses:" links open the right notes,
 - the set appears on `/practice`.
+
+## 11. JSON API
+
+Everything under `/api` returns JSON instead of a page. The React frontend will use it; for now you can open any of these in the browser to see the data. Each returns the same data its HTML page uses (from `services/`); fields called `content` hold the HTML of the note, set or paper.
+
+| Address | Returns |
+|---|---|
+| `/api/home` | `subjects` (tabs → courses → topics) and `stats` (counts) |
+| `/api/search-index` | `[{title, where, url}]` for every note, set and paper |
+| `/api/notes` | `notes_meta` (every note's path and title, in order) and `display_names` for the Topics sidebar |
+| `/api/notes/<path>` | `note_title`, `content`, `location`, `nav` (prev/next) and `practice` (sets for this note) |
+| `/api/practice` | `courses` → topics → sets |
+| `/api/practice/<path>` | one set: `title`, `count`, `content`, `location`, `nav` |
+| `/api/past` | `categories`, each with its papers |
+| `/api/past/<exam>` | one category: name, about, `papers`, `groups` |
+| `/api/past/<exam>/[<course>/]<paper>` | one paper, like a set, plus `paper` (its category) |
+
+Anything that doesn't exist answers `404` with `{"error": "not found"}`. The old address of a renamed paper answers `404` with `{"error": "moved", "moved_to": "/past/..."}`.

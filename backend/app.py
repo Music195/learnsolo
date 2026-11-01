@@ -6,6 +6,7 @@ from routes.home import home_bp
 from routes.notes import notes_bp
 from routes.practice import practice_bp
 from routes.past import past_bp
+from api import api_bp
 
 def create_app():
     app = Flask(__name__)
@@ -20,6 +21,7 @@ def create_app():
     app.register_blueprint(notes_bp)      # /notes/... and the PDF viewer
     app.register_blueprint(practice_bp)   # /practice/...
     app.register_blueprint(past_bp)       # /past/...
+    app.register_blueprint(api_bp)        # /api/... JSON for the React frontend (api/)
 
     # flask import-content: copy content/ into the database (importer.py)
     @app.cli.command("import-content")
