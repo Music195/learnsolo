@@ -18,7 +18,7 @@ This project is built to act as a personal study companion, helping users struct
 ## 🛠️ Tech Stack
 
 * **Backend:** Python, Flask
-* **Frontend:** React (Vite, React Router), moving over from Flask HTML templates page by page
+* **Frontend:** React (Vite, React Router); the old Flask HTML templates are still there until the last step
 * **Database:** PostgreSQL via SQLAlchemy (Flask-SQLAlchemy, Flask-Migrate). Notes are written as HTML files in `content/` and imported with `flask import-content`.
 
 ---
@@ -75,7 +75,7 @@ npm install                   # once, and after package.json changes
 npm run dev                   # http://localhost:5173 (keep Flask running: React gets its data from it)
 ```
 
-Pages not in React yet open on the Flask site (:5000).
+Every page is in React now. The Flask pages on :5000 still work too, until they are removed in the last step.
 
 Run the tests from `backend/` (they use a separate `learnsolo_test` database):
 

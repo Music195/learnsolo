@@ -10,6 +10,8 @@ export async function fetchJson(url) {
   if (!response.ok) {
     const error = new Error(`${url} answered ${response.status}`)
     error.status = response.status   // e.g. 404, so pages can say "not found"
+    // The API explains errors in JSON, e.g. {"error": "moved", "moved_to": "/past/..."}
+    error.body = await response.json().catch(() => null)
     throw error
   }
   return response.json()
