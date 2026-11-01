@@ -11,17 +11,19 @@ from models import Note, ProblemSet
 NOTE = "math-1/03-quadratic-functions/05-quadratic-formula"
 
 
-def test_home_counts_match_the_database(client):
+def test_home_counts_match_the_database(client, app):
     response = client.get("/api/home")
     assert response.status_code == 200
     data = response.get_json()                     # the JSON, as Python dicts and lists
-    assert data["stats"]["notes"] == Note.query.count()
+    with app.app_context():                        # needed to read the database here
+        assert data["stats"]["notes"] == Note.query.count()
     assert [s["name"] for s in data["subjects"]][:2] == ["Mathematics", "Physics"]
 
 
-def test_search_index_has_every_note_set_and_paper(client):
+def test_search_index_has_every_note_set_and_paper(client, app):
     data = client.get("/api/search-index").get_json()
-    assert len(data) == Note.query.count() + ProblemSet.query.count()
+    with app.app_context():
+        assert len(data) == Note.query.count() + ProblemSet.query.count()
     assert {"title", "where", "url"} <= set(data[0])        # <= means "is a subset of"
 
 
@@ -40,9 +42,10 @@ def test_first_note_has_no_previous(client):
     assert data["nav"]["prev"] is None
 
 
-def test_notes_sidebar(client):
+def test_notes_sidebar(client, app):
     data = client.get("/api/notes").get_json()
-    assert len(data["notes_meta"]) == Note.query.count()
+    with app.app_context():
+        assert len(data["notes_meta"]) == Note.query.count()
     assert data["display_names"]["courses"]["math-1"] == "Math I"
 
 

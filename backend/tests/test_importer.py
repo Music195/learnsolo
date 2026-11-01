@@ -6,7 +6,8 @@ from importer import import_content, parse_note, parse_set
 def test_second_import_changes_nothing(app):
     # The `app` fixture already imported everything once, so a second
     # run should find every row up to date.
-    report = import_content()
+    with app.app_context():
+        report = import_content()
     for table, counts in report.items():
         assert counts == {"added": 0, "updated": 0, "removed": 0}, table
 

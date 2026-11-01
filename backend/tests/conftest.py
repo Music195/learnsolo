@@ -19,6 +19,8 @@ TEST_DATABASE_URL = os.environ.get(
 # before importing anything from the app. Environment variables win over
 # the .env file, so this one is used.
 os.environ["DATABASE_URL"] = TEST_DATABASE_URL
+# Logins need a secret key to sign their cookie; any value will do in tests
+os.environ.setdefault("SECRET_KEY", "test-secret-key")
 
 
 def _create_test_database():
@@ -48,12 +50,17 @@ def app():
     app = create_app()
     app.config["TESTING"] = True          # errors show up in the test instead of a 500 page
 
+    # An "app context" lets code outside a request use the database. Only
+    # keep it open while setting up: Flask-Login remembers the logged-in user
+    # in it (flask.g), so an open one would let one test's login leak into
+    # the next. Each request gets its own context instead; a test that reads
+    # the database itself opens one with `with app.app_context():`.
     with app.app_context():
         db.drop_all()                     # start from empty tables each run
         db.create_all()                   # make the tables from models.py
         import_content()                  # fill them from content/
-        yield app                         # the tests run here
         db.session.remove()
+    yield app                             # the tests run here
 
 
 @pytest.fixture()
