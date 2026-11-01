@@ -3,7 +3,7 @@
 // "Solved 2 of 6", then "All papers" and "Next paper" cards.
 //
 // The data comes from /api/past/<exam>/<paper> (backend/services/past.py).
-// The HTML matches backend/templates/practice.html with `paper` given.
+// It is styled like a set (src/styles/practice.css).
 
 import { useEffect, useRef, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router'

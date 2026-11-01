@@ -2,9 +2,8 @@
 // Purple header, the note in a white card, practice links, previous/next
 // cards, the floating bar and the Topics sidebar.
 //
-// The data comes from /api/notes/<path> (backend/services/notes.py). The
-// HTML and class names match backend/templates/note.html, so the same CSS
-// styles it (note-page.css, note-blocks.css, practice.css).
+// The data comes from /api/notes/<path> (backend/services/notes.py). It is
+// styled by src/styles/note-page.css, note-blocks.css and practice.css.
 
 import { useCallback, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'

@@ -4,7 +4,7 @@
 //                     Course 2) there is a tab per subfolder, with "Solved n of m".
 //
 // The data comes from /api/past and /api/past/<exam> (backend/services/past.py).
-// The HTML matches backend/templates/past-list.html (past.css, practice-list.css).
+// Styled by src/styles/past.css and practice-list.css.
 
 import { Link, useParams } from 'react-router'
 import { useApi } from '../api.js'

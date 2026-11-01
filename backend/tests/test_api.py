@@ -79,12 +79,3 @@ def test_unknown_addresses_give_json_404(client):
         response = client.get(url)
         assert response.status_code == 404, url
         assert response.get_json() == {"error": "not found"}, url
-
-
-def test_html_pages_still_work(client):
-    assert client.get("/").status_code == 200
-    assert client.get("/notes/" + NOTE).status_code == 200
-    # Outside /api, a missing page is still HTML, not JSON
-    response = client.get("/no-such-page")
-    assert response.status_code == 404
-    assert response.content_type.startswith("text/html")

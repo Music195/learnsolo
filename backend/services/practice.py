@@ -7,7 +7,7 @@ from services.urls import practice_url, practice_hub_url
 #   /practice          every course, its topics and their sets
 #   /practice/<path>   one set, shown like a note: floating bar, purple header,
 #                      white card. Each problem has a hint, a step-by-step
-#                      solution and an answer check (static/js/practice.js).
+#                      solution and an answer check (frontend/src/practice.js).
 
 
 def practice_courses():

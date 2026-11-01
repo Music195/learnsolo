@@ -4,7 +4,7 @@
 // from your saved progress (src/progress.js). Past questions are linked at the end.
 //
 // The data comes from /api/practice (backend/services/practice.py). The
-// HTML matches backend/templates/practice-list.html (practice-list.css).
+// page is styled by src/styles/practice-list.css.
 
 import { Link } from 'react-router'
 import { useApi } from '../api.js'
@@ -15,7 +15,7 @@ import FloatBar from '../components/FloatBar.jsx'
 import LoadError from '../components/LoadError.jsx'
 import { HubTabs, SetProgress, plural } from '../components/HubTabs.jsx'
 
-// Where the chosen course tab is remembered (the same name as the old site)
+// Where the chosen course tab is remembered (in localStorage)
 const TAB_KEY = 'practice-hub:course'
 
 export default function PracticeList() {

@@ -7,7 +7,7 @@ from utils.content_loader import ContentNotFound
 # Python dict or list, and Flask turns it into JSON automatically. Open one
 # in the browser to see it, e.g. http://localhost:5000/api/home
 #
-# The data comes from services/, the same functions the HTML pages use.
+# The data comes from services/.
 
 api_bp = Blueprint("api", __name__, url_prefix="/api")
 
@@ -26,8 +26,9 @@ def content_not_found(error):
 @api_bp.app_errorhandler(404)
 def page_not_found(error):
     # An address that matches no route at all, e.g. /api/nothing-here.
-    # This handler sees every 404 in the app, so only answer with JSON
-    # for /api/ addresses and let the HTML pages keep Flask's usual 404.
+    # This handler sees every 404 in the app, so only answer with JSON for
+    # /api/ addresses. (Other addresses get the React page, which shows
+    # its own "Page not found"; see frontend.py.)
     if request.path.startswith("/api/"):
         return jsonify(error="not found"), 404
     return error

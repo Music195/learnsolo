@@ -24,6 +24,9 @@ def _database_url():
 class Config:
     SQLALCHEMY_DATABASE_URI = _database_url()
 
+    # Where `npm run build` puts the React app (served by frontend.py)
+    FRONTEND_DIST = os.path.join(PROJECT_ROOT, "frontend", "dist")
+
     # Signs the login cookie, so nobody can make a fake one. Must be long,
     # random and secret (see .env.example).
     SECRET_KEY = os.environ.get("SECRET_KEY")
