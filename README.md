@@ -31,7 +31,10 @@ This project is built to act as a personal study companion, helping users struct
 │   ├── config.py           #   Settings from .env (DATABASE_URL, SECRET_KEY)
 │   ├── models.py           #   Database tables (SQLAlchemy); migrations/ holds their history
 │   ├── importer.py         #   flask import-content: copies content/ into the database
-│   ├── routes/             #   home.py, notes.py, practice.py, past.py
+│   ├── routes/             #   HTML pages: home.py, notes.py, practice.py, past.py
+│   ├── api/                #   JSON API under /api, for the React frontend
+│   ├── services/           #   The data behind each page, shared by routes/ and api/
+│   ├── tests/              #   Automatic tests (pytest)
 │   ├── utils/              #   content_loader.py (reads the database), courses.py (display names)
 │   ├── templates/          #   Page templates (partials/ holds shared pieces)
 │   ├── static/             #   css/, js/ (js/demos/ holds the demo helpers)
@@ -57,5 +60,12 @@ docker compose up -d          # PostgreSQL
 cd backend
 flask db upgrade              # create the tables
 flask import-content          # copy content/ into the database (again after editing content)
-python app.py                 # http://localhost:5000
+python app.py                 # http://localhost:5000 (JSON API: /api/home, /api/notes/...)
+```
+
+Run the tests from `backend/` (they use a separate `learnsolo_test` database):
+
+```bash
+pip install -r requirements-dev.txt   # once
+pytest
 ```
