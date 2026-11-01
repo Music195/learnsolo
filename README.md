@@ -18,7 +18,7 @@ This project is built to act as a personal study companion, helping users struct
 ## 🛠️ Tech Stack
 
 * **Backend:** Python, Flask
-* **Frontend:** HTML5, CSS3, JavaScript
+* **Frontend:** React (Vite, React Router), moving over from Flask HTML templates page by page
 * **Database:** PostgreSQL via SQLAlchemy (Flask-SQLAlchemy, Flask-Migrate). Notes are written as HTML files in `content/` and imported with `flask import-content`.
 
 ---
@@ -39,6 +39,10 @@ This project is built to act as a personal study companion, helping users struct
 │   ├── templates/          #   Page templates (partials/ holds shared pieces)
 │   ├── static/             #   css/, js/ (js/demos/ holds the demo helpers)
 │   └── requirements.txt    #   Python packages
+├── frontend/               # The React app (Vite), replacing the HTML pages one by one
+│   ├── index.html          #   The one page React draws into
+│   └── src/                #   main.jsx (start), App.jsx (which page for which address),
+│                           #   api.js, pages/, components/
 ├── content/                # All learning material, as HTML fragments
 │   ├── notes/              #   notes/<course>/<topic>/<nn-name>.html
 │   ├── practice/           #   practice sets, same course/topic folders as notes/
@@ -62,6 +66,16 @@ flask db upgrade              # create the tables
 flask import-content          # copy content/ into the database (again after editing content)
 python app.py                 # http://localhost:5000 (JSON API: /api/home, /api/notes/...)
 ```
+
+Then, in a second terminal, the React app (needs Node.js):
+
+```bash
+cd frontend
+npm install                   # once, and after package.json changes
+npm run dev                   # http://localhost:5173 (keep Flask running: React gets its data from it)
+```
+
+Pages not in React yet open on the Flask site (:5000).
 
 Run the tests from `backend/` (they use a separate `learnsolo_test` database):
 
