@@ -9,3 +9,6 @@
 
 import '../../backend/static/css/floatbar.css'
 import '../../backend/static/css/home.css'
+import '../../backend/static/css/note-page.css'     // the page around a note
+import '../../backend/static/css/note-blocks.css'   // the 8 blocks inside a note
+import '../../backend/static/css/practice.css'      // the "Practise this note" cards

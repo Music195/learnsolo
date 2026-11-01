@@ -1,0 +1,165 @@
+// A note page: /notes/<course>/<topic>/<note>
+// Purple header, the note in a white card, practice links, previous/next
+// cards, the floating bar and the Topics sidebar.
+//
+// The data comes from /api/notes/<path> (backend/services/notes.py). The
+// HTML and class names match backend/templates/note.html, so the same CSS
+// styles it (note-page.css, note-blocks.css, practice.css).
+
+import { useCallback, useEffect, useState } from 'react'
+import { Link, useNavigate, useParams } from 'react-router'
+import { useApi } from '../api.js'
+import FloatBar from '../components/FloatBar.jsx'
+import LoadError from '../components/LoadError.jsx'
+import NoteContent from '../components/NoteContent.jsx'
+import TopicsSidebar from '../components/TopicsSidebar.jsx'
+
+// Text size: 70%–150% in steps of 5%, remembered in the browser (localStorage)
+// under the same name the old site used, so a saved size carries over.
+const SIZE_KEY = 'noteFontSize'
+const clampSize = (size) => Math.min(Math.max(size, 70), 150)
+
+export default function Note() {
+  // The route in App.jsx is "/notes/*"; useParams()['*'] is the part the *
+  // matched, e.g. "math-1/03-quadratic-functions/05-quadratic-formula"
+  const path = useParams()['*']
+  const navigate = useNavigate()
+
+  const { data, error } = useApi(`/api/notes/${path}`)   // this note
+  const sidebar = useApi('/api/notes').data              // every note, for the sidebar
+
+  const [topicsOpen, setTopicsOpen] = useState(false)
+  // useState(() => ...) runs the function only once, for the first value
+  const [textSize, setTextSize] = useState(
+    () => clampSize(parseInt(localStorage.getItem(SIZE_KEY), 10) || 100),
+  )
+
+  // useCallback keeps the same function between draws, so the sidebar's
+  // effect that uses it doesn't restart every time this page draws.
+  const closeTopics = useCallback(() => setTopicsOpen(false), [])
+
+  function changeTextSize(step) {
+    const size = clampSize(textSize + 5 * step)
+    setTextSize(size)
+    localStorage.setItem(SIZE_KEY, size)
+  }
+
+  // A new note: start at the top with the sidebar closed, as a new page would
+  useEffect(() => {
+    window.scrollTo(0, 0)
+    setTopicsOpen(false)
+  }, [path])
+
+  // The browser tab's title, e.g. "Law of Sines · Math I · Learn Solo"
+  useEffect(() => {
+    if (data) document.title = `${data.note_title} · ${data.location.course} · Learn Solo`
+  }, [data])
+
+  // ← / → keys go to the previous / next note.
+  // Ignored while typing or using a slider, so the demos' arrow keys still work.
+  useEffect(() => {
+    if (!data) return
+    function onKey(event) {
+      if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return
+      const el = document.activeElement
+      if (el && (el.isContentEditable || /^(INPUT|SELECT|TEXTAREA|BUTTON)$/.test(el.tagName))) return
+      if (topicsOpen) return
+      const link = { ArrowLeft: data.nav.prev, ArrowRight: data.nav.next }[event.key]
+      if (link) navigate(link.url)
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [data, topicsOpen, navigate])
+
+  if (error) return <LoadError error={error} what="note" />
+  if (!data) return <p className="section">Loading…</p>
+
+  const { note_title: title, content, location, nav, practice } = data
+
+  return (
+    <>
+      <FloatBar
+        location={location} nav={nav}
+        onTextSize={changeTextSize}
+        onTopics={sidebar ? () => setTopicsOpen(!topicsOpen) : undefined}
+        topicsOpen={topicsOpen}
+      />
+
+      {/* key={path}: a new note gets a fresh sidebar, starting on its own course and topic */}
+      {sidebar && (
+        <TopicsSidebar key={path} sidebar={sidebar} currentPath={path} open={topicsOpen} onClose={closeTopics} />
+      )}
+
+      {/* NOTE HEADER: course and topic, the title, and how far along the topic this note is */}
+      <header className="note-header">
+        <div className="note-header-inner">
+          <p className="note-chips">
+            <Link to={`/notes/${location.course_first}`}>{location.course}</Link>
+            {location.topic && <Link to={`/notes/${location.topic_first}`}>{location.topic}</Link>}
+          </p>
+          <h1>{title}</h1>
+          <p className="note-progress">
+            Note {location.index} of {location.total}{location.topic && ` in ${location.topic}`}
+            <span className="progress-bar" aria-hidden="true">
+              <span style={{ width: `${Math.round((100 * location.index) / location.total)}%` }}></span>
+            </span>
+          </p>
+        </div>
+      </header>
+
+      {/* THE NOTE: its HTML from the database, with its demos and formulas */}
+      <NoteContent html={content} style={{ fontSize: `${textSize}%` }} />
+
+      {practice && <PracticeLinks practice={practice} />}
+
+      {/* PREVIOUS / NEXT: cards at the end of the note (also the ← / → keys) */}
+      <nav className="note-pager" aria-label="Previous and next note">
+        <PagerCard link={nav.prev} side="prev" />
+        <PagerCard link={nav.next} side="next" />
+      </nav>
+    </>
+  )
+}
+
+// PRACTICE: the set that practises this note, then the topic's other sets
+function PracticeLinks({ practice }) {
+  const { main, more, topic } = practice
+  return (
+    <section className="practice-links" aria-label="Practise this note">
+      <Link className="practice-link" to={`/practice/${main.path}`}>
+        <i className="fas fa-puzzle-piece"></i>
+        <span>
+          <strong>Practise this note: {main.title}</strong>
+          <span>{main.count} problems with hints and step-by-step solutions</span>
+        </span>
+        <span className="go">Start <i className="fas fa-arrow-right"></i></span>
+      </Link>
+      {more.length > 0 && (
+        <p className="practice-more">
+          <span>More practice for {topic}:</span>{' '}
+          {more.map((set, i) => (
+            <span key={set.path}>
+              <Link to={`/practice/${set.path}`}>{set.review ? 'Topic review' : set.title}</Link>
+              {i < more.length - 1 && ' · '}
+            </span>
+          ))}
+        </p>
+      )}
+    </section>
+  )
+}
+
+// One previous/next card. With no note on that side, an empty card keeps
+// the other one in its place.
+function PagerCard({ link, side }) {
+  if (!link) return <span className={`pager-card pager-${side} pager-empty`} aria-hidden="true"></span>
+  return (
+    <Link className={`pager-card pager-${side}`} to={link.url}>
+      <span className="pager-label">
+        {side === 'prev' ? <><i className="fas fa-arrow-left"></i> Previous</> : <>Next <i className="fas fa-arrow-right"></i></>}
+      </span>
+      <strong>{link.title}</strong>
+      <span className="pager-where">{link.where}</span>
+    </Link>
+  )
+}

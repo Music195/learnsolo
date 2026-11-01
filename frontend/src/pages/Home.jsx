@@ -9,6 +9,7 @@ import { Link } from 'react-router'
 import { useApi } from '../api.js'
 import FloatBar from '../components/FloatBar.jsx'
 import HeroDemo from '../components/HeroDemo.jsx'
+import LoadError from '../components/LoadError.jsx'
 
 // One icon and colour per course card, by display name
 const COURSE_STYLE = {
@@ -41,7 +42,7 @@ export default function Home() {
   }, [])
 
   // Until the data arrives, show a short message instead of the page
-  if (error) return <p className="section">Sorry, the notes couldn't be loaded. Please refresh the page.</p>
+  if (error) return <LoadError error={error} what="home page" />
   if (!data) return <p className="section">Loading…</p>
 
   return <HomeContent subjects={data.subjects} stats={data.stats} />

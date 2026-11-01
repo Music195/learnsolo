@@ -8,7 +8,9 @@ import { useEffect, useState } from 'react'
 export async function fetchJson(url) {
   const response = await fetch(url)
   if (!response.ok) {
-    throw new Error(`${url} answered ${response.status}`)
+    const error = new Error(`${url} answered ${response.status}`)
+    error.status = response.status   // e.g. 404, so pages can say "not found"
+    throw error
   }
   return response.json()
 }
