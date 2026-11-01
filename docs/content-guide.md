@@ -361,7 +361,7 @@ Anything that doesn't exist answers `404` with `{"error": "not found"}`. The old
 
 ## 12. React frontend
 
-The site is moving from Flask templates to a React app in `frontend/`, one page at a time. So far React has the **home page**; every other address sends the browser on to the same page on the Flask site.
+The site is moving from Flask templates to a React app in `frontend/`, one page at a time. So far React has the **home page** and the **note pages**; every other address (practice, past questions) sends the browser on to the same page on the Flask site.
 
 **Run it** (Flask must be running too, for the data):
 
@@ -382,10 +382,18 @@ npm run dev        # http://localhost:5173
 | `src/api.js` | `fetchJson(url)` and the `useApi(url)` hook: load data from `/api/...` |
 | `src/mathjax.js` | `typeset(element)`: draw the `$...$` formulas inside an element, once |
 | `src/pages/Home.jsx` | The home page, from `/api/home` |
+| `src/pages/Note.jsx` | A note page (`/notes/<path>`), from `/api/notes/<path>`: header, practice links, previous/next cards, text size, ← / → keys |
+| `src/components/NoteContent.jsx` | Shows a note's HTML, runs its `<script>` tags in order (loading helpers like `venn.js` once) and then draws its formulas |
+| `src/components/TopicsSidebar.jsx` | The Topics sidebar, from `/api/notes` |
+| `src/components/LoadError.jsx` | "Not found" / "couldn't be loaded" messages |
 | `src/pages/OldSitePage.jsx` | Stand-in for pages not moved yet: opens them on :5000 |
-| `src/components/FloatBar.jsx`, `SearchBox.jsx` | The floating bar and its search box |
+| `src/components/FloatBar.jsx`, `SearchBox.jsx` | The floating bar (home version, or note version with where-you-are, text size, previous/next and Topics) and its search box |
 | `src/components/HeroDemo.jsx` | The draggable demo on the home page |
 
 The React pages use the same HTML and class names as the templates, so the same CSS styles them.
 
 **MathJax:** typeset each element only once. A drawn formula keeps a hidden MathML copy for screen readers, and this MathJax build reads MathML too, so typesetting the same element again draws every formula a second time inside the first. `typeset()` in `src/mathjax.js` remembers which elements it has done.
+
+**Scripts in notes:** React doesn't run `<script>` tags in HTML it inserts, so `NoteContent.jsx` runs them itself. Moving to another note doesn't reload the page, so all notes' scripts share one page. That's safe as long as each note keeps to the rules it already follows: wrap the code in `(function () { ... })();`, only touch elements inside the note, and don't wait for the page's load event (`DOMContentLoaded`); the note's HTML is already there when its script runs.
+
+**If `npm run dev` stops passing `/api` to Flask** (pages say "couldn't be loaded" while Flask is running), restart it with Ctrl+C and `npm run dev`. This happens when `vite.config.js` briefly disappears while it runs, for example during `git checkout` to a branch without `frontend/`.

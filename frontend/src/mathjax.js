@@ -21,6 +21,7 @@ export function typeset(element) {
   done.add(element)
   queue = queue
     .then(() => mathjax.startup.promise)          // wait until MathJax has started
-    .then(() => mathjax.typesetPromise([element]))
+    // skip an element React has already taken off the page
+    .then(() => element.isConnected && mathjax.typesetPromise([element]))
     .catch((error) => console.error('MathJax:', error))
 }
