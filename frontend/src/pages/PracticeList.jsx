@@ -6,13 +6,13 @@
 // The data comes from /api/practice (backend/services/practice.py). The
 // HTML matches backend/templates/practice-list.html (practice-list.css).
 
-import { useState } from 'react'
-import { Link, useLocation } from 'react-router'
+import { Link } from 'react-router'
 import { useApi } from '../api.js'
 import { solvedCount } from '../progress.js'
 import { usePageTitle } from '../pageHooks.js'
 import FloatBar from '../components/FloatBar.jsx'
 import LoadError from '../components/LoadError.jsx'
+import { HubTabs, SetProgress, plural } from '../components/HubTabs.jsx'
 
 // Where the chosen course tab is remembered (the same name as the old site)
 const TAB_KEY = 'practice-hub:course'
@@ -57,53 +57,15 @@ export default function PracticeList() {
   )
 }
 
-// The course tabs and one panel per course
+// The course tabs (components/HubTabs.jsx), with a card per topic in each panel
 function CourseTabs({ courses }) {
-  const location = useLocation()
-  const folders = courses.map((c) => c.folder)
-
-  // The tab open at the start: /practice#math-a opens Math A; otherwise the
-  // one chosen last time; otherwise the first.
-  const [open, setOpen] = useState(() => {
-    const wanted = location.hash.slice(1) || localStorage.getItem(TAB_KEY)
-    return folders.includes(wanted) ? wanted : folders[0]
-  })
-
-  function choose(folder) {
-    setOpen(folder)
-    localStorage.setItem(TAB_KEY, folder)
-  }
-
-  // ← / → move between tabs, as in other tab lists
-  function onTabKey(event) {
-    const step = { ArrowRight: 1, ArrowLeft: -1 }[event.key]
-    if (!step) return
-    const next = folders[(folders.indexOf(open) + step + folders.length) % folders.length]
-    choose(next)
-    document.getElementById(`tab-${next}`).focus()
-  }
-
   return (
-    <>
-      <div className="hub-tabs" role="tablist" aria-label="Courses">
-        {courses.map((course) => (
-          <button key={course.folder} className="hub-tab" role="tab" id={`tab-${course.folder}`}
-                  aria-controls={`panel-${course.folder}`} aria-selected={course.folder === open}
-                  tabIndex={course.folder === open ? 0 : -1}
-                  onClick={() => choose(course.folder)} onKeyDown={onTabKey}>
-            {course.name}
-          </button>
-        ))}
-      </div>
-
-      {/* ONE PANEL PER COURSE: a card per topic */}
-      {courses.map((course) => (
-        <section key={course.folder} className="hub-panel" role="tabpanel" id={`panel-${course.folder}`}
-                 aria-labelledby={`tab-${course.folder}`} hidden={course.folder !== open}>
-          {course.topics.map((topic, i) => <TopicCard key={topic.folder} topic={topic} number={i + 1} />)}
-        </section>
-      ))}
-    </>
+    <HubTabs
+      tabs={courses.map((course) => ({ id: course.folder, name: course.name, topics: course.topics }))}
+      rememberKey={TAB_KEY}
+      label="Courses"
+      renderPanel={(tab) => tab.topics.map((topic, i) => <TopicCard key={topic.folder} topic={topic} number={i + 1} />)}
+    />
   )
 }
 
@@ -112,7 +74,6 @@ function TopicCard({ topic, number }) {
   // Solved problems per set (null = not started), and the topic's total
   const solved = topic.sets.map((s) => solvedCount(s.path, s.moved_from))
   const topicSolved = solved.reduce((sum, n) => sum + (n || 0), 0)   // add them up
-  const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`
 
   return (
     <article className="topic-card">
@@ -148,16 +109,5 @@ function TopicCard({ topic, number }) {
         ))}
       </ol>
     </article>
-  )
-}
-
-// "Solved 2 of 6", or "✓ Done", or nothing if not started
-function SetProgress({ solved, count }) {
-  if (!solved) return <span className="set-progress" hidden></span>
-  const done = solved >= count
-  return (
-    <span className={'set-progress' + (done ? ' is-done' : '')}>
-      {done ? <><i className="fas fa-check"></i> Done</> : `Solved ${solved} of ${count}`}
-    </span>
   )
 }
