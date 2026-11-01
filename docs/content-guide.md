@@ -29,6 +29,8 @@ The floating bar at the top of every page has the search box, which finds notes,
 
 ### Map of the code
 
+The app code lives in `backend/`, so every code path below (`app.py`, `routes/`, `utils/`, `templates/`, `static/`) is inside `backend/`. `content/` stays at the project root.
+
 | Part | Files | Job |
 |---|---|---|
 | App | `app.py` | Creates the Flask app and registers the four route files |
