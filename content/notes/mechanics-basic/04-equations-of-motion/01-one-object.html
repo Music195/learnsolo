@@ -1,0 +1,280 @@
+<!-- tags: Equations of Motion -->
+<!-- =====================================================================
+     NOTE: The Equation of Motion for One Object
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Equations of Motion">The Equation of Motion for One Object</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Draw every force first, then write ma = (net force) along the motion</h2>
+    <p>Once you can write equations of motion without mistakes, many mechanics problems become easy. It takes practice, and it always follows the same steps:</p>
+    <ol>
+      <li><strong>Draw every force on the object.</strong> Gravity $mg$ first, then one force for each thing it touches: the floor (normal force $N$, friction), a string (tension $T$), a hand.</li>
+      <li><strong>Choose the positive direction</strong>, usually the way it speeds up, and mark the acceleration $a$ that way.</li>
+      <li><strong>Write $ma =$ the net force in that direction:</strong> forces that way with $+$, forces the other way with $-$. Forces at right angles to it don't go in.</li>
+    </ol>
+    <p>If the object can't move in some direction (it stays on the floor or on the slope), the forces in that direction <strong>balance</strong>. This gives the normal force, and from it the friction.</p>
+  </section>
+
+  <!-- FORMULA: equation of motion in one direction -->
+  <div class="note-formula">
+    <h3>The equation of motion along one direction</h3>
+    <div class="formula-main">$$ma = (\text{forces in the } + \text{ direction}) - (\text{forces in the } - \text{ direction})$$</div>
+    <p class="symbols">The left side is always "mass of the object × its acceleration". Directions it can't move in: forces balance, e.g. $N = mg$ on a level floor, $N = mg\cos\theta$ on a slope at angle $\theta$.</p>
+  </div>
+
+  <!-- PROOF: why N = mg cos θ on a slope -->
+  <div class="note-proof">
+    <ol>
+      <li>On a slope at angle $\theta$, split gravity $mg$ into two parts: $mg\sin\theta$ down the slope and $mg\cos\theta$ into the slope.</li>
+      <li>The object slides along the slope, but it never jumps off the slope or sinks into it. So its acceleration at right angles to the slope is $0$.</li>
+      <li>Equation of motion at right angles to the slope: $m \times 0 = N - mg\cos\theta$, so $N = mg\cos\theta$.</li>
+      <li>Along the slope, only the parts of the forces along it count: for a pull $T$ up the slope, $ma = T - mg\sin\theta$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: six one-object problems; code at the bottom -->
+  <div class="note-demo">
+    <h2>Six problems: see the forces and the equation of motion ($m = 2.0\ \mathrm{kg}$)</h2>
+    <div class="controls choices" id="ooChoices">
+      <button type="button" data-scene="coast" class="active">Smooth floor, moving</button>
+      <button type="button" data-scene="pull">Smooth floor, pulled</button>
+      <button type="button" data-scene="lift">Lifted by a string</button>
+      <button type="button" data-scene="slope">Pulled up a smooth slope</button>
+      <button type="button" data-scene="skid">Rough floor, sliding</button>
+      <button type="button" data-scene="drag">Rough floor, pulled</button>
+    </div>
+    <div class="controls">
+      <label>$T$ = <input type="range" id="ooT" min="0" max="40" step="1" value="30"></label>
+    </div>
+    <canvas id="ooCanvas"></canvas>
+    <div class="output table-text" id="ooOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A $2.0\ \mathrm{kg}$ block moves at $3.0\ \mathrm{m/s}$ to the right on a smooth floor. Find its acceleration.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Forces: $mg$ down, $N$ up. Nothing along the floor: $3.0\ \mathrm{m/s}$ is a velocity, not a force.</li>
+        <li>Right positive: $2.0\,a = 0$.</li>
+      </ol>
+      <p class="answer">$a = 0$: it keeps moving at $3.0\ \mathrm{m/s}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">A $2.0\ \mathrm{kg}$ weight hangs on a string, and the string pulls it up with $T = 30\ \mathrm{N}$. Take up as positive. Find its acceleration.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Forces: $T = 30$ up, $mg = 19.6$ down.</li>
+        <li>$2.0\,a = 30 - 19.6 = 10.4$.</li>
+      </ol>
+      <p class="answer">$a = 5.2\ \mathrm{m/s^2}$, upwards</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A $2.0\ \mathrm{kg}$ block is pulled up a smooth $30^\circ$ slope by a $15\ \mathrm{N}$ force along the slope. Find its acceleration and the normal force.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Split gravity: $mg\sin 30^\circ = 9.8$ down the slope, $mg\cos 30^\circ \approx 17.0$ into the slope.</li>
+        <li>At right angles to the slope: $N = 17.0\ \mathrm{N}$.</li>
+        <li>Up the slope positive: $2.0\,a = 15 - 9.8 = 5.2$.</li>
+      </ol>
+      <p class="answer">$a = 2.6\ \mathrm{m/s^2}$ up the slope; $N \approx 17\ \mathrm{N}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">A block slides to the right on a rough floor. The coefficient of kinetic friction is $\mu = 0.25$. Take right as positive. Find its acceleration (any mass $m$).</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Up and down: $N = mg$. Kinetic friction $\mu N = \mu mg$, to the left (against the motion).</li>
+        <li>$ma = -\mu mg$, so $a = -\mu g = -0.25 \times 9.8$.</li>
+      </ol>
+      <p class="answer">$a = -2.45\ \mathrm{m/s^2}$: it slows down, whatever its mass</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">A $4.0\ \mathrm{kg}$ box is pulled to the right with $20\ \mathrm{N}$ on a rough floor ($\mu = 0.20$) while it slides. Find its acceleration.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Kinetic friction: $\mu mg = 0.20 \times 4.0 \times 9.8 = 7.84\ \mathrm{N}$, to the left.</li>
+        <li>$4.0\,a = 20 - 7.84 = 12.16$.</li>
+      </ol>
+      <p class="answer">$a \approx 3.0\ \mathrm{m/s^2}$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: velocity is not a force -->
+  <div class="note-warning">
+    A velocity like $v_0$ is <strong>not a force</strong>. A block moving at $v_0$ on a smooth floor has no force along the floor, so $ma = 0$. Never put $v_0$ into the right side of $ma = F$.
+  </div>
+
+  <!-- TIP: balance in the other direction -->
+  <div class="note-tip">
+    Always write the balance at right angles to the motion too ($N = mg$, or $N = mg\cos\theta$ on a slope), even if the question doesn't ask. You need it as soon as there is friction, because kinetic friction is $\mu N$.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Steps: draw every force, choose the positive direction, write $ma =$ net force in that direction.</li>
+      <li>Only gravity and forces from things the object touches act on it. A velocity is not a force.</li>
+      <li>Directions it can't move in: forces balance. Kinetic friction is $\mu N$, against the motion.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Six problems" demo (the TRY IT block above).
+  // Each button shows one object (m = 2.0 kg) with every force on it as an arrow
+  // (5 pixels per newton), the velocity as a dashed blue arrow (it is NOT a force),
+  // and the equation of motion with numbers. The T slider sets the pull of the string
+  // in the problems that have one. μ = 0.25 and the slope angle is 30°.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('ooCanvas');
+    const output = document.getElementById('ooOutput');
+    const tBox = document.getElementById('ooT');
+    const M = 2.0, G = 9.8, MU = 0.25, TH = 30 * Math.PI / 180;
+    let PX = 5;                        // pixels per newton (3 for the hanging weight, so T fits)
+    const GRAV = '#dc2626', CONTACT = '#2563eb', PULL = '#7c3aed', FRIC = '#16a34a', VEL = '#0891b2', THING = '#475569';
+    let scene = 'coast';
+
+    // arrow from p along d (pixels), with an arrowhead and a label just past the tip (or at "at")
+    function arrow(g, p, d, color, label, at, dash) {
+      const len = Math.hypot(d[0], d[1]);
+      if (len < 3) return;
+      const u = [d[0] / len, d[1] / len], n = [-u[1], u[0]], q = [p[0] + d[0], p[1] + d[1]];
+      g.seg(p, q, color, { width: dash ? 2 : 3, dash });
+      g.poly([q, [q[0] - 10 * u[0] + 5 * n[0], q[1] - 10 * u[1] + 5 * n[1]],
+                 [q[0] - 10 * u[0] - 5 * n[0], q[1] - 10 * u[1] - 5 * n[1]]], color);
+      if (label) g.text(at || [q[0] + 16 * u[0], q[1] + 16 * u[1]], label, color);
+    }
+    // a block with centre c, width w, height h, turned so its bottom lies along unit vector u
+    function block(g, c, w, h, u) {
+      const n = [u[1], -u[0]];                       // "up" for this block
+      const corner = (sx, sy) => [c[0] + sx * w / 2 * u[0] + sy * h / 2 * n[0], c[1] + sx * w / 2 * u[1] + sy * h / 2 * n[1]];
+      const pts = [corner(-1, -1), corner(1, -1), corner(1, 1), corner(-1, 1)];
+      g.poly(pts, '#fde68a');
+      pts.forEach((p, i) => g.seg(p, pts[(i + 1) % 4], THING, { width: 2 }));
+    }
+    const floor = (g, y, rough) => {
+      g.seg([30, y], [490, y], THING, { width: 3 });
+      if (rough) for (let x = 40; x < 490; x += 14) g.seg([x, y + 2], [x - 8, y + 10], '#94a3b8', { width: 1 });
+      g.text([60, y + 22], rough ? 'rough (μ = 0.25)' : 'smooth', '#94a3b8');
+    };
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const T = Number(tBox.value), mg = M * G;
+        const usesT = ['pull', 'lift', 'slope', 'drag'].includes(scene);
+        tBox.disabled = !usesT;
+        let lines;
+        PX = scene === 'lift' ? 3 : 5;
+
+        if (scene === 'lift') {
+          const c = [260, 210];
+          g.seg([150, 30], [370, 30], THING, { width: 3 });
+          g.seg([260, 30], [260, c[1] - 30], THING, { width: 2 });               // the string
+          block(g, c, 70, 60, [1, 0]);
+          arrow(g, [260, c[1] - 30], [0, -T * PX], PULL, 'T', [280, c[1] - 30 - T * PX / 2]);
+          arrow(g, [260, c[1] + 30], [0, mg * PX], GRAV, 'mg', [285, c[1] + 30 + mg * PX / 2]);
+          arrow(g, [340, 230], [0, -50], THING, 'a', [356, 205], true);
+          const a = (T - mg) / M;
+          lines = [
+            `Forces: tension T = ${T} N up, gravity mg = ${mg.toFixed(1)} N down.`,
+            'Up positive (the a arrow):',
+            `  ${M}a = T − mg = ${T} − ${mg.toFixed(1)} = ${(T - mg).toFixed(1).replace('-', '−')}`,
+            `  a = ${a.toFixed(2).replace('-', '−')} m/s²` +
+              (a > 0 ? '  (speeds up upwards)' : a < 0 ? '  (a points down)' : '  (constant velocity)'),
+          ];
+        } else if (scene === 'slope') {
+          const u = [Math.cos(TH), -Math.sin(TH)], n = [-Math.sin(TH), -Math.cos(TH)];
+          const base = [40, 310], top = [40 + 440 * u[0], 310 + 440 * u[1]];
+          g.poly([base, top, [top[0], 310]], '#e2e8f0');
+          g.seg(base, top, THING, { width: 3 });
+          g.arc(base, top, [300, 310], THING, 40);
+          g.text([100, 298], '30°', THING);
+          const contact = [base[0] + 200 * u[0], base[1] + 200 * u[1]];
+          const c = [contact[0] + 35 * n[0], contact[1] + 35 * n[1]];
+          block(g, c, 80, 70, u);
+          const sinPart = mg * Math.sin(TH), cosPart = mg * Math.cos(TH);
+          arrow(g, c, [0, mg * PX], GRAV, 'mg', [c[0] + 24, c[1] + mg * PX - 6]);
+          const sinTip = [c[0] - u[0] * sinPart * PX, c[1] - u[1] * sinPart * PX];
+          const cosTip = [c[0] - n[0] * cosPart * PX, c[1] - n[1] * cosPart * PX];
+          arrow(g, c, [sinTip[0] - c[0], sinTip[1] - c[1]], GRAV, 'mg sinθ', [sinTip[0] - 40, sinTip[1] - 4], true);
+          arrow(g, c, [cosTip[0] - c[0], cosTip[1] - c[1]], GRAV, 'mg cosθ', [cosTip[0] + 44, cosTip[1] + 6], true);
+          arrow(g, contact, [n[0] * cosPart * PX, n[1] * cosPart * PX], CONTACT, 'N');
+          const front = [c[0] + 40 * u[0], c[1] + 40 * u[1]];
+          arrow(g, front, [u[0] * T * PX, u[1] * T * PX], PULL, 'T');
+          const a = (T - sinPart) / M;
+          lines = [
+            `Forces: mg = ${mg.toFixed(1)} N, normal N, pull T = ${T} N up the slope.`,
+            `Split mg: ${sinPart.toFixed(1)} N down the slope, ${cosPart.toFixed(1)} N into the slope.`,
+            `At right angles: N = mg cos30° = ${cosPart.toFixed(1)} N (no motion that way)`,
+            `Up the slope positive:  ${M}a = T − mg sin30° = ${T} − ${sinPart.toFixed(1)}`,
+            `  a = ${a.toFixed(2).replace('-', '−')} m/s²`,
+          ];
+        } else {
+          // the four floor problems
+          const rough = scene === 'skid' || scene === 'drag', FY = 230, c = [250, FY - 30];
+          floor(g, FY, rough);
+          block(g, c, 80, 60, [1, 0]);
+          arrow(g, [c[0] - 8, c[1]], [0, mg * PX], GRAV, 'mg', [c[0] - 32, c[1] + mg * PX - 6]);
+          arrow(g, [c[0] + 8, FY], [0, -mg * PX], CONTACT, 'N', [c[0] + 26, FY - mg * PX + 6]);
+          const moving = scene !== 'pull';
+          if (moving) arrow(g, [c[0] - 40, c[1] - 120], [90, 0], VEL, 'velocity v0 (not a force)', [c[0] + 5, c[1] - 138], true);
+          if (usesT) {
+            g.seg([c[0] + 40, c[1]], [c[0] + 60, c[1]], THING, { width: 2 });
+            arrow(g, [c[0] + 40, c[1]], [T * PX, 0], PULL, 'T');
+          }
+          const f = rough ? MU * mg : 0;
+          if (rough) arrow(g, [c[0] - 40, FY - 4], [-f * PX, 0], FRIC, 'μN', [c[0] - 40 - f * PX - 20, FY - 16]);
+          const net = (usesT ? T : 0) - f, a = net / M;
+          const sum = usesT && rough ? `T − μmg = ${T} − ${f.toFixed(2)}`
+                    : usesT ? `T = ${T}` : rough ? `−μmg = −${f.toFixed(2)}` : '0 (no force along the floor)';
+          lines = [
+            `Forces: mg = ${mg.toFixed(1)} N down, N up` + (usesT ? `, T = ${T} N right` : '') +
+              (rough ? `, μN = ${f.toFixed(2)} N left` : '') + '.',
+            `Up/down: N = mg = ${mg.toFixed(1)} N (it stays on the floor)`,
+            `Right positive:  ${M}a = ${sum}`,
+            `  a = ${a.toFixed(2).replace('-', '−')} m/s²` +
+              (a === 0 ? '  (constant velocity)' : a < 0 ? '  (it slows down)' : '  (it speeds up)'),
+          ];
+          if (moving) lines.push('v0 is a velocity, not a force: it is not in the equation.');
+        }
+        output.textContent = lines.join('\n');
+      },
+    });
+
+    document.querySelectorAll('#ooChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#ooChoices button').forEach((x) => x.classList.toggle('active', x === b));
+      scene = b.dataset.scene;
+      board.redraw();
+    }));
+    tBox.addEventListener('input', board.redraw);
+  })();
+</script>
