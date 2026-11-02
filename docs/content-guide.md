@@ -745,24 +745,95 @@ Progress is stored under the set's path, both in the browser and in accounts. Re
 
 ## 10. Running and deploying
 
-**On your computer** (from the project root, once):
+### Running it on your computer
+
+Running the site locally takes **three programs at once**, each in its own terminal:
+
+| Program | What it does | Address |
+|---|---|---|
+| PostgreSQL (in Docker) | The database: notes, practice sets, accounts | `localhost:5432` |
+| Flask (`app.py`) | The API: answers `/api/...` with JSON from the database | http://localhost:5000 |
+| Vite (`npm run dev`) | The React app; passes `/api/...` on to Flask | http://localhost:5173 ← **open this one** |
+
+**You need** (check each with the command on the right):
+
+| Tool | Check | If it's missing (Ubuntu) |
+|---|---|---|
+| Python 3.12 or newer | `python3 --version` | `sudo apt install python3 python3-venv` |
+| Node.js 20.19+ or 22.12+, with npm (Vite needs it) | `node --version` | `sudo apt install nodejs npm`; if that version is too old, install a newer one from nodejs.org |
+| Docker with Compose | `docker compose version` | Install Docker, then `sudo usermod -aG docker $USER` and log out and in again, so `docker` works without `sudo` |
+| git | `git --version` | `sudo apt install git` |
+
+On Ubuntu the command is **`python3`**, not `python`: plain `python` gives "command not found". Once the venv exists, use `../venv/bin/python` and `../venv/bin/flask`, which run this project's own Python with its packages.
+
+#### First time only (setup)
+
+Run these from the **project root** (the `learnsolo/` folder), in order:
 
 ```bash
-python -m venv venv && venv/bin/pip install -r backend/requirements.txt
-cp .env.example .env              # then set SECRET_KEY to a long random string
-docker compose up -d              # starts PostgreSQL (again after each reboot)
+python3 -m venv venv                                   # 1. make venv/, a private Python for this project
+venv/bin/pip install -r backend/requirements.txt -r backend/requirements-dev.txt
+                                                       # 2. install Flask, SQLAlchemy, pytest… into venv/
+cp .env.example .env                                   # 3. make your settings file (never commit it)
+venv/bin/python -c "import secrets; print(secrets.token_hex(32))"
+                                                       # 4. prints a random key: paste it into .env as SECRET_KEY=...
+docker compose up -d                                   # 5. start PostgreSQL in the background
+cd frontend && npm install && cd ..                    # 6. install React, Vite… into frontend/node_modules/
 cd backend
-../venv/bin/flask db upgrade      # creates the tables
-../venv/bin/flask import-content  # copies content/ into the database
+../venv/bin/flask db upgrade                           # 7. create the tables in the empty database
+../venv/bin/flask import-content                       # 8. copy content/ into the database
 ```
 
-Then, from `backend/`:
+What to expect:
+- Step 5 prints `Container learnsolo-db-1 Started` (the first time it also downloads PostgreSQL).
+- Step 7 prints `Running upgrade ... Create content, user and progress tables`.
+- Step 8 prints three lines like `notes  335 added  0 updated  0 removed`.
+
+#### Every time (start working)
+
+**Terminal 1**: the database, then Flask:
 
 ```bash
-../venv/bin/python app.py         # the API on http://localhost:5000 (reloads when Python files change, FLASK_DEBUG=1 in .env)
+cd ~/Projects/learnsolo                # wherever you cloned it
+docker compose up -d                   # start PostgreSQL (it doesn't start by itself after a reboot)
+cd backend
+../venv/bin/flask import-content       # only if content/ changed (e.g. after git pull)
+../venv/bin/python app.py              # Flask on http://localhost:5000; leave this terminal open
 ```
 
-and, in a second terminal, the React app (section 12): `cd frontend && npm run dev`, then open http://localhost:5173.
+**Terminal 2**: the React app:
+
+```bash
+cd ~/Projects/learnsolo/frontend
+npm run dev                            # Vite on http://localhost:5173; leave this terminal open
+```
+
+Open **http://localhost:5173** in the browser. (http://localhost:5000 alone only shows JSON at `/api/...`, unless you've run `npm run build`; then it serves the built site too.)
+
+**To stop:** press `Ctrl+C` in each terminal. The database keeps running in the background until you run `docker compose stop` or shut down the computer; that's fine to leave.
+
+**After `git pull`**, also run `../venv/bin/flask db upgrade` (from `backend/`), in case someone changed the tables, and `npm install` (in `frontend/`) if `package.json` changed. Running them when nothing changed does no harm.
+
+#### If it doesn't work
+
+| What you see | Why | Fix |
+|---|---|---|
+| `python: command not found` | Ubuntu only has `python3` | Use `python3 -m venv venv`, then always `../venv/bin/python` |
+| `The virtual environment was not created successfully because ensurepip is not available` | The venv module isn't installed | `sudo apt install python3-venv`, delete the half-made `venv/`, try again |
+| `ModuleNotFoundError: No module named 'flask'` | You ran the system `python3`, not the venv's | Use `../venv/bin/python app.py` from `backend/` (or `source venv/bin/activate` first) |
+| `connection refused` / `OperationalError ... port 5432` | PostgreSQL isn't running | `docker compose up -d` from the project root; `docker ps` should list `learnsolo-db-1` |
+| `permission denied while trying to connect to the Docker daemon` | Your user isn't in the `docker` group | `sudo usermod -aG docker $USER`, log out and back in |
+| `Bind for 0.0.0.0:5432 failed: port is already allocated` | Another PostgreSQL is already using port 5432 | Stop it (`sudo systemctl stop postgresql`), or see which container has it with `docker ps` |
+| `DATABASE_URL is not set` | No `.env` in the project root | `cp .env.example .env` (in `learnsolo/`, not in `backend/`) |
+| `relation "notes" does not exist` | The tables were never made | `../venv/bin/flask db upgrade` from `backend/` |
+| `Address already in use` / `Port 5000 is in use` | Flask is already running in another terminal | Use that one, or stop it with `Ctrl+C` there. To find it: `ss -ltnp \| grep 5000` |
+| Vite says `Port 5173 is in use, trying another one...` | `npm run dev` is already running elsewhere | Open the address Vite prints, or stop the other one |
+| `sh: 1: vite: not found` | `frontend/node_modules/` is missing | `npm install` in `frontend/` |
+| The page loads but is empty, or says it can't load | Flask (terminal 1) isn't running; Vite needs it for every `/api/...` | Start `../venv/bin/python app.py` in `backend/` |
+| A new or edited note doesn't show | The database still has the old copy | `../venv/bin/flask import-content` in `backend/`, then refresh |
+| `Error: No such command 'import-content'` | `flask` was run outside `backend/`, so it can't find `app.py` | `cd backend` first |
+
+**Other systems:** on macOS, use the same commands (`python3`, Docker Desktop); if port 5000 is taken by AirPlay Receiver, turn that off in System Settings → General → AirDrop & Handoff. On Windows the venv paths are `venv\Scripts\python` and `venv\Scripts\flask` instead of `venv/bin/...`; running in WSL (Ubuntu) avoids that difference.
 
 **After editing content**, run `../venv/bin/flask import-content` from `backend/` and refresh the page. It prints how many rows were added, updated and removed; running it twice in a row changes nothing. The app doesn't need a restart.
 

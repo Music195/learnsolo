@@ -58,11 +58,14 @@ This project is built to act as a personal study companion, helping users struct
 
 ## ▶️ Running locally
 
+Needs Python 3.12+, Node.js 20.19+, and Docker. On Ubuntu the command is `python3`, not `python`.
+Step by step, with what to do when something fails: [docs/content-guide.md, section 10](docs/content-guide.md#10-running-and-deploying).
+
 ```bash
-python -m venv venv && source venv/bin/activate
+python3 -m venv venv && source venv/bin/activate
 pip install -r backend/requirements.txt
 cp .env.example .env          # then edit SECRET_KEY
-docker compose up -d          # PostgreSQL
+docker compose up -d          # PostgreSQL (again after each reboot)
 cd backend
 flask db upgrade              # create the tables
 flask import-content          # copy content/ into the database (again after editing content)
