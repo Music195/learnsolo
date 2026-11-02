@@ -1,0 +1,212 @@
+<!-- tags: Ideal Gases -->
+<!-- =====================================================================
+     NOTE: The Ideal Gas Equation
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Ideal Gases">The Ideal Gas Equation</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>$PV/T$ is fixed, and its value is just "number of moles × $R$"</h2>
+    <p>The combined law says $PV/T$ stays the same for a given amount of gas. But what is that constant? Twice as much gas at the same $P$ and $T$ takes up twice the volume, so the constant must be proportional to the number of moles $n$: $PV/T = nR$.</p>
+    <ul>
+      <li>To find $R$, use one known state. At <strong>standard conditions</strong> (0 °C $= 273$ K, $1.013 \times 10^5$ Pa), 1 mol of any gas fills $22.4$ L.</li>
+      <li>That gives $R = 8.31$ J/(mol·K), the <strong>gas constant</strong>. It is the same for every gas.</li>
+      <li>A gas that follows $PV = nRT$ exactly is an <strong>ideal gas</strong>. Real gases are close to ideal unless they are very cold or very squeezed.</li>
+    </ul>
+    <p>To find the pressure of a gas under a piston, look at the forces on the <strong>piston</strong>: the gas pushes up with $PS$, the air outside pushes down with $P_0S$, and the piston's weight is $Mg$.</p>
+  </section>
+
+  <!-- FORMULA: the equation of state -->
+  <div class="note-formula">
+    <h3>The ideal gas equation (equation of state)</h3>
+    <div class="formula-main">$$PV = nRT \qquad R = 8.31\ \mathrm{J/(mol\cdot K)}$$</div>
+    <p class="symbols">$P$: pressure (Pa). $V$: volume (m³; 1 L $= 10^{-3}$ m³). $n$: amount (mol). $T$: temperature (K).</p>
+  </div>
+
+  <!-- PROOF: the value and unit of R -->
+  <div class="note-proof">
+    <ol>
+      <li>$R = \dfrac{PV}{nT} = \dfrac{1.013 \times 10^5 \times 22.4 \times 10^{-3}}{1 \times 273} \approx 8.31$.</li>
+      <li>Unit: $\mathrm{Pa \cdot m^3} = \dfrac{\mathrm{N}}{\mathrm{m^2}} \cdot \mathrm{m^3} = \mathrm{N \cdot m} = \mathrm{J}$. So $PV$ is an energy, and $R$ is in J/(mol·K).</li>
+      <li><strong>Gas under a piston</strong> (area $S$, mass $M$, outside pressure $P_0$). The piston is at rest, so the forces balance: $PS = P_0S + Mg$, giving $P = P_0 + \dfrac{Mg}{S}$.</li>
+      <li>With gas column length $L$, $V = SL$, so $PV = nRT$ gives $T = \dfrac{(P_0S + Mg)L}{nR}$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: piston with a load; code at the bottom -->
+  <div class="note-demo">
+    <h2>Gas under a piston ($S = 1.0 \times 10^{-2}$ m², $P_0 = 1.0 \times 10^5$ Pa)</h2>
+    <div class="controls choices" id="esChoices">
+      <button type="button" data-n="0.05">n = 0.05 mol</button>
+      <button type="button" data-n="0.10" class="active">n = 0.10 mol</button>
+      <button type="button" data-n="0.20">n = 0.20 mol</button>
+    </div>
+    <div class="controls">
+      <label>load $M$ (kg) = <input type="range" id="esM" min="0" max="40" step="5" value="10"></label>
+      <label>$T$ (K) = <input type="range" id="esT" min="200" max="600" step="10" value="300"></label>
+    </div>
+    <canvas id="esCanvas"></canvas>
+    <div class="output table-text" id="esOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">How many moles of gas are in $2.0 \times 10^{-2}$ m³ at $1.0 \times 10^5$ Pa and 300 K?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$n = \dfrac{PV}{RT} = \dfrac{1.0 \times 10^5 \times 2.0 \times 10^{-2}}{8.31 \times 300} = \dfrac{2000}{2493}$.</li>
+      </ol>
+      <p class="answer">$n \approx 0.80\ \mathrm{mol}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">0.50 mol of gas is kept in a 10 L container at 27 °C. Find its pressure.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Units: $V = 10 \times 10^{-3} = 1.0 \times 10^{-2}$ m³, $T = 300$ K.</li>
+        <li>$P = \dfrac{nRT}{V} = \dfrac{0.50 \times 8.31 \times 300}{1.0 \times 10^{-2}}$.</li>
+      </ol>
+      <p class="answer">$P \approx 1.2 \times 10^5\ \mathrm{Pa}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A cylinder stands upright with a 10 kg piston of area $1.0 \times 10^{-2}$ m². Outside pressure is $1.0 \times 10^5$ Pa. Find the gas pressure. ($g = 9.8$ m/s²)</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Forces on the piston: $PS = P_0S + Mg$.</li>
+        <li>$P = 1.0 \times 10^5 + \dfrac{10 \times 9.8}{1.0 \times 10^{-2}} = 1.0 \times 10^5 + 9800$.</li>
+      </ol>
+      <p class="answer">$P \approx 1.1 \times 10^5\ \mathrm{Pa}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">The cylinder in Example 3 holds 0.10 mol of gas at 300 K. How long is the gas column?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$V = \dfrac{nRT}{P} = \dfrac{0.10 \times 8.31 \times 300}{1.098 \times 10^5} \approx 2.27 \times 10^{-3}$ m³.</li>
+        <li>$L = V/S = \dfrac{2.27 \times 10^{-3}}{1.0 \times 10^{-2}}$.</li>
+      </ol>
+      <p class="answer">$L \approx 0.23\ \mathrm{m}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">The gas in Example 4 is heated slowly. The piston is free to rise. At what temperature is the column 0.30 m long?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The forces on the piston don't change, so $P$ stays the same, and $V \propto T$.</li>
+        <li>$T = 300 \times \dfrac{0.30}{0.227}$ (or use $T = \dfrac{(P_0S + Mg)L}{nR} = \dfrac{1098 \times 0.30}{0.831}$).</li>
+      </ol>
+      <p class="answer">$T \approx 4.0 \times 10^2\ \mathrm{K}$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: SI units -->
+  <div class="note-warning">
+    With $R = 8.31$, every quantity must be in SI units: pressure in Pa, volume in <strong>m³</strong> (not L or cm³), temperature in <strong>K</strong>. 1 L $= 10^{-3}$ m³ and 1 cm³ $= 10^{-6}$ m³.
+  </div>
+
+  <!-- TIP: free piston -->
+  <div class="note-tip">
+    A piston that can move freely means <strong>constant pressure</strong> (its force balance doesn't change). A piston held by stops, or a rigid container, means <strong>constant volume</strong>.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$PV = nRT$ with $R = 8.31$ J/(mol·K), from 1 mol filling 22.4 L at 273 K and $1.013 \times 10^5$ Pa.</li>
+      <li>$\mathrm{Pa \cdot m^3} = \mathrm{J}$: $PV$ is an energy.</li>
+      <li>Gas under a piston: balance the piston, $P = P_0 + Mg/S$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Gas under a piston" demo (the TRY IT block above).
+  // The piston (area S = 0.010 m²) carries a load M; outside pressure P0 = 1.0×10^5 Pa.
+  // Force balance on the piston: P = P0 + Mg/S (g = 9.8). Then V = nRT/P and the
+  // column length L = V/S. 1 m of column = 240 pixels, so the tallest case
+  // (0.20 mol, 600 K, no load, about 1.0 m) still fits.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('esCanvas');
+    const output = document.getElementById('esOutput');
+    const mBox = document.getElementById('esM'), tBox = document.getElementById('esT');
+    const S = 0.01, P0 = 1e5, G = 9.8, R = 8.31, PXM = 240, BASE = 320;
+    const THING = '#475569', RED = '#dc2626', BLUE = '#2563eb', GREEN = '#16a34a';
+    let n = 0.1, lastText = '';
+
+    function arrow(g, p, q, color) {
+      g.seg(p, q, color, { width: 3 });
+      const d = Math.sign(q[1] - p[1]);
+      g.poly([q, [q[0] - 6, q[1] - 10 * d], [q[0] + 6, q[1] - 10 * d]], color);
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const M = Number(mBox.value), T = Number(tBox.value);
+        const P = P0 + M * G / S, V = n * R * T / P, L = V / S;
+        const top = BASE - L * PXM;
+        // cylinder and gas
+        g.seg([120, 20], [120, BASE], THING, { width: 2 });
+        g.seg([240, 20], [240, BASE], THING, { width: 2 });
+        g.seg([120, BASE], [240, BASE], THING, { width: 2 });
+        const hot = (T - 200) / 400;
+        g.poly([[121, top], [239, top], [239, BASE - 1], [121, BASE - 1]], `rgba(${Math.round(37 + 183 * hot)}, ${Math.round(99 - 61 * hot)}, ${Math.round(235 - 197 * hot)}, 0.25)`);
+        // piston and load
+        g.poly([[121, top - 12], [239, top - 12], [239, top], [121, top]], '#94a3b8');
+        if (M > 0) {
+          const h = 6 + M * 0.8;
+          g.poly([[150, top - 12 - h], [210, top - 12 - h], [210, top - 12], [150, top - 12]], 'rgba(71, 85, 105, 0.7)');
+          g.text([180, top - 12 - h / 2], `${M} kg`, '#ffffff');
+        }
+        g.text([180, (top + BASE) / 2], `L = ${L.toFixed(3)} m`, THING);
+        // forces on the piston, drawn on a separate copy of it (right side);
+        // arrow lengths are proportional to the forces (1 pixel per 10 N)
+        const FB = [400, 170], F0 = P0 * S, FM = M * G, FP = P * S;
+        g.text([FB[0], 30], 'forces on the piston', THING);
+        g.poly([[FB[0] - 40, FB[1] - 6], [FB[0] + 40, FB[1] - 6], [FB[0] + 40, FB[1] + 6], [FB[0] - 40, FB[1] + 6]], '#94a3b8');
+        arrow(g, [FB[0] - 20, FB[1] - 6 - F0 / 10], [FB[0] - 20, FB[1] - 6], THING);
+        g.text([FB[0] - 62, FB[1] - 60], 'P0S', THING);
+        if (M > 0) { arrow(g, [FB[0] + 20, FB[1] - 6 - FM / 10], [FB[0] + 20, FB[1] - 6], GREEN); g.text([FB[0] + 50, FB[1] - 20], 'Mg', GREEN); }
+        arrow(g, [FB[0], FB[1] + 6 + FP / 10], [FB[0], FB[1] + 6], RED);   // gas pushes up
+        g.text([FB[0] + 30, FB[1] + 70], 'PS', RED);
+
+        const text =
+          `P = P0 + Mg/S = 1.0×10^5 + ${M}×9.8/0.010 = ${(P / 1e5).toFixed(3)} × 10^5 Pa\n` +
+          `V = nRT/P = ${n}×8.31×${T}/${P.toFixed(0)} = ${(V * 1000).toFixed(2)} × 10^-3 m³\n` +
+          `L = V/S = ${L.toFixed(3)} m`;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    document.querySelectorAll('#esChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#esChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      n = Number(b.dataset.n);
+      board.redraw();
+    }));
+    [mBox, tBox].forEach((b) => b.addEventListener('input', () => board.redraw()));
+  })();
+</script>

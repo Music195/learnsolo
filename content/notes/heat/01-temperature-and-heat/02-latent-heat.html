@@ -1,0 +1,232 @@
+<!-- tags: Temperature and Heat -->
+<!-- =====================================================================
+     NOTE: Latent Heat
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Temperature and Heat">Latent Heat</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>While ice melts, heat goes in but the temperature doesn't move</h2>
+    <p>Heat a block of ice from −10 °C. Its temperature climbs to 0 °C and then <strong>stops</strong>. You keep heating, yet the thermometer stays at 0 °C until every bit of ice has melted. Only then does the water start warming up.</p>
+    <ul>
+      <li>During melting, the heat is used to pull the molecules out of their fixed places in the solid, not to make them move faster. So the temperature stays the same.</li>
+      <li>The heat needed to change the state of 1 g without changing its temperature is the <strong>latent heat</strong> $L$ ("latent" means hidden: it doesn't show on the thermometer).</li>
+      <li>For water: melting (fusion) $L = 336$ J/g at 0 °C; boiling (vaporisation) $L \approx 2260$ J/g at 100 °C.</li>
+    </ul>
+    <p>So a "from ice to warm water" problem has <strong>three stages</strong>: warm the ice, melt it, warm the water. Work out each one and add them up.</p>
+  </section>
+
+  <!-- FORMULA: heat for a change of state -->
+  <div class="note-formula">
+    <h3>Heat to change the state of mass $m$</h3>
+    <div class="formula-main">$$Q = mL$$</div>
+    <p class="symbols">$Q$: heat (J). $m$: mass (g). $L$: latent heat (J/g). During the change of state $\Delta T = 0$, so $Q = mc\,\Delta T$ can't be used for this stage.</p>
+  </div>
+
+  <!-- PROOF: the three stages -->
+  <div class="note-proof">
+    <ol>
+      <li><strong>Warm the ice</strong> from $t_1$ to 0 °C: $Q_1 = m\,c_{\text{ice}}\,(0 - t_1)$.</li>
+      <li><strong>Melt it</strong> at 0 °C: $Q_2 = mL$.</li>
+      <li><strong>Warm the water</strong> from 0 °C to $t_2$: $Q_3 = m\,c_{\text{water}}\,(t_2 - 0)$.</li>
+      <li>Total: $Q = Q_1 + Q_2 + Q_3$. Ice and water have different specific heats ($2.1$ and $4.2$ J/(g·K)), so the two warming stages must use different $c$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: heating curve; code at the bottom -->
+  <div class="note-demo">
+    <h2>Heat ice from −10 °C with a 500 W heater</h2>
+    <div class="controls choices" id="lhChoices">
+      <button type="button" data-m="50">50 g of ice</button>
+      <button type="button" data-m="100" class="active">100 g of ice</button>
+      <button type="button" data-m="200">200 g of ice</button>
+    </div>
+    <canvas id="lhCanvas"></canvas>
+    <div class="output table-text" id="lhOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">How much heat turns 100 g of ice at −10 °C into water at 40 °C? ($c_{\text{ice}} = 2.1$, $c_{\text{water}} = 4.2$ J/(g·K), $L = 336$ J/g.) Give 2 significant figures.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Warm the ice: $100 \times 2.1 \times 10 = 2100$ J.</li>
+        <li>Melt it: $100 \times 336 = 33600$ J.</li>
+        <li>Warm the water: $100 \times 4.2 \times 40 = 16800$ J.</li>
+        <li>Total: $52500$ J $= 5.25 \times 10^4$ J.</li>
+      </ol>
+      <p class="answer">$Q \approx 5.3 \times 10^4\ \mathrm{J}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">How much heat melts 50 g of ice that is already at 0 °C?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Only the melting stage: $Q = mL = 50 \times 336$.</li>
+      </ol>
+      <p class="answer">$Q = 16800\ \mathrm{J} \approx 1.7 \times 10^4\ \mathrm{J}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A 420 W heater is put into 100 g of ice at 0 °C. How long does the ice take to melt, and how long after that until the water reaches 100 °C? (All the heat goes into the ice/water.)</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Power is heat per second, so time = heat ÷ power.</li>
+        <li>Melting: $\dfrac{100 \times 336}{420} = 80$ s.</li>
+        <li>Warming: $\dfrac{100 \times 4.2 \times 100}{420} = 100$ s.</li>
+      </ol>
+      <p class="answer">80 s to melt, then 100 s more to reach 100 °C</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">How much heat turns 10 g of water at 100 °C into steam at 100 °C? ($L = 2260$ J/g)</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$Q = mL = 10 \times 2260 = 22600$ J.</li>
+        <li>Compare: warming those 10 g all the way from 0 °C to 100 °C needs only $10 \times 4.2 \times 100 = 4200$ J.</li>
+      </ol>
+      <p class="answer">$Q \approx 2.3 \times 10^4\ \mathrm{J}$, over 5 times the heat to warm it from 0 °C</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">Write 52500 J and 0.00336 J in scientific notation with 2 significant figures.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The number in front must be at least 1 and less than 10.</li>
+        <li>$52500 = 5.25 \times 10^4 \approx 5.3 \times 10^4$ (not $53 \times 10^3$).</li>
+        <li>$0.00336 = 3.36 \times 10^{-3} \approx 3.4 \times 10^{-3}$.</li>
+      </ol>
+      <p class="answer">$5.3 \times 10^4$ J and $3.4 \times 10^{-3}$ J</p>
+    </details>
+  </div>
+
+  <!-- WARNING: no temperature change while melting -->
+  <div class="note-warning">
+    Don't use $Q = mc\,\Delta T$ across 0 °C in one go, as in $100 \times 4.2 \times 50$ for "−10 °C to 40 °C". It misses the melting stage, which is usually the biggest part, and uses the wrong $c$ for the ice.
+  </div>
+
+  <!-- TIP: flat part of the graph -->
+  <div class="note-tip">
+    On a temperature–time graph with a steady heater, a <strong>flat</strong> part means a change of state. Its length tells you $mL$, and the slope of each sloping part tells you $mc$: a gentler slope means a bigger heat capacity.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>During melting or boiling the temperature stays the same; the heat needed is $Q = mL$.</li>
+      <li>Ice to warm water: warm the ice + melt + warm the water, each with its own formula.</li>
+      <li>Scientific notation: the front number is at least 1 and less than 10.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Heating curve" demo (the TRY IT block above).
+  // Ice of mass m (g) starts at −10 °C. A 500 W heater gives it 500 J every second.
+  // Stage 1: ice warms (c = 2.1); stage 2: it melts at 0 °C (L = 336 J/g);
+  // stage 3: the water warms (c = 4.2) up to 100 °C, where the run stops.
+  // The time axis is fixed (0 to 330 s), so a bigger mass gives a longer curve.
+  // The animation runs 40 times faster than real time.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('lhCanvas');
+    const output = document.getElementById('lhOutput');
+    const P = 500, CI = 2.1, CW = 4.2, L = 336;
+    const O = [60, 290], XS = 430 / 330, YS = 2;            // pixels per second, pixels per °C
+    const THING = '#475569', RED = '#dc2626', BLUE = '#2563eb';
+    let m = 100, t = 0, lastText = '';
+
+    // temperature (°C) and stage after heat Q (J) has gone in
+    function state(Q) {
+      const Q1 = m * CI * 10, Q2 = m * L, Q3 = m * CW * 100;
+      if (Q < Q1) return { T: -10 + Q / (m * CI), stage: 1, ice: 1 };
+      if (Q < Q1 + Q2) return { T: 0, stage: 2, ice: 1 - (Q - Q1) / Q2 };
+      return { T: Math.min(100, (Q - Q1 - Q2) / (m * CW)), stage: 3, ice: 0 };
+    }
+    const px = (time, T) => [O[0] + time * XS, O[1] - (T + 10) * YS - 20];
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        // axes and grid
+        for (let T = -10; T <= 100; T += 10) {
+          const y = px(0, T)[1];
+          g.seg([O[0], y], [O[0] + 430, y], T === 0 ? '#cbd5e1' : '#f1f5f9', { width: 1 });
+          if (T % 20 === 0 || T === -10) g.text([O[0] - 24, y], `${T}`.replace('-', '−'), '#94a3b8');
+        }
+        g.seg([O[0], O[1]], [O[0] + 430, O[1]], THING, { width: 1.5 });
+        g.seg([O[0], O[1]], [O[0], 20], THING, { width: 1.5 });
+        for (let s = 0; s <= 300; s += 50) g.text([O[0] + s * XS, O[1] + 14], `${s}`, '#94a3b8');
+        g.text([O[0] + 400, O[1] + 34], 'time (s)', THING);
+        g.text([O[0] - 24, 12], 'T (°C)', THING);
+
+        // the curve so far
+        const tEnd = (m * CI * 10 + m * L + m * CW * 100) / P;
+        const now = Math.min(t, tEnd);
+        let prev = px(0, -10);
+        for (let k = 1; k <= 200; k++) {
+          const tt = now * k / 200, p = px(tt, state(P * tt).T);
+          g.seg(prev, p, RED, { width: 2.5 });
+          prev = p;
+        }
+        const s = state(P * now);
+        g.circle(prev, 5, RED, { fill: RED });
+
+        // a beaker in the top-left corner: ice fraction (light blue) and water
+        const bx = 100, by = 46;
+        g.poly([[bx, by], [bx + 80, by], [bx + 80, by + 70], [bx, by + 70]], 'rgba(147, 197, 253, 0.35)');
+        if (s.ice > 0) g.poly([[bx + 10, by + 30], [bx + 10 + 60 * s.ice, by + 30], [bx + 10 + 60 * s.ice, by + 60], [bx + 10, by + 60]], 'rgba(219, 234, 254, 1)');
+        g.text([bx + 40, by - 14], ['', 'ice warming', 'melting', 'water warming'][s.stage], BLUE);
+
+        const Q1 = m * CI * 10, Q2 = m * L, Q3 = m * CW * 100;
+        const text =
+          `m = ${m} g:  warm ice ${Q1} J,  melt ${Q2} J,  warm water to 100 °C ${Q3} J\n` +
+          `times at 500 W:  ${(Q1 / P).toFixed(1)} s,  ${(Q2 / P).toFixed(1)} s,  ${(Q3 / P).toFixed(1)} s\n` +
+          `t = ${now.toFixed(0)} s:  heat in = ${(P * now).toFixed(0)} J,  T = ${s.T.toFixed(1).replace('-', '−')} °C` +
+          (s.stage === 2 ? `,  ice left ${(100 * s.ice).toFixed(0)} %` : '');
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Run the clock 40 times faster than real time. Stop when the page has changed.
+    let last = performance.now();
+    function tick(nowMs) {
+      if (!canvas.isConnected) return;
+      const dt = Math.max(0, Math.min((nowMs - last) / 1000, 0.05));
+      last = nowMs;
+      const tEnd = (m * CI * 10 + m * L + m * CW * 100) / P;
+      if (t < tEnd) { t += 40 * dt; board.redraw(); }
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    document.querySelectorAll('#lhChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#lhChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      m = Number(b.dataset.m);
+      t = 0;
+      board.redraw();
+    }));
+  })();
+</script>

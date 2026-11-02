@@ -1,0 +1,219 @@
+<!-- tags: Ideal Gases -->
+<!-- =====================================================================
+     NOTE: The Gas Laws
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Ideal Gases">The Gas Laws</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Squeeze a gas and its pressure rises; heat it and it expands</h2>
+    <p>A fixed amount of gas is described by three numbers: pressure $P$, volume $V$ and temperature $T$. Two experiments link them.</p>
+    <ul>
+      <li><strong>Boyle's law</strong> (temperature fixed): halve the volume and the pressure doubles. $PV$ stays the same.</li>
+      <li><strong>Charles's law</strong> (pressure fixed): for every 1 °C of warming, the volume grows by $\frac{1}{273}$ of its volume at 0 °C. So $V = V_0\left(1 + \frac{t}{273}\right) = V_0\,\frac{273 + t}{273}$.</li>
+    </ul>
+    <p>That "$273 + t$" is the temperature in <strong>kelvin</strong>, $T$. Following the line back, the volume would reach zero at $t = -273$ °C: <strong>absolute zero</strong>, the coldest anything can be. Measured from there, Charles's law is simply $V \propto T$.</p>
+    <p>Put the two laws together and you get one rule for any change of a fixed amount of gas: <strong>$PV/T$ stays the same</strong>.</p>
+  </section>
+
+  <!-- FORMULA: the three laws -->
+  <div class="note-formula">
+    <h3>A fixed amount of gas</h3>
+    <div class="formula-main">$$P_1V_1 = P_2V_2 \qquad \frac{V_1}{T_1} = \frac{V_2}{T_2} \qquad \frac{P_1V_1}{T_1} = \frac{P_2V_2}{T_2}$$</div>
+    <p class="symbols">Boyle (same $T$), Charles (same $P$), and the combined law. $T$ must be in kelvin: $T = t + 273$.</p>
+  </div>
+
+  <!-- PROOF: combining the laws -->
+  <div class="note-proof">
+    <ol>
+      <li>Go from $(P_1, V_1, T_1)$ to $(P_2, V_2, T_2)$ in two steps through a middle state $(P_2, V', T_1)$.</li>
+      <li>Step 1, same temperature (Boyle): $P_1V_1 = P_2V'$, so $V' = \dfrac{P_1V_1}{P_2}$.</li>
+      <li>Step 2, same pressure (Charles): $\dfrac{V'}{T_1} = \dfrac{V_2}{T_2}$.</li>
+      <li>Put in $V'$: $\dfrac{P_1V_1}{P_2T_1} = \dfrac{V_2}{T_2}$, so $\dfrac{P_1V_1}{T_1} = \dfrac{P_2V_2}{T_2}$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: gas in a cylinder; code at the bottom -->
+  <div class="note-demo">
+    <h2>Gas in a cylinder: start at $P = 1.0 \times 10^5$ Pa, $V = 3.0$ L, $T = 300$ K</h2>
+    <div class="controls choices" id="glChoices">
+      <button type="button" data-law="boyle" class="active">Same T (Boyle)</button>
+      <button type="button" data-law="charles">Same P (Charles)</button>
+    </div>
+    <div class="controls">
+      <label>change = <input type="range" id="glS" min="0" max="100" value="50"></label>
+    </div>
+    <canvas id="glCanvas"></canvas>
+    <div class="output table-text" id="glOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">2.0 L of gas at $1.0 \times 10^5$ Pa is squeezed to 0.50 L at the same temperature. Find the new pressure.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Boyle: $P_2 = \dfrac{P_1V_1}{V_2} = \dfrac{1.0 \times 10^5 \times 2.0}{0.50}$.</li>
+      </ol>
+      <p class="answer">$P_2 = 4.0 \times 10^5\ \mathrm{Pa}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">3.0 L of gas at 27 °C is heated to 127 °C at constant pressure. Find the new volume.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Change to kelvin: 300 K and 400 K.</li>
+        <li>Charles: $V_2 = V_1\,\dfrac{T_2}{T_1} = 3.0 \times \dfrac{400}{300}$.</li>
+      </ol>
+      <p class="answer">$V_2 = 4.0\ \mathrm{L}$ (not $3.0 \times \frac{127}{27}$)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A gas at $1.0 \times 10^5$ Pa, 6.0 L and 300 K is changed to $2.0 \times 10^5$ Pa and 450 K. Find its volume.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$V_2 = V_1 \times \dfrac{P_1}{P_2} \times \dfrac{T_2}{T_1} = 6.0 \times \dfrac12 \times \dfrac{450}{300}$.</li>
+      </ol>
+      <p class="answer">$V_2 = 4.5\ \mathrm{L}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">A sealed rigid can holds gas at $1.0 \times 10^5$ Pa and 27 °C. It is heated to 327 °C. Find the pressure.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The volume is fixed, so the combined law gives $\dfrac{P_1}{T_1} = \dfrac{P_2}{T_2}$.</li>
+        <li>$P_2 = 1.0 \times 10^5 \times \dfrac{600}{300}$.</li>
+      </ol>
+      <p class="answer">$P_2 = 2.0 \times 10^5\ \mathrm{Pa}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">At 0 °C a gas has volume $V_0$. Using Charles's law, at what temperature would its volume be zero at the same pressure?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$V = V_0\left(1 + \dfrac{t}{273}\right) = 0$ when $\dfrac{t}{273} = -1$.</li>
+      </ol>
+      <p class="answer">$t = -273\ ^\circ\mathrm{C}$, which is $0$ K (absolute zero)</p>
+    </details>
+  </div>
+
+  <!-- WARNING: kelvin -->
+  <div class="note-warning">
+    The gas laws only work with <strong>kelvin</strong>. "From 27 °C to 54 °C" is not doubling the temperature: it is 300 K to 327 K, a rise of only 9 %.
+  </div>
+
+  <!-- TIP: which law -->
+  <div class="note-tip">
+    You can always use the combined law $\frac{PV}{T} = \text{constant}$; anything that stays the same simply cancels. That's quicker than deciding which named law applies.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Boyle: $PV$ constant at fixed $T$. Charles: $V/T$ constant at fixed $P$.</li>
+      <li>Combined: $PV/T$ constant for a fixed amount of gas.</li>
+      <li>Always use kelvin: $T = t + 273$. Absolute zero is −273 °C.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Gas in a cylinder" demo (the TRY IT block above).
+  // Start: P = 1.0×10^5 Pa, V = 3.0 L, T = 300 K.
+  // Boyle: T fixed, the slider sets V from 1.0 L to 5.0 L; P = 3.0/V (×10^5 Pa).
+  // Charles: P fixed, the slider sets T from 100 K to 500 K; V = 3.0 × T/300 L.
+  // Left: the cylinder (piston height ∝ V). Right: the graph for the chosen law,
+  // P–V for Boyle (a curve) and V–T for Charles (a straight line through 0 K).
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('glCanvas');
+    const output = document.getElementById('glOutput');
+    const sBox = document.getElementById('glS');
+    const THING = '#475569', RED = '#dc2626', BLUE = '#2563eb';
+    const G0 = [250, 290], GW = 240, GH = 240;
+    let law = 'boyle', lastText = '';
+
+    // the state for slider value s (0–100)
+    function state(s) {
+      if (law === 'boyle') { const V = 1 + 4 * s / 100; return { P: 3 / V, V, T: 300 }; }
+      const T = 100 + 4 * s; return { P: 1, V: 3 * T / 300, T };
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const st = state(Number(sBox.value));
+        // cylinder: 1 L = 40 pixels of height
+        const base = 290, top = base - st.V * 40;
+        g.seg([40, 60], [40, base], THING, { width: 2 });
+        g.seg([160, 60], [160, base], THING, { width: 2 });
+        g.seg([40, base], [160, base], THING, { width: 2 });
+        const hot = Math.max(0, Math.min(1, (st.T - 100) / 400));
+        g.poly([[41, top], [159, top], [159, base - 1], [41, base - 1]], `rgba(${Math.round(37 + 183 * hot)}, ${Math.round(99 - 61 * hot)}, ${Math.round(235 - 197 * hot)}, 0.25)`);
+        g.poly([[41, top - 12], [159, top - 12], [159, top], [41, top]], '#94a3b8');
+        g.seg([100, top - 12], [100, 30], THING, { width: 4 });
+        g.text([100, base - 20], `${st.V.toFixed(2)} L`, THING);
+
+        // graph axes
+        g.seg(G0, [G0[0] + GW, G0[1]], THING, { width: 1.5 });
+        g.seg(G0, [G0[0], G0[1] - GH], THING, { width: 1.5 });
+        let pt;
+        if (law === 'boyle') {
+          // P from 0 to 3.2 (×10^5 Pa), V from 0 to 5.5 L
+          const gp = (V, P) => [G0[0] + V / 5.5 * GW, G0[1] - P / 3.2 * GH];
+          let prev = gp(1, 3);
+          for (let V = 1.05; V <= 5.001; V += 0.05) { const p = gp(V, 3 / V); g.seg(prev, p, BLUE, { width: 2 }); prev = p; }
+          pt = gp(st.V, st.P);
+          g.text([G0[0] + GW - 10, G0[1] + 16], 'V (L)', THING);
+          g.text([G0[0] + 10, G0[1] - GH - 12], 'P', THING);
+          g.text([G0[0] + 150, G0[1] - 160], 'PV = constant', BLUE);
+        } else {
+          // V from 0 to 5.5 L, T from 0 to 520 K
+          const gp = (T, V) => [G0[0] + T / 520 * GW, G0[1] - V / 5.5 * GH];
+          g.seg(gp(0, 0), gp(100, 1), BLUE, { width: 1.5, dash: true });
+          g.seg(gp(100, 1), gp(500, 5), BLUE, { width: 2 });
+          pt = gp(st.T, st.V);
+          g.text([G0[0] + GW - 10, G0[1] + 16], 'T (K)', THING);
+          g.text([G0[0] + 10, G0[1] - GH - 12], 'V', THING);
+          g.text([G0[0] + 2, G0[1] + 16], '0 K', '#94a3b8');
+          g.text([G0[0] + 80, G0[1] - 190], 'V ∝ T', BLUE);
+        }
+        g.circle(pt, 6, RED, { fill: RED });
+
+        const text =
+          `P = ${st.P.toFixed(2)} × 10^5 Pa,  V = ${st.V.toFixed(2)} L,  T = ${st.T} K (${st.T - 273} °C)`.replace('(-', '(−') + '\n' +
+          `PV = ${(st.P * st.V).toFixed(2)} × 10^5 Pa·L,  V/T = ${(st.V / st.T * 1000).toFixed(2)} × 10^-3 L/K\n` +
+          `PV/T = ${(st.P * st.V / st.T * 100).toFixed(2)} × 10^3 Pa·L/K (always the same)`;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    document.querySelectorAll('#glChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#glChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      law = b.dataset.law;
+      board.redraw();
+    }));
+    sBox.addEventListener('input', () => board.redraw());
+  })();
+</script>

@@ -1,0 +1,221 @@
+<!-- tags: Temperature and Heat -->
+<!-- =====================================================================
+     NOTE: Heat Balance
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Temperature and Heat">Heat Balance</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Heat lost by the hot thing = heat gained by the cold thing</h2>
+    <p>Drop a hot metal block into cold water. Heat flows from the block to the water: the block cools, the water warms, and they meet at one common temperature. When nothing changes any more, they are in <strong>thermal equilibrium</strong>.</p>
+    <ul>
+      <li>If no heat escapes to the surroundings, energy is conserved: <strong>heat lost = heat gained</strong>.</li>
+      <li>Write each side with $Q = mc\,\Delta T$, using a <strong>positive</strong> temperature change on each side: (hot start − final) for the hot one, (final − cold start) for the cold one.</li>
+      <li>The final temperature is closer to the start of the object with the bigger heat capacity $mc$: water usually "wins".</li>
+    </ul>
+    <p>Other energy can join the balance too. A fast bullet stopping in ice turns its kinetic energy into heat as well, so it goes on the "heat given" side.</p>
+  </section>
+
+  <!-- FORMULA: the balance -->
+  <div class="note-formula">
+    <h3>Two objects reaching a common temperature $T$</h3>
+    <div class="formula-main">$$m_1c_1(T_1 - T) = m_2c_2(T - T_2) \quad\Rightarrow\quad T = \frac{m_1c_1T_1 + m_2c_2T_2}{m_1c_1 + m_2c_2}$$</div>
+    <p class="symbols">Object 1 starts hot at $T_1$, object 2 starts cold at $T_2$. $T$ is a weighted average of the start temperatures, weighted by heat capacity $mc$.</p>
+  </div>
+
+  <!-- PROOF: solve for T -->
+  <div class="note-proof">
+    <ol>
+      <li>Heat lost by the hot object: $m_1c_1(T_1 - T)$. Heat gained by the cold one: $m_2c_2(T - T_2)$.</li>
+      <li>Set them equal and expand: $m_1c_1T_1 - m_1c_1T = m_2c_2T - m_2c_2T_2$.</li>
+      <li>Collect the $T$ terms: $(m_1c_1 + m_2c_2)T = m_1c_1T_1 + m_2c_2T_2$, which gives the formula.</li>
+      <li>If ice melts on the way, add its $mL$ to the "gained" side, and remember the melted ice then warms as water from 0 °C.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: hot block in water; code at the bottom -->
+  <div class="note-demo">
+    <h2>A 100 °C metal block dropped into water at 20 °C</h2>
+    <div class="controls choices" id="hbChoices">
+      <button type="button" data-m1="200" data-c1="0.45" data-m2="300" data-name="200 g iron, 300 g water" class="active">200 g iron, 300 g water</button>
+      <button type="button" data-m1="200" data-c1="0.90" data-m2="100" data-name="200 g aluminium, 100 g water">200 g aluminium, 100 g water</button>
+      <button type="button" data-m1="500" data-c1="0.39" data-m2="50" data-name="500 g copper, 50 g water">500 g copper, 50 g water</button>
+    </div>
+    <canvas id="hbCanvas"></canvas>
+    <div class="output table-text" id="hbOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">100 g of water at 80 °C is mixed with 300 g of water at 20 °C. Find the final temperature.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$100 \times 4.2\,(80 - T) = 300 \times 4.2\,(T - 20)$.</li>
+        <li>The $4.2$ cancels: $8000 - 100T = 300T - 6000$, so $400T = 14000$.</li>
+      </ol>
+      <p class="answer">$T = 35\ ^\circ\mathrm{C}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">A 200 g iron block ($c = 0.45$ J/(g·K)) at 100 °C is put into 300 g of water at 20 °C. Find the final temperature.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$T = \dfrac{200 \times 0.45 \times 100 + 300 \times 4.2 \times 20}{200 \times 0.45 + 300 \times 4.2} = \dfrac{9000 + 25200}{90 + 1260}$.</li>
+      </ol>
+      <p class="answer">$T \approx 25\ ^\circ\mathrm{C}$: the water hardly warms</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A container with heat capacity 84 J/K holds 200 g of water, both at 20 °C. 100 g of water at 60 °C is poured in. Find the final temperature.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The container warms too, so it goes on the "gained" side: $100 \times 4.2\,(60 - T) = (84 + 200 \times 4.2)(T - 20)$.</li>
+        <li>$25200 - 420T = 924T - 18480$, so $1344T = 43680$.</li>
+      </ol>
+      <p class="answer">$T = 32.5\ ^\circ\mathrm{C}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">50 g of ice at 0 °C is dropped into 200 g of water at 60 °C. All the ice melts. Find the final temperature. ($L = 336$ J/g)</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Gained: melt the ice, $50 \times 336 = 16800$ J, then warm 50 g of melted water from 0 °C: $50 \times 4.2 \times T = 210T$.</li>
+        <li>Lost: $200 \times 4.2\,(60 - T) = 50400 - 840T$.</li>
+        <li>$50400 - 840T = 16800 + 210T$, so $1050T = 33600$.</li>
+      </ol>
+      <p class="answer">$T = 32\ ^\circ\mathrm{C}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">A 100 g bullet at 100 °C, moving at 500 m/s, hits a large block of ice at 0 °C and stops inside it. How much ice melts? ($c_{\text{bullet}} = 0.38$ J/(g·K), $L = 336$ J/g; the bullet ends at 0 °C and all the energy goes into the ice.)</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Heat from cooling: $0.38 \times 100 \times 100 = 3800$ J (mass in <strong>g</strong>, because $c$ is per gram).</li>
+        <li>Kinetic energy: $\tfrac12 \times 0.100 \times 500^2 = 12500$ J (mass in <strong>kg</strong>, because $\tfrac12mv^2$ is in SI units).</li>
+        <li>Heat lost = heat gained: $3800 + 12500 = 336x$.</li>
+      </ol>
+      <p class="answer">$x \approx 48.5\ \mathrm{g} \approx 49\ \mathrm{g}$ of ice melts</p>
+    </details>
+  </div>
+
+  <!-- WARNING: g vs kg -->
+  <div class="note-warning">
+    In Example 5 the same bullet is "100" in one term and "0.100" in the other. Heat with $c$ in J/(g·K) uses grams; kinetic energy $\tfrac12mv^2$ in joules uses kilograms. Writing $\tfrac12 \times 100 \times 500^2$ gives an answer 1000 times too big.
+  </div>
+
+  <!-- TIP: graph shape -->
+  <div class="note-tip">
+    On a temperature–time graph the two curves approach the same level. They change fast at first (big temperature gap, fast heat flow) and then level off. Where they meet is the equilibrium temperature from the formula.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Heat lost = heat gained, with each temperature change written as a positive number.</li>
+      <li>The final temperature is the $mc$-weighted average of the start temperatures.</li>
+      <li>Add containers ($C\,\Delta T$), melting ($mL$) and kinetic energy to the right side of the balance.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Hot block in water" demo (the TRY IT block above).
+  // The block (mass m1, specific heat c1) starts at 100 °C; the water (m2, c = 4.2)
+  // at 20 °C. Both approach the equilibrium temperature
+  //   Teq = (m1 c1 100 + m2 4.2 20) / (m1 c1 + m2 4.2)
+  // along curves that fall off like e^(−t/τ). The time scale τ is only for show.
+  // Left: the beaker; right: the temperature–time graph.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('hbCanvas');
+    const output = document.getElementById('hbOutput');
+    const THING = '#475569', RED = '#dc2626', BLUE = '#2563eb', TAU = 1.2, TMAX = 8;
+    const G0 = [200, 290], GW = 300, GH = 250;             // graph origin, width, height (0–100 °C)
+    let m1 = 200, c1 = 0.45, m2 = 300, name = '200 g iron, 300 g water', t = 0, lastText = '';
+
+    const gp = (time, T) => [G0[0] + time / TMAX * GW, G0[1] - T / 100 * GH];
+    // a colour from blue (20 °C) to red (100 °C)
+    const heat = (T) => { const f = Math.max(0, Math.min(1, (T - 20) / 80)); return `rgb(${Math.round(37 + 183 * f)}, ${Math.round(99 - 61 * f)}, ${Math.round(235 - 197 * f)})`; };
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const C1 = m1 * c1, C2 = m2 * 4.2, Teq = (C1 * 100 + C2 * 20) / (C1 + C2);
+        const f = Math.exp(-t / TAU);
+        const Tb = Teq + (100 - Teq) * f, Tw = Teq + (20 - Teq) * f;
+
+        // the beaker with water and the block
+        g.poly([[30, 150], [170, 150], [170, 290], [30, 290]], 'rgba(147, 197, 253, 0.45)');
+        g.seg([30, 120], [30, 290], THING, { width: 2 });
+        g.seg([170, 120], [170, 290], THING, { width: 2 });
+        g.seg([30, 290], [170, 290], THING, { width: 2 });
+        g.poly([[75, 215], [125, 215], [125, 265], [75, 265]], heat(Tb));
+        g.text([100, 240], `${Tb.toFixed(0)} °C`, '#ffffff');
+        g.text([100, 180], `water ${Tw.toFixed(1)} °C`, BLUE);
+
+        // the graph
+        g.seg(G0, [G0[0] + GW, G0[1]], THING, { width: 1.5 });
+        g.seg(G0, [G0[0], G0[1] - GH - 10], THING, { width: 1.5 });
+        [0, 20, 50, 100].forEach((T) => g.text([G0[0] - 16, gp(0, T)[1]], `${T}`, '#94a3b8'));
+        g.seg(gp(0, Teq), gp(TMAX, Teq), '#94a3b8', { width: 1, dash: true });
+        g.text([G0[0] + GW - 20, gp(0, Teq)[1] - 12], `${Teq.toFixed(1)} °C`, '#475569');
+        g.text([G0[0] + GW - 20, G0[1] + 16], 'time', THING);
+        let pb = gp(0, 100), pw = gp(0, 20);
+        for (let k = 1; k <= 120; k++) {
+          const tt = t * k / 120, ff = Math.exp(-tt / TAU);
+          const nb = gp(tt, Teq + (100 - Teq) * ff), nw = gp(tt, Teq + (20 - Teq) * ff);
+          g.seg(pb, nb, RED, { width: 2.5 });
+          g.seg(pw, nw, BLUE, { width: 2.5 });
+          pb = nb; pw = nw;
+        }
+
+        const lost = C1 * (100 - Tb), gained = C2 * (Tw - 20);
+        const text =
+          `${name}:  mc = ${C1.toFixed(0)} J/K (block),  ${C2.toFixed(0)} J/K (water)\n` +
+          `Teq = (${C1.toFixed(0)} × 100 + ${C2.toFixed(0)} × 20)/(${C1.toFixed(0)} + ${C2.toFixed(0)}) = ${Teq.toFixed(1)} °C\n` +
+          `so far: block lost ${lost.toFixed(0)} J,  water gained ${gained.toFixed(0)} J`;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Advance the clock until the graph is full. Stop when the page has changed.
+    let last = performance.now();
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.max(0, Math.min((now - last) / 1000, 0.05));
+      last = now;
+      if (t < TMAX) { t = Math.min(TMAX, t + dt * 1.6); board.redraw(); }
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    document.querySelectorAll('#hbChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#hbChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      m1 = Number(b.dataset.m1); c1 = Number(b.dataset.c1); m2 = Number(b.dataset.m2); name = b.dataset.name;
+      t = 0;
+      board.redraw();
+    }));
+  })();
+</script>

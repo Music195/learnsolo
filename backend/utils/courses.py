@@ -18,6 +18,7 @@ SUBJECTS = [
 # Course folder -> display name and subject. A folder missing here is shown
 # with a name made from the folder ("physics-basic" -> "Physics Basic") and
 # goes under the subject named by its first word.
+# Courses are listed in the order written here (folders not listed come last).
 COURSES = {
     "math-1": {"name": "Math I", "subject": "Mathematics"},
     "math-2": {"name": "Math II", "subject": "Mathematics"},
@@ -30,6 +31,8 @@ COURSES = {
     # impulse and momentum, inertial force, circular motion,
     # universal gravitation, simple harmonic motion
     "mechanics-basic": {"name": "Mechanics Basic", "subject": "Physics"},
+    # Heat: temperature and heat, ideal gases, thermodynamics
+    "heat": {"name": "Heat", "subject": "Physics"},
 }
 
 # Past question folders (content/past/<folder>/) -> name, icon and description.
@@ -67,6 +70,12 @@ def _from_folder(folder):
 
 def course_name(folder):
     return COURSES.get(folder, {}).get("name") or _from_folder(folder)
+
+
+def course_order(folder):
+    """Sort key: courses in the order of COURSES, then other folders by name."""
+    order = list(COURSES)
+    return (order.index(folder) if folder in order else len(order), folder)
 
 
 def course_subject(folder):

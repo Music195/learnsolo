@@ -1,0 +1,194 @@
+<!-- tags: Thermodynamics -->
+<!-- =====================================================================
+     NOTE: Molar Heat Capacities and Mayer's Relation
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Thermodynamics">Molar Heat Capacities and Mayer's Relation</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Heat per mole per kelvin depends on how you heat: $C_P$ is bigger than $C_V$ by exactly $R$</h2>
+    <p>For solids and liquids we used "heat per gram per kelvin". For gases it is easier to count in moles, and it matters whether the gas can expand while it warms.</p>
+    <ul>
+      <li><strong>Molar heat capacity at constant volume</strong> $C_V$: heat to warm 1 mol by 1 K in a rigid container. $Q = nC_V\,\Delta T$.</li>
+      <li><strong>Molar heat capacity at constant pressure</strong> $C_P$: heat to warm 1 mol by 1 K with a free piston. $Q = nC_P\,\Delta T$.</li>
+      <li><strong>Mayer's relation</strong>: $C_P = C_V + R$. The extra $R$ pays for the work of pushing the piston out.</li>
+    </ul>
+    <p>The most useful fact of all: since $U$ depends only on $T$, <strong>$\Delta U = nC_V\,\Delta T$ for every change</strong>, not just constant-volume ones. Constant volume is merely the case where all the heat becomes $\Delta U$, which lets us measure it.</p>
+  </section>
+
+  <!-- FORMULA: the relations -->
+  <div class="note-formula">
+    <h3>Ideal gas</h3>
+    <div class="formula-main">$$\Delta U = nC_V\,\Delta T \ (\text{any change}) \qquad C_P = C_V + R \qquad \text{monatomic: } C_V = \tfrac32R,\ C_P = \tfrac52R$$</div>
+    <p class="symbols">$C_V$, $C_P$ in J/(mol·K). The ratio $\gamma = C_P/C_V$ is $\frac53$ for a monatomic gas (used in the next note). For two-atom molecules $C_V = \frac52R$ and $C_P = \frac72R$, but Mayer's relation still holds.</p>
+  </div>
+
+  <!-- PROOF: Mayer's relation -->
+  <div class="note-proof">
+    <ol>
+      <li>Warm $n$ mol by $\Delta T$ at constant pressure: $Q = nC_P\,\Delta T$.</li>
+      <li>$\Delta U$ depends only on $\Delta T$, so it is the same as at constant volume: $\Delta U = nC_V\,\Delta T$.</li>
+      <li>Work at constant pressure: $W = P\,\Delta V = nR\,\Delta T$.</li>
+      <li>First law: $nC_P\,\Delta T = nC_V\,\Delta T + nR\,\Delta T$, so $C_P = C_V + R$.</li>
+      <li>Monatomic: $\Delta U = \tfrac32nR\,\Delta T$ gives $C_V = \tfrac32R$, so $C_P = \tfrac52R$. At constant pressure $Q : \Delta U : W = \tfrac52 : \tfrac32 : 1 = 5 : 3 : 2$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: compare the two ways; code at the bottom -->
+  <div class="note-demo">
+    <h2>Warm 1 mol of gas by $\Delta T$</h2>
+    <div class="controls choices" id="mhChoices">
+      <button type="button" data-gas="1.5" data-name="monatomic (He, Ar)" class="active">Monatomic</button>
+      <button type="button" data-gas="2.5" data-name="two-atom molecules (N₂, O₂)">Two-atom</button>
+    </div>
+    <div class="controls">
+      <label>$\Delta T$ (K) = <input type="range" id="mhT" min="5" max="40" step="5" value="20"></label>
+    </div>
+    <canvas id="mhCanvas"></canvas>
+    <div class="output table-text" id="mhOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A monatomic gas expands at constant pressure and does 200 J of work. Find $Q$ and $\Delta U$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>At constant pressure, $Q : \Delta U : W = 5 : 3 : 2$.</li>
+        <li>$W = 2$ parts $= 200$ J, so 1 part $= 100$ J.</li>
+      </ol>
+      <p class="answer">$Q = 500\ \mathrm{J}$, $\Delta U = 300\ \mathrm{J}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">2.0 mol of a monatomic gas is warmed by 20 K at constant pressure. Find $Q$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$Q = nC_P\,\Delta T = 2.0 \times \tfrac52 \times 8.31 \times 20$.</li>
+      </ol>
+      <p class="answer">$Q \approx 8.3 \times 10^2\ \mathrm{J}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">0.50 mol of a monatomic gas goes from 300 K to 500 K along a curved path on the P–V graph. Find $\Delta U$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\Delta U = nC_V\,\Delta T$ for <em>any</em> path: $0.50 \times \tfrac32 \times 8.31 \times 200$.</li>
+      </ol>
+      <p class="answer">$\Delta U \approx 1.2 \times 10^3\ \mathrm{J}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">A gas has $C_V = 20.8$ J/(mol·K). Find $C_P$ and $\gamma$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$C_P = C_V + R = 20.8 + 8.31 \approx 29.1$ J/(mol·K).</li>
+        <li>$\gamma = 29.1/20.8$.</li>
+      </ol>
+      <p class="answer">$C_P \approx 29.1$ J/(mol·K), $\gamma \approx 1.4$ (a two-atom gas)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">A monatomic gas is given 1000 J of heat at constant pressure. How much becomes work?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$W/Q = 2/5$.</li>
+      </ol>
+      <p class="answer">$W = 400\ \mathrm{J}$ (and $\Delta U = 600$ J)</p>
+    </details>
+  </div>
+
+  <!-- WARNING: ΔU uses C_V -->
+  <div class="note-warning">
+    $\Delta U$ always uses $C_V$, even when the change is at constant pressure. Writing $\Delta U = nC_P\,\Delta T$ is a common slip: that is $Q$, not $\Delta U$.
+  </div>
+
+  <!-- TIP: 5:3:2 -->
+  <div class="note-tip">
+    Remember $5 : 3 : 2$ for $Q : \Delta U : W$ in a constant-pressure change of a monatomic gas. Knowing any one of them gives the other two at once.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$\Delta U = nC_V\,\Delta T$ for any change of an ideal gas.</li>
+      <li>Mayer: $C_P = C_V + R$.</li>
+      <li>Monatomic: $C_V = \tfrac32R$, $C_P = \tfrac52R$, $\gamma = \tfrac53$; at constant $P$, $Q : \Delta U : W = 5 : 3 : 2$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Constant V vs constant P" demo (the TRY IT block above).
+  // 1 mol is warmed by ΔT. Two stacked bars:
+  //   constant V: Q = ΔU = C_V ΔT (all red)
+  //   constant P: Q = C_P ΔT = ΔU (red, same height as before) + W = RΔT (green)
+  // C_V = 1.5R (monatomic) or 2.5R (two-atom). 1 pixel = 5 J.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('mhCanvas');
+    const output = document.getElementById('mhOutput');
+    const tBox = document.getElementById('mhT');
+    const R = 8.31, BASE = 300, YS = 0.2;
+    const THING = '#475569', RED = 'rgba(220, 38, 38, 0.7)', GREEN = 'rgba(22, 163, 74, 0.7)';
+    let cv = 1.5, name = 'monatomic (He, Ar)', lastText = '';
+
+    function block(g, x, y0, h, color, label) {
+      g.poly([[x - 50, y0], [x + 50, y0], [x + 50, y0 - h], [x - 50, y0 - h]], color);
+      if (h > 16) g.text([x, y0 - h / 2], label, '#ffffff');
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const dT = Number(tBox.value), U = cv * R * dT, W = R * dT;
+        g.seg([40, BASE], [500, BASE], THING, { width: 1.5 });
+        // constant volume
+        block(g, 150, BASE, U * YS, RED, `ΔU ${U.toFixed(0)} J`);
+        g.text([150, BASE - U * YS - 14], `Q = ${U.toFixed(0)} J`, THING);
+        g.text([150, BASE + 16], 'constant V (W = 0)', THING);
+        // constant pressure
+        block(g, 370, BASE, U * YS, RED, `ΔU ${U.toFixed(0)} J`);
+        block(g, 370, BASE - U * YS, W * YS, GREEN, `W ${W.toFixed(0)} J`);
+        g.text([370, BASE - (U + W) * YS - 14], `Q = ${(U + W).toFixed(0)} J`, THING);
+        g.text([370, BASE + 16], 'constant P (piston moves)', THING);
+        g.seg([210, BASE - U * YS], [310, BASE - U * YS], '#94a3b8', { width: 1, dash: true });
+
+        const text =
+          `${name}:  C_V = ${cv}R,  C_P = C_V + R = ${cv + 1}R\n` +
+          `ΔT = ${dT} K:  ΔU = C_V ΔT = ${U.toFixed(1)} J in both cases\n` +
+          `constant P also does W = RΔT = ${W.toFixed(1)} J, so Q is bigger by that much\n` +
+          `Q : ΔU : W at constant P = ${2 * cv + 2} : ${2 * cv} : 2,  γ = C_P/C_V = ${((cv + 1) / cv).toFixed(2)}`;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    document.querySelectorAll('#mhChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#mhChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      cv = Number(b.dataset.gas); name = b.dataset.name;
+      board.redraw();
+    }));
+    tBox.addEventListener('input', () => board.redraw());
+  })();
+</script>

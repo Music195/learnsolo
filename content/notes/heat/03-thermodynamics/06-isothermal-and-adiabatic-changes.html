@@ -1,0 +1,235 @@
+<!-- tags: Thermodynamics -->
+<!-- =====================================================================
+     NOTE: Isothermal and Adiabatic Changes
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Thermodynamics">Isothermal and Adiabatic Changes</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Isothermal: temperature fixed. Adiabatic: no heat in or out, so the temperature changes</h2>
+    <ul>
+      <li><strong>Isothermal</strong> change: the temperature stays the same (slow, with the gas touching something at a fixed temperature). $\Delta U = 0$, so $Q = W$: any work the gas does is paid for by heat flowing in. On the P–V graph it follows $PV = $ constant, a curve called an <strong>isotherm</strong>. Isotherms further from the origin are hotter.</li>
+      <li><strong>Adiabatic</strong> change: no heat goes in or out (the gas is insulated, or the change is too fast for heat to flow). $Q = 0$, so $\Delta U = -W$.</li>
+    </ul>
+    <p>In an adiabatic <strong>expansion</strong>, the gas does work using its own internal energy, so it <strong>cools</strong>. In an adiabatic <strong>compression</strong> the work done on it raises its internal energy, so it <strong>warms</strong>: this is why a bicycle pump gets hot, and why a diesel engine can ignite fuel without a spark.</p>
+    <p>Because the temperature also falls as it expands, the pressure of an adiabatic gas drops faster than along an isotherm: <strong>adiabatic curves are steeper</strong> than isotherms through the same point.</p>
+  </section>
+
+  <!-- FORMULA: Poisson's law -->
+  <div class="note-formula">
+    <h3>Adiabatic change of an ideal gas (Poisson's law)</h3>
+    <div class="formula-main">$$PV^{\gamma} = \text{constant} \qquad TV^{\gamma - 1} = \text{constant} \qquad \gamma = \frac{C_P}{C_V} = \frac53 \ (\text{monatomic})$$</div>
+    <p class="symbols">Compare isothermal: $PV = $ constant. Since $\gamma &gt; 1$, $P$ falls faster with $V$ on an adiabatic curve. The second form follows from the first using $P = nRT/V$.</p>
+  </div>
+
+  <!-- PROOF: the first law in each case -->
+  <div class="note-proof">
+    <ol>
+      <li><strong>Isothermal:</strong> $\Delta T = 0$ so $\Delta U = 0$, and the first law gives $Q = W$. Expanding ($W &gt; 0$) takes in heat; compressing gives heat out.</li>
+      <li><strong>Adiabatic:</strong> $Q = 0$, so $0 = \Delta U + W$, i.e. $\Delta U = -W$. Expansion: $W &gt; 0$, $\Delta U &lt; 0$, it cools.</li>
+      <li><strong>Steeper:</strong> expand from the same point by the same $\Delta V$. Isothermally $T$ stays put; adiabatically $T$ drops. Lower $T$ at the same $V$ means lower $P$, so the adiabatic curve is below the isotherm on the expansion side: it is steeper.</li>
+      <li><strong>Using Poisson:</strong> $P_1V_1^{\gamma} = P_2V_2^{\gamma}$ and $T_1V_1^{\gamma-1} = T_2V_2^{\gamma-1}$. (Deriving these needs calculus; here we just use them.)</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: curves on the P–V graph; code at the bottom -->
+  <div class="note-demo">
+    <h2>Monatomic gas starting from 1.0 L, $4.0 \times 10^5$ Pa, 400 K (dashed lines: isotherms)</h2>
+    <div class="controls choices" id="iaChoices">
+      <button type="button" data-kind="iso" class="active">Isothermal expansion</button>
+      <button type="button" data-kind="adi">Adiabatic expansion</button>
+      <button type="button" data-kind="comp">Adiabatic compression</button>
+    </div>
+    <canvas id="iaCanvas"></canvas>
+    <div class="output table-text" id="iaOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A monatomic gas expands adiabatically to 8 times its volume. By what factor do its pressure and its temperature change?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$PV^{5/3}$ constant: $P_2 = P_1 \times 8^{-5/3}$. Since $8^{1/3} = 2$, $8^{5/3} = 2^5 = 32$.</li>
+        <li>$TV^{2/3}$ constant: $T_2 = T_1 \times 8^{-2/3} = T_1 / 2^2$.</li>
+      </ol>
+      <p class="answer">Pressure × $\frac{1}{32}$, temperature × $\frac14$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">1.0 mol of a monatomic gas at 300 K is compressed adiabatically; 1000 J of work is done on it. Find its new temperature.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$Q = 0$ and $W = -1000$ J (work done on the gas), so $\Delta U = -W = +1000$ J.</li>
+        <li>$\Delta T = \dfrac{\Delta U}{\tfrac32nR} = \dfrac{1000}{1.5 \times 8.31} \approx 80$ K.</li>
+      </ol>
+      <p class="answer">$T \approx 380\ \mathrm{K}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A gas expands isothermally and does 300 J of work. Find $\Delta U$ and $Q$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Isothermal: $\Delta U = 0$.</li>
+        <li>$Q = \Delta U + W = 300$ J.</li>
+      </ol>
+      <p class="answer">$\Delta U = 0$, $Q = 300\ \mathrm{J}$ taken in</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">An isotherm and an adiabatic curve pass through the same point. Which is steeper, and why?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>On expansion, the adiabatic gas does work with no heat coming in, so it cools.</li>
+        <li>At the same volume, lower temperature means lower pressure.</li>
+      </ol>
+      <p class="answer">The adiabatic curve is steeper</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">A cycle: A → B constant-pressure expansion; B → C adiabatic expansion back to A's temperature; C → A isothermal compression. In which steps is heat taken in, and is the net work positive?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>A → B: $W &gt; 0$ and $T$ rises ($\Delta U &gt; 0$), so $Q &gt; 0$: heat taken in.</li>
+        <li>B → C: adiabatic, $Q = 0$.</li>
+        <li>C → A: isothermal compression: $\Delta U = 0$, $W &lt; 0$, so $Q &lt; 0$: heat given out.</li>
+        <li>The cycle runs clockwise on the P–V graph (out at high pressure, back at low pressure), so the net work is the enclosed area and is positive.</li>
+      </ol>
+      <p class="answer">Heat is taken in only on A → B; net work &gt; 0</p>
+    </details>
+  </div>
+
+  <!-- WARNING: adiabatic is not isothermal -->
+  <div class="note-warning">
+    "No heat flows" does <strong>not</strong> mean "the temperature stays the same". In an adiabatic change the temperature changes because of the work. Constant temperature is the <em>isothermal</em> case, where heat does flow.
+  </div>
+
+  <!-- TIP: powers of 8 -->
+  <div class="note-tip">
+    Exam numbers are chosen to make $V^{5/3}$ easy: a factor of 8 ($8^{1/3} = 2$) or 27 ($27^{1/3} = 3$). Take the cube root first, then the power.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Isothermal: $\Delta U = 0$, $Q = W$, $PV$ constant.</li>
+      <li>Adiabatic: $Q = 0$, $\Delta U = -W$; expansion cools, compression warms; $PV^{5/3}$ constant for a monatomic gas.</li>
+      <li>Adiabatic curves are steeper than isotherms; isotherms further out are hotter.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Isothermal vs adiabatic" demo (the TRY IT block above).
+  // P–V graph: V from 0 to 4.5 L (100 pixels per L), P from 0 to 5 ×10^5 Pa
+  // (50 pixels per 10^5 Pa). Dashed isotherms PV = 2, 4, 6 (200, 400, 600 K).
+  // Start A = (1 L, 4) at 400 K. Units: 1 L × 10^5 Pa = 100 J; monatomic, γ = 5/3.
+  //   isothermal expansion: 1 → 4 L along PV = 4; W = 400 ln V J (area), Q = W.
+  //   adiabatic expansion:  1 → 4 L along PV^(5/3) = 4; W = −ΔU, Q = 0.
+  //   adiabatic compression: from (4 L, 1) at 400 K to 2 L along PV^(5/3) = 4^(5/3).
+  // A dot moves along the curve over 3 s; the readout shows P, V, T, Q, ΔU, W so far.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('iaCanvas');
+    const output = document.getElementById('iaOutput');
+    const G0 = [50, 300], XS = 100, YS = 50, GAM = 5 / 3;
+    const THING = '#475569', RED = '#dc2626', BLUE = '#2563eb', ORANGE = '#ea580c';
+    const KINDS = {
+      iso: { V0: 1, V1: 4, P: (V) => 4 / V, name: 'isothermal expansion' },
+      adi: { V0: 1, V1: 4, P: (V) => 4 * Math.pow(V, -GAM), name: 'adiabatic expansion' },
+      comp: { V0: 4, V1: 2, P: (V) => Math.pow(4, GAM) * Math.pow(V, -GAM), name: 'adiabatic compression' },
+    };
+    let kind = 'iso', s = 0, lastText = '';
+    const gp = (V, P) => [G0[0] + V * XS, G0[1] - P * YS];
+
+    function curve(g, f, va, vb, color, opts) {
+      let prev = null;
+      for (let k = 0; k <= 80; k++) {
+        const V = va + (vb - va) * k / 80, P = f(V);
+        const p = P <= 5.2 ? gp(V, P) : null;
+        if (prev && p) g.seg(prev, p, color, opts);
+        prev = p;
+      }
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        g.seg(G0, gp(4.6, 0), THING, { width: 1.5 });
+        g.seg(G0, gp(0, 5.4), THING, { width: 1.5 });
+        for (let v = 1; v <= 4; v++) g.text([gp(v, 0)[0], G0[1] + 14], `${v}`, '#94a3b8');
+        for (let p = 1; p <= 5; p++) g.text([G0[0] - 14, gp(0, p)[1]], `${p}`, '#94a3b8');
+        g.text([gp(4.3, 0)[0], G0[1] + 30], 'V (L)', THING);
+        g.text([G0[0] + 50, gp(0, 5.5)[1]], 'P (×10^5 Pa)', THING);
+        // isotherms
+        [[2, '200 K'], [4, '400 K'], [6, '600 K']].forEach(([c, label]) => {
+          curve(g, (V) => c / V, 0.3, 4.4, '#cbd5e1', { width: 1.5, dash: true });
+          g.text(gp(4.45, c / 4.45).map((v, i) => v + (i ? -12 : 0)), label, '#94a3b8');
+        });
+
+        const K = KINDS[kind];
+        curve(g, K.P, K.V0, K.V1, '#94a3b8', { width: 1.5 });
+        const V = K.V0 + (K.V1 - K.V0) * s, P = K.P(V);
+        curve(g, K.P, K.V0, V, kind === 'iso' ? BLUE : ORANGE, { width: 3 });
+        g.circle(gp(V, P), 6, RED, { fill: RED });
+        g.dot(gp(K.V0, K.P(K.V0)), THING, 'start');
+
+        // energies so far (J); PV = 4 means 400 K
+        const T = 100 * P * V, PV0 = K.V0 * K.P(K.V0);
+        let W, dU;
+        if (kind === 'iso') { W = 400 * Math.log(V / K.V0); dU = 0; }
+        else { dU = 150 * (P * V - PV0); W = -dU; }
+        const Q = dU + W;
+        const f = (x) => `${x.toFixed(0)}`.replace('-', '−');
+        const text =
+          `${K.name}:  V = ${V.toFixed(2)} L,  P = ${P.toFixed(2)} × 10^5 Pa,  T = ${T.toFixed(0)} K\n` +
+          `so far:  Q = ${f(Q)} J,  ΔU = ${f(dU)} J,  W = ${f(W)} J\n` +
+          (kind === 'iso' ? 'T fixed, so ΔU = 0: heat in = work out'
+            : kind === 'adi' ? 'Q = 0: the work comes out of U, so the gas cools: colder isotherms'
+            : 'Q = 0: work done on the gas raises U, so it warms: hotter isotherms');
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Move the dot over 3 s, pause, repeat. Stop when the page has changed.
+    let last = performance.now(), hold = 0;
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.max(0, Math.min((now - last) / 1000, 0.05));
+      last = now;
+      if (s < 1) s = Math.min(1, s + dt / 3);
+      else if ((hold += dt) > 1.5) { s = 0; hold = 0; }
+      board.redraw();
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    document.querySelectorAll('#iaChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#iaChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      kind = b.dataset.kind;
+      s = 0; hold = 0;
+      board.redraw();
+    }));
+  })();
+</script>

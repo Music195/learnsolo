@@ -1,0 +1,222 @@
+<!-- tags: Ideal Gases -->
+<!-- =====================================================================
+     NOTE: Kinetic Theory of Gases
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Ideal Gases">Kinetic Theory of Gases</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Pressure is countless molecules hitting the wall; temperature is how fast they move</h2>
+    <p>A gas is a huge number of tiny molecules flying around and bouncing off the walls. Each bounce gives the wall a small push. Add up all the pushes every second and you get a steady force: that is the gas <strong>pressure</strong>.</p>
+    <ul>
+      <li>One molecule (mass $m$) hitting a wall with velocity $v_x$ bounces back with $-v_x$. Its momentum changes by $2mv_x$, so it gives the wall an impulse of $2mv_x$.</li>
+      <li>In a box of length $L$ it comes back to the same wall every $2L/v_x$ seconds. Faster molecules hit harder <em>and</em> more often, so the force goes as $v_x^2$.</li>
+      <li>Comparing the result with $PV = nRT$ shows that the <strong>average kinetic energy of a molecule depends only on temperature</strong>: $\tfrac12m\overline{v^2} = \tfrac32kT$.</li>
+    </ul>
+    <p>So "hotter" literally means "molecules moving faster". At the same temperature, light molecules move faster than heavy ones, because they have the same average kinetic energy.</p>
+  </section>
+
+  <!-- FORMULA: pressure and molecular energy -->
+  <div class="note-formula">
+    <h3>$N$ molecules in a volume $V$</h3>
+    <div class="formula-main">$$P = \frac{Nm\overline{v^2}}{3V} \qquad \frac12m\overline{v^2} = \frac32kT \qquad \sqrt{\overline{v^2}} = \sqrt{\frac{3RT}{M}}$$</div>
+    <p class="symbols">$\overline{v^2}$: average of $v^2$ over all molecules. $k = R/N_A = 1.38 \times 10^{-23}$ J/K (Boltzmann constant; $N_A = 6.02 \times 10^{23}$ /mol). $M$: molar mass in <strong>kg/mol</strong> (for O₂, $M = 0.032$). $\sqrt{\overline{v^2}}$ is the root-mean-square (rms) speed.</p>
+  </div>
+
+  <!-- PROOF: from collisions to pressure -->
+  <div class="note-proof">
+    <ol>
+      <li>A cube of side $L$. One molecule bounces off the right wall: impulse to the wall $2mv_x$.</li>
+      <li>It goes to the far wall and back, $2L$, before the next hit, so in time $t$ it hits $\dfrac{v_xt}{2L}$ times.</li>
+      <li>Total impulse in time $t$: $2mv_x \times \dfrac{v_xt}{2L} = \dfrac{mv_x^2}{L}\,t$. Impulse = force × time, so the average force is $\dfrac{mv_x^2}{L}$.</li>
+      <li>For $N$ molecules, use the average $\overline{v_x^2}$: $F = \dfrac{Nm\overline{v_x^2}}{L}$. No direction is special, so $\overline{v_x^2} = \overline{v_y^2} = \overline{v_z^2}$, and since $v^2 = v_x^2 + v_y^2 + v_z^2$, $\overline{v_x^2} = \tfrac13\overline{v^2}$.</li>
+      <li>Pressure = force ÷ area: $P = \dfrac{F}{L^2} = \dfrac{Nm\overline{v^2}}{3L^3} = \dfrac{Nm\overline{v^2}}{3V}$.</li>
+      <li>Compare with $PV = nRT$ and $N = nN_A$: $\tfrac13Nm\overline{v^2} = nRT$, so $\tfrac12m\overline{v^2} = \tfrac32\dfrac{R}{N_A}T = \tfrac32kT$.</li>
+      <li>Also $N_Am = M$ (molar mass), so $\overline{v^2} = \dfrac{3RT}{N_Am} = \dfrac{3RT}{M}$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: molecules in a box; code at the bottom -->
+  <div class="note-demo">
+    <h2>Helium molecules in a box: count the hits on the right wall</h2>
+    <div class="controls choices" id="ktChoices">
+      <button type="button" data-t="150">150 K</button>
+      <button type="button" data-t="300" class="active">300 K</button>
+      <button type="button" data-t="600">600 K</button>
+      <button type="button" data-t="1200">1200 K</button>
+    </div>
+    <canvas id="ktCanvas"></canvas>
+    <div class="output table-text" id="ktOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find the rms speed of nitrogen molecules ($M = 0.028$ kg/mol) at 300 K.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\sqrt{\dfrac{3RT}{M}} = \sqrt{\dfrac{3 \times 8.31 \times 300}{0.028}} = \sqrt{2.67 \times 10^5}$.</li>
+      </ol>
+      <p class="answer">about $5.2 \times 10^2\ \mathrm{m/s}$ (faster than sound)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">At the same temperature, how many times faster (rms) are hydrogen molecules ($M = 2$ g/mol) than oxygen molecules ($M = 32$ g/mol)?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\sqrt{\overline{v^2}} \propto \dfrac{1}{\sqrt M}$ at the same $T$.</li>
+        <li>Ratio $= \sqrt{\dfrac{32}{2}} = \sqrt{16}$.</li>
+      </ol>
+      <p class="answer">4 times</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Find the average kinetic energy of one gas molecule at 300 K. ($k = 1.38 \times 10^{-23}$ J/K)</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\tfrac32kT = 1.5 \times 1.38 \times 10^{-23} \times 300$.</li>
+      </ol>
+      <p class="answer">$\approx 6.2 \times 10^{-21}\ \mathrm{J}$, the same for every kind of gas</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">The temperature of a gas goes from 300 K to 1200 K. By what factor does the rms speed change?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\sqrt{\overline{v^2}} \propto \sqrt T$, and $T$ is 4 times bigger.</li>
+      </ol>
+      <p class="answer">2 times (not 4)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">In the derivation, a molecule with $v_x = 400$ m/s and mass $5.0 \times 10^{-26}$ kg moves in a box with $L = 0.20$ m. Find the impulse per hit, the number of hits on one wall per second, and its average force on that wall.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Impulse per hit: $2mv_x = 2 \times 5.0 \times 10^{-26} \times 400 = 4.0 \times 10^{-23}$ N·s.</li>
+        <li>Hits per second: $\dfrac{v_x}{2L} = \dfrac{400}{0.40} = 1000$.</li>
+        <li>Force: $4.0 \times 10^{-23} \times 1000 = \dfrac{mv_x^2}{L}$.</li>
+      </ol>
+      <p class="answer">$4.0 \times 10^{-23}$ N·s, 1000 hits/s, $4.0 \times 10^{-20}$ N</p>
+    </details>
+  </div>
+
+  <!-- WARNING: molar mass in kg -->
+  <div class="note-warning">
+    In $\sqrt{3RT/M}$ the molar mass must be in <strong>kg/mol</strong>: oxygen is $0.032$, not $32$. Using 32 makes the speed $\sqrt{1000} \approx 32$ times too small.
+  </div>
+
+  <!-- TIP: the 1/3 -->
+  <div class="note-tip">
+    The $\frac13$ comes only from "the three directions are equal". A wall only feels the motion that's at right angles to it, which on average is one third of $\overline{v^2}$.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Pressure comes from molecules hitting the walls: $P = \dfrac{Nm\overline{v^2}}{3V}$.</li>
+      <li>Average kinetic energy per molecule: $\tfrac32kT$, depending only on $T$.</li>
+      <li>rms speed $\sqrt{3RT/M}$: doubles when $T$ is ×4; lighter gases are faster.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Molecules in a box" demo (the TRY IT block above).
+  // 60 helium molecules bounce around a 2D box. Their speeds are scaled so the
+  // rms speed is proportional to √(3RT/M) for helium (M = 0.004 kg/mol):
+  // on screen, 6 m/s of real speed = 1 pixel per second. The right wall flashes
+  // at each hit, and the hits in the last 4 s are counted.
+  // Force on the wall ∝ (hits per second) × (impulse per hit) ∝ √T × √T = T.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('ktCanvas');
+    const output = document.getElementById('ktOutput');
+    const R = 8.31, M = 0.004, X0 = 30, X1 = 430, Y0 = 30, Y1 = 310, N = 60;
+    const THING = '#475569', RED = '#dc2626', BLUE = '#2563eb';
+    let T = 300, lastText = '', flash = 0;
+    let hits = [];                         // times (s) of the hits on the right wall
+
+    // starting molecules: random positions and directions, with a spread of speeds
+    const base = [];
+    for (let i = 0; i < N; i++) {
+      const a = Math.random() * 2 * Math.PI, s = 0.5 + Math.random();
+      base.push({ x: X0 + 10 + Math.random() * (X1 - X0 - 20), y: Y0 + 10 + Math.random() * (Y1 - Y0 - 20), ux: Math.cos(a) * s, uy: Math.sin(a) * s });
+    }
+    const rms0 = Math.sqrt(base.reduce((t, b) => t + b.ux * b.ux + b.uy * b.uy, 0) / N);
+    const vrms = () => Math.sqrt(3 * R * T / M);             // m/s
+    const scale = () => vrms() / 6 / rms0;                  // pixels per second per unit of u
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        g.poly([[X0, Y0], [X1, Y0], [X1, Y1], [X0, Y1]], 'rgba(147, 197, 253, 0.12)');
+        g.seg([X0, Y0], [X1, Y0], THING, { width: 2 });
+        g.seg([X0, Y1], [X1, Y1], THING, { width: 2 });
+        g.seg([X0, Y0], [X0, Y1], THING, { width: 2 });
+        g.seg([X1, Y0], [X1, Y1], flash > 0 ? RED : THING, { width: flash > 0 ? 6 : 2 });
+        base.forEach((b) => g.circle([b.x, b.y], 4, BLUE, { fill: BLUE }));
+        g.text([475, 170], 'wall', THING);
+
+        const v = vrms(), now = performance.now() / 1000;
+        hits = hits.filter((h) => now - h < 4);
+        const rate = hits.length / 4;
+        const text =
+          `T = ${T} K:  rms speed √(3RT/M) = ${v.toFixed(0)} m/s\n` +
+          `average kinetic energy (3/2)kT = ${(1.5 * 1.38e-23 * T * 1e21).toFixed(1)} × 10^-21 J per molecule\n` +
+          `hits on the right wall: about ${rate.toFixed(0)} per second in the animation\n` +
+          `vs 300 K: speed ×${Math.sqrt(T / 300).toFixed(2)}, hits ×${Math.sqrt(T / 300).toFixed(2)}, ` +
+          `force ×${(T / 300).toFixed(2)}`;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Move every molecule; bounce off the walls. Stop when the page has changed.
+    let last = performance.now();
+    function tick(nowMs) {
+      if (!canvas.isConnected) return;
+      const dt = Math.max(0, Math.min((nowMs - last) / 1000, 0.05));
+      last = nowMs;
+      const k = scale();
+      base.forEach((b) => {
+        b.x += b.ux * k * dt;
+        b.y += b.uy * k * dt;
+        if (b.x < X0 + 4) { b.x = 2 * (X0 + 4) - b.x; b.ux = -b.ux; }
+        if (b.x > X1 - 4) { b.x = 2 * (X1 - 4) - b.x; b.ux = -b.ux; hits.push(nowMs / 1000); flash = 0.08; }
+        if (b.y < Y0 + 4) { b.y = 2 * (Y0 + 4) - b.y; b.uy = -b.uy; }
+        if (b.y > Y1 - 4) { b.y = 2 * (Y1 - 4) - b.y; b.uy = -b.uy; }
+      });
+      flash = Math.max(0, flash - dt);
+      board.redraw();
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    document.querySelectorAll('#ktChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#ktChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      T = Number(b.dataset.t);
+      hits = [];
+      board.redraw();
+    }));
+  })();
+</script>
