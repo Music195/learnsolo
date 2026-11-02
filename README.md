@@ -51,6 +51,7 @@ This project is built to act as a personal study companion, helping users struct
 ├── docker-compose.yml      # Local PostgreSQL (docker compose up -d)
 ├── .env.example            # Copy to .env: DATABASE_URL, SECRET_KEY
 ├── docs/content-guide.md   # Learn the whole project: how it works, every file, writing content, recipes for changing it
+├── docs/dictionary-guide.md # 3-way dictionary guide: writing terms, CLI commands, hybrid engine
 ├── docs/oracle-server.md   # A second copy of the site on a free Oracle Cloud server, every command explained
 └── README.md               # Project documentation
 
