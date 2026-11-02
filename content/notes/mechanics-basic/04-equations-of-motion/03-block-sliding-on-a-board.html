@@ -1,0 +1,232 @@
+<!-- tags: Equations of Motion -->
+<!-- =====================================================================
+     NOTE: Stacked Objects: A Block Sliding on a Board
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Equations of Motion">Stacked Objects: A Block Sliding on a Board</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Two stacked objects can move differently: each gets its own acceleration</h2>
+    <p>A board B (mass $M$) lies on a <strong>smooth</strong> floor, and a block A (mass $m$) is sent sliding along the top of it at $v_0$. There is friction between A and B (coefficient $\mu$). Picture someone running onto ice and sliding on a thin mat: the rough mat stops the person, but nothing stops the mat sliding on the ice.</p>
+    <p>Here the two objects <strong>don't</strong> share an acceleration, so give them different ones, $a_A$ and $a_B$. Kinetic friction $\mu mg$ acts on A <strong>backwards</strong> (against its sliding), and its reaction acts on B <strong>forwards</strong>. A slows down, B speeds up, until they have the <strong>same velocity</strong>. After that A stops sliding on B ("A is at rest relative to B") and they move together at a constant velocity.</p>
+  </section>
+
+  <!-- FORMULA: the equations and the results -->
+  <div class="note-formula">
+    <h3>Block A sliding on board B (smooth floor)</h3>
+    <div class="formula-main">$$m a_A = -\mu m g, \qquad M a_B = \mu m g$$</div>
+    <p class="symbols">So $a_A = -\mu g$ and $a_B = \dfrac{\mu m g}{M}$. They reach the same velocity $v = \dfrac{m v_0}{m + M}$ at $t_1 = \dfrac{M v_0}{\mu (m + M) g}$. In that time A slides $L = \tfrac{1}{2} v_0 t_1$ along B.</p>
+  </div>
+
+  <!-- PROOF: using the v–t graph -->
+  <div class="note-proof">
+    <ol>
+      <li>Draw both v–t lines. A starts at $v_0$ and goes down (slope $-\mu g$); B starts at $0$ and goes up (slope $\mu m g / M$).</li>
+      <li>They meet at $t_1$: B's line gives $v = \dfrac{\mu m g}{M}\,t_1$, and A's gives $v = v_0 - \mu g\,t_1$. Setting them equal: $t_1 = \dfrac{M v_0}{\mu (m+M) g}$, and then $v = \dfrac{m v_0}{m + M}$.</li>
+      <li>The area under each line is how far each moved. A moved further: the difference between the areas is the <strong>triangle</strong> between the two lines.</li>
+      <li>That triangle has base $v_0$ (on the $v$ axis at $t = 0$) and height $t_1$, so the distance A slid along B is $L = \tfrac{1}{2} v_0 t_1 = \dfrac{M v_0^2}{2\mu (m + M) g}$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: the sliding block and its v–t graph; code at the bottom -->
+  <div class="note-demo">
+    <h2>Send block A sliding onto board B at $v_0 = 4\ \mathrm{m/s}$</h2>
+    <div class="controls">
+      <label>$m$ = <input type="range" id="bsM" min="0.5" max="3" step="0.5" value="1"></label>
+      <label>$M$ = <input type="range" id="bsBig" min="1" max="5" step="0.5" value="3"></label>
+      <label>$\mu$ = <input type="range" id="bsMu" min="0.1" max="0.6" step="0.05" value="0.3"></label>
+      <button type="button" id="bsGo">Start again</button>
+    </div>
+    <canvas id="bsCanvas"></canvas>
+    <div class="output table-text" id="bsOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A $1.0\ \mathrm{kg}$ block slides onto a $3.0\ \mathrm{kg}$ board on a smooth floor at $4.0\ \mathrm{m/s}$, with $\mu = 0.30$. Find the accelerations of the block and the board.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Friction: $\mu m g = 0.30 \times 1.0 \times 9.8 = 2.94\ \mathrm{N}$, backwards on A, forwards on B.</li>
+        <li>A: $1.0\,a_A = -2.94$. &nbsp; B: $3.0\,a_B = 2.94$.</li>
+      </ol>
+      <p class="answer">$a_A = -2.94\ \mathrm{m/s^2}$, $a_B = 0.98\ \mathrm{m/s^2}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">In Example 1, when do they reach the same velocity, and what is it?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>B is simpler (starts from rest): $v = 0.98\,t_1$. A: $v = 4.0 - 2.94\,t_1$.</li>
+        <li>Equal: $3.92\,t_1 = 4.0$, so $t_1 \approx 1.02\ \mathrm{s}$, and $v = 0.98 \times 1.02 = 1.0$.</li>
+      </ol>
+      <p class="answer">After about $1.0\ \mathrm{s}$, both at $1.0\ \mathrm{m/s}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">In Example 1, how far does the block slide along the board?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The triangle between the two v–t lines has base $v_0 = 4.0$ and height $t_1 = 1.02$.</li>
+        <li>$L = \tfrac{1}{2} \times 4.0 \times 1.02$.</li>
+      </ol>
+      <p class="answer">$L \approx 2.0\ \mathrm{m}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Check Example 3 with relative motion: as seen from B, A starts at $4.0\ \mathrm{m/s}$ with acceleration $a_A - a_B$. How far does A go relative to B before it stops relative to B?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Relative acceleration: $a_A - a_B = -2.94 - 0.98 = -3.92\ \mathrm{m/s^2}$.</li>
+        <li>Use $v^2 - v_0^2 = 2ax$ for the relative motion: $0 - 4.0^2 = 2 \times (-3.92) \times L$.</li>
+      </ol>
+      <p class="answer">$L = 16 / 7.84 \approx 2.0\ \mathrm{m}$, the same</p>
+    </details>
+  </div>
+
+  <!-- WARNING: same size of friction, different masses -->
+  <div class="note-warning">
+    The friction on A and on B is an action–reaction pair, so both have size $\mu m g$, with the <strong>small</strong> $m$ (A's weight is what presses on B). Don't write $\mu M g$ for B. Also, "A is at rest relative to B" means the same velocity, not that A has stopped.
+  </div>
+
+  <!-- TIP: use the v–t graph -->
+  <div class="note-tip">
+    For two objects that move differently, draw both v–t lines on one graph. Where they meet is when they move together, and the area between them is how far one slides on the other. In a later topic, <strong>conservation of momentum</strong> gives $v = \dfrac{m v_0}{m + M}$ even faster.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Stacked objects that slide on each other get different accelerations $a_A$, $a_B$.</li>
+      <li>Kinetic friction $\mu m g$ acts backwards on the sliding block and forwards on the board.</li>
+      <li>They move together once their velocities are equal; the area between the v–t lines is the distance slid.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Block sliding on a board" demo (the TRY IT block above).
+  // Top: board B on a smooth floor and block A, seen from the ground. A starts at
+  // v0 = 4 m/s at the back end of B. Friction slows A and speeds up B until their
+  // velocities are equal at t1; after that they move together.
+  // Bottom: the v–t graph of both. The shaded triangle between the lines is the
+  // distance A slides along B. The scale of the top picture changes with the
+  // sliders so that the whole run fits on the canvas.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('bsCanvas');
+    const output = document.getElementById('bsOutput');
+    const mBox = document.getElementById('bsM'), bigBox = document.getElementById('bsBig'), muBox = document.getElementById('bsMu');
+    const G = 9.8, V0 = 4, AFTER = 1.0, BLOCK = 0.4;          // block A is 0.4 m long
+    const A_COL = '#2563eb', B_COL = '#ea580c', THING = '#475569';
+    const GT0 = 60, GT1 = 480, GV0 = 320, GV1 = 185;           // v–t graph box
+    let t = 0, lastText = '';
+
+    function setup() {
+      const m = Number(mBox.value), M = Number(bigBox.value), mu = Number(muBox.value);
+      const aA = -mu * G, aB = mu * m * G / M;
+      const t1 = V0 / (aB - aA), v = aB * t1;
+      const L = V0 * t1 / 2, tEnd = t1 + AFTER;
+      return { m, M, mu, aA, aB, t1, v, L, tEnd };
+    }
+    // positions (m, from the start) and velocities at time tt
+    function state(s, tt) {
+      const tp = Math.min(tt, s.t1), rest = tt - tp;
+      const xA = V0 * tp + 0.5 * s.aA * tp * tp + s.v * rest, xB = 0.5 * s.aB * tp * tp + s.v * rest;
+      return { xA, xB, vA: tt < s.t1 ? V0 + s.aA * tt : s.v, vB: tt < s.t1 ? s.aB * tt : s.v };
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const s = setup(), now = state(s, t), end = state(s, s.tEnd);
+        const boardLen = s.L + BLOCK + 0.4;
+        const scale = Math.min(70, 440 / Math.max(end.xA + BLOCK, end.xB + boardLen));
+        const X = (x) => 40 + x * scale, FLOOR = 130;
+
+        // --- Top: floor, board, block ---
+        g.poly([[20, FLOOR], [500, FLOOR], [500, FLOOR + 8], [20, FLOOR + 8]], '#e0f2fe');
+        g.text([450, FLOOR + 20], 'smooth floor', '#94a3b8');
+        const bx = X(now.xB), bw = boardLen * scale;
+        g.poly([[bx, FLOOR - 14], [bx + bw, FLOOR - 14], [bx + bw, FLOOR], [bx, FLOOR]], '#fed7aa');
+        g.text([bx + bw - 14, FLOOR - 26], 'B', B_COL);
+        const ax = X(now.xA), aw = BLOCK * scale;
+        g.poly([[ax, FLOOR - 14 - 30], [ax + aw, FLOOR - 44], [ax + aw, FLOOR - 14], [ax, FLOOR - 14]], '#bfdbfe');
+        g.text([ax + aw / 2, FLOOR - 29], 'A', A_COL);
+        // where A started on the board, and the distance slid so far
+        const startOnB = bx, slid = now.xA - now.xB;
+        g.seg([startOnB, FLOOR - 60], [startOnB, FLOOR - 14], '#94a3b8', { width: 1, dash: true });
+        if (slid * scale > 4) {
+          g.seg([startOnB, FLOOR - 56], [startOnB + slid * scale, FLOOR - 56], '#16a34a', { width: 2 });
+          g.text([startOnB + slid * scale / 2, FLOOR - 70], `slid ${slid.toFixed(2)} m`, '#16a34a');
+        }
+
+        // --- Bottom: v–t graph ---
+        const P = (tt, vv) => [GT0 + tt / s.tEnd * (GT1 - GT0), GV0 - vv / V0 * (GV0 - GV1)];
+        g.seg([GT0, GV0], [GT1 + 10, GV0], THING, { width: 1.5 });
+        g.seg([GT0, GV0], [GT0, GV1 - 12], THING, { width: 1.5 });
+        g.text([GT1 + 6, GV0 + 14], 't', THING);
+        g.text([GT0, GV1 - 22], 'v (m/s)', THING);
+        g.text([GT0 - 18, GV1], '4', '#94a3b8');
+        g.poly([P(0, V0), P(0, 0), P(s.t1, s.v)], 'rgba(22, 163, 74, 0.18)');
+        g.text([P(s.t1 * 0.3, 0)[0], P(0, V0 * 0.42)[1]], 'L', '#16a34a');
+        g.seg(P(s.t1, 0), P(s.t1, s.v), '#94a3b8', { width: 1, dash: true });
+        g.text([P(s.t1, 0)[0], GV0 + 14], 't1', THING);
+        // full lines (light) and the part so far (bold)
+        const lineA = (a, b) => [P(a, state(s, a).vA), P(b, state(s, b).vA)];
+        const lineB = (a, b) => [P(a, state(s, a).vB), P(b, state(s, b).vB)];
+        [[0, s.t1], [s.t1, s.tEnd]].forEach(([a, b]) => {
+          g.seg(...lineA(a, b), '#bfdbfe', { width: 2 }); g.seg(...lineB(a, b), '#fed7aa', { width: 2 });
+          const bb = Math.min(b, t);
+          if (bb > a) { g.seg(...lineA(a, bb), A_COL, { width: 3 }); g.seg(...lineB(a, bb), B_COL, { width: 3 }); }
+        });
+        g.text([P(0, V0)[0] + 24, P(0, V0)[1] - 10], 'A', A_COL);
+        g.text([P(s.tEnd, s.v)[0] - 4, P(s.tEnd, s.v)[1] - 14], 'together', THING);
+        g.text([P(s.t1 * 0.6, s.aB * s.t1 * 0.6)[0] + 14, P(s.t1 * 0.6, s.aB * s.t1 * 0.6)[1] + 12], 'B', B_COL);
+
+        const text =
+          `A: ${s.m}·a_A = −μmg  →  a_A = −μg = ${s.aA.toFixed(2).replace('-', '−')} m/s²\n` +
+          `B: ${s.M}·a_B = μmg   →  a_B = μmg/M = ${s.aB.toFixed(2)} m/s²\n` +
+          `same velocity at t1 = ${s.t1.toFixed(2)} s:  v = mv0/(m + M) = ${s.v.toFixed(2)} m/s\n` +
+          `distance slid  L = ½·v0·t1 = ${s.L.toFixed(2)} m  (the green triangle)\n` +
+          `t = ${t.toFixed(2)} s:  vA = ${now.vA.toFixed(2)} m/s,  vB = ${now.vB.toFixed(2)} m/s` +
+            (t >= s.t1 ? '  (moving together)' : '');
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Run the clock until a little after t1. Stop when the page has changed.
+    let last = performance.now();
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      const end = setup().tEnd;
+      if (t < end) { t = Math.min(t + dt * 0.7, end); board.redraw(); }
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    const restart = () => { t = 0; board.redraw(); };
+    [mBox, bigBox, muBox].forEach((b) => b.addEventListener('input', restart));
+    document.getElementById('bsGo').addEventListener('click', restart);
+  })();
+</script>

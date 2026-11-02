@@ -25,7 +25,8 @@ COURSES = {
     "math-a": {"name": "Math A", "subject": "Mathematics"},
     "math-b": {"name": "Math B", "subject": "Mathematics"},
     "math-c": {"name": "Math C", "subject": "Mathematics"},
-    # Mechanics Basic: motion, forces, Newton's laws
+    # Mechanics Basic: motion, forces, Newton's laws, equations of motion,
+    # falling and projectile motion, work and energy
     "mechanics-basic": {"name": "Mechanics Basic", "subject": "Physics"},
 }
 

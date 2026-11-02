@@ -1,0 +1,220 @@
+<!-- tags: Work and Energy -->
+<!-- =====================================================================
+     NOTE: When Friction Does Work
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Work and Energy">When Friction Does Work</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Friction turns mechanical energy into heat</h2>
+    <p>Kinetic friction is non-conservative, so when it does work, mechanical energy is <strong>not</strong> conserved. You can still use energy, in one of two ways. The key is to know which one you are writing, so you don't count the same thing twice.</p>
+    <ol>
+      <li><strong>Change in mechanical energy = work done by non-conservative forces.</strong> The work done by gravity is already inside $U$, so only friction (and any other non-conservative force) goes on the right. Kinetic friction's work is $-\mu N L$: it takes energy away.</li>
+      <li><strong>Count friction as heat.</strong> The energy friction takes away doesn't vanish: it becomes heat, $Q = \mu N L$ (always positive). Then everything is conserved again, and you can write <strong>increases = decreases</strong> with the heat as one of the increases.</li>
+    </ol>
+    <p>Think of the money story again: U gives 5000 coins to K, through a third friend H. K only gets 4000 coins. H kept 1000 coins. The money K and U have together went down by 1000, but with H counted, nothing is lost. H is the heat.</p>
+  </section>
+
+  <!-- FORMULA: the two forms -->
+  <div class="note-formula">
+    <h3>Energy with kinetic friction</h3>
+    <div class="formula-main">$$(K + U)_{\text{after}} - (K + U)_{\text{before}} = W_{\text{non-conservative}} \qquad Q = \mu N L$$</div>
+    <p class="symbols">With friction only: $W_{\text{non-conservative}} = -\mu N L$, where $L$ is the distance slid. As gains and losses: (increases in $K$ and $U$) $+\ Q$ = (decreases in $K$ and $U$).</p>
+  </div>
+
+  <!-- PROOF: splitting the work -->
+  <div class="note-proof">
+    <ol>
+      <li>Start from the work–energy relation: change in $K$ = work done by <strong>all</strong> forces.</li>
+      <li>Split the work into the work of conservative forces and of non-conservative forces.</li>
+      <li>The work of a conservative force is the drop in its potential energy: $W_{\text{cons}} = -(\text{change in } U)$. Move it to the left: change in $K$ + change in $U$ = $W_{\text{non-cons}}$.</li>
+      <li>So if you use $U$ for gravity on the left, <strong>don't</strong> also put gravity's work on the right. That would count it twice.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: a block sliding down a rough slope; code at the bottom -->
+  <div class="note-demo">
+    <h2>A $1\ \mathrm{kg}$ block slides $4.0\ \mathrm{m}$ down a rough slope from rest</h2>
+    <div class="controls">
+      <label>slope angle $\theta$ = <input type="range" id="fwTh" min="15" max="60" step="5" value="30"></label>
+      <label>$\mu$ = <input type="range" id="fwMu" min="0" max="0.6" step="0.05" value="0.2"></label>
+      <button type="button" id="fwGo">Start again</button>
+    </div>
+    <canvas id="fwCanvas"></canvas>
+    <div class="output table-text" id="fwOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A $2.0\ \mathrm{kg}$ block slides $5.0\ \mathrm{m}$ along a level floor ($\mu = 0.20$), starting at $6.0\ \mathrm{m/s}$. Find its speed at the end.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Heat: $Q = \mu mg L = 0.20 \times 2.0 \times 9.8 \times 5.0 = 19.6\ \mathrm{J}$.</li>
+        <li>Decrease in $K$ = heat: $\tfrac{1}{2} \times 2.0 \times 6.0^2 - \tfrac{1}{2} \times 2.0\,v^2 = 19.6$.</li>
+        <li>$36 - v^2 = 19.6$, so $v^2 = 16.4$.</li>
+      </ol>
+      <p class="answer">$v \approx 4.0\ \mathrm{m/s}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">A block of mass $m$ slides a distance $L$ down a slope at angle $\theta$ from rest, with coefficient of kinetic friction $\mu$. Find its speed $v$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$N = mg\cos\theta$, so the heat is $Q = \mu mg\cos\theta \cdot L$.</li>
+        <li>Decrease: $U$, by $mgL\sin\theta$. Increases: $K$ and $Q$.</li>
+        <li>$\tfrac{1}{2}mv^2 + \mu mgL\cos\theta = mgL\sin\theta$.</li>
+      </ol>
+      <p class="answer">$v = \sqrt{2gL(\sin\theta - \mu\cos\theta)}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Block A ($2.0\ \mathrm{kg}$) is on a rough $30^\circ$ slope ($\mu = 0.20$), tied over a pulley at the top to block B ($3.0\ \mathrm{kg}$), which hangs. From rest, B falls $1.0\ \mathrm{m}$ and A moves $1.0\ \mathrm{m}$ up the slope. Find their speed.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Increases: $K_A + K_B = \tfrac{1}{2}(5.0)v^2$; $U_A$ by $2.0 \times 9.8 \times 1.0\sin 30^\circ = 9.8$; heat $Q = 0.20 \times 2.0 \times 9.8\cos 30^\circ \times 1.0 \approx 3.39$.</li>
+        <li>Decrease: $U_B$ by $3.0 \times 9.8 \times 1.0 = 29.4$.</li>
+        <li>$2.5v^2 + 9.8 + 3.39 = 29.4$, so $v^2 \approx 6.48$.</li>
+      </ol>
+      <p class="answer">$v \approx 2.5\ \mathrm{m/s}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">For Example 2, a student writes $\tfrac{1}{2}mv^2 - mgL\sin\theta = mgL\sin\theta - \mu mgL\cos\theta$. What went wrong?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The left side already uses the change in $U$ (gravity's potential energy).</li>
+        <li>The right side should only have non-conservative work. Gravity's work $mgL\sin\theta$ was counted a second time.</li>
+      </ol>
+      <p class="answer">Gravity counted twice: as $U$ on the left and as work on the right</p>
+    </details>
+  </div>
+
+  <!-- WARNING: don't double count, and the force times distance -->
+  <div class="note-warning">
+    Two common mistakes: counting gravity twice (as $U$ <strong>and</strong> as work), and writing the heat as just $\mu N$. Heat is a force <strong>times the distance slid</strong>: $Q = \mu N L$, and on a slope $N = mg\cos\theta$, not $mg$.
+  </div>
+
+  <!-- TIP: heat is an increase -->
+  <div class="note-tip">
+    In the gains-and-losses table, the heat $Q$ is always an <strong>increase</strong>. Friction reduces the mechanical energy, but the heat itself is energy that something (the surfaces) receives.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>With friction, mechanical energy is not conserved: change in $K + U$ = work by non-conservative forces.</li>
+      <li>Friction's lost energy becomes heat $Q = \mu N L$; counting it makes "increases = decreases" work again.</li>
+      <li>Know which form you use, so gravity isn't counted twice.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Rough slope" demo (the TRY IT block above).
+  // The block starts at rest at the top and slides 4.0 m down the slope (60 pixels
+  // per metre) with acceleration g(sinθ − μ cosθ). If μ is too big (μ ≥ tanθ),
+  // it doesn't slide at all.
+  // Right: energy bars. U lost (red) = K gained (blue) + heat Q = μN × distance (orange).
+  // 5 pixels per joule. Drawn with NoteGeom.board in canvas pixels (520 × 340, y down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('fwCanvas');
+    const output = document.getElementById('fwOutput');
+    const thBox = document.getElementById('fwTh'), muBox = document.getElementById('fwMu');
+    const M = 1, G = 9.8, L = 4, PXM = 60, TOP = [50, 50], PXJ = 5, BASE = 300, THING = '#475569';
+    let t = 0, lastText = '';
+
+    function setup() {
+      const th = Number(thBox.value) * Math.PI / 180, mu = Number(muBox.value);
+      const a = G * (Math.sin(th) - mu * Math.cos(th));
+      const slides = a > 1e-9;
+      return { th, mu, a, slides, tEnd: slides ? Math.sqrt(2 * L / a) : 0, N: M * G * Math.cos(th) };
+    }
+    function bar(g, x, val, color, label) {
+      g.poly([[x - 22, BASE], [x + 22, BASE], [x + 22, BASE - val * PXJ], [x - 22, BASE - val * PXJ]], color);
+      g.text([x, BASE + 14], label, THING);
+      g.text([x, BASE - val * PXJ - 10], val.toFixed(1), THING);
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const s = setup(), tt = Math.min(t, s.tEnd);
+        const d = s.slides ? 0.5 * s.a * tt * tt : 0, v = s.a * tt;
+        const u = [Math.cos(s.th), Math.sin(s.th)], nrm = [Math.sin(s.th), -Math.cos(s.th)];   // down the slope, out of it
+        const SL = (L + 0.6) * PXM;                                  // drawn slope: a bit longer than the 4.0 m slid
+        const bottom = [TOP[0] + SL * u[0], TOP[1] + SL * u[1]];
+
+        // the slope
+        g.poly([TOP, bottom, [TOP[0], bottom[1]]], '#e2e8f0');
+        g.seg(TOP, bottom, THING, { width: 3 });
+        for (let k = 0; k < SL / 15; k++) {
+          const p = [TOP[0] + k * 15 * u[0], TOP[1] + k * 15 * u[1]];
+          g.seg(p, [p[0] - 6 * nrm[0] + 5 * u[0], p[1] - 6 * nrm[1] + 5 * u[1]], '#94a3b8', { width: 1 });
+        }
+        g.seg([TOP[0], bottom[1]], [bottom[0] + 30, bottom[1]], THING, { width: 2 });
+        g.arc(bottom, TOP, [TOP[0], bottom[1]], THING, 34);
+        g.text([bottom[0] - 50, bottom[1] - 10], 'θ', THING);
+
+        // the block
+        const c0 = [TOP[0] + (0.3 + d) * PXM * u[0], TOP[1] + (0.3 + d) * PXM * u[1]];
+        const c = [c0[0] + 14 * nrm[0], c0[1] + 14 * nrm[1]];
+        const corner = (sx, sy) => [c[0] + sx * 18 * u[0] + sy * 14 * nrm[0], c[1] + sx * 18 * u[1] + sy * 14 * nrm[1]];
+        const pts = [corner(-1, -1), corner(1, -1), corner(1, 1), corner(-1, 1)];
+        g.poly(pts, '#fde68a');
+        pts.forEach((p, i) => g.seg(p, pts[(i + 1) % 4], THING, { width: 2 }));
+
+        // energies so far
+        const Ulost = M * G * d * Math.sin(s.th), K = 0.5 * M * v * v, Q = s.mu * s.N * d;
+        g.seg([330, BASE], [510, BASE], THING, { width: 1.5 });
+        bar(g, 360, Ulost, '#fca5a5', 'U lost');
+        bar(g, 420, K, '#93c5fd', 'K');
+        bar(g, 480, Q, '#fdba74', 'heat Q');
+        g.text([390, BASE - 12], '=', THING); g.text([450, BASE - 12], '+', THING);
+
+        const n = (x) => x.toFixed(2);
+        const text = !s.slides
+          ? `μ = ${s.mu} ≥ tanθ = ${Math.tan(s.th).toFixed(2)}: friction holds the block, it doesn't slide.`
+          : `N = mg cosθ = ${n(s.N)} N,  friction μN = ${n(s.mu * s.N)} N\n` +
+            `slid ${n(d)} m:  U lost = mg·d·sinθ = ${n(Ulost)} J\n` +
+            `  K = ½mv² = ${n(K)} J,  heat Q = μN·d = ${n(Q)} J,  K + Q = ${n(K + Q)} J\n` +
+            `at the bottom: v = √(2gL(sinθ − μcosθ)) = ${n(Math.sqrt(2 * s.a * L))} m/s`;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Run the clock until the block reaches the bottom. Stop when the page has changed.
+    let last = performance.now();
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      const end = setup().tEnd;
+      if (t < end) { t = Math.min(t + dt, end); board.redraw(); }
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    const restart = () => { t = 0; board.redraw(); };
+    [thBox, muBox].forEach((b) => b.addEventListener('input', restart));
+    document.getElementById('fwGo').addEventListener('click', restart);
+  })();
+</script>

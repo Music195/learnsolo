@@ -1,0 +1,245 @@
+<!-- tags: Falling and Projectile Motion -->
+<!-- =====================================================================
+     NOTE: Free Fall and Vertical Throws
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Falling and Projectile Motion">Free Fall and Vertical Throws</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Only gravity acts: constant acceleration $g$, so use the constant-acceleration formulas</h2>
+    <p>When an object moves straight up or down and <strong>only gravity</strong> acts on it (no air resistance), its equation of motion is $ma = mg$, so its acceleration is always $g = 9.8\ \mathrm{m/s^2}$, downwards. It is just uniformly accelerated motion (topic 01) with $a = \pm g$. There are three standard cases:</p>
+    <ul>
+      <li><strong>Free fall:</strong> let go "gently" (that means $v_0 = 0$).</li>
+      <li><strong>Throwing down:</strong> thrown downwards with speed $v_0$.</li>
+      <li><strong>Throwing up:</strong> thrown upwards with speed $v_0$. It slows down, stops for an instant at the top, then falls back.</li>
+    </ul>
+    <p>Choose the positive direction first. Most books take <strong>down as positive</strong> for free fall and throwing down ($a = +g$), and <strong>up as positive</strong> for throwing up ($a = -g$). You don't need new formulas: put $a = \pm g$ and $x \to y$ into the three you already know.</p>
+  </section>
+
+  <!-- FORMULA: the three sets -->
+  <div class="note-formula">
+    <h3>Vertical motion under gravity</h3>
+    <div class="formula-main">$$\begin{aligned} &\text{free fall (down +):} && v = gt, && y = \tfrac{1}{2}gt^2, && v^2 = 2gy \\ &\text{throw down (down +):} && v = v_0 + gt, && y = v_0 t + \tfrac{1}{2}gt^2, && v^2 - v_0^2 = 2gy \\ &\text{throw up (up +):} && v = v_0 - gt, && y = v_0 t - \tfrac{1}{2}gt^2, && v^2 - v_0^2 = -2gy \end{aligned}$$</div>
+    <p class="symbols">For a throw up: it reaches the top at $t_1 = \dfrac{v_0}{g}$, at height $H = \dfrac{v_0^2}{2g}$, and lands back at $2t_1$ with velocity $-v_0$.</p>
+  </div>
+
+  <!-- PROOF: the top and the symmetry from the v–t graph -->
+  <div class="note-proof">
+    <ol>
+      <li>Throw up (up positive): the v–t graph is a straight line starting at $v_0$ with slope $-g$. Each second the velocity drops by $g$.</li>
+      <li>At the top the velocity is $0$: $0 = v_0 - g t_1$, so $t_1 = \dfrac{v_0}{g}$.</li>
+      <li>The height is the area under the line up to $t_1$, a triangle: $H = \tfrac{1}{2} v_0 t_1 = \dfrac{v_0^2}{2g}$.</li>
+      <li>To come back down, the area below the axis must also be $H$. The line keeps the same slope, so this second triangle is the same as the first: it takes another $t_1$, and ends at $-v_0$. Going up and coming down are <strong>symmetric</strong>.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: three throws with a live v–t graph; code at the bottom -->
+  <div class="note-demo">
+    <h2>Drop or throw a ball and watch its v–t graph</h2>
+    <div class="controls choices" id="ffChoices">
+      <button type="button" data-scene="fall" class="active">Free fall from 45 m</button>
+      <button type="button" data-scene="down">Throw down from 45 m</button>
+      <button type="button" data-scene="up">Throw up from the ground</button>
+    </div>
+    <div class="controls">
+      <label>$v_0$ = <input type="range" id="ffV0" min="0" max="15" step="1" value="10"></label>
+      <button type="button" id="ffGo">Again</button>
+    </div>
+    <canvas id="ffCanvas"></canvas>
+    <div class="output table-text" id="ffOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A stone is dropped from a cliff and hits the ground after $3.0\ \mathrm{s}$. How high is the cliff, and how fast does the stone hit the ground?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Free fall, down positive: $y = \tfrac{1}{2} \times 9.8 \times 3.0^2 = 44.1$.</li>
+        <li>$v = 9.8 \times 3.0 = 29.4$.</li>
+      </ol>
+      <p class="answer">About $44\ \mathrm{m}$; $29\ \mathrm{m/s}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">A ball is thrown down at $5.0\ \mathrm{m/s}$ from a height of $10\ \mathrm{m}$. Find its speed when it hits the ground.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Down positive: $v^2 - 5.0^2 = 2 \times 9.8 \times 10$, so $v^2 = 221$.</li>
+      </ol>
+      <p class="answer">$v \approx 15\ \mathrm{m/s}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A ball is thrown straight up at $19.6\ \mathrm{m/s}$. Find the time to the top, the maximum height, and when it lands back.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$t_1 = \dfrac{19.6}{9.8} = 2.0\ \mathrm{s}$.</li>
+        <li>$H = \tfrac{1}{2} \times 19.6 \times 2.0 = 19.6\ \mathrm{m}$ (area of the triangle).</li>
+        <li>By symmetry it lands at $2t_1$.</li>
+      </ol>
+      <p class="answer">$2.0\ \mathrm{s}$; $19.6\ \mathrm{m}$; after $4.0\ \mathrm{s}$, at $19.6\ \mathrm{m/s}$ downwards</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">A ball is thrown straight up at $14.7\ \mathrm{m/s}$. Where is it, and which way is it moving, after $2.0\ \mathrm{s}$?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Up positive: $v = 14.7 - 9.8 \times 2.0 = -4.9$: moving down.</li>
+        <li>$y = 14.7 \times 2.0 - 4.9 \times 2.0^2 = 29.4 - 19.6 = 9.8$.</li>
+      </ol>
+      <p class="answer">$9.8\ \mathrm{m}$ up, falling at $4.9\ \mathrm{m/s}$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: a = 0 at the top is wrong -->
+  <div class="note-warning">
+    At the top of a throw the <strong>velocity</strong> is $0$, but the <strong>acceleration</strong> is still $g$ downwards. Gravity never switches off: that is why the ball starts falling again.
+  </div>
+
+  <!-- TIP: use the v–t graph -->
+  <div class="note-tip">
+    You don't need to memorise the three sets of formulas. Draw the v–t graph: the time to the top is where the line crosses the axis, the height is a triangle's area, and the symmetry gives the rest.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Under gravity alone, the acceleration is always $g$ downwards: use the constant-acceleration formulas with $a = \pm g$.</li>
+      <li>Throw up: top at $t_1 = v_0/g$, height $H = v_0^2/2g$.</li>
+      <li>It takes as long to come down as to go up, and lands with the same speed.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Drop or throw a ball" demo (the TRY IT block above).
+  // Left: the ball's height above the ground (6 pixels per metre).
+  // Right: its v–t graph, drawn live. Free fall and throw down use down as positive,
+  // throw up uses up as positive, like most books. The run stops when the ball lands.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('ffCanvas');
+    const output = document.getElementById('ffOutput');
+    const vBox = document.getElementById('ffV0');
+    const G = 9.8, H0 = 45, PXM = 6, GROUND = 315, BALL = '#2563eb', THING = '#475569';
+    const GT0 = 250, GT1 = 500, GMID = 170, PXV = 4, TMAX = 4.2;    // v–t graph: 4 px per m/s
+    let scene = 'fall', t = 0, lastText = '';
+
+    // start values for the scene: v0 (in the chosen + direction), a, height at t = 0, and the landing time
+    function setup() {
+      const v0 = scene === 'fall' ? 0 : Number(vBox.value);
+      if (scene === 'up') return { v0, a: -G, start: 0, upPos: true, tEnd: 2 * v0 / G };
+      // down +: H0 = v0 t + ½ g t²
+      return { v0, a: G, start: H0, upPos: false, tEnd: (-v0 + Math.sqrt(v0 * v0 + 2 * G * H0)) / G };
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const s = setup(), tt = Math.min(t, s.tEnd);
+        vBox.disabled = scene === 'fall';
+        const v = s.v0 + s.a * tt, y = s.v0 * tt + 0.5 * s.a * tt * tt;      // in the + direction
+        const height = s.upPos ? y : s.start - y;
+
+        // --- Left: ground, tower, ball ---
+        g.seg([20, GROUND], [210, GROUND], THING, { width: 3 });
+        if (!s.upPos) {
+          g.poly([[60, GROUND - H0 * PXM], [100, GROUND - H0 * PXM], [100, GROUND], [60, GROUND]], '#e2e8f0');
+          g.text([80, GROUND - H0 * PXM - 12], '45 m', THING);
+        }
+        for (let m = 10; m <= 40; m += 10) {
+          g.text([36, GROUND - m * PXM], `${m} m`, '#94a3b8');
+        }
+        if (s.upPos && s.v0 > 0) {
+          const Hm = s.v0 * s.v0 / (2 * G);
+          g.seg([115, GROUND - Hm * PXM], [205, GROUND - Hm * PXM], '#94a3b8', { width: 1, dash: true });
+          g.text([185, GROUND - Hm * PXM - 12], `top ${Hm.toFixed(1)} m`, '#94a3b8');
+        }
+        const ball = [140, GROUND - 8 - height * PXM];
+        g.circle(ball, 8, BALL, { fill: '#93c5fd' });
+        // velocity arrow (1.5 px per m/s), up or down on the screen
+        const vScreen = s.upPos ? -v : v;                                    // + = down on the screen
+        if (Math.abs(v) > 0.3) {
+          const tip = [ball[0] + 24, ball[1] + vScreen * 1.5], d = Math.sign(vScreen);
+          g.seg([ball[0] + 24, ball[1]], tip, '#dc2626', { width: 2.5 });
+          g.poly([tip, [tip[0] - 5, tip[1] - 8 * d], [tip[0] + 5, tip[1] - 8 * d]], '#dc2626');
+        }
+
+        // --- Right: the v–t graph ---
+        const P = (t2, v2) => [GT0 + t2 / TMAX * (GT1 - GT0), GMID - v2 * PXV];
+        g.seg([GT0, GMID], [GT1 + 6, GMID], THING, { width: 1.5 });
+        g.seg([GT0, 30], [GT0, 312], THING, { width: 1.5 });
+        g.text([GT1 + 2, GMID + 14], 't (s)', THING);
+        g.text([GT0 + 54, 22], s.upPos ? 'v (m/s), up +' : 'v (m/s), down +', THING);
+        for (let k = 1; k <= 4; k++) g.text([P(k, 0)[0], GMID + 14], `${k}`, '#94a3b8');
+        [-30, -20, -10, 10, 20, 30].forEach((vv) => g.text([GT0 - 16, P(0, vv)[1]], `${vv}`.replace('-', '−'), '#94a3b8'));
+        g.seg(P(0, s.v0), P(s.tEnd, s.v0 + s.a * s.tEnd), '#cbd5e1', { width: 2 });
+        if (s.upPos && s.v0 > 0) {
+          // the two triangles: up (above the axis) and down (below), the same area H
+          g.poly([P(0, 0), P(0, s.v0), P(s.tEnd / 2, 0)], 'rgba(37, 99, 235, 0.15)');
+          g.poly([P(s.tEnd / 2, 0), P(s.tEnd, 0), P(s.tEnd, -s.v0)], 'rgba(220, 38, 38, 0.12)');
+          g.text([P(s.tEnd / 2, 0)[0], GMID - 12], 't1', THING);
+        } else {
+          g.poly([P(0, 0), P(0, s.v0), P(s.tEnd, s.v0 + s.a * s.tEnd), P(s.tEnd, 0)], 'rgba(37, 99, 235, 0.12)');
+        }
+        g.seg(P(0, s.v0), P(tt, v), '#dc2626', { width: 3 });
+        g.circle(P(tt, v), 4, '#dc2626', { fill: '#dc2626' });
+
+        const n = (x) => x.toFixed(1).replace('-', '−');
+        const lines = [];
+        if (scene === 'fall') lines.push('Free fall, down positive:  v = gt,  y = ½gt²   (v0 = 0)');
+        if (scene === 'down') lines.push(`Throw down, down positive:  v = ${s.v0} + 9.8t,  y = ${s.v0}t + 4.9t²`);
+        if (scene === 'up') lines.push(`Throw up, up positive:  v = ${s.v0} − 9.8t,  y = ${s.v0}t − 4.9t²`);
+        lines.push(`t = ${tt.toFixed(2)} s:  v = ${n(v)} m/s,  height above ground = ${n(Math.max(height, 0))} m`);
+        if (scene === 'up') {
+          lines.push(`top at t1 = v0/g = ${(s.v0 / G).toFixed(2)} s,  H = v0²/2g = ${(s.v0 * s.v0 / 2 / G).toFixed(2)} m`);
+          lines.push(`lands at 2t1 = ${s.tEnd.toFixed(2)} s with v = −v0 = ${n(-s.v0)} m/s  (symmetry)`);
+        } else {
+          lines.push(`lands after ${s.tEnd.toFixed(2)} s at ${(s.v0 + G * s.tEnd).toFixed(1)} m/s  (area = 45 m)`);
+        }
+        const text = lines.join('\n');
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Run the clock until the ball lands. Stop when the page has changed.
+    let last = performance.now();
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      const end = setup().tEnd;
+      if (t < end) { t = Math.min(t + dt, end); board.redraw(); }
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    const restart = () => { t = 0; board.redraw(); };
+    document.querySelectorAll('#ffChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#ffChoices button').forEach((x) => x.classList.toggle('active', x === b));
+      scene = b.dataset.scene;
+      restart();
+    }));
+    vBox.addEventListener('input', restart);
+    document.getElementById('ffGo').addEventListener('click', restart);
+  })();
+</script>
