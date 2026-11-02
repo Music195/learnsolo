@@ -1,0 +1,227 @@
+<!-- tags: Falling and Projectile Motion -->
+<!-- =====================================================================
+     NOTE: Projectile Motion
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Falling and Projectile Motion">Projectile Motion</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Split the motion: across it moves at constant velocity, up and down it's a vertical throw</h2>
+    <p>Throw a ball at speed $v_0$ at an angle $\theta$ above the horizontal and it flies along a curve called a <strong>parabola</strong>. This is <strong>projectile motion</strong>. The trick is to never think about the curve as a whole. Look at the two directions <strong>separately</strong>:</p>
+    <ul>
+      <li><strong>Horizontal ($x$):</strong> no force acts that way, so $a_x = 0$. The ball moves at a constant $v_0\cos\theta$, like its shadow on the ground under a midday sun.</li>
+      <li><strong>Vertical ($y$, up positive):</strong> only gravity acts, so $a_y = -g$. This is a vertical throw upwards, with starting speed $v_0\sin\theta$, like the ball's shadow on a wall.</li>
+    </ul>
+    <p>Both directions share the same clock $t$. A <strong>horizontal throw</strong> is the special case $\theta = 0$: across it is constant velocity, and up and down it is free fall.</p>
+  </section>
+
+  <!-- FORMULA: the equations for x and y -->
+  <div class="note-formula">
+    <h3>Thrown from the origin at $v_0$, angle $\theta$ (up positive)</h3>
+    <div class="formula-main">$$\begin{aligned} v_x &= v_0\cos\theta, & x &= v_0\cos\theta \cdot t \\ v_y &= v_0\sin\theta - gt, & y &= v_0\sin\theta \cdot t - \tfrac{1}{2}gt^2 \end{aligned}$$</div>
+    <p class="symbols">Top at $t_1 = \dfrac{v_0\sin\theta}{g}$, height $H = \dfrac{v_0^2\sin^2\theta}{2g}$. It lands at $2t_1$, a distance $L = \dfrac{v_0^2\sin 2\theta}{g}$ away, which is longest at $\theta = 45^\circ$.</p>
+  </div>
+
+  <!-- PROOF: from the equation of motion -->
+  <div class="note-proof">
+    <ol>
+      <li>In the air, the only force is gravity $mg$, straight down. Equations of motion: $ma_x = 0$ and $ma_y = -mg$, so $a_x = 0$, $a_y = -g$.</li>
+      <li>Split the starting velocity: $v_0\cos\theta$ across and $v_0\sin\theta$ up. With constant acceleration in each direction, the formulas above follow. (If you know calculus: integrate $a_x$ and $a_y$ twice with respect to $t$; the starting values are the constants of integration.)</li>
+      <li>Top: $v_y = 0$, so $t_1 = \dfrac{v_0\sin\theta}{g}$. Height: area of the $v_y$–$t$ triangle, $H = \tfrac{1}{2} v_0\sin\theta \cdot t_1 = \dfrac{v_0^2\sin^2\theta}{2g}$.</li>
+      <li>It lands at $2t_1$ (symmetry), so $L = v_0\cos\theta \cdot 2t_1 = \dfrac{2v_0^2\sin\theta\cos\theta}{g} = \dfrac{v_0^2\sin 2\theta}{g}$, using $2\sin\theta\cos\theta = \sin 2\theta$.</li>
+      <li>$\sin 2\theta$ is at most $1$, when $2\theta = 90^\circ$. So the longest throw is at $\theta = 45^\circ$, with $L = \dfrac{v_0^2}{g}$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: throw a ball, see its shadows; code at the bottom -->
+  <div class="note-demo">
+    <h2>Throw a ball: its shadows show the two separate motions</h2>
+    <div class="controls">
+      <label>$v_0$ = <input type="range" id="pmV" min="5" max="25" step="1" value="20"></label>
+      <label>$\theta$ = <input type="range" id="pmTh" min="0" max="90" step="5" value="60"></label>
+      <button type="button" id="pmGo">Throw</button>
+    </div>
+    <canvas id="pmCanvas"></canvas>
+    <div class="output table-text" id="pmOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A ball is thrown horizontally at $10\ \mathrm{m/s}$ from the top of a $19.6\ \mathrm{m}$ cliff. When and how far from the cliff does it land?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Up and down it is free fall: $19.6 = \tfrac{1}{2} \times 9.8\,t^2$, so $t = 2.0\ \mathrm{s}$.</li>
+        <li>Across, constant velocity: $x = 10 \times 2.0$.</li>
+      </ol>
+      <p class="answer">After $2.0\ \mathrm{s}$, $20\ \mathrm{m}$ from the cliff</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">A ball is thrown at $19.6\ \mathrm{m/s}$ at $30^\circ$ above the horizontal. Find the time to the top and the greatest height.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Vertical start: $19.6 \sin 30^\circ = 9.8\ \mathrm{m/s}$. $t_1 = 9.8 / 9.8 = 1.0\ \mathrm{s}$.</li>
+        <li>$H = \tfrac{1}{2} \times 9.8 \times 1.0$.</li>
+      </ol>
+      <p class="answer">$1.0\ \mathrm{s}$; $4.9\ \mathrm{m}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">In Example 2, how far away does the ball land?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>It lands at $2t_1 = 2.0\ \mathrm{s}$.</li>
+        <li>Across: $19.6\cos 30^\circ \times 2.0 \approx 17.0 \times 2.0$.</li>
+      </ol>
+      <p class="answer">About $34\ \mathrm{m}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">What is the farthest you can throw a ball on level ground at $14\ \mathrm{m/s}$, and at what angle?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$L = \dfrac{v_0^2 \sin 2\theta}{g}$ is largest when $\sin 2\theta = 1$, at $\theta = 45^\circ$.</li>
+        <li>$L = \dfrac{14^2}{9.8} = 20$.</li>
+      </ol>
+      <p class="answer">$20\ \mathrm{m}$, at $45^\circ$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: the velocity at the top is not zero -->
+  <div class="note-warning">
+    At the top of the curve only the <strong>vertical</strong> velocity is $0$. The ball is still moving across at $v_0\cos\theta$, so its speed at the top is $v_0\cos\theta$, not $0$.
+  </div>
+
+  <!-- TIP: same angle sum to 90° -->
+  <div class="note-tip">
+    $\sin 2\theta$ is the same for $\theta$ and $90^\circ - \theta$, so throws at $30^\circ$ and $60^\circ$ land in the same place (try it in the demo). The $60^\circ$ throw goes higher and takes longer.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Split into $x$ (constant velocity $v_0\cos\theta$) and $y$ (vertical throw with $v_0\sin\theta$, $a = -g$).</li>
+      <li>Top: $v_y = 0$, at $t_1 = \dfrac{v_0\sin\theta}{g}$; it lands at $2t_1$.</li>
+      <li>Range $L = \dfrac{v_0^2\sin 2\theta}{g}$, longest at $45^\circ$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Throw a ball" demo (the TRY IT block above).
+  // The ball is thrown from the origin; its path is drawn as it flies (the light curve
+  // shows the whole path in advance). The green dot on the ground is its shadow from
+  // above: it moves at a constant speed. The orange dot on the left wall is its shadow
+  // from the side: it goes up and down like a vertical throw. The arrows on the ball
+  // are the two parts of its velocity: vx (constant) and vy (changing).
+  // 7 pixels per metre. Drawn with NoteGeom.board in canvas pixels (520 × 340, y down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('pmCanvas');
+    const output = document.getElementById('pmOutput');
+    const vBox = document.getElementById('pmV'), thBox = document.getElementById('pmTh');
+    const G = 9.8, PXM = 7, O = [40, 310], PXV = 2.5, THING = '#475569';
+    const VX = '#2563eb', VY = '#dc2626', SH_X = '#16a34a', SH_Y = '#ea580c';
+    let t = 0, lastText = '';
+
+    function setup() {
+      const v0 = Number(vBox.value), th = Number(thBox.value) * Math.PI / 180;
+      const vx = v0 * Math.cos(th), vy0 = v0 * Math.sin(th), t1 = vy0 / G;
+      return { v0, th, vx, vy0, t1, tEnd: 2 * t1, H: vy0 * vy0 / (2 * G), L: vx * 2 * t1 };
+    }
+    const pos = (s, tt) => [s.vx * tt, s.vy0 * tt - 0.5 * G * tt * tt];
+    const px = ([x, y]) => [O[0] + x * PXM, O[1] - y * PXM];
+    function arrow(g, p, d, color) {
+      const len = Math.hypot(d[0], d[1]);
+      if (len < 4) return;
+      const u = [d[0] / len, d[1] / len], n = [-u[1], u[0]], q = [p[0] + d[0], p[1] + d[1]];
+      g.seg(p, q, color, { width: 2.5 });
+      g.poly([q, [q[0] - 9 * u[0] + 4 * n[0], q[1] - 9 * u[1] + 4 * n[1]], [q[0] - 9 * u[0] - 4 * n[0], q[1] - 9 * u[1] - 4 * n[1]]], color);
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const s = setup(), tt = Math.min(t, s.tEnd);
+        // axes and metre marks
+        g.seg([O[0] - 10, O[1]], [510, O[1]], THING, { width: 2 });
+        g.seg([O[0], O[1] + 10], [O[0], 20], THING, { width: 2 });
+        for (let m = 10; m <= 60; m += 10) g.text([O[0] + m * PXM, O[1] + 14], `${m}`, '#94a3b8');
+        for (let m = 10; m <= 40; m += 10) g.text([O[0] - 22, O[1] - m * PXM], `${m}`, '#94a3b8');
+        g.text([495, O[1] - 12], 'x (m)', THING);
+        g.text([O[0] + 30, 22], 'y (m)', THING);
+
+        // the whole path (light) and the part so far (bold)
+        const N = 60;
+        let prev = px(pos(s, 0));
+        for (let k = 1; k <= N; k++) {
+          const tk = s.tEnd * k / N, p = px(pos(s, tk));
+          g.seg(prev, p, tk <= tt ? '#0f172a' : '#cbd5e1', { width: tk <= tt ? 2.5 : 1.5 });
+          prev = p;
+        }
+        if (s.tEnd > 0) {
+          const top = px([s.vx * s.t1, s.H]);
+          g.seg(top, [top[0], O[1]], '#94a3b8', { width: 1, dash: true });
+          g.text([top[0] + 26, top[1] - 12], `H = ${s.H.toFixed(1)}`, '#94a3b8');
+          g.text([px([s.L, 0])[0], O[1] - 14], `L = ${s.L.toFixed(1)}`, '#94a3b8');
+        }
+
+        const here = pos(s, tt), b = px(here);
+        // shadows: from above on the ground, from the side on the y axis
+        g.seg(b, [b[0], O[1]], SH_X, { width: 1, dash: true });
+        g.seg(b, [O[0], b[1]], SH_Y, { width: 1, dash: true });
+        g.circle([b[0], O[1]], 6, SH_X, { fill: SH_X });
+        g.circle([O[0], b[1]], 6, SH_Y, { fill: SH_Y });
+        g.circle(b, 8, '#2563eb', { fill: '#93c5fd' });
+        const vy = s.vy0 - G * tt;
+        arrow(g, b, [s.vx * PXV, 0], VX);
+        arrow(g, b, [0, -vy * PXV], VY);
+        g.text([b[0] + s.vx * PXV + 16, b[1]], 'vx', VX);
+        if (Math.abs(vy) * PXV > 8) g.text([b[0] - 16, b[1] - vy * PXV], 'vy', VY);
+
+        const n = (x) => x.toFixed(2).replace('-', '−');
+        const text =
+          `x: no force → vx = v0 cosθ = ${n(s.vx)} m/s all the time\n` +
+          `y: vertical throw → vy = v0 sinθ − gt = ${n(s.vy0)} − 9.8t\n` +
+          `top at t1 = ${n(s.t1)} s, H = ${n(s.H)} m;  lands at 2t1 = ${n(s.tEnd)} s, L = ${n(s.L)} m\n` +
+          `t = ${n(tt)} s:  x = ${n(here[0])} m,  y = ${n(Math.max(here[1], 0))} m,  vy = ${n(vy)} m/s` +
+          (Math.abs(thBox.value - 45) < 1 ? '\n45°: the longest throw for this speed' : '');
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Run the clock until the ball lands. Stop when the page has changed.
+    let last = performance.now();
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      const end = setup().tEnd;
+      if (t < end) { t = Math.min(t + dt, end); board.redraw(); }
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    const restart = () => { t = 0; board.redraw(); };
+    [vBox, thBox].forEach((b) => b.addEventListener('input', restart));
+    document.getElementById('pmGo').addEventListener('click', restart);
+  })();
+</script>

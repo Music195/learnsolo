@@ -1,0 +1,225 @@
+<!-- tags: Falling and Projectile Motion -->
+<!-- =====================================================================
+     NOTE: Bouncing: the Coefficient of Restitution
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Falling and Projectile Motion">Bouncing: the Coefficient of Restitution</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>$e$ says what fraction of the speed a ball keeps when it bounces</h2>
+    <p>Drop a ball on the floor and it bounces back up, but usually more slowly than it hit. The <strong>coefficient of restitution</strong> $e$ (also called the <strong>coefficient of rebound</strong>) is the ratio of the speed just after the bounce to the speed just before.</p>
+    <ul>
+      <li>A super ball keeps almost all its speed: $e$ is close to $1$.</li>
+      <li>A lump of clay goes splat and doesn't bounce at all: $e = 0$.</li>
+    </ul>
+    <p>Here the ball hits something that <strong>can't move</strong>, like a floor or a wall. (Collisions between two moving objects come in a later topic.)</p>
+  </section>
+
+  <!-- FORMULA: e and the types of collision -->
+  <div class="note-formula">
+    <h3>Coefficient of restitution (hitting a fixed floor or wall)</h3>
+    <div class="formula-main">$$e = -\frac{v'}{v} \qquad (0 \le e \le 1)$$</div>
+    <p class="symbols">$v$ velocity just before, $v'$ just after (same positive direction). The minus sign is there because the direction reverses. $e = 1$: <strong>elastic</strong> collision; $0 &lt; e &lt; 1$: <strong>inelastic</strong>; $e = 0$: <strong>perfectly inelastic</strong>.</p>
+  </div>
+
+  <!-- PROOF: each bounce is e² as high -->
+  <div class="note-proof">
+    <ol>
+      <li>Take up as positive. The ball hits the floor at $-v_0$ and leaves at $+ev_0$.</li>
+      <li>On the v–t graph, the flight before the bounce ends in a triangle with height $v_0$; the flight after starts a triangle with height $ev_0$. Both lines have the same slope $-g$, so the two triangles are <strong>similar</strong>, with ratio $1 : e$.</li>
+      <li>Similar shapes: areas are in the ratio of the squares, $1 : e^2$. The areas are the heights, so $h_2 = e^2 h_1$.</li>
+      <li>The time of each flight is in the ratio $1 : e$: each bounce is $e$ times as long as the one before.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: a bouncing ball with its v–t graph; code at the bottom -->
+  <div class="note-demo">
+    <h2>Drop a ball from $5.0\ \mathrm{m}$ and change $e$</h2>
+    <div class="controls">
+      <label>$e$ = <input type="range" id="brE" min="0" max="1" step="0.05" value="0.7"></label>
+      <button type="button" id="brGo">Drop again</button>
+    </div>
+    <canvas id="brCanvas"></canvas>
+    <div class="output table-text" id="brOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A ball hits the floor at $8.0\ \mathrm{m/s}$ and leaves at $6.0\ \mathrm{m/s}$. Find $e$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Down positive: $v = 8.0$, $v' = -6.0$. $e = -\dfrac{-6.0}{8.0}$.</li>
+      </ol>
+      <p class="answer">$e = 0.75$ (an inelastic collision)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">A ball is dropped from $2.5\ \mathrm{m}$ onto a floor with $e = 0.60$. How high does it bounce?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$h_2 = e^2 h_1 = 0.36 \times 2.5$.</li>
+      </ol>
+      <p class="answer">$0.90\ \mathrm{m}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A ball is thrown straight up from the floor at $v_0$. It comes back down and bounces with coefficient $e$. Find the height of the first bounce in terms of $v_0$, $e$ and $g$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>First flight: up to $H_1 = \dfrac{v_0^2}{2g}$, back to the floor at speed $v_0$ (symmetry).</li>
+        <li>It leaves the floor at $ev_0$, so the next height is $\dfrac{(ev_0)^2}{2g} = e^2 H_1$.</li>
+      </ol>
+      <p class="answer">$H_2 = \dfrac{e^2 v_0^2}{2g}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">A ball dropped from $4.0\ \mathrm{m}$ bounces to $1.0\ \mathrm{m}$. Find $e$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\dfrac{h_2}{h_1} = e^2 = \dfrac{1.0}{4.0} = 0.25$.</li>
+      </ol>
+      <p class="answer">$e = 0.50$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: e² for heights, e for speeds -->
+  <div class="note-warning">
+    $e$ is a ratio of <strong>speeds</strong>, not of heights. The bounce height goes down by $e^2$: with $e = 0.5$ the ball keeps half its speed but only reaches a quarter of the height.
+  </div>
+
+  <!-- TIP: draw the bounce on the v–t graph -->
+  <div class="note-tip">
+    On a v–t graph (up positive), a bounce is a sudden jump from $-v$ up to $+ev$. Then the line continues with the same slope $-g$. Try drawing it yourself before you look at the demo.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$e = -\dfrac{v'}{v}$, between $0$ and $1$: elastic ($1$), inelastic, perfectly inelastic ($0$).</li>
+      <li>After a bounce the speed is $e$ times as big, so the height is $e^2$ times as big.</li>
+      <li>On the v–t graph, the triangles before and after a bounce are similar with ratio $1 : e$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Bouncing ball" demo (the TRY IT block above).
+  // The ball is dropped from 5.0 m. Each time it hits the floor its speed is
+  // multiplied by e and it goes back up. Left: the ball (40 pixels per metre) with
+  // a mark at each bounce's highest point. Right: the v–t graph with up as positive:
+  // straight lines of slope −g, and a jump from −v to +ev at each bounce.
+  // The run lasts 6 s, or until the ball stops bouncing.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('brCanvas');
+    const output = document.getElementById('brOutput');
+    const eBox = document.getElementById('brE');
+    const G = 9.8, H0 = 5, PXM = 55, GROUND = 315, TMAX = 6, THING = '#475569';
+    const GT0 = 230, GT1 = 505, GMID = 170, PXV = 13;      // v–t graph: 13 px per m/s
+    let t = 0, lastText = '';
+
+    // The flights: each one starts at time "start" from the floor (or from 5 m for the drop)
+    // with upward velocity u. Returns the list of flights up to TMAX.
+    function flights(e) {
+      const v1 = Math.sqrt(2 * G * H0), list = [{ start: 0, u: 0, h0: H0, end: v1 / G }];
+      let tt = v1 / G, u = e * v1;
+      while (tt < TMAX && u > 0.2) {
+        list.push({ start: tt, u, h0: 0, end: tt + 2 * u / G });
+        tt += 2 * u / G; u *= e;
+      }
+      return list;
+    }
+    // height and velocity at time tt
+    function state(list, tt) {
+      const f = list.find((x) => tt <= x.end) || null;
+      if (!f) return { h: 0, v: 0, resting: true };
+      const s = tt - f.start;
+      return { h: f.h0 + f.u * s - 0.5 * G * s * s, v: f.u - G * s, resting: false };
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const e = Number(eBox.value), list = flights(e), now = state(list, t);
+
+        // --- Left: the ball ---
+        g.seg([20, GROUND], [200, GROUND], THING, { width: 3 });
+        for (let m = 1; m <= 5; m++) {
+          g.text([36, GROUND - m * PXM], `${m} m`, '#94a3b8');
+        }
+        list.slice(1, 4).forEach((f, i) => {
+          const top = f.u * f.u / (2 * G);
+          g.seg([90, GROUND - top * PXM], [170, GROUND - top * PXM], '#94a3b8', { width: 1, dash: true });
+          g.text([190, GROUND - top * PXM - 8], `h${i + 1}`, '#94a3b8');
+        });
+        g.circle([130, GROUND - 10 - now.h * PXM], 10, '#2563eb', { fill: '#93c5fd' });
+
+        // --- Right: the v–t graph ---
+        const P = (t2, v2) => [GT0 + t2 / TMAX * (GT1 - GT0), GMID - v2 * PXV];
+        g.seg([GT0, GMID], [GT1 + 6, GMID], THING, { width: 1.5 });
+        g.seg([GT0, 30], [GT0, 312], THING, { width: 1.5 });
+        g.text([GT1 - 4, GMID + 14], 't (s)', THING);
+        g.text([GT0 + 50, 22], 'v (m/s), up +', THING);
+        [-10, -5, 5, 10].forEach((vv) => g.text([GT0 - 16, P(0, vv)[1]], `${vv}`.replace('-', '−'), '#94a3b8'));
+        for (let k = 1; k <= 5; k++) g.text([P(k, 0)[0], GMID + 14], `${k}`, '#94a3b8');
+        list.forEach((f, i) => {
+          const endV = f.u - G * (f.end - f.start), stop = Math.min(f.end, t);
+          if (i > 0) g.seg(P(f.start, -list[i - 1].u || -Math.sqrt(2 * G * H0)), P(f.start, f.u), '#cbd5e1', { width: 1, dash: true });
+          g.seg(P(f.start, f.u), P(f.end, endV), '#cbd5e1', { width: 2 });
+          if (stop > f.start) g.seg(P(f.start, f.u), P(stop, f.u - G * (stop - f.start)), '#dc2626', { width: 3 });
+        });
+        // shade the first two triangles to compare them
+        if (list.length > 1) {
+          const v1 = Math.sqrt(2 * G * H0), t1 = list[0].end, u = list[1].u;
+          g.poly([P(0, 0), P(t1, 0), P(t1, -v1)], 'rgba(220, 38, 38, 0.12)');
+          g.poly([P(t1, 0), P(t1, u), P(t1 + u / G, 0)], 'rgba(37, 99, 235, 0.15)');
+        }
+
+        const kind = e === 1 ? 'elastic (e = 1)' : e === 0 ? 'perfectly inelastic (e = 0)' : 'inelastic (0 < e < 1)';
+        const v1 = Math.sqrt(2 * G * H0);
+        const heights = list.slice(1, 4).map((f) => (f.u * f.u / (2 * G)).toFixed(2)).join(' m, ');
+        const text =
+          `${kind}\n` +
+          `hits the floor at ${v1.toFixed(1)} m/s, leaves at e × ${v1.toFixed(1)} = ${(e * v1).toFixed(1)} m/s\n` +
+          (e > 0 ? `bounce heights: ${heights} m   (each e² = ${(e * e).toFixed(3)} times the last)\n`
+                 : 'it doesn\'t bounce at all: it sticks to the floor\n') +
+          `t = ${t.toFixed(2)} s:  height ${Math.max(now.h, 0).toFixed(2)} m,  v = ${now.v.toFixed(1).replace('-', '−')} m/s`;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Run the clock for TMAX seconds. Stop when the page has changed.
+    let last = performance.now();
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      if (t < TMAX) { t = Math.min(t + dt, TMAX); board.redraw(); }
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    const restart = () => { t = 0; board.redraw(); };
+    eBox.addEventListener('input', restart);
+    document.getElementById('brGo').addEventListener('click', restart);
+  })();
+</script>
