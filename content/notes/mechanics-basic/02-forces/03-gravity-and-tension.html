@@ -1,0 +1,200 @@
+<!-- tags: Force -->
+<!-- =====================================================================
+     NOTE: Gravity and Tension (重力と張力)
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Force">Gravity and Tension</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Gravity has a formula, tension does not</h2>
+    <p><strong>Gravity</strong> (重力) is the Earth's pull on an object. It acts at the <strong>centre of gravity</strong> (重心), straight down (鉛直下向き), and its size is $W = mg$: the mass times the <strong>gravitational acceleration</strong> (重力加速度) $g$.</p>
+    <p><strong>Tension</strong> (張力) is the pull of a string. It acts where the string is attached (the point of contact), <strong>along the string, away from the object</strong>. A string can only pull, never push.</p>
+    <p>The important difference: tension has <strong>no formula</strong>. A string pulls exactly as hard as the situation needs, so its size is found by writing the balance of forces (つり合いの式), or later the equation of motion.</p>
+  </section>
+
+  <!-- FORMULA: weight -->
+  <div class="note-formula">
+    <h3>Gravity on an object of mass $m$</h3>
+    <div class="formula-main">$$W = mg$$</div>
+    <p class="symbols">$m$ mass in $\mathrm{kg}$, $g = 9.8\ \mathrm{m/s^2}$, $W$ in newtons ($\mathrm{N}$). Tension $T$: no formula; find it from the balance of forces.</p>
+  </div>
+
+  <!-- PROOF: where the two come from -->
+  <div class="note-proof">
+    <ol>
+      <li>Without air resistance, every object falls with the same acceleration, $g = 9.8\ \mathrm{m/s^2}$. This is measured.</li>
+      <li>Newton's second law (topic 03) says force = mass × acceleration, so the pull that makes it fall is $W = mg$.</li>
+      <li>A string, on the other hand, can pull with any size of force (up to breaking). Hang $1.0\ \mathrm{kg}$ from it and it pulls with $9.8\ \mathrm{N}$; hang $2.0\ \mathrm{kg}$ and the same string pulls with $19.6\ \mathrm{N}$.</li>
+      <li>So tension depends on the situation, not on the string: it is whatever keeps the forces balanced.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: a lamp on two strings; code at the bottom -->
+  <div class="note-demo">
+    <h2>Drag the knots A and B along the ceiling, and change the mass</h2>
+    <div class="controls">
+      <label>$m$ = <input type="range" id="gtMass" min="0.5" max="5" step="0.5" value="2"></label>
+    </div>
+    <canvas id="gtCanvas"></canvas>
+    <div class="output table-text" id="gtOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find the size of the gravity on a $2.0\ \mathrm{kg}$ bag. Use $g = 9.8\ \mathrm{m/s^2}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$W = mg = 2.0 \times 9.8$.</li>
+      </ol>
+      <p class="answer">$19.6\ \mathrm{N}$ (about $20\ \mathrm{N}$)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">A $3.0\ \mathrm{kg}$ lamp hangs at rest from a single vertical string. Find the tension.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Forces on the lamp: gravity $mg$ down, tension $T$ up.</li>
+        <li>At rest, up = down: $T = mg = 3.0 \times 9.8$.</li>
+      </ol>
+      <p class="answer">$T = 29.4\ \mathrm{N}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Block P ($2.0\ \mathrm{kg}$) hangs from the ceiling by string 1. Block Q ($1.0\ \mathrm{kg}$) hangs below P by string 2. Find both tensions.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Forces on Q: gravity $1.0 \times 9.8$ down, $T_2$ up. So $T_2 = 9.8\ \mathrm{N}$.</li>
+        <li>Forces on P: gravity $2.0 \times 9.8$ down, $T_2$ down (string 2 pulls P down), $T_1$ up.</li>
+        <li>$T_1 = 19.6 + 9.8$.</li>
+      </ol>
+      <p class="answer">$T_1 = 29.4\ \mathrm{N}$, $T_2 = 9.8\ \mathrm{N}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">A $1.0\ \mathrm{kg}$ picture hangs from two strings, each at $60°$ to the vertical, one on each side. Find the tension in each string.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>By symmetry both tensions are equal, $T$. Each pulls up by $T\cos 60° = \tfrac{1}{2}T$.</li>
+        <li>Up = down: $2 \times \tfrac{1}{2}T = mg$, so $T = mg = 1.0 \times 9.8$.</li>
+      </ol>
+      <p class="answer">$T = 9.8\ \mathrm{N}$ each: as much as the whole weight</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">A spring scale reads $49\ \mathrm{N}$ when a box hangs from it at rest. What is the mass of the box?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>At rest, the scale pulls up as hard as gravity pulls down: $mg = 49$.</li>
+        <li>$m = 49 \div 9.8$.</li>
+      </ol>
+      <p class="answer">$m = 5.0\ \mathrm{kg}$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: no tension formula -->
+  <div class="note-warning">
+    Don't write $T = mg$ as if it were a formula. It is only true for one vertical string holding an object still. With two strings, an angle or an acceleration, the tension is different (Example 4: the strings pull with the whole weight each).
+  </div>
+
+  <!-- TIP: mass vs weight -->
+  <div class="note-tip">
+    Keep mass and force apart: mass is in $\mathrm{kg}$, gravity is a force in $\mathrm{N}$. A $1\ \mathrm{kg}$ object weighs $9.8\ \mathrm{N}$, so roughly $1\ \mathrm{N}$ is the weight of $100\ \mathrm{g}$, about an apple.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Gravity: $W = mg$, from the centre of gravity, straight down.</li>
+      <li>Tension: from the point of attachment, along the string, pulling away.</li>
+      <li>Tension has no formula: find it from the balance of forces.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Lamp on two strings" demo (the TRY IT block above).
+  // Drag the knots A and B along the ceiling; the slider sets the mass m.
+  // The tensions T1 and T2 are found from the balance of forces at the hook,
+  // so the same lamp needs very different tensions depending on the angles.
+  // Arrow lengths are in proportion to the forces (red: gravity, blue: tension).
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const output = document.getElementById('gtOutput');
+    const massBox = document.getElementById('gtMass');
+    const G = 9.8, CEILING = 40, HOOK = [260, 205], CENTRE = [260, 225], SCALE = 2.2; // pixels per newton
+    const GRAVITY = '#dc2626', TENSION = '#2563eb', THING = '#475569';
+
+    function arrow(g, p, q, color, label) {
+      g.seg(p, q, color, { width: 3 });
+      const a = Math.atan2(q[1] - p[1], q[0] - p[0]), s = 11;
+      g.poly([q, [q[0] - s * Math.cos(a - 0.4), q[1] - s * Math.sin(a - 0.4)],
+        [q[0] - s * Math.cos(a + 0.4), q[1] - s * Math.sin(a + 0.4)]], color);
+      g.text([q[0] + 18 * Math.cos(a), q[1] + 18 * Math.sin(a)], label, color);
+    }
+    const fix = (x) => x.toFixed(1);
+
+    const board = NoteGeom.board(document.getElementById('gtCanvas'), {
+      // A stays left of the lamp and B right of it, on the ceiling
+      points: { A: [140, CEILING], B: [400, CEILING] },
+      constrain: {
+        A: ([x]) => [Math.min(Math.max(x, 30), 245), CEILING],
+        B: ([x]) => [Math.min(Math.max(x, 275), 490), CEILING],
+      },
+      draw(g, P) {
+        const m = Number(massBox.value), W = m * G;
+
+        // Unit vectors from the hook along each string (pixels, y down)
+        const unit = (p) => { const d = NoteGeom.dist(HOOK, p); return [(p[0] - HOOK[0]) / d, (p[1] - HOOK[1]) / d]; };
+        const u1 = unit(P.A), u2 = unit(P.B);
+        // Balance at the hook: T1·u1 + T2·u2 + (0, W) = (0, 0). Solve the 2 × 2 system.
+        const det = u1[0] * u2[1] - u2[0] * u1[1];
+        const T1 = (u2[0] * W) / det, T2 = (-u1[0] * W) / det;
+        const angle = (u) => Math.round(Math.atan2(Math.abs(u[0]), -u[1]) * 180 / Math.PI); // from the vertical
+
+        // Ceiling, strings and lamp
+        g.seg([20, CEILING], [500, CEILING], THING, { width: 3 });
+        for (let x = 28; x < 500; x += 16) g.seg([x, CEILING], [x - 8, CEILING - 10], THING, { width: 1 });
+        g.seg(P.A, HOOK, THING); g.seg(P.B, HOOK, THING);
+        g.circle(CENTRE, 20, THING, { fill: '#fde68a' });
+        g.dot(HOOK, THING);
+
+        // Forces on the lamp, to scale
+        arrow(g, CENTRE, [CENTRE[0], CENTRE[1] + W * SCALE], GRAVITY, 'mg');
+        arrow(g, HOOK, [HOOK[0] + u1[0] * T1 * SCALE, HOOK[1] + u1[1] * T1 * SCALE], TENSION, 'T1');
+        arrow(g, HOOK, [HOOK[0] + u2[0] * T2 * SCALE, HOOK[1] + u2[1] * T2 * SCALE], TENSION, 'T2');
+
+        output.textContent =
+          `m = ${m.toFixed(1)} kg,  gravity mg = ${m.toFixed(1)} × 9.8 = ${fix(W)} N\n` +
+          `string A: ${angle(u1)}° from the vertical,  T1 = ${fix(T1)} N\n` +
+          `string B: ${angle(u2)}° from the vertical,  T2 = ${fix(T2)} N\n` +
+          `T1 + T2 = ${fix(T1 + T2)} N, ` +
+          (T1 + T2 > W + 0.05 ? 'more than mg:\nthe strings also pull sideways, against each other'
+                              : 'equal to mg:\nboth strings pull straight up');
+      },
+    });
+
+    massBox.addEventListener('input', board.redraw);
+  })();
+</script>

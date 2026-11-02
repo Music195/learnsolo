@@ -1,0 +1,230 @@
+<!-- tags: Force -->
+<!-- =====================================================================
+     NOTE: Static and Kinetic Friction (静止摩擦力と動摩擦力)
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Force">Static and Kinetic Friction</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>At rest, about to slide, sliding: three cases, three rules</h2>
+    <p>Try dragging a heavy desk. You pull a little: it doesn't move. You pull harder: still nothing. Then suddenly it lurches, and once it is moving, keeping it moving is easier. Friction has three cases:</p>
+    <p><strong>1. At rest</strong>: <strong>static friction</strong> (静止摩擦力). It has <strong>no formula</strong>: it is exactly as big as needed to stop the sliding, like tension and the normal force. Pull with $3\ \mathrm{N}$ and it is $3\ \mathrm{N}$; pull with $5\ \mathrm{N}$ and it is $5\ \mathrm{N}$.</p>
+    <p><strong>2. About to slide</strong>: static friction has a limit, the <strong>maximum static friction</strong> (最大摩擦力), $f_0 = \mu N$. It is still static friction, just at its biggest. $\mu$ is the <strong>coefficient of static friction</strong> (静止摩擦係数).</p>
+    <p><strong>3. Sliding</strong>: <strong>kinetic friction</strong> (動摩擦力), $f' = \mu' N$, with the <strong>coefficient of kinetic friction</strong> (動摩擦係数) $\mu'$. It stays the same however hard you pull, and $\mu' &lt; \mu$.</p>
+  </section>
+
+  <!-- FORMULA: the three cases -->
+  <div class="note-formula">
+    <h3>Friction on an object on a rough surface</h3>
+    <div class="formula-main">$$\underbrace{f \le \mu N}_{\text{at rest}} \qquad \underbrace{f_0 = \mu N}_{\text{about to slide}} \qquad \underbrace{f' = \mu' N}_{\text{sliding}}$$</div>
+    <p class="symbols">$N$ normal force, $\mu$ coefficient of static friction, $\mu'$ coefficient of kinetic friction (no units), and $\mu' &lt; \mu$. At rest, find $f$ from the balance of forces.</p>
+  </div>
+
+  <!-- PROOF: reading the friction graph -->
+  <div class="note-proof">
+    <ol>
+      <li>Pull a block with force $F$ and plot friction $f$ against $F$.</li>
+      <li>While the block stays still, the forces along the floor balance: $f = F$. The graph is the straight line $f = F$ through the origin. That is why static friction has no formula.</li>
+      <li>The line stops at the limit $f_0 = \mu N$: pull any harder and the block starts to slide.</li>
+      <li>Once it slides, friction drops to $f' = \mu' N$ and stays flat, whatever $F$ is. Since $\mu' &lt; \mu$, starting is the hardest part.</li>
+      <li>Both limits are proportional to $N$: press the surfaces together harder and they grip more.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: pull a block, friction graph built live; code at the bottom -->
+  <div class="note-demo">
+    <h2>Pull harder and harder, then ease off ($m = 2.0\ \mathrm{kg}$, $\mu = 0.50$, $\mu' = 0.30$)</h2>
+    <div class="controls">
+      <label>pull $F$ = <input type="range" id="skPull" min="0" max="20" step="0.5" value="0"></label>
+    </div>
+    <canvas id="skCanvas"></canvas>
+    <div class="output table-text" id="skOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A $5.0\ \mathrm{kg}$ box rests on a floor with $\mu = 0.40$. You pull it sideways with $10\ \mathrm{N}$ and it does not move. Find the friction on it.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>At rest, so static friction: no formula. The forces along the floor balance.</li>
+        <li>$f = 10$. ($\mu N$ is not used: the box is not about to slide.)</li>
+      </ol>
+      <p class="answer">$f = 10\ \mathrm{N}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">For the same box, what is the smallest sideways pull that makes it start to slide?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$N = mg = 5.0 \times 9.8 = 49$.</li>
+        <li>It starts to slide when the pull passes the maximum static friction: $f_0 = \mu N = 0.40 \times 49$.</li>
+      </ol>
+      <p class="answer">$19.6\ \mathrm{N}$ (about $20\ \mathrm{N}$)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Once the box slides, $\mu' = 0.25$. Find the kinetic friction, and say what happens if you keep pulling with $15\ \mathrm{N}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$f' = \mu' N = 0.25 \times 49 \approx 12.3$.</li>
+        <li>$15 > 12.3$, so the forces don't balance: the box speeds up.</li>
+      </ol>
+      <p class="answer">$f' \approx 12\ \mathrm{N}$; with $15\ \mathrm{N}$ it keeps speeding up</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">A block rests on a board. The board is slowly tilted, and the block starts to slide when the angle reaches $\theta$. Show that $\mu = \tan\theta$, and find $\mu$ when $\theta = 30°$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Across the slope: $N = mg\cos\theta$. Along the slope, about to slide: $f_0 = mg\sin\theta$.</li>
+        <li>$f_0 = \mu N$ gives $mg\sin\theta = \mu\, mg\cos\theta$, so $\mu = \tan\theta$.</li>
+        <li>$\tan 30° = \tfrac{1}{\sqrt{3}} \approx 0.58$.</li>
+      </ol>
+      <p class="answer">$\mu = \tan\theta$; at $30°$, $\mu \approx 0.58$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">You press a $0.50\ \mathrm{kg}$ book against a wall with a $20\ \mathrm{N}$ push at right angles to the wall. $\mu = 0.50$. Does the book stay up, and what is the friction?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Across the wall: $N = 20$, so the maximum friction is $\mu N = 0.50 \times 20 = 10$.</li>
+        <li>Gravity is $0.50 \times 9.8 = 4.9$, less than $10$: the book stays up.</li>
+        <li>At rest, friction just balances gravity: $f = 4.9$ (not $10$).</li>
+      </ol>
+      <p class="answer">It stays up; $f = 4.9\ \mathrm{N}$, upwards</p>
+    </details>
+  </div>
+
+  <!-- WARNING: μN is not "the friction" -->
+  <div class="note-warning">
+    Don't write $f = \mu N$ for every object at rest. $\mu N$ is only the <strong>limit</strong>. An object at rest has static friction from the balance of forces (Examples 1 and 5); use $\mu N$ only when the question says "about to slide" or "starts to slide".
+  </div>
+
+  <!-- TIP: ask first -->
+  <div class="note-tip">
+    Before writing anything, ask: is it <strong>at rest</strong>, <strong>about to slide</strong>, or <strong>sliding</strong>? That one question picks the rule: balance, $\mu N$, or $\mu' N$.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>At rest: static friction, no formula, from the balance of forces ($f \le \mu N$).</li>
+      <li>About to slide: maximum static friction $f_0 = \mu N$.</li>
+      <li>Sliding: kinetic friction $f' = \mu' N$, constant, and $\mu' &lt; \mu$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Friction graph" demo (the TRY IT block above).
+  // The slider sets the pull F on a 2.0 kg block (μ = 0.50, μ' = 0.30).
+  // Top: the block, the pull (purple) and friction (green), to scale.
+  // Bottom: the graph of friction f against the pull F. The grey line is the
+  // whole story; the red dot is where the block is now.
+  // The block remembers whether it is sliding: once it slides, it keeps sliding
+  // while F is bigger than kinetic friction, even below μN.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const output = document.getElementById('skOutput');
+    const pullBox = document.getElementById('skPull');
+    const M = 2.0, G = 9.8, MU = 0.50, MU_K = 0.30;
+    const N = M * G, F0 = MU * N, FK = MU_K * N;      // 19.6 N, 9.8 N, 5.88 N
+    const PULL = '#7c3aed', FRICTION = '#16a34a', NOW = '#dc2626', LINE = '#94a3b8', THING = '#475569';
+    const O = [70, 315], PX = 20, PY = 12;             // graph origin; pixels per newton on each axis
+    const at = (F, f) => [O[0] + F * PX, O[1] - f * PY];
+    const fix = (x) => x.toFixed(1);
+
+    let sliding = false;   // is the block sliding right now?
+    let note = '';         // a one-off message when the block starts or stops
+
+    function arrow(g, p, q, color, label, labelAt) {
+      if (NoteGeom.dist(p, q) < 2) return;
+      g.seg(p, q, color, { width: 3 });
+      const a = Math.atan2(q[1] - p[1], q[0] - p[0]), s = 10;
+      g.poly([q, [q[0] - s * Math.cos(a - 0.4), q[1] - s * Math.sin(a - 0.4)],
+        [q[0] - s * Math.cos(a + 0.4), q[1] - s * Math.sin(a + 0.4)]], color);
+      g.text(labelAt || [q[0] + 16 * Math.cos(a), q[1] - 12], label, color);
+    }
+
+    const board = NoteGeom.board(document.getElementById('skCanvas'), {
+      points: {},
+      draw(g) {
+        const F = Number(pullBox.value);
+        const f = sliding ? FK : F;
+
+        // --- Top: the block on the floor ---
+        g.seg([30, 110], [490, 110], THING, { width: 3 });
+        for (let x = 38; x < 490; x += 16) g.seg([x, 110], [x - 8, 120], THING, { width: 1 });
+        const shift = sliding ? 20 : 0;                // nudge the block right while it slides
+        const L = 215 + shift, R = 285 + shift;
+        g.poly([[L, 55], [R, 55], [R, 110], [L, 110]], '#fde68a');
+        g.seg([L, 55], [R, 55], THING); g.seg([R, 55], [R, 110], THING);
+        g.seg([R, 110], [L, 110], THING); g.seg([L, 110], [L, 55], THING);
+        arrow(g, [R, 82], [R + F * 4, 82], PULL, 'F');
+        arrow(g, [L + 20, 110], [L + 20 - f * 4, 110], FRICTION, 'f', [L + 12 - f * 4, 96]);
+        g.text([R + 70, 40], sliding ? 'sliding →' : 'at rest', sliding ? NOW : THING);
+
+        // --- Bottom: the graph of f against F ---
+        g.seg(O, [480, O[1]], THING); g.seg(O, [O[0], 160], THING);
+        g.text([495, O[1]], 'F', THING); g.text([O[0], 150], 'f', THING);
+        for (let k = 5; k <= 20; k += 5) {
+          g.seg([at(k, 0)[0], O[1]], [at(k, 0)[0], O[1] + 5], THING, { width: 1 });
+          g.text([at(k, 0)[0], O[1] + 15], String(k), THING);
+        }
+        g.text([O[0] - 8, O[1] + 15], '0', THING);
+        // the limits μN and μ'N
+        g.seg(at(0, F0), at(F0, F0), LINE, { dash: true, width: 1 });
+        g.seg(at(0, FK), at(FK, FK), LINE, { dash: true, width: 1 });
+        g.text([O[0] - 32, at(0, F0)[1]], 'μN', FRICTION);
+        g.text([O[0] - 32, at(0, FK)[1]], "μ'N", FRICTION);
+        // the whole graph: static line, the drop, kinetic line
+        g.seg(at(0, 0), at(F0, F0), LINE, { width: 3 });
+        g.seg(at(F0, F0), at(F0, FK), LINE, { dash: true });
+        g.seg(at(F0, FK), at(20, FK), LINE, { width: 3 });
+        g.seg(at(FK, FK), at(F0, FK), LINE, { dash: true });   // still sliding while easing off
+        g.text([at(3, 3)[0] + 34, at(3, 3)[1] + 6], 'static', THING);
+        g.text([at(15, FK)[0], at(15, FK)[1] - 14], 'kinetic', THING);
+        g.circle(at(F, f), 6, NOW, { fill: NOW });
+
+        output.textContent =
+          `pull F = ${fix(F)} N,  N = mg = ${fix(N)} N\n` +
+          `limit μN = 0.50 × ${fix(N)} = ${fix(F0)} N,   kinetic μ'N = 0.30 × ${fix(N)} = ${FK.toFixed(2)} N\n` +
+          (sliding
+            ? `sliding: kinetic friction f' = ${FK.toFixed(2)} N, whatever F is\n` +
+              (F > FK ? `F > f': the block speeds up` : '')
+            : `at rest: static friction f = F = ${fix(F)} N (it just balances the pull)`) +
+          (note ? `\n${note}` : '');
+      },
+    });
+
+    pullBox.addEventListener('input', () => {
+      const F = Number(pullBox.value);
+      note = '';
+      if (!sliding && F > F0) { sliding = true; note = 'F passed μN: the block starts to slide, and friction drops.'; }
+      else if (sliding && F <= FK) { sliding = false; note = "F fell below μ'N: the block slowed down and stopped."; }
+      board.redraw();
+    });
+  })();
+</script>

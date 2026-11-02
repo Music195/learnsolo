@@ -1,0 +1,218 @@
+<!-- tags: Force -->
+<!-- =====================================================================
+     NOTE: Normal Force (垂直抗力)
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Force">Normal Force</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>A surface pushes back, at right angles to itself</h2>
+    <p>When an object touches a surface, the surface pushes on it. This push is the <strong>normal force</strong> (垂直抗力), $N$. "Normal" means perpendicular: it acts <strong>at right angles to the surface</strong>, from the point or face of contact, out of the surface.</p>
+    <p>A surface can only push, never pull, so $N$ is never negative. And like tension, it has <strong>no formula</strong>: the surface pushes as hard as needed to stop the object sinking into it. Its size comes from the balance of forces across the surface.</p>
+    <p>For a block on a slope of angle $\theta$, that balance gives $N = mg\cos\theta$. Only on level ground, with nothing else pushing or pulling up or down, is $N = mg$.</p>
+  </section>
+
+  <!-- FORMULA: block on a slope -->
+  <div class="note-formula">
+    <h3>A block at rest on a slope of angle $\theta$</h3>
+    <div class="formula-main">$$N = mg\cos\theta$$</div>
+    <p class="symbols">$N$ normal force, $mg$ gravity, $\theta$ the slope's angle with the horizontal. With an extra force across the slope, it joins the balance: a push in makes $N$ bigger, a pull away makes it smaller.</p>
+  </div>
+
+  <!-- PROOF: balance across the slope -->
+  <div class="note-proof">
+    <ol>
+      <li>Forces on the block: gravity $mg$ (down), the normal force $N$ (out of the slope), and friction $f$ (along the slope, holding it).</li>
+      <li>Split gravity along the slope and across it. The angle between "straight down" and "into the slope" equals $\theta$, so the parts are $mg\cos\theta$ into the slope and $mg\sin\theta$ down the slope.</li>
+      <li>The block doesn't move across the slope, so the forces across it balance: $N = mg\cos\theta$.</li>
+      <li>On level ground $\theta = 0$, and $\cos 0 = 1$ gives $N = mg$. On a slope, $\cos\theta &lt; 1$, so $N &lt; mg$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: block on a slope with a hand; code at the bottom -->
+  <div class="note-demo">
+    <h2>Tilt the slope and push or pull with the hand ($m = 2.0\ \mathrm{kg}$)</h2>
+    <div class="controls">
+      <label>$\theta$ = <input type="range" id="nfAngle" min="0" max="60" step="5" value="30"></label>
+      <label>hand = <input type="range" id="nfHand" min="-25" max="15" step="1" value="0"></label>
+    </div>
+    <canvas id="nfCanvas"></canvas>
+    <div class="output table-text" id="nfOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A $2.0\ \mathrm{kg}$ book lies on a level table. Find the normal force on it.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Forces: gravity $2.0 \times 9.8$ down, $N$ up.</li>
+        <li>Up = down: $N = 19.6$.</li>
+      </ol>
+      <p class="answer">$N = 19.6\ \mathrm{N}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">The same book is pressed down by a hand with $5.0\ \mathrm{N}$. Find the normal force now.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Down: gravity $19.6$ and the hand $5.0$. Up: $N$.</li>
+        <li>$N = 19.6 + 5.0$.</li>
+      </ol>
+      <p class="answer">$N = 24.6\ \mathrm{N}$, more than $mg$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A $3.0\ \mathrm{kg}$ box on the floor is pulled straight up by a string with $10\ \mathrm{N}$, but stays on the floor. Find the normal force. How hard must the string pull to just lift the box?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Up: $N + 10$. Down: $3.0 \times 9.8 = 29.4$. So $N = 29.4 - 10 = 19.4$.</li>
+        <li>The box just lifts when the floor no longer pushes, $N = 0$: the string pulls $29.4\ \mathrm{N}$.</li>
+      </ol>
+      <p class="answer">$N = 19.4\ \mathrm{N}$; it lifts at $29.4\ \mathrm{N}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">A $2.0\ \mathrm{kg}$ block rests on a slope of $30°$. Find the normal force.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$N = mg\cos 30° = 2.0 \times 9.8 \times \dfrac{\sqrt{3}}{2} = 9.8\sqrt{3}$.</li>
+      </ol>
+      <p class="answer">$N = 9.8\sqrt{3} \approx 17\ \mathrm{N}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">A ladder leans against a smooth vertical wall, with its foot on the floor. In which directions do the two normal forces on the ladder act?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Each is perpendicular to its own surface, pushing out of it.</li>
+        <li>The wall is vertical, so its push is horizontal, away from the wall. The floor is horizontal, so its push is straight up.</li>
+      </ol>
+      <p class="answer">From the wall: horizontal, away from the wall. From the floor: vertically up</p>
+    </details>
+  </div>
+
+  <!-- WARNING: N is not always mg -->
+  <div class="note-warning">
+    $N$ is <strong>not</strong> always $mg$. Many students write $N = mg$ by habit and lose the marks. It is only true on level ground with no other vertical force. Always find $N$ from the balance across the surface.
+  </div>
+
+  <!-- TIP: N = 0 means leaving -->
+  <div class="note-tip">
+    $N = 0$ means the surface has stopped pushing: the object is just about to leave it. Questions like "when does the box lift off?" or "when does the car leave the road?" are solved by setting $N = 0$.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>The normal force is perpendicular to the surface, and always a push.</li>
+      <li>No formula: find it from the balance across the surface.</li>
+      <li>On a slope at rest, $N = mg\cos\theta$; $N = mg$ only on level ground with nothing else pressing.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Block on a slope" demo (the TRY IT block above).
+  // The angle slider tilts the slope; the hand slider pushes the block into the
+  // slope (+) or pulls it away (−), at right angles to the slope. The normal force
+  // is found from the balance across the slope: N = mg cos θ + hand.
+  // Arrows are in proportion to the forces: red gravity (with its two parts
+  // dashed), blue normal force, purple hand, grey friction (it holds the block).
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const output = document.getElementById('nfOutput');
+    const angleBox = document.getElementById('nfAngle');
+    const handBox = document.getElementById('nfHand');
+    const M = 2.0, G = 9.8, C = [250, 215], SIZE = 50, SCALE = 3; // C: middle of the block's bottom face
+    const GRAVITY = '#dc2626', NORMAL = '#2563eb', HAND = '#7c3aed', FRICTION = '#94a3b8', THING = '#475569';
+
+    function arrow(g, p, q, color, label, dash) {
+      if (NoteGeom.dist(p, q) < 2) return;
+      g.seg(p, q, color, { width: dash ? 2 : 3, dash });
+      const a = Math.atan2(q[1] - p[1], q[0] - p[0]), s = dash ? 8 : 11;
+      g.poly([q, [q[0] - s * Math.cos(a - 0.4), q[1] - s * Math.sin(a - 0.4)],
+        [q[0] - s * Math.cos(a + 0.4), q[1] - s * Math.sin(a + 0.4)]], color);
+      if (label) g.text([q[0] + 22 * Math.cos(a), q[1] + 16 * Math.sin(a)], label, color);
+    }
+    const add = (p, v, k) => [p[0] + v[0] * k, p[1] + v[1] * k];
+    const fix = (x) => x.toFixed(1);
+
+    const board = NoteGeom.board(document.getElementById('nfCanvas'), {
+      points: {},
+      draw(g) {
+        const deg = Number(angleBox.value), t = deg * Math.PI / 180, hand = Number(handBox.value);
+        const W = M * G, across = W * Math.cos(t), along = W * Math.sin(t);
+        const s = [Math.cos(t), -Math.sin(t)];   // up the slope (to the right)
+        const n = [-Math.sin(t), -Math.cos(t)];  // out of the slope
+        const leaves = across + hand < 0;        // the hand pulls it off the surface
+        const N = leaves ? 0 : across + hand;
+
+        // The slope: a shaded wedge under the line through C
+        const L = add(C, s, -320), R = add(C, s, 320);
+        g.poly([L, R, [R[0], 420], [L[0], 420]], '#e2e8f0');
+        g.seg(L, R, THING, { width: 3 });
+        if (deg > 0) {                          // the angle θ, where the slope meets a horizontal line
+          const Q = add(C, s, -105 / Math.sin(t) > -320 ? -105 / Math.sin(t) : -320);
+          g.seg(Q, [Q[0] + 110, Q[1]], THING, { dash: true, width: 1 });
+          g.arc(Q, [Q[0] + 50, Q[1]], add(Q, s, 50), '#ea580c', 34);
+          g.text([Q[0] + 50, Q[1] - 12], 'θ', '#ea580c');
+        }
+
+        // The block (lifted a little if the hand pulls it off)
+        const base = leaves ? add(C, n, 14) : C;
+        const corners = [add(base, s, -SIZE / 2), add(base, s, SIZE / 2)];
+        corners.push(add(corners[1], n, SIZE), add(corners[0], n, SIZE));
+        g.poly(corners, '#fde68a');
+        corners.forEach((p, i) => g.seg(p, corners[(i + 1) % 4], THING));
+        const centre = add(base, n, SIZE / 2), top = add(base, n, SIZE);
+
+        // Forces on the block, to scale
+        arrow(g, centre, [centre[0], centre[1] + W * SCALE], GRAVITY, 'mg');
+        arrow(g, centre, add(centre, n, -across * SCALE), GRAVITY, '', true);     // mg cos θ, into the slope
+        arrow(g, centre, add(centre, s, -along * SCALE), GRAVITY, '', true);      // mg sin θ, down the slope
+        if (!leaves) arrow(g, add(base, s, 8), add(add(base, s, 8), n, N * SCALE), NORMAL, 'N');
+        if (!leaves && deg > 0) arrow(g, add(base, s, -8), add(add(base, s, -8), s, along * SCALE), FRICTION, 'f');
+        if (hand > 0) arrow(g, add(top, n, hand * SCALE), top, HAND, 'hand');     // pushing in
+        if (hand < 0) arrow(g, top, add(top, n, -hand * SCALE), HAND, 'hand');    // pulling away
+
+        const handText = hand > 0 ? `+ ${hand}` : hand < 0 ? `− ${-hand}` : '+ 0';
+        output.textContent =
+          `θ = ${deg}°,  mg = 2.0 × 9.8 = ${fix(W)} N\n` +
+          `gravity's parts:  mg cos θ = ${fix(across)} N into the slope\n` +
+          `                  mg sin θ = ${fix(along)} N down the slope\n` +
+          `hand: ${hand > 0 ? `pushes ${hand} N into the slope` : hand < 0 ? `pulls ${-hand} N away from the slope` : 'not used'}\n` +
+          (leaves
+            ? `mg cos θ ${handText} < 0: the hand pulls harder than gravity presses,\n` +
+              `so the block leaves the slope and N = 0`
+            : `balance across the slope:  N = mg cos θ ${handText} = ${fix(N)} N\n` +
+              `(mg is ${fix(W)} N` + (Math.abs(N - W) < 0.05 ? ', the same only here)' : ', so N ≠ mg)')) +
+          (deg > 0 && !leaves ? `\nfriction f = mg sin θ = ${fix(along)} N stops it sliding (grey arrow)` : '');
+      },
+    });
+
+    angleBox.addEventListener('input', board.redraw);
+    handBox.addEventListener('input', board.redraw);
+  })();
+</script>

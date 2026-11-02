@@ -1,0 +1,210 @@
+<!-- tags: Force -->
+<!-- =====================================================================
+     NOTE: Equilibrium of Forces (力のつり合い)
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Force">Equilibrium of Forces</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Split every force into two directions, then balance each one</h2>
+    <p>When the forces on an object cancel out completely, they are in <strong>equilibrium</strong> (つり合い). Their total, the <strong>net force</strong> (合力), is zero, and an object at rest stays at rest.</p>
+    <p>Forces are vectors, so "cancel out" means as arrows, not just as numbers. The practical way: choose two directions at right angles (usually horizontal and vertical), split every force into its <strong>components</strong> (分力) along them, and then write <strong>up = down</strong> and <strong>left = right</strong>.</p>
+    <p>This is how every tension, normal force and static friction in this topic was found. It is the main tool for the whole of mechanics.</p>
+  </section>
+
+  <!-- FORMULA: the balance conditions -->
+  <div class="note-formula">
+    <h3>Forces in equilibrium</h3>
+    <div class="formula-main">$$\vec{F}_1 + \vec{F}_2 + \cdots = \vec{0} \quad\Longleftrightarrow\quad \begin{cases} \text{(right)} = \text{(left)} \\ \text{(up)} = \text{(down)} \end{cases}$$</div>
+    <p class="symbols">A force $F$ at angle $\theta$ to the horizontal splits into $F\cos\theta$ (horizontal) and $F\sin\theta$ (vertical). On a slope, use "along the slope" and "across the slope" instead.</p>
+  </div>
+
+  <!-- PROOF: why components work -->
+  <div class="note-proof">
+    <ol>
+      <li>Every force arrow is the sum of a horizontal arrow and a vertical arrow: its components.</li>
+      <li>Adding forces means adding the horizontal parts together and the vertical parts together, separately.</li>
+      <li>The total is the zero vector only if both totals are zero: the right-pointing parts equal the left-pointing parts, and the upward parts equal the downward parts.</li>
+      <li>Drawn head to tail, forces in equilibrium make a closed shape: you end where you started.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: three forces on a ring; code at the bottom -->
+  <div class="note-demo">
+    <h2>Drag the tips of $F_1$ and $F_2$; $F_3$ is the force that keeps the ring still</h2>
+    <div class="controls choices" id="eqView">
+      <button type="button" data-view="parts" class="active">Show components</button>
+      <button type="button" data-view="chain">Show head to tail</button>
+    </div>
+    <canvas id="eqCanvas"></canvas>
+    <div class="output table-text" id="eqOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A $1.0\ \mathrm{kg}$ lamp hangs from two strings: string 1 at $60°$ to the vertical, string 2 horizontal. Find both tensions.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Split $T_1$: vertical part $T_1\cos 60° = \tfrac{1}{2}T_1$, horizontal part $T_1\sin 60° = \tfrac{\sqrt{3}}{2}T_1$.</li>
+        <li>Up = down: $\tfrac{1}{2}T_1 = 1.0 \times 9.8$, so $T_1 = 19.6$.</li>
+        <li>Left = right: $T_2 = \tfrac{\sqrt{3}}{2}T_1 = 9.8\sqrt{3} \approx 17.0$.</li>
+      </ol>
+      <p class="answer">$T_1 = 19.6\ \mathrm{N}$, $T_2 \approx 17\ \mathrm{N}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">A $3.0\ \mathrm{kg}$ block rests on a smooth slope of $30°$, held by a string parallel to the slope. Find the tension and the normal force.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Use directions along and across the slope. Gravity splits into $mg\sin 30°$ down the slope and $mg\cos 30°$ into it.</li>
+        <li>Along: $T = 3.0 \times 9.8 \times \tfrac{1}{2} = 14.7$.</li>
+        <li>Across: $N = 3.0 \times 9.8 \times \tfrac{\sqrt{3}}{2} \approx 25.5$.</li>
+      </ol>
+      <p class="answer">$T = 14.7\ \mathrm{N}$, $N \approx 25\ \mathrm{N}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A $5.0\ \mathrm{kg}$ box on a rough floor is pulled by a rope at $30°$ above the horizontal with $20\ \mathrm{N}$. It doesn't move. Find the normal force and the friction.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Split the pull: $20\cos 30° = 10\sqrt{3} \approx 17.3$ horizontal, $20\sin 30° = 10$ up.</li>
+        <li>Up = down: $N + 10 = 5.0 \times 9.8 = 49$, so $N = 39$.</li>
+        <li>Left = right: $f = 17.3$ (static friction, from the balance).</li>
+      </ol>
+      <p class="answer">$N = 39\ \mathrm{N}$, $f \approx 17\ \mathrm{N}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Two forces act on a ring: $3.0\ \mathrm{N}$ east and $4.0\ \mathrm{N}$ north. What third force keeps it in equilibrium?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>East–west: the third force needs $3.0\ \mathrm{N}$ west. North–south: $4.0\ \mathrm{N}$ south.</li>
+        <li>Its size: $\sqrt{3.0^2 + 4.0^2} = 5.0$.</li>
+      </ol>
+      <p class="answer">$5.0\ \mathrm{N}$, pointing south-west (opposite to the sum of the first two)</p>
+    </details>
+  </div>
+
+  <!-- WARNING: forces on one object, both directions -->
+  <div class="note-warning">
+    Only forces <strong>on the same object</strong> go into its balance (note 02). And one equation is not enough: a 2D problem needs both directions, otherwise you'll have two unknowns and one equation.
+  </div>
+
+  <!-- TIP: choose the axes -->
+  <div class="note-tip">
+    Choose the directions so that as many forces as possible lie along them. On a slope, "along" and "across" the slope leave only gravity to split.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Equilibrium: the net force is zero.</li>
+      <li>Split forces into two directions at right angles; balance each: up = down, left = right.</li>
+      <li>Head to tail, forces in equilibrium close up into a polygon.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Three forces on a ring" demo (the TRY IT block above).
+  // Drag the tips of F1 and F2 (they snap to whole newtons; 10 pixels = 1 N).
+  // F3 (red) is calculated as −(F1 + F2): the force that balances them.
+  // "Show components": dashed lines drop from each tip to the axes, and the
+  // table adds up the x and y parts. "Show head to tail": F2 and F3 are copied
+  // to start where the previous arrow ends, making a closed triangle.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const output = document.getElementById('eqOutput');
+    const viewButtons = document.querySelectorAll('#eqView button');
+    const O = [260, 170], PX = 10, LIMIT = 8;          // the ring; pixels per newton; largest part (N)
+    const C1 = '#2563eb', C2 = '#16a34a', C3 = '#dc2626', THING = '#475569', GRID = '#eef2f7';
+    let view = 'parts';
+
+    // pixels ↔ newtons (x right, y UP for the forces)
+    const toForce = (p) => [(p[0] - O[0]) / PX, (O[1] - p[1]) / PX];
+    const toPx = (F, from = O) => [from[0] + F[0] * PX, from[1] - F[1] * PX];
+    const snap = ([x, y]) => {
+      const F = toForce([x, y]).map((v) => Math.max(-LIMIT, Math.min(LIMIT, Math.round(v))));
+      return toPx(F);
+    };
+
+    function arrow(g, p, q, color, label, dash) {
+      if (NoteGeom.dist(p, q) < 2) return;
+      g.seg(p, q, color, { width: dash ? 2 : 3, dash });
+      const a = Math.atan2(q[1] - p[1], q[0] - p[0]), s = dash ? 9 : 11;
+      g.poly([q, [q[0] - s * Math.cos(a - 0.4), q[1] - s * Math.sin(a - 0.4)],
+        [q[0] - s * Math.cos(a + 0.4), q[1] - s * Math.sin(a + 0.4)]], color);
+      if (label) g.text([q[0] + 20 * Math.cos(a), q[1] + 20 * Math.sin(a)], label, color);
+    }
+    const sign = (v) => (v > 0 ? '+' : v < 0 ? '−' : ' ') + Math.abs(v).toFixed(1);
+
+    const board = NoteGeom.board(document.getElementById('eqCanvas'), {
+      points: { F1: toPx([6, 4]), F2: toPx([-5, 3]) },
+      constrain: { F1: snap, F2: snap },
+      draw(g, P) {
+        const F1 = toForce(P.F1), F2 = toForce(P.F2);
+        const F3 = [-(F1[0] + F2[0]), -(F1[1] + F2[1])];
+        const tip3 = toPx(F3);
+
+        // Grid (every 1 N) and the axes through the ring
+        for (let x = O[0] % PX; x < 520; x += PX) g.seg([x, 0], [x, 340], GRID, { width: 1 });
+        for (let y = O[1] % PX; y < 340; y += PX) g.seg([0, y], [520, y], GRID, { width: 1 });
+        g.seg([20, O[1]], [500, O[1]], '#cbd5e1', { width: 1 });
+        g.seg([O[0], 5], [O[0], 335], '#cbd5e1', { width: 1 });
+        g.text([495, O[1] - 12], 'x', THING); g.text([O[0] + 12, 12], 'y', THING);
+
+        if (view === 'parts') {
+          // dashed drops from each tip to the two axes
+          [[P.F1, C1], [P.F2, C2], [tip3, C3]].forEach(([t, c]) => {
+            g.seg(t, [t[0], O[1]], c, { dash: true, width: 1 });
+            g.seg(t, [O[0], t[1]], c, { dash: true, width: 1 });
+          });
+        } else {
+          // head to tail: F1, then F2 from F1's tip, then F3 from there, back to the ring
+          const end2 = toPx(F2, P.F1);
+          arrow(g, P.F1, end2, C2, '', true);
+          arrow(g, end2, toPx(F3, end2), C3, '', true);
+        }
+
+        arrow(g, O, P.F1, C1, '');               // labels for F1, F2 come from the drag handles
+        arrow(g, O, P.F2, C2, '');
+        arrow(g, O, tip3, C3, 'F3');
+        g.circle(O, 8, THING, { fill: '#fff' });
+
+        const size3 = Math.hypot(F3[0], F3[1]);
+        output.textContent =
+          '         x (right +)   y (up +)\n' +
+          `F1         ${sign(F1[0])}         ${sign(F1[1])}\n` +
+          `F2         ${sign(F2[0])}         ${sign(F2[1])}\n` +
+          `F3         ${sign(F3[0])}         ${sign(F3[1])}\n` +
+          `sum        ${sign(0)}         ${sign(0)}    ← both directions balance\n` +
+          `size of F3 = √(${Math.abs(F3[0])}² + ${Math.abs(F3[1])}²) = ${size3.toFixed(1)} N`;
+      },
+    });
+
+    viewButtons.forEach((button) => button.addEventListener('click', () => {
+      view = button.dataset.view;
+      viewButtons.forEach((b) => b.classList.toggle('active', b === button));
+      board.redraw();
+    }));
+  })();
+</script>
