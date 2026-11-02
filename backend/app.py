@@ -48,6 +48,101 @@ def create_app():
         for table, counts in import_content().items():
             print(f"{table:13} {counts['added']:4} added {counts['updated']:4} updated {counts['removed']:4} removed")
 
+    # flask import-dictionary: copy content/dictionary.json into the database
+    @app.cli.command("import-dictionary")
+    def import_dictionary_command():
+        """Import curated terms from content/dictionary.json into the database."""
+        import json
+        import os
+        from config import PROJECT_ROOT
+        from models import DictionaryEntry
+        path = os.path.join(PROJECT_ROOT, "content", "dictionary.json")
+        if not os.path.exists(path):
+            print(f"File not found: {path}")
+            return
+        with open(path, "r", encoding="utf-8") as f:
+            items = json.load(f)
+        added, updated = 0, 0
+        for item in items:
+            key = item.get("word", item.get("english", "")).lower().strip()
+            existing = DictionaryEntry.query.filter_by(word=key).first()
+            if existing:
+                existing.english = item.get("english", existing.english)
+                existing.burmese = item.get("burmese", existing.burmese)
+                existing.japanese = item.get("japanese", existing.japanese)
+                existing.reading = item.get("reading", existing.reading)
+                existing.notes = item.get("notes", existing.notes)
+                existing.source = item.get("source", "curated")
+                updated += 1
+            else:
+                entry = DictionaryEntry(
+                    word=key,
+                    source_lang=item.get("source_lang", "en"),
+                    english=item.get("english", key),
+                    burmese=item.get("burmese", ""),
+                    japanese=item.get("japanese", ""),
+                    reading=item.get("reading", ""),
+                    notes=item.get("notes", ""),
+                    source=item.get("source", "curated"),
+                )
+                db.session.add(entry)
+                added += 1
+        db.session.commit()
+        print(f"Dictionary imported successfully: {added} added, {updated} updated.")
+
+    # flask list-dictionary: show all dictionary entries in the database
+    @app.cli.command("list-dictionary")
+    def list_dictionary_command():
+        """List all dictionary words stored in the database."""
+        from models import DictionaryEntry
+        entries = DictionaryEntry.query.order_by(DictionaryEntry.word).all()
+        print(f"\n--- Total dictionary entries in DB: {len(entries)} ---")
+        for e in entries:
+            source_tag = f"[{e.source}]"
+            reading = f" ({e.reading})" if e.reading else ""
+            notes = f" — {e.notes}" if e.notes else ""
+            print(f"• {e.word:<14} | EN: {e.english} | MY: {e.burmese} | JA: {e.japanese}{reading}{notes} {source_tag}")
+        print()
+
+    # flask add-word: add or update an entry from command line
+    import click
+
+    @app.cli.command("add-word")
+    @click.option("--word", required=True, help="Unique lookup keyword (e.g. 'wavelength')")
+    @click.option("--en", "english", required=True, help="English meaning / word")
+    @click.option("--my", "burmese", required=True, help="Burmese translation (Unicode)")
+    @click.option("--ja", "japanese", required=True, help="Japanese translation (Kanji/Kana)")
+    @click.option("--reading", default="", help="Japanese reading (Hiragana/Romaji)")
+    @click.option("--notes", default="", help="Context, subject, or part of speech")
+    def add_word_command(word, english, burmese, japanese, reading, notes):
+        """Add or update a word's meaning in the database."""
+        from models import DictionaryEntry
+        key = word.lower().strip()
+        existing = DictionaryEntry.query.filter_by(word=key).first()
+        if existing:
+            existing.english = english
+            existing.burmese = burmese
+            existing.japanese = japanese
+            existing.reading = reading
+            existing.notes = notes
+            existing.source = "curated"
+            action = "Updated"
+        else:
+            entry = DictionaryEntry(
+                word=key,
+                source_lang="en",
+                english=english,
+                burmese=burmese,
+                japanese=japanese,
+                reading=reading,
+                notes=notes,
+                source="curated",
+            )
+            db.session.add(entry)
+            action = "Added"
+        db.session.commit()
+        print(f"✓ {action} word '{key}' successfully in the database!")
+
     return app
 
 app = create_app()

@@ -95,3 +95,21 @@ class Progress(db.Model):
     updated_at = db.Column(db.DateTime(timezone=True), nullable=False,
                            default=lambda: datetime.now(timezone.utc),
                            onupdate=lambda: datetime.now(timezone.utc))
+
+
+class DictionaryEntry(db.Model):
+    """3-language dictionary entry (English, Burmese, Japanese).
+    Cached or curated for fast hybrid lookup."""
+    __tablename__ = "dictionary_entries"
+    id = db.Column(db.Integer, primary_key=True)
+    word = db.Column(db.String(255), index=True, nullable=False)
+    source_lang = db.Column(db.String(10), nullable=False, default="en")
+    english = db.Column(db.Text, nullable=False)
+    burmese = db.Column(db.Text, nullable=False)
+    japanese = db.Column(db.Text, nullable=False)
+    reading = db.Column(db.String(255), nullable=True)             # e.g., hiragana / romaji
+    notes = db.Column(db.Text, nullable=True)                      # part of speech, context, or category
+    source = db.Column(db.String(50), nullable=False, default="curated") # 'curated', 'ai', 'online'
+    created_at = db.Column(db.DateTime(timezone=True), nullable=False,
+                           default=lambda: datetime.now(timezone.utc))
+
