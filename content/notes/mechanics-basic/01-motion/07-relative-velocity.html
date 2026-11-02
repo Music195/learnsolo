@@ -1,0 +1,228 @@
+<!-- tags: Motion -->
+<!-- =====================================================================
+     NOTE: Relative Velocity (相対速度)
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Motion">Relative Velocity</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>How fast does the other one seem to move, seen from me?</h2>
+    <p>Sitting in a train, a train passing the other way flashes by. A train going the same way at almost the same speed seems to crawl: you can see the faces of its passengers. The velocity something <strong>seems</strong> to have, seen by a moving observer, is its <strong>relative velocity</strong> (相対速度).</p>
+    <p>"The relative velocity of B with respect to A" (Aに対するBの相対速度) is easier to read as "B's velocity <strong>seen from A</strong>": A is "me", the observer, and B is "the other one". The rule is a subtraction: <strong>the other minus me</strong>.</p>
+    <p>Adding velocities is the opposite case: walking at $1\ \mathrm{m/s}$ inside a train moving at $20\ \mathrm{m/s}$ gives $21\ \mathrm{m/s}$ seen from the ground. This <strong>composition of velocities</strong> (速度の合成) is an addition, and the order doesn't matter. The subtraction is where mistakes happen.</p>
+  </section>
+
+  <!-- FORMULA: relative velocity -->
+  <div class="note-formula">
+    <h3>Velocity of B seen from A</h3>
+    <div class="formula-main">$$v_{AB} = v_B - v_A$$</div>
+    <p class="symbols">$v_A$ velocity of the observer A ("me"), $v_B$ velocity of the object B ("the other one"), both measured from the ground, with signs. Read $v_{AB}$ as "from A, B". The order matters: $v_{BA} = v_A - v_B = -v_{AB}$.</p>
+  </div>
+
+  <!-- PROOF: displacement seen from A -->
+  <div class="note-proof">
+    <ol>
+      <li>Seen from the ground, in a time $t$, A moves $v_A t$ and B moves $v_B t$.</li>
+      <li>A carries its own view with it. The gap from A to B changes by B's movement minus A's movement: $v_B t - v_A t$.</li>
+      <li>Divide by $t$: B's velocity seen from A is $v_B - v_A$.</li>
+      <li>Check with the trains: going the same way at nearly the same speed, $v_B - v_A$ is small; going opposite ways, the signs differ and the sizes add up.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: two moving trains; code at the bottom -->
+  <div class="note-demo">
+    <h2>Set the two trains' velocities (right is $+$), then ride in train A</h2>
+    <div class="controls">
+      <label>$v_A$ = <input type="range" id="rvA" min="-30" max="30" step="5" value="20"></label>
+      <label>$v_B$ = <input type="range" id="rvB" min="-30" max="30" step="5" value="-15"></label>
+    </div>
+    <div class="controls choices" id="rvView">
+      <button type="button" data-view="ground" class="active">Seen from the ground</button>
+      <button type="button" data-view="A">Seen from train A</button>
+    </div>
+    <canvas id="rvCanvas"></canvas>
+    <div class="output table-text" id="rvOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Car A drives right at $20\ \mathrm{m/s}$ and car B drives right at $15\ \mathrm{m/s}$. Find the velocity of B relative to A (right is positive).</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>"Relative to A": A is me, B is the other one.</li>
+        <li>$v_{AB} = v_B - v_A = 15 - 20 = -5$.</li>
+      </ol>
+      <p class="answer">$-5\ \mathrm{m/s}$: from A, B seems to drift backwards (left) at $5\ \mathrm{m/s}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Train A goes right at $20\ \mathrm{m/s}$; train B comes the other way at $15\ \mathrm{m/s}$. Find B's velocity seen from A, and A's velocity seen from B.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>With signs: $v_A = +20$, $v_B = -15$.</li>
+        <li>From A: $v_{AB} = v_B - v_A = -15 - 20 = -35$.</li>
+        <li>From B: $v_{BA} = v_A - v_B = 20 - (-15) = +35$.</li>
+      </ol>
+      <p class="answer">$-35\ \mathrm{m/s}$ and $+35\ \mathrm{m/s}$: each sees the other rush past at $35\ \mathrm{m/s}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A boat moves at $4.0\ \mathrm{m/s}$ relative to the water, in a river flowing at $3.0\ \mathrm{m/s}$. Find its velocity relative to the bank when it goes downstream and when it goes upstream.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>This is composition: add the velocities, downstream positive.</li>
+        <li>Downstream: $4.0 + 3.0 = 7.0$. Upstream: $-4.0 + 3.0 = -1.0$.</li>
+      </ol>
+      <p class="answer">$7.0\ \mathrm{m/s}$ downstream; $1.0\ \mathrm{m/s}$ upstream</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Rain falls straight down at $8.0\ \mathrm{m/s}$. You run east at $6.0\ \mathrm{m/s}$. How fast does the rain seem to fall, seen by you, and from which side does it come?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The rule works for vectors too: $\vec{v}_{\text{you, rain}} = \vec{v}_{\text{rain}} - \vec{v}_{\text{you}}$.</li>
+        <li>East part: $0 - 6.0 = -6.0$ (towards the west). Down part: $8.0$.</li>
+        <li>Size: $\sqrt{6.0^2 + 8.0^2} = 10$.</li>
+      </ol>
+      <p class="answer">$10\ \mathrm{m/s}$, slanting towards you from the front (east): that's why you tilt your umbrella forward</p>
+    </details>
+  </div>
+
+  <!-- WARNING: order of subtraction -->
+  <div class="note-warning">
+    Always <strong>the other minus me</strong>: $v_{AB} = v_B - v_A$, where A is the observer. Swapping the order gives the right size but the wrong sign. Read the question carefully to decide who is "me".
+  </div>
+
+  <!-- TIP: put yourself in the seat -->
+  <div class="note-tip">
+    Imagine sitting in A and ask: "if I were standing still, what would B do?" In the demo, "Seen from train A" does exactly this: A stays still and the ground slides backwards.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Relative velocity = velocity seen by a moving observer.</li>
+      <li>$v_{AB} = v_B - v_A$: the other minus me.</li>
+      <li>Composition (adding velocities) is an addition; relative velocity is a subtraction.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Two trains" demo (the TRY IT block above).
+  // The sliders set the trains' velocities seen from the ground (right is +).
+  // The trains really move: positions are updated every animation frame.
+  // "Seen from the ground": the posts stand still and both trains move.
+  // "Seen from train A": we ride in A, so A stays in the middle of the picture,
+  // the ground slides backwards at −vA, and B moves at vB − vA (purple arrow).
+  // 2 pixels per second for every 1 m/s; arrows: 3 pixels per m/s.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('rvCanvas');
+    const output = document.getElementById('rvOutput');
+    const aBox = document.getElementById('rvA'), bBox = document.getElementById('rvB');
+    const viewButtons = document.querySelectorAll('#rvView button');
+    const SPEED = 2, ARROW = 3, LOOP = 640, YA = 110, YB = 220, MIDDLE = 260;
+    const COLOR_A = '#2563eb', COLOR_B = '#ea580c', REL = '#7c3aed', THING = '#475569';
+    let view = 'ground';
+    let groundA = 200, groundB = 360;     // positions measured on the ground (pixels)
+    let lastText = '';
+
+    // keep a position on screen: wrap it round between −60 and 580
+    const wrap = (x) => ((x + 60) % LOOP + LOOP) % LOOP - 60;
+    const signed = (n) => (n > 0 ? `+${n}` : n < 0 ? `−${-n}` : '0');
+
+    function arrow(g, from, v, y, color, label) {
+      if (v === 0) { g.text([from, y], label + ' = 0', color); return; }
+      const q = [from + v * ARROW, y];
+      g.seg([from, y], q, color, { width: 3 });
+      const d = Math.sign(v);
+      g.poly([q, [q[0] - 10 * d, y - 5], [q[0] - 10 * d, y + 5]], color);
+      g.text([q[0] + 30 * d, y], label, color);
+    }
+    function train(g, x, y, color, name) {
+      g.poly([[x - 45, y - 18], [x + 45, y - 18], [x + 45, y + 18], [x - 45, y + 18]], color);
+      g.text([x, y], name, '#fff');
+      g.circle([x - 28, y + 22], 5, THING, { fill: THING });
+      g.circle([x + 28, y + 22], 5, THING, { fill: THING });
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const vA = Number(aBox.value), vB = Number(bBox.value), rel = vB - vA;
+        const fromA = view === 'A';
+        // what is drawn where depends on who is watching
+        const shift = fromA ? MIDDLE - groundA : 0;   // in A's view, everything moves so A sits in the middle
+        const xA = fromA ? MIDDLE : wrap(groundA);
+        const xB = wrap(groundB + shift);
+
+        // rails and ground posts
+        [YA + 27, YB + 27].forEach((y) => g.seg([0, y], [520, y], '#cbd5e1', { width: 2 }));
+        for (let k = 0; k < LOOP; k += 80) {
+          const x = wrap(k + shift);
+          g.seg([x, 290], [x, 320], '#94a3b8', { width: 4 });
+        }
+        g.seg([0, 320], [520, 320], THING, { width: 2 });
+
+        train(g, xA, YA, COLOR_A, 'A');
+        train(g, xB, YB, COLOR_B, 'B');
+        if (fromA) {
+          arrow(g, xA, 0, YA - 40, COLOR_A, 'A (me)');
+          arrow(g, xB, rel, YB - 40, REL, 'vB − vA');
+          arrow(g, 260, -vA, 280, '#94a3b8', 'ground');
+          g.text([90, 22], 'riding in A', REL);
+        } else {
+          arrow(g, xA, vA, YA - 40, COLOR_A, 'vA');
+          arrow(g, xB, vB, YB - 40, COLOR_B, 'vB');
+          g.text([90, 22], 'standing on the ground', THING);
+        }
+
+        const text =
+          `right is +.   vA = ${signed(vA)} m/s,   vB = ${signed(vB)} m/s   (seen from the ground)\n` +
+          `B seen from A:  vAB = vB − vA = (${signed(vB)}) − (${signed(vA)}) = ${signed(rel)} m/s\n` +
+          (rel === 0 ? 'from A, B seems to stand still beside it'
+                     : `from A, B seems to move ${rel > 0 ? 'right' : 'left'} at ${Math.abs(rel)} m/s`);
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Move the trains a little every frame. Stop when the page has changed.
+    let last = performance.now();
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.min((now - last) / 1000, 0.1);
+      last = now;
+      groundA += Number(aBox.value) * SPEED * dt;
+      groundB += Number(bBox.value) * SPEED * dt;
+      board.redraw();
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    viewButtons.forEach((button) => button.addEventListener('click', () => {
+      view = button.dataset.view;
+      viewButtons.forEach((b) => b.classList.toggle('active', b === button));
+      board.redraw();
+    }));
+  })();
+</script>
