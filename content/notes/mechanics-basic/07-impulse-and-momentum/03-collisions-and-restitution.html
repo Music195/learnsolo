@@ -1,0 +1,207 @@
+<!-- tags: Impulse and Momentum -->
+<!-- =====================================================================
+     NOTE: Collisions and the Coefficient of Restitution
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Impulse and Momentum">Collisions and the Coefficient of Restitution</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Two unknown velocities need two equations: momentum and restitution</h2>
+    <p>When two objects collide and bounce apart, there are two unknowns: both velocities afterwards. Conservation of momentum gives one equation. The second comes from the <strong>coefficient of restitution</strong> $e$, which you met for a ball hitting a fixed floor (topic 05). For two moving objects, it compares their <strong>relative velocities</strong>: how fast they separate afterwards, compared with how fast they approached before.</p>
+    <ul>
+      <li>$e = 1$: <strong>elastic</strong> collision: they separate as fast as they approached, and kinetic energy is conserved.</li>
+      <li>$0 &lt; e &lt; 1$: <strong>inelastic</strong>.</li>
+      <li>$e = 0$: <strong>perfectly inelastic</strong>: they stick together.</li>
+    </ul>
+    <p>Always write every velocity <strong>with the same positive direction</strong>, even one you think will go backwards. If it really goes backwards, the answer simply comes out negative. Guessing directions is the easiest way to make a sign mistake.</p>
+  </section>
+
+  <!-- FORMULA: restitution for two objects -->
+  <div class="note-formula">
+    <h3>Coefficient of restitution for two moving objects</h3>
+    <div class="formula-main">$$e = -\frac{v_A' - v_B'}{v_A - v_B}$$</div>
+    <p class="symbols">Bottom: relative velocity before; top: relative velocity after (dashes). Subtract in the same order on top and bottom (A − B both times, or B − A both times). Don't forget the minus sign. Solve it together with $m_A v_A + m_B v_B = m_A v_A' + m_B v_B'$.</p>
+  </div>
+
+  <!-- PROOF: solving the standard collision -->
+  <div class="note-proof">
+    <ol>
+      <li>P (mass $m$, velocity $v_0$) hits Q (mass $M$, at rest). Afterwards: $v$ and $V$, both taken as positive in P's direction.</li>
+      <li>Momentum: $mv_0 = mv + MV$. &nbsp; Restitution: $-e = \dfrac{v - V}{v_0 - 0}$, so $-ev_0 = v - V$.</li>
+      <li>Eliminate $v$ (adding and subtracting, rather than substituting, is safer): multiply the restitution equation by $m$ and subtract it from the momentum equation: $(1 + e)mv_0 = (m + M)V$.</li>
+      <li>So $V = \dfrac{(1 + e)mv_0}{m + M}$ and, from $v = V - ev_0$, $v = \dfrac{(m - eM)v_0}{m + M}$.</li>
+      <li>$V$ is always positive (Q is pushed forwards). $v$ is negative when $m &lt; eM$: a light object bounces back off a heavy one.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: P hits Q; code at the bottom -->
+  <div class="note-demo">
+    <h2>P hits Q (at rest) at $v_0 = 4.0\ \mathrm{m/s}$ on a smooth floor</h2>
+    <div class="controls">
+      <label>$m$ (P) = <input type="range" id="crM" min="1" max="5" step="0.5" value="2"></label>
+      <label>$M$ (Q) = <input type="range" id="crBig" min="1" max="5" step="0.5" value="3"></label>
+      <label>$e$ = <input type="range" id="crE" min="0" max="1" step="0.1" value="0.5"></label>
+      <button type="button" id="crGo">Again</button>
+    </div>
+    <canvas id="crCanvas"></canvas>
+    <div class="output table-text" id="crOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">P ($2.0\ \mathrm{kg}$, $4.0\ \mathrm{m/s}$) hits Q ($3.0\ \mathrm{kg}$, at rest), with $e = 0.50$. Find both velocities afterwards.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Momentum: $8.0 = 2.0v + 3.0V$. Restitution: $v - V = -0.50 \times 4.0 = -2.0$.</li>
+        <li>From the second, $v = V - 2.0$. Then $8.0 = 2.0V - 4.0 + 3.0V$, so $V = 2.4$, $v = 0.40$.</li>
+      </ol>
+      <p class="answer">P: $0.40\ \mathrm{m/s}$, Q: $2.4\ \mathrm{m/s}$, both forwards</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">In Example 1, find the size of the impulse on P.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The impulses on P and Q are an action–reaction pair: the same size. Q is easier (it started at rest).</li>
+        <li>On Q: $3.0 \times 2.4 - 0 = 7.2$.</li>
+      </ol>
+      <p class="answer">$7.2\ \mathrm{N \cdot s}$ (backwards on P)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Two equal masses collide elastically ($e = 1$); one was at rest. What happens?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$v = \dfrac{(m - m)v_0}{2m} = 0$, $V = \dfrac{2mv_0}{2m} = v_0$.</li>
+      </ol>
+      <p class="answer">They swap velocities: the moving one stops dead, and the other moves off at $v_0$ (like a pool ball hit straight on)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">A ($1.0\ \mathrm{kg}$, $+3.0\ \mathrm{m/s}$) and B ($2.0\ \mathrm{kg}$, $-1.0\ \mathrm{m/s}$) collide head on with $e = 0.50$. Find the velocities afterwards.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Momentum: $3.0 - 2.0 = 1.0 = v_A' + 2.0v_B'$.</li>
+        <li>Restitution: $v_A' - v_B' = -0.50 \times (3.0 - (-1.0)) = -2.0$.</li>
+        <li>Subtract: $3.0v_B' = 3.0$, so $v_B' = 1.0$, $v_A' = -1.0$.</li>
+      </ol>
+      <p class="answer">A: $-1.0\ \mathrm{m/s}$ (backwards), B: $+1.0\ \mathrm{m/s}$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: sign of the velocity and the minus in e -->
+  <div class="note-warning">
+    Two classic mistakes: forgetting the minus sign in $e = -\dfrac{v_A' - v_B'}{v_A - v_B}$, and drawing a velocity backwards because you "expect" it to bounce back. Take every velocity positive in one direction and let the algebra decide.
+  </div>
+
+  <!-- TIP: impulse from the easier object -->
+  <div class="note-tip">
+    The impulse in a collision can't be found from $F\Delta t$ (the force isn't constant), so use change in momentum. And since the two impulses are an action–reaction pair, work it out for whichever object is simpler.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Two unknowns, two equations: momentum and $e = -\dfrac{v_A' - v_B'}{v_A - v_B}$.</li>
+      <li>Same positive direction for every velocity; negative answers mean backwards.</li>
+      <li>$e = 1$ elastic (kinetic energy conserved), $e = 0$ they stick.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "P hits Q" demo (the TRY IT block above).
+  // P moves at 4.0 m/s towards Q, which is at rest. At the collision the velocities
+  // change to v = (m − eM)v0/(m + M) and V = (1 + e)mv0/(m + M). The arrows on the
+  // balls are their velocities (12 pixels per m/s). The run stops when a ball reaches
+  // the edge. Track: 60 pixels per metre.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('crCanvas');
+    const output = document.getElementById('crOutput');
+    const mBox = document.getElementById('crM'), bigBox = document.getElementById('crBig'), eBox = document.getElementById('crE');
+    const V0 = 4, PXM = 60, X0 = 20, Y = 150, THING = '#475569';
+    let t = 0, lastText = '';
+
+    function setup() {
+      const m = Number(mBox.value), M = Number(bigBox.value), e = Number(eBox.value);
+      const v = (m - e * M) * V0 / (m + M), V = (1 + e) * m * V0 / (m + M);
+      // they touch when the centres are one radius + one radius apart (radii in pixels: 14 + 3 × mass)
+      return { m, M, e, v, V, tc: (4 - (28 + 3 * m + 3 * M) / PXM) / V0 };
+    }
+    function pos(s, tt) {
+      const t1 = Math.min(tt, s.tc), t2 = Math.max(tt - s.tc, 0);
+      return [1 + V0 * t1 + s.v * t2, 5 + s.V * t2];
+    }
+    function ball(g, x, v, mass, fill, name) {
+      const c = [X0 + x * PXM, Y], r = 14 + mass * 3;
+      g.circle([c[0], Y + 34 - r], r, THING, { fill });
+      g.text([c[0], Y + 34 - r], name, THING);
+      if (Math.abs(v) > 0.05) {
+        const q = [c[0] + v * 12, Y - 36], d = Math.sign(v);
+        g.seg([c[0], Y - 36], q, '#dc2626', { width: 2.5 });
+        g.poly([q, [q[0] - 9 * d, q[1] - 5], [q[0] - 9 * d, q[1] + 5]], '#dc2626');
+        g.text([c[0] + v * 6, Y - 52], `${v.toFixed(2).replace('-', '−')} m/s`, '#dc2626');
+      }
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const s = setup(), x = pos(s, t), hit = t >= s.tc;
+        g.seg([10, Y + 34], [510, Y + 34], THING, { width: 3 });
+        g.text([470, Y + 50], 'right +', THING);
+        ball(g, x[0], hit ? s.v : V0, s.m, '#93c5fd', 'P');
+        ball(g, x[1], hit ? s.V : 0, s.M, '#fdba74', 'Q');
+
+        const n = (z) => z.toFixed(2).replace('-', '−');
+        const KB = 0.5 * s.m * V0 * V0, KA = 0.5 * s.m * s.v ** 2 + 0.5 * s.M * s.V ** 2;
+        const kind = s.e === 1 ? 'elastic' : s.e === 0 ? 'perfectly inelastic (they stick)' : 'inelastic';
+        const text =
+          `momentum:     ${s.m}×4 = ${s.m}v + ${s.M}V\n` +
+          `restitution:  v − V = −e(4 − 0) = ${n(-s.e * V0)}\n` +
+          `v = (m − eM)v0/(m + M) = ${n(s.v)} m/s` +
+            (s.v < -1e-9 ? '  (negative: P bounces back)' : s.v === 0 ? '  (P stops)' : '') + '\n' +
+          `V = (1 + e)mv0/(m + M) = ${n(s.V)} m/s\n` +
+          `impulse on Q = MV = ${n(s.M * s.V)} N·s (same size on P, backwards)\n` +
+          `${kind}: kinetic energy ${n(KB)} J → ${n(KA)} J`;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Run until a ball reaches the edge of the track. Stop when the page has changed.
+    let last = performance.now();
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      const x = pos(setup(), t);
+      if (x[0] > 0.4 && x[1] < 8.0 && t < 8) { t += dt; board.redraw(); }
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    const restart = () => { t = 0; board.redraw(); };
+    [mBox, bigBox, eBox].forEach((b) => b.addEventListener('input', restart));
+    document.getElementById('crGo').addEventListener('click', restart);
+  })();
+</script>

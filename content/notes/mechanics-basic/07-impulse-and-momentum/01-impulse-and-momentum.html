@@ -1,0 +1,222 @@
+<!-- tags: Impulse and Momentum -->
+<!-- =====================================================================
+     NOTE: Impulse and Momentum
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Impulse and Momentum">Impulse and Momentum</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Force × time changes the momentum $m\vec{v}$</h2>
+    <p>The <strong>impulse</strong> of a force is the force multiplied by the time it acts: $\vec{I} = \vec{F}\,t$. Don't mix it up with work ($W = Fx$, force × <strong>distance</strong>). The two are different in two ways:</p>
+    <ul>
+      <li><strong>Units:</strong> work is in $\mathrm{N \cdot m} = \mathrm{J}$; impulse is in $\mathrm{N \cdot s}$.</li>
+      <li><strong>Direction:</strong> work is a dot product of two vectors, so it's a <strong>scalar</strong> with no direction. Impulse is a vector (force) times a scalar (time), so it's a <strong>vector</strong>. You have to add and subtract impulses as arrows.</li>
+    </ul>
+    <p>The <strong>momentum</strong> of an object is $\vec{p} = m\vec{v}$, also a vector. The key result: <strong>the change in momentum equals the impulse</strong> it receives.</p>
+    <p>On a graph of force against time (an F–t graph), the impulse is the <strong>area under the graph</strong>. In a real collision the force rises and falls very quickly in a shape no simple function describes, so we can't calculate that area directly. Instead, we find the impulse from the change in momentum.</p>
+  </section>
+
+  <!-- FORMULA: impulse and the momentum relation -->
+  <div class="note-formula">
+    <h3>Impulse and momentum</h3>
+    <div class="formula-main">$$\vec{I} = \vec{F}\,\Delta t \qquad m\vec{v}\,' - m\vec{v} = \vec{I}$$</div>
+    <p class="symbols">$\vec{I}$ impulse in $\mathrm{N \cdot s}$; $m\vec{v}$ momentum in $\mathrm{kg \cdot m/s}$ (the same unit). For a changing force, $\vec{I}$ is the area under the F–t graph, and the <strong>average force</strong> is $\bar{F} = \dfrac{I}{\Delta t}$.</p>
+  </div>
+
+  <!-- PROOF: from the equation of motion -->
+  <div class="note-proof">
+    <ol>
+      <li>Start from the equation of motion $ma = F$, and write the acceleration as the rate of change of velocity: $m\dfrac{dv}{dt} = F$.</li>
+      <li>Integrate both sides over time, from when the velocity is $v$ to when it is $v'$: $\displaystyle\int_v^{v'} m\,dv = \int F\,dt$.</li>
+      <li>The left side is $mv' - mv$, the change in $mv$. We name $mv$ the <strong>momentum</strong>.</li>
+      <li>The right side is the area under the F–t graph, the impulse. For a constant force it is simply $F\Delta t$. So: change in momentum = impulse.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: F–t graphs and the bat; code at the bottom -->
+  <div class="note-demo">
+    <h2>Impulse as an area, and as an arrow (a $0.20\ \mathrm{kg}$ ball)</h2>
+    <div class="controls choices" id="imChoices">
+      <button type="button" data-scene="const" class="active">Constant force</button>
+      <button type="button" data-scene="hit">Collision force</button>
+      <button type="button" data-scene="bat">Bat hits a ball (vectors)</button>
+    </div>
+    <div class="controls">
+      <label>largest force = <input type="range" id="imF" min="200" max="2000" step="100" value="1000"></label>
+      <label>contact time $\Delta t$ (ms) = <input type="range" id="imT" min="2" max="20" step="1" value="10"></label>
+      <label>angle out $\theta$ = <input type="range" id="imTh" min="0" max="90" step="5" value="60"></label>
+    </div>
+    <canvas id="imCanvas"></canvas>
+    <div class="output table-text" id="imOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A constant $20\ \mathrm{N}$ force pushes a $4.0\ \mathrm{kg}$ cart, at rest, for $3.0\ \mathrm{s}$. Find the impulse and the final speed.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$I = 20 \times 3.0 = 60\ \mathrm{N \cdot s}$.</li>
+        <li>$4.0\,v - 0 = 60$.</li>
+      </ol>
+      <p class="answer">$60\ \mathrm{N \cdot s}$; $15\ \mathrm{m/s}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">A $0.20\ \mathrm{kg}$ ball hits a wall at $10\ \mathrm{m/s}$ and bounces straight back at $8.0\ \mathrm{m/s}$. Find the impulse from the wall.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Take "away from the wall" as positive: before $-10$, after $+8.0$.</li>
+        <li>$I = 0.20 \times 8.0 - 0.20 \times (-10) = 1.6 + 2.0$.</li>
+      </ol>
+      <p class="answer">$3.6\ \mathrm{N \cdot s}$, away from the wall (not $0.4$!)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A $0.20\ \mathrm{kg}$ ball comes in horizontally at $30\ \mathrm{m/s}$. The bat sends it off at $30\ \mathrm{m/s}$, $60^\circ$ above the horizontal, back the way it came. Find the size of the impulse.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Momentum before and after: both $0.20 \times 30 = 6.0\ \mathrm{N \cdot s}$, with $120^\circ$ between the two arrows.</li>
+        <li>Impulse = after − before: put the arrows tail to tail; the impulse goes from the tip of "before" to the tip of "after".</li>
+        <li>That triangle is isosceles with a $120^\circ$ angle, so the third side is $2 \times 6.0 \times \sin 60^\circ = 6\sqrt{3}$.</li>
+      </ol>
+      <p class="answer">$6\sqrt{3} \approx 10\ \mathrm{N \cdot s}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">In Example 3 the ball touches the bat for $1.0 \times 10^{-2}\ \mathrm{s}$. Find the average force on the ball.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\bar{F} = \dfrac{I}{\Delta t} = \dfrac{10.4}{1.0 \times 10^{-2}}$.</li>
+      </ol>
+      <p class="answer">About $1.0 \times 10^3\ \mathrm{N}$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: vectors, not sizes -->
+  <div class="note-warning">
+    Momentum and impulse are <strong>vectors</strong>. When something bounces back, the change in momentum is the sum of the two sizes, not the difference (Example 2). When the direction changes at an angle, subtract the arrows (Example 3).
+  </div>
+
+  <!-- TIP: impulse vs work -->
+  <div class="note-tip">
+    Pair them up: <strong>force × distance = work → change in kinetic energy</strong> (scalars), and <strong>force × time = impulse → change in momentum</strong> (vectors).
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Impulse $\vec{I} = \vec{F}\Delta t$ (unit $\mathrm{N \cdot s}$) is the area under the F–t graph.</li>
+      <li>Momentum $\vec{p} = m\vec{v}$; change in momentum = impulse.</li>
+      <li>Both are vectors. Average force = impulse ÷ contact time.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Impulse" demo (the TRY IT block above).
+  // Constant force / Collision force: the F–t graph, its area shaded (the impulse),
+  // and for the collision a dashed rectangle with the same area: the average force.
+  // The collision force is drawn as F = Fmax·sin²(πt/Δt): it rises and falls
+  // smoothly, and its area is Fmax·Δt/2.
+  // Bat: momentum before (6.0 N·s, horizontal) and after (6.0 N·s at θ), drawn tail
+  // to tail; the impulse is the arrow from the tip of "before" to the tip of "after".
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('imCanvas');
+    const output = document.getElementById('imOutput');
+    const fBox = document.getElementById('imF'), tBox = document.getElementById('imT'), thBox = document.getElementById('imTh');
+    const M = 0.2, SPEED = 30, THING = '#475569', IMP = '#dc2626';
+    const GX0 = 70, GX1 = 480, GY0 = 290, GY1 = 50, TMAX = 20, FMAX = 2000;
+    let scene = 'const';
+
+    function arrow(g, p, q, color, label, at) {
+      const d = [q[0] - p[0], q[1] - p[1]], len = Math.hypot(d[0], d[1]);
+      if (len < 3) return;
+      const u = [d[0] / len, d[1] / len], n = [-u[1], u[0]];
+      g.seg(p, q, color, { width: 3 });
+      g.poly([q, [q[0] - 12 * u[0] + 6 * n[0], q[1] - 12 * u[1] + 6 * n[1]], [q[0] - 12 * u[0] - 6 * n[0], q[1] - 12 * u[1] - 6 * n[1]]], color);
+      if (label) g.text(at, label, color);
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const Fm = Number(fBox.value), dt = Number(tBox.value), th = Number(thBox.value) * Math.PI / 180;
+        fBox.disabled = scene === 'bat'; thBox.disabled = scene !== 'bat';
+        const n2 = (x) => x.toFixed(2);
+
+        if (scene !== 'bat') {
+          // --- F–t graph ---
+          const P = (t, F) => [GX0 + t / TMAX * (GX1 - GX0), GY0 - F / FMAX * (GY0 - GY1)];
+          g.seg([GX0, GY0], [GX1 + 10, GY0], THING, { width: 1.5 });
+          g.seg([GX0, GY0], [GX0, GY1 - 15], THING, { width: 1.5 });
+          g.text([GX1 + 4, GY0 - 12], 't (ms)', THING);
+          g.text([GX0 + 30, GY1 - 24], 'F (N)', THING);
+          for (let k = 5; k <= 20; k += 5) g.text([P(k, 0)[0], GY0 + 14], `${k}`, '#94a3b8');
+          for (let f = 500; f <= 2000; f += 500) g.text([GX0 - 24, P(0, f)[1]], `${f}`, '#94a3b8');
+          const shape = scene === 'const' ? () => Fm : (t) => Fm * Math.sin(Math.PI * t / dt) ** 2;
+          const pts = [P(0, 0)];
+          for (let k = 0; k <= 60; k++) pts.push(P(dt * k / 60, shape(dt * k / 60)));
+          pts.push(P(dt, 0));
+          g.poly(pts, 'rgba(220, 38, 38, 0.18)');
+          for (let k = 1; k < pts.length; k++) g.seg(pts[k - 1], pts[k], IMP, { width: 2.5 });
+          const I = scene === 'const' ? Fm * dt / 1000 : Fm * dt / 2000, Fbar = I / (dt / 1000);
+          g.text([P(dt / 2, 0)[0], P(0, Fbar * 0.45)[1]], 'area = I', IMP);
+          if (scene === 'hit') {
+            g.seg(P(0, Fbar), P(dt, Fbar), '#2563eb', { width: 1.5, dash: true });
+            g.seg(P(dt, 0), P(dt, Fbar), '#2563eb', { width: 1.5, dash: true });
+            g.text([P(dt, 0)[0] + 62, P(0, Fbar)[1]], 'average force', '#2563eb');
+          }
+          output.textContent =
+            (scene === 'const'
+              ? `constant force: I = F·Δt = ${Fm} × ${(dt / 1000).toFixed(3)} = ${n2(I)} N·s\n`
+              : `collision force: I = area under the curve = ${n2(I)} N·s\n` +
+                `average force = I / Δt = ${n2(I)} / ${(dt / 1000).toFixed(3)} = ${Fbar.toFixed(0)} N  (same area)\n`) +
+            `ball (0.20 kg) from rest: change in momentum = I, so v = I/m = ${n2(I / M)} m/s`;
+        } else {
+          // --- Bat: momentum vectors tail to tail ---
+          const O = [300, 230], S = 22;                      // 22 px per N·s
+          const p = M * SPEED, before = [O[0] - p * S, O[1]];
+          const after = [O[0] + p * S * Math.cos(th), O[1] - p * S * Math.sin(th)];
+          arrow(g, O, before, '#2563eb', 'before: mv', [O[0] - p * S / 2, O[1] + 18]);
+          arrow(g, O, after, '#16a34a', "after: mv'", [after[0] + 40, after[1]]);
+          arrow(g, before, after, IMP, 'impulse I', [(before[0] + after[0]) / 2 - 40, (before[1] + after[1]) / 2 - 14]);
+          g.dot(O, THING, '');
+          const I = Math.hypot(after[0] - before[0], after[1] - before[1]) / S, Fbar = I / (dt / 1000);
+          const ang = 180 - Number(thBox.value);
+          output.textContent =
+            `before: 0.20 × 30 = 6.0 N·s (horizontal);  after: 6.0 N·s at ${thBox.value}° up\n` +
+            `angle between the two arrows: ${ang}°\n` +
+            `impulse = after − before (an arrow): size I = ${n2(I)} N·s\n` +
+            `average force = I / Δt = ${n2(I)} / ${(dt / 1000).toFixed(3)} = ${Fbar.toFixed(0)} N`;
+        }
+      },
+    });
+
+    document.querySelectorAll('#imChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#imChoices button').forEach((x) => x.classList.toggle('active', x === b));
+      scene = b.dataset.scene;
+      board.redraw();
+    }));
+    [fBox, tBox, thBox].forEach((b) => b.addEventListener('input', board.redraw));
+  })();
+</script>
