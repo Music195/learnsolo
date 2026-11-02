@@ -1,0 +1,244 @@
+<!-- tags: Circular Motion -->
+<!-- =====================================================================
+     NOTE: Vertical Circles: Rod or String
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Circular Motion">Vertical Circles: Rod or String</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Going round a vertical circle: a rod only needs speed at the top, a string needs it to stay tight</h2>
+    <p>Now the circle stands up (a <strong>vertical circle</strong>). Unlike a Ferris wheel, which a motor turns at a steady speed, a ball on its own speeds up on the way down and slows down on the way up. So this is circular motion that is <em>not</em> uniform.</p>
+    <p>A ball of mass $m$ at the bottom of a circle of radius $r$ is given a speed $v_0$. Will it go all the way round? It depends on one word in the question:</p>
+    <ul>
+      <li><strong>On a light rod</strong>: a rod can push as well as pull, and never goes slack. Even if the ball almost stops at the top, the rod holds it on the circle and it carries on. It only needs <strong>some speed at the top</strong>: $v &gt; 0$.</li>
+      <li><strong>On a string</strong>: a string can only pull. Near the top, if the ball is too slow, the string goes slack and the ball falls inside the circle. It needs the <strong>tension at the top to be $T \ge 0$</strong>, which takes a faster start.</li>
+    </ul>
+    <p>Problems like this always use the same two equations: <strong>conservation of energy</strong> (bottom to top) and, for the string, the <strong>balance towards the centre</strong> using the centrifugal force.</p>
+  </section>
+
+  <!-- FORMULA: the two conditions -->
+  <div class="note-formula">
+    <h3>To go all the way round a vertical circle of radius $r$</h3>
+    <div class="formula-main">$$\text{rod: } v_0 &gt; 2\sqrt{gr} \qquad \text{string: } v_0 \ge \sqrt{5gr}$$</div>
+    <p class="symbols">Energy, bottom to top: $\tfrac12 mv_0^2 = \tfrac12 mv^2 + mg(2r)$. At the top, for the string (seen riding with the ball): $T + mg = m\dfrac{v^2}{r}$ (the centrifugal force $mv^2/r$ points up, out of the circle).</p>
+  </div>
+
+  <!-- PROOF: both cases -->
+  <div class="note-proof">
+    <ol>
+      <li><strong>Energy</strong> (both cases): $\tfrac12 mv_0^2 = \tfrac12 mv^2 + 2mgr$, so $v^2 = v_0^2 - 4gr$ at the top.</li>
+      <li><strong>Rod</strong>: it just needs $v^2 &gt; 0$ at the top, so $v_0^2 &gt; 4gr$, giving $v_0 &gt; 2\sqrt{gr}$. Not "$\ge$": with $v = 0$ exactly, the ball would stop at the top and stay balanced there.</li>
+      <li><strong>String</strong>: riding with the ball at the top, $T$ and $mg$ point down and the centrifugal force $mv^2/r$ points up. Balance: $T + mg = mv^2/r$, so $T = \dfrac{mv^2}{r} - mg$.</li>
+      <li>The string must not go slack: $T \ge 0$, so $v^2 \ge gr$. With $T = 0$ the string is just tight for that one instant and tight again either side, so "$=$" is allowed.</li>
+      <li>Put in $v^2 = v_0^2 - 4gr$: $v_0^2 - 4gr \ge gr$, so $v_0 \ge \sqrt{5gr}$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: rod or string; code at the bottom -->
+  <div class="note-demo">
+    <h2>A $0.50\ \mathrm{kg}$ ball on a circle of radius $0.80\ \mathrm{m}$</h2>
+    <div class="controls choices" id="vcChoices">
+      <button type="button" data-kind="rod" class="active">On a rod</button>
+      <button type="button" data-kind="string">On a string</button>
+    </div>
+    <div class="controls">
+      <label>start speed $v_0$ (m/s) = <input type="range" id="vcV" min="3" max="8" step="0.1" value="6"></label>
+      <button type="button" id="vcGo">Again</button>
+    </div>
+    <canvas id="vcCanvas"></canvas>
+    <div class="output table-text" id="vcOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A ball on a light rod of length $0.80\ \mathrm{m}$ swings in a vertical circle. Find the smallest speed at the bottom that takes it all the way round.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$v_0 &gt; 2\sqrt{gr} = 2\sqrt{9.8 \times 0.80} = 2 \times 2.8$.</li>
+      </ol>
+      <p class="answer">$v_0$ must be more than $5.6\ \mathrm{m/s}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Same circle, but now the ball is on a string. Find the smallest speed at the bottom.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$v_0 \ge \sqrt{5gr} = \sqrt{5 \times 9.8 \times 0.80} = \sqrt{39.2}$.</li>
+      </ol>
+      <p class="answer">$v_0 \ge 6.3\ \mathrm{m/s}$, faster than with the rod</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A $0.50\ \mathrm{kg}$ ball on that string starts at $7.0\ \mathrm{m/s}$. Find its speed and the tension at the top.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$v^2 = 7.0^2 - 4 \times 9.8 \times 0.80 = 49 - 31.36 = 17.64$, so $v = 4.2\ \mathrm{m/s}$.</li>
+        <li>$T = mv^2/r - mg = 0.50 \times 17.64/0.80 - 4.9 = 11.0 - 4.9$.</li>
+      </ol>
+      <p class="answer">$v = 4.2\ \mathrm{m/s}$, $T \approx 6.1\ \mathrm{N}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Find the tension at the bottom for the ball in Example 3, just after it starts.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>At the bottom the centrifugal force points down, with $mg$; $T$ points up. Balance: $T = mg + mv_0^2/r$.</li>
+        <li>$T = 4.9 + 0.50 \times 49/0.80 = 4.9 + 30.6$.</li>
+      </ol>
+      <p class="answer">$T \approx 35.5\ \mathrm{N}$: the string is tightest at the bottom</p>
+    </details>
+  </div>
+
+  <!-- WARNING: read the question carefully -->
+  <div class="note-warning">
+    "Rod" or "string": one word in the question changes the answer. A rod case uses only energy ($v &gt; 0$ at the top). A string case needs energy <em>and</em> the force balance at the top ($T \ge 0$).
+  </div>
+
+  <!-- TIP: the standard method -->
+  <div class="note-tip">
+    For any vertical circle: (1) write conservation of energy between the start and the point you care about, (2) write the balance towards the centre at that point, with the centrifugal force $mv^2/r$ pointing out. Then solve the two together.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Speed changes round a vertical circle: use conservation of energy.</li>
+      <li>Rod: $v &gt; 0$ at the top, $v_0 &gt; 2\sqrt{gr}$.</li>
+      <li>String: $T \ge 0$ at the top, $v_0 \ge \sqrt{5gr}$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Vertical circle" demo (the TRY IT block above).
+  // A 0.50 kg ball starts at the bottom of a circle of radius 0.80 m with speed v0,
+  // going anticlockwise. φ is the angle turned from the bottom. While on the circle,
+  // φ'' = −(g/r) sin φ, and the pull of the rod or string towards the centre is
+  //   T = m v²/r + m g cos φ   (negative T means the rod is pushing).
+  // A string can't push: when T would go below 0 the ball flies off as a projectile,
+  // inside the circle, until the string is tight again (the demo stops there).
+  // 130 pixels per metre. Drawn with NoteGeom.board in canvas pixels (520 × 340, y down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('vcCanvas');
+    const output = document.getElementById('vcOutput');
+    const vBox = document.getElementById('vcV');
+    const G = 9.8, M = 0.5, RAD = 0.8, PXM = 130, C = [190, 168];
+    const THING = '#475569', BLUE = '#2563eb', RED = '#dc2626';
+    let kind = 'rod', st, lastText = '';
+
+    function reset() {
+      st = { phi: 0, w: Number(vBox.value) / RAD, free: false, x: 0, y: -RAD, vx: 0, vy: 0, done: '', trail: [], slackAt: null, maxPhi: 0 };
+    }
+    reset();
+    const toPx = (x, y) => [C[0] + x * PXM, C[1] - y * PXM];
+
+    // One small time step of the motion.
+    function step(dt) {
+      if (st.done) return;
+      if (!st.free) {
+        st.w += -(G / RAD) * Math.sin(st.phi) * dt;
+        st.phi += st.w * dt;
+        st.maxPhi = Math.max(st.maxPhi, st.phi);
+        st.x = RAD * Math.sin(st.phi); st.y = -RAD * Math.cos(st.phi);
+        const v = RAD * st.w, T = M * v * v / RAD + M * G * Math.cos(st.phi);
+        if (kind === 'string' && T < 0) {
+          st.free = true; st.slackAt = st.phi;
+          st.vx = v * Math.cos(st.phi); st.vy = v * Math.sin(st.phi);
+        }
+        if (st.phi >= 2 * Math.PI) st.done = 'round';
+      } else {
+        st.vy -= G * dt; st.x += st.vx * dt; st.y += st.vy * dt;
+        if (Math.hypot(st.x, st.y) >= RAD && st.vy < 0) st.done = 'tight';
+      }
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const v0 = Number(vBox.value);
+        // the circle path, the pivot, the trail
+        g.circle(C, RAD * PXM, '#cbd5e1');
+        for (let k = 1; k < st.trail.length; k++) g.seg(st.trail[k - 1], st.trail[k], 'rgba(37, 99, 235, 0.35)', { width: 2 });
+        const B = toPx(st.x, st.y);
+        if (kind === 'rod') g.seg(C, B, THING, { width: 5 });
+        else if (!st.free) g.seg(C, B, '#94a3b8', { width: 2 });
+        else {
+          // a slack string: draw it as a bent line
+          const mid = [(C[0] + B[0]) / 2 + 12, (C[1] + B[1]) / 2 + 14];
+          g.seg(C, mid, '#94a3b8', { width: 2, dash: true }); g.seg(mid, B, '#94a3b8', { width: 2, dash: true });
+          g.text([mid[0] + 26, mid[1]], 'slack', RED);
+        }
+        g.dot(C, THING);
+        g.circle(B, 10, BLUE, { fill: '#93c5fd' });
+        g.text([C[0], C[1] - RAD * PXM - 14], 'top', THING);
+
+        // numbers for the explanation
+        const n = (z, k = 2) => z.toFixed(k).replace('-', '−');
+        const need = kind === 'rod' ? 2 * Math.sqrt(G * RAD) : Math.sqrt(5 * G * RAD);
+        const v = st.free ? Math.hypot(st.vx, st.vy) : Math.abs(RAD * st.w);
+        const T = M * v * v / RAD + M * G * Math.cos(st.phi);
+        const deg = (a) => (a * 180 / Math.PI).toFixed(0);
+        let now;
+        if (st.free) now = `string slack since ${deg(st.slackAt)}° from the bottom: the ball is a projectile`;
+        else if (kind === 'rod') now = `now: v = ${n(v)} m/s, rod ${T >= 0 ? 'pulls' : 'pushes'} with ${n(Math.abs(T))} N`;
+        else now = `now: v = ${n(v)} m/s, tension T = ${n(T)} N`;
+        let result = '';
+        if (st.done === 'round') result = 'result: it goes all the way round';
+        else if (st.done === 'tight') result = 'result: it fell inside the circle; the string jerks tight again';
+        else if (st.w < 0 && !st.free) result = `result: it stops at ${deg(st.maxPhi)}° and swings back`;
+        const vTop2 = v0 * v0 - 4 * G * RAD;
+        const text =
+          (kind === 'rod'
+            ? `rod: needs v > 0 at the top, so v0 > 2√(gr) = ${n(need)} m/s\n`
+            : `string: needs T ≥ 0 at the top, so v0 ≥ √(5gr) = ${n(need)} m/s\n`) +
+          `energy: v_top² = v0² − 4gr = ${n(vTop2)}` + (kind === 'string' && vTop2 > 0 ? `,  T_top = m·v²/r − mg = ${n(M * vTop2 / RAD - M * G)} N` : '') + `\n` +
+          now + '\n' + result;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Run the motion in small steps (slowed to 60 %). Stop when the page has changed.
+    let last = performance.now(), sinceTrail = 0;
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.min((now - last) / 1000, 0.05) * 0.6;
+      last = now;
+      if (!st.done && !(st.w < 0 && !st.free && st.phi <= 0)) {
+        for (let k = 0; k < 20; k++) step(dt / 20);
+        sinceTrail += dt;
+        if (sinceTrail > 0.01) { st.trail.push(toPx(st.x, st.y)); sinceTrail = 0; if (st.trail.length > 600) st.trail.shift(); }
+      }
+      board.redraw();
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    const restart = () => { reset(); board.redraw(); };
+    document.querySelectorAll('#vcChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#vcChoices button').forEach((x) => x.classList.toggle('active', x === b));
+      kind = b.dataset.kind;
+      restart();
+    }));
+    vBox.addEventListener('input', restart);
+    document.getElementById('vcGo').addEventListener('click', restart);
+  })();
+</script>

@@ -1,0 +1,215 @@
+<!-- tags: Circular Motion -->
+<!-- =====================================================================
+     NOTE: Uniform Circular Motion
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Circular Motion">Uniform Circular Motion</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Steady speed around a circle still needs a force, pointing at the centre</h2>
+    <p>In <strong>uniform circular motion</strong> an object goes round a circle at a constant speed. The speed doesn't change, but the <em>direction</em> does all the time, so the velocity changes and there must be an acceleration.</p>
+    <p>Picture rolling a football along a chalk circle on a playground. One kick starts it, and it rolls straight on, along the <strong>tangent</strong>. To keep it on the circle you must keep giving it little taps <strong>towards the inside</strong>. So:</p>
+    <ul>
+      <li>the <strong>velocity</strong> points along the tangent to the circle;</li>
+      <li>the <strong>acceleration</strong> (and the force causing it) points to the <strong>centre</strong> of the circle.</li>
+    </ul>
+    <p>The force that points to the centre is called the <strong>centripetal force</strong>. It is not a new kind of force. It is a <em>role</em> that some real force plays: gravity, tension, friction, a normal force, or a component of one of them. Never draw "centripetal force" as an extra arrow next to the real forces.</p>
+  </section>
+
+  <!-- FORMULA: the circular-motion formulas -->
+  <div class="note-formula">
+    <h3>Uniform circular motion (radius $r$)</h3>
+    <div class="formula-main">$$T = \frac{2\pi r}{v} = \frac{2\pi}{\omega} \qquad v = r\omega \qquad a = r\omega^2 = \frac{v^2}{r} = v\omega$$</div>
+    <p class="symbols">$T$: period, the time for one lap (s). $\omega$: <strong>angular velocity</strong>, the angle turned per second (rad/s). $v$: speed, along the tangent. $a$: acceleration, towards the centre. The equation of motion towards the centre: $m\dfrac{v^2}{r} = F$, where $F$ is the total force towards the centre.</p>
+  </div>
+
+  <!-- PROOF: where v = rω and a = v²/r come from -->
+  <div class="note-proof">
+    <ol>
+      <li>One lap is a distance $2\pi r$ at speed $v$, so $T = 2\pi r / v$. In angles, one lap is $2\pi$ radians at $\omega$ radians per second, so $T = 2\pi/\omega$. Setting the two equal gives $v = r\omega$.</li>
+      <li>The same thing from maths: an arc of radius $r$ and angle $\theta$ has length $r\theta$. In one second the angle is $\omega$, so the distance travelled each second is $r\omega$.</li>
+      <li>For the acceleration, take two velocity arrows $\vec{v}_1$ and $\vec{v}_2$ a short time $\Delta t$ apart. Both have size $v$, and they differ in direction by the angle $\omega\Delta t$.</li>
+      <li>Put them tail to tail. The change $\Delta\vec{v}$ joins their tips and points towards the centre of the circle. For a small angle the chord is nearly the arc: $|\Delta\vec{v}| \approx v \cdot \omega\Delta t$.</li>
+      <li>So $a = |\Delta\vec{v}|/\Delta t = v\omega$. Use $v = r\omega$ to get the other forms: $a = r\omega^2 = v^2/r$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: a ball going round with its arrows; code at the bottom -->
+  <div class="note-demo">
+    <h2>Velocity along the tangent, acceleration to the centre</h2>
+    <div class="controls">
+      <label>radius $r$ (m) = <input type="range" id="ucR" min="0.5" max="2" step="0.1" value="1.5"></label>
+      <label>$\omega$ (rad/s) = <input type="range" id="ucW" min="0.5" max="3" step="0.1" value="2"></label>
+    </div>
+    <canvas id="ucCanvas"></canvas>
+    <div class="output table-text" id="ucOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A ball goes round a circle of radius $2.0\ \mathrm{m}$ at $4.0\ \mathrm{m/s}$. Find its period and angular velocity.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$T = 2\pi r / v = 2\pi \times 2.0 / 4.0 = \pi \approx 3.1\ \mathrm{s}$.</li>
+        <li>$\omega = v/r = 4.0/2.0$.</li>
+      </ol>
+      <p class="answer">$T \approx 3.1\ \mathrm{s}$, $\omega = 2.0\ \mathrm{rad/s}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">For the ball in Example 1 (mass $0.50\ \mathrm{kg}$), find the acceleration and the total force needed towards the centre.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$a = v^2/r = 16/2.0 = 8.0\ \mathrm{m/s^2}$ (check: $r\omega^2 = 2.0 \times 4.0 = 8.0$).</li>
+        <li>$F = ma = 0.50 \times 8.0$.</li>
+      </ol>
+      <p class="answer">$a = 8.0\ \mathrm{m/s^2}$ towards the centre; $F = 4.0\ \mathrm{N}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A turntable makes $30$ turns per minute. Find $\omega$, and the speed of a coin $0.10\ \mathrm{m}$ from the centre.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>30 turns per minute is one turn every $2.0\ \mathrm{s}$, so $T = 2.0\ \mathrm{s}$ and $\omega = 2\pi/T = \pi\ \mathrm{rad/s}$.</li>
+        <li>$v = r\omega = 0.10 \times \pi$.</li>
+      </ol>
+      <p class="answer">$\omega = \pi \approx 3.1\ \mathrm{rad/s}$; $v \approx 0.31\ \mathrm{m/s}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">That coin ($m = 0.010\ \mathrm{kg}$) turns with the turntable without slipping. Which force is the centripetal force, and how big is it?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Only static friction from the turntable acts sideways on the coin, so friction is the centripetal force.</li>
+        <li>$f = mr\omega^2 = 0.010 \times 0.10 \times \pi^2$.</li>
+      </ol>
+      <p class="answer">Static friction, about $9.9 \times 10^{-3}\ \mathrm{N}$, towards the centre</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">If the same object goes round the same circle twice as fast, what happens to the force needed?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$F = mv^2/r$, and $v$ doubles, so $v^2$ becomes 4 times bigger.</li>
+      </ol>
+      <p class="answer">4 times the force</p>
+    </details>
+  </div>
+
+  <!-- WARNING: centripetal force is not an extra force -->
+  <div class="note-warning">
+    "Centripetal force" is not a type of force like gravity or tension. Don't write "centripetal force and gravity act on it". Ask instead: <em>which real force (or which part of it) points to the centre?</em> That is the centripetal force.
+  </div>
+
+  <!-- TIP: which formula to pick -->
+  <div class="note-tip">
+    You only need to remember one form of the acceleration. Derive the others with $v = r\omega$. Use $v^2/r$ when the problem gives a speed, and $r\omega^2$ when it gives a period or turns per second.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Velocity: along the tangent, $v = r\omega$.</li>
+      <li>Acceleration: to the centre, $a = r\omega^2 = v^2/r$.</li>
+      <li>Period $T = 2\pi r/v = 2\pi/\omega$.</li>
+      <li>Equation of motion towards the centre: $mv^2/r = $ (total real force towards the centre).</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Uniform circular motion" demo (the TRY IT block above).
+  // A ball goes round anticlockwise at angular velocity ω. Blue arrow: velocity
+  // (tangent, 14 pixels per m/s). Red arrow: acceleration (towards the centre,
+  // 5 pixels per m/s²). On the right, the velocities now and 0.4 s later are drawn
+  // tail to tail (always drawn 70 pixels long): the change Δv between their tips
+  // points towards the centre.
+  // 70 pixels per metre. Drawn with NoteGeom.board in canvas pixels (520 × 340, y down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('ucCanvas');
+    const output = document.getElementById('ucOutput');
+    const rBox = document.getElementById('ucR'), wBox = document.getElementById('ucW');
+    const C = [170, 170], PXM = 70, KV = 14, KA = 5, DT = 0.4;
+    const BLUE = '#2563eb', RED = '#dc2626', THING = '#475569', PURPLE = '#7c3aed';
+    let phi = 0, lastText = '';
+
+    function arrow(g, p, v, color, label, off = [0, -12]) {
+      const q = [p[0] + v[0], p[1] + v[1]], L = Math.hypot(v[0], v[1]);
+      if (L < 3) return;
+      const ux = v[0] / L, uy = v[1] / L;
+      g.seg(p, q, color, { width: 2.5 });
+      g.poly([q, [q[0] - 10 * ux - 5 * uy, q[1] - 10 * uy + 5 * ux], [q[0] - 10 * ux + 5 * uy, q[1] - 10 * uy - 5 * ux]], color);
+      if (label) g.text([q[0] + off[0], q[1] + off[1]], label, color);
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const r = Number(rBox.value), w = Number(wBox.value);
+        const v = r * w, a = r * w * w, T = 2 * Math.PI / w, R = r * PXM;
+        // the circle, its centre and the ball (y is down, so anticlockwise means −sin)
+        g.circle(C, R, '#cbd5e1');
+        g.dot(C, THING, 'O');
+        const P = [C[0] + R * Math.cos(phi), C[1] - R * Math.sin(phi)];
+        g.seg(C, P, '#cbd5e1', { width: 1, dash: true });
+        g.circle(P, 9, BLUE, { fill: '#93c5fd' });
+        // velocity along the tangent, acceleration towards the centre
+        const tx = -Math.sin(phi), ty = -Math.cos(phi);
+        arrow(g, P, [tx * v * KV, ty * v * KV], BLUE, 'v', [10 * tx, 10 * ty - 4]);
+        arrow(g, P, [(C[0] - P[0]) / R * a * KA, (C[1] - P[1]) / R * a * KA], RED, 'a', [8, 10]);
+
+        // the vector triangle: v now and v a short time later, tail to tail
+        const Q = [430, 170], phi2 = phi + w * DT;
+        const t2x = -Math.sin(phi2), t2y = -Math.cos(phi2), K2 = 70 / v;   // drawn 70 px long
+        g.text([430, 40], 'v now, v 0.4 s later', THING);
+        arrow(g, Q, [tx * v * K2, ty * v * K2], BLUE, 'v₁', [8 * tx, 8 * ty - 10]);
+        arrow(g, Q, [t2x * v * K2, t2y * v * K2], PURPLE, 'v₂', [8 * t2x, 8 * t2y - 10]);
+        arrow(g, [Q[0] + tx * v * K2, Q[1] + ty * v * K2], [(t2x - tx) * v * K2, (t2y - ty) * v * K2], RED, '', [0, 0]);
+        g.text([430, 310], 'Δv (red) points to the centre', RED);
+
+        const n = (z, k = 2) => z.toFixed(k);
+        const text =
+          `r = ${n(r, 1)} m,  ω = ${n(w, 1)} rad/s\n` +
+          `speed v = rω = ${n(v)} m/s  (along the tangent)\n` +
+          `acceleration a = rω² = v²/r = ${n(a)} m/s²  (towards the centre)\n` +
+          `period T = 2π/ω = 2πr/v = ${n(T)} s`;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Turn the ball at the chosen ω. Stop when the page has changed.
+    let last = performance.now();
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      phi += Number(wBox.value) * dt;
+      board.redraw();
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+    [rBox, wBox].forEach((b) => b.addEventListener('input', () => board.redraw()));
+  })();
+</script>

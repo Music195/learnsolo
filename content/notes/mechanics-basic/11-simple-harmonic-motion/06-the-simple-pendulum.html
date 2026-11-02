@@ -1,0 +1,210 @@
+<!-- tags: Simple Harmonic Motion -->
+<!-- =====================================================================
+     NOTE: The Simple Pendulum
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Simple Harmonic Motion">The Simple Pendulum</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>A pendulum swinging through a small angle is SHM</h2>
+    <p>A <strong>simple pendulum</strong> is a small mass $m$ on a light string of length $L$, swinging to and fro. Strictly, it moves along part of a vertical circle. But when the swing is <strong>small</strong>, the motion along the arc is simple harmonic motion.</p>
+    <p>The key step is an approximation. When a question says "the angle is small enough", it is telling you to use</p>
+    <p>$$\sin\theta \approx \theta \approx \tan\theta \quad (\theta \text{ in radians})$$</p>
+    <p>This isn't a formula to memorise but a picture: on a circle of radius 1, for a tiny angle, the half-chord ($\sin\theta$), the arc ($\theta$) and the tangent line ($\tan\theta$) are almost the same length.</p>
+    <p>With it, the equation of motion along the arc becomes $a = -\dfrac{g}{L}x$, which is the SHM condition. Remember the result next to the spring's period: spring $2\pi\sqrt{m/k}$, pendulum $2\pi\sqrt{L/g}$. The pendulum's period doesn't depend on the mass or (for small swings) on how far it swings.</p>
+  </section>
+
+  <!-- FORMULA: the period -->
+  <div class="note-formula">
+    <h3>Simple pendulum (small swings)</h3>
+    <div class="formula-main">$$ma = -mg\sin\theta \approx -\frac{mg}{L}x \qquad T = 2\pi\sqrt{\frac{L}{g}}$$</div>
+    <p class="symbols">$x = L\theta$: distance along the arc from the lowest point. $\omega = \sqrt{g/L}$. Valid when $\theta$ is small (in practice, up to about $10^\circ$–$15^\circ$).</p>
+  </div>
+
+  <!-- PROOF: from the forces to the period -->
+  <div class="note-proof">
+    <ol>
+      <li>Measure $x$ along the arc from the lowest point, $+$ to the right. At angle $\theta$, split gravity: $mg\cos\theta$ along the string (cancelled by the tension and the circular motion), and $mg\sin\theta$ along the arc, pointing back towards the lowest point.</li>
+      <li>Along the arc: $ma = -mg\sin\theta$, so $a = -g\sin\theta$. As it stands, this is not yet of the form $-\omega^2x$.</li>
+      <li>Small angle: $\sin\theta \approx \theta$, so $a = -g\theta$.</li>
+      <li>The arc length is $x = L\theta$ (radius × angle), so $\theta = x/L$ and $a = -\dfrac{g}{L}x$.</li>
+      <li>This is $a = -\omega^2x$ with $\omega = \sqrt{g/L}$, so $T = \dfrac{2\pi}{\omega} = 2\pi\sqrt{\dfrac{L}{g}}$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: swinging pendulum, formula vs real period; code at the bottom -->
+  <div class="note-demo">
+    <h2>How good is the small-angle formula?</h2>
+    <div class="controls">
+      <label>length $L$ (m) = <input type="range" id="pnL" min="0.25" max="2" step="0.25" value="1"></label>
+      <label>starting angle (°) = <input type="range" id="pnTh" min="5" max="60" step="5" value="10"></label>
+    </div>
+    <canvas id="pnCanvas"></canvas>
+    <div class="output table-text" id="pnOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find the period of a simple pendulum of length $1.0\ \mathrm{m}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$T = 2\pi\sqrt{1.0/9.8} = 2\pi \times 0.319$.</li>
+      </ol>
+      <p class="answer">$T \approx 2.0\ \mathrm{s}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">How long must a pendulum be to have a period of $1.0\ \mathrm{s}$?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$T^2 = 4\pi^2L/g$, so $L = \dfrac{gT^2}{4\pi^2} = \dfrac{9.8 \times 1.0}{39.5}$.</li>
+      </ol>
+      <p class="answer">$L \approx 0.25\ \mathrm{m}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A pendulum's mass is doubled and its length made 4 times as long. What happens to its period?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The mass doesn't appear in $T = 2\pi\sqrt{L/g}$.</li>
+        <li>$T \propto \sqrt L$, and $\sqrt4 = 2$.</li>
+      </ol>
+      <p class="answer">The period doubles</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">On the Moon, $g$ is about $1/6$ of the Earth's. How does the period of the same pendulum change?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$T \propto 1/\sqrt g$; $g$ becomes $1/6$, so $T$ becomes $\sqrt6$ times as long.</li>
+      </ol>
+      <p class="answer">About $2.4$ times longer</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">The pendulum hangs in a lift accelerating upwards at $a$. What is its period? (Hint: the topic on inertial force.)</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Inside the lift the apparent gravity is $g + a$; it plays the role of $g$.</li>
+      </ol>
+      <p class="answer">$T = 2\pi\sqrt{\dfrac{L}{g + a}}$, shorter than in a still lift</p>
+    </details>
+  </div>
+
+  <!-- WARNING: small angles only, radians only -->
+  <div class="note-warning">
+    $\sin\theta \approx \theta$ only works with $\theta$ in <strong>radians</strong> and only for small angles. At large swings the real period is longer than $2\pi\sqrt{L/g}$, and then the motion is the vertical circular motion from the circular-motion topic, not SHM.
+  </div>
+
+  <!-- TIP: the route again -->
+  <div class="note-tip">
+    The route is the same as for a spring: equation of motion → (here, approximate) → $a = -\omega^2x$ → $T = 2\pi/\omega$. Any problem that ends in $a = -(\text{constant})\,x$ is SHM.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Small angle: $\sin\theta \approx \theta \approx \tan\theta$ (radians).</li>
+      <li>Along the arc: $a = -\dfrac{g}{L}x$, so $T = 2\pi\sqrt{L/g}$.</li>
+      <li>Spring: $2\pi\sqrt{m/k}$; pendulum: $2\pi\sqrt{L/g}$, independent of mass.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Simple pendulum" demo (the TRY IT block above).
+  // The pendulum swings with the full equation θ'' = −(g/L) sin θ (no small-angle
+  // approximation), stepped in small time steps. The real period for a swing of
+  // amplitude θ0 is 2π√(L/g) / AGM(1, cos(θ0/2)) (AGM: the arithmetic–geometric mean),
+  // which we compare with the small-angle formula 2π√(L/g).
+  // Green arrow: gravity mg; red arrow: its part along the arc, mg sin θ.
+  // 140 pixels per metre. Drawn with NoteGeom.board in canvas pixels (520 × 340, y down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('pnCanvas');
+    const output = document.getElementById('pnOutput');
+    const lBox = document.getElementById('pnL'), thBox = document.getElementById('pnTh');
+    const G = 9.8, PIV = [200, 24], PXM = 140, THING = '#475569', BLUE = '#2563eb', RED = '#dc2626', GREEN = '#16a34a';
+    let th = 0, w = 0, lastText = '';
+
+    function reset() { th = Number(thBox.value) * Math.PI / 180; w = 0; }
+    reset();
+    function agm(a, b) { for (let k = 0; k < 20; k++) [a, b] = [(a + b) / 2, Math.sqrt(a * b)]; return a; }
+    function arrow(g, p, v, color, label, off) {
+      const q = [p[0] + v[0], p[1] + v[1]], len = Math.hypot(v[0], v[1]);
+      if (len < 4) return;
+      const ux = v[0] / len, uy = v[1] / len;
+      g.seg(p, q, color, { width: 2.5 });
+      g.poly([q, [q[0] - 9 * ux - 5 * uy, q[1] - 9 * uy + 5 * ux], [q[0] - 9 * ux + 5 * uy, q[1] - 9 * uy - 5 * ux]], color);
+      g.text([q[0] + off[0], q[1] + off[1]], label, color);
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const L = Number(lBox.value), th0 = Number(thBox.value) * Math.PI / 180, R = L * PXM;
+        // ceiling, the vertical line, the arc the bob follows
+        g.seg([PIV[0] - 60, PIV[1]], [PIV[0] + 60, PIV[1]], THING, { width: 4 });
+        g.seg(PIV, [PIV[0], PIV[1] + R + 20], '#cbd5e1', { width: 1, dash: true });
+        let prev = null;
+        for (let k = -20; k <= 20; k++) {
+          const a = th0 * k / 20, q = [PIV[0] + R * Math.sin(a), PIV[1] + R * Math.cos(a)];
+          if (prev) g.seg(prev, q, '#cbd5e1', { width: 1.5 });
+          prev = q;
+        }
+        // string and bob
+        const B = [PIV[0] + R * Math.sin(th), PIV[1] + R * Math.cos(th)];
+        g.seg(PIV, B, '#94a3b8', { width: 2 });
+        g.circle(B, 10, BLUE, { fill: '#93c5fd' });
+        // forces: gravity and its part along the arc (towards the bottom)
+        arrow(g, B, [0, 36], GREEN, 'mg', [14, 0]);
+        const ft = -36 * Math.sin(th);
+        arrow(g, B, [ft * Math.cos(th), -ft * Math.sin(th)], RED, 'mg sinθ', [0, 14]);
+        g.arc(PIV, [PIV[0], PIV[1] + 60], B, '#ea580c', 34);
+
+        const Tf = 2 * Math.PI * Math.sqrt(L / G), Tr = Tf / agm(1, Math.cos(th0 / 2));
+        const rad = th0, n = (z, k = 3) => z.toFixed(k);
+        const text =
+          `start angle ${thBox.value}° = ${n(rad)} rad:  sin = ${n(Math.sin(rad))},  tan = ${n(Math.tan(rad))}\n` +
+          `small-angle formula: T = 2π√(L/g) = ${n(Tf, 2)} s\n` +
+          `real period (no approximation): ${n(Tr, 2)} s   (${((Tr / Tf - 1) * 100).toFixed(1)} % longer)\n` +
+          (th0 <= 15 * Math.PI / 180 ? 'small swing: sin θ ≈ θ ≈ tan θ, and the formula is very good' : 'big swing: sin θ is noticeably less than θ, so the formula is off');
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Swing with the full equation, in small steps. Stop when the page has changed.
+    let last = performance.now();
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.min((now - last) / 1000, 0.05), L = Number(lBox.value);
+      last = now;
+      for (let k = 0; k < 20; k++) { w += -(G / L) * Math.sin(th) * dt / 20; th += w * dt / 20; }
+      board.redraw();
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+    [lBox, thBox].forEach((b) => b.addEventListener('input', () => { reset(); board.redraw(); }));
+  })();
+</script>

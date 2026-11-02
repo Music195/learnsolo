@@ -1,0 +1,215 @@
+<!-- tags: Universal Gravitation -->
+<!-- =====================================================================
+     NOTE: Circular and Elliptical Orbits
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Universal Gravitation">Circular and Elliptical Orbits</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Circles use the equation of motion; ellipses use Kepler's second law plus energy</h2>
+    <p>A typical exam problem has two orbits around a planet of mass $M$:</p>
+    <ul>
+      <li><strong>Orbit A</strong>: a circle of radius $r$.</li>
+      <li><strong>Orbit B</strong>: an ellipse that touches A at its nearest point P (distance $r$) and reaches out to its furthest point Q (distance $3r$).</li>
+    </ul>
+    <p>The questions usually go in the same order, and each one has its own tool:</p>
+    <ol>
+      <li>Speed on the circle: <strong>equation of motion</strong> for circular motion.</li>
+      <li>Period on the circle: distance round ÷ speed.</li>
+      <li>Ratio of speeds at P and Q: <strong>Kepler's second law</strong>.</li>
+      <li>The actual speeds at P and Q: second law <strong>together with conservation of energy</strong>. Whenever you use the second law for an ellipse, expect to pair it with energy.</li>
+      <li>Period of the ellipse: <strong>Kepler's third law</strong>, comparing B with A.</li>
+    </ol>
+  </section>
+
+  <!-- FORMULA: results for orbit B with far distance kr -->
+  <div class="note-formula">
+    <h3>Circle of radius $r$, and an ellipse from $r$ (P) out to $kr$ (Q)</h3>
+    <div class="formula-main">$$v_A = \sqrt{\frac{GM}{r}} \qquad v_P = \sqrt{\frac{2k}{1+k}}\,v_A \qquad v_Q = \frac{v_P}{k} \qquad T_B = \left(\frac{1+k}{2}\right)^{3/2}T_A$$</div>
+    <p class="symbols">$T_A = \dfrac{2\pi r}{v_A} = 2\pi r\sqrt{\dfrac{r}{GM}}$. Semi-major axis of B: $a = \dfrac{r + kr}{2}$. With $k = 3$: $v_P = \sqrt{\dfrac{3GM}{2r}}$, $v_Q = \sqrt{\dfrac{GM}{6r}}$, $a = 2r$, $T_B = 2\sqrt2\,T_A$.</p>
+  </div>
+
+  <!-- PROOF: speeds on the ellipse -->
+  <div class="note-proof">
+    <ol>
+      <li><strong>Circle A</strong>: $m\dfrac{v_A^2}{r} = G\dfrac{Mm}{r^2}$, so $v_A = \sqrt{GM/r}$.</li>
+      <li><strong>Second law</strong> at P and Q: $\tfrac12 r\,v_P = \tfrac12 (kr)\,v_Q$, so $v_P = k\,v_Q$.</li>
+      <li><strong>Energy</strong> from P to Q: $\tfrac12 mv_P^2 - G\dfrac{Mm}{r} = \tfrac12 mv_Q^2 - G\dfrac{Mm}{kr}$.</li>
+      <li>Put in $v_P = kv_Q$: $\tfrac12 v_Q^2(k^2 - 1) = \dfrac{GM}{r}\left(1 - \dfrac1k\right) = \dfrac{GM}{r}\cdot\dfrac{k - 1}{k}$. Divide by $(k - 1)$: $v_Q^2 = \dfrac{2GM}{rk(k + 1)}$.</li>
+      <li>Then $v_P^2 = k^2v_Q^2 = \dfrac{2k}{k + 1}\cdot\dfrac{GM}{r}$. For $k = 3$: $v_Q^2 = \dfrac{GM}{6r}$ and $v_P^2 = \dfrac{3GM}{2r}$.</li>
+      <li><strong>Third law</strong> (same planet, so the same constant): $\dfrac{T_B^2}{a^3} = \dfrac{T_A^2}{r^3}$, so $T_B = \left(\dfrac{a}{r}\right)^{3/2}T_A$. Solve for $T_B$ <em>before</em> putting numbers in; it keeps the algebra short.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: two orbits; code at the bottom -->
+  <div class="note-demo">
+    <h2>Orbit A (circle, radius $r$) and orbit B (ellipse from $r$ out to $kr$)</h2>
+    <div class="controls">
+      <label>furthest distance of B, $k$ = <input type="range" id="orK" min="1.5" max="5" step="0.5" value="3"></label>
+      <button type="button" id="orGo">Again</button>
+    </div>
+    <canvas id="orCanvas"></canvas>
+    <div class="output table-text" id="orOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A satellite moves on circle A (radius $r$) round a planet of mass $M$. Find its speed and period. ($G$ is the gravitational constant.)</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$m\dfrac{v_A^2}{r} = G\dfrac{Mm}{r^2}$ gives $v_A = \sqrt{GM/r}$.</li>
+        <li>$T_A = \dfrac{2\pi r}{v_A} = 2\pi r\sqrt{\dfrac{r}{GM}}$.</li>
+      </ol>
+      <p class="answer">$v_A = \sqrt{\dfrac{GM}{r}}$, $T_A = 2\pi r\sqrt{\dfrac{r}{GM}}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Orbit B goes from P (distance $r$) to Q (distance $3r$). How many times faster is the satellite at P than at Q?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Second law: $\tfrac12 r v_P = \tfrac12 (3r) v_Q$.</li>
+      </ol>
+      <p class="answer">$v_P = 3v_Q$: 3 times faster at P</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Find the speed at Q on orbit B.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Energy: $\tfrac12 m(3v_Q)^2 - \dfrac{GMm}{r} = \tfrac12 mv_Q^2 - \dfrac{GMm}{3r}$.</li>
+        <li>$4v_Q^2 = \dfrac{2GM}{3r}$, so $v_Q^2 = \dfrac{GM}{6r}$.</li>
+      </ol>
+      <p class="answer">$v_Q = \sqrt{\dfrac{GM}{6r}}$ (and $v_P = 3v_Q = \sqrt{\dfrac{3GM}{2r}}$)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Find the period of orbit B.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Semi-major axis: $a = \dfrac{r + 3r}{2} = 2r$.</li>
+        <li>Third law: $T_B = \left(\dfrac{2r}{r}\right)^{3/2}T_A = 2\sqrt2\,T_A = 4\sqrt2\,\pi r\sqrt{\dfrac{r}{GM}}$.</li>
+      </ol>
+      <p class="answer">$T_B = 4\sqrt2\,\pi r\sqrt{\dfrac{r}{GM}}$, about $2.8$ times $T_A$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">A satellite on circle A wants to move onto orbit B. At P, should its engine speed it up or slow it down, and by how much?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>On A at P: $v_A = \sqrt{GM/r}$. On B at P: $v_P = \sqrt{3GM/(2r)} = \sqrt{1.5}\,v_A$.</li>
+      </ol>
+      <p class="answer">Speed up, to about $1.22$ times its circular speed</p>
+    </details>
+  </div>
+
+  <!-- WARNING: the second law alone is not enough -->
+  <div class="note-warning">
+    The second law only gives the <strong>ratio</strong> $v_P : v_Q$. To find the actual speeds you must also write conservation of energy, with $U = -GMm/r$ (not $mgh$).
+  </div>
+
+  <!-- TIP: rationalise at the end -->
+  <div class="note-tip">
+    Answers like $\dfrac{1}{\sqrt{6}}$ look neater rationalised: $\dfrac{\sqrt6}{6}$. Do that last, after everything has cancelled.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Circle: equation of motion gives $v = \sqrt{GM/r}$; then $T = 2\pi r/v$.</li>
+      <li>Ellipse: second law (ratio of speeds) + energy (actual speeds).</li>
+      <li>Ellipse period: third law with $a = (r_{\text{near}} + r_{\text{far}})/2$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Two orbits" demo (the TRY IT block above).
+  // Scaled units: r = 1 and GM = 1, so the circle speed v_A = 1 and T_A = 2π.
+  // Orbit B: an ellipse with the planet at a focus, nearest point P at distance 1
+  // (on the left) and furthest point Q at distance k (on the right). Its position in
+  // time comes from Kepler's equation M = E − e sin E. Both satellites start at P.
+  // Time runs at 2 units per second. r is drawn as 70 pixels.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('orCanvas');
+    const output = document.getElementById('orOutput');
+    const kBox = document.getElementById('orK');
+    const PL = [120, 170], S = 70, GREEN = '#16a34a', BLUE = '#2563eb', RED = '#dc2626', THING = '#475569';
+    let t = 0, lastText = '';
+
+    function solveE(M, e) {
+      let E = M;
+      for (let k = 0; k < 20; k++) E -= (E - e * Math.sin(E) - M) / (1 - e * Math.cos(E));
+      return E;
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const k = Number(kBox.value), a = (1 + k) / 2, e = (k - 1) / (k + 1), b = a * Math.sqrt(1 - e * e);
+        // the ellipse, measured from the planet: x = −a(cos E − e), y = b sin E
+        const atB = (E) => [PL[0] - a * (Math.cos(E) - e) * S, PL[1] - b * Math.sin(E) * S];
+        let prev = null;
+        for (let j = 0; j <= 96; j++) { const q = atB(j * Math.PI / 48); if (prev) g.seg(prev, q, '#fca5a5', { width: 1.5 }); prev = q; }
+        g.circle(PL, S, '#93c5fd');
+        g.circle(PL, 16, GREEN, { fill: 'rgba(34, 197, 94, 0.35)' });
+        g.text(PL, 'M', GREEN);
+        g.text([PL[0] - S - 14, PL[1]], 'P', THING);
+        g.text([PL[0] + k * S + 14, PL[1]], 'Q', THING);
+        g.text([PL[0], PL[1] - S - 12], 'A', BLUE);
+        g.text([PL[0] + (k - 1) / 2 * S, PL[1] - b * S - 12], 'B', RED);
+        // satellite on A (period 2π) and on B (period 2π·a^1.5), both starting at P
+        const A = [PL[0] - Math.cos(t) * S, PL[1] - Math.sin(t) * S];
+        g.circle(A, 6, BLUE, { fill: BLUE });
+        const TB = 2 * Math.PI * Math.pow(a, 1.5);
+        const Bp = atB(solveE(2 * Math.PI * ((t / TB) % 1), e));
+        g.circle(Bp, 6, RED, { fill: RED });
+
+        const vP = Math.sqrt(2 * k / (1 + k)), vQ = vP / k;
+        const text =
+          `A (circle): v_A = √(GM/r),  T_A = 2πr√(r/GM)\n` +
+          `B: a = (r + ${k}r)/2 = ${a.toFixed(2)}r\n` +
+          `2nd law: v_P = ${k} × v_Q;  with energy: v_P = ${vP.toFixed(3)} v_A,  v_Q = ${vQ.toFixed(3)} v_A\n` +
+          `3rd law: T_B = (a/r)^(3/2) × T_A = ${Math.pow(a, 1.5).toFixed(2)} T_A`;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Move both satellites. Stop when the page has changed.
+    let last = performance.now();
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      t += 2 * dt;
+      board.redraw();
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+    const restart = () => { t = 0; board.redraw(); };
+    kBox.addEventListener('input', restart);
+    document.getElementById('orGo').addEventListener('click', restart);
+  })();
+</script>

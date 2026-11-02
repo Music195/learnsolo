@@ -27,7 +27,8 @@ COURSES = {
     "math-c": {"name": "Math C", "subject": "Mathematics"},
     # Mechanics Basic: motion, forces, Newton's laws, equations of motion,
     # falling and projectile motion, work and energy,
-    # impulse and momentum
+    # impulse and momentum, inertial force, circular motion,
+    # universal gravitation, simple harmonic motion
     "mechanics-basic": {"name": "Mechanics Basic", "subject": "Physics"},
 }
 

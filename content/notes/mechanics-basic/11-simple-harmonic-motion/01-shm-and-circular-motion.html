@@ -1,0 +1,210 @@
+<!-- tags: Simple Harmonic Motion -->
+<!-- =====================================================================
+     NOTE: Simple Harmonic Motion as a Shadow of Circular Motion
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Simple Harmonic Motion">Simple Harmonic Motion as a Shadow of Circular Motion</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Watch uniform circular motion from the side and you see simple harmonic motion</h2>
+    <p>A ball goes round a circle at a steady rate. Shine a light on it from the side so its shadow falls on a wall: the shadow moves up and down, fastest in the middle and stopping for an instant at each end. That back-and-forth motion is <strong>simple harmonic motion</strong> (SHM). In one phrase: <em>SHM is the projection of uniform circular motion</em>.</p>
+    <p>Everything about SHM comes from the circle:</p>
+    <ul>
+      <li>The circle's radius becomes the <strong>amplitude</strong> $A$, the furthest the object gets from the centre.</li>
+      <li>The angular velocity $\omega$ becomes the <strong>angular frequency</strong>. The period is still $T = 2\pi/\omega$.</li>
+      <li>The circle's velocity ($A\omega$ along the tangent) and acceleration ($A\omega^2$ to the centre) cast shadows too; those shadows are the velocity and acceleration of the SHM.</li>
+    </ul>
+    <p>The key result: the acceleration is always $-\omega^2$ times the position. Turned around, this is the test for SHM: if an equation of motion can be rearranged into $a = -(\text{a positive constant}) \times x$, the motion is simple harmonic.</p>
+  </section>
+
+  <!-- FORMULA: the SHM equations -->
+  <div class="note-formula">
+    <h3>Simple harmonic motion starting at the centre, moving in the $+$ direction</h3>
+    <div class="formula-main">$$x = A\sin\omega t \qquad v = A\omega\cos\omega t \qquad a = -A\omega^2\sin\omega t = -\omega^2x$$</div>
+    <p class="symbols">$A$: amplitude (m). $\omega$: angular frequency (rad/s). $T = 2\pi/\omega$: period. <strong>The SHM condition</strong>: $a = -\omega^2x$. Other starting points just shift the angle (for example, starting at the top end: $x = A\cos\omega t$).</p>
+  </div>
+
+  <!-- PROOF: projecting the circle -->
+  <div class="note-proof">
+    <ol>
+      <li><strong>Position.</strong> Start the ball on the circle at the level of the centre at $t = 0$. After time $t$ it has turned through $\theta = \omega t$. Its height above the centre is $A\sin\omega t$, so the shadow is at $x = A\sin\omega t$.</li>
+      <li><strong>Velocity.</strong> On the circle the velocity is $A\omega$ along the tangent. The tangent makes the angle $\omega t$ with the vertical, so its vertical part (the shadow's velocity) is $v = A\omega\cos\omega t$.</li>
+      <li><strong>Acceleration.</strong> On the circle the acceleration is $A\omega^2$ towards the centre. Its vertical part has size $A\omega^2\sin\omega t$ and points <em>down</em> when the ball is above the centre, so $a = -A\omega^2\sin\omega t$.</li>
+      <li>Since $x = A\sin\omega t$, this is $a = -\omega^2x$.</li>
+      <li>With calculus you can check the chain directly: differentiate $x$ to get $v$ (the chain rule brings out $\omega$), and differentiate again: $\cos$ becomes $-\sin$ and another $\omega$ comes out. Two differentiations bring $\sin\omega t$ back, now with $-\omega^2$ in front.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: the circle and its shadow; code at the bottom -->
+  <div class="note-demo">
+    <h2>A point on a circle, its shadow, and the shadow's graph</h2>
+    <div class="controls">
+      <label>amplitude $A$ (m) = <input type="range" id="shA" min="0.4" max="1" step="0.1" value="0.8"></label>
+      <label>$\omega$ (rad/s) = <input type="range" id="shW" min="0.5" max="4" step="0.1" value="2"></label>
+    </div>
+    <canvas id="shCanvas"></canvas>
+    <div class="output table-text" id="shOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">An object moves with $x = 0.20\sin 5t$ (metres, seconds). Find the amplitude, angular frequency and period.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Compare with $x = A\sin\omega t$: $A = 0.20\ \mathrm{m}$, $\omega = 5\ \mathrm{rad/s}$.</li>
+        <li>$T = 2\pi/\omega = 2\pi/5$.</li>
+      </ol>
+      <p class="answer">$A = 0.20\ \mathrm{m}$, $\omega = 5.0\ \mathrm{rad/s}$, $T \approx 1.3\ \mathrm{s}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">For the motion in Example 1, find the largest speed and the largest acceleration, and where each happens.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Largest speed $A\omega = 0.20 \times 5 = 1.0\ \mathrm{m/s}$, when $\cos\omega t = \pm1$: at the centre $x = 0$.</li>
+        <li>Largest acceleration $A\omega^2 = 0.20 \times 25 = 5.0\ \mathrm{m/s^2}$, when $\sin\omega t = \pm1$: at the ends $x = \pm A$.</li>
+      </ol>
+      <p class="answer">$1.0\ \mathrm{m/s}$ at the centre; $5.0\ \mathrm{m/s^2}$ at the ends</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">An object's equation of motion is $2.0\,a = -18x$. Is it SHM? If so, find $\omega$ and $T$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$a = -9.0\,x$: the form $a = -\omega^2x$, so yes, with $\omega^2 = 9.0$.</li>
+        <li>$\omega = 3.0\ \mathrm{rad/s}$, $T = 2\pi/3.0$.</li>
+      </ol>
+      <p class="answer">SHM with $\omega = 3.0\ \mathrm{rad/s}$, $T \approx 2.1\ \mathrm{s}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">An object in SHM with $\omega = 4.0\ \mathrm{rad/s}$ is at $x = -0.050\ \mathrm{m}$. Find its acceleration.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$a = -\omega^2x = -16 \times (-0.050)$.</li>
+      </ol>
+      <p class="answer">$a = +0.80\ \mathrm{m/s^2}$: always pointing back towards the centre</p>
+    </details>
+  </div>
+
+  <!-- WARNING: the minus sign -->
+  <div class="note-warning">
+    Don't drop the minus sign in $a = -\omega^2x$. It says the acceleration always points <strong>back towards the centre</strong>: on the $+$ side it is negative, on the $-$ side positive. Without the minus sign the object would run away instead of oscillating.
+  </div>
+
+  <!-- TIP: amplitude vs radius -->
+  <div class="note-tip">
+    The words change, the maths doesn't: radius → <strong>amplitude</strong>, angular velocity → <strong>angular frequency</strong>. When stuck on an SHM question, draw the reference circle and think about the ball going round it.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>SHM is the projection (shadow) of uniform circular motion.</li>
+      <li>$x = A\sin\omega t$, $v = A\omega\cos\omega t$, $a = -\omega^2x$.</li>
+      <li>Test for SHM: rearrange the equation of motion into $a = -\omega^2x$; then $T = 2\pi/\omega$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Shadow of circular motion" demo (the TRY IT block above).
+  // Left: a point goes round a circle of radius A at angular velocity ω, starting at
+  // the right-hand side (level with the centre) and moving up. Middle: its shadow on
+  // a vertical line, with the velocity (blue) and acceleration (red) of the shadow.
+  // Right: the graph of the shadow's position x against time (the last 4 seconds).
+  // 110 pixels per metre; up is +. Arrows: 25 pixels per m/s and 8 per m/s².
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('shCanvas');
+    const output = document.getElementById('shOutput');
+    const aBox = document.getElementById('shA'), wBox = document.getElementById('shW');
+    const C = [110, 170], SX = 260, GX0 = 290, GX1 = 510, PXM = 110, KV = 25, KA = 8, SPAN = 4;
+    const BLUE = '#2563eb', RED = '#dc2626', THING = '#475569', PURPLE = '#7c3aed';
+    let t = 0, lastText = '';
+
+    function arrowV(g, p, dy, color, label, side) {
+      if (Math.abs(dy) < 3) return;
+      const q = [p[0], p[1] + dy], d = Math.sign(dy);
+      g.seg(p, q, color, { width: 2.5 });
+      g.poly([q, [q[0] - 5, q[1] - 9 * d], [q[0] + 5, q[1] - 9 * d]], color);
+      g.text([q[0] + side * 12, q[1] - d * 6], label, color);
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const A = Number(aBox.value), w = Number(wBox.value), R = A * PXM, ph = w * t;
+        // the reference circle and the point going round it
+        g.circle(C, R, '#cbd5e1');
+        g.dot(C, THING);
+        const P = [C[0] + R * Math.cos(ph), C[1] - R * Math.sin(ph)];
+        g.seg(C, P, '#cbd5e1', { width: 1, dash: true });
+        g.circle(P, 7, PURPLE, { fill: '#c4b5fd' });
+        // the shadow on the vertical line
+        g.seg([SX, C[1] - 120], [SX, C[1] + 120], THING, { width: 1.5 });
+        g.text([SX + 12, C[1] - 124], 'x', THING);
+        g.seg([SX - 6, C[1]], [SX + 6, C[1]], THING, { width: 1.5 });
+        const S = [SX, P[1]];
+        g.seg(P, S, '#cbd5e1', { width: 1, dash: true });
+        g.circle(S, 8, BLUE, { fill: '#93c5fd' });
+        const x = A * Math.sin(ph), v = A * w * Math.cos(ph), a = -w * w * x;
+        arrowV(g, [SX - 16, S[1]], -v * KV, BLUE, 'v', -1);
+        arrowV(g, [SX + 16, S[1]], -a * KA, RED, 'a', 1);
+        // x–t graph of the last SPAN seconds (newest on the left, at the shadow)
+        g.seg([GX0, C[1]], [GX1, C[1]], '#cbd5e1', { width: 1 });
+        g.text([GX1 - 4, C[1] + 14], 'earlier →', '#94a3b8');
+        let prev = null;
+        for (let k = 0; k <= 120; k++) {
+          const tt = t - SPAN * k / 120;
+          if (tt < 0) break;
+          const q = [GX0 + (GX1 - GX0) * k / 120, C[1] - A * Math.sin(w * tt) * PXM];
+          if (prev) g.seg(prev, q, BLUE, { width: 2 });
+          prev = q;
+        }
+        g.seg(S, [GX0, S[1]], '#cbd5e1', { width: 1, dash: true });
+
+        const n = (z) => z.toFixed(2).replace('-', '−');
+        const text =
+          `x = A sin ωt = ${n(x)} m     (A = ${A.toFixed(1)} m, ω = ${w.toFixed(1)} rad/s)\n` +
+          `v = Aω cos ωt = ${n(v)} m/s   (largest Aω = ${n(A * w)}, at the centre)\n` +
+          `a = −ω²x = ${n(a)} m/s²   (always back towards the centre)\n` +
+          `period T = 2π/ω = ${n(2 * Math.PI / w)} s`;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Turn the point round. Stop when the page has changed.
+    let last = performance.now();
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      t += dt;
+      board.redraw();
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+    const restart = () => { t = 0; board.redraw(); };
+    [aBox, wBox].forEach((b) => b.addEventListener('input', restart));
+  })();
+</script>
