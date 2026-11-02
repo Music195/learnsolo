@@ -1,0 +1,190 @@
+<!-- tags: Motion -->
+<!-- =====================================================================
+     NOTE: Negative Acceleration and Using the v–t Graph
+           (負の加速度・v-t グラフの利用)
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Motion">Negative Acceleration</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Slow down, stop, come back: all with one constant acceleration</h2>
+    <p>Roll a ball up a slope. It slows down, stops for an instant at the top, then rolls back, faster and faster. Taking "up the slope" as positive, its acceleration is negative and <strong>constant</strong> the whole time. It is one uniformly accelerated motion, not three separate ones.</p>
+    <p>On the $v$–$t$ graph this is a single straight line sloping down. It crosses the $t$-axis at the turning point ($v = 0$). Above the axis the ball moves up the slope; below it, it moves back down.</p>
+    <p>This is where <strong>displacement</strong> and <strong>distance travelled</strong> (note 01) part ways. The displacement is the area above the axis <strong>minus</strong> the area below; the distance is the two areas <strong>added</strong>.</p>
+  </section>
+
+  <!-- FORMULA: areas -->
+  <div class="note-formula">
+    <h3>Reading the $v$–$t$ graph when it crosses the axis</h3>
+    <div class="formula-main">$$\text{displacement} = S_{\text{above}} - S_{\text{below}} \qquad \text{distance} = S_{\text{above}} + S_{\text{below}}$$</div>
+    <p class="symbols">$S_{\text{above}}$, $S_{\text{below}}$: the areas between the $v$–$t$ graph and the $t$-axis, above and below it. The turning point is where $v = 0$: $t = -\dfrac{v_0}{a}$.</p>
+  </div>
+
+  <!-- PROOF: why subtract -->
+  <div class="note-proof">
+    <ol>
+      <li>Area under the $v$–$t$ graph is displacement (note 04). Where $v &lt; 0$, each thin strip $v\,\Delta t$ is negative: the object moves in the negative direction.</li>
+      <li>So the total displacement adds the area above the axis and the (negative) area below: $S_{\text{above}} - S_{\text{below}}$.</li>
+      <li>Distance travelled has no direction: every strip counts as positive, so it is $S_{\text{above}} + S_{\text{below}}$.</li>
+      <li>The turning point is where the line crosses the axis: $0 = v_0 + at$, so $t = -v_0/a$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: ball rolled up a slope; code at the bottom -->
+  <div class="note-demo">
+    <h2>A ball rolled up a slope ($a = -2.0\ \mathrm{m/s^2}$, up the slope is $+$): set $v_0$ and move $t$</h2>
+    <div class="controls">
+      <label>$v_0$ = <input type="range" id="naV0" min="2" max="8" step="1" value="6"></label>
+      <label>$t$ = <input type="range" id="naT" min="0" max="6" step="0.1" value="5"></label>
+    </div>
+    <canvas id="naCanvas"></canvas>
+    <div class="output table-text" id="naOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A cart starts from rest. Its $v$–$t$ graph rises in a straight line to $6.0\ \mathrm{m/s}$ at $3.0\ \mathrm{s}$, then falls in a straight line to $0$ at $5.0\ \mathrm{s}$. Find the two accelerations, and the displacement and distance at $5.0\ \mathrm{s}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$0$–$3\ \mathrm{s}$: $a_1 = \dfrac{6.0 - 0}{3.0} = 2.0$. $3$–$5\ \mathrm{s}$: $a_2 = \dfrac{0 - 6.0}{2.0} = -3.0$ (after − before!).</li>
+        <li>Areas: $\tfrac{1}{2} \times 3.0 \times 6.0 = 9.0$ and $\tfrac{1}{2} \times 2.0 \times 6.0 = 6.0$, both above the axis.</li>
+        <li>It never turns back, so displacement and distance are both $9.0 + 6.0$.</li>
+      </ol>
+      <p class="answer">$a_1 = 2.0\ \mathrm{m/s^2}$, $a_2 = -3.0\ \mathrm{m/s^2}$; displacement $+15\ \mathrm{m}$, distance $15\ \mathrm{m}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">A cart's $v$–$t$ graph is a straight line from $6.0\ \mathrm{m/s}$ at $t = 0$, through $0$ at $3.0\ \mathrm{s}$, continuing down to $5.0\ \mathrm{s}$. Find the acceleration, the velocity at $5.0\ \mathrm{s}$, and the displacement and distance at $5.0\ \mathrm{s}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$a = \dfrac{0 - 6.0}{3.0} = -2.0\ \mathrm{m/s^2}$, the same for the whole straight line.</li>
+        <li>At $5.0\ \mathrm{s}$: $v = 6.0 - 2.0 \times 5.0 = -4.0\ \mathrm{m/s}$. (Or by similar triangles: the two triangles have sides in the ratio $3 : 2$, so $6 : 4$.)</li>
+        <li>Area above: $\tfrac{1}{2} \times 3.0 \times 6.0 = 9.0$ (moving forwards). Area below: $\tfrac{1}{2} \times 2.0 \times 4.0 = 4.0$ (coming back).</li>
+        <li>Displacement $= 9.0 - 4.0 = 5.0$; distance $= 9.0 + 4.0 = 13$.</li>
+      </ol>
+      <p class="answer">$a = -2.0\ \mathrm{m/s^2}$, $v = -4.0\ \mathrm{m/s}$; displacement $+5.0\ \mathrm{m}$, distance $13\ \mathrm{m}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A ball is thrown straight up at $14.7\ \mathrm{m/s}$ ($a = -9.8\ \mathrm{m/s^2}$, up positive). When does it reach the top, how high does it go, and what is its velocity when it is back at the hand?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Top: $v = 0$, so $0 = 14.7 - 9.8t$ and $t = 1.5\ \mathrm{s}$.</li>
+        <li>Height: area of the triangle above the axis, $\tfrac{1}{2} \times 1.5 \times 14.7 \approx 11.0\ \mathrm{m}$.</li>
+        <li>Back at the hand the displacement is $0$, so the area below must equal the area above: another $1.5\ \mathrm{s}$, ending at $v = 14.7 - 9.8 \times 3.0 = -14.7$.</li>
+      </ol>
+      <p class="answer">$1.5\ \mathrm{s}$; about $11\ \mathrm{m}$; $-14.7\ \mathrm{m/s}$ (same speed, now downwards)</p>
+    </details>
+  </div>
+
+  <!-- WARNING: at the top, a is not zero -->
+  <div class="note-warning">
+    At the turning point the <strong>velocity</strong> is $0$, but the <strong>acceleration</strong> is not: it is still $-2.0\ \mathrm{m/s^2}$ (or $-9.8$ for a thrown ball). If $a$ were $0$ there, the ball would stay at the top forever.
+  </div>
+
+  <!-- TIP: picture the motion -->
+  <div class="note-tip">
+    Before calculating, turn the graph into a picture on an $x$-axis: "forwards 9 m, stop, back 4 m". Then displacement and distance are easy to see. The same shape fits a ball rolled up a slope and a ball thrown straight up.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>One constant negative acceleration can slow an object, stop it and bring it back.</li>
+      <li>The turning point is where the $v$–$t$ line crosses the axis; there $v = 0$ but $a \ne 0$.</li>
+      <li>Displacement $=$ area above $-$ area below; distance $=$ area above $+$ area below.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Ball rolled up a slope" demo (the TRY IT block above).
+  // a = −2.0 m/s² throughout (up the slope is +). The sliders set v0 and the time t.
+  // Top: the ball on its track (drawn flat; right = up the slope). The blue arrow is
+  // the trip up, the red arrow the trip back down.
+  // Bottom: the v–t graph, with the area above the axis (blue) and below it (red)
+  // shaded up to time t.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const output = document.getElementById('naOutput');
+    const v0Box = document.getElementById('naV0'), tBox = document.getElementById('naT');
+    const A = -2.0;
+    const TRACK = 90, X0 = 304, MX = 11;               // track height; start position; pixels per metre
+    const T0 = 60, PT = 70, V0LINE = 235, PV = 8;      // v–t graph: t = 0, px per s, v = 0, px per m/s
+    const UP = '#2563eb', BACK = '#dc2626', THING = '#475569';
+    const fix = (n) => (Math.abs(n) < 0.005 ? 0 : n).toFixed(1).replace('-', '−');   // a real minus sign
+
+    function arrow(g, p, q, color) {
+      if (Math.abs(q[0] - p[0]) < 3) return;
+      g.seg(p, q, color, { width: 3 });
+      const d = Math.sign(q[0] - p[0]);
+      g.poly([q, [q[0] - 10 * d, q[1] - 5], [q[0] - 10 * d, q[1] + 5]], color);
+    }
+
+    const board = NoteGeom.board(document.getElementById('naCanvas'), {
+      points: {},
+      draw(g) {
+        const v0 = Number(v0Box.value), t = Number(tBox.value);
+        const turn = -v0 / A;                            // time of the turning point
+        const pos = (s) => v0 * s + 0.5 * A * s * s;
+        const v = v0 + A * t, x = pos(t);
+        const top = pos(Math.min(t, turn));             // furthest point reached so far
+        const above = top, below = t > turn ? pos(turn) - x : 0;
+
+        // --- Top: the track and the ball ---
+        g.seg([30, TRACK + 12], [490, TRACK + 12], THING, { width: 3 });
+        g.text([470, TRACK + 28], 'up the slope →', '#94a3b8');
+        g.seg([X0, TRACK - 30], [X0, TRACK + 18], THING, { dash: true, width: 1 });
+        g.text([X0, TRACK + 28], 'start', THING);
+        arrow(g, [X0, 40], [X0 + top * MX, 40], UP);                       // trip up
+        if (t > turn) arrow(g, [X0 + top * MX, 56], [X0 + x * MX, 56], BACK);  // trip back
+        g.circle([X0 + x * MX, TRACK], 10, THING, { fill: '#fde68a' });
+
+        // --- Bottom: the v–t graph ---
+        const P = (s, vv) => [T0 + s * PT, V0LINE - vv * PV];
+        g.seg([T0, V0LINE], [T0 + 6.3 * PT, V0LINE], THING, { width: 1.5 });
+        g.seg([T0, V0LINE - 85], [T0, V0LINE + 90], THING, { width: 1.5 });
+        for (let k = 1; k <= 6; k++) g.text([T0 + k * PT, V0LINE + 98], String(k), '#94a3b8');   // time numbers along the bottom
+        g.text([T0 + 6.3 * PT, V0LINE - 12], 't (s)', THING);
+        g.text([T0 - 28, V0LINE - 80], 'v', THING);
+        g.text([T0 - 14, V0LINE - v0 * PV], String(v0), '#94a3b8');
+        // shaded areas up to t: above the axis until the turn, below after it
+        const tA = Math.min(t, turn);
+        if (tA > 0) g.poly([P(0, 0), P(0, v0), P(tA, v0 + A * tA), P(tA, 0)], 'rgba(37, 99, 235, 0.25)');
+        if (t > turn) g.poly([P(turn, 0), P(t, v), P(t, 0)], 'rgba(220, 38, 38, 0.25)');
+        // area labels inside each shaded part, kept at least 14 px away from the axis
+        if (above > 0.3) g.text([T0 + tA / 3 * PT, V0LINE - Math.max(14, v0 / 3 * PV)], `+${fix(above)} m`, UP);
+        if (below > 0.3) g.text([T0 + (turn + 2 * t) / 3 * PT, V0LINE + Math.max(14, -v / 3 * PV)], `−${fix(below)} m`, BACK);
+        g.seg(P(0, v0), P(6, v0 + A * 6), '#7c3aed', { width: 3 });
+        g.seg([T0 + t * PT, V0LINE - 85], [T0 + t * PT, V0LINE + 90], '#94a3b8', { dash: true, width: 1 });
+        g.circle(P(t, v), 4, '#7c3aed', { fill: '#7c3aed' });
+
+        output.textContent =
+          `v0 = ${v0} m/s,  a = −2.0 m/s²;  at t = ${t.toFixed(1)} s:  v = ${fix(v)} m/s` +
+          (Math.abs(v) < 0.05 ? '  (the turning point)' : v > 0 ? '  (going up)' : '  (coming back)') + '\n' +
+          `turns back at t = ${fix(turn)} s, after ${fix(pos(turn))} m up the slope\n` +
+          `area above (up) = ${fix(above)} m,   area below (back) = ${fix(below)} m\n` +
+          `displacement = ${fix(above)} − ${fix(below)} = ${fix(x)} m     distance = ${fix(above)} + ${fix(below)} = ${fix(above + below)} m`;
+      },
+    });
+
+    v0Box.addEventListener('input', board.redraw);
+    tBox.addEventListener('input', board.redraw);
+  })();
+</script>

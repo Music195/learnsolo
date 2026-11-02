@@ -1,0 +1,164 @@
+<!-- tags: Motion -->
+<!-- =====================================================================
+     NOTE: Speed and Velocity (速さと速度)
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helpers /static/js/demos/geom.js and plot.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Motion">Speed and Velocity</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Velocity is displacement per second; speed is its size</h2>
+    <p>In everyday life we say "speed". Physics separates two ideas. <strong>Speed</strong> (速さ) is the distance travelled per unit time: a scalar, never negative. <strong>Velocity</strong> (速度) is the <strong>displacement</strong> per unit time: a vector, so on a line it has a sign ($+$ one way, $-$ the other).</p>
+    <p>Driving from Tokyo to Aomori, about $700\ \mathrm{km}$, takes about 10 hours: roughly $70\ \mathrm{km/h}$. But nobody drives at exactly $70$ the whole way: there are red lights and motorways. $70\ \mathrm{km/h}$ is the <strong>average velocity</strong> (平均の速度) over the whole trip.</p>
+    <p>The speedometer shows something else: the velocity at one instant, the <strong>instantaneous velocity</strong> (瞬間の速度). It is the average velocity over a time interval so short that it shrinks towards zero.</p>
+  </section>
+
+  <!-- FORMULA: average and instantaneous velocity -->
+  <div class="note-formula">
+    <h3>Average and instantaneous velocity</h3>
+    <div class="formula-main">$$\bar{v} = \frac{x_2 - x_1}{t_2 - t_1} = \frac{\Delta x}{\Delta t} \qquad\qquad v = \lim_{\Delta t \to 0} \frac{\Delta x}{\Delta t} = \frac{dx}{dt}$$</div>
+    <p class="symbols">$x_1, x_2$ positions at times $t_1, t_2$; $\bar{v}$ ("v bar") average velocity; $v$ instantaneous velocity, in $\mathrm{m/s}$. On an $x$–$t$ graph, $\bar{v}$ is the slope of the line through two points and $v$ is the slope of the tangent.</p>
+  </div>
+
+  <!-- PROOF: from the x–t graph -->
+  <div class="note-proof">
+    <ol>
+      <li>Plot position $x$ against time $t$. Mark the points $(t_1, x_1)$ and $(t_2, x_2)$ and join them with a straight line.</li>
+      <li>Its slope is $\dfrac{x_2 - x_1}{t_2 - t_1}$: displacement over time, the average velocity.</li>
+      <li>Now slide $t_2$ closer and closer to $t_1$. The line through the two points turns towards the <strong>tangent</strong> at $t_1$.</li>
+      <li>So the instantaneous velocity is the slope of the tangent: $v = \lim_{\Delta t \to 0} \dfrac{\Delta x}{\Delta t}$, which in maths is the derivative $\dfrac{dx}{dt}$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: secant and tangent on an x–t graph; code at the bottom -->
+  <div class="note-demo">
+    <h2>Drag P₁ and P₂ along the $x$–$t$ graph; bring P₂ close to P₁</h2>
+    <canvas id="svCanvas"></canvas>
+    <div class="output table-text" id="svOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A car leaves Tokyo at 12:00 and arrives in Aomori, $700\ \mathrm{km}$ away, at 22:00. Find its average speed in $\mathrm{km/h}$ and in $\mathrm{m/s}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\Delta t = 22 - 12 = 10\ \mathrm{h}$, so $\bar{v} = \dfrac{700}{10} = 70\ \mathrm{km/h}$.</li>
+        <li>$70\ \mathrm{km/h} = \dfrac{70\,000\ \mathrm{m}}{3600\ \mathrm{s}} \approx 19.4\ \mathrm{m/s}$.</li>
+      </ol>
+      <p class="answer">$70\ \mathrm{km/h} \approx 19\ \mathrm{m/s}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Convert $72\ \mathrm{km/h}$ to $\mathrm{m/s}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$1\ \mathrm{km/h} = \dfrac{1000}{3600} = \dfrac{1}{3.6}\ \mathrm{m/s}$, so divide by $3.6$.</li>
+        <li>$72 \div 3.6 = 20$.</li>
+      </ol>
+      <p class="answer">$20\ \mathrm{m/s}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A cat walks $30\ \mathrm{m}$ east, then $10\ \mathrm{m}$ west, taking $10\ \mathrm{s}$ in all. Taking east as positive, find its average velocity and its average speed.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Displacement $= +30 - 10 = +20\ \mathrm{m}$, so $\bar{v} = \dfrac{+20}{10} = +2.0\ \mathrm{m/s}$.</li>
+        <li>Distance $= 30 + 10 = 40\ \mathrm{m}$, so average speed $= \dfrac{40}{10} = 4.0\ \mathrm{m/s}$.</li>
+      </ol>
+      <p class="answer">Velocity $+2.0\ \mathrm{m/s}$ (east); speed $4.0\ \mathrm{m/s}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">With right as positive, a ball's velocity is $-3.0\ \mathrm{m/s}$. What are its speed and its direction?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Speed is the size of the velocity: $3.0$. The minus sign means "left".</li>
+      </ol>
+      <p class="answer">Speed $3.0\ \mathrm{m/s}$, moving left</p>
+    </details>
+  </div>
+
+  <!-- WARNING: speed has no sign -->
+  <div class="note-warning">
+    If a question asks for <strong>velocity</strong>, give the sign (or the direction). If it asks for <strong>speed</strong>, never write a minus sign: speed is only a size.
+  </div>
+
+  <!-- TIP: units -->
+  <div class="note-tip">
+    To change $\mathrm{km/h}$ into $\mathrm{m/s}$, divide by $3.6$; to go back, multiply by $3.6$. Worth remembering: $36\ \mathrm{km/h} = 10\ \mathrm{m/s}$.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Speed: distance per time (scalar). Velocity: displacement per time (vector, with a sign).</li>
+      <li>Average velocity $= \Delta x / \Delta t$: slope of the line through two points of the $x$–$t$ graph.</li>
+      <li>Instantaneous velocity $= dx/dt$: slope of the tangent.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Secant to tangent" demo (the TRY IT block above).
+  // The blue curve is the position of a toy car: x = 1 + 4t − 0.5t² (metres, seconds).
+  // P₁ and P₂ slide along it. Orange: the line through them, slope = average
+  // velocity. Green dashed: the tangent at P₁, slope = instantaneous velocity
+  // v = 4 − t. As P₂ comes close to P₁, orange turns into green.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const output = document.getElementById('svOutput');
+    const x = (t) => 1 + 4 * t - 0.5 * t * t;
+    const v = (t) => 4 - t;
+    const onCurve = ([t]) => { const s = Math.min(Math.max(Math.round(t * 10) / 10, 0), 8); return [s, x(s)]; };
+    const fix = (n) => (Math.abs(n) < 0.005 ? 0 : n).toFixed(2).replace('-', '−');   // a real minus sign
+
+    NotePlot.graph(document.getElementById('svCanvas'), {
+      x: [-0.8, 8.8], y: [-1.5, 10.5],
+      points: { P1: [1, x(1)], P2: [5, x(5)] },
+      constrain: { P1: onCurve, P2: onCurve },
+      draw(g, P) {
+        const [t1, x1] = P.P1, [t2, x2] = P.P2;
+        g.fn(x, '#2563eb', { from: 0, to: 8 });
+        g.text([8.4, -0.8], 't (s)', '#475569');
+        g.text([0.7, 10], 'x (m)', '#475569');
+        g.fn((t) => x1 + v(t1) * (t - t1), '#16a34a', { width: 2, dash: true });   // tangent at P1
+        const close = Math.abs(t2 - t1) < 0.05;
+        if (!close) {
+          const slope = (x2 - x1) / (t2 - t1);
+          g.fn((t) => x1 + slope * (t - t1), '#ea580c', { width: 2 });           // through P1 and P2
+          g.seg([t1, x1], [t2, x1], '#94a3b8', { dash: true });                     // Δt
+          g.seg([t2, x1], [t2, x2], '#94a3b8', { dash: true });                     // Δx
+          output.textContent =
+            `P1: t1 = ${t1.toFixed(1)} s, x1 = ${fix(x1)} m      P2: t2 = ${t2.toFixed(1)} s, x2 = ${fix(x2)} m\n` +
+            `average velocity (orange) = Δx/Δt = ${fix(x2 - x1)} / ${(t2 - t1).toFixed(1)} = ${fix(slope)} m/s\n` +
+            `instantaneous velocity at P1 (green) = ${fix(v(t1))} m/s\n` +
+            (Math.abs(t2 - t1) <= 0.5 ? 'P2 is close to P1: the two slopes are almost the same'
+                                      : 'move P2 towards P1 and watch the orange line turn into the green one');
+        } else {
+          output.textContent =
+            `P1 and P2 are at the same time: Δt = 0, so Δx/Δt can't be worked out.\n` +
+            `Its limit is the tangent slope: v = ${fix(v(t1))} m/s at t = ${t1.toFixed(1)} s` +
+            (Math.abs(v(t1)) < 0.005 ? '  (the car is turning back here)' : v(t1) < 0 ? '  (moving backwards)' : '');
+        }
+      },
+    });
+  })();
+</script>

@@ -1,0 +1,181 @@
+<!-- tags: Motion -->
+<!-- =====================================================================
+     NOTE: Displacement and Distance (変位と移動距離)
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Motion">Displacement and Distance</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Displacement is "where you ended up", distance is "how far you went"</h2>
+    <p>To say where something is, stand at a reference point (an observer) and draw an arrow to the object. This arrow is its <strong>position vector</strong> (位置ベクトル), $\vec{r}$. On a straight line we just use a coordinate, $x$.</p>
+    <p>The <strong>displacement</strong> (変位) is the <strong>change in position</strong>: the position after minus the position before. It is an arrow straight from the start to the end, so it has a size and a direction. It ignores the route.</p>
+    <p>The <strong>distance travelled</strong> (移動距離) is the length of the actual route. A butterfly that flutters about covers a long distance, but its displacement is just the straight arrow from where it started to where it is now.</p>
+  </section>
+
+  <!-- FORMULA: displacement -->
+  <div class="note-formula">
+    <h3>Displacement = after − before</h3>
+    <div class="formula-main">$$\Delta\vec{r} = \vec{r}_2 - \vec{r}_1 \qquad\qquad \Delta x = x_2 - x_1$$</div>
+    <p class="symbols">$\vec{r}_1$, $x_1$ position before; $\vec{r}_2$, $x_2$ position after; $\Delta$ ("delta") means "change in". On a line, the sign of $\Delta x$ shows the direction. Distance travelled has no direction and is never negative.</p>
+  </div>
+
+  <!-- PROOF: why after minus before -->
+  <div class="note-proof">
+    <ol>
+      <li>Any "change" in physics is always <strong>after − before</strong>, so the change in position is $\vec{r}_2 - \vec{r}_1$.</li>
+      <li>In the picture, $\vec{r}_1 + \Delta\vec{r} = \vec{r}_2$: go from the observer to the start, then along the displacement, and you reach the end. Rearranged, $\Delta\vec{r} = \vec{r}_2 - \vec{r}_1$.</li>
+      <li>Only the start and end positions appear, so the route doesn't matter.</li>
+      <li>A straight line is the shortest route between two points, so distance travelled $\ge$ size of the displacement. They are equal only when the object moves in a straight line without turning back.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: a curved path; code at the bottom -->
+  <div class="note-demo">
+    <h2>Drag the start, the end and the two bends of the butterfly's path (1 square = 1 m)</h2>
+    <canvas id="ddCanvas"></canvas>
+    <div class="output table-text" id="ddOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">You walk $3\ \mathrm{m}$ east, then $4\ \mathrm{m}$ north. Find the distance travelled and the size of the displacement.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Distance: $3 + 4 = 7$.</li>
+        <li>Displacement: the arrow from start to end is the hypotenuse of a $3$–$4$ right triangle: $\sqrt{3^2 + 4^2} = 5$.</li>
+      </ol>
+      <p class="answer">Distance $7\ \mathrm{m}$; displacement $5\ \mathrm{m}$ (towards the north-east)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">A runner does one full lap of a $400\ \mathrm{m}$ track. Find the distance and the displacement.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The route is $400\ \mathrm{m}$ long.</li>
+        <li>The runner ends where they started: after − before $= \vec{0}$.</li>
+      </ol>
+      <p class="answer">Distance $400\ \mathrm{m}$; displacement $0$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">On an $x$-axis (right is positive), a ball moves from $x = 2.0\ \mathrm{m}$ to $x = -3.0\ \mathrm{m}$. Find its displacement.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\Delta x = x_2 - x_1 = -3.0 - 2.0$.</li>
+      </ol>
+      <p class="answer">$\Delta x = -5.0\ \mathrm{m}$: $5.0\ \mathrm{m}$ to the left</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">A ball is thrown straight up, rises $5.0\ \mathrm{m}$ and falls back into the hand. Find the distance and the displacement.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Distance: $5.0$ up plus $5.0$ down $= 10$.</li>
+        <li>Displacement: it ends where it started.</li>
+      </ol>
+      <p class="answer">Distance $10\ \mathrm{m}$; displacement $0$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: order of subtraction -->
+  <div class="note-warning">
+    Always subtract in the order <strong>after − before</strong>. Doing it the other way flips the sign, and in physics a wrong sign is a wrong answer.
+  </div>
+
+  <!-- TIP: scalar and vector -->
+  <div class="note-tip">
+    A quantity with only a size (distance, time, mass) is a <strong>scalar</strong> (スカラー). One with a size and a direction (displacement, velocity, force) is a <strong>vector</strong> (ベクトル). Knowing which one a question asks for tells you whether a sign or direction belongs in the answer.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Displacement = position after − position before: a vector, route ignored.</li>
+      <li>Distance travelled = length of the route: a scalar, never negative.</li>
+      <li>Distance $\ge$ size of displacement; equal only for straight motion without turning back.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Butterfly path" demo (the TRY IT block above).
+  // The route is a smooth curve from "start" to "end", bent by the two points
+  // "bend1" and "bend2" (a Bézier curve). The observer O is fixed at the corner.
+  // Grey arrows: position vectors r1 and r2. Red arrow: the displacement.
+  // The distance along the curve is measured by adding up 200 tiny straight pieces.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down); 20 px = 1 m.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const output = document.getElementById('ddOutput');
+    const O = [40, 315], M = 20;                       // observer; pixels per metre
+    const PATH = '#2563eb', DISP = '#dc2626', POS = '#94a3b8', THING = '#475569';
+
+    function arrow(g, p, q, color, label, width = 3) {
+      if (NoteGeom.dist(p, q) < 2) return;
+      g.seg(p, q, color, { width });
+      const a = Math.atan2(q[1] - p[1], q[0] - p[0]), s = 11;
+      g.poly([q, [q[0] - s * Math.cos(a - 0.4), q[1] - s * Math.sin(a - 0.4)],
+        [q[0] - s * Math.cos(a + 0.4), q[1] - s * Math.sin(a + 0.4)]], color);
+      const m = NoteGeom.mid(p, q);                    // label beside the middle of the arrow
+      g.text([m[0] - 14 * Math.sin(a), m[1] + 14 * Math.cos(a)], label, color);
+    }
+    // A point on the curve at t (0 → start, 1 → end)
+    function bezier(P, t) {
+      const u = 1 - t, pts = [P.start, P.bend1, P.bend2, P.end], w = [u * u * u, 3 * u * u * t, 3 * u * t * t, t * t * t];
+      return [0, 1].map((k) => pts.reduce((sum, p, i) => sum + w[i] * p[k], 0));
+    }
+
+    NoteGeom.board(document.getElementById('ddCanvas'), {
+      points: { start: [110, 250], bend1: [170, 40], bend2: [330, 330], end: [440, 110] },
+      draw(g, P) {
+        // grid: 1 square = 1 m
+        for (let x = O[0]; x < 520; x += M) g.seg([x, 0], [x, 340], '#f1f5f9', { width: 1 });
+        for (let y = O[1]; y > 0; y -= M) g.seg([0, y], [520, y], '#f1f5f9', { width: 1 });
+
+        // light lines to the bends, so it's clear they shape the curve
+        g.seg(P.start, P.bend1, '#e2e8f0', { width: 1 });
+        g.seg(P.end, P.bend2, '#e2e8f0', { width: 1 });
+
+        // the route, and its length
+        let length = 0, prev = P.start;
+        for (let i = 1; i <= 200; i++) {
+          const cur = bezier(P, i / 200);
+          g.seg(prev, cur, PATH, { width: 3 });
+          length += NoteGeom.dist(prev, cur);
+          prev = cur;
+        }
+
+        // observer, position vectors, displacement
+        g.dot(O, THING, 'O');
+        arrow(g, O, P.start, POS, 'r1', 2);
+        arrow(g, O, P.end, POS, 'r2', 2);
+        arrow(g, P.start, P.end, DISP, 'Δr');
+
+        const d = NoteGeom.dist(P.start, P.end) / M, s = length / M;
+        output.textContent =
+          `distance travelled (along the blue route) = ${s.toFixed(1)} m\n` +
+          `size of the displacement (red arrow)      = ${d.toFixed(1)} m\n` +
+          (s - d < 0.05 ? 'equal: the route is a straight line'
+                        : `the route is ${(s - d).toFixed(1)} m longer than the straight arrow`);
+      },
+    });
+  })();
+</script>

@@ -1,0 +1,164 @@
+<!-- tags: Motion -->
+<!-- =====================================================================
+     NOTE: Uniformly Accelerated Motion (等加速度直線運動)
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helpers /static/js/demos/geom.js and plot.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Motion">Uniformly Accelerated Motion</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Constant acceleration: three formulas, all read off one graph</h2>
+    <p>Motion along a straight line with a <strong>constant</strong> acceleration is called <strong>uniformly accelerated motion</strong> (等加速度直線運動). A car pulling away steadily, a ball rolling down a slope and a falling stone (ignoring air) all move like this.</p>
+    <p>Its $v$–$t$ graph is a straight line: it starts at $v_0$ and its slope is $a$. Everything about the motion can be read from that line: the velocity from the line itself, the displacement from the area under it.</p>
+    <p>That gives three formulas. You don't need to learn them by heart: you can rebuild them from the graph in a minute, and the derivation is worth practising.</p>
+  </section>
+
+  <!-- FORMULA: the three formulas -->
+  <div class="note-formula">
+    <h3>Starting at $x = 0$ with velocity $v_0$, constant acceleration $a$</h3>
+    <div class="formula-main">$$v = v_0 + at \qquad x = v_0 t + \tfrac{1}{2}at^2 \qquad v^2 - v_0^2 = 2ax$$</div>
+    <p class="symbols">$v_0$ initial velocity (初速度), $v$ velocity and $x$ displacement at time $t$, $a$ acceleration. All of $v_0$, $v$, $a$, $x$ carry signs: choose a positive direction first. The third formula has no $t$: use it when time isn't given or asked.</p>
+  </div>
+
+  <!-- PROOF: from the v–t graph -->
+  <div class="note-proof">
+    <ol>
+      <li>The $v$–$t$ graph is a straight line with intercept $v_0$ and slope $a$. Like $y = ax + b$ in maths, its equation is $v = at + v_0$. That is formula 1.</li>
+      <li>The displacement is the area under the line from $0$ to $t$: a trapezium with parallel sides $v_0$ and $v$, and width $t$. Area $= \tfrac{1}{2}(v_0 + v)\,t$.</li>
+      <li>Put in $v = v_0 + at$: $\tfrac{1}{2}(v_0 + v_0 + at)\,t = v_0 t + \tfrac{1}{2}at^2$. That is formula 2.</li>
+      <li>To remove $t$, write formula 1 as $t = \dfrac{v - v_0}{a}$ and put it into $x = \tfrac{1}{2}(v_0 + v)\,t$: $x = \dfrac{(v + v_0)(v - v_0)}{2a} = \dfrac{v^2 - v_0^2}{2a}$.</li>
+      <li>Multiply by $2a$: $v^2 - v_0^2 = 2ax$. That is formula 3.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: v–t line with the area shaded; code at the bottom -->
+  <div class="note-demo">
+    <h2>Set $v_0$, $a$ and the time $t$: the shaded area is the displacement</h2>
+    <div class="controls">
+      <label>$v_0$ = <input type="range" id="uaV0" min="-4" max="6" step="1" value="2"></label>
+      <label>$a$ = <input type="range" id="uaA" min="-2" max="2" step="0.5" value="1"></label>
+      <label>$t$ = <input type="range" id="uaT" min="0" max="5" step="0.5" value="4"></label>
+    </div>
+    <canvas id="uaCanvas"></canvas>
+    <div class="output table-text" id="uaOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A car moving at $10\ \mathrm{m/s}$ accelerates at $2.0\ \mathrm{m/s^2}$ for $5.0\ \mathrm{s}$. Find its final velocity and the distance covered.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$v = v_0 + at = 10 + 2.0 \times 5.0 = 20$.</li>
+        <li>$x = v_0 t + \tfrac{1}{2}at^2 = 10 \times 5.0 + \tfrac{1}{2} \times 2.0 \times 25 = 50 + 25 = 75$.</li>
+      </ol>
+      <p class="answer">$20\ \mathrm{m/s}$; $75\ \mathrm{m}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">A car at $20\ \mathrm{m/s}$ brakes with an acceleration of $-4.0\ \mathrm{m/s^2}$. How far does it go before stopping, and how long does it take?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>No time given, so use formula 3 with $v = 0$: $0 - 20^2 = 2 \times (-4.0) \times x$, so $x = \dfrac{400}{8.0} = 50$.</li>
+        <li>Formula 1: $0 = 20 - 4.0t$, so $t = 5.0$.</li>
+      </ol>
+      <p class="answer">$50\ \mathrm{m}$; $5.0\ \mathrm{s}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A cart speeds up steadily from $5.0\ \mathrm{m/s}$ to $15\ \mathrm{m/s}$ over $50\ \mathrm{m}$. Find its acceleration.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Formula 3: $15^2 - 5.0^2 = 2a \times 50$, so $200 = 100a$.</li>
+      </ol>
+      <p class="answer">$a = 2.0\ \mathrm{m/s^2}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">A stone is dropped from rest and falls freely ($a = 9.8\ \mathrm{m/s^2}$, down positive). Find its velocity and how far it has fallen after $2.0\ \mathrm{s}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$v = 0 + 9.8 \times 2.0 = 19.6$.</li>
+        <li>$x = 0 + \tfrac{1}{2} \times 9.8 \times 2.0^2 = 19.6$.</li>
+      </ol>
+      <p class="answer">$19.6\ \mathrm{m/s}$; $19.6\ \mathrm{m}$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: constant a only, and signs -->
+  <div class="note-warning">
+    These formulas are only for <strong>constant</strong> acceleration. And put every quantity in with its sign: braking means $a$ is negative when $v_0$ is positive (Example 2). Forgetting a minus sign is the most common mistake here.
+  </div>
+
+  <!-- TIP: which formula -->
+  <div class="note-tip">
+    Pick the formula by what's missing. No $x$ given or asked: formula 1. No $v$: formula 2. No $t$: formula 3.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$v = v_0 + at$: the equation of the straight $v$–$t$ line.</li>
+      <li>$x = v_0 t + \tfrac{1}{2}at^2$: the trapezium area under it.</li>
+      <li>$v^2 - v_0^2 = 2ax$: the first two with $t$ removed.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "v–t line and its area" demo (the TRY IT block above).
+  // The sliders set the initial velocity v0, the acceleration a and the time t.
+  // Purple: the v–t line v = v0 + at. Shaded from 0 to t: the displacement
+  // (blue above the t-axis counts +, red below counts −).
+  // The output fills in all three formulas and checks the third one.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const output = document.getElementById('uaOutput');
+    const boxes = ['uaV0', 'uaA', 'uaT'].map((id) => document.getElementById(id));
+    const fix = (n) => (Math.abs(n) < 0.005 ? 0 : n).toFixed(1).replace('-', '−');   // a real minus sign
+    const paren = (n) => (n < 0 ? `(${fix(n)})` : fix(n));   // negative numbers in brackets
+
+    const plot = NotePlot.graph(document.getElementById('uaCanvas'), {
+      x: [-0.5, 5.5], y: [-15, 17],
+      draw(g) {
+        const [v0, a, t] = boxes.map((b) => Number(b.value));
+        const v = (s) => v0 + a * s;
+        g.fill((s) => Math.max(v(s), 0), 0, t, 'rgba(37, 99, 235, 0.25)');
+        g.fill((s) => Math.min(v(s), 0), 0, t, 'rgba(220, 38, 38, 0.25)');
+        g.fn(v, '#7c3aed', { from: 0, to: 5.2 });
+        g.vline(t, '#94a3b8');
+        g.dot([0, v0], '#7c3aed', 'v0');
+        g.dot([t, v(t)], '#7c3aed', 'v');
+        g.text([5.2, -1.6], 't (s)', '#475569');
+        g.text([0.75, 16], 'v (m/s)', '#475569');
+
+        const vt = v(t), x = v0 * t + 0.5 * a * t * t;
+        const lhs = vt * vt - v0 * v0, rhs = 2 * a * x;
+        output.textContent =
+          `1)  v = v0 + at = ${fix(v0)} + ${paren(a)} × ${fix(t)} = ${fix(vt)} m/s\n` +
+          `2)  x = v0 t + ½at² = ${paren(v0)} × ${fix(t)} + ½ × ${paren(a)} × ${fix(t)}² = ${fix(x)} m   (the shaded area)\n` +
+          `3)  v² − v0² = ${fix(vt * vt)} − ${fix(v0 * v0)} = ${fix(lhs)}     2ax = 2 × ${paren(a)} × ${paren(x)} = ${fix(rhs)}` +
+          (Math.abs(lhs - rhs) < 0.01 ? '   equal ✔' : '');
+      },
+    });
+
+    boxes.forEach((b) => b.addEventListener('input', plot.redraw));
+  })();
+</script>

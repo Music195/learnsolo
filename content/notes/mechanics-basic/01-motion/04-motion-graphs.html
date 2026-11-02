@@ -1,0 +1,211 @@
+<!-- tags: Motion -->
+<!-- =====================================================================
+     NOTE: x, v, a and Their Graphs (x-t・v-t・a-t グラフ)
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Motion">x, v, a and Their Graphs</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Slopes go down the chain, areas go back up</h2>
+    <p>Position $x$, velocity $v$ and acceleration $a$ are linked in a chain. Each one is the rate of change of the one before: $v$ is how fast $x$ changes, and $a$ is how fast $v$ changes. In maths words, going down the chain is <strong>differentiating</strong> (微分) with respect to time.</p>
+    <p>Going back up the chain is the reverse, <strong>integrating</strong> (積分). On a graph, differentiating means taking the <strong>slope</strong>, and integrating means finding the <strong>area</strong> under the graph.</p>
+    <p>The three graphs have names: the <strong>$x$–$t$ graph</strong>, the <strong>$v$–$t$ graph</strong> and the <strong>$a$–$t$ graph</strong>. The $v$–$t$ graph is the most useful one, because it shows two things at once: its slope is $a$ and its area is the displacement.</p>
+  </section>
+
+  <!-- FORMULA: the chain -->
+  <div class="note-formula">
+    <h3>The chain $x \to v \to a$</h3>
+    <div class="formula-main">$$x \;\xrightarrow{\ \text{slope}\ }\; v \;\xrightarrow{\ \text{slope}\ }\; a \qquad\qquad a \;\xrightarrow{\ \text{area}\ }\; \Delta v \qquad v \;\xrightarrow{\ \text{area}\ }\; \Delta x$$</div>
+    <p class="symbols">Slope of the $x$–$t$ graph $= v$; slope of the $v$–$t$ graph $= a$. Area under the $v$–$t$ graph $=$ displacement $\Delta x$; area under the $a$–$t$ graph $=$ change in velocity $\Delta v$. Area below the $t$-axis counts as negative.</p>
+  </div>
+
+  <!-- PROOF: why area gives the displacement -->
+  <div class="note-proof">
+    <ol>
+      <li>The slope rules come straight from the definitions $v = \dfrac{dx}{dt}$ and $a = \dfrac{dv}{dt}$ (notes 02 and 03).</li>
+      <li>For the area rule: if the velocity is a constant $v$ for a time $t$, the displacement is $vt$. On the $v$–$t$ graph, that is a rectangle of height $v$ and width $t$: its area.</li>
+      <li>If $v$ changes, cut the time into thin strips. In each strip $v$ is almost constant, so the strip's displacement is almost its area $v\,\Delta t$.</li>
+      <li>Add up all the strips: total displacement $=$ total area. Making the strips thinner makes it exact; this is integration.</li>
+      <li>The same argument on the $a$–$t$ graph gives: area $=$ change in velocity.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: three linked graphs; code at the bottom -->
+  <div class="note-demo">
+    <h2>Set the acceleration in three 2-second stages, then move the time $t$</h2>
+    <div class="controls">
+      <label>$a_1$ = <input type="range" id="mgA1" min="-3" max="3" step="0.5" value="2"></label>
+      <label>$a_2$ = <input type="range" id="mgA2" min="-3" max="3" step="0.5" value="0"></label>
+      <label>$a_3$ = <input type="range" id="mgA3" min="-3" max="3" step="0.5" value="-2"></label>
+      <label>$t$ = <input type="range" id="mgT" min="0" max="6" step="0.1" value="3"></label>
+    </div>
+    <canvas id="mgCanvas"></canvas>
+    <div class="output table-text" id="mgOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">On an $x$–$t$ graph, a car's line goes straight from $(0\ \mathrm{s}, 0\ \mathrm{m})$ to $(5\ \mathrm{s}, 40\ \mathrm{m})$. Find its velocity.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>A straight $x$–$t$ line has a constant slope: $\dfrac{40 - 0}{5 - 0}$.</li>
+      </ol>
+      <p class="answer">$v = 8.0\ \mathrm{m/s}$ (constant)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">A cart moves at a constant $3.0\ \mathrm{m/s}$ for $4.0\ \mathrm{s}$. Use the $v$–$t$ graph to find the displacement.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The graph is a horizontal line at $v = 3.0$; the area under it from $0$ to $4.0$ is a rectangle.</li>
+        <li>Area $= 3.0 \times 4.0$.</li>
+      </ol>
+      <p class="answer">$12\ \mathrm{m}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A train starts from rest, and its velocity rises steadily to $10\ \mathrm{m/s}$ in $20\ \mathrm{s}$. Find the acceleration and the distance covered.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Slope of the $v$–$t$ line: $a = \dfrac{10}{20} = 0.50\ \mathrm{m/s^2}$.</li>
+        <li>Area: a triangle, $\tfrac{1}{2} \times 20 \times 10 = 100$.</li>
+      </ol>
+      <p class="answer">$a = 0.50\ \mathrm{m/s^2}$; $100\ \mathrm{m}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">An $a$–$t$ graph shows $a = 2.0\ \mathrm{m/s^2}$ from $0$ to $3.0\ \mathrm{s}$. The object started at $1.0\ \mathrm{m/s}$. Find its velocity at $3.0\ \mathrm{s}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Area under the $a$–$t$ graph $= 2.0 \times 3.0 = 6.0$: this is the change in velocity.</li>
+        <li>$v = 1.0 + 6.0$.</li>
+      </ol>
+      <p class="answer">$v = 7.0\ \mathrm{m/s}$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: the area is a change -->
+  <div class="note-warning">
+    The area gives the <strong>change</strong>, not the value itself. Area under $v$–$t$ is the displacement, so add the starting position to get $x$. Area under $a$–$t$ is $\Delta v$, so add the starting velocity (Example 4).
+  </div>
+
+  <!-- TIP: read the v–t graph -->
+  <div class="note-tip">
+    When a motion problem looks hard, sketch the $v$–$t$ graph first. One picture gives you the acceleration (slope) and the displacement (area) without any formula.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Slope of $x$–$t$ $= v$; slope of $v$–$t$ $= a$ (differentiating).</li>
+      <li>Area under $v$–$t$ $= \Delta x$; area under $a$–$t$ $= \Delta v$ (integrating).</li>
+      <li>Area below the $t$-axis counts as negative.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Three linked graphs" demo (the TRY IT block above).
+  // The sliders set the acceleration for 0–2 s, 2–4 s and 4–6 s (starting from
+  // rest at x = 0). From those, v(t) and x(t) are calculated and drawn as the
+  // a–t, v–t and x–t graphs, one above the other with the same time axis.
+  // The t slider moves the dashed line. Shaded: the areas under a–t and v–t up
+  // to t (blue above the axis, red below). Green: the tangent to x–t at t.
+  // Each graph scales itself to fit; 1 tick on the time axis = 1 s.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const output = document.getElementById('mgOutput');
+    const boxes = ['mgA1', 'mgA2', 'mgA3', 'mgT'].map((id) => document.getElementById(id));
+    const T0 = 70, T1 = 505, PX = (T1 - T0) / 6, HALF = 38;
+    const PANELS = [
+      { key: 'a', mid: 58, name: 'a (m/s²)', color: '#7c3aed' },
+      { key: 'v', mid: 163, name: 'v (m/s)', color: '#2563eb' },
+      { key: 'x', mid: 268, name: 'x (m)', color: '#ea580c' },
+    ];
+    const UP = 'rgba(37, 99, 235, 0.22)', DOWN = 'rgba(220, 38, 38, 0.22)', THING = '#475569';
+    const fix = (n) => (Math.abs(n) < 0.005 ? 0 : n).toFixed(1).replace('-', '−');   // a real minus sign
+
+    // a, v and x at time t, for the accelerations acc = [a1, a2, a3]
+    function state(t, acc) {
+      let v = 0, x = 0;
+      for (let i = 0; i < 3; i++) {
+        const dt = Math.min(Math.max(t - 2 * i, 0), 2);
+        x += v * dt + 0.5 * acc[i] * dt * dt;
+        v += acc[i] * dt;
+      }
+      return { a: acc[Math.min(Math.floor(t / 2), 2)], v, x };
+    }
+
+    const board = NoteGeom.board(document.getElementById('mgCanvas'), {
+      points: {},
+      draw(g) {
+        const acc = boxes.slice(0, 3).map((b) => Number(b.value)), t = Number(boxes[3].value);
+        const samples = [];
+        for (let i = 0; i <= 240; i++) samples.push({ t: i * 6 / 240, ...state(i * 6 / 240, acc) });
+        const now = state(t, acc);
+
+        PANELS.forEach((pn) => {
+          const max = Math.max(1, ...samples.map((s) => Math.abs(s[pn.key])));
+          const y = (val) => pn.mid - val / max * HALF;
+          const px = (tt) => T0 + tt * PX;
+          g.text([32, pn.mid - 10], pn.name.split(' ')[0], pn.color);
+          g.text([32, pn.mid + 8], pn.name.split(' ')[1], '#94a3b8');
+          g.text([T0 - 14, y(max)], String(+max.toFixed(1)), '#94a3b8');
+          g.seg([T0, pn.mid], [T1, pn.mid], '#cbd5e1', { width: 1 });
+          g.seg([T0, pn.mid - HALF - 4], [T0, pn.mid + HALF + 4], '#cbd5e1', { width: 1 });
+
+          // shaded area up to t, strip by strip (for the a–t and v–t graphs)
+          if (pn.key !== 'x') {
+            samples.forEach((s, i) => {
+              if (i === 0 || s.t > t + 1e-9) return;
+              const p = samples[i - 1];
+              g.poly([[px(p.t), pn.mid], [px(p.t), y(p[pn.key])], [px(s.t), y(s[pn.key])], [px(s.t), pn.mid]],
+                s[pn.key] + p[pn.key] >= 0 ? UP : DOWN);
+            });
+          }
+          // the graph itself (for a–t, a vertical jump between stages is drawn too)
+          samples.forEach((s, i) => {
+            if (i > 0) g.seg([px(samples[i - 1].t), y(samples[i - 1][pn.key])], [px(s.t), y(s[pn.key])], pn.color, { width: 3 });
+          });
+          // the tangent to x–t at t: its slope is v
+          if (pn.key === 'x') {
+            const d = 0.7;
+            g.seg([px(t - d), y(now.x - now.v * d)], [px(t + d), y(now.x + now.v * d)], '#16a34a', { width: 2 });
+          }
+          g.circle([px(t), y(now[pn.key])], 4, pn.color, { fill: pn.color });
+        });
+
+        // the time axis numbers and the dashed "now" line
+        for (let k = 0; k <= 6; k++) g.text([T0 + k * PX, 330], String(k), '#94a3b8');
+        g.text([T1 - 2, 316], 't (s)', THING);
+        g.seg([T0 + t * PX, 12], [T0 + t * PX, 312], THING, { dash: true, width: 1 });
+
+        output.textContent =
+          `at t = ${t.toFixed(1)} s:   a = ${fix(now.a)} m/s²,   v = ${fix(now.v)} m/s,   x = ${fix(now.x)} m\n` +
+          `slope of x–t at t (green line)      = ${fix(now.v)}  = v\n` +
+          `area under v–t from 0 to t (shaded) = ${fix(now.x)}  = x   (red parts count as negative)\n` +
+          `area under a–t from 0 to t (shaded) = ${fix(now.v)}  = v`;
+      },
+    });
+    boxes.forEach((b) => b.addEventListener('input', board.redraw));
+  })();
+</script>

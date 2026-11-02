@@ -1,0 +1,162 @@
+<!-- tags: Motion -->
+<!-- =====================================================================
+     NOTE: Acceleration (加速度)
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helpers /static/js/demos/geom.js and plot.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Motion">Acceleration</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Acceleration is how fast the velocity changes</h2>
+    <p>When the lights turn green, a car pulls away: its velocity grows second by second. When it brakes, its velocity shrinks. Whenever the velocity changes, the object has an <strong>acceleration</strong> (加速度).</p>
+    <p>Acceleration is the <strong>change in velocity per unit time</strong>: how many $\mathrm{m/s}$ the velocity gains (or loses) every second. Its unit is therefore $\mathrm{m/s}$ per $\mathrm{s}$, written $\mathrm{m/s^2}$.</p>
+    <p>Just as with velocity, there is an <strong>average acceleration</strong> over a time interval and an <strong>instantaneous acceleration</strong> at one moment. Acceleration is a vector: on a line it has a sign.</p>
+  </section>
+
+  <!-- FORMULA: acceleration -->
+  <div class="note-formula">
+    <h3>Average and instantaneous acceleration</h3>
+    <div class="formula-main">$$\bar{a} = \frac{v_2 - v_1}{t_2 - t_1} = \frac{\Delta v}{\Delta t} \qquad\qquad a = \lim_{\Delta t \to 0} \frac{\Delta v}{\Delta t} = \frac{dv}{dt}$$</div>
+    <p class="symbols">$v_1, v_2$ velocities at times $t_1, t_2$; $a$ in $\mathrm{m/s^2}$. On a $v$–$t$ graph, acceleration is the <strong>slope</strong>: a straight line means constant acceleration.</p>
+  </div>
+
+  <!-- PROOF: same steps as for velocity -->
+  <div class="note-proof">
+    <ol>
+      <li>Acceleration is built exactly like velocity, one step up: velocity was the change in <strong>position</strong> per time, acceleration is the change in <strong>velocity</strong> per time.</li>
+      <li>On a $v$–$t$ graph, the line through $(t_1, v_1)$ and $(t_2, v_2)$ has slope $\dfrac{v_2 - v_1}{t_2 - t_1}$: the average acceleration.</li>
+      <li>Let $t_2$ approach $t_1$: the line becomes the tangent, and its slope is the instantaneous acceleration $a = \dfrac{dv}{dt}$.</li>
+      <li>So $a$ is the derivative of $v$, which is itself the derivative of $x$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: a car's v–t graph with three straight pieces; code at the bottom -->
+  <div class="note-demo">
+    <h2>A car drives between two traffic lights: drag the corners of its $v$–$t$ graph</h2>
+    <canvas id="acCanvas"></canvas>
+    <div class="output table-text" id="acOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A car starts from rest and reaches $20\ \mathrm{m/s}$ in $5.0\ \mathrm{s}$. Find its average acceleration.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\bar{a} = \dfrac{20 - 0}{5.0}$.</li>
+      </ol>
+      <p class="answer">$4.0\ \mathrm{m/s^2}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">A car moving at $20\ \mathrm{m/s}$ brakes and stops in $4.0\ \mathrm{s}$. Find its acceleration.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>After − before: $\bar{a} = \dfrac{0 - 20}{4.0} = -5.0$.</li>
+        <li>The minus sign: the acceleration points opposite to the motion, so the car slows down.</li>
+      </ol>
+      <p class="answer">$-5.0\ \mathrm{m/s^2}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A ball is thrown upwards at $15.0\ \mathrm{m/s}$. One second later it moves up at $5.2\ \mathrm{m/s}$. Taking up as positive, find its acceleration.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\bar{a} = \dfrac{5.2 - 15.0}{1.0} = -9.8$.</li>
+      </ol>
+      <p class="answer">$-9.8\ \mathrm{m/s^2}$: the gravitational acceleration, pointing down</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">A cart has velocity $-2.0\ \mathrm{m/s}$, and $2.0\ \mathrm{s}$ later $-6.0\ \mathrm{m/s}$. Find its acceleration. Is it speeding up or slowing down?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\bar{a} = \dfrac{-6.0 - (-2.0)}{2.0} = -2.0\ \mathrm{m/s^2}$.</li>
+        <li>Its speed went from $2.0$ to $6.0$: it is speeding up, in the negative direction.</li>
+      </ol>
+      <p class="answer">$-2.0\ \mathrm{m/s^2}$, and it is speeding up</p>
+    </details>
+  </div>
+
+  <!-- WARNING: negative does not mean slowing down -->
+  <div class="note-warning">
+    A negative acceleration does not always mean "slowing down". It means the acceleration points in the negative direction. If the velocity is also negative, the object speeds up (Example 4). Slowing down means $v$ and $a$ have <strong>opposite</strong> signs.
+  </div>
+
+  <!-- TIP: reading the unit -->
+  <div class="note-tip">
+    Read $\mathrm{m/s^2}$ as "metres per second, every second". $a = 2\ \mathrm{m/s^2}$ means the velocity grows by $2\ \mathrm{m/s}$ each second: $0, 2, 4, 6, \dots$
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Acceleration = change in velocity per time, $a = \Delta v / \Delta t$, in $\mathrm{m/s^2}$.</li>
+      <li>It is the slope of the $v$–$t$ graph; instantaneous: $a = dv/dt$.</li>
+      <li>Speeding up: $v$ and $a$ have the same sign. Slowing down: opposite signs.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+<script>
+  // "Car between traffic lights" demo (the TRY IT block above).
+  // The v–t graph is three straight pieces: from rest at t = 0 up to P, from P to Q,
+  // and from Q down to rest at R. Drag P, Q and R (they snap to 0.5).
+  // The slope of each piece is the car's acceleration during that time; the
+  // colour says what it means: green speeding up, grey steady, red slowing down.
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const output = document.getElementById('acOutput');
+    const half = (n) => Math.round(n * 2) / 2;
+    const clamp = (n, lo, hi) => Math.min(Math.max(n, lo), hi);
+    let plot;   // set below; the constraints read the other points from it
+
+    const plotPoints = () => plot ? plot.points : { P: [3, 6], Q: [7, 6], R: [10, 0] };
+    plot = NotePlot.graph(document.getElementById('acCanvas'), {
+      x: [-0.8, 11.2], y: [-1.5, 12],
+      points: { P: [3, 6], Q: [7, 6], R: [10, 0] },
+      constrain: {
+        // keep the corners in time order: 0 < P < Q < R, with 0 ≤ v ≤ 11
+        P: ([t, v]) => [clamp(half(t), 0.5, plotPoints().Q[0] - 0.5), clamp(half(v), 0, 11)],
+        Q: ([t, v]) => [clamp(half(t), plotPoints().P[0] + 0.5, plotPoints().R[0] - 0.5), clamp(half(v), 0, 11)],
+        R: ([t]) => [clamp(half(t), plotPoints().Q[0] + 0.5, 11), 0],
+      },
+      draw(g, Pt) {
+        const corners = [[0, 0], Pt.P, Pt.Q, Pt.R];
+        g.text([10.8, -0.8], 't (s)', '#475569');
+        g.text([0.9, 11.5], 'v (m/s)', '#475569');
+        const lines = [];
+        for (let i = 0; i < 3; i++) {
+          const [t1, v1] = corners[i], [t2, v2] = corners[i + 1];
+          const a = (v2 - v1) / (t2 - t1);
+          const kind = Math.abs(a) < 1e-9 ? 'steady (a = 0)' : a > 0 ? 'speeding up' : 'slowing down';
+          const color = Math.abs(a) < 1e-9 ? '#64748b' : a > 0 ? '#16a34a' : '#dc2626';
+          g.seg([t1, v1], [t2, v2], color, { width: 4 });
+          // the slope label in the middle of the piece
+          g.text([(t1 + t2) / 2 + (Math.abs(a) < 1e-9 ? 0 : a > 0 ? -1.0 : 1.0), (v1 + v2) / 2 + 0.8],   // beside the line, above it
+             `a = ${(Math.abs(a) < 1e-9 ? 0 : a).toFixed(1).replace('-', '−')}`, color);
+          lines.push(`${t1.toFixed(1)} s → ${t2.toFixed(1)} s:  a = (${v2.toFixed(1)} − ${v1.toFixed(1)}) / ${(t2 - t1).toFixed(1)}` +
+            ` = ${a > 1e-9 ? '+' : ''}${(Math.abs(a) < 1e-9 ? 0 : a).toFixed(2).replace('-', '−')} m/s²   ${kind}`);
+        }
+        output.textContent = lines.join('\n');
+      },
+    });
+  })();
+</script>
