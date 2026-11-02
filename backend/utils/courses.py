@@ -25,7 +25,7 @@ COURSES = {
     "math-a": {"name": "Math A", "subject": "Mathematics"},
     "math-b": {"name": "Math B", "subject": "Mathematics"},
     "math-c": {"name": "Math C", "subject": "Mathematics"},
-    # 力学 (Mechanics Basic): motion, forces, Newton's laws
+    # Mechanics Basic: motion, forces, Newton's laws
     "mechanics-basic": {"name": "Mechanics Basic", "subject": "Physics"},
 }
 
@@ -49,7 +49,10 @@ PAST_CATEGORIES = {
 
 # Topic names are made from the folder: "03-quadratic-functions" ->
 # "Quadratic Functions". Add a folder here only if that gives the wrong name.
-TOPIC_NAMES = {}
+TOPIC_NAMES = {
+    # a folder name can't hold the apostrophe
+    "03-newtons-laws": "Newton's Laws",
+}
 
 _SMALL_WORDS = {"and", "of", "the", "in", "on", "to", "a", "an", "for"}
 
