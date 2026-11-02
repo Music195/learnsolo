@@ -1,0 +1,282 @@
+<!-- tags: Force -->
+<!-- =====================================================================
+     NOTE: Direction of Friction (摩擦力の向き)
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Force">Direction of Friction</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Friction fights the sliding between two surfaces</h2>
+    <p>A <strong>rough</strong> surface (粗い面) can push along itself as well as at right angles to itself. The push along the surface is <strong>friction</strong> (摩擦力), $f$. A <strong>smooth</strong> surface (なめらかな面) has no friction at all: only the normal force.</p>
+    <p>Friction always acts <strong>along the surface</strong>, against the sliding of the object <strong>relative to the surface</strong> (or against the sliding that would happen if there were no friction). It does not always point against the motion: a box on a truck that speeds up is carried forward by friction.</p>
+    <p>The normal force $N$ and friction $f$ both come from the same surface. Added together they make one force, the <strong>reaction force</strong> (抗力), $R$.</p>
+  </section>
+
+  <!-- FORMULA: the reaction force -->
+  <div class="note-formula">
+    <h3>Normal force + friction = reaction force</h3>
+    <div class="formula-main">$$R = \sqrt{N^2 + f^2}$$</div>
+    <p class="symbols">$N$ at right angles to the surface, $f$ along it, so they form a right angle and Pythagoras gives the size of $R$. On a smooth surface $f = 0$ and $R = N$.</p>
+  </div>
+
+  <!-- PROOF: how to find the direction -->
+  <div class="note-proof">
+    <ol>
+      <li>Friction comes from the two surfaces gripping each other. It stops (or slows) them sliding past each other.</li>
+      <li>So first ask: <strong>which way would the object slide, compared with the surface</strong>, if the surface were ice?</li>
+      <li>Friction on the object points the opposite way, along the surface.</li>
+      <li>"Compared with the surface" matters when the surface moves. On a truck that speeds up, the box would slide backwards on the truck bed, so friction on the box points forwards.</li>
+      <li>$N$ and $f$ are at right angles, so the reaction force they make has size $R = \sqrt{N^2 + f^2}$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: scenes with friction arrows; code at the bottom -->
+  <div class="note-demo">
+    <h2>Choose a scene: the grey dashed arrow is the sliding, the green arrow is friction</h2>
+    <div class="controls choices" id="dfChoices">
+      <button type="button" data-scene="pull" class="active">Box pulled on a floor</button>
+      <button type="button" data-scene="slope">Box resting on a slope</button>
+      <button type="button" data-scene="truck">Box on a truck speeding up</button>
+      <button type="button" data-scene="bike">Bicycle speeding up</button>
+      <button type="button" data-scene="ice">Box pulled on ice</button>
+    </div>
+    <canvas id="dfCanvas"></canvas>
+    <div class="output table-text" id="dfOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A book slides to the right across a rough table after a push. Which way does friction act on the book?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The book slides right compared with the table.</li>
+        <li>Friction acts against that, along the table.</li>
+      </ol>
+      <p class="answer">To the left</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">A $2.0\ \mathrm{kg}$ box rests on a rough slope of $30°$. Find the size and direction of the friction on it.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Without friction it would slide down the slope, so friction points <strong>up</strong> the slope.</li>
+        <li>Along the slope, gravity's part $mg\sin 30°$ pulls it down. At rest, friction balances it.</li>
+        <li>$f = 2.0 \times 9.8 \times \tfrac{1}{2} = 9.8$.</li>
+      </ol>
+      <p class="answer">$f = 9.8\ \mathrm{N}$, up the slope</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">For the box in Example 2, find the size of the reaction force $R$ from the slope.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$N = mg\cos 30° = 19.6 \times \tfrac{\sqrt{3}}{2} \approx 17.0$ and $f = 9.8$.</li>
+        <li>$R = \sqrt{17.0^2 + 9.8^2} = \sqrt{289 + 96} \approx 19.6$.</li>
+        <li>Check: only two forces act on the box, gravity and $R$, so $R$ must equal $mg$ and point straight up.</li>
+      </ol>
+      <p class="answer">$R = 19.6\ \mathrm{N}$, straight up</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">A box rides on a truck that is speeding up to the east. The box doesn't slide on the truck bed. Which way does friction act on the box?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>If the bed were ice, the truck would pull away and the box would slide backwards (west) compared with the bed.</li>
+        <li>Friction acts against that: east. It is the force that speeds the box up with the truck.</li>
+      </ol>
+      <p class="answer">East, the same way the truck moves</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">When you walk forwards, which way does the ground's friction act on your shoe?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Your foot pushes back against the ground. On ice, the shoe would slip backwards.</li>
+        <li>Friction on the shoe acts against that slip: forwards.</li>
+      </ol>
+      <p class="answer">Forwards: friction is what moves you forwards</p>
+    </details>
+  </div>
+
+  <!-- WARNING: not always against the motion -->
+  <div class="note-warning">
+    "Friction is opposite to the motion" is only true when the surface stands still. The rule is: opposite to the sliding <strong>relative to the surface</strong>. A box on a truck, a shoe when walking and the back wheel of a bicycle are all pushed forwards by friction.
+  </div>
+
+  <!-- TIP: the ice trick -->
+  <div class="note-tip">
+    Imagine the surface is turned into ice. Which way would the object slip? Friction points the other way.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Friction acts along the surface, against sliding relative to the surface.</li>
+      <li>Smooth surface: no friction. Rough surface: friction can act.</li>
+      <li>Normal force and friction together are the reaction force, $R = \sqrt{N^2 + f^2}$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Direction of friction" demo (the TRY IT block above).
+  // Each button shows a scene. The grey dashed arrow shows the sliding (or the
+  // sliding that would happen on ice); the green arrow is friction, the other way.
+  // Purple dashed: the reaction force R (normal force and friction added).
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const output = document.getElementById('dfOutput');
+    const buttons = document.querySelectorAll('#dfChoices button');
+    const GRAVITY = '#dc2626', CONTACT = '#2563eb', FRICTION = '#16a34a', REACTION = '#7c3aed';
+    const SLIDE = '#94a3b8', THING = '#475569';
+
+    // An arrow from p to q with a filled head; label at labelAt (or just past the tip)
+    function arrow(g, p, q, color, label, labelAt, dash) {
+      g.seg(p, q, color, { width: dash ? 2 : 3, dash });
+      const a = Math.atan2(q[1] - p[1], q[0] - p[0]), s = dash ? 9 : 11;
+      g.poly([q, [q[0] - s * Math.cos(a - 0.4), q[1] - s * Math.sin(a - 0.4)],
+        [q[0] - s * Math.cos(a + 0.4), q[1] - s * Math.sin(a + 0.4)]], color);
+      if (label) g.text(labelAt || [q[0] + 18 * Math.cos(a), q[1] + 18 * Math.sin(a)], label, color);
+    }
+    // A filled shape through the corner points, with an outline
+    function shape(g, pts, fill) {
+      g.poly(pts, fill);
+      pts.forEach((p, i) => g.seg(p, pts[(i + 1) % pts.length], THING));
+    }
+    const rect = (p, q) => [p, [q[0], p[1]], q, [p[0], q[1]]];
+    // A floor line with hatch marks underneath (blue and no hatching for ice)
+    function floor(g, y, ice) {
+      g.seg([30, y], [490, y], ice ? '#7dd3fc' : THING, { width: ice ? 5 : 3 });
+      if (!ice) for (let x = 38; x < 490; x += 16) g.seg([x, y], [x - 8, y + 10], THING, { width: 1 });
+    }
+    const add = (p, v, k) => [p[0] + v[0] * k, p[1] + v[1] * k];
+
+    // A box on a floor, pulled right by a rope. "rough" adds friction and R.
+    function pulledBox(g, rough) {
+      floor(g, 260, !rough);
+      shape(g, rect([190, 200], [290, 260]), '#fde68a');
+      g.seg([290, 230], [460, 230], THING);                            // the rope
+      arrow(g, [200, 150], [280, 150], SLIDE, 'it slides this way', [240, 134], true);
+      arrow(g, [240, 230], [240, 300], GRAVITY, 'mg');
+      arrow(g, [220, 260], [220, 185], CONTACT, 'N', [220, 170]);
+      arrow(g, [290, 230], [370, 230], CONTACT, 'T', [380, 216]);
+      if (rough) {
+        arrow(g, [220, 260], [155, 260], FRICTION, 'f', [150, 245]);
+        arrow(g, [220, 260], [155, 185], REACTION, 'R', [140, 176], true);
+      }
+    }
+
+    const scenes = {
+      pull: {
+        draw: (g) => pulledBox(g, true),
+        text: 'The box slides right on the floor.\n' +
+              'Friction f on the box: left, along the floor.\n' +
+              'R (dashed purple) = N and f added: it leans backwards.',
+      },
+      slope: {
+        draw(g) {
+          const t = 30 * Math.PI / 180, s = [Math.cos(t), -Math.sin(t)], n = [-Math.sin(t), -Math.cos(t)];
+          const P = [260, 230];                                       // middle of the box's bottom face
+          const L = add(P, s, -300), R = add(P, s, 300);
+          g.poly([L, R, [R[0], 400], [L[0], 400]], '#e2e8f0');
+          g.seg(L, R, THING, { width: 3 });
+          const c = [add(P, s, -30), add(P, s, 30)];
+          shape(g, [c[0], c[1], add(c[1], n, 60), add(c[0], n, 60)], '#fde68a');
+          arrow(g, add(add(P, n, 110), s, -60), add(add(P, n, 110), s, -130), SLIDE, 'would slide (on ice)',
+            add(add(P, n, 132), s, -95), true);
+          arrow(g, add(P, n, 30), [add(P, n, 30)[0], add(P, n, 30)[1] + 75], GRAVITY, 'mg');
+          arrow(g, P, add(P, n, 65), CONTACT, 'N');
+          arrow(g, P, add(P, s, 50), FRICTION, 'f', add(add(P, s, 58), n, 16));
+          arrow(g, P, add(add(P, n, 65), s, 50), REACTION, 'R', null, true);
+        },
+        text: 'On ice the box would slide down the slope.\n' +
+              'Friction f on the box: up the slope.\n' +
+              'R points straight up: it balances gravity exactly.',
+      },
+      truck: {
+        draw(g) {
+          g.seg([30, 300], [490, 300], THING, { width: 3 });               // the road
+          shape(g, rect([80, 230], [360, 260]), '#cbd5e1');              // truck bed
+          shape(g, rect([360, 190], [440, 260]), '#cbd5e1');             // cab
+          g.circle([140, 280], 18, THING, { fill: '#334155' });
+          g.circle([390, 280], 18, THING, { fill: '#334155' });
+          shape(g, rect([190, 180], [270, 230]), '#fde68a');             // the box
+          arrow(g, [330, 60], [440, 60], THING, 'truck speeds up', [385, 44]);
+          arrow(g, [270, 118], [190, 118], SLIDE, 'box would slide back on the bed', [230, 102], true);
+          arrow(g, [230, 205], [230, 275], GRAVITY, 'mg', [244, 285]);
+          arrow(g, [210, 230], [210, 165], CONTACT, 'N', [210, 150]);
+          arrow(g, [210, 230], [275, 230], FRICTION, 'f', [284, 218]);
+          arrow(g, [210, 230], [275, 165], REACTION, 'R', [287, 156], true);
+        },
+        text: 'On an icy bed, the truck would pull away and the box\n' +
+              'would slide backwards compared with the bed.\n' +
+              'Friction f on the box: forwards. It moves the box with the truck.',
+      },
+      bike: {
+        draw(g) {
+          g.seg([30, 280], [490, 280], THING, { width: 3 });
+          g.circle([160, 235], 45, THING);                                // rear wheel
+          g.circle([370, 235], 45, THING);                                // front wheel
+          g.seg([160, 235], [250, 235], THING, { width: 3 });             // frame
+          g.seg([250, 235], [215, 160], THING, { width: 3 });
+          g.seg([215, 160], [160, 235], THING, { width: 3 });
+          g.seg([215, 160], [330, 160], THING, { width: 3 });
+          g.seg([330, 160], [370, 235], THING, { width: 3 });
+          g.seg([330, 160], [320, 130], THING, { width: 3 });             // handlebar
+          g.seg([250, 235], [330, 160], THING, { width: 3 });
+          g.circle([250, 235], 9, THING, { fill: '#e2e8f0' });            // pedals
+          arrow(g, [350, 70], [450, 70], THING, 'bike speeds up', [400, 54]);
+          arrow(g, [160, 292], [100, 292], SLIDE, 'rear tyre would slip back', [130, 310], true);
+          arrow(g, [160, 280], [235, 280], FRICTION, 'f1', [248, 266]);
+          arrow(g, [370, 280], [330, 280], FRICTION, 'f2', [318, 266]);
+        },
+        text: 'Rear wheel (turned by the pedals): its tyre pushes the road back,\n' +
+              '  so friction f1 on it points forwards. This moves the bike.\n' +
+              'Front wheel (just rolling): friction f2 is small and points back.\n' +
+              '  (Only the friction forces are drawn here.)',
+      },
+      ice: {
+        draw: (g) => pulledBox(g, false),
+        text: 'Ice is a smooth surface: no friction.\n' +
+              'The floor only pushes up (N), so here R = N.',
+      },
+    };
+
+    let scene = 'pull';
+    const board = NoteGeom.board(document.getElementById('dfCanvas'), {
+      points: {},                              // nothing to drag: the buttons choose
+      draw(g) {
+        scenes[scene].draw(g);
+        output.textContent = scenes[scene].text;
+      },
+    });
+
+    buttons.forEach((button) => button.addEventListener('click', () => {
+      scene = button.dataset.scene;
+      buttons.forEach((b) => b.classList.toggle('active', b === button));
+      board.redraw();
+    }));
+  })();
+</script>

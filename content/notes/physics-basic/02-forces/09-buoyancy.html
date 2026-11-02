@@ -1,0 +1,198 @@
+<!-- tags: Force -->
+<!-- =====================================================================
+     NOTE: Buoyancy (浮力) and Archimedes' Principle (アルキメデスの原理)
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Force">Buoyancy</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Water pushes up harder on the bottom than down on the top</h2>
+    <p>Water pressure grows with depth (previous note). An object in water has its bottom deeper than its top, so the water pushes up on the bottom harder than it pushes down on the top. The difference is an upward force: <strong>buoyancy</strong> (浮力).</p>
+    <p><strong>Archimedes' principle</strong> (アルキメデスの原理): the buoyancy equals the <strong>weight of the liquid the object pushes aside</strong>. It depends on the volume <strong>under the surface</strong> and the density of the <strong>liquid</strong>, not on what the object is made of.</p>
+    <p>An object less dense than the liquid floats, with just enough of itself under the surface that buoyancy equals its weight. A denser object sinks.</p>
+  </section>
+
+  <!-- FORMULA: buoyancy -->
+  <div class="note-formula">
+    <h3>Buoyancy on an object in a liquid</h3>
+    <div class="formula-main">$$F = \rho V g$$</div>
+    <p class="symbols">$\rho$ density of the <strong>liquid</strong> ($\mathrm{kg/m^3}$), $V$ volume of the object <strong>under the surface</strong> ($\mathrm{m^3}$), $g = 9.8\ \mathrm{m/s^2}$. It points straight up. $\rho V$ is the mass of the liquid pushed aside, so $\rho V g$ is its weight.</p>
+  </div>
+
+  <!-- PROOF: from water pressure -->
+  <div class="note-proof">
+    <ol>
+      <li>Take a block with top and bottom faces of area $S$, fully under water: the top at depth $h_1$, the bottom at depth $h_2$. Its height is $h_2 - h_1$, so its volume is $V = (h_2 - h_1)S$.</li>
+      <li>The water pushes on the sides too, but the pushes on opposite sides are at the same depths, so they cancel.</li>
+      <li>On the bottom, upwards: $p_2 S = (p_0 + \rho h_2 g)S$. On the top, downwards: $p_1 S = (p_0 + \rho h_1 g)S$.</li>
+      <li>Up minus down: $(p_0 + \rho h_2 g)S - (p_0 + \rho h_1 g)S = \rho (h_2 - h_1) S g = \rho V g$.</li>
+      <li>$p_0$ cancelled, and so did the depth: buoyancy doesn't change as a fully sunk object goes deeper.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: a block of chosen density in water; code at the bottom -->
+  <div class="note-demo">
+    <h2>Change what the block is made of (a $10\ \mathrm{cm}$ cube in water)</h2>
+    <div class="controls">
+      <label>density = <input type="range" id="buDensity" min="200" max="1500" step="50" value="600"></label>
+    </div>
+    <canvas id="buCanvas"></canvas>
+    <div class="output table-text" id="buOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A stone of volume $2.0 \times 10^{-3}\ \mathrm{m^3}$ lies fully under water ($\rho = 1.0 \times 10^3\ \mathrm{kg/m^3}$). Find the buoyancy on it.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$F = \rho V g = 1.0 \times 10^3 \times 2.0 \times 10^{-3} \times 9.8$.</li>
+      </ol>
+      <p class="answer">$F = 19.6\ \mathrm{N}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">A block floats in water with $\tfrac{3}{4}$ of its volume under the surface. Find the density of the block.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Let the block's volume be $V$ and its density $\rho_B$. Gravity: $\rho_B V g$.</li>
+        <li>Volume under water: $\tfrac{3}{4}V$, so buoyancy: $1.0 \times 10^3 \times \tfrac{3}{4}V \times g$.</li>
+        <li>Floating at rest: $\rho_B V g = 1.0 \times 10^3 \times \tfrac{3}{4} V g$. $V$ and $g$ cancel.</li>
+      </ol>
+      <p class="answer">$\rho_B = 7.5 \times 10^2\ \mathrm{kg/m^3}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Wood of density $6.0 \times 10^2\ \mathrm{kg/m^3}$ floats in water. What fraction of it is under the surface?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>As in Example 2: $\rho_B V g = \rho_W V_{\text{under}}\, g$, so $\dfrac{V_{\text{under}}}{V} = \dfrac{\rho_B}{\rho_W} = \dfrac{600}{1000}$.</li>
+      </ol>
+      <p class="answer">$0.60$ of it ($60\%$)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">A $3.0\ \mathrm{kg}$ metal block of volume $1.0 \times 10^{-3}\ \mathrm{m^3}$ hangs from a string, fully under water. Find the tension.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Forces: gravity $3.0 \times 9.8 = 29.4$ down; buoyancy $1.0 \times 10^3 \times 1.0 \times 10^{-3} \times 9.8 = 9.8$ up; tension $T$ up.</li>
+        <li>At rest: $T + 9.8 = 29.4$.</li>
+      </ol>
+      <p class="answer">$T = 19.6\ \mathrm{N}$: the block seems lighter in water</p>
+    </details>
+  </div>
+
+  <!-- WARNING: which ρ, which V -->
+  <div class="note-warning">
+    In $F = \rho V g$, $\rho$ is the density of the <strong>liquid</strong>, not of the object, and $V$ is only the volume <strong>under the surface</strong>. For a floating object, $V$ is less than the object's whole volume.
+  </div>
+
+  <!-- TIP: weight of the water pushed aside -->
+  <div class="note-tip">
+    Think "buoyancy = weight of the water pushed aside". A ship floats because its hull pushes aside a huge volume of water whose weight equals the ship's.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Buoyancy comes from water pressure being bigger at the bottom than at the top.</li>
+      <li>$F = \rho V g$: liquid's density, volume under the surface. It points up.</li>
+      <li>Floating: buoyancy = gravity, and the fraction under water is $\rho_{\text{object}} / \rho_{\text{liquid}}$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Floating block" demo (the TRY IT block above).
+  // The slider sets the density of a 10 cm cube (V = 1.0 × 10⁻³ m³) in water.
+  // Less dense than water: it floats with just enough under water that buoyancy
+  // equals gravity. Denser: it sinks, and the tank's bottom holds up the rest.
+  // Arrows are to scale (9 pixels per newton): red gravity, blue buoyancy
+  // (from the middle of the part under water), purple normal force.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const output = document.getElementById('buOutput');
+    const densityBox = document.getElementById('buDensity');
+    const RHO_W = 1000, V = 1.0e-3, G = 9.8;
+    const SURFACE = 110, BOTTOM = 230, LEFT = 100, RIGHT = 420, SIDE = 80, CX = 260, SCALE = 9;
+    const GRAVITY = '#dc2626', BUOY = '#2563eb', NORMAL = '#7c3aed', THING = '#475569';
+
+    function arrow(g, p, q, color, label, labelX) {
+      if (NoteGeom.dist(p, q) < 2) return;
+      g.seg(p, q, color, { width: 3 });
+      const a = Math.atan2(q[1] - p[1], q[0] - p[0]), s = 10;
+      g.poly([q, [q[0] - s * Math.cos(a - 0.4), q[1] - s * Math.sin(a - 0.4)],
+        [q[0] - s * Math.cos(a + 0.4), q[1] - s * Math.sin(a + 0.4)]], color);
+      g.text([labelX, q[1]], label, color);           // label beside the block, at the tip's height
+    }
+
+    const board = NoteGeom.board(document.getElementById('buCanvas'), {
+      points: {},
+      draw(g) {
+        const rhoB = Number(densityBox.value);
+        const m = rhoB * V, W = m * G;
+        const floats = rhoB <= RHO_W;
+        // depth of the cube under the surface, in pixels (80 px = 10 cm)
+        const under = floats ? SIDE * rhoB / RHO_W : SIDE;
+        const top = floats ? SURFACE - (SIDE - under) : BOTTOM - SIDE;
+        const bottom = top + SIDE;
+        const vUnder = V * under / SIDE;
+        const B = RHO_W * vUnder * G;                   // buoyancy
+        const N = floats ? 0 : W - B;                   // the bottom's push, if sunk
+        const wet = Math.max(top, SURFACE);             // top of the part under water
+
+        // Tank and water
+        g.poly([[LEFT, SURFACE], [RIGHT, SURFACE], [RIGHT, BOTTOM], [LEFT, BOTTOM]], 'rgba(56, 189, 248, 0.18)');
+        g.seg([LEFT, 60], [LEFT, BOTTOM], THING, { width: 3 });
+        g.seg([LEFT, BOTTOM], [RIGHT, BOTTOM], THING, { width: 3 });
+        g.seg([RIGHT, BOTTOM], [RIGHT, 60], THING, { width: 3 });
+
+        // The cube, with the part under water tinted
+        const x1 = CX - SIDE / 2, x2 = CX + SIDE / 2;
+        g.poly([[x1, top], [x2, top], [x2, bottom], [x1, bottom]], '#fde68a');
+        g.poly([[x1, wet], [x2, wet], [x2, bottom], [x1, bottom]], 'rgba(37, 99, 235, 0.25)');
+        g.seg([x1, top], [x2, top], THING); g.seg([x2, top], [x2, bottom], THING);
+        g.seg([x2, bottom], [x1, bottom], THING); g.seg([x1, bottom], [x1, top], THING);
+        g.seg([LEFT, SURFACE], [RIGHT, SURFACE], '#0284c7', { width: 2 });   // water surface on top
+
+        // Forces, to scale
+        const centre = (top + bottom) / 2, wetCentre = (wet + bottom) / 2;
+        arrow(g, [CX + 14, centre], [CX + 14, centre + W * SCALE], GRAVITY, 'mg', x2 + 24);
+        arrow(g, [CX - 14, wetCentre], [CX - 14, wetCentre - B * SCALE], BUOY, 'ρVg', x1 - 28);
+        if (N > 0.01) arrow(g, [x2 - 8, bottom], [x2 - 8, bottom - N * SCALE], NORMAL, 'N', x2 + 24);
+
+        const fix = (x) => x.toFixed(1);
+        output.textContent =
+          `block: density ${rhoB} kg/m³,  m = ${rhoB} × 0.0010 = ${m.toFixed(2)} kg,  mg = ${fix(W)} N\n` +
+          (rhoB < RHO_W
+            ? `less dense than water: it floats, with buoyancy = gravity = ${fix(W)} N\n` +
+              `volume under water = ${(vUnder * 1000).toFixed(2)} × 10⁻³ m³: ${(rhoB / 10).toFixed(0)}% of the block (${rhoB}/1000)`
+            : rhoB === RHO_W
+              ? `same density as water: just fully under, buoyancy = gravity = ${fix(W)} N`
+              : `denser than water: it sinks. Fully under, buoyancy is only\n` +
+                `ρVg = 1000 × 0.0010 × 9.8 = ${fix(B)} N\n` +
+                `the bottom holds up the rest: N = mg − ρVg = ${fix(W)} − ${fix(B)} = ${fix(N)} N`);
+      },
+    });
+
+    densityBox.addEventListener('input', board.redraw);
+  })();
+</script>

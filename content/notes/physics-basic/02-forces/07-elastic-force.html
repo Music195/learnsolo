@@ -1,0 +1,204 @@
+<!-- tags: Force -->
+<!-- =====================================================================
+     NOTE: Elastic Force, Hooke's Law (弾性力・フックの法則)
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Force">Elastic Force (Hooke's Law)</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>A spring always pulls or pushes back towards its natural length</h2>
+    <p>A spring that is neither stretched nor squashed has its <strong>natural length</strong> (自然長). At the natural length it puts no force on anything.</p>
+    <p>Stretch it, and it pulls back; squash it, and it pushes back. Either way the force points <strong>towards the natural length</strong>: this is the <strong>elastic force</strong> (弾性力), a kind of <strong>restoring force</strong> (復元力). The interesting part: the direction flips between stretched and squashed.</p>
+    <p>Its size follows <strong>Hooke's law</strong> (フックの法則): it is proportional to how far the spring is stretched or squashed from its natural length.</p>
+  </section>
+
+  <!-- FORMULA: Hooke's law -->
+  <div class="note-formula">
+    <h3>Hooke's law</h3>
+    <div class="formula-main">$$F = kx$$</div>
+    <p class="symbols">$F$ the <strong>size</strong> of the elastic force ($\mathrm{N}$), $k$ the <strong>spring constant</strong> (ばね定数, $\mathrm{N/m}$), $x$ the stretch or squash <strong>from the natural length</strong> ($\mathrm{m}$). The direction is not in the formula: decide it by looking.</p>
+  </div>
+
+  <!-- PROOF: where it comes from -->
+  <div class="note-proof">
+    <ol>
+      <li>Hang weights on a spring and measure the stretch. Double the weight and the stretch doubles; triple it and it triples. So force and stretch are proportional: $F = kx$. This is measured, not derived.</li>
+      <li>The constant $k$ is the force per metre of stretch, so its unit is $\mathrm{N/m}$. A spring with $k = 50\ \mathrm{N/m}$ needs $50\ \mathrm{N}$ to stretch it by $1\ \mathrm{m}$.</li>
+      <li>A big $k$ is a stiff (strong) spring; a small $k$ is a soft (weak) one.</li>
+      <li>Squashing works the same way, as long as the spring isn't squashed solid or stretched out of shape.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: drag a block on a spring; code at the bottom -->
+  <div class="note-demo">
+    <h2>Drag the block to stretch or squash the spring, and change $k$</h2>
+    <div class="controls">
+      <label>$k$ = <input type="range" id="efK" min="10" max="60" step="10" value="30"></label>
+    </div>
+    <canvas id="efCanvas"></canvas>
+    <div class="output table-text" id="efOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A spring with $k = 50\ \mathrm{N/m}$ is stretched by $0.20\ \mathrm{m}$. Find the size of its elastic force.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$F = kx = 50 \times 0.20$.</li>
+      </ol>
+      <p class="answer">$F = 10\ \mathrm{N}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">A $0.50\ \mathrm{kg}$ mass hangs at rest from a spring with $k = 49\ \mathrm{N/m}$. How far is the spring stretched?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Forces on the mass: gravity $mg$ down, elastic force $kx$ up.</li>
+        <li>At rest: $kx = mg$, so $x = \dfrac{0.50 \times 9.8}{49} = \dfrac{4.9}{49}$.</li>
+      </ol>
+      <p class="answer">$x = 0.10\ \mathrm{m}$ ($10\ \mathrm{cm}$)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A spring's natural length is $20\ \mathrm{cm}$. Pulled with $2.0\ \mathrm{N}$, it is $25\ \mathrm{cm}$ long. Find $k$, and the spring's length when it is squashed with $3.0\ \mathrm{N}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The stretch is $25 - 20 = 5\ \mathrm{cm} = 0.050\ \mathrm{m}$, so $k = \dfrac{2.0}{0.050} = 40\ \mathrm{N/m}$.</li>
+        <li>Squashed with $3.0\ \mathrm{N}$: $x = \dfrac{3.0}{40} = 0.075\ \mathrm{m} = 7.5\ \mathrm{cm}$.</li>
+        <li>Length $= 20 - 7.5$.</li>
+      </ol>
+      <p class="answer">$k = 40\ \mathrm{N/m}$; length $12.5\ \mathrm{cm}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Two people pull the two ends of a spring ($k = 100\ \mathrm{N/m}$) apart, each with $10\ \mathrm{N}$. How far does it stretch?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Look at one end: it is pulled out with $10\ \mathrm{N}$ and the spring pulls it back with $kx$.</li>
+        <li>$kx = 10$, so $x = 0.10$. (Not $20\ \mathrm{N}$: this is the same as fixing one end to a wall and pulling the other with $10\ \mathrm{N}$.)</li>
+      </ol>
+      <p class="answer">$x = 0.10\ \mathrm{m}$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: x is not the length -->
+  <div class="note-warning">
+    $x$ is the change <strong>from the natural length</strong>, not the length of the spring. And $F = kx$ is a size, never negative: give the force its direction yourself, by asking "which way does the spring want to go back?"
+  </div>
+
+  <!-- TIP: units -->
+  <div class="note-tip">
+    $k$ is in $\mathrm{N/m}$, so turn centimetres into metres before using it: $5\ \mathrm{cm} = 0.05\ \mathrm{m}$.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>The elastic force points back towards the natural length: it flips between stretched and squashed.</li>
+      <li>Size: $F = kx$, with $x$ measured from the natural length.</li>
+      <li>$k$ in $\mathrm{N/m}$: a bigger $k$ is a stiffer spring.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Spring and block" demo (the TRY IT block above).
+  // A spring is fixed to a wall on the left. Drag the block (point B) to stretch
+  // or squash it; the slider sets the spring constant k.
+  // The dashed line marks the natural length; 4 pixels = 1 cm.
+  // The blue arrow is the elastic force on the block, to scale: it always points
+  // back towards the natural length.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const output = document.getElementById('efOutput');
+    const kBox = document.getElementById('efK');
+    const WALL = 50, FLOOR = 200, HALF = 25, NATURAL = 260, CM = 4, SCALE = 6; // SCALE: pixels per newton
+    const SPRING = '#2563eb', THING = '#475569', MARK = '#ea580c';
+
+    function arrow(g, p, q, color, label) {
+      if (NoteGeom.dist(p, q) < 2) return;
+      g.seg(p, q, color, { width: 3 });
+      const a = Math.atan2(q[1] - p[1], q[0] - p[0]), s = 11;
+      g.poly([q, [q[0] - s * Math.cos(a - 0.4), q[1] - s * Math.sin(a - 0.4)],
+        [q[0] - s * Math.cos(a + 0.4), q[1] - s * Math.sin(a + 0.4)]], color);
+      g.text([q[0], q[1] - 16], label, color);
+    }
+
+    const board = NoteGeom.board(document.getElementById('efCanvas'), {
+      // B is the middle of the block; it slides along the floor only
+      points: { B: [NATURAL + 60, FLOOR - HALF] },
+      constrain: { B: ([x]) => [Math.min(Math.max(x, 150), 440), FLOOR - HALF] },
+      draw(g, P) {
+        const k = Number(kBox.value);
+        const xcm = (P.B[0] - NATURAL) / CM;          // + stretched, − squashed (cm)
+        const x = Math.abs(xcm) / 100;                // size in metres
+        const F = k * x;
+        const face = P.B[0] - HALF;                   // the block's left face, where the spring is tied
+
+        // Wall, floor and the natural-length mark
+        g.seg([WALL, 80], [WALL, FLOOR + 10], THING, { width: 4 });
+        for (let y = 88; y < FLOOR + 10; y += 14) g.seg([WALL, y], [WALL - 10, y + 8], THING, { width: 1 });
+        g.seg([WALL, FLOOR], [490, FLOOR], THING, { width: 3 });
+        const nat = NATURAL - HALF;
+        g.seg([nat, 120], [nat, FLOOR + 60], MARK, { dash: true, width: 1 });
+        g.text([nat, FLOOR + 72], 'natural length', MARK);
+
+        // The spring: a zigzag from the wall to the block
+        const y = FLOOR - HALF, coils = 14, amp = 12, lead = 12;
+        let prev = [WALL, y];
+        const step = (face - WALL - 2 * lead) / coils;
+        g.seg(prev, [WALL + lead, y], THING); prev = [WALL + lead, y];
+        for (let i = 0; i < coils; i++) {
+          const next = [WALL + lead + step * (i + 0.5), y + (i % 2 ? amp : -amp)];
+          g.seg(prev, next, THING); prev = next;
+        }
+        g.seg(prev, [face - lead, y], THING); g.seg([face - lead, y], [face, y], THING);
+
+        // The block
+        g.poly([[face, FLOOR - 2 * HALF], [face + 2 * HALF, FLOOR - 2 * HALF], [face + 2 * HALF, FLOOR], [face, FLOOR]], '#fde68a');
+        g.seg([face, FLOOR - 2 * HALF], [face + 2 * HALF, FLOOR - 2 * HALF], THING);
+        g.seg([face + 2 * HALF, FLOOR - 2 * HALF], [face + 2 * HALF, FLOOR], THING);
+        g.seg([face, FLOOR - 2 * HALF], [face, FLOOR], THING);
+
+        // The stretch x, marked under the floor
+        if (Math.abs(xcm) >= 1) {
+          g.seg([nat, FLOOR + 30], [face, FLOOR + 30], MARK, { width: 2 });
+          g.seg([face, FLOOR + 22], [face, FLOOR + 38], MARK, { width: 2 });
+          g.text([(nat + face) / 2, FLOOR + 48], `x = ${Math.abs(xcm).toFixed(0)} cm`, MARK);
+        }
+
+        // The elastic force on the block, back towards the natural length
+        const dir = xcm > 0 ? -1 : 1;
+        if (Math.abs(xcm) >= 1) arrow(g, [P.B[0], FLOOR - 70], [P.B[0] + dir * F * SCALE, FLOOR - 70], SPRING, 'kx');
+
+        output.textContent =
+          (Math.abs(xcm) < 1
+            ? 'At the natural length: x = 0, so the spring puts no force on the block.'
+            : `${xcm > 0 ? 'stretched' : 'squashed'} by x = ${Math.abs(xcm).toFixed(0)} cm = ${x.toFixed(2)} m\n` +
+              `F = kx = ${k} × ${x.toFixed(2)} = ${F.toFixed(1)} N\n` +
+              `direction: ${xcm > 0 ? 'left, pulling the block back in' : 'right, pushing the block back out'}`);
+      },
+    });
+
+    kBox.addEventListener('input', board.redraw);
+  })();
+</script>
