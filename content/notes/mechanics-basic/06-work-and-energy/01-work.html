@@ -1,0 +1,230 @@
+<!-- tags: Work and Energy -->
+<!-- =====================================================================
+     NOTE: Work
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Work and Energy">Work</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>A force does work when the object moves along the force</h2>
+    <p>In everyday life, "work" means any effort. In physics it has a strict meaning: <em>when a force acts on an object and the object moves in the direction of the force, the force does <strong>work</strong> on the object.</em></p>
+    <p>Carrying a heavy bag along a level path is hard, but your upward lifting force does <strong>no work</strong>: the bag moves sideways, at right angles to your force. Only the part of the force <strong>along the movement</strong> counts.</p>
+    <p>Work is done by <strong>one particular force</strong>, so always say which one: "the work done by gravity", "the work done by friction". Several forces can act on the same object, each doing its own work.</p>
+  </section>
+
+  <!-- FORMULA: the definition of work -->
+  <div class="note-formula">
+    <h3>Work done by a constant force</h3>
+    <div class="formula-main">$$W = Fx\cos\theta = \vec{F}\cdot\vec{x}$$</div>
+    <p class="symbols">$F$ size of the force in $\mathrm{N}$, $x$ distance moved in $\mathrm{m}$, $\theta$ the angle <strong>between the force and the displacement</strong>. Unit: the joule, $1\ \mathrm{J} = 1\ \mathrm{N \cdot m}$. Work is positive for $\theta &lt; 90^\circ$, zero at $90^\circ$, and negative for $\theta &gt; 90^\circ$.</p>
+  </div>
+
+  <!-- PROOF: why the cosine -->
+  <div class="note-proof">
+    <ol>
+      <li>Simplest case: the force points the same way as the movement. Then $W = Fx$. A force of $1\ \mathrm{N}$ moving an object $1\ \mathrm{m}$ does $1\ \mathrm{J}$ of work.</li>
+      <li>If the force is at an angle $\theta$, split it into a part along the movement, $F\cos\theta$, and a part at right angles, $F\sin\theta$.</li>
+      <li>The object doesn't move at right angles, so that part does no work. The part along the movement does $W = (F\cos\theta)\,x$.</li>
+      <li>In vector language, this is the <strong>dot product</strong> of the force vector and the displacement vector: $\vec{F}\cdot\vec{x} = |\vec{F}||\vec{x}|\cos\theta$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: the work done by each force on a slope; code at the bottom -->
+  <div class="note-demo">
+    <h2>A $2.0\ \mathrm{kg}$ block is pulled $2.0\ \mathrm{m}$ up a rough $30^\circ$ slope ($\mu = 0.30$)</h2>
+    <div class="controls choices" id="wkChoices">
+      <button type="button" data-force="F" class="active">Work by the pull F</button>
+      <button type="button" data-force="g">Work by gravity</button>
+      <button type="button" data-force="N">Work by the normal force</button>
+      <button type="button" data-force="f">Work by friction</button>
+    </div>
+    <div class="controls">
+      <label>$F$ = <input type="range" id="wkF" min="0" max="30" step="1" value="20"></label>
+      <label>angle of the pull $\varphi$ = <input type="range" id="wkPhi" min="0" max="40" step="5" value="20"></label>
+    </div>
+    <canvas id="wkCanvas"></canvas>
+    <div class="output table-text" id="wkOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A box is pushed $3.0\ \mathrm{m}$ along a floor by a $20\ \mathrm{N}$ force in the direction of motion. Find the work done by the push.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\theta = 0^\circ$: $W = 20 \times 3.0 \times \cos 0^\circ$.</li>
+      </ol>
+      <p class="answer">$60\ \mathrm{J}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">A sledge is pulled $5.0\ \mathrm{m}$ along level snow by a rope at $60^\circ$ above the horizontal, with tension $40\ \mathrm{N}$. Find the work done by the rope.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$W = 40 \times 5.0 \times \cos 60^\circ = 200 \times 0.5$.</li>
+      </ol>
+      <p class="answer">$100\ \mathrm{J}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A block of mass $m$ is pulled a distance $L$ up a slope at angle $\theta$. Find the work done by gravity.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Gravity points straight down; the displacement points up the slope. The angle between them is $90^\circ + \theta$.</li>
+        <li>$W = mgL\cos(90^\circ + \theta) = -mgL\sin\theta$.</li>
+      </ol>
+      <p class="answer">$W = -mgL\sin\theta$ (negative: the block moves up, against gravity)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">A $2.0\ \mathrm{kg}$ block slides $4.0\ \mathrm{m}$ along a level floor with $\mu = 0.25$. Find the work done by the normal force and by kinetic friction.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Normal force: at $90^\circ$ to the movement, so $W_N = 0$.</li>
+        <li>Friction: $\mu mg = 4.9\ \mathrm{N}$, opposite to the movement ($180^\circ$): $W_f = 4.9 \times 4.0 \times \cos 180^\circ$.</li>
+      </ol>
+      <p class="answer">$W_N = 0$; $W_f = -19.6\ \mathrm{J}$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: the right angle -->
+  <div class="note-warning">
+    $\theta$ is the angle between <strong>the force and the displacement</strong>, not the angle of the slope. On a slope there are often two angles in the picture: check which one sits between the two arrows you care about.
+  </div>
+
+  <!-- TIP: quick signs -->
+  <div class="note-tip">
+    Quick check for the sign: a force helping the motion does positive work; a force at right angles (like the normal force on a fixed surface) does zero work; a force against the motion (like kinetic friction) does negative work.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$W = Fx\cos\theta$, the dot product of force and displacement; unit joule ($\mathrm{J}$).</li>
+      <li>Only the part of the force along the movement does work.</li>
+      <li>Work can be positive, zero or negative; always say which force does it.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Work on a slope" demo (the TRY IT block above).
+  // The block moves L = 2.0 m up a 30° slope (black dashed arrow: the displacement).
+  // Four forces act on it: the pull F at angle φ above the slope, gravity, the normal
+  // force and kinetic friction. The chosen force is drawn bold, with the angle between
+  // it and the displacement marked. Output: W = F x cos(angle) with numbers, and the
+  // work done by each force. 4 pixels per newton.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('wkCanvas');
+    const output = document.getElementById('wkOutput');
+    const fBox = document.getElementById('wkF'), phiBox = document.getElementById('wkPhi');
+    const M = 2.0, G = 9.8, MU = 0.3, L = 2.0, TH = 30 * Math.PI / 180, PX = 4;
+    const COLORS = { F: '#7c3aed', g: '#dc2626', N: '#2563eb', f: '#16a34a' };
+    const THING = '#475569';
+    let chosen = 'F';
+
+    function arrow(g, p, d, color, width) {
+      const len = Math.hypot(d[0], d[1]);
+      if (len < 3) return;
+      const u = [d[0] / len, d[1] / len], n = [-u[1], u[0]], q = [p[0] + d[0], p[1] + d[1]];
+      g.seg(p, q, color, { width });
+      g.poly([q, [q[0] - 10 * u[0] + 5 * n[0], q[1] - 10 * u[1] + 5 * n[1]], [q[0] - 10 * u[0] - 5 * n[0], q[1] - 10 * u[1] - 5 * n[1]]], color);
+    }
+    const n2 = (x) => x.toFixed(2).replace('-', '−');
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const F = Number(fBox.value), phi = Number(phiBox.value) * Math.PI / 180;
+        const u = [Math.cos(TH), -Math.sin(TH)], nrm = [-Math.sin(TH), -Math.cos(TH)];   // up the slope, out of the slope
+        const base = [30, 320], top = [30 + 470 * u[0], 320 + 470 * u[1]];
+        g.poly([base, top, [top[0], 320]], '#e2e8f0');
+        g.seg(base, top, THING, { width: 3 });
+        g.arc(base, top, [200, 320], THING, 36);
+        g.text([84, 310], '30°', THING);
+
+        // the block (at the start) and where it ends up after L = 2.0 m (60 px per metre)
+        const contact = [base[0] + 130 * u[0], base[1] + 130 * u[1]], c = [contact[0] + 28 * nrm[0], contact[1] + 28 * nrm[1]];
+        const corner = (cc, sx, sy) => [cc[0] + sx * 34 * u[0] + sy * 28 * nrm[0], cc[1] + sx * 34 * u[1] + sy * 28 * nrm[1]];
+        const end = [c[0] + 120 * u[0], c[1] + 120 * u[1]];
+        g.poly([corner(end, -1, -1), corner(end, 1, -1), corner(end, 1, 1), corner(end, -1, 1)], 'rgba(253, 230, 138, 0.35)');
+        const pts = [corner(c, -1, -1), corner(c, 1, -1), corner(c, 1, 1), corner(c, -1, 1)];
+        g.poly(pts, '#fde68a');
+        pts.forEach((p, i) => g.seg(p, pts[(i + 1) % 4], THING, { width: 2 }));
+        // the displacement: an arrow above the block, from where it starts to where it ends
+        const d0 = [contact[0] + 80 * nrm[0], contact[1] + 80 * nrm[1]], d1 = [d0[0] + 120 * u[0], d0[1] + 120 * u[1]];
+        g.seg(d0, d1, '#0f172a', { width: 1.5, dash: true });
+        g.poly([d1, [d1[0] - 9 * u[0] + 4 * nrm[0], d1[1] - 9 * u[1] + 4 * nrm[1]], [d1[0] - 9 * u[0] - 4 * nrm[0], d1[1] - 9 * u[1] - 4 * nrm[1]]], '#0f172a');
+        g.text([(d0[0] + d1[0]) / 2 + 26 * nrm[0] - 20, (d0[1] + d1[1]) / 2 + 26 * nrm[1]], 'displacement L = 2.0 m', '#0f172a');
+
+        // the forces
+        const mg = M * G;
+        let N = mg * Math.cos(TH) - F * Math.sin(phi);
+        const lifted = N < 0;
+        if (lifted) N = 0;
+        const fr = MU * N;
+        const dirF = [Math.cos(phi) * u[0] + Math.sin(phi) * nrm[0], Math.cos(phi) * u[1] + Math.sin(phi) * nrm[1]];
+        const vec = {
+          F: [dirF[0] * F * PX, dirF[1] * F * PX],
+          g: [0, mg * PX],
+          N: [nrm[0] * N * PX, nrm[1] * N * PX],
+          f: [-u[0] * fr * PX, -u[1] * fr * PX],
+        };
+        const from = { F: corner(c, 1, 0), g: c, N: contact, f: corner(c, -1, 1) };
+        Object.keys(vec).forEach((k) => arrow(g, from[k], vec[k], k === chosen ? COLORS[k] : '#cbd5e1', k === chosen ? 3.5 : 2));
+
+        // angle between the chosen force and the displacement, shown at the force's tail
+        const angleDeg = { F: phi * 180 / Math.PI, g: 120, N: 90, f: 180 }[chosen];
+        const p0 = from[chosen];
+        if (Math.hypot(...vec[chosen]) > 3) {
+          g.seg(p0, [p0[0] + 60 * u[0], p0[1] + 60 * u[1]], '#0f172a', { width: 1, dash: true });
+          if (angleDeg > 0 && angleDeg < 180) g.arc(p0, [p0[0] + 60 * u[0], p0[1] + 60 * u[1]], [p0[0] + vec[chosen][0], p0[1] + vec[chosen][1]], COLORS[chosen], 22);
+        }
+
+        const W = {
+          F: F * L * Math.cos(phi),
+          g: mg * L * Math.cos(120 * Math.PI / 180),
+          N: 0,
+          f: -fr * L,
+        };
+        const size = { F, g: mg, N, f: fr }[chosen];
+        const name = { F: 'the pull F', g: 'gravity mg', N: 'the normal force N', f: 'kinetic friction μN' }[chosen];
+        const lines = [
+          `${name}: size ${n2(size)} N, angle to the displacement ${angleDeg.toFixed(0)}°`,
+          `W = (force) × L × cos(angle) = ${n2(size)} × ${L.toFixed(1)} × cos ${angleDeg.toFixed(0)}° = ${n2(W[chosen])} J`,
+        ];
+        if (chosen === 'g') lines.push('angle = 90° + 30°, so W = −mgL sin30° (negative: it moves up)');
+        if (chosen === 'N' || chosen === 'f') lines.push(`N = mg cos30° − F sinφ = ${n2(N)} N  (balance at right angles to the slope)`);
+        if (lifted) lines.push('(F sinφ is bigger than mg cos30°: the block would lift off the slope)');
+        lines.push(`all four: W_F = ${n2(W.F)},  W_g = ${n2(W.g)},  W_N = 0,  W_f = ${n2(W.f)}  (J)`);
+        output.textContent = lines.join('\n');
+      },
+    });
+
+    document.querySelectorAll('#wkChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#wkChoices button').forEach((x) => x.classList.toggle('active', x === b));
+      chosen = b.dataset.force;
+      board.redraw();
+    }));
+    [fBox, phiBox].forEach((b) => b.addEventListener('input', board.redraw));
+  })();
+</script>
