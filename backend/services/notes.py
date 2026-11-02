@@ -1,5 +1,5 @@
 from utils.content_loader import get_notes_with_titles, get_practice_sets, load_note, ContentNotFound
-from utils.courses import course_name, topic_name
+from utils.courses import course_name, course_order, topic_name
 from services.urls import note_url
 
 # Data for a note page (/notes/<path>).
@@ -87,7 +87,7 @@ def notes_sidebar():
     for the course and topic folders (for its two dropdowns)."""
     notes_meta = get_notes_with_titles()
     notes_list = [n["path"] for n in notes_meta]
-    courses = sorted({p.split("/")[0] for p in notes_list})
+    courses = sorted({p.split("/")[0] for p in notes_list}, key=course_order)
     topics = {p.split("/")[1] for p in notes_list if p.count("/") >= 2}
     return {
         "notes_meta": notes_meta,

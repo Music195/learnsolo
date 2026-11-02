@@ -1,0 +1,222 @@
+<!-- tags: Thermodynamics -->
+<!-- =====================================================================
+     NOTE: The First Law of Thermodynamics
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Thermodynamics">The First Law of Thermodynamics</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Heat put in = rise in internal energy + work the gas does</h2>
+    <p>Give a gas some heat $Q$. Where does that energy go? Some of it raises the internal energy (the gas gets hotter), and the rest leaves as work, when the gas pushes a piston out. Energy is never lost, so:</p>
+    <p><strong>$Q = \Delta U + W$</strong>: "money in = savings + spending".</p>
+    <ul>
+      <li>$Q &gt; 0$: heat goes <em>into</em> the gas. $Q &lt; 0$: the gas gives heat out.</li>
+      <li>$\Delta U &gt; 0$: the temperature rises. $\Delta U &lt; 0$: it falls.</li>
+      <li>$W &gt; 0$: the gas expands and does work. $W &lt; 0$: it is compressed, so work is done on it.</li>
+    </ul>
+    <p>Many textbooks write the same law as $\Delta U = Q + W_{\text{on}}$, where $W_{\text{on}}$ is the work done <em>on</em> the gas. Since $W_{\text{on}} = -W$, it is the same equation. In this course $W$ always means work done <strong>by</strong> the gas.</p>
+  </section>
+
+  <!-- FORMULA: the first law -->
+  <div class="note-formula">
+    <h3>The first law (energy conservation for a gas)</h3>
+    <div class="formula-main">$$Q = \Delta U + W$$</div>
+    <p class="symbols">$Q$: heat into the gas. $\Delta U$: change in internal energy. $W$: work done by the gas. All in J, each with its sign.</p>
+  </div>
+
+  <!-- PROOF: why it holds -->
+  <div class="note-proof">
+    <ol>
+      <li>The gas's energy is its internal energy $U$. Only two things can change it: heat flowing in or out, and work done.</li>
+      <li>Heat $Q$ in adds $Q$. Work $W$ done by the gas on the outside takes $W$ away.</li>
+      <li>So $\Delta U = Q - W$, which rearranges to $Q = \Delta U + W$.</li>
+      <li>To use it: find any two of $Q$, $\Delta U$, $W$ with the right signs; the third follows.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: energy bars; code at the bottom -->
+  <div class="note-demo">
+    <h2>Where does the energy go? (bars: $Q$, $\Delta U$, $W$)</h2>
+    <div class="controls choices" id="flChoices">
+      <button type="button" data-q="500" data-u="300" data-w="200" data-name="heated, expands at constant P" class="active">Heated, expands</button>
+      <button type="button" data-q="300" data-u="300" data-w="0" data-name="heated in a rigid container">Heated, rigid</button>
+      <button type="button" data-q="-200" data-u="-400" data-w="200" data-name="expands, gives out heat, cools">Expands and cools</button>
+      <button type="button" data-q="-100" data-u="100" data-w="-200" data-name="pushed in, gives out heat, warms">Compressed</button>
+    </div>
+    <canvas id="flCanvas"></canvas>
+    <div class="output table-text" id="flOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A gas takes in 500 J of heat and does 200 J of work. Find the change in its internal energy.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\Delta U = Q - W = 500 - 200$.</li>
+      </ol>
+      <p class="answer">$\Delta U = +300\ \mathrm{J}$: the gas gets hotter</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">A gas's internal energy falls by 400 J while it gives out 200 J of heat. Did its volume increase or decrease? How much work did it do?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Signs: $\Delta U = -400$ J, $Q = -200$ J (heat out).</li>
+        <li>$W = Q - \Delta U = -200 - (-400) = +200$ J.</li>
+        <li>$W &gt; 0$ means the gas did work on the outside: it expanded.</li>
+      </ol>
+      <p class="answer">The volume increased; the gas did 200 J of work</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">200 J of work is done on a gas and its internal energy rises by 100 J. Was heat taken in or given out, and how much?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Work done <em>on</em> the gas is 200 J, so the work done <em>by</em> it is $W = -200$ J.</li>
+        <li>$Q = \Delta U + W = 100 + (-200) = -100$ J.</li>
+      </ol>
+      <p class="answer">100 J of heat was given out</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">A gas in a rigid container is given 300 J of heat. Find $W$ and $\Delta U$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Rigid: no volume change, so $W = 0$.</li>
+        <li>$\Delta U = Q - W = 300$ J: all the heat goes into internal energy.</li>
+      </ol>
+      <p class="answer">$W = 0$, $\Delta U = 300\ \mathrm{J}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">A gas expands at constant temperature and does 250 J of work. How much heat did it take in?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Constant temperature means $\Delta U = 0$ for an ideal gas.</li>
+        <li>$Q = 0 + 250$.</li>
+      </ol>
+      <p class="answer">$Q = 250\ \mathrm{J}$: all the heat taken in comes out as work</p>
+    </details>
+  </div>
+
+  <!-- WARNING: signs -->
+  <div class="note-warning">
+    Most mistakes are sign mistakes. "Work done <strong>on</strong> the gas" means $W$ is negative here; "heat released" means $Q$ is negative. Write each sign down before using the formula.
+  </div>
+
+  <!-- TIP: what fixes what -->
+  <div class="note-tip">
+    Read the situation for free information: rigid container → $W = 0$; constant temperature → $\Delta U = 0$; insulated (no heat in or out) → $Q = 0$.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$Q = \Delta U + W$, with $W$ the work done by the gas.</li>
+      <li>Signs: heat in $+$, temperature up $+$, expansion $+$.</li>
+      <li>Work done on the gas $= -W$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Where does the energy go" demo (the TRY IT block above).
+  // Three bars for Q, ΔU and W (1 pixel = 4 J, upwards = positive), with a
+  // cylinder sketch showing the piston moving out (W > 0) or in (W < 0) and the gas
+  // colour getting warmer (ΔU > 0) or cooler (ΔU < 0). The bars grow from 0 to their
+  // full size over 1.5 s so the balance Q = ΔU + W can be watched.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('flCanvas');
+    const output = document.getElementById('flOutput');
+    const ZERO = 190, YS = 0.25;
+    const THING = '#475569', RED = '#dc2626', BLUE = '#2563eb', GREEN = '#16a34a', ORANGE = '#ea580c';
+    let Q = 500, U = 300, W = 200, name = 'heated, expands at constant P', f = 0, lastText = '';
+
+    function bar(g, x, v, color, label) {
+      const h = v * f * YS;
+      g.poly([[x - 28, ZERO], [x + 28, ZERO], [x + 28, ZERO - h], [x - 28, ZERO - h]], color);
+      g.text([x, ZERO - h + (v >= 0 ? -12 : 12)], `${(v * f).toFixed(0)} J`.replace('-', '−'), THING);
+      g.text([x, 320], label, THING);
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        // bars
+        g.seg([250, ZERO], [500, ZERO], THING, { width: 1.5 });
+        bar(g, 290, Q, 'rgba(234, 88, 12, 0.7)', 'Q');
+        bar(g, 375, U, 'rgba(220, 38, 38, 0.7)', 'ΔU');
+        bar(g, 460, W, 'rgba(22, 163, 74, 0.7)', 'W');
+        g.text([332, 320], '=', THING);
+        g.text([417, 320], '+', THING);
+
+        // cylinder (horizontal), piston at x set by W
+        const px = 170 + (W / 200) * 40 * f;
+        g.seg([20, 120], [220, 120], THING, { width: 2 });
+        g.seg([20, 240], [220, 240], THING, { width: 2 });
+        g.seg([20, 120], [20, 240], THING, { width: 2 });
+        const warm = Math.max(-1, Math.min(1, U / 400 * f));
+        const col = warm >= 0 ? `rgba(220, 38, 38, ${0.15 + 0.35 * warm})` : `rgba(37, 99, 235, ${0.15 - 0.35 * warm})`;
+        g.poly([[21, 121], [px, 121], [px, 239], [21, 239]], col);
+        g.poly([[px, 121], [px + 12, 121], [px + 12, 239], [px, 239]], '#94a3b8');
+        g.seg([px + 12, 180], [px + 40, 180], THING, { width: 4 });
+        // heat arrow in or out at the bottom
+        if (Q !== 0) {
+          const y0 = Q > 0 ? 300 : 250, y1 = Q > 0 ? 250 : 300;
+          g.seg([95, y0], [95, y1], ORANGE, { width: 4 });
+          g.poly([[95, y1], [87, y1 + (Q > 0 ? 12 : -12)], [103, y1 + (Q > 0 ? 12 : -12)]], ORANGE);
+          g.text([140, 275], Q > 0 ? 'heat in' : 'heat out', ORANGE);
+        }
+
+        const sg = (v) => `${v >= 0 ? '+' : '−'}${Math.abs(v)}`;
+        const text =
+          `${name}\n` +
+          `Q = ΔU + W:  ${sg(Q)} = ${sg(U)} + (${sg(W)})   [J]\n` +
+          (W > 0 ? 'W > 0: the gas expands and pushes the piston out' : W < 0 ? 'W < 0: the gas is compressed; work done on it = ' + (-W) + ' J' : 'W = 0: the volume does not change') + '\n' +
+          (U > 0 ? 'ΔU > 0: the temperature rises' : 'ΔU < 0: the temperature falls');
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Grow the bars over 1.5 s. Stop when the page has changed.
+    let last = performance.now();
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.max(0, Math.min((now - last) / 1000, 0.05));
+      last = now;
+      if (f < 1) { f = Math.min(1, f + dt / 1.5); board.redraw(); }
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    document.querySelectorAll('#flChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#flChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      Q = Number(b.dataset.q); U = Number(b.dataset.u); W = Number(b.dataset.w); name = b.dataset.name;
+      f = 0;
+      board.redraw();
+    }));
+  })();
+</script>

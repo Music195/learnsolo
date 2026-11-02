@@ -1,0 +1,187 @@
+<!-- tags: Temperature and Heat -->
+<!-- =====================================================================
+     NOTE: Specific Heat and Heat Capacity
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Temperature and Heat">Specific Heat and Heat Capacity</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Some things need a lot of heat to warm up, others very little</h2>
+    <p>Give the same amount of heat to 100 g of water and to 100 g of iron: the iron gets much hotter. Each substance has its own "how hard is it to warm up" number.</p>
+    <ul>
+      <li><strong>Heat</strong> is energy that flows because of a temperature difference. Its unit is the joule (J). <strong>Temperature</strong> (K or °C) is something else: a measure of how hot something is.</li>
+      <li><strong>Specific heat</strong> $c$: the heat needed to raise <strong>1 g</strong> of a substance by <strong>1 K</strong>. Unit: J/(g·K). Water is about $4.2$, iron about $0.45$.</li>
+      <li><strong>Heat capacity</strong> $C$: the heat needed to raise <strong>a whole object</strong> by 1 K. Unit: J/K.</li>
+    </ul>
+    <p>Why have both? Specific heat belongs to a pure substance. But a real object, like a pot made of an alloy, with a lid, a thermometer stuck in it and some foam wrapped round it, isn't one substance. Its heat capacity, "J per K for the whole thing", is easy to measure once and then use in every calculation.</p>
+    <p>Note the unit: in heat problems, masses are usually in <strong>grams</strong>, like in chemistry, not kilograms.</p>
+  </section>
+
+  <!-- FORMULA: heat for a temperature change -->
+  <div class="note-formula">
+    <h3>Heat needed to raise the temperature by $\Delta T$</h3>
+    <div class="formula-main">$$Q = mc\,\Delta T \qquad Q = C\,\Delta T \qquad C = mc$$</div>
+    <p class="symbols">$Q$: heat (J). $m$: mass (g). $c$: specific heat (J/(g·K)). $C$: heat capacity (J/K). $\Delta T$: temperature change; a change of 1 K is the same as a change of 1 °C, so either can be used for $\Delta T$.</p>
+  </div>
+
+  <!-- PROOF: where the formulas come from -->
+  <div class="note-proof">
+    <ol>
+      <li>By definition, 1 g needs $c$ joules for each kelvin.</li>
+      <li>$m$ grams need $m$ times as much: $mc$ joules per kelvin.</li>
+      <li>For $\Delta T$ kelvins: $Q = mc\,\Delta T$.</li>
+      <li>"$mc$" is the heat per kelvin for the whole object: that is its heat capacity, $C = mc$. For an object made of several parts, add their heat capacities: $C = m_1c_1 + m_2c_2 + \cdots$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: heating different materials; code at the bottom -->
+  <div class="note-demo">
+    <h2>Give the same heat to water and to a metal</h2>
+    <div class="controls choices" id="shChoices">
+      <button type="button" data-c="0.90" data-name="aluminium">Aluminium</button>
+      <button type="button" data-c="0.45" data-name="iron" class="active">Iron</button>
+      <button type="button" data-c="0.39" data-name="copper">Copper</button>
+    </div>
+    <div class="controls">
+      <label>mass $m$ (g) = <input type="range" id="shM" min="50" max="500" step="50" value="100"></label>
+      <label>heat $Q$ (J) = <input type="range" id="shQ" min="0" max="8000" step="200" value="2000"></label>
+    </div>
+    <canvas id="shCanvas"></canvas>
+    <div class="output table-text" id="shOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">How much heat raises 200 g of water from 20 °C to 50 °C? ($c = 4.2$ J/(g·K))</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$Q = mc\,\Delta T = 200 \times 4.2 \times 30$.</li>
+      </ol>
+      <p class="answer">$Q = 2.52 \times 10^4\ \mathrm{J} \approx 2.5 \times 10^4\ \mathrm{J}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">The same heat as in Example 1 goes into 200 g of iron ($c = 0.45$ J/(g·K)). How much does its temperature rise?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\Delta T = \dfrac{Q}{mc} = \dfrac{25200}{200 \times 0.45}$.</li>
+      </ol>
+      <p class="answer">$\Delta T = 280\ \mathrm{K}$: over 9 times as much as the water</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A pot has a heat capacity of 150 J/K. It holds 500 g of water. How much heat raises the pot and water together by 10 K?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Total heat capacity: $C = 150 + 500 \times 4.2 = 2250\ \mathrm{J/K}$.</li>
+        <li>$Q = C\,\Delta T = 2250 \times 10$.</li>
+      </ol>
+      <p class="answer">$Q = 2.25 \times 10^4\ \mathrm{J}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">An object warms by 8.0 K when it receives 1200 J. Find its heat capacity.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$C = Q/\Delta T = 1200/8.0$.</li>
+      </ol>
+      <p class="answer">$C = 150\ \mathrm{J/K}$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: grams -->
+  <div class="note-warning">
+    Specific heat here is per <strong>gram</strong>. Everywhere else in physics, masses are in kilograms, so check the unit of $c$ before putting a mass in. If $c$ is given in J/(kg·K), the mass must be in kg.
+  </div>
+
+  <!-- TIP: kelvin vs degree Celsius -->
+  <div class="note-tip">
+    For a <em>change</em> in temperature, kelvin and °C are the same size: from −10 °C to 0 °C is a rise of 10 K. Only for an actual temperature (not a change) do you need $T\,[\mathrm{K}] = t\,[^\circ\mathrm{C}] + 273$.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Specific heat $c$: heat per gram per kelvin. Heat capacity $C$: heat per kelvin for a whole object.</li>
+      <li>$Q = mc\,\Delta T = C\,\Delta T$, with $C = mc$ (add the parts for a mixed object).</li>
+      <li>Heat is energy (J); temperature is how hot (K).</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Same heat, different things" demo (the TRY IT block above).
+  // A block of the chosen material (mass m) starts at 20 °C and receives heat Q.
+  // Its temperature rises by ΔT = Q/(mc). For comparison, the same mass of water
+  // gets the same heat on the left. Thermometers go from 0 °C to 200 °C
+  // (1 pixel per °C); a reading above 200 °C stops at the top with an arrow.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('shCanvas');
+    const output = document.getElementById('shOutput');
+    const mBox = document.getElementById('shM'), qBox = document.getElementById('shQ');
+    const T0 = 20, BOT = 290, PXC = 1, THING = '#475569', RED = '#dc2626';
+    let c = 0.45, name = 'iron', lastText = '';
+
+    // A thermometer at x showing temperature t (°C), with a block underneath.
+    function thermometer(g, x, t, label, color) {
+      const top = BOT - 200 * PXC;
+      g.seg([x, BOT], [x, top], '#cbd5e1', { width: 10 });
+      const h = Math.min(t, 200) * PXC;
+      g.seg([x, BOT], [x, BOT - h], RED, { width: 6 });
+      g.circle([x, BOT + 4], 9, RED, { fill: RED });
+      if (t > 200) g.poly([[x, top - 16], [x - 7, top - 4], [x + 7, top - 4]], RED);
+      g.text([x, top - 28], `${t.toFixed(1)} °C`, RED);
+      g.poly([[x - 50, BOT + 18], [x + 50, BOT + 18], [x + 50, BOT + 42], [x - 50, BOT + 42]], color);
+      g.text([x, BOT + 30], label, THING);
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const m = Number(mBox.value), Q = Number(qBox.value);
+        // scale marks every 50 °C
+        for (let t = 0; t <= 200; t += 50) {
+          g.seg([30, BOT - t * PXC], [480, BOT - t * PXC], '#f1f5f9', { width: 1 });
+          g.text([18, BOT - t * PXC], `${t}`, '#94a3b8');
+        }
+        const dW = Q / (m * 4.2), dX = Q / (m * c);
+        thermometer(g, 150, T0 + dW, `${m} g water`, 'rgba(147, 197, 253, 0.6)');
+        thermometer(g, 360, T0 + dX, `${m} g ${name}`, 'rgba(148, 163, 184, 0.6)');
+
+        const text =
+          `heat Q = ${Q} J given to each (both start at 20 °C)\n` +
+          `water:  ΔT = Q/(mc) = ${Q}/(${m} × 4.2) = ${dW.toFixed(1)} K\n` +
+          `${name}:  ΔT = Q/(mc) = ${Q}/(${m} × ${c}) = ${dX.toFixed(1)} K\n` +
+          `heat capacity C = mc:  water ${(m * 4.2).toFixed(0)} J/K,  ${name} ${(m * c).toFixed(0)} J/K`;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    document.querySelectorAll('#shChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#shChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      c = Number(b.dataset.c); name = b.dataset.name;
+      board.redraw();
+    }));
+    [mBox, qBox].forEach((b) => b.addEventListener('input', () => board.redraw()));
+  })();
+</script>

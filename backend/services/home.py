@@ -1,5 +1,5 @@
 from utils.content_loader import get_notes_list, get_notes_with_titles, get_practice_sets, get_past_papers
-from utils.courses import SUBJECTS, course_name, course_subject, topic_name, past_category, past_group
+from utils.courses import SUBJECTS, course_name, course_order, course_subject, topic_name, past_category, past_group
 from services.urls import note_url, practice_url, past_paper_url
 
 # Data for the home page and the search box.
@@ -25,7 +25,8 @@ def build_courses(notes_list):
     # topics were a dict (to find them quickly); the page only needs the list
     for course in courses.values():
         course["topics"] = list(course["topics"].values())
-    return list(courses.values())
+    # courses in the order set in utils/courses.py (e.g. Mechanics Basic before Heat)
+    return sorted(courses.values(), key=lambda c: course_order(c["folder"]))
 
 
 def build_subjects(courses):

@@ -1,0 +1,214 @@
+<!-- tags: Thermodynamics -->
+<!-- =====================================================================
+     NOTE: Heat Engines and Efficiency
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Thermodynamics">Heat Engines and Efficiency</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>An engine takes in heat, turns part of it into work, and throws the rest away</h2>
+    <p>A <strong>heat engine</strong> (a car engine, a power-station turbine) runs a gas round a <strong>cycle</strong>: it ends each lap in exactly the state it started, ready to go again.</p>
+    <ul>
+      <li>After one full cycle the gas is back at the same temperature, so $\Delta U = 0$. The first law then says the net heat in equals the net work out: $W_{\text{net}} = Q_{\text{in}} - Q_{\text{out}}$.</li>
+      <li>On a P–V graph the net work is the <strong>area enclosed</strong> by the cycle. Going round clockwise gives positive work: an engine.</li>
+      <li>The <strong>efficiency</strong> is the fraction of the heat taken in that becomes useful work: $e = W_{\text{net}}/Q_{\text{in}}$.</li>
+    </ul>
+    <p>To find $Q_{\text{in}}$, go round the cycle one step at a time, work out $Q$ for each step, and add up only the <strong>positive</strong> ones. Don't use the net heat: the heat thrown away ($Q_{\text{out}}$) is never zero for a real engine, so $e$ is always less than 1.</p>
+  </section>
+
+  <!-- FORMULA: efficiency -->
+  <div class="note-formula">
+    <h3>Efficiency of a heat engine</h3>
+    <div class="formula-main">$$e = \frac{W_{\text{net}}}{Q_{\text{in}}} = \frac{Q_{\text{in}} - Q_{\text{out}}}{Q_{\text{in}}} = 1 - \frac{Q_{\text{out}}}{Q_{\text{in}}}$$</div>
+    <p class="symbols">$Q_{\text{in}}$: total heat taken in during the steps where $Q &gt; 0$. $Q_{\text{out}}$: total heat given out (as a positive number). $W_{\text{net}}$: area enclosed by the cycle.</p>
+  </div>
+
+  <!-- PROOF: why W = Qin − Qout -->
+  <div class="note-proof">
+    <ol>
+      <li>Add the first law $Q = \Delta U + W$ over every step of the cycle.</li>
+      <li>The total $\Delta U$ is zero, because the gas returns to its starting temperature.</li>
+      <li>So (sum of all $Q$) = (sum of all $W$): $Q_{\text{in}} - Q_{\text{out}} = W_{\text{net}}$.</li>
+      <li>Divide by $Q_{\text{in}}$: $e = 1 - Q_{\text{out}}/Q_{\text{in}}$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: rectangular cycle; code at the bottom -->
+  <div class="note-demo">
+    <h2>A rectangular cycle of a monatomic gas: A ($V_0$, $P_0$) → B → C → D → A, with C at $4V_0$</h2>
+    <div class="controls choices" id="heChoices">
+      <button type="button" data-a="2">B at 2P₀</button>
+      <button type="button" data-a="3" class="active">B at 3P₀</button>
+      <button type="button" data-a="4">B at 4P₀</button>
+    </div>
+    <canvas id="heCanvas"></canvas>
+    <div class="output table-text" id="heOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">In each cycle an engine takes in 500 J of heat and gives out 300 J. Find the work per cycle and the efficiency.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$W = Q_{\text{in}} - Q_{\text{out}} = 200$ J.</li>
+        <li>$e = 200/500$.</li>
+      </ol>
+      <p class="answer">$W = 200\ \mathrm{J}$, $e = 0.40$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">An engine with efficiency 0.25 does 100 J of work per cycle. How much heat does it take in and give out?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$Q_{\text{in}} = W/e = 100/0.25 = 400$ J.</li>
+        <li>$Q_{\text{out}} = Q_{\text{in}} - W = 300$ J.</li>
+      </ol>
+      <p class="answer">Takes in 400 J, gives out 300 J</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A monatomic gas goes round A ($V_0$, $P_0$) → B ($V_0$, $3P_0$) → C ($4V_0$, $3P_0$) → D ($4V_0$, $P_0$) → A. Find the efficiency.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>A → B (constant $V$): $Q = \tfrac32V_0 \times 2P_0 = 3P_0V_0$ (in).</li>
+        <li>B → C (constant $P$): $Q = \tfrac52 \times 3P_0 \times 3V_0 = 22.5P_0V_0$ (in).</li>
+        <li>C → D: $Q = \tfrac32 \times 4V_0 \times (-2P_0) = -12P_0V_0$ (out). D → A: $Q = \tfrac52P_0 \times (-3V_0) = -7.5P_0V_0$ (out).</li>
+        <li>$Q_{\text{in}} = 25.5P_0V_0$. $W_{\text{net}}$ = rectangle $= 2P_0 \times 3V_0 = 6P_0V_0$ (check: $25.5 - 19.5 = 6$).</li>
+        <li>$e = 6/25.5 = 4/17$.</li>
+      </ol>
+      <p class="answer">$e \approx 0.24$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">In Example 3, a student computes $e = W_{\text{net}} / (\text{sum of all } Q)$. What do they get, and why is it wrong?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The sum of all $Q$ over a cycle equals $W_{\text{net}}$ (because $\Delta U = 0$), so they get $6/6 = 1$.</li>
+        <li>Efficiency compares the work with the heat you had to <em>supply</em>, which is $Q_{\text{in}}$ only.</li>
+      </ol>
+      <p class="answer">They get 1 (100 %), which is impossible; divide by $Q_{\text{in}}$ only</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">Gas in a well-insulated (vacuum-walled) flask is quickly compressed by a piston. Does its temperature stay the same?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Insulated: no heat flows, so the change is adiabatic, $Q = 0$.</li>
+        <li>Work is done on the gas ($W &lt; 0$), so $\Delta U = -W &gt; 0$.</li>
+      </ol>
+      <p class="answer">No: the temperature rises. "No heat flow" is not "same temperature".</p>
+    </details>
+  </div>
+
+  <!-- WARNING: heat vs temperature -->
+  <div class="note-warning">
+    Keep heat and temperature apart. Heat $Q$ is energy that <em>flows</em>; temperature is a property of the gas. A gas can warm up with no heat at all (adiabatic compression), and can take in heat with no warming (isothermal expansion).
+  </div>
+
+  <!-- TIP: table -->
+  <div class="note-tip">
+    For any cycle problem, make a table with one row per step and columns $\Delta U$, $W$, $Q$. Each column of $\Delta U$ must add up to 0, and the $W$ column must add up to the enclosed area: two free checks on your work.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Over a cycle $\Delta U = 0$, so $W_{\text{net}} = Q_{\text{in}} - Q_{\text{out}}$ = enclosed area.</li>
+      <li>$e = W_{\text{net}}/Q_{\text{in}} = 1 - Q_{\text{out}}/Q_{\text{in}}$; $Q_{\text{in}}$ adds only the steps with $Q &gt; 0$.</li>
+      <li>Always less than 1: some heat is always given out.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Rectangular cycle" demo (the TRY IT block above).
+  // P–V graph in units of V0 (90 pixels) and P0 (55 pixels). A = (1, 1),
+  // B = (1, a), C = (4, a), D = (4, 1), with a = 2, 3 or 4 from the buttons.
+  // Monatomic gas, heat for each step (in units of P0V0):
+  //   A→B: (3/2)(a − 1)    B→C: (5/2)a·3    C→D: −(3/2)·4(a − 1)    D→A: −(5/2)·3
+  // A dot runs round the cycle (4 s a lap). The current side is drawn red if heat
+  // goes in there and blue if heat goes out; the enclosed area is the net work.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('heCanvas');
+    const output = document.getElementById('heOutput');
+    const G0 = [60, 300], XS = 90, YS = 55;
+    const THING = '#475569', RED = '#dc2626', BLUE = '#2563eb';
+    let a = 3, s = 0, lastText = '';
+    const gp = (p) => [G0[0] + p[0] * XS, G0[1] - p[1] * YS];
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const A = [1, 1], B = [1, a], C = [4, a], D = [4, 1], pts = [A, B, C, D, A];
+        const Qs = [1.5 * (a - 1), 2.5 * a * 3, -1.5 * 4 * (a - 1), -2.5 * 3];
+        const names = ['A → B', 'B → C', 'C → D', 'D → A'];
+        g.seg(G0, gp([4.8, 0]), THING, { width: 1.5 });
+        g.seg(G0, gp([0, 5.2]), THING, { width: 1.5 });
+        for (let v = 1; v <= 4; v++) g.text([gp([v, 0])[0], G0[1] + 14], `${v}V₀`, '#94a3b8');
+        for (let p = 1; p <= 4; p++) g.text([G0[0] - 22, gp([0, p])[1]], `${p}P₀`, '#94a3b8');
+        g.text([gp([4.6, 0])[0], G0[1] + 30], 'V', THING);
+        g.text([G0[0] + 14, gp([0, 5.2])[1]], 'P', THING);
+        g.poly([gp(A), gp(B), gp(C), gp(D)], 'rgba(22, 163, 74, 0.18)');
+        g.text(gp([2.5, (1 + a) / 2]), `W = ${3 * (a - 1)} P₀V₀`, '#16a34a');
+
+        // which side the dot is on (each side gets a quarter of the lap)
+        const side = Math.min(3, Math.floor(s * 4)), k = s * 4 - side;
+        for (let i = 0; i < 4; i++) g.seg(gp(pts[i]), gp(pts[i + 1]), i === side ? (Qs[i] > 0 ? RED : BLUE) : '#94a3b8', { width: i === side ? 4 : 2 });
+        const p = [pts[side][0] + (pts[side + 1][0] - pts[side][0]) * k, pts[side][1] + (pts[side + 1][1] - pts[side][1]) * k];
+        g.circle(gp(p), 6, RED, { fill: RED });
+        [['A', A, [-14, 12]], ['B', B, [-14, -12]], ['C', C, [14, -12]], ['D', D, [14, 12]]].forEach(([n, q, d]) => g.text([gp(q)[0] + d[0], gp(q)[1] + d[1]], n, THING));
+
+        const Qin = Qs.filter((q) => q > 0).reduce((t, q) => t + q, 0), W = 3 * (a - 1);
+        const fmt = (q) => `${q > 0 ? '+' : '−'}${Math.abs(q)}`;
+        const text =
+          `Q per step (P₀V₀): ` + names.map((n, i) => `${n} ${fmt(Qs[i])}`).join(',  ') + '\n' +
+          `Q_in = ${Qin} P₀V₀,  Q_out = ${Qin - W} P₀V₀,  W_net = area = ${W} P₀V₀\n` +
+          `e = W_net/Q_in = ${W}/${Qin} = ${(W / Qin).toFixed(3)}\n` +
+          `now on ${names[side]}: heat ${Qs[side] > 0 ? 'goes in (red)' : 'goes out (blue)'}`;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Run round the cycle every 4 s. Stop when the page has changed.
+    let last = performance.now();
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.max(0, Math.min((now - last) / 1000, 0.05));
+      last = now;
+      s = (s + dt / 4) % 1;
+      board.redraw();
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    document.querySelectorAll('#heChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#heChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      a = Number(b.dataset.a);
+      s = 0;
+      board.redraw();
+    }));
+  })();
+</script>

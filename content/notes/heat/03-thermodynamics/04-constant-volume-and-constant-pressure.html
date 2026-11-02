@@ -1,0 +1,214 @@
+<!-- tags: Thermodynamics -->
+<!-- =====================================================================
+     NOTE: Constant-Volume and Constant-Pressure Changes
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Thermodynamics">Constant-Volume and Constant-Pressure Changes</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Same warming, different heat: at constant pressure some heat leaves as work</h2>
+    <p>Two simple ways to heat a gas, both easy to draw on a P–V graph:</p>
+    <ul>
+      <li><strong>Constant volume</strong> (isochoric; a vertical line): the container is rigid, so $W = 0$ and all the heat goes into internal energy: $Q = \Delta U$.</li>
+      <li><strong>Constant pressure</strong> (isobaric; a horizontal line): a free piston lets the gas expand, so it does work $W = P\,\Delta V$. Now $Q = \Delta U + P\,\Delta V$: more heat is needed for the same warming.</li>
+    </ul>
+    <p>The trick that makes these quick: in $PV = nRT$, if one of $P$ or $V$ stays fixed, the change becomes $\Delta P\cdot V = nR\,\Delta T$ or $P\,\Delta V = nR\,\Delta T$. So you can swap $nR\,\Delta T$ for something you can read straight off the graph.</p>
+  </section>
+
+  <!-- FORMULA: the two changes for a monatomic gas -->
+  <div class="note-formula">
+    <h3>Monatomic ideal gas</h3>
+    <div class="formula-main">$$\text{constant } V:\ Q = \Delta U = \frac32V\,\Delta P \qquad \text{constant } P:\ Q = \frac32P\,\Delta V + P\,\Delta V = \frac52P\,\Delta V$$</div>
+    <p class="symbols">In terms of temperature: constant $V$, $Q = \frac32nR\,\Delta T$; constant $P$, $Q = \frac52nR\,\Delta T$. The heat per mole per kelvin, $\frac32R$ and $\frac52R$, are the molar heat capacities $C_V$ and $C_P$ (next note).</p>
+  </div>
+
+  <!-- PROOF: derive both -->
+  <div class="note-proof">
+    <ol>
+      <li><strong>Constant $V$.</strong> $PV = nRT$ with $V$ fixed: $V\,\Delta P = nR\,\Delta T$. $W = 0$, and $\Delta U = \tfrac32nR\,\Delta T = \tfrac32V\,\Delta P$. So $Q = \tfrac32V\,\Delta P$.</li>
+      <li><strong>Constant $P$.</strong> With $P$ fixed: $P\,\Delta V = nR\,\Delta T$. Work $W = P\,\Delta V$.</li>
+      <li>$\Delta U = \tfrac32nR\,\Delta T = \tfrac32P\,\Delta V$.</li>
+      <li>$Q = \Delta U + W = \tfrac32P\,\Delta V + P\,\Delta V = \tfrac52P\,\Delta V$. Of every 5 parts of heat, 3 parts warm the gas and 2 parts become work.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: A to B to C; code at the bottom -->
+  <div class="note-demo">
+    <h2>A $(2.0\ \mathrm{L},\ 1.0 \times 10^5\ \mathrm{Pa})$ → B (same V, $3.0 \times 10^5$ Pa) → C (5.0 L, same P)</h2>
+    <div class="controls choices" id="cvChoices">
+      <button type="button" data-step="ab" class="active">A → B (constant V)</button>
+      <button type="button" data-step="bc">B → C (constant P)</button>
+      <button type="button" data-step="abc">A → B → C</button>
+    </div>
+    <canvas id="cvCanvas"></canvas>
+    <div class="output table-text" id="cvOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A monatomic gas goes from A ($2.0 \times 10^{-3}$ m³, $1.0 \times 10^5$ Pa) to B ($2.0 \times 10^{-3}$ m³, $3.0 \times 10^5$ Pa). Find the heat it takes in.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Constant volume: $W = 0$, so $Q = \Delta U = \tfrac32V\,\Delta P$.</li>
+        <li>$Q = 1.5 \times 2.0 \times 10^{-3} \times 2.0 \times 10^5$.</li>
+      </ol>
+      <p class="answer">$Q_{AB} = 600\ \mathrm{J}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">It then goes from B to C ($5.0 \times 10^{-3}$ m³, $3.0 \times 10^5$ Pa). Find $W$, $\Delta U$ and $Q$ for B → C.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$W = P\,\Delta V = 3.0 \times 10^5 \times 3.0 \times 10^{-3} = 900$ J.</li>
+        <li>$\Delta U = \tfrac32P\,\Delta V = 1350$ J.</li>
+        <li>$Q = \Delta U + W = \tfrac52P\,\Delta V$.</li>
+      </ol>
+      <p class="answer">$W = 900$ J, $\Delta U = 1350$ J, $Q_{BC} = 2250\ \mathrm{J}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">1.0 mol of a monatomic gas is warmed by 10 K at constant volume. How much heat is needed?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$Q = \tfrac32nR\,\Delta T = 1.5 \times 1.0 \times 8.31 \times 10$.</li>
+      </ol>
+      <p class="answer">$Q \approx 1.2 \times 10^2\ \mathrm{J}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">The same gas is warmed by 10 K at constant pressure instead. Find the heat needed and the work done.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$Q = \tfrac52nR\,\Delta T = 2.5 \times 8.31 \times 10 \approx 208$ J.</li>
+        <li>$W = P\,\Delta V = nR\,\Delta T = 8.31 \times 10 \approx 83$ J.</li>
+      </ol>
+      <p class="answer">$Q \approx 2.1 \times 10^2$ J, $W \approx 83$ J</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">In Examples 3 and 4 the temperature rise is the same. Why does constant pressure need more heat?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Same $\Delta T$ means the same $\Delta U$ (125 J) in both cases.</li>
+        <li>At constant pressure the gas also expands and does work (83 J), which must be paid for with extra heat.</li>
+      </ol>
+      <p class="answer">The extra heat (83 J) leaves the gas as work</p>
+    </details>
+  </div>
+
+  <!-- WARNING: 5/2 only at constant P -->
+  <div class="note-warning">
+    $Q = \frac52P\,\Delta V$ only works at <strong>constant pressure</strong>, and $Q = \frac32V\,\Delta P$ only at <strong>constant volume</strong>. On a sloping line in the P–V graph neither one applies: use $Q = \Delta U + W$ with the area under the line.
+  </div>
+
+  <!-- TIP: read the graph -->
+  <div class="note-tip">
+    On a P–V graph with numbers, you never need $n$ or $T$: replace $nR\,\Delta T$ by $\Delta(PV)$ and read $P$ and $V$ off the axes.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Constant volume: $W = 0$, $Q = \Delta U = \tfrac32V\,\Delta P = \tfrac32nR\,\Delta T$.</li>
+      <li>Constant pressure: $W = P\,\Delta V$, $Q = \tfrac52P\,\Delta V = \tfrac52nR\,\Delta T$.</li>
+      <li>Same $\Delta T$ needs more heat at constant pressure, because some becomes work.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "A → B → C" demo (the TRY IT block above).
+  // P–V graph: V from 0 to 6 L (65 pixels per L), P from 0 to 4 ×10^5 Pa
+  // (60 pixels per 10^5 Pa). A = (2, 1), B = (2, 3), C = (5, 3).
+  // A dot moves along the chosen step(s); the area under B → C (the work) is shaded.
+  // Numbers use 1 L × 10^5 Pa = 100 J and a monatomic gas.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('cvCanvas');
+    const output = document.getElementById('cvOutput');
+    const G0 = [60, 300], XS = 65, YS = 60;
+    const THING = '#475569', RED = '#dc2626', BLUE = '#2563eb';
+    const A = [2, 1], B = [2, 3], C = [5, 3];
+    let step = 'ab', s = 0, lastText = '';
+    const gp = (p) => [G0[0] + p[0] * XS, G0[1] - p[1] * YS];
+    const mix = (p, q, k) => [p[0] + (q[0] - p[0]) * k, p[1] + (q[1] - p[1]) * k];
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        g.seg(G0, gp([6.3, 0]), THING, { width: 1.5 });
+        g.seg(G0, gp([0, 4.2]), THING, { width: 1.5 });
+        for (let v = 1; v <= 6; v++) g.text([gp([v, 0])[0], G0[1] + 14], `${v}`, '#94a3b8');
+        for (let p = 1; p <= 4; p++) g.text([G0[0] - 14, gp([0, p])[1]], `${p}`, '#94a3b8');
+        g.text([gp([6, 0])[0], G0[1] + 30], 'V (L)', THING);
+        g.text([G0[0] + 40, gp([0, 4.3])[1]], 'P (×10^5 Pa)', THING);
+
+        // where the dot is: for 'abc' the first half of s is A → B, the second B → C
+        let path, here;
+        if (step === 'ab') { path = [A, B]; here = mix(A, B, s); }
+        else if (step === 'bc') { path = [B, C]; here = mix(B, C, s); }
+        else { path = [A, B, C]; here = s < 0.5 ? mix(A, B, s * 2) : mix(B, C, s * 2 - 1); }
+        const onBC = step === 'bc' || (step === 'abc' && s > 0.5);
+        if (onBC) g.poly([gp([B[0], 0]), gp(B), gp([here[0], 3]), gp([here[0], 0])], 'rgba(22, 163, 74, 0.25)');
+        for (let i = 1; i < path.length; i++) g.seg(gp(path[i - 1]), gp(path[i]), BLUE, { width: 3 });
+        g.dot(gp(A), THING, 'A');
+        g.dot(gp(B), THING, 'B');
+        g.dot(gp(C), THING, 'C');
+        g.circle(gp(here), 6, RED, { fill: RED });
+
+        const rows = {
+          ab: 'A → B  (V fixed):  W = 0,    ΔU = (3/2)VΔP = 600 J,   Q = 600 J',
+          bc: 'B → C  (P fixed):  W = 900 J,  ΔU = (3/2)PΔV = 1350 J,  Q = 2250 J',
+        };
+        const text = step === 'abc'
+          ? `${rows.ab}\n${rows.bc}\nA → C total:  W = 900 J,  ΔU = 1950 J,  Q = 2550 J`
+          : `${rows[step]}\n` + (step === 'ab'
+            ? 'all the heat stays in the gas: P triples, so T triples'
+            : 'of the heat, 3/5 warms the gas and 2/5 becomes work (shaded area)');
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Move the dot over 3 s, pause, repeat. Stop when the page has changed.
+    let last = performance.now(), hold = 0;
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.max(0, Math.min((now - last) / 1000, 0.05));
+      last = now;
+      if (s < 1) s = Math.min(1, s + dt / 3);
+      else if ((hold += dt) > 1.5) { s = 0; hold = 0; }
+      board.redraw();
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    document.querySelectorAll('#cvChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#cvChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      step = b.dataset.step;
+      s = 0; hold = 0;
+      board.redraw();
+    }));
+  })();
+</script>

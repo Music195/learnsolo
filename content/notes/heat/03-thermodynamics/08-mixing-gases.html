@@ -1,0 +1,241 @@
+<!-- tags: Thermodynamics -->
+<!-- =====================================================================
+     NOTE: Connecting and Mixing Gases
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Thermodynamics">Connecting and Mixing Gases</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Two containers joined by a tube: count moles, balance pressures, keep the total energy</h2>
+    <p>Many problems join two containers with a thin tube and a valve. Three facts solve almost all of them:</p>
+    <ul>
+      <li><strong>Moles are conserved.</strong> Gas moves between the containers but none is made or lost: $n_A + n_B$ stays the same.</li>
+      <li><strong>Open valve → equal pressure.</strong> Gas flows until the pressure is the same everywhere (the temperatures can still differ if each container is held at its own temperature).</li>
+      <li><strong>Insulated and rigid → total internal energy is conserved.</strong> No heat comes in ($Q = 0$) and the walls don't move, so no work is done on the outside ($W = 0$). So $U_A + U_B$ before = $U$ after.</li>
+    </ul>
+    <p>A special case: gas rushing into an empty (vacuum) container. It pushes against nothing, so it does no work; no heat flows; so $\Delta U = 0$ and the <strong>temperature doesn't change</strong>. This is called <strong>free expansion</strong>.</p>
+  </section>
+
+  <!-- FORMULA: mixing in an insulated rigid container -->
+  <div class="note-formula">
+    <h3>Monatomic gases mixing in insulated, rigid containers</h3>
+    <div class="formula-main">$$T = \frac{n_AT_A + n_BT_B}{n_A + n_B} \qquad P = \frac{P_AV_A + P_BV_B}{V_A + V_B}$$</div>
+    <p class="symbols">Both come from $\frac32n_ART_A + \frac32n_BRT_B = \frac32(n_A + n_B)RT$, which is the same as $\frac32P_AV_A + \frac32P_BV_B = \frac32P(V_A + V_B)$.</p>
+  </div>
+
+  <!-- PROOF: energy conservation -->
+  <div class="note-proof">
+    <ol>
+      <li>Insulated: $Q = 0$. Rigid: $W = 0$. First law: $\Delta U = 0$ for the whole gas.</li>
+      <li>Before: $U = \tfrac32n_ART_A + \tfrac32n_BRT_B$. After: $U = \tfrac32(n_A + n_B)RT$.</li>
+      <li>Set them equal and cancel $\tfrac32R$: $T = \dfrac{n_AT_A + n_BT_B}{n_A + n_B}$, a mole-weighted average.</li>
+      <li>Using $U = \tfrac32PV$ instead: $P_AV_A + P_BV_B = P(V_A + V_B)$, which gives the final pressure without finding $n$ or $T$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: open the valve; code at the bottom -->
+  <div class="note-demo">
+    <h2>Open the valve between A and B (insulated, rigid; $V = 8.31$ L)</h2>
+    <div class="controls choices" id="mgChoices">
+      <button type="button" data-case="vac" class="active">Into a vacuum</button>
+      <button type="button" data-case="mix">1 mol at 300 K + 2 mol at 450 K</button>
+      <button type="button" data-case="hot">1 mol at 600 K + 1 mol at 200 K</button>
+    </div>
+    <canvas id="mgCanvas"></canvas>
+    <div class="output table-text" id="mgOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Container A (volume $V$) is held at 500 K and container B (volume $2V$) at 600 K. They are joined by an open tube and hold 1.0 mol of gas in total. How many moles are in each?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Open tube, so the same pressure $P$: $n_A = \dfrac{PV}{500R}$, $n_B = \dfrac{P \cdot 2V}{600R} = \dfrac{PV}{300R}$.</li>
+        <li>$\dfrac{n_B}{n_A} = \dfrac{500}{300} = \dfrac53$.</li>
+        <li>$n_A + n_B = 1.0$, so $n_A = \tfrac38$ and $n_B = \tfrac58$.</li>
+      </ol>
+      <p class="answer">$n_A = 0.375$ mol, $n_B = 0.625$ mol</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Insulated container A holds gas at 300 K and $3.0 \times 10^5$ Pa. Container B, the same size, is a vacuum. The valve is opened. Find the final temperature and pressure.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Free expansion: $Q = 0$, $W = 0$, so $\Delta U = 0$ and $T$ stays at 300 K.</li>
+        <li>Same $n$ and $T$ in twice the volume: $P$ halves.</li>
+      </ol>
+      <p class="answer">$300\ \mathrm{K}$ and $1.5 \times 10^5\ \mathrm{Pa}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Insulated rigid containers: A has 1.0 mol of a monatomic gas at 300 K; B has 2.0 mol at 450 K. The valve is opened. Find the final temperature.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$T = \dfrac{1.0 \times 300 + 2.0 \times 450}{1.0 + 2.0} = \dfrac{1200}{3.0}$.</li>
+      </ol>
+      <p class="answer">$T = 400\ \mathrm{K}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">In Example 3, A has volume $V$ at $3.0 \times 10^5$ Pa and B has volume $2V$ at $4.5 \times 10^5$ Pa. Find the final pressure without using moles.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$P = \dfrac{P_AV_A + P_BV_B}{V_A + V_B} = \dfrac{3.0 \times V + 4.5 \times 2V}{3V} \times 10^5$.</li>
+      </ol>
+      <p class="answer">$P = 4.0 \times 10^5\ \mathrm{Pa}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">Two equal insulated containers each hold $n$ mol of a monatomic gas at $T_0$, with the valve closed. The gas in A alone is heated to $3T_0$. Then the valve is opened. Find the final temperature.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Each container still holds $n$ mol (the valve was closed while heating).</li>
+        <li>$T = \dfrac{n \cdot 3T_0 + n \cdot T_0}{2n}$.</li>
+      </ol>
+      <p class="answer">$T = 2T_0$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: not the average of temperatures -->
+  <div class="note-warning">
+    The final temperature is the average weighted by <strong>moles</strong>, not the plain average of the two temperatures, and not weighted by volume. In Example 3, $(300 + 450)/2 = 375$ K is wrong.
+  </div>
+
+  <!-- TIP: which fact to use -->
+  <div class="note-tip">
+    Ask three questions: Is the valve open (equal pressure)? Is anything heated or held at a temperature (then energy isn't conserved)? Is it insulated and rigid (then $U$ total is conserved)? Moles are conserved in every case.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Joined containers: total moles conserved; an open valve means equal pressure.</li>
+      <li>Insulated and rigid: total $U$ conserved, so $T$ is the mole-weighted average.</li>
+      <li>Free expansion into a vacuum: no work, no heat, no temperature change.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Open the valve" demo (the TRY IT block above).
+  // Container volumes are multiples of V = 8.31 L, so P = nRT/V = n·T·1000 Pa
+  // for one unit of volume. Each mole is drawn as 12 dots, coloured by where it
+  // started (A red, B blue). The valve opens after 1.5 s; over 2 s every dot slides
+  // to a random place in the combined space. Then the readout shows the result:
+  //   T = (nA TA + nB TB)/(nA + nB),  P = (PA VA + PB VB)/(VA + VB).
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('mgCanvas');
+    const output = document.getElementById('mgOutput');
+    const THING = '#475569', RED = '#dc2626', BLUE = '#2563eb';
+    const CASES = {
+      vac: { a: { n: 1, T: 300, V: 1 }, b: { n: 0, T: 0, V: 1 } },
+      mix: { a: { n: 1, T: 300, V: 1 }, b: { n: 2, T: 450, V: 2 } },
+      hot: { a: { n: 1, T: 600, V: 1 }, b: { n: 1, T: 200, V: 1 } },
+    };
+    const Y0 = 90, H = 160, UNIT = 120, AX = 40, GAP = 40;   // one volume unit = 120 pixels wide
+    let key = 'vac', t = 0, dots = [], lastText = '';
+
+    // the box positions for the current case
+    function boxes() {
+      const c = CASES[key];
+      const ax1 = AX + c.a.V * UNIT, bx0 = ax1 + GAP, bx1 = bx0 + c.b.V * UNIT;
+      return { c, ax1, bx0, bx1 };
+    }
+    // a random point in the box that spans x0..x1
+    const rnd = (x0, x1) => [x0 + 8 + Math.random() * (x1 - x0 - 16), Y0 + 8 + Math.random() * (H - 16)];
+
+    function setup() {
+      const { c, ax1, bx0, bx1 } = boxes();
+      dots = [];
+      const total = c.a.V + c.b.V;
+      // after opening, a dot goes to box A with probability VA/(VA + VB)
+      const place = () => (Math.random() < c.a.V / total ? rnd(AX, ax1) : rnd(bx0, bx1));
+      for (let i = 0; i < c.a.n * 12; i++) dots.push({ from: rnd(AX, ax1), to: place(), color: RED });
+      for (let i = 0; i < c.b.n * 12; i++) dots.push({ from: rnd(bx0, bx1), to: place(), color: BLUE });
+      t = 0;
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const { c, ax1, bx0, bx1 } = boxes();
+        const open = t > 1.5, k = Math.max(0, Math.min(1, (t - 1.5) / 2));
+        const box = (x0, x1) => {
+          g.seg([x0, Y0], [x1, Y0], THING, { width: 3 });
+          g.seg([x0, Y0 + H], [x1, Y0 + H], THING, { width: 3 });
+          g.seg([x0, Y0], [x0, Y0 + H], THING, { width: 3 });
+          g.seg([x1, Y0], [x1, Y0 + H], THING, { width: 3 });
+        };
+        box(AX, ax1);
+        box(bx0, bx1);
+        // tube and valve
+        g.seg([ax1, Y0 + H / 2 - 8], [bx0, Y0 + H / 2 - 8], THING, { width: 2 });
+        g.seg([ax1, Y0 + H / 2 + 8], [bx0, Y0 + H / 2 + 8], THING, { width: 2 });
+        const vx = (ax1 + bx0) / 2;
+        if (open) g.seg([vx - 8, Y0 + H / 2], [vx + 8, Y0 + H / 2], '#16a34a', { width: 4 });
+        else g.seg([vx, Y0 + H / 2 - 8], [vx, Y0 + H / 2 + 8], RED, { width: 4 });
+        g.text([vx, Y0 + H / 2 + 26], open ? 'open' : 'closed', open ? '#16a34a' : RED);
+        // ease the dots from start to end
+        const e = k * k * (3 - 2 * k);
+        dots.forEach((d) => g.circle([d.from[0] + (d.to[0] - d.from[0]) * e, d.from[1] + (d.to[1] - d.from[1]) * e], 4, d.color, { fill: d.color }));
+
+        const PA = c.a.n * c.a.T / c.a.V / 100, PB = c.b.n ? c.b.n * c.b.T / c.b.V / 100 : 0;   // ×10^5 Pa
+        const nT = c.a.n + c.b.n, T = (c.a.n * c.a.T + c.b.n * c.b.T) / nT;
+        const P = (PA * c.a.V + PB * c.b.V) / (c.a.V + c.b.V);
+        g.text([(AX + ax1) / 2, Y0 - 18], `A: ${c.a.V === 1 ? "" : c.a.V}V`, THING);
+        g.text([(bx0 + bx1) / 2, Y0 - 18], `B: ${c.b.V === 1 ? "" : c.b.V}V`, THING);
+        const before = (s, b, p) => (b.n ? `${s}: ${b.n} mol, ${b.T} K, ${p.toFixed(1)} × 10^5 Pa` : `${s}: vacuum`);
+        const text =
+          `before:  ${before('A', c.a, PA)};  ${before('B', c.b, PB)}\n` +
+          (k < 1 ? 'opening the valve…' :
+            `after:  T = (${c.a.n}×${c.a.T}` + (c.b.n ? ` + ${c.b.n}×${c.b.T}` : '') + `)/${nT} = ${T.toFixed(0)} K,  ` +
+            `P = ${P.toFixed(1)} × 10^5 Pa everywhere`) + '\n' +
+          (key === 'vac' ? 'free expansion: no work, no heat, so T is unchanged and P halves'
+            : 'insulated and rigid: total U is conserved; T is the mole-weighted average');
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Advance the clock until the dots have settled. Stop when the page has changed.
+    let last = performance.now();
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.max(0, Math.min((now - last) / 1000, 0.05));
+      last = now;
+      if (t < 3.5) { t += dt; board.redraw(); }
+      requestAnimationFrame(tick);
+    }
+    setup();
+    requestAnimationFrame(tick);
+
+    document.querySelectorAll('#mgChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#mgChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      key = b.dataset.case;
+      setup();
+      board.redraw();
+    }));
+  })();
+</script>

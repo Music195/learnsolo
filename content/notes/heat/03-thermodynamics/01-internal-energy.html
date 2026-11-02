@@ -1,0 +1,193 @@
+<!-- tags: Thermodynamics -->
+<!-- =====================================================================
+     NOTE: Internal Energy
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Thermodynamics">Internal Energy</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>A gas stores energy in the motion of its molecules</h2>
+    <p>The <strong>internal energy</strong> $U$ of a gas is the total energy of all its molecules. For an ideal gas, the molecules don't pull on each other, so there's no stored "position" energy between them: $U$ is just the sum of their kinetic energies.</p>
+    <ul>
+      <li>For a <strong>monatomic</strong> gas (single atoms, like helium or argon), each molecule has on average $\tfrac32kT$ of kinetic energy (from kinetic theory).</li>
+      <li>$N$ molecules: $U = N \times \tfrac32kT = \tfrac32nRT$, since $Nk = nN_Ak = nR$.</li>
+      <li>So for a fixed amount of ideal gas, <strong>$U$ depends only on $T$</strong>. Same temperature, same internal energy, however you got there.</li>
+    </ul>
+    <p>This is why thermodynamics problems keep asking "did the temperature go up or down?": that alone tells you whether $U$ went up or down.</p>
+  </section>
+
+  <!-- FORMULA: internal energy -->
+  <div class="note-formula">
+    <h3>Monatomic ideal gas</h3>
+    <div class="formula-main">$$U = \frac32nRT = \frac32PV \qquad \Delta U = \frac32nR\,\Delta T$$</div>
+    <p class="symbols">$n$: moles. $T$: temperature (K). $\frac32PV$ comes from $PV = nRT$. For a gas of two-atom molecules (like N₂ or O₂) the molecules also spin, and $U = \frac52nRT$.</p>
+  </div>
+
+  <!-- PROOF: from kinetic theory -->
+  <div class="note-proof">
+    <ol>
+      <li>Kinetic theory: one molecule has average kinetic energy $\tfrac12m\overline{v^2} = \tfrac32kT$.</li>
+      <li>$N = nN_A$ molecules: $U = nN_A \times \tfrac32kT$.</li>
+      <li>$N_Ak = R$, so $U = \tfrac32nRT$.</li>
+      <li>A change in temperature $\Delta T$ changes $U$ by $\Delta U = \tfrac32nR\,\Delta T$; it depends only on the start and end temperatures, not on the route.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: internal energy vs temperature; code at the bottom -->
+  <div class="note-demo">
+    <h2>Internal energy of a monatomic gas</h2>
+    <div class="controls choices" id="ieChoices">
+      <button type="button" data-n="1" class="active">n = 1 mol</button>
+      <button type="button" data-n="2">n = 2 mol</button>
+      <button type="button" data-n="3">n = 3 mol</button>
+    </div>
+    <div class="controls">
+      <label>$T$ (K) = <input type="range" id="ieT" min="0" max="600" step="10" value="300"></label>
+    </div>
+    <canvas id="ieCanvas"></canvas>
+    <div class="output table-text" id="ieOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find the internal energy of 2.0 mol of helium at 300 K.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$U = \tfrac32nRT = 1.5 \times 2.0 \times 8.31 \times 300$.</li>
+      </ol>
+      <p class="answer">$U \approx 7.5 \times 10^3\ \mathrm{J}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">1.0 mol of a monatomic gas is heated from 300 K to 400 K. Find $\Delta U$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\Delta U = \tfrac32nR\,\Delta T = 1.5 \times 1.0 \times 8.31 \times 100$.</li>
+      </ol>
+      <p class="answer">$\Delta U \approx 1.2 \times 10^3\ \mathrm{J}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A monatomic gas is at $1.0 \times 10^5$ Pa in $2.0 \times 10^{-2}$ m³. Find its internal energy without knowing $n$ or $T$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$U = \tfrac32nRT = \tfrac32PV = 1.5 \times 1.0 \times 10^5 \times 2.0 \times 10^{-2}$.</li>
+      </ol>
+      <p class="answer">$U = 3.0 \times 10^3\ \mathrm{J}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">A gas goes from state A (300 K) to state B (500 K) along two different routes. Compare $\Delta U$ for the two routes.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$U$ depends only on $T$ (for a fixed amount of ideal gas).</li>
+        <li>Both routes start at 300 K and end at 500 K.</li>
+      </ol>
+      <p class="answer">$\Delta U$ is the same for both routes</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">A gas expands from $V$ to $3V$ while its pressure falls from $3P$ to $P$. What happens to its internal energy?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$PV$ at the start: $3P \times V = 3PV$. At the end: $P \times 3V = 3PV$.</li>
+        <li>$PV$ is unchanged, so $T$ is unchanged, so $U = \tfrac32PV$ is unchanged.</li>
+      </ol>
+      <p class="answer">$\Delta U = 0$: the start and end temperatures are equal</p>
+    </details>
+  </div>
+
+  <!-- WARNING: depends only on T -->
+  <div class="note-warning">
+    $U$ depends on temperature, <strong>not</strong> on pressure or volume alone. A gas whose volume grows can have more, less or the same internal energy: check what happened to $T$ (or to $PV$).
+  </div>
+
+  <!-- TIP: use PV -->
+  <div class="note-tip">
+    When a problem gives pressures and volumes but no temperatures, use $\Delta U = \tfrac32\Delta(PV) = \tfrac32(P_2V_2 - P_1V_1)$.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Internal energy of an ideal gas = total kinetic energy of its molecules.</li>
+      <li>Monatomic: $U = \tfrac32nRT = \tfrac32PV$.</li>
+      <li>$\Delta U$ depends only on the change in $T$, never on the route.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Internal energy" demo (the TRY IT block above).
+  // Left: a straight-line graph of U = (3/2)nRT against T for n = 1, 2, 3 mol
+  // (the chosen n is drawn thick). Right: a bar showing U now.
+  // U goes up to 1.5 × 3 × 8.31 × 600 ≈ 22 400 J, so 1 pixel = 100 J.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('ieCanvas');
+    const output = document.getElementById('ieOutput');
+    const tBox = document.getElementById('ieT');
+    const R = 8.31, G0 = [60, 300], XS = 300 / 600, YS = 1 / 100;
+    const THING = '#475569', RED = '#dc2626', BLUE = '#2563eb';
+    let n = 1, lastText = '';
+    const gp = (T, U) => [G0[0] + T * XS, G0[1] - U * YS];
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const T = Number(tBox.value), U = 1.5 * n * R * T;
+        g.seg(G0, [G0[0] + 310, G0[1]], THING, { width: 1.5 });
+        g.seg(G0, [G0[0], 40], THING, { width: 1.5 });
+        for (let t = 0; t <= 600; t += 200) g.text([gp(t, 0)[0], G0[1] + 14], `${t}`, '#94a3b8');
+        for (let u = 0; u <= 20000; u += 10000) g.text([G0[0] - 28, gp(0, u)[1]], u ? `${u / 1000}k` : "0", '#94a3b8');
+        g.text([G0[0] + 300, G0[1] + 30], 'T (K)', THING);
+        g.text([G0[0] + 10, 26], 'U (J)', THING);
+        [1, 2, 3].forEach((k) => {
+          g.seg(gp(0, 0), gp(600, 1.5 * k * R * 600), k === n ? BLUE : '#cbd5e1', { width: k === n ? 3 : 1.5 });
+          g.text(gp(600, 1.5 * k * R * 600).map((v, i) => v + (i ? -2 : 26)), `${k} mol`, k === n ? BLUE : '#94a3b8');
+        });
+        g.seg(gp(T, 0), gp(T, U), '#94a3b8', { width: 1, dash: true });
+        g.circle(gp(T, U), 6, RED, { fill: RED });
+        // the bar
+        g.poly([[440, G0[1] - U * YS], [490, G0[1] - U * YS], [490, G0[1]], [440, G0[1]]], 'rgba(220, 38, 38, 0.6)');
+        g.text([465, G0[1] - U * YS - 12], `${U.toFixed(0)} J`, RED);
+        g.text([465, G0[1] + 14], 'U now', THING);
+
+        const text =
+          `U = (3/2)nRT = 1.5 × ${n} × 8.31 × ${T} = ${U.toFixed(0)} J\n` +
+          `per molecule: (3/2)kT = ${(1.5 * 1.38e-23 * T * 1e21).toFixed(2)} × 10^-21 J\n` +
+          (T === 0 ? 'at 0 K the molecules would stop: U = 0' : 'double T and U doubles; double n and U doubles');
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    document.querySelectorAll('#ieChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#ieChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      n = Number(b.dataset.n);
+      board.redraw();
+    }));
+    tBox.addEventListener('input', () => board.redraw());
+  })();
+</script>
