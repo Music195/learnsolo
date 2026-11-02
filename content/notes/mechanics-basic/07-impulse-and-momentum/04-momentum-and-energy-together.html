@@ -1,0 +1,221 @@
+<!-- tags: Impulse and Momentum -->
+<!-- =====================================================================
+     NOTE: Using Both Conservation Laws
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Impulse and Momentum">Using Both Conservation Laws</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>A block slides up a ramp that can move: momentum and energy together</h2>
+    <p>A small block (mass $m$) slides at $v_0$ towards a ramp (mass $M$) with a smooth curved face. The ramp is <strong>not fixed</strong>: it sits on a smooth floor. The block pushes the ramp forwards as it climbs, reaches a highest point, slides back down, and leaves the ramp. Two laws work at the same time:</p>
+    <ul>
+      <li><strong>Momentum (horizontal):</strong> the only horizontal forces are the normal forces between block and ramp, an internal pair. So horizontal momentum is conserved.</li>
+      <li><strong>Mechanical energy:</strong> for the pair, only gravity does work. (The normal forces do work on each object, but the two works cancel, just like the string in topic 06.)</li>
+    </ul>
+    <p>At the <strong>highest point</strong>, the block stops moving <em>relative to the ramp</em>: for an instant they have the <strong>same velocity</strong>. It does not stop completely.</p>
+  </section>
+
+  <!-- FORMULA: highest point and after -->
+  <div class="note-formula">
+    <h3>Block $m$ and free ramp $M$ on a smooth floor</h3>
+    <div class="formula-main">$$mv_0 = (m + M)V, \qquad \tfrac{1}{2}mv_0^2 = \tfrac{1}{2}(m + M)V^2 + mgh \quad\Rightarrow\quad h = \frac{Mv_0^2}{2(m + M)g}$$</div>
+    <p class="symbols">After it slides off, kinetic energy is back to $\tfrac{1}{2}mv_0^2$, so it behaves like an <strong>elastic collision</strong> ($e = 1$): block $u = \dfrac{(m - M)v_0}{m + M}$, ramp $U = \dfrac{2mv_0}{m + M}$.</p>
+  </div>
+
+  <!-- PROOF: the shortcut with e = 1 -->
+  <div class="note-proof">
+    <ol>
+      <li>Highest point: same velocity $V$, so momentum gives $V = \dfrac{mv_0}{m + M}$.</li>
+      <li>Energy: $mgh = \tfrac{1}{2}mv_0^2 - \tfrac{1}{2}(m + M)V^2 = \tfrac{1}{2}mv_0^2\left(1 - \dfrac{m}{m + M}\right)$, so $h = \dfrac{Mv_0^2}{2(m + M)g}$.</li>
+      <li>After it leaves (back on the floor, $U$ is the same as at the start): $mv_0 = mu + MU$ and $\tfrac{1}{2}mv_0^2 = \tfrac{1}{2}mu^2 + \tfrac{1}{2}MU^2$. Solving with squares is slow.</li>
+      <li>Shortcut: kinetic energy is conserved overall, which is exactly what an elastic collision means. So use $e = 1$ instead of the energy equation: $u - U = -(v_0 - 0)$.</li>
+      <li>Together with momentum (no squares now): $u = \dfrac{(m - M)v_0}{m + M}$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: the block and the free ramp; code at the bottom -->
+  <div class="note-demo">
+    <h2>Send a block at a ramp that can slide (curved face, radius 1 m)</h2>
+    <div class="controls">
+      <label>$m$ (block) = <input type="range" id="meM" min="0.5" max="3" step="0.5" value="1"></label>
+      <label>$M$ (ramp) = <input type="range" id="meBig" min="1" max="5" step="0.5" value="2"></label>
+      <label>$v_0$ = <input type="range" id="meV" min="1" max="4" step="0.5" value="3"></label>
+      <button type="button" id="meGo">Again</button>
+    </div>
+    <canvas id="meCanvas"></canvas>
+    <div class="output table-text" id="meOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A $1.0\ \mathrm{kg}$ block slides at $3.0\ \mathrm{m/s}$ onto a free $2.0\ \mathrm{kg}$ ramp. How high does it rise?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Highest point: $1.0 \times 3.0 = 3.0V$, so $V = 1.0\ \mathrm{m/s}$.</li>
+        <li>$\tfrac{1}{2}(1.0)(3.0)^2 = \tfrac{1}{2}(3.0)(1.0)^2 + 1.0 \times 9.8 \times h$, so $4.5 = 1.5 + 9.8h$.</li>
+      </ol>
+      <p class="answer">$h \approx 0.31\ \mathrm{m}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">If the ramp in Example 1 were fixed, how high would the block rise? Why is the answer different?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Fixed: all the kinetic energy becomes potential: $h = \dfrac{v_0^2}{2g} = \dfrac{9.0}{19.6}$.</li>
+        <li>With a free ramp, some kinetic energy stays as the motion of both objects at the top.</li>
+      </ol>
+      <p class="answer">$0.46\ \mathrm{m}$; the free ramp keeps some energy moving</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">In Example 1, find the velocities of the block and the ramp after the block leaves the ramp.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Treat it as elastic: $u - U = -3.0$. Momentum: $u + 2.0U = 3.0$.</li>
+        <li>Subtract the first from the second: $3.0U = 6.0$, so $U = 2.0$ and $u = 2.0 - 3.0 = -1.0$.</li>
+      </ol>
+      <p class="answer">Block $1.0\ \mathrm{m/s}$ backwards; ramp $2.0\ \mathrm{m/s}$ forwards</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">With letters, the block's velocity afterwards is $u = \dfrac{(m - M)v_0}{m + M}$. A question asks for its <strong>speed</strong>. What should you write?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>A speed is a size, never negative. If $M > m$, the expression is negative.</li>
+        <li>Without knowing which mass is bigger, use the absolute value.</li>
+      </ol>
+      <p class="answer">$\dfrac{|m - M|}{m + M}\,v_0$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: the top is not a stop -->
+  <div class="note-warning">
+    At the highest point the block is at rest <strong>relative to the ramp</strong>, not relative to the floor. Writing "$v = 0$ at the top" ignores that the ramp (and the block with it) is still moving, and gives $h = \dfrac{v_0^2}{2g}$, which is wrong here.
+  </div>
+
+  <!-- TIP: e = 1 whenever kinetic energy comes back -->
+  <div class="note-tip">
+    Whenever the total kinetic energy at the end equals the total at the start, you may replace the energy equation (with its squares) by $e = 1$. It's linear, so it's much faster to solve with momentum.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Check each law: horizontal momentum (internal forces only) and energy (only gravity does work on the pair).</li>
+      <li>Highest point: same velocity for both, $h = \dfrac{Mv_0^2}{2(m+M)g}$.</li>
+      <li>Kinetic energy conserved overall ⇒ use $e = 1$ with momentum.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Block and free ramp" demo (the TRY IT block above).
+  // The ramp's face is a quarter circle of radius 1 m. s is the block's horizontal
+  // position measured from the foot of the curve, and u = ds/dt is its velocity
+  // relative to the ramp. Momentum and energy together give, at every s:
+  //   u² = (μv0² − 2mg·h(s)) / (μ + m·h'(s)²),   μ = mM/(m + M)
+  // and the ramp's velocity is m(v0 − u)/(m + M). We step s and the ramp forward
+  // in small time steps; at the top u reaches 0 and the block slides back.
+  // 120 pixels per metre. Drawn with NoteGeom.board in canvas pixels (520 × 340).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('meCanvas');
+    const output = document.getElementById('meOutput');
+    const mBox = document.getElementById('meM'), bigBox = document.getElementById('meBig'), vBox = document.getElementById('meV');
+    const G = 9.8, R = 1, S = 120, FLOOR = 300, THING = '#475569';
+    let st, lastText = '';
+
+    const h = (s) => (s <= 0 ? 0 : R - Math.sqrt(Math.max(R * R - s * s, 0)));
+    const dh = (s) => (s <= 0 ? 0 : s / Math.sqrt(Math.max(R * R - s * s, 1e-9)));
+    function reset() {
+      const m = Number(mBox.value), M = Number(bigBox.value), v0 = Number(vBox.value);
+      st = { m, M, v0, mu: m * M / (m + M), s: -1, X: 2, dir: 1, top: 0, t: 0, done: false };
+    }
+    // speed relative to the ramp at position s
+    const u2 = (s) => (st.mu * st.v0 * st.v0 - 2 * st.m * G * h(s)) / (st.mu + st.m * dh(s) ** 2);
+    function step(dt) {
+      let q = u2(st.s);
+      if (st.dir > 0 && q <= 1e-6) { st.dir = -1; }                 // reached the top: slide back
+      const u = st.dir * Math.max(Math.sqrt(Math.max(q, 0)), 0.02);
+      st.X += st.m * (st.v0 - u) / (st.m + st.M) * dt;
+      st.s += u * dt;
+      st.top = Math.max(st.top, h(st.s));
+      st.t += dt;
+    }
+
+    reset();
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const px = (x, y) => [x * S, FLOOR - y * S];
+        g.seg([0, FLOOR], [520, FLOOR], THING, { width: 3 });
+        g.text([470, FLOOR + 16], 'smooth floor', '#94a3b8');
+        // the ramp: foot of the curve at X
+        const curve = [];
+        for (let k = 0; k <= 40; k++) { const s = R * k / 40; curve.push(px(st.X + s, h(s))); }
+        g.poly([px(st.X, 0), ...curve, px(st.X + R + 0.25, R), px(st.X + R + 0.25, 0)], '#fed7aa');
+        for (let k = 1; k <= 40; k++) g.seg(curve[k - 1], curve[k], THING, { width: 2.5 });
+        g.text(px(st.X + R + 0.12, 0.3), 'M', THING);
+        // the block, sitting on the curve (moved 10 px towards the circle's centre)
+        const bx = st.X + st.s, by = h(st.s), c = px(bx, by);
+        const cen = px(st.X, R), d = Math.hypot(cen[0] - c[0], cen[1] - c[1]);
+        const pos = st.s > 0 ? [c[0] + 10 * (cen[0] - c[0]) / d, c[1] + 10 * (cen[1] - c[1]) / d] : [c[0], c[1] - 10];
+        g.circle(pos, 10, '#2563eb', { fill: '#93c5fd' });
+        // highest point so far
+        if (st.top > 0.01) {
+          g.seg([20, FLOOR - st.top * S], [st.X * S + R * S + 30, FLOOR - st.top * S], '#94a3b8', { width: 1, dash: true });
+          g.text([60, FLOOR - st.top * S - 12], `highest ${st.top.toFixed(2)} m`, '#94a3b8');
+        }
+
+        const { m, M, v0 } = st, n = (z) => z.toFixed(2).replace('-', '−');
+        const q = u2(st.s), u = st.dir * Math.sqrt(Math.max(q, 0));
+        const V = m * (v0 - u) / (m + M), vb = V + u;
+        const text =
+          `top: same velocity V = mv0/(m + M) = ${n(m * v0 / (m + M))} m/s\n` +
+          `     height h = Mv0²/(2(m + M)g) = ${n(M * v0 * v0 / (2 * (m + M) * G))} m\n` +
+          `after (like e = 1): block u = (m − M)v0/(m + M) = ${n((m - M) * v0 / (m + M))} m/s\n` +
+          `                    ramp U = ${n(2 * m * v0 / (m + M))} m/s\n` +
+          `now: block vx = ${n(vb)} m/s, ramp ${n(V)} m/s\n` +
+          `     momentum m·vx + M·V = ${n(m * vb + M * V)}  (always mv0 = ${n(m * v0)})`;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Step the motion until the block or the ramp leaves the picture. Stop when the page has changed.
+    let last = performance.now();
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      if (!st.done) {
+        for (let k = 0; k < 20; k++) step(dt / 20);
+        if (st.X + R + 0.25 > 520 / S || st.X + st.s < 0.1 || st.t > 8) st.done = true;
+        board.redraw();
+      }
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    const restart = () => { reset(); board.redraw(); };
+    [mBox, bigBox, vBox].forEach((b) => b.addEventListener('input', restart));
+    document.getElementById('meGo').addEventListener('click', restart);
+  })();
+</script>
