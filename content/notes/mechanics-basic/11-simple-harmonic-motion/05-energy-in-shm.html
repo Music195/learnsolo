@@ -1,0 +1,220 @@
+<!-- tags: Simple Harmonic Motion -->
+<!-- =====================================================================
+     NOTE: Energy in SHM
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Simple Harmonic Motion">Energy in SHM</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Two different "$\tfrac12 kx^2$"s: know which $x$ you mean</h2>
+    <p>For a mass hanging on a spring, the expression $\tfrac12 kx^2$ can mean two different things, and mixing them up is a common source of wrong answers:</p>
+    <ul>
+      <li><strong>Elastic potential energy</strong> (the spring's own energy): here $x$ is the stretch or squash <strong>from the natural length</strong>, just like in Hooke's law. Gravity's potential energy $mgh$ must then be added separately.</li>
+      <li><strong>The combined potential energy</strong> of the spring force and gravity together (their total force is $-kx$): here $x$ is measured <strong>from the equilibrium position</strong>. This one already includes gravity, so no $mgh$ term.</li>
+    </ul>
+    <p>Both give the same answers, but the second is far shorter. If a question asks "what is the <em>elastic</em> potential energy?", though, you must use the first meaning (stretch from the natural length).</p>
+    <p>And there is a third way to get the top speed with no energy at all: SHM is the shadow of circular motion, and at the centre the shadow moves exactly as fast as the point on the circle: $v_{\max} = A\omega$.</p>
+  </section>
+
+  <!-- FORMULA: energy conservation, two ways -->
+  <div class="note-formula">
+    <h3>A mass on a vertical spring ($kl = mg$; $x$ from equilibrium, down $+$)</h3>
+    <div class="formula-main">$$\tfrac12 mv^2 + \tfrac12 kx^2 = \text{constant} \qquad v_{\max} = A\omega = A\sqrt{\frac{k}{m}}$$</div>
+    <p class="symbols">The long way: $\tfrac12 mv^2 + \tfrac12 k(l + x)^2 + mgh = $ constant, with $l$ the stretch at equilibrium and $h$ the height. At position $x$ (amplitude $A$): $v = \omega\sqrt{A^2 - x^2}$.</p>
+  </div>
+
+  <!-- PROOF: the long way and the short way -->
+  <div class="note-proof">
+    <ol>
+      <li>Released from $x = d$ (at rest). Take the lowest point as the zero of height. Find the speed $v$ at O.</li>
+      <li><strong>Method 1</strong> (elastic PE + gravity PE): $\tfrac12 k(l + d)^2 + 0 = \tfrac12 mv^2 + \tfrac12 kl^2 + mgd$.</li>
+      <li>Expand: $\tfrac12 kl^2 + kld + \tfrac12 kd^2 = \tfrac12 mv^2 + \tfrac12 kl^2 + mgd$. The $\tfrac12 kl^2$ cancel, and $kld = mgd$ because $kl = mg$. Left: $\tfrac12 kd^2 = \tfrac12 mv^2$.</li>
+      <li><strong>Method 2</strong> (combined, $x$ from equilibrium): $\tfrac12 kd^2 = \tfrac12 mv^2 + \tfrac12 k \cdot 0^2$. The same line, at once.</li>
+      <li>So $v = d\sqrt{k/m}$. <strong>Method 3</strong>: the reference circle has radius $d$ and turns at $\omega$, so its point moves at $d\omega$; at O the shadow moves exactly that fast: $v = d\omega = d\sqrt{k/m}$.</li>
+      <li>At $x = d/2$: $\tfrac12 kd^2 = \tfrac12 mu^2 + \tfrac12 k(d/2)^2$, so $u^2 = \tfrac34\cdot\dfrac{k}{m}d^2$ and $u = \dfrac{\sqrt3}{2}d\sqrt{k/m}$. On the circle the point is $60^\circ$ round, and the vertical part of its velocity is $d\omega\cos 30^\circ$: the same.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: energy bars, two ways; code at the bottom -->
+  <div class="note-demo">
+    <h2>Released from $x = d$ ($m = 0.50\ \mathrm{kg}$, $k = 8.0\ \mathrm{N/m}$, $d = 0.20\ \mathrm{m}$)</h2>
+    <div class="controls choices" id="enChoices">
+      <button type="button" data-way="long" class="active">Elastic PE + gravity PE</button>
+      <button type="button" data-way="short">Combined ½kx² (from equilibrium)</button>
+    </div>
+    <canvas id="enCanvas"></canvas>
+    <div class="output table-text" id="enOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A $0.50\ \mathrm{kg}$ mass on a spring ($k = 8.0\ \mathrm{N/m}$) is pulled $0.20\ \mathrm{m}$ below equilibrium and released. Find its largest speed.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$v_{\max} = d\sqrt{k/m} = 0.20 \times \sqrt{16} = 0.20 \times 4.0$.</li>
+      </ol>
+      <p class="answer">$0.80\ \mathrm{m/s}$, at the equilibrium position</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find its speed at $x = d/2 = 0.10\ \mathrm{m}$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$u = \dfrac{\sqrt3}{2}v_{\max} = 0.866 \times 0.80$.</li>
+      </ol>
+      <p class="answer">$u \approx 0.69\ \mathrm{m/s}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">What is the spring's <em>elastic</em> potential energy at the lowest point?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Stretch from the natural length: $l + d$, with $l = mg/k = 4.9/8.0 = 0.6125\ \mathrm{m}$, so $l + d = 0.8125\ \mathrm{m}$.</li>
+        <li>$\tfrac12 \times 8.0 \times 0.8125^2$.</li>
+      </ol>
+      <p class="answer">About $2.6\ \mathrm{J}$ (not $\tfrac12 \times 8.0 \times 0.20^2 = 0.16\ \mathrm{J}$)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Using the combined potential energy, find the total energy of the oscillation.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>At the lowest point it is at rest: total $= \tfrac12 kd^2 = \tfrac12 \times 8.0 \times 0.20^2$.</li>
+      </ol>
+      <p class="answer">$0.16\ \mathrm{J}$ (check: $\tfrac12 \times 0.50 \times 0.80^2 = 0.16$ at O)</p>
+    </details>
+  </div>
+
+  <!-- WARNING: which x -->
+  <div class="note-warning">
+    Each time you write $\tfrac12 kx^2$, ask "measured from where?" From the natural length: it's elastic PE, add $mgh$. From equilibrium: it's the combined PE, no $mgh$. Never mix the two in one equation.
+  </div>
+
+  <!-- TIP: three ways -->
+  <div class="note-tip">
+    For top speeds and speeds at simple points, the reference circle is the quickest: $v_{\max} = A\omega$, and at other points take the vertical part of the circle's velocity. Exam time is limited, so knowing this shortcut matters.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Elastic PE: $\tfrac12 k(\text{stretch from natural length})^2$, plus $mgh$ separately.</li>
+      <li>Combined PE: $\tfrac12 kx^2$ with $x$ from equilibrium, no $mgh$.</li>
+      <li>$v_{\max} = A\omega$; at $x$, $v = \omega\sqrt{A^2 - x^2}$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Energy in SHM" demo (the TRY IT block above).
+  // A 0.50 kg mass on a spring (k = 8.0 N/m) is released 0.20 m below equilibrium.
+  // Down is +; x = d cos ωt with ω = 4.0 rad/s (shown at 40 % speed).
+  // At equilibrium the spring is already stretched l = mg/k = 0.6125 m.
+  // Bars on the right: the energies, either as
+  //   kinetic + elastic ½k(l + x)² + gravity mg(d − x)  (zero height at the lowest point)
+  // or as kinetic + combined ½kx². The total bar stays the same length.
+  // 300 pixels per metre. Drawn with NoteGeom.board in canvas pixels (520 × 340, y down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('enCanvas');
+    const output = document.getElementById('enOutput');
+    const M = 0.5, K = 8, G = 9.8, D = 0.2, L = M * G / K, W = Math.sqrt(K / M);
+    const PXM = 300, O = [110, 236], TOP = 50, THING = '#475569', BLUE = '#2563eb', RED = '#dc2626', GREEN = '#16a34a', ORANGE = '#ea580c', PURPLE = '#7c3aed';
+    let way = 'long', t = 0, lastText = '';
+
+    function zigzag(g, p, q, coils = 14) {
+      const pts = [p], len = q[1] - p[1];
+      for (let i = 0; i < coils * 2; i++) pts.push([p[0] + (i % 2 ? 9 : -9), p[1] + len * (i + 0.5) / (coils * 2)]);
+      pts.push(q);
+      for (let i = 1; i < pts.length; i++) g.seg(pts[i - 1], pts[i], THING, { width: 1.5 });
+    }
+    function bar(g, y, value, scale, color, name) {
+      g.text([250, y], name, color);
+      g.poly([[300, y - 9], [300 + value * scale, y - 9], [300 + value * scale, y + 9], [300, y + 9]], color);
+      g.text([300 + value * scale + 34, y], `${value.toFixed(3)} J`, color);
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const x = D * Math.cos(W * t), v = -D * W * Math.sin(W * t);
+        const ke = 0.5 * M * v * v;
+        // ceiling, spring, block (the block's top hangs from the spring)
+        const y = O[1] + x * PXM;
+        g.seg([O[0] - 50, TOP - 36], [O[0] + 50, TOP - 36], THING, { width: 4 });
+        zigzag(g, [O[0], TOP - 36], [O[0], y - 16]);
+        g.poly([[O[0] - 20, y - 16], [O[0] + 20, y - 16], [O[0] + 20, y + 16], [O[0] - 20, y + 16]], 'rgba(147, 197, 253, 0.8)');
+        // reference lines: natural length (block centre), equilibrium O, lowest point
+        const nat = O[1] - L * PXM;
+        g.seg([O[0] + 30, nat], [O[0] + 70, nat], ORANGE, { width: 1, dash: true });
+        g.text([O[0] + 70, nat - 12], 'natural length', ORANGE);
+        g.seg([O[0] + 30, O[1]], [O[0] + 70, O[1]], '#94a3b8', { width: 1, dash: true });
+        g.text([O[0] + 82, O[1]], 'O', '#94a3b8');
+        g.seg([O[0] + 30, O[1] + D * PXM], [O[0] + 70, O[1] + D * PXM], '#94a3b8', { width: 1, dash: true });
+        g.text([O[0] + 82, O[1] + D * PXM], 'd', '#94a3b8');
+
+        let text;
+        if (way === 'long') {
+          const el = 0.5 * K * (L + x) ** 2, gp = M * G * (D - x), S = 60;
+          bar(g, 60, ke, S, BLUE, 'kinetic');
+          bar(g, 100, el, S, PURPLE, 'elastic');
+          bar(g, 140, gp, S, GREEN, 'gravity');
+          bar(g, 190, ke + el + gp, S, RED, 'total');
+          text =
+            `x = ${x.toFixed(3).replace('-', '−')} m,  v = ${Math.abs(v).toFixed(3)} m/s\n` +
+            `½mv² + ½k(l + x)² + mg(d − x) = ${ke.toFixed(3)} + ${el.toFixed(3)} + ${gp.toFixed(3)}\n` +
+            `             = ${(ke + el + gp).toFixed(3)} J  (stays the same, but long to write)\n` +
+            `elastic PE uses the stretch from the natural length: l + x`;
+        } else {
+          const pe = 0.5 * K * x * x, S = 1000;
+          bar(g, 60, ke, S, BLUE, 'kinetic');
+          bar(g, 100, pe, S, PURPLE, '½kx²');
+          bar(g, 150, ke + pe, S, RED, 'total');
+          text =
+            `x = ${x.toFixed(3).replace('-', '−')} m (from O),  v = ${Math.abs(v).toFixed(3)} m/s\n` +
+            `½mv² + ½kx² = ${ke.toFixed(3)} + ${pe.toFixed(3)} = ${(ke + pe).toFixed(3)} J = ½kd²  (no mgh needed)\n` +
+            `top speed at O: ½kd² = ½mv²  →  v = d√(k/m) = dω = ${(D * W).toFixed(2)} m/s\n` +
+            `at x = d/2:  u = (√3/2)·dω = ${(Math.sqrt(3) / 2 * D * W).toFixed(2)} m/s`;
+        }
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Run the oscillation at 40 % speed. Stop when the page has changed.
+    let last = performance.now();
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      t += dt * 0.4;
+      board.redraw();
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    document.querySelectorAll('#enChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#enChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      way = b.dataset.way;
+      t = 0;
+      board.redraw();
+    }));
+  })();
+</script>

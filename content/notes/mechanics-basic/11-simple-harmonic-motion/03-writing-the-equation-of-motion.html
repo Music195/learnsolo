@@ -1,0 +1,279 @@
+<!-- tags: Simple Harmonic Motion -->
+<!-- =====================================================================
+     NOTE: Writing the Equation of Motion for SHM
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Simple Harmonic Motion">Writing the Equation of Motion for SHM</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Set it up carefully and every spring problem ends as $ma = -kx$</h2>
+    <p>The hard part of SHM is writing the equation of motion with the right signs. Three habits make it reliable:</p>
+    <ol>
+      <li><strong>Choose the $+$ direction</strong> and the origin, and stick to them. A good origin is the <strong>equilibrium position</strong>: where the object could rest if placed gently.</li>
+      <li><strong>Hooke's law uses the change in length from the natural length</strong>, not the position $x$. Work out the stretch (or squash) first, from the picture.</li>
+      <li>If $x$ is negative on the side you're drawing, the length is $-x$, not $x$. Write $k \times (-x)$ and let the signs sort themselves out.</li>
+    </ol>
+    <p>Do this, and whether the spring is horizontal or vertical, stretched or compressed, $+$ to the left or the right, or even with two blocks on a slope, the equation always ends up as $(\text{total mass}) \times a = -kx$, with $x$ measured from the equilibrium position.</p>
+  </section>
+
+  <!-- FORMULA: the general result -->
+  <div class="note-formula">
+    <h3>Any object on a spring, $x$ measured from equilibrium</h3>
+    <div class="formula-main">$$ma = -kx$$</div>
+    <p class="symbols">Vertical spring: the spring is already stretched by $d$ at equilibrium, with $kd = mg$; at position $x$ (down $+$) the stretch is $d + x$, and $mg$ cancels $kd$. Gravity changes <em>where</em> the centre is, but not the period $2\pi\sqrt{m/k}$.</p>
+  </div>
+
+  <!-- PROOF: the vertical spring and two blocks on a slope -->
+  <div class="note-proof">
+    <ol>
+      <li><strong>Vertical spring, down $+$.</strong> At equilibrium the stretch is $d$ and $kd = mg$. At position $x$ the stretch is $d + x$, so the spring pulls up with $k(d + x)$. Then $ma = mg - k(d + x) = (mg - kd) - kx = -kx$.</li>
+      <li>Same thing above equilibrium, $x &lt; 0$: the stretch is $d + x$ again (smaller than $d$) and the same algebra gives $ma = -kx$. Writing "$k(d - x)$" here is the usual mistake: $x$ is already negative.</li>
+      <li><strong>Two blocks on a slope</strong> (angle $\theta$, up the slope $+$). Block A (mass $M$) sits on a spring at the bottom; block B (mass $m$) rests against A, uphill, not joined to anything. At equilibrium the spring is squashed by $d$, with $kd = (M + m)g\sin\theta$.</li>
+      <li>At position $x$ the squash is $d - x$. Taking each block separately (B pushes A with $N$ and A pushes B with $N$):
+        <br>A: $Ma = k(d - x) - N - Mg\sin\theta$
+        <br>B: $ma = N - mg\sin\theta$.</li>
+      <li>Add them, since they move together: $(M + m)a = k(d - x) - (M + m)g\sin\theta = -kx$. (B is not joined to the spring, so no spring force acts on B.)</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: drag the block and read the equation; code at the bottom -->
+  <div class="note-demo">
+    <h2>Drag the block: the equation always ends as $-kx$</h2>
+    <div class="controls choices" id="eqChoices">
+      <button type="button" data-scene="right" class="active">Floor, right +</button>
+      <button type="button" data-scene="left">Floor, left +</button>
+      <button type="button" data-scene="vert">Hanging, down +</button>
+      <button type="button" data-scene="slope">Two blocks on a slope</button>
+    </div>
+    <canvas id="eqCanvas"></canvas>
+    <div class="output table-text" id="eqOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Left is $+$. A block on a smooth floor is joined to a spring fixed to a wall on its left. The block is $0.10\ \mathrm{m}$ to the right of the natural-length point ($k = 20\ \mathrm{N/m}$). Write the equation of motion.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Position: $x = -0.10\ \mathrm{m}$ (right of O, and left is $+$). Stretch: $-x = 0.10\ \mathrm{m}$.</li>
+        <li>The spring pulls left ($+$) with $k(-x)$: $ma = k(-x) = -kx$.</li>
+      </ol>
+      <p class="answer">$ma = -kx$, here $ma = +2.0\ \mathrm{N}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">A $1.0\ \mathrm{kg}$ mass hangs on a spring with $k = 49\ \mathrm{N/m}$. How far is the spring stretched at equilibrium?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$kd = mg$: $d = 9.8/49$.</li>
+      </ol>
+      <p class="answer">$d = 0.20\ \mathrm{m}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">For the hanging mass in Example 2, write the equation of motion with down $+$ and $x$ from equilibrium, and find the period.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$ma = mg - k(d + x) = -kx$, so $a = -49x$.</li>
+        <li>$\omega = 7.0\ \mathrm{rad/s}$, $T = 2\pi/7.0$.</li>
+      </ol>
+      <p class="answer">$1.0\,a = -49x$; $T \approx 0.90\ \mathrm{s}$, the same as on a smooth floor</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">In the slope set-up ($M = 1.0\ \mathrm{kg}$, $m = 0.50\ \mathrm{kg}$, $k = 49\ \mathrm{N/m}$, $\theta = 30^\circ$), find the period, and the push between the blocks when they are at $x = 0$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$(M + m)a = -kx$: $\omega = \sqrt{49/1.5} = 5.7\ \mathrm{rad/s}$, $T = 2\pi/5.7 \approx 1.1\ \mathrm{s}$.</li>
+        <li>At $x = 0$, $a = 0$, so B's equation gives $N = mg\sin\theta = 0.50 \times 9.8 \times 0.5$.</li>
+      </ol>
+      <p class="answer">$T \approx 1.1\ \mathrm{s}$; $N \approx 2.5\ \mathrm{N}$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: origin matters -->
+  <div class="note-warning">
+    $ma = -kx$ holds when $x$ is measured from the <strong>equilibrium position</strong>. If a problem puts the origin at the natural length of a vertical spring instead, the equation becomes $ma = mg - kx$, which is still SHM, but about a different centre.
+  </div>
+
+  <!-- TIP: write the length first -->
+  <div class="note-tip">
+    Before writing any equation, write the spring's stretch or squash as a separate line, like "squash $= d - x$". Then the force is $k \times$ (that), and its direction comes from the picture.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Hooke's law uses the change from the natural length.</li>
+      <li>With $x$ from equilibrium, every case gives (mass) $\times\, a = -kx$.</li>
+      <li>Gravity on a vertical spring or slope shifts the centre but doesn't change the period.</li>
+      <li>For blocks that move together, write one equation each and add them.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Writing the equation" demo (the TRY IT block above).
+  // Drag the point X to move the block; the output builds the equation of motion
+  // step by step from the spring's stretch or squash.
+  //   floor:   m = 1.0 kg, k = 20 N/m, O = natural length (wall on the left)
+  //   hanging: m = 1.0 kg, k = 49 N/m, stretch d = 0.20 m at equilibrium O
+  //   slope:   30°, block A (1.0 kg, on the spring) and block B (0.50 kg, resting
+  //            on A's uphill side), k = 49 N/m, squash d = 0.15 m at equilibrium O
+  // 300 pixels per metre. Arrows: 5 pixels per newton (4 when hanging).
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('eqCanvas');
+    const output = document.getElementById('eqOutput');
+    const PXM = 300, KF = 5, G = 9.8, RANGE = 0.12;
+    const THING = '#475569', RED = '#dc2626', GREEN = '#16a34a', BLUE = '#2563eb', ORANGE = '#ea580c';
+    const TH = Math.PI / 6, BASE = [50, 300], U = [Math.cos(TH), -Math.sin(TH)], NV = [-Math.sin(TH), -Math.cos(TH)];
+    let scene = 'right', lastText = '';
+
+    // Where the origin O is, and which way + points, for each scene (pixels).
+    function axis() {
+      if (scene === 'right') return { o: [280, 190], u: [1, 0] };
+      if (scene === 'left') return { o: [280, 190], u: [-1, 0] };
+      if (scene === 'vert') return { o: [260, 170], u: [0, 1] };
+      const s0 = 0.30 + 0.06;                                   // spring length at O + half of block A
+      return { o: [BASE[0] + U[0] * s0 * PXM, BASE[1] + U[1] * s0 * PXM], u: U };
+    }
+    // Keep the dragged point on the axis, within ±RANGE metres of O.
+    function onAxis(p) {
+      const { o, u } = axis();
+      let s = ((p[0] - o[0]) * u[0] + (p[1] - o[1]) * u[1]) / PXM;
+      s = Math.max(-RANGE, Math.min(RANGE, s));
+      return [o[0] + u[0] * s * PXM, o[1] + u[1] * s * PXM];
+    }
+    function xOf(p) { const { o, u } = axis(); return ((p[0] - o[0]) * u[0] + (p[1] - o[1]) * u[1]) / PXM; }
+
+    function zigzag(g, p, q, coils = 10) {
+      const dx = q[0] - p[0], dy = q[1] - p[1], L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L;
+      const pts = [p];
+      for (let i = 0; i < coils * 2; i++) {
+        const f = (i + 0.5) / (coils * 2), side = i % 2 ? 9 : -9;
+        pts.push([p[0] + dx * f - uy * side, p[1] + dy * f + ux * side]);
+      }
+      pts.push(q);
+      for (let i = 1; i < pts.length; i++) g.seg(pts[i - 1], pts[i], THING, { width: 1.5 });
+    }
+    function arrow(g, p, v, color, label, off = [0, -12]) {
+      const q = [p[0] + v[0], p[1] + v[1]], len = Math.hypot(v[0], v[1]);
+      if (len < 4) return;
+      const ux = v[0] / len, uy = v[1] / len;
+      g.seg(p, q, color, { width: 3 });
+      g.poly([q, [q[0] - 10 * ux - 5 * uy, q[1] - 10 * uy + 5 * ux], [q[0] - 10 * ux + 5 * uy, q[1] - 10 * uy - 5 * ux]], color);
+      if (label) g.text([q[0] + off[0], q[1] + off[1]], label, color);
+    }
+    // A square block of side s centred at c, turned to the direction u.
+    function block(g, c, u, s, fill, name) {
+      const n = [-u[1], u[0]], h = s / 2;
+      const pts = [[1, 1], [1, -1], [-1, -1], [-1, 1]].map(([a, b]) => [c[0] + (u[0] * a + n[0] * b) * h, c[1] + (u[1] * a + n[1] * b) * h]);
+      g.poly(pts, fill);
+      for (let i = 0; i < 4; i++) g.seg(pts[i], pts[(i + 1) % 4], THING, { width: 1.5 });
+      g.text(c, name, THING);
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: { X: [280, 190] },
+      constrain: { X: onAxis },
+      draw(g, pts) {
+        const x = xOf(pts.X), n = (z, k = 2) => z.toFixed(k).replace('-', '−'), { o, u } = axis();
+        let text;
+        // the origin mark and the + arrow
+        g.seg([o[0] - u[1] * 40, o[1] + u[0] * 40], [o[0] + u[1] * 40, o[1] - u[0] * 40], '#94a3b8', { width: 1, dash: true });
+        g.text([o[0] - u[1] * 52, o[1] + u[0] * 52], 'O', '#94a3b8');
+        arrow(g, [o[0] + u[0] * 60 - u[1] * 60, o[1] + u[1] * 60 + u[0] * 60], [u[0] * 36, u[1] * 36], THING, '+', [u[0] * 10, u[1] * 10 - 10]);
+
+        if (scene === 'right' || scene === 'left') {
+          const k = 20, m = 1, FLOOR = 215;
+          const c = [o[0] + u[0] * x * PXM, 190];
+          const s = (c[0] - o[0]) / PXM;                          // metres to the right of O = stretch
+          g.seg([40, FLOOR - 80], [40, FLOOR], THING, { width: 4 });
+          g.seg([40, FLOOR], [500, FLOOR], THING, { width: 3 });
+          zigzag(g, [40, 190], [c[0] - 25, 190]);
+          block(g, c, [1, 0], 50, 'rgba(147, 197, 253, 0.8)', 'm');
+          arrow(g, [c[0], 150], [-k * s * KF, 0], RED, `${n(Math.abs(k * s), 1)} N`);
+          const plusName = scene === 'right' ? 'right' : 'left';
+          const len = Math.abs(s), state = s >= 0 ? 'stretched' : 'squashed';
+          const dirReal = s >= 0 ? 'left (towards the wall)' : 'right (away from the wall)';
+          const sign = (s >= 0) === (scene === 'right') ? '−' : '+';
+          const lenExpr = x >= 0 ? 'x' : '(−x)';
+          text =
+            `${plusName} is +:  x = ${n(x)} m\n` +
+            `spring ${state} by ${n(len)} m = ${lenExpr}, so it ${s >= 0 ? 'pulls' : 'pushes'} ${dirReal}\n` +
+            `ma = ${sign}k${lenExpr} = ${n(-k * x)} N\n` +
+            `either way:  ma = −kx  (a = ${n(-k * x / m)} m/s²)`;
+        } else if (scene === 'vert') {
+          const k = 49, m = 1, d = 0.2, TOP = 20;
+          const c = [260, o[1] + x * PXM];
+          g.seg([200, TOP], [320, TOP], THING, { width: 4 });
+          zigzag(g, [260, TOP], [260, c[1] - 25], 12);
+          block(g, c, [1, 0], 50, 'rgba(147, 197, 253, 0.8)', 'm');
+          const nat = o[1] - d * PXM;
+          g.seg([330, nat], [380, nat], ORANGE, { width: 1, dash: true });
+          g.text([440, nat], 'natural length', ORANGE);
+          g.text([440, o[1] + 14], 'equilibrium O', '#94a3b8');
+          const ext = d + x, Fs = k * ext;
+          arrow(g, [230, c[1]], [0, -Fs * KF * 0.8], RED, `k(d + x)`, [-30, 0]);
+          arrow(g, [290, c[1]], [0, m * G * KF * 0.8], GREEN, 'mg', [18, 0]);
+          text =
+            `down is +, O = equilibrium:  kd = mg, d = ${n(d)} m;  x = ${n(x)} m\n` +
+            `stretch from natural length = d + x = ${n(ext)} m\n` +
+            `ma = mg − k(d + x) = 9.80 − 49 × ${n(ext)} = ${n(m * G - Fs)} N\n` +
+            `mg and kd cancel:  ma = −kx = ${n(-k * x)} N`;
+        } else {
+          const k = 49, M = 1, m = 0.5, d = 0.15, S = 36;
+          // the slope, the base stop, the spring and the two blocks
+          const top = [BASE[0] + U[0] * 1.45 * PXM, BASE[1] + U[1] * 1.45 * PXM];
+          g.poly([BASE, top, [top[0], BASE[1]]], 'rgba(148, 163, 184, 0.2)');
+          g.seg(BASE, top, THING, { width: 3 });
+          g.seg([BASE[0], BASE[1] + 2], [BASE[0] + NV[0] * 50, BASE[1] + NV[1] * 50], THING, { width: 4 });
+          const cA = [o[0] + U[0] * x * PXM + NV[0] * S / 2, o[1] + U[1] * x * PXM + NV[1] * S / 2];
+          const lowFace = [cA[0] - U[0] * S / 2, cA[1] - U[1] * S / 2];
+          zigzag(g, [BASE[0] + NV[0] * S / 2, BASE[1] + NV[1] * S / 2], lowFace, 8);
+          block(g, cA, U, S, 'rgba(252, 165, 165, 0.8)', 'A');
+          block(g, [cA[0] + U[0] * S, cA[1] + U[1] * S], U, S, 'rgba(253, 224, 71, 0.7)', 'B');
+          g.text([BASE[0] + 50, BASE[1] - 10], '30°', THING);
+          const sq = d - x, a = -k * x / (M + m), N = m * (a + G * Math.sin(TH));
+          text =
+            `up the slope is +;  at O the squash is d = 0.15 m;  x = ${n(x)} m\n` +
+            `squash = d − x = ${n(sq)} m\n` +
+            `A: Ma = k(d − x) − N − Mg sinθ;   B: ma = N − mg sinθ\n` +
+            `add:  (M + m)a = k(d − x) − (M + m)g sinθ = ${n(-k * x)} N  = −kx\n` +
+            `a = ${n(a)} m/s²,  push between the blocks N = m(a + g sinθ) = ${n(N)} N`;
+        }
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    document.querySelectorAll('#eqChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#eqChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      scene = b.dataset.scene;
+      // start each scene a little away from O
+      const { o, u } = axis();
+      board.points.X[0] = o[0] + u[0] * 0.08 * PXM; board.points.X[1] = o[1] + u[1] * 0.08 * PXM;
+      board.redraw();
+    }));
+    board.points.X[0] = 280 + 0.08 * PXM;
+    board.redraw();
+  })();
+</script>

@@ -1,0 +1,218 @@
+<!-- tags: Inertial Force -->
+<!-- =====================================================================
+     NOTE: Inertial Force in a Lift
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Inertial Force">Inertial Force in a Lift</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>The same object, two observers, two different-looking equations</h2>
+    <p>A ball of mass $m$ hangs from the ceiling of a lift on a string (tension $T$). The lift accelerates upwards at $a$.</p>
+    <ul>
+      <li><strong>Observer at rest outside the lift</strong>: the ball moves with the lift, so its acceleration is $a$ upwards. Write the equation of motion $ma = T - mg$.</li>
+      <li><strong>Observer inside the lift</strong>: this observer accelerates upwards at $a$, so they see an inertial force $ma$ <em>downwards</em>. And to them the ball is not moving: its acceleration is $0$. Write $m \times 0 = T - mg - ma$, a balance of forces.</li>
+    </ul>
+    <p>Move $ma$ across and the two equations are the same, so both observers get the same tension. The common mistake is to mix them: writing $ma$ on the left <em>and</em> an inertial force on the right.</p>
+  </section>
+
+  <!-- FORMULA: the two equations -->
+  <div class="note-formula">
+    <h3>A ball hanging in a lift accelerating upwards at $a$</h3>
+    <div class="formula-main">$$\text{outside: } ma = T - mg \qquad \text{inside: } 0 = T - mg - ma$$</div>
+    <p class="symbols">Both give $T = m(g + a)$. Inside the lift, gravity $mg$ and the inertial force $ma$ together act like a stronger gravity, the <strong>apparent gravity</strong> $m(g + a)$. If the lift accelerates downwards, change the sign of $a$.</p>
+  </div>
+
+  <!-- PROOF: step by step for each observer -->
+  <div class="note-proof">
+    <ol>
+      <li><strong>Draw the real forces first</strong>, for any observer: gravity $mg$ down, tension $T$ up.</li>
+      <li><strong>Outside, at rest</strong>: the observer doesn't accelerate, so no inertial force. The ball's acceleration is $a$ (up). Taking up as positive: $ma = T - mg$.</li>
+      <li><strong>Inside the lift</strong>: the observer's acceleration is $a$ upwards, so add the inertial force $ma$ downwards. The ball looks still, so the left side is $m \times 0$: $0 = T - mg - ma$.</li>
+      <li>An equation with $0$ on the left is a <strong>balance of forces</strong>: once you are used to it, simply say "$T$ balances $mg$ and $ma$".</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: the lift with its forces; code at the bottom -->
+  <div class="note-demo">
+    <h2>A $2.0\ \mathrm{kg}$ ball hanging in a lift</h2>
+    <div class="controls choices" id="lfView">
+      <button type="button" data-view="ground" class="active">Seen from outside (at rest)</button>
+      <button type="button" data-view="lift">Seen from inside the lift</button>
+    </div>
+    <div class="controls">
+      <label>lift acceleration $a$ (up +) = <input type="range" id="lfA" min="-9.8" max="5" step="0.2" value="2"></label>
+    </div>
+    <canvas id="lfCanvas"></canvas>
+    <div class="output table-text" id="lfOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A $2.0\ \mathrm{kg}$ ball hangs in a lift that accelerates upwards at $1.2\ \mathrm{m/s^2}$. Find the tension, using an observer inside the lift.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Inertial force $ma = 2.0 \times 1.2 = 2.4\ \mathrm{N}$ downwards; the ball looks still.</li>
+        <li>Balance: $T = mg + ma = 19.6 + 2.4$.</li>
+      </ol>
+      <p class="answer">$T = 22\ \mathrm{N}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Solve Example 1 again, this time as an observer at rest outside the lift.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>No inertial force. The ball accelerates upwards at $1.2\ \mathrm{m/s^2}$.</li>
+        <li>$2.0 \times 1.2 = T - 2.0 \times 9.8$.</li>
+      </ol>
+      <p class="answer">$T = 22\ \mathrm{N}$, the same tension</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A $50\ \mathrm{kg}$ person stands on bathroom scales in a lift that accelerates <strong>downwards</strong> at $2.0\ \mathrm{m/s^2}$. What force do the scales measure?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Inside the lift: inertial force $50 \times 2.0 = 100\ \mathrm{N}$ <strong>upwards</strong> (opposite to the lift's acceleration).</li>
+        <li>Balance: $N + 100 = 50 \times 9.8 = 490$.</li>
+      </ol>
+      <p class="answer">$N = 390\ \mathrm{N}$: the person feels lighter</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">The lift cable breaks and the lift falls freely ($a = g$ downwards). What is the tension in the string holding the ball?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Inside: inertial force $mg$ upwards exactly cancels gravity $mg$ downwards.</li>
+        <li>So $T = m(g - g) = 0$: the apparent gravity is zero.</li>
+      </ol>
+      <p class="answer">$T = 0$: everything in the lift floats ("weightless")</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">The lift moves upwards at a steady $3.0\ \mathrm{m/s}$. Find the tension for the $2.0\ \mathrm{kg}$ ball.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Steady velocity means $a = 0$: no inertial force, and the ball's acceleration is $0$ for every observer.</li>
+      </ol>
+      <p class="answer">$T = mg = 19.6\ \mathrm{N}$: only acceleration matters, not velocity</p>
+    </details>
+  </div>
+
+  <!-- WARNING: the classic mixed-up equation -->
+  <div class="note-warning">
+    Inside the lift, writing $ma = T - mg - ma$ is wrong. The observer inside sees the ball <strong>at rest</strong>, so the left side is $m \times 0$. Use an inertial force <em>or</em> the ball's acceleration $a$, never both.
+  </div>
+
+  <!-- TIP: apparent gravity -->
+  <div class="note-tip">
+    Inside an accelerating vehicle, combine gravity and the inertial force into one "apparent gravity". In a lift with acceleration $a$ upwards it is $m(g + a)$ downwards; everything inside behaves as if $g$ became $g + a$.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Outside (at rest): $ma = T - mg$, with $a$ the ball's acceleration.</li>
+      <li>Inside: add an inertial force $ma$ opposite to the lift's acceleration; the ball is still, so the forces balance.</li>
+      <li>Both observers get the same answer: $T = m(g + a)$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Ball in a lift" demo (the TRY IT block above).
+  // A 2.0 kg ball hangs from the lift ceiling. The slider sets the lift's acceleration
+  // a (upwards positive; −9.8 means falling freely). Real forces: gravity mg and
+  // tension T = m(g + a). Seen from inside, an inertial force m·a is added, opposite
+  // to the lift's acceleration, and the ball is at rest.
+  // Force arrows: 4 pixels per newton.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('lfCanvas');
+    const output = document.getElementById('lfOutput');
+    const aBox = document.getElementById('lfA');
+    const M = 2, G = 9.8, PXN = 4, THING = '#475569', RED = '#dc2626', GREEN = '#16a34a', BLUE = '#2563eb', ORANGE = '#ea580c';
+    let view = 'ground', lastText = '';
+
+    // A vertical arrow from p, dy pixels long (negative = up), labelled on the right.
+    function arrow(g, p, dy, color, label, side = 1) {
+      if (Math.abs(dy) < 2) return;
+      const q = [p[0], p[1] + dy], d = Math.sign(dy);
+      g.seg(p, q, color, { width: 3 });
+      g.poly([q, [q[0] - 6, q[1] - 10 * d], [q[0] + 6, q[1] - 10 * d]], color);
+      g.text([p[0] + side * 60, p[1] + dy * 0.7], label, color);
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const a = Number(aBox.value), T = M * (G + a);
+        // the lift car
+        const L = 110, R = 390, TOP = 30, BOT = 310;
+        g.poly([[L, TOP], [R, TOP], [R, BOT], [L, BOT]], 'rgba(148, 163, 184, 0.12)');
+        g.seg([L, TOP], [R, TOP], THING, { width: 3 });
+        g.seg([L, BOT], [R, BOT], THING, { width: 3 });
+        g.seg([L, TOP], [L, BOT], THING, { width: 3 });
+        g.seg([R, TOP], [R, BOT], THING, { width: 3 });
+        g.seg([(L + R) / 2 + 60, 0], [(L + R) / 2 + 60, TOP], THING, { width: 2 });   // the cable
+        // the string and the ball
+        const ball = [(L + R) / 2, 170];
+        g.seg([ball[0], TOP], ball, '#94a3b8', { width: 2 });
+        g.circle(ball, 13, BLUE, { fill: '#93c5fd' });
+        // real forces on the ball
+        arrow(g, [ball[0], ball[1] - 13], -T * PXN, RED, `T = ${T.toFixed(1)} N`, -1.3);
+        arrow(g, [ball[0], ball[1] + 13], M * G * PXN, GREEN, `mg = ${(M * G).toFixed(1)} N`, -1.3);
+        if (view === 'lift') {
+          // the inertial force sits next to the ball, opposite to the lift's acceleration
+          arrow(g, [ball[0] + 26, ball[1]], Math.sign(a) * Math.abs(M * a) * PXN, ORANGE, `ma = ${Math.abs(M * a).toFixed(1)} N`, 1.2);
+          g.text([(L + R) / 2, BOT - 14], 'the ball looks still', THING);
+        } else if (Math.abs(a) > 0.01) {
+          // the lift's acceleration, outside the car
+          arrow(g, [450, a > 0 ? 200 : 140], -Math.sign(a) * 60, THING, '', 1);
+          g.text([455, 100], `a = ${Math.abs(a).toFixed(1)} m/s²`, THING);
+          g.text([455, 118], a > 0 ? '(up)' : '(down)', THING);
+        }
+
+        const n = (z) => z.toFixed(1).replace('-', '−');
+        const aS = `(${n(a)})`;
+        const text = view === 'ground'
+          ? `observer at rest: no inertial force; the ball accelerates with the lift\n` +
+            `ma = T − mg:   2.0 × ${aS} = T − 19.6\n` +
+            `T = ${n(T)} N\n` +
+            (a < -9.7 ? 'falling freely: the string goes slack (weightless)' : `the string pulls ${T > 19.6 ? 'harder than' : T < 19.6 ? 'less than' : 'the same as'} when the lift is still`)
+          : `observer in the lift: inertial force ma = ${Math.abs(M * a).toFixed(1)} N ${a >= 0 ? 'down' : 'up'}\n` +
+            `the ball is still: 0 = T − mg − ma:   0 = T − 19.6 − 2.0 × ${aS}\n` +
+            `T = ${n(T)} N  (the same as outside)\n` +
+            `apparent gravity m(g + a) = ${n(T)} N, so it is like g = ${n(G + a)} m/s²`;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    document.querySelectorAll('#lfView button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#lfView button').forEach((x) => x.classList.toggle('active', x === b));
+      view = b.dataset.view;
+      board.redraw();
+    }));
+    aBox.addEventListener('input', () => board.redraw());
+  })();
+</script>

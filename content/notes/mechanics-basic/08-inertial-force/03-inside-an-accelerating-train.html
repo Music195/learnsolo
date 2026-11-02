@@ -1,0 +1,289 @@
+<!-- tags: Inertial Force -->
+<!-- =====================================================================
+     NOTE: Inside an Accelerating Train
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Inertial Force">Inside an Accelerating Train</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>In an accelerating train, "down" tilts backwards</h2>
+    <p>A train speeds up with acceleration $a$ to the right. A ball of mass $m$ hangs from the ceiling. Seen from inside the train, the ball hangs still, but tilted <strong>backwards</strong> by an angle $\theta$.</p>
+    <p>For a passenger, three forces act on the ball: gravity $mg$ (down), the inertial force $ma$ (backwards), and the tension $T$. Gravity and the inertial force add up to one arrow, the <strong>apparent gravity</strong> $mg'$. Inside the train it behaves exactly like gravity, just tilted. The string simply lines up with it.</p>
+    <p>This picture answers three classic questions at once:</p>
+    <ul>
+      <li><strong>The angle</strong>: $\tan\theta = a/g$.</li>
+      <li><strong>Cut the string</strong>: inside the train, the ball "falls" straight along the apparent gravity, a straight slanted line. From the ground, only real gravity acts, and the ball already had the train's velocity, so it follows a <strong>horizontal projectile</strong> path.</li>
+      <li><strong>A helium balloon</strong> tied to the floor tilts <strong>forwards</strong>. Buoyancy always points opposite to "down", and here "down" is the apparent gravity, so up is tilted forwards.</li>
+    </ul>
+  </section>
+
+  <!-- FORMULA: apparent gravity in the train -->
+  <div class="note-formula">
+    <h3>Apparent gravity in a train with acceleration $a$</h3>
+    <div class="formula-main">$$\tan\theta = \frac{a}{g} \qquad g' = \sqrt{g^2 + a^2} \qquad T = mg'$$</div>
+    <p class="symbols">$\theta$: angle of the string from the vertical (tilted backwards). $mg'$: gravity $mg$ and the inertial force $ma$ added as arrows. The tension balances it: same size, opposite direction, on the same line.</p>
+  </div>
+
+  <!-- PROOF: the right-angled triangle -->
+  <div class="note-proof">
+    <ol>
+      <li>Inside the train the ball is still, so $T$, $mg$ and $ma$ balance.</li>
+      <li>Add $mg$ (down) and $ma$ (backwards) tip to tail: they form the two short sides of a right-angled triangle. The long side is the apparent gravity $mg' = m\sqrt{g^2 + a^2}$.</li>
+      <li>The tension must be equal and opposite to $mg'$, so the string lies along the long side. The angle between the string and the vertical is the angle in that triangle: $\tan\theta = \dfrac{ma}{mg} = \dfrac{a}{g}$.</li>
+      <li>You could also split $T$ into $T\sin\theta$ and $T\cos\theta$ and solve two equations; the triangle is quicker.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: hanging ball, cut string, balloon; code at the bottom -->
+  <div class="note-demo">
+    <h2>A train speeding up to the right ($m = 0.50\ \mathrm{kg}$)</h2>
+    <div class="controls choices" id="trChoices">
+      <button type="button" data-scene="hang" class="active">Hanging ball</button>
+      <button type="button" data-scene="cutIn">Cut the string (inside view)</button>
+      <button type="button" data-scene="cutOut">Cut the string (ground view)</button>
+      <button type="button" data-scene="balloon">Helium balloon</button>
+    </div>
+    <div class="controls">
+      <label>train acceleration $a$ = <input type="range" id="trA" min="1" max="6" step="0.5" value="4"></label>
+      <button type="button" id="trGo">Again</button>
+    </div>
+    <canvas id="trCanvas"></canvas>
+    <div class="output table-text" id="trOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A train speeds up at $4.9\ \mathrm{m/s^2}$. Find $\tan\theta$ for a ball hanging from its ceiling, and the angle.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\tan\theta = a/g = 4.9/9.8 = 0.50$.</li>
+      </ol>
+      <p class="answer">$\tan\theta = 0.50$, so $\theta \approx 27^\circ$, tilted backwards</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">In Example 1 the ball has mass $0.50\ \mathrm{kg}$. Find the tension.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$g' = \sqrt{9.8^2 + 4.9^2} = 4.9\sqrt{5} \approx 11.0\ \mathrm{m/s^2}$.</li>
+        <li>$T = mg' = 0.50 \times 11.0$.</li>
+      </ol>
+      <p class="answer">$T \approx 5.5\ \mathrm{N}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">The string is cut. Describe the ball's path (a) for a passenger, (b) for someone standing beside the track.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>(a) The passenger sees the ball start from rest under the constant apparent gravity $mg'$: it moves in a straight line along the string's direction, speeding up at $g'$.</li>
+        <li>(b) From the ground there is no inertial force; only gravity acts. At the moment of cutting the ball has the train's horizontal velocity, so it moves like a ball thrown horizontally.</li>
+      </ol>
+      <p class="answer">(a) a straight line slanting backwards; (b) a horizontal projectile (a parabola)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">A helium balloon is tied to the floor of the train in Example 1. Which way does its string lean, and by what angle?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Gravity and the inertial force on the balloon add up to an apparent gravity tilted backwards by $\theta$.</li>
+        <li>Buoyancy acts opposite to the apparent gravity, so it points up and <strong>forwards</strong>; the balloon's string lines up with it.</li>
+      </ol>
+      <p class="answer">Forwards, at about $27^\circ$ from the vertical ($\tan\theta = 0.50$)</p>
+    </details>
+  </div>
+
+  <!-- WARNING: buoyancy direction -->
+  <div class="note-warning">
+    Don't forget the balloon also has weight and an inertial force, just like the ball. Buoyancy is not "always straight up": it is always opposite to the (apparent) gravity.
+  </div>
+
+  <!-- TIP: think in apparent gravity -->
+  <div class="note-tip">
+    Inside any vehicle with constant acceleration, first find the apparent gravity $\vec{g}' = \vec{g} - \vec{a}$. After that, treat the problem exactly like one with ordinary gravity that happens to point in a slanted direction.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>In a train speeding up at $a$: hanging objects tilt backwards with $\tan\theta = a/g$.</li>
+      <li>Apparent gravity $g' = \sqrt{g^2 + a^2}$; the tension is $mg'$.</li>
+      <li>Cut string: a straight line inside; a horizontal projectile from the ground.</li>
+      <li>A helium balloon leans forwards.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Accelerating train" demo (the TRY IT block above).
+  // The train speeds up to the right at a. A 0.50 kg ball hangs on a 1.0 m string
+  // from a ceiling 2.4 m above the floor. Inside the train it hangs still, tilted back
+  // by θ with tan θ = a/g. When the string is cut:
+  //   inside view: the ball moves in a straight line along the apparent gravity g';
+  //   ground view: the ball (moving at the train's 1.0 m/s) follows a horizontal
+  //   projectile path while the train keeps speeding up under it.
+  // The balloon leans forwards, opposite to the apparent gravity.
+  // 90 pixels per metre. Drawn with NoteGeom.board in canvas pixels (520 × 340, y down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('trCanvas');
+    const output = document.getElementById('trOutput');
+    const aBox = document.getElementById('trA');
+    const G = 9.8, M = 0.5, PXM = 90, FLOOR = 290, H = 2.4, LEN = 1.0, U = 1.0;
+    const THING = '#475569', RED = '#dc2626', GREEN = '#16a34a', BLUE = '#2563eb', ORANGE = '#ea580c', PURPLE = '#7c3aed';
+    let scene = 'hang', t = 0, lastText = '';
+
+    function arrow(g, p, v, color, label, off = [0, -12]) {
+      const q = [p[0] + v[0], p[1] + v[1]], L = Math.hypot(v[0], v[1]);
+      if (L < 3) return;
+      const ux = v[0] / L, uy = v[1] / L;
+      g.seg(p, q, color, { width: 2.5 });
+      g.poly([q, [q[0] - 10 * ux - 5 * uy, q[1] - 10 * uy + 5 * ux], [q[0] - 10 * ux + 5 * uy, q[1] - 10 * uy - 5 * ux]], color);
+      if (label) g.text([q[0] + off[0], q[1] + off[1]], label, color);
+    }
+    // The train car with its left end at pixel x.
+    function car(g, left) {
+      const W = 300, top = FLOOR - H * PXM;
+      g.poly([[left, top], [left + W, top], [left + W, FLOOR], [left, FLOOR]], 'rgba(148, 163, 184, 0.12)');
+      [[[left, top], [left + W, top]], [[left, FLOOR], [left + W, FLOOR]], [[left, top], [left, FLOOR]], [[left + W, top], [left + W, FLOOR]]]
+        .forEach(([p, q]) => g.seg(p, q, THING, { width: 3 }));
+      g.circle([left + 50, FLOOR + 12], 10, THING, { fill: '#475569' });
+      g.circle([left + W - 50, FLOOR + 12], 10, THING, { fill: '#475569' });
+      return { top, W };
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const a = Number(aBox.value), th = Math.atan(a / G), gp = Math.hypot(G, a), T = M * gp;
+        const deg = (th * 180 / Math.PI).toFixed(1);
+        g.seg([0, FLOOR + 22], [520, FLOOR + 22], THING, { width: 3 });
+        // the ball's hanging position, in metres from the hook (x right, y up)
+        const hx = -LEN * Math.sin(th), hy = -LEN * Math.cos(th);
+        const ballH = H + hy;                                      // height above the floor
+        const fallT = Math.sqrt(2 * ballH / G);                    // same for both views
+        const tt = Math.min(t, fallT);
+        let text;
+
+        if (scene === 'hang' || scene === 'balloon') {
+          const left = 110, { top } = car(g, left);
+          const hook = [left + 200, top];
+          const ball = [hook[0] + hx * PXM, hook[1] - hy * PXM];
+          g.seg([hook[0], top], [hook[0], top + 75], '#cbd5e1', { width: 1, dash: true });
+          g.seg(hook, ball, '#94a3b8', { width: 2 });
+          g.circle(ball, 11, BLUE, { fill: '#93c5fd' });
+          g.arc(hook, [hook[0], top + 70], ball, ORANGE, 30);
+          g.text([hook[0] - 10, top + 46], 'θ', ORANGE);
+          arrow(g, [440, 40], [50, 0], THING, `a = ${a.toFixed(1)}`, [-20, -14]);
+          if (scene === 'hang') {
+            const k = 6;                                           // pixels per m/s² (× m)
+            arrow(g, ball, [0, G * k], GREEN, 'mg', [14, 0]);
+            arrow(g, ball, [-a * k, 0], ORANGE, 'ma', [-6, -14]);
+            arrow(g, ball, [-a * k, G * k], PURPLE, "mg'", [-12, 12]);
+            arrow(g, ball, [a * k, -G * k], RED, 'T', [12, 0]);
+            text =
+              `inside the train: mg (down) + inertial force ma (back) = mg'\n` +
+              `tan θ = a/g = ${a.toFixed(1)}/9.8 = ${(a / G).toFixed(3)},  so θ = ${deg}° (tilted back)\n` +
+              `g' = √(g² + a²) = ${gp.toFixed(2)} m/s²\n` +
+              `T = mg' = 0.50 × ${gp.toFixed(2)} = ${T.toFixed(2)} N`;
+          } else {
+            // the balloon: tied to the floor, leaning forwards along −g'
+            const knot = [left + 30, FLOOR];
+            const bal = [knot[0] + Math.sin(th) * 1.3 * PXM, knot[1] - Math.cos(th) * 1.3 * PXM];
+            g.seg(knot, bal, '#94a3b8', { width: 2 });
+            g.circle(bal, 18, RED, { fill: '#fca5a5' });
+            g.seg([knot[0], FLOOR], [knot[0], FLOOR - 80], '#cbd5e1', { width: 1, dash: true });
+            const k = 3;
+            arrow(g, [bal[0] + 6, bal[1] - 20], [a * k, -G * k], BLUE, 'buoyancy', [24, -4]);
+            arrow(g, [bal[0], bal[1] + 18], [-a * k, G * k], PURPLE, "mg'", [-16, 8]);
+            text =
+              `ball on a string: leans BACK by θ = ${deg}°\n` +
+              `balloon: buoyancy is opposite to the apparent gravity mg',\n` +
+              `  so it points up and FORWARDS: the balloon leans forwards by ${deg}°\n` +
+              `(tan θ = a/g = ${(a / G).toFixed(3)} for both)`;
+          }
+        } else if (scene === 'cutIn') {
+          const left = 110, { top } = car(g, left);
+          const hook = [left + 200, top];
+          const start = [hook[0] + hx * PXM, hook[1] - hy * PXM];
+          // straight line along g': displacement ½·g'·t² in the direction (−a, −g)/g'
+          const s = 0.5 * gp * tt * tt;
+          const p = [start[0] - s * (a / gp) * PXM, start[1] + s * (G / gp) * PXM];
+          const end = [start[0] - 0.5 * a * fallT * fallT * PXM, FLOOR - 11];
+          g.seg(start, end, PURPLE, { width: 1.5, dash: true });
+          g.seg(hook, [hook[0] + hx * PXM * 0.35, hook[1] - hy * PXM * 0.35], '#94a3b8', { width: 2 });
+          g.circle([p[0], Math.min(p[1], FLOOR - 11)], 11, BLUE, { fill: '#93c5fd' });
+          arrow(g, [440, 40], [50, 0], THING, `a = ${a.toFixed(1)}`, [-20, -14]);
+          const back = 0.5 * a * fallT * fallT;
+          text =
+            `inside: only the apparent gravity mg' acts, starting from rest\n` +
+            `so the ball moves in a STRAIGHT LINE along the old string direction\n` +
+            `falls ${ballH.toFixed(2)} m in t = √(2h/g) = ${fallT.toFixed(2)} s\n` +
+            `and lands ${back.toFixed(2)} m behind where it started (½at²)`;
+        } else {
+          // ground view: the camera is still; the train keeps speeding up
+          const left0 = 20;
+          const left = left0 + (U * tt + 0.5 * a * tt * tt) * PXM;
+          const { top } = car(g, left);
+          const hook = [left + 200, top];
+          const start = [left0 + 200 + hx * PXM, top - hy * PXM];
+          // the path so far: x = x0 + U·t, y = y0 − ½gt²
+          let prev = start;
+          for (let k = 1; k <= 30; k++) {
+            const s = tt * k / 30;
+            const q = [start[0] + U * s * PXM, start[1] + 0.5 * G * s * s * PXM];
+            g.seg(prev, q, PURPLE, { width: 1.5, dash: true });
+            prev = q;
+          }
+          g.seg(hook, [hook[0] + hx * PXM * 0.35, hook[1] - hy * PXM * 0.35], '#94a3b8', { width: 2 });
+          g.circle([prev[0], Math.min(prev[1], FLOOR - 11)], 11, BLUE, { fill: '#93c5fd' });
+          arrow(g, [440, 40], [50, 0], THING, `a = ${a.toFixed(1)}`, [-20, -14]);
+          const ball = U * fallT, train = U * fallT + 0.5 * a * fallT * fallT;
+          text =
+            `ground: no inertial force, only gravity mg\n` +
+            `at the cut the ball moves with the train at ${U.toFixed(1)} m/s (horizontal)\n` +
+            `so it is a HORIZONTAL PROJECTILE: it falls in ${fallT.toFixed(2)} s, moving ${ball.toFixed(2)} m\n` +
+            `the train moves ${train.toFixed(2)} m meanwhile, so the ball lands ${(train - ball).toFixed(2)} m further back`;
+        }
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Animate the falling ball after the cut. Stop when the page has changed.
+    let last = performance.now();
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      if ((scene === 'cutIn' || scene === 'cutOut') && t < 1.2) { t += dt * 0.6; board.redraw(); }
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    const restart = () => { t = 0; board.redraw(); };
+    document.querySelectorAll('#trChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#trChoices button').forEach((x) => x.classList.toggle('active', x === b));
+      scene = b.dataset.scene;
+      restart();
+    }));
+    aBox.addEventListener('input', restart);
+    document.getElementById('trGo').addEventListener('click', restart);
+  })();
+</script>

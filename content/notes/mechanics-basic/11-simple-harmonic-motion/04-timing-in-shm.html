@@ -1,0 +1,202 @@
+<!-- tags: Simple Harmonic Motion -->
+<!-- =====================================================================
+     NOTE: Timing in SHM
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Simple Harmonic Motion">Timing in SHM</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>To find "how long until it gets there", measure the angle on the reference circle</h2>
+    <p>A mass $m$ hangs on a spring (constant $k$) with its equilibrium position at O. It is pulled down a distance $d$ and released at $t = 0$. Take down as $+$.</p>
+    <p>How long until it first passes O, or $x = d/2$, or $x = -d/2$? You <strong>can't</strong> use the constant-acceleration formulas: the spring force changes with $x$, so the acceleration keeps changing. Instead use the picture from the start of this topic: SHM is the shadow of a point going round a circle (radius $d$) at a <strong>steady</strong> angular speed. So:</p>
+    <p><strong>time = (angle turned on the circle ÷ $360^\circ$) × $T$</strong></p>
+    <p>Because the point turns steadily but the shadow moves fast in the middle and slowly near the ends, equal distances do <em>not</em> take equal times. Going from $d$ to $d/2$ takes $T/6$, not half of the $T/4$ needed to reach O.</p>
+  </section>
+
+  <!-- FORMULA: position and time -->
+  <div class="note-formula">
+    <h3>Released from $x = d$ at $t = 0$</h3>
+    <div class="formula-main">$$x = d\cos\omega t \qquad t = \frac{\theta}{360^\circ}T \qquad T = 2\pi\sqrt{\frac{m}{k}}$$</div>
+    <p class="symbols">$\theta$: the angle the reference point has turned (in degrees). First times: $x = 0$ at $T/4$ ($90^\circ$); $x = d/2$ at $T/6$ ($60^\circ$); $x = -d/2$ at $T/3$ ($120^\circ$); $x = -d$ at $T/2$ ($180^\circ$).</p>
+  </div>
+
+  <!-- PROOF: the angles -->
+  <div class="note-proof">
+    <ol>
+      <li><strong>Period.</strong> With $x$ from equilibrium (down $+$), the equation of motion is $ma = -kx$, so $\omega = \sqrt{k/m}$ and $T = 2\pi\sqrt{m/k}$.</li>
+      <li><strong>To O.</strong> The reference point starts at the bottom of the circle (level with $x = d$). Its shadow reaches O when the point is level with the centre: a quarter turn, $90^\circ$, so $t = T/4$.</li>
+      <li><strong>To $x = d/2$.</strong> The shadow is at $d/2$ when $\cos\theta = \frac{d/2}{d} = \frac12$. In that right-angled triangle the sides are in the ratio $1 : 2 : \sqrt3$, so $\theta = 60^\circ$ and $t = \frac{60}{360}T = T/6$. Not $45^\circ$!</li>
+      <li><strong>To $x = -d/2$.</strong> Past the centre, $\cos\theta = -\frac12$, so $\theta = 90^\circ + 30^\circ = 120^\circ$ and $t = T/3$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: the reference circle and the hanging mass; code at the bottom -->
+  <div class="note-demo">
+    <h2>Released from $x = d$ ($m = 0.50\ \mathrm{kg}$, $k = 8.0\ \mathrm{N/m}$, $d = 0.20\ \mathrm{m}$)</h2>
+    <div class="controls choices" id="tmChoices">
+      <button type="button" data-to="0" class="active">until x = 0</button>
+      <button type="button" data-to="0.5">until x = d/2</button>
+      <button type="button" data-to="-0.5">until x = −d/2</button>
+      <button type="button" data-to="-1">until x = −d</button>
+    </div>
+    <canvas id="tmCanvas"></canvas>
+    <div class="output table-text" id="tmOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A $0.50\ \mathrm{kg}$ mass on a spring with $k = 8.0\ \mathrm{N/m}$ is pulled down and released. Find its period.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$T = 2\pi\sqrt{0.50/8.0} = 2\pi \times 0.25$.</li>
+      </ol>
+      <p class="answer">$T = \pi/2 \approx 1.6\ \mathrm{s}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">How long after release does it first pass the equilibrium position O?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>A quarter turn: $t = T/4 = \dfrac{\pi}{2}\sqrt{\dfrac mk} = \dfrac{\pi}{8}$.</li>
+      </ol>
+      <p class="answer">$t \approx 0.39\ \mathrm{s}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">When does it first reach $x = d/2$?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\cos\theta = 1/2$, so $\theta = 60^\circ$: $t = T/6 = \dfrac{\pi}{3}\sqrt{\dfrac mk} = \dfrac{\pi}{12}$.</li>
+      </ol>
+      <p class="answer">$t \approx 0.26\ \mathrm{s}$ (not $T/8$)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">When does it first reach $x = -d/2$ (above O)?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\theta = 90^\circ + 30^\circ = 120^\circ$, so $t = T/3 = \dfrac{2\pi}{3}\sqrt{\dfrac mk} = \dfrac{\pi}{6}$.</li>
+      </ol>
+      <p class="answer">$t \approx 0.52\ \mathrm{s}$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: not uniformly accelerated -->
+  <div class="note-warning">
+    SHM is <strong>not</strong> uniformly accelerated motion, so $x = v_0t + \tfrac12at^2$ is wrong here. And distances don't split time evenly: half the distance to O is not half the time.
+  </div>
+
+  <!-- TIP: draw the circle -->
+  <div class="note-tip">
+    For any timing question, draw the reference circle with radius equal to the amplitude, mark the start and the target heights, and read off the angle with a $1 : 2 : \sqrt3$ or $1 : 1 : \sqrt2$ triangle.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Time in SHM = (angle on the reference circle ÷ $360^\circ$) × $T$.</li>
+      <li>From an end: to the centre $T/4$; to half-way $T/6$; to the other half-way point $T/3$; to the other end $T/2$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Timing" demo (the TRY IT block above).
+  // Left: the reference circle (radius d = 0.20 m, drawn 110 pixels). The point
+  // starts at the bottom and turns steadily; its height matches the hanging block.
+  // Right: the block on its spring, down +, released from x = d. x = d cos ωt with
+  // ω = √(k/m) = 4.0 rad/s. The animation runs at 40 % speed and stops when the block
+  // first reaches the chosen position; the shaded angle shows how far the point turned.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('tmCanvas');
+    const output = document.getElementById('tmOutput');
+    const M = 0.5, K = 8, D = 0.2, W = Math.sqrt(K / M), T = 2 * Math.PI / W;
+    const C = [140, 170], R = 110, BX = 330, THING = '#475569', BLUE = '#2563eb', PURPLE = '#7c3aed', ORANGE = '#ea580c';
+    let target = 0, phi = 0, lastText = '';
+
+    function zigzag(g, p, q, coils = 12) {
+      const pts = [p], L = q[1] - p[1];
+      for (let i = 0; i < coils * 2; i++) pts.push([p[0] + (i % 2 ? 9 : -9), p[1] + L * (i + 0.5) / (coils * 2)]);
+      pts.push(q);
+      for (let i = 1; i < pts.length; i++) g.seg(pts[i - 1], pts[i], THING, { width: 1.5 });
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const goal = Math.acos(target);                       // angle at which x = target·d
+        const ang = Math.min(phi, goal);
+        // the reference circle; φ = 0 is the bottom, turning anticlockwise
+        g.circle(C, R, '#cbd5e1');
+        g.dot(C, THING);
+        const at = (a) => [C[0] + R * Math.sin(a), C[1] + R * Math.cos(a)];
+        const pts = [C];
+        for (let k = 0; k <= 30; k++) pts.push(at(ang * k / 30));
+        g.poly(pts, 'rgba(234, 88, 12, 0.15)');
+        const P = at(ang);
+        g.seg(C, at(0), ORANGE, { width: 1.5 });
+        g.seg(C, P, ORANGE, { width: 1.5 });
+        g.circle(P, 7, PURPLE, { fill: '#c4b5fd' });
+        g.text([C[0] + 30, C[1] + 10], `${(ang * 180 / Math.PI).toFixed(0)}°`, ORANGE);
+        // marks on the block's axis
+        [[1, 'd'], [0.5, 'd/2'], [0, 'O'], [-0.5, '−d/2'], [-1, '−d']].forEach(([f, name]) => {
+          const y = C[1] + f * R;
+          g.seg([BX + 40, y], [BX + 52, y], '#94a3b8', { width: 2 });
+          g.text([BX + 76, y], name, f === target ? ORANGE : '#94a3b8');
+        });
+        // the block on its spring, level with the point
+        g.seg([BX - 50, 14], [BX + 50, 14], THING, { width: 4 });
+        zigzag(g, [BX, 14], [BX, P[1] - 18]);
+        g.poly([[BX - 22, P[1] - 18], [BX + 22, P[1] - 18], [BX + 22, P[1] + 18], [BX - 22, P[1] + 18]], 'rgba(147, 197, 253, 0.8)');
+        g.seg(P, [BX - 22, P[1]], '#cbd5e1', { width: 1, dash: true });
+
+        const deg = Math.round(goal * 180 / Math.PI), frac = { 90: 'T/4', 60: 'T/6', 120: 'T/3', 180: 'T/2' }[deg];
+        const name = { '0': '0', '0.5': 'd/2', '-0.5': '−d/2', '-1': '−d' }[String(target)];
+        const text =
+          `x = d cos ωt,  ω = √(k/m) = ${W.toFixed(1)} rad/s,  T = 2π/ω = ${T.toFixed(2)} s\n` +
+          `to reach x = ${name}: cos θ = ${String(target).replace('-', '−')}, so the point turns θ = ${deg}°\n` +
+          `t = (${deg}/360) × T = ${frac} = ${(deg / 360 * T).toFixed(2)} s\n` +
+          (target === 0.5 ? 'half the distance to O, but only 2/3 of the time to O (T/6 vs T/4)' : 'the point turns steadily; the block is slow near the ends');
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Turn the point at 40 % of real speed until the target. Stop when the page has changed.
+    let last = performance.now();
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      if (phi < Math.acos(target)) { phi += W * dt * 0.4; board.redraw(); }
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    document.querySelectorAll('#tmChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#tmChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      target = Number(b.dataset.to);
+      phi = 0;
+      board.redraw();
+    }));
+  })();
+</script>

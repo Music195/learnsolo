@@ -1,0 +1,237 @@
+<!-- tags: Circular Motion -->
+<!-- =====================================================================
+     NOTE: Leaving a Curved Surface
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Circular Motion">Leaving a Curved Surface</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>On a rounded top, the surface pushes less and less, and at $N = 0$ the object flies off</h2>
+    <p>A small object slides along a smooth flat surface at speed $v_0$ and then over the top A of a rounded surface, part of a circle of radius $r$ (a dome).</p>
+    <ul>
+      <li><strong>Just before A</strong> it moves in a straight line at steady speed, so the forces balance: $N = mg$, whatever $v_0$ is.</li>
+      <li><strong>Just after A</strong> it is in circular motion. Riding with it, the centrifugal force $mv_0^2/r$ points up, away from the centre, so $N' = mg - mv_0^2/r$. The faster it goes, the smaller $N'$. If $v_0^2 \ge gr$, then $N'$ would be $0$ or less: it leaves the surface straight away at A.</li>
+      <li><strong>Starting very slowly</strong> (almost $v_0 = 0$), it speeds up as it slides down, $N$ falls, and it always leaves the surface partway down. This is why no real slide is shaped like a dome: a child on a "scary slide" like that would fly off before the bottom!</li>
+    </ul>
+    <p>The method is the same as for any vertical circle: <strong>energy</strong> plus <strong>the balance towards the centre</strong>, with the condition "leaves the surface" meaning $N = 0$.</p>
+  </section>
+
+  <!-- FORMULA: where it leaves -->
+  <div class="note-formula">
+    <h3>Sliding over a smooth dome (angle $\theta$ measured from the top)</h3>
+    <div class="formula-main">$$N = mg\cos\theta - m\frac{v^2}{r} \qquad \tfrac12 mv^2 = \tfrac12 mv_0^2 + mgr(1 - \cos\theta)$$</div>
+    <p class="symbols">It leaves where $N = 0$: $\cos\theta = \dfrac{2}{3} + \dfrac{v_0^2}{3gr}$. Starting from rest: $\cos\theta = \dfrac23$, at a height $h = r\cos\theta = \dfrac23 r$ above the centre. It leaves at A itself if $v_0 \ge \sqrt{gr}$.</p>
+  </div>
+
+  <!-- PROOF: from rest at the top -->
+  <div class="note-proof">
+    <ol>
+      <li>Call the angle from the top $\theta$ (choosing an angle makes the algebra easier than using the height directly). The drop from A is $r(1 - \cos\theta)$.</li>
+      <li>Energy, starting from rest: $mgr(1 - \cos\theta) = \tfrac12 mv^2$.</li>
+      <li>Riding with the object, along the line to the centre: gravity's part $mg\cos\theta$ points in, the normal force $N$ and the centrifugal force $mv^2/r$ point out. Balance: $mg\cos\theta = N + mv^2/r$.</li>
+      <li>Leaving means $N = 0$: $mv^2 = mgr\cos\theta$. Put this into the energy equation: $mgr(1 - \cos\theta) = \tfrac12 mgr\cos\theta$, so $1 - \cos\theta = \tfrac12\cos\theta$ and $\cos\theta = \tfrac23$.</li>
+      <li>The height above the centre is $h = r\cos\theta = \tfrac23 r$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: sliding over the dome; code at the bottom -->
+  <div class="note-demo">
+    <h2>A $1.0\ \mathrm{kg}$ object over a smooth dome of radius $1.0\ \mathrm{m}$</h2>
+    <div class="controls">
+      <label>speed at the top $v_0$ (m/s) = <input type="range" id="lsV" min="0" max="4" step="0.1" value="0"></label>
+      <button type="button" id="lsGo">Again</button>
+    </div>
+    <canvas id="lsCanvas"></canvas>
+    <div class="output table-text" id="lsOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A $1.0\ \mathrm{kg}$ object moves at $2.0\ \mathrm{m/s}$ on the flat part, towards a dome of radius $1.0\ \mathrm{m}$. Find the normal force just before and just after the top A.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Before A: steady straight-line motion, $N = mg = 9.8\ \mathrm{N}$.</li>
+        <li>After A: $N' = mg - mv_0^2/r = 9.8 - 1.0 \times 4.0/1.0$.</li>
+      </ol>
+      <p class="answer">$9.8\ \mathrm{N}$ before; $5.8\ \mathrm{N}$ just after</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">For that dome, find the smallest $v_0$ for which the object leaves the surface right at A.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Set $N' = 0$: $mg = mv_0^2/r$, so $v_0 = \sqrt{gr} = \sqrt{9.8 \times 1.0}$.</li>
+      </ol>
+      <p class="answer">$v_0 \approx 3.1\ \mathrm{m/s}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">The object starts at A almost at rest. At what height above the centre does it leave the dome ($r = 1.0\ \mathrm{m}$), and how fast is it then?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>From the proof, $\cos\theta = 2/3$, so $h = \tfrac23 r \approx 0.67\ \mathrm{m}$ ($\theta \approx 48^\circ$).</li>
+        <li>$v^2 = gr\cos\theta = 9.8 \times \tfrac23 = 6.5$.</li>
+      </ol>
+      <p class="answer">$h \approx 0.67\ \mathrm{m}$; $v \approx 2.6\ \mathrm{m/s}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">The object passes A at $2.0\ \mathrm{m/s}$ instead. Where does it leave the dome?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\cos\theta = \dfrac23 + \dfrac{v_0^2}{3gr} = 0.667 + \dfrac{4.0}{29.4} = 0.80$.</li>
+        <li>$h = r\cos\theta = 0.80\ \mathrm{m}$, $\theta \approx 37^\circ$.</li>
+      </ol>
+      <p class="answer">At $0.80\ \mathrm{m}$ above the centre: earlier than when starting from rest</p>
+    </details>
+  </div>
+
+  <!-- WARNING: don't assume it reaches the bottom -->
+  <div class="note-warning">
+    On the <strong>outside</strong> of a curve the surface can only push outwards, so $N$ can't go below $0$. Never assume a smooth object slides all the way down a dome: check where $N$ becomes $0$.
+  </div>
+
+  <!-- TIP: use an angle -->
+  <div class="note-tip">
+    Even when the question asks for a height $h$, introduce an angle $\theta$ yourself. Both equations are simple in $\cos\theta$, and at the end $h = r\cos\theta$.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>On the flat: $N = mg$. On the dome: $N = mg\cos\theta - mv^2/r$.</li>
+      <li>"Leaves the surface" means $N = 0$.</li>
+      <li>From rest at the top: leaves at $\cos\theta = 2/3$, height $\tfrac23 r$ above the centre. If $v_0 \ge \sqrt{gr}$ it leaves at the top.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Leaving a dome" demo (the TRY IT block above).
+  // A 1.0 kg object slides on a smooth flat surface at v0, then over the top A of a
+  // quarter-circle dome of radius 1.0 m (centre O on the floor). θ is the angle from
+  // the top. On the dome: θ'' = (g/r) sin θ and N = m(g cos θ − v²/r). When N
+  // reaches 0 it leaves and flies as a projectile until it lands on the floor.
+  // v0 = 0 means "the smallest nudge". 130 pixels per metre.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('lsCanvas');
+    const output = document.getElementById('lsOutput');
+    const vBox = document.getElementById('lsV');
+    const G = 9.8, M = 1.0, RAD = 1.0, PXM = 130, O = [190, 300], BR = 8;
+    const THING = '#475569', BLUE = '#2563eb', RED = '#dc2626', ORANGE = '#ea580c', GREEN = '#16a34a';
+    let st, lastText = '';
+
+    function reset() {
+      const v0 = Math.max(Number(vBox.value), 0.1);
+      // start on the flat part (unless very slow, then start at A)
+      st = { phase: v0 >= 0.5 ? 'flat' : 'dome', x: v0 >= 0.5 ? -0.8 : 0, y: RAD, v0, th: 0, w: v0 / RAD, vx: 0, vy: 0, leftAt: null, trail: [] };
+    }
+    reset();
+    const toPx = (x, y) => [O[0] + x * PXM, O[1] - y * PXM];
+
+    function step(dt) {
+      if (st.phase === 'flat') {
+        st.x += st.v0 * dt;
+        if (st.x >= 0) { st.x = 0; st.phase = 'dome'; }
+      } else if (st.phase === 'dome') {
+        const v = RAD * st.w, N = M * (G * Math.cos(st.th) - v * v / RAD);
+        if (N <= 0) {
+          st.phase = 'fly'; st.leftAt = st.th;
+          st.vx = v * Math.cos(st.th); st.vy = -v * Math.sin(st.th);
+          return;
+        }
+        st.w += (G / RAD) * Math.sin(st.th) * dt;
+        st.th += st.w * dt;
+        st.x = RAD * Math.sin(st.th); st.y = RAD * Math.cos(st.th);
+      } else if (st.phase === 'fly') {
+        st.vy -= G * dt; st.x += st.vx * dt; st.y += st.vy * dt;
+        if (st.y <= 0) { st.y = 0; st.phase = 'landed'; }
+      }
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        // floor, the flat platform and the dome
+        g.seg([0, O[1]], [520, O[1]], THING, { width: 3 });
+        const A = toPx(0, RAD);
+        g.poly([[10, A[1]], A, [A[0], O[1]], [10, O[1]]], 'rgba(148, 163, 184, 0.25)');
+        const pts = [A];
+        for (let k = 1; k <= 30; k++) { const a = k * Math.PI / 60; pts.push(toPx(RAD * Math.sin(a), RAD * Math.cos(a))); }
+        g.poly([...pts, O], 'rgba(148, 163, 184, 0.25)');
+        g.seg([10, A[1]], A, THING, { width: 3 });
+        for (let k = 1; k < pts.length; k++) g.seg(pts[k - 1], pts[k], THING, { width: 3 });
+        g.dot(O, THING);
+        g.text([O[0] - 14, O[1] + 14], 'O', THING);
+        g.text([A[0], A[1] - 16], 'A', THING);
+        // the trail and the object (drawn just outside the surface)
+        for (let k = 1; k < st.trail.length; k++) g.seg(st.trail[k - 1], st.trail[k], 'rgba(37, 99, 235, 0.35)', { width: 2 });
+        const d = Math.hypot(st.x, st.y) || 1, P = toPx(st.x, st.y);
+        const draw = st.phase === 'flat' ? [P[0], P[1] - BR] : st.phase === 'landed' ? [P[0], P[1] - BR] : [P[0] + st.x / d * BR, P[1] - st.y / d * BR];
+        g.circle(draw, BR, BLUE, { fill: '#93c5fd' });
+        // where it left, if it has
+        const n = (z, k = 2) => z.toFixed(k).replace('-', '−'), deg = (a) => (a * 180 / Math.PI).toFixed(0);
+        if (st.leftAt !== null) {
+          const L = toPx(RAD * Math.sin(st.leftAt), RAD * Math.cos(st.leftAt));
+          g.seg(O, L, ORANGE, { width: 1.5, dash: true });
+          g.seg(L, [O[0] - 10, L[1]], GREEN, { width: 1, dash: true });
+          g.text([O[0] - 40, (L[1] + O[1]) / 2], `h = ${n(RAD * Math.cos(st.leftAt))} m`, GREEN);
+          if (st.leftAt > 0.01) g.arc(O, A, L, ORANGE, 30);
+        }
+
+        const v0 = Number(vBox.value);
+        const cosT = Math.min(2 / 3 + v0 * v0 / (3 * G * RAD), 1);
+        const v = st.phase === 'dome' ? RAD * st.w : st.phase === 'fly' ? Math.hypot(st.vx, st.vy) : v0;
+        const N = st.phase === 'dome' ? M * (G * Math.cos(st.th) - v * v / RAD) : st.phase === 'flat' ? M * G : 0;
+        const text =
+          `before A (flat): N = mg = 9.80 N\njust after A:    N' = m(g − v0²/r) = ${n(M * (G - v0 * v0 / RAD))} N\n` +
+          (v0 * v0 >= G * RAD
+            ? `v0 ≥ √(gr) = ${n(Math.sqrt(G * RAD))} m/s, so it leaves the dome right at A\n`
+            : `leaves where N = 0:  cos θ = 2/3 + v0²/(3gr) = ${n(cosT, 3)},  θ = ${deg(Math.acos(cosT))}°\n`) +
+          `height above O when it leaves: h = r cos θ = ${n(RAD * cosT)} m  (from rest: 2r/3)\n` +
+          `now: ${st.phase === 'fly' || st.phase === 'landed' ? 'off the surface, N = 0' : `v = ${n(v)} m/s, N = ${n(Math.max(N, 0))} N`}`;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Run the motion in small steps (slowed to 60 %). Stop when the page has changed.
+    let last = performance.now(), sinceTrail = 0;
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.min((now - last) / 1000, 0.05) * 0.6;
+      last = now;
+      if (st.phase !== 'landed') {
+        for (let k = 0; k < 20; k++) step(dt / 20);
+        sinceTrail += dt;
+        if (sinceTrail > 0.01 && st.phase !== 'flat') { st.trail.push(toPx(st.x, st.y)); sinceTrail = 0; }
+      }
+      board.redraw();
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    const restart = () => { reset(); board.redraw(); };
+    vBox.addEventListener('input', restart);
+    document.getElementById('lsGo').addEventListener('click', restart);
+  })();
+</script>

@@ -1,0 +1,195 @@
+<!-- tags: Simple Harmonic Motion -->
+<!-- =====================================================================
+     NOTE: The Spring Oscillator
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Simple Harmonic Motion">The Spring Oscillator</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>A mass on a spring obeys $a = -\omega^2x$, so it moves in SHM</h2>
+    <p>A block of mass $m$ on a smooth floor is joined to a spring (spring constant $k$). Put the origin O where the spring has its natural length, and take $x$ as the block's position, positive to the right.</p>
+    <p>Pull it to $x$ and the spring pulls back with size $kx$ (Hooke's law), towards O. The equation of motion is $ma = -kx$, so $a = -\dfrac{k}{m}x$. That is exactly the SHM condition $a = -\omega^2x$, with $\omega^2 = k/m$. So we get the angular frequency and the period at once.</p>
+    <p>A classic slip is the <strong>compressed</strong> side. There the spring pushes to the right, so it is tempting to write $ma = +kx$. But on that side $x$ itself is negative, so $+kx$ would point left. The correct equation is still $ma = -kx$: a negative $x$ times $-k$ gives a positive (rightward) force.</p>
+  </section>
+
+  <!-- FORMULA: spring oscillator -->
+  <div class="note-formula">
+    <h3>Spring oscillator</h3>
+    <div class="formula-main">$$ma = -kx \qquad \omega = \sqrt{\frac{k}{m}} \qquad T = 2\pi\sqrt{\frac{m}{k}}$$</div>
+    <p class="symbols">$k$: spring constant (N/m). $m$: mass (kg). $x$: position measured from where the forces balance (on a smooth floor, the natural length). The period does <strong>not</strong> depend on the amplitude.</p>
+  </div>
+
+  <!-- PROOF: from the equation of motion to the period -->
+  <div class="note-proof">
+    <ol>
+      <li>Stretched by $x$ (with $x &gt; 0$): the spring pulls left with $kx$. Taking right as $+$: $ma = -kx$.</li>
+      <li>Compressed (now $x &lt; 0$, compression $-x$): the spring pushes right with $k(-x)$. Taking right as $+$: $ma = +k(-x) = -kx$. The same equation.</li>
+      <li>Rearranged: $a = -\dfrac{k}{m}x$. Compare with $a = -\omega^2x$: $\omega^2 = \dfrac{k}{m}$.</li>
+      <li>$T = \dfrac{2\pi}{\omega} = 2\pi\sqrt{\dfrac{m}{k}}$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: the oscillating block; code at the bottom -->
+  <div class="note-demo">
+    <h2>A block on a spring, pulled out and let go</h2>
+    <div class="controls">
+      <label>$m$ (kg) = <input type="range" id="spM" min="0.5" max="4" step="0.5" value="1"></label>
+      <label>$k$ (N/m) = <input type="range" id="spK" min="5" max="40" step="5" value="20"></label>
+      <label>amplitude (m) = <input type="range" id="spA" min="0.1" max="0.3" step="0.05" value="0.2"></label>
+    </div>
+    <canvas id="spCanvas"></canvas>
+    <div class="output table-text" id="spOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A $0.50\ \mathrm{kg}$ block on a spring with $k = 50\ \mathrm{N/m}$ oscillates on a smooth floor. Find $\omega$ and $T$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\omega = \sqrt{k/m} = \sqrt{100} = 10\ \mathrm{rad/s}$.</li>
+        <li>$T = 2\pi/\omega$.</li>
+      </ol>
+      <p class="answer">$\omega = 10\ \mathrm{rad/s}$, $T \approx 0.63\ \mathrm{s}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">The block in Example 1 is pulled out twice as far before being released. What happens to the period?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$T = 2\pi\sqrt{m/k}$ has no amplitude in it.</li>
+      </ol>
+      <p class="answer">It stays $0.63\ \mathrm{s}$ (it moves faster, over a longer path)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">What mass on the same spring would double the period?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$T \propto \sqrt m$, so doubling $T$ needs $4$ times the mass.</li>
+      </ol>
+      <p class="answer">$2.0\ \mathrm{kg}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Right is $+$. The block in Example 1 is at $x = -0.040\ \mathrm{m}$ (spring compressed). Write the equation of motion and find $a$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$ma = -kx$ still: $0.50\,a = -50 \times (-0.040) = 2.0$.</li>
+      </ol>
+      <p class="answer">$a = +4.0\ \mathrm{m/s^2}$, to the right, back towards O</p>
+    </details>
+  </div>
+
+  <!-- WARNING: the compressed side -->
+  <div class="note-warning">
+    $x$ is a <strong>position</strong> (with a sign), not a length. Writing $ma = kx$ for the compressed side treats $x$ as a length. Keep $ma = -kx$ and let the sign of $x$ do the work.
+  </div>
+
+  <!-- TIP: learn the route, not only the result -->
+  <div class="note-tip">
+    You can memorise $T = 2\pi\sqrt{m/k}$, but also learn the route: equation of motion → $a = -\omega^2x$ → $T = 2\pi/\omega$. That route works for every SHM, not just springs.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Spring: $ma = -kx$ on both sides of O.</li>
+      <li>$\omega = \sqrt{k/m}$, $T = 2\pi\sqrt{m/k}$, independent of amplitude.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Spring oscillator" demo (the TRY IT block above).
+  // A block on a smooth floor, joined to a spring fixed to the wall on the left.
+  // O (the dashed line) is where the spring has its natural length; right is +.
+  // Released from x = amplitude at t = 0, so x = A cos ωt with ω = √(k/m).
+  // The red arrow is the spring force −kx (6 pixels per newton).
+  // 500 pixels per metre. Drawn with NoteGeom.board in canvas pixels (520 × 340, y down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('spCanvas');
+    const output = document.getElementById('spOutput');
+    const mBox = document.getElementById('spM'), kBox = document.getElementById('spK'), aBox = document.getElementById('spA');
+    const WALL = 40, O = 280, FLOOR = 220, PXM = 500, KF = 6, W = 60;
+    const THING = '#475569', RED = '#dc2626', BLUE = '#2563eb';
+    let t = 0, lastText = '';
+
+    // A zigzag spring from p to q (horizontal).
+    function spring(g, p, q, coils = 12) {
+      const pts = [p, [p[0] + 12, p[1]]], L = q[0] - p[0] - 24;
+      for (let i = 0; i < coils * 2; i++) pts.push([p[0] + 12 + L * (i + 0.5) / (coils * 2), p[1] + (i % 2 ? 10 : -10)]);
+      pts.push([q[0] - 12, q[1]], q);
+      for (let i = 1; i < pts.length; i++) g.seg(pts[i - 1], pts[i], THING, { width: 1.5 });
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const m = Number(mBox.value), k = Number(kBox.value), A = Number(aBox.value);
+        const w = Math.sqrt(k / m), x = A * Math.cos(w * t), v = -A * w * Math.sin(w * t), F = -k * x;
+        // wall and floor
+        g.seg([WALL, FLOOR - 90], [WALL, FLOOR], THING, { width: 4 });
+        g.seg([WALL, FLOOR], [500, FLOOR], THING, { width: 3 });
+        // natural-length line O and the amplitude marks
+        g.seg([O, FLOOR - 100], [O, FLOOR + 14], '#94a3b8', { width: 1, dash: true });
+        g.text([O, FLOOR + 26], 'O (natural length)', '#94a3b8');
+        [-A, A].forEach((z) => g.seg([O + z * PXM, FLOOR + 4], [O + z * PXM, FLOOR + 12], '#94a3b8', { width: 2 }));
+        // spring and block (the block's centre line marks its position x)
+        const bx = O + x * PXM;
+        spring(g, [WALL, FLOOR - 25], [bx - W / 2, FLOOR - 25]);
+        g.poly([[bx - W / 2, FLOOR - 50], [bx + W / 2, FLOOR - 50], [bx + W / 2, FLOOR], [bx - W / 2, FLOOR]], 'rgba(147, 197, 253, 0.8)');
+        g.text([bx, FLOOR - 25], 'm', BLUE);
+        g.seg([bx, FLOOR - 50], [bx, FLOOR - 58], THING, { width: 2 });
+        // the spring force
+        const len = F * KF;
+        if (Math.abs(len) > 3) {
+          const p = [bx, FLOOR - 80], q = [bx + len, FLOOR - 80], d = Math.sign(len);
+          g.seg(p, q, RED, { width: 3 });
+          g.poly([q, [q[0] - 10 * d, q[1] - 6], [q[0] - 10 * d, q[1] + 6]], RED);
+          g.text([bx + len / 2, FLOOR - 96], `−kx = ${F.toFixed(1).replace('-', '−')} N`, RED);
+        }
+
+        const n = (z) => z.toFixed(2).replace('-', '−');
+        const text =
+          `ω = √(k/m) = √(${k}/${m}) = ${n(w)} rad/s,   T = 2π√(m/k) = ${n(2 * Math.PI / w)} s\n` +
+          `x = ${n(x)} m (${x >= 0 ? 'stretched' : 'compressed'}),  v = ${n(v)} m/s\n` +
+          `force = −kx = ${n(F)} N,  a = −(k/m)x = ${n(F / m)} m/s²\n` +
+          `(change the amplitude: the period stays the same)`;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Run the motion. Stop when the page has changed.
+    let last = performance.now();
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      t += dt;
+      board.redraw();
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+    const restart = () => { t = 0; board.redraw(); };
+    [mBox, kBox, aBox].forEach((b) => b.addEventListener('input', restart));
+  })();
+</script>

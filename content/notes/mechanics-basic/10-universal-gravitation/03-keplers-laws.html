@@ -1,0 +1,192 @@
+<!-- tags: Universal Gravitation -->
+<!-- =====================================================================
+     NOTE: Kepler's Laws
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Universal Gravitation">Kepler's Laws</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Three rules for how planets move, found from careful observation</h2>
+    <p>Kepler studied years of measurements of the planets and found three laws. They came <em>before</em> Newton, and Newton's law of universal gravitation was built to explain them. Problems on gravitation and orbits often use them together.</p>
+    <ul>
+      <li><strong>First law</strong>: each planet moves in an <strong>ellipse</strong>, with the Sun at one focus. (It just says "an ellipse, not necessarily a circle"; you rarely calculate with it, so it's the one people forget.)</li>
+      <li><strong>Second law</strong>: the line from the Sun to a planet sweeps out <strong>equal areas in equal times</strong> (the <strong>areal velocity</strong> is constant). So a planet moves fastest when it is nearest the Sun.</li>
+      <li><strong>Third law</strong>: the square of the period is proportional to the cube of the <strong>semi-major axis</strong> (half the long axis of the ellipse): $T^2 \propto a^3$, the same constant for every planet of the Sun.</li>
+    </ul>
+  </section>
+
+  <!-- FORMULA: the second and third laws -->
+  <div class="note-formula">
+    <h3>Kepler's second and third laws</h3>
+    <div class="formula-main">$$\tfrac12 r_1v_1 = \tfrac12 r_2v_2 \ \ \text{(nearest and furthest points)} \qquad \frac{T^2}{a^3} = \text{constant}$$</div>
+    <p class="symbols">At the nearest and furthest points the velocity is at right angles to the line to the Sun, so the area swept in one second is a thin triangle, $\tfrac12 rv$. $a$: semi-major axis; for a circle, $a$ is the radius. For orbits around a body of mass $M$: $\dfrac{T^2}{a^3} = \dfrac{4\pi^2}{GM}$.</p>
+  </div>
+
+  <!-- PROOF: getting universal gravitation from the third law -->
+  <div class="note-proof">
+    <ol>
+      <li>Take a planet of mass $m$ in a circular orbit of radius $r$ (so $a = r$). The third law says $T^2 = kr^3$ for some constant $k$.</li>
+      <li>Circular motion: the force towards the Sun is $F = mr\omega^2 = mr\left(\dfrac{2\pi}{T}\right)^2 = \dfrac{4\pi^2mr}{T^2}$.</li>
+      <li>Put in $T^2 = kr^3$: $F = \dfrac{4\pi^2}{k}\cdot\dfrac{m}{r^2}$. The force falls as $1/r^2$ and is proportional to the planet's mass $m$.</li>
+      <li>By action and reaction, the planet pulls the Sun just as hard, so the force must also be proportional to the Sun's mass $M$. Take $M$ out of the constant: $\dfrac{4\pi^2}{k} = GM$.</li>
+      <li>That gives $F = G\dfrac{Mm}{r^2}$, the law of universal gravitation, with $G$ the same for every pair of objects.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: equal areas in equal times; code at the bottom -->
+  <div class="note-demo">
+    <h2>Equal areas in equal times</h2>
+    <div class="controls">
+      <label>how stretched the ellipse is ($e$) = <input type="range" id="kpE" min="0" max="0.7" step="0.05" value="0.5"></label>
+    </div>
+    <canvas id="kpCanvas"></canvas>
+    <div class="output table-text" id="kpOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A comet's nearest distance from the Sun is $1.0\ \mathrm{AU}$ and its furthest is $5.0\ \mathrm{AU}$. How many times faster is it at the nearest point than at the furthest?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Second law: $\tfrac12 \times 1.0 \times v_1 = \tfrac12 \times 5.0 \times v_2$.</li>
+      </ol>
+      <p class="answer">$v_1 = 5.0\,v_2$: 5 times faster</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find the semi-major axis of the comet's orbit in Example 1, and its period (the Earth: $a = 1\ \mathrm{AU}$, $T = 1$ year).</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The long axis is $1.0 + 5.0 = 6.0\ \mathrm{AU}$, so $a = 3.0\ \mathrm{AU}$.</li>
+        <li>Third law: $T^2 = 3.0^3 = 27$ (in years and AU), so $T = \sqrt{27}$.</li>
+      </ol>
+      <p class="answer">$a = 3.0\ \mathrm{AU}$; $T \approx 5.2$ years</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Satellite X orbits the Earth in a circle 4 times as large in radius as satellite Y. Compare their periods.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$T^2 \propto a^3$: $\left(\dfrac{T_X}{T_Y}\right)^2 = 4^3 = 64$.</li>
+      </ol>
+      <p class="answer">$T_X = 8\,T_Y$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">The Moon goes round the Earth in a circle of radius $3.8 \times 10^8\ \mathrm{m}$ with a period of $2.4 \times 10^6\ \mathrm{s}$. Find $GM$ for the Earth.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$GM = \dfrac{4\pi^2a^3}{T^2} = \dfrac{4\pi^2 \times (3.8 \times 10^8)^3}{(2.4 \times 10^6)^2}$.</li>
+      </ol>
+      <p class="answer">$GM \approx 3.8 \times 10^{14}\ \mathrm{m^3/s^2}$, close to $gR^2 \approx 4.0 \times 10^{14}$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: semi-major axis -->
+  <div class="note-warning">
+    In the third law use the <strong>semi-major</strong> axis, half the long axis: $a = \dfrac{r_{\text{near}} + r_{\text{far}}}{2}$. Using the far distance, or the whole long axis, is a very common slip. And the constant $T^2/a^3$ is only shared by orbits around the <strong>same</strong> central body.
+  </div>
+
+  <!-- TIP: which law to use -->
+  <div class="note-tip">
+    Circular orbit: use the equation of motion, no Kepler needed. Ellipse: speeds at the near and far points come from the second law <em>together with conservation of energy</em>; periods come from the third law.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>1st: orbits are ellipses with the Sun at a focus.</li>
+      <li>2nd: equal areas in equal times; at the near and far points $r_1v_1 = r_2v_2$.</li>
+      <li>3rd: $T^2/a^3$ is the same for all orbits around one body; it equals $4\pi^2/GM$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Equal areas" demo (the TRY IT block above).
+  // A planet goes round an ellipse with the Sun at a focus. The position at each time
+  // comes from Kepler's equation  M = E − e sin E  (M grows steadily with time; E is
+  // found by Newton's method). The shaded slices are the areas swept in equal times
+  // (one twelfth of a period each); they look different but have equal areas.
+  // Semi-major axis a = 150 pixels; the nearest point is on the right.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('kpCanvas');
+    const output = document.getElementById('kpOutput');
+    const eBox = document.getElementById('kpE');
+    const A = 150, CEN = [250, 170], ORANGE = '#ea580c', BLUE = '#2563eb', THING = '#475569';
+    let mean = 0, lastText = '';
+
+    function solveE(M, e) {
+      let E = M;
+      for (let k = 0; k < 20; k++) E -= (E - e * Math.sin(E) - M) / (1 - e * Math.cos(E));
+      return E;
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const e = Number(eBox.value), B = A * Math.sqrt(1 - e * e);
+        const S = [CEN[0] + A * e, CEN[1]];                    // the Sun, at a focus
+        const at = (E) => [CEN[0] + A * Math.cos(E), CEN[1] - B * Math.sin(E)];
+        // shaded slices: every other twelfth of a period
+        for (let k = 0; k < 12; k += 2) {
+          const pts = [S];
+          for (let j = 0; j <= 16; j++) pts.push(at(solveE(2 * Math.PI * (k + j / 16) / 12, e)));
+          g.poly(pts, 'rgba(37, 99, 235, 0.15)');
+        }
+        // the orbit, the Sun, the planet
+        let prev = null;
+        for (let j = 0; j <= 96; j++) { const q = at(j * Math.PI / 48); if (prev) g.seg(prev, q, '#94a3b8', { width: 1.5 }); prev = q; }
+        g.circle(S, 12, ORANGE, { fill: '#fdba74' });
+        g.text([S[0], S[1] + 24], 'Sun', ORANGE);
+        const P = at(solveE(mean % (2 * Math.PI), e));
+        g.seg(S, P, '#cbd5e1', { width: 1 });
+        g.circle(P, 7, BLUE, { fill: '#93c5fd' });
+        g.text([CEN[0] + A + 26, CEN[1]], 'near', THING);
+        g.text([CEN[0] - A - 22, CEN[1]], 'far', THING);
+
+        const near = 1 - e, far = 1 + e;
+        const text =
+          `with a = 1: nearest r = ${near.toFixed(2)},  furthest r = ${far.toFixed(2)}\n` +
+          `2nd law: speed near ÷ speed far = r_far ÷ r_near = ${(far / near).toFixed(2)}\n` +
+          `each shaded slice is swept in the same time (1/12 of a period)\n` +
+          `3rd law: Earth a = 1.00 AU, T = 1.00 yr; Mars a = 1.52 AU, T = 1.88 yr\n` +
+          `         T²/a³ = 1.00 for both (in years and AU)`;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Move the planet: one orbit every 8 seconds. Stop when the page has changed.
+    let last = performance.now();
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      mean += 2 * Math.PI / 8 * dt;
+      board.redraw();
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+    eBox.addEventListener('input', () => board.redraw());
+  })();
+</script>
