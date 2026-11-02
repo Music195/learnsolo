@@ -1,0 +1,245 @@
+<!-- tags: Force -->
+<!-- =====================================================================
+     NOTE: Drawing Force Arrows (力の図示)
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Force">Drawing Force Arrows</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Pick one object, and draw only the forces it receives</h2>
+    <p>A force is drawn as an arrow (力の矢印). The arrow starts at the <strong>point of application</strong> (作用点), points in the force's <strong>direction</strong> (向き), and its length shows the <strong>size</strong> (大きさ). The straight line through the arrow is the <strong>line of action</strong> (作用線).</p>
+    <p>With one object, this is easy. With two or three objects touching each other, people start drawing too many or too few arrows. The fix is a rule: <strong>choose one object, and draw only the forces acting on it</strong> (その物体が受ける力). Forces that it puts on other objects belong in their pictures, not this one.</p>
+  </section>
+
+  <!-- FORMULA: what an arrow shows -->
+  <div class="note-formula">
+    <h3>The three parts of a force</h3>
+    <div class="formula-main">$$\text{force} = \text{point of application} \;+\; \text{direction} \;+\; \text{size}$$</div>
+    <p class="symbols">Size is measured in newtons, $\mathrm{N}$: about the weight of a $100\ \mathrm{g}$ object. Gravity starts at the centre of gravity (重心); a contact force starts where the objects touch.</p>
+  </div>
+
+  <!-- PROOF: why only the forces received -->
+  <div class="note-proof">
+    <ol>
+      <li>We draw forces to find out whether an object stays still or how it moves.</li>
+      <li>That depends only on the forces <strong>acting on</strong> it. A force it exerts acts on something else, and moves that something else.</li>
+      <li>So every force can be named "<em>who</em> on <em>whom</em>", e.g. "floor on box". Keep it only if "whom" is the object you chose.</li>
+      <li>Search in two steps (note 01): gravity first, then one contact force at each place the object touches something.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: choose the forces on A or B and check; code at the bottom -->
+  <div class="note-demo">
+    <h2>Block A sits on block B. Choose an object, pick its forces, then check</h2>
+    <div class="controls choices" id="faFocus">
+      <button type="button" data-focus="A" class="active">Forces on A</button>
+      <button type="button" data-focus="B">Forces on B</button>
+    </div>
+    <div class="controls choices" id="faForces"></div>
+    <div class="controls">
+      <button type="button" id="faCheck">Check</button>
+    </div>
+    <canvas id="faCanvas"></canvas>
+    <div class="output table-text" id="faOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A box hangs from a string tied to the ceiling. Which forces act on the box?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Gravity: from the centre of gravity, straight down.</li>
+        <li>The box touches only the string: tension, pulling up along the string.</li>
+        <li>"Box pulls the string" and "ceiling pulls the string" act on the string, not the box.</li>
+      </ol>
+      <p class="answer">Gravity and tension: 2 forces</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">A student drew 4 forces on a book lying on a table: gravity on the book, the normal force from the table, the book pushing on the table, and gravity on the table. Which ones should be removed?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>"Book on table" acts on the table: remove it.</li>
+        <li>"Earth on table" acts on the table: remove it.</li>
+      </ol>
+      <p class="answer">The book's push on the table, and gravity on the table</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Block A rests on block B, and B rests on the floor. List the forces on B.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Gravity on B, from its centre, down.</li>
+        <li>B touches A on its top face: A pushes B down.</li>
+        <li>B touches the floor on its bottom face: the floor pushes B up.</li>
+      </ol>
+      <p class="answer">Gravity on B, the push from A (down), the normal force from the floor (up)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Blocks A and B lie on a smooth floor, joined by a string. A hand pulls B to the right with another string, so both move right. List the forces on A.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Gravity on A, down.</li>
+        <li>A touches the floor: the normal force, up. The floor is smooth, so no friction.</li>
+        <li>A touches the string to B: tension, pulling A to the right. The hand doesn't touch A, so its pull is not on A's list.</li>
+      </ol>
+      <p class="answer">Gravity, normal force, tension: 3 forces</p>
+    </details>
+  </div>
+
+  <!-- WARNING: weight does not travel -->
+  <div class="note-warning">
+    "The weight of A" is not a force on B. Gravity on A acts on A only. What B feels is A's <strong>push</strong> on its top face, a contact force. When A is at rest on B it happens to be the same size, $m_A g$, but it is a different force.
+  </div>
+
+  <!-- TIP: name every force -->
+  <div class="note-tip">
+    Say each force aloud as "<em>who</em> on <em>whom</em>": "Earth on box", "string on box", "box on floor". Any force whose "whom" isn't your object doesn't belong in the picture.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>An arrow shows the point of application, the direction and the size.</li>
+      <li>Choose one object; draw only the forces acting on it.</li>
+      <li>Gravity first, then one contact force at each place it touches.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Drawing force arrows" demo (the TRY IT block above).
+  // Block A sits on block B, which sits on the floor. Choose A or B, then click
+  // forces to add or remove them from the picture. "Check" marks each chosen
+  // arrow green (acts on that block) or red (doesn't), and shows the ones you
+  // missed as dashed green arrows, with a reason for each mistake.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const output = document.getElementById('faOutput');
+    const focusButtons = document.querySelectorAll('#faFocus button');
+    const forceRow = document.getElementById('faForces');
+    const PICKED = '#2563eb', RIGHT = '#16a34a', WRONG = '#dc2626', THING = '#475569';
+
+    // The candidate forces. "on" is the block that receives it (none: the force
+    // doesn't exist). "why" explains a wrong choice for each block.
+    // "at" is where the arrow's label goes (chosen by hand so labels don't overlap).
+    // Block A: (190,130)-(330,200), centre (260,165). Block B: (130,200)-(390,280),
+    // centre (260,240). The floor is the line y = 280.
+    const forces = [
+      { id: 'gA', name: 'Gravity on A', label: 'mAg', from: [260, 165], to: [260, 215], at: [282, 214], on: 'A',
+        why: { B: 'acts on A (the Earth pulls A), not on B' } },
+      { id: 'BA', name: 'B pushes A up', label: 'N1', from: [210, 200], to: [210, 140], at: [210, 120], on: 'A',
+        why: { B: 'B exerts this one; it acts on A' } },
+      { id: 'AB', name: 'A pushes B down', label: "N1'", from: [305, 200], to: [305, 258], at: [284, 252], on: 'B',
+        why: { A: 'A exerts this one; it acts on B' } },
+      { id: 'gB', name: 'Gravity on B', label: 'mBg', from: [260, 240], to: [260, 320], at: [282, 318], on: 'B',
+        why: { A: 'acts on B, not on A' } },
+      { id: 'fB', name: 'Floor pushes B up', label: 'N2', from: [150, 280], to: [150, 195], at: [150, 178], on: 'B',
+        why: { A: "A doesn't touch the floor" } },
+      { id: 'wA', name: "A's weight on B", label: '?', from: [345, 200], to: [345, 258], at: [360, 252], on: null,
+        why: { A: 'no such force: gravity on A acts on A only',
+               B: "no such force: what B feels is A's push\n    (A pushes B down), a contact force" } },
+    ];
+
+    let focus = 'A';
+    let picked = new Set();
+    let checked = false;
+
+    // Make one toggle button per candidate force
+    forces.forEach((f) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.textContent = f.name;
+      button.addEventListener('click', () => {
+        picked.has(f.id) ? picked.delete(f.id) : picked.add(f.id);
+        button.classList.toggle('active', picked.has(f.id));
+        checked = false;
+        board.redraw();
+      });
+      f.button = button;
+      forceRow.appendChild(button);
+    });
+
+    // An arrow for force f in the given colour (dashed for a missed force)
+    function arrow(g, f, color, dash) {
+      const p = f.from, q = f.to;
+      g.seg(p, q, color, { width: 3, dash });
+      const a = Math.atan2(q[1] - p[1], q[0] - p[0]), s = 11;
+      g.poly([q, [q[0] - s * Math.cos(a - 0.4), q[1] - s * Math.sin(a - 0.4)],
+        [q[0] - s * Math.cos(a + 0.4), q[1] - s * Math.sin(a + 0.4)]], color);
+      g.text(f.at, f.label, color);
+    }
+    function block(g, p, q, fill, name, bold) {
+      g.poly([p, [q[0], p[1]], q, [p[0], q[1]]], fill);
+      const edge = bold ? { width: 4 } : { width: 2 };
+      g.seg(p, [q[0], p[1]], THING, edge); g.seg([q[0], p[1]], q, THING, edge);
+      g.seg(q, [p[0], q[1]], THING, edge); g.seg([p[0], q[1]], p, THING, edge);
+      g.text([q[0] - 16, p[1] + 14], name, THING);
+    }
+
+    const board = NoteGeom.board(document.getElementById('faCanvas'), {
+      points: {},
+      draw(g) {
+        // floor, B, then A on top; the chosen block has a thick outline
+        g.seg([40, 280], [480, 280], THING, { width: 3 });
+        for (let x = 48; x < 480; x += 16) g.seg([x, 280], [x - 8, 290], THING, { width: 1 });
+        block(g, [130, 200], [390, 280], '#bfdbfe', 'B', focus === 'B');
+        block(g, [190, 130], [330, 200], '#fde68a', 'A', focus === 'A');
+
+        const lines = [];
+        forces.forEach((f) => {
+          const isPicked = picked.has(f.id), belongs = f.on === focus;
+          if (!checked) {
+            if (isPicked) arrow(g, f, PICKED);
+            return;
+          }
+          if (isPicked && belongs) { arrow(g, f, RIGHT); lines.push(`✔ ${f.name}`); }
+          if (isPicked && !belongs) { arrow(g, f, WRONG); lines.push(`✘ ${f.name}:\n    ${f.why[focus]}`); }
+          if (!isPicked && belongs) { arrow(g, f, RIGHT, true); lines.push(`… missing: ${f.name}`); }
+        });
+
+        const total = forces.filter((f) => f.on === focus).length;
+        if (!checked) {
+          output.textContent = `Pick the forces acting on ${focus} (there are ${total}), then press Check.`;
+        } else {
+          const perfect = lines.every((l) => l.startsWith('✔'));
+          output.textContent = (perfect ? `All ${total} forces on ${focus}, and nothing extra. Well done!\n` : '') + lines.join('\n');
+        }
+      },
+    });
+
+    // Choosing A or B starts again with nothing picked
+    focusButtons.forEach((button) => button.addEventListener('click', () => {
+      focus = button.dataset.focus;
+      focusButtons.forEach((b) => b.classList.toggle('active', b === button));
+      picked = new Set();
+      forces.forEach((f) => f.button.classList.remove('active'));
+      checked = false;
+      board.redraw();
+    }));
+    document.getElementById('faCheck').addEventListener('click', () => {
+      checked = true;
+      board.redraw();
+    });
+  })();
+</script>

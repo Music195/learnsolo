@@ -25,6 +25,8 @@ COURSES = {
     "math-a": {"name": "Math A", "subject": "Mathematics"},
     "math-b": {"name": "Math B", "subject": "Mathematics"},
     "math-c": {"name": "Math C", "subject": "Mathematics"},
+    # 物理基礎 (Physics Basic): motion, forces, Newton's laws
+    "physics-basic": {"name": "Physics Basic", "subject": "Physics"},
 }
 
 # Past question folders (content/past/<folder>/) -> name, icon and description.
