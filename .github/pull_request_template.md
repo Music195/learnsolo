@@ -1,50 +1,47 @@
-## 📌 Summary
-Briefly describe what this PR changes.
+<!--
+  GitHub puts this checklist into every new pull request.
+  Tick a box by writing [x] instead of [ ]. Delete the parts that don't
+  apply to this change (e.g. "Content" for a code-only change).
+  How to check each point: docs/content-guide.md (section in brackets).
+-->
+
+## Summary
+What this PR changes, and why.
 
 ---
 
-## ✅ Pull Request Checklist
+## Checklist
 
-### 🔒 Branch & Safety
-- [✅] This PR does **NOT** push directly to `main`
-- [✅] Changes are made in a feature branch (e.g. `notes-v2`)
-- [✅] No force-pushes were used
+### Branch
+- [ ] Made on its own branch, not on `main` (E1)
+- [ ] No force-pushes
 
-### 🧠 Notes & Content
-- [ ] Note content is separated from reusable HTML templates
-- [ ] No `<style>` or `<script>` tags are embedded in content files
-- [ ] Conceptual explanations are clear and consistent
-- [ ] Existing notes were not unintentionally altered
+### Content (notes, practice sets, past papers)
+- [ ] Ran `flask import-content` and opened every changed page (section 10)
+- [ ] Notes keep the 8 blocks in order, with no `<style>` block (section 2)
+- [ ] Demo scripts are wrapped in `(function () { ... })();` with a unique id prefix (section 3)
+- [ ] Formulas render, and demos draw (no errors in the browser's Console, F12)
+- [ ] Practice sets: every `data-answer` is accepted when typed, the "Uses:" links open the right notes, the set appears on `/practice` (section 7)
+- [ ] A renamed set or paper lists its old path in `data-moved-from` (sections 7 and 8)
 
-### 🧩 Templates & Structure
-- [ ] Reusable template was not duplicated
-- [ ] `{{ content | safe }}` injection works correctly
-- [ ] Sidebar / navigation still works
-- [ ] Prev / Next navigation works as expected
+### Code
+- [ ] `../venv/bin/pytest` passes, from `backend/` (E8)
+- [ ] `npm run build` works, from `frontend/` (E1)
+- [ ] New behaviour has a test, if it's in the backend (E8)
+- [ ] `models.py` changed? The migration file from `flask db migrate` is included (E7)
+- [ ] New package? Added to `requirements.txt` or `package.json` with `package-lock.json` (E9)
+- [ ] No secrets in the code (`.env` stays out of git)
 
-### ⚙️ JavaScript
-- [ ] Demo scripts are scoped to individual notes
-- [ ] No global JS was broken
-- [ ] No unused JS files were added
+### Pages
+- [ ] Clicked through the changed pages: home, a note, a practice set, a past paper
+- [ ] Still readable on a phone-sized window (F12 → the phone icon)
+- [ ] Logging in and saving progress still work, if this PR touches them
 
-### 🎨 Styling
-- [ ] Shared CSS is used (no duplicated styles)
-- [ ] Dark mode (if affected) works correctly
-- [ ] Layout remains readable on desktop and mobile
-
-### 🧪 Testing
-- [ ] I tested the app locally
-- [ ] I opened multiple notes to verify rendering
-- [ ] MathJax renders formulas correctly
-- [ ] No console errors appear in the browser
-
-### 📝 Documentation
-- [ ] Commit messages are clear and descriptive
-- [ ] Folder structure changes are intentional
-- [ ] This PR is ready to merge into `main`
+### Documentation
+- [ ] `docs/content-guide.md` updated if something works differently now
+- [ ] Commit messages say what changed and why
 
 ---
 
-## 📸 Screenshots (optional)
-Add screenshots if UI changes were made.
- 
+## Screenshots (optional)
+For changes you can see.
