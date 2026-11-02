@@ -25,7 +25,7 @@ COURSES = {
     "math-a": {"name": "Math A", "subject": "Mathematics"},
     "math-b": {"name": "Math B", "subject": "Mathematics"},
     "math-c": {"name": "Math C", "subject": "Mathematics"},
-    # 力学 (Mechanics Basic): motion, forces, Newton's laws
+    # Mechanics Basic: motion, forces, Newton's laws
     "mechanics-basic": {"name": "Mechanics Basic", "subject": "Physics"},
 }
 
