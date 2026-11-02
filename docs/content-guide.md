@@ -359,6 +359,8 @@ It deploys again when `main` changes, so the usual flow is:
 3. Open a pull request.
 4. Merge into `main`.
 
+**A second copy on an Oracle Cloud server** (https://learnsolo.duckdns.org) runs the same code with its own database and accounts. It doesn't update by itself: after merging, log in to the server and run `~/deploy.sh`. How it was built, and every command explained: `docs/oracle-server.md`.
+
 **Before merging**, open the pages you changed in the browser. For a practice set, also check:
 - every `data-answer` is accepted when typed in,
 - the "Uses:" links open the right notes,
