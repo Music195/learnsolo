@@ -1,0 +1,244 @@
+<article class="note-page">
+  <header class="note-header">
+    <div class="note-eyebrow">Chapter 10: Method of Integration</div>
+    <h1 class="note-title" data-topic="Partial Fractions and Initial Value Problems">10.4 Partial Fraction Method &amp; Finding Functions from Derivatives</h1>
+    <p class="note-lede">
+      Rational functions whose denominators factor into linear terms can be decomposed into simpler partial fractions that integrate directly to logarithms and powers, while initial conditions determine the exact constant of integration $C$.
+    </p>
+  </header>
+
+  <section class="note-section">
+    <h2>1. Partial Fraction Decomposition for Rational Integrals</h2>
+    <p>
+      To integrate a proper rational function $\dfrac{P(x)}{Q(x)}$ (where $\deg P < \deg Q$), we factor the denominator $Q(x)$ and split the fraction into a sum of simpler <strong>partial fractions</strong>:
+    </p>
+
+    <div class="note-grid-2">
+      <div class="box-thm">
+        <div class="box-title">Case 1: Distinct Linear Factors</div>
+        <p>
+          If the denominator factors into distinct linear terms $(ax + b)(cx + d)$, we write:
+          $$\frac{px + q}{(ax + b)(cx + d)} = \frac{A}{ax + b} + \frac{B}{cx + d}$$
+          Integrating term by term gives:
+          $$\frac{A}{a}\ln|ax + b| + \frac{B}{c}\ln|cx + d| + C$$
+        </p>
+      </div>
+      <div class="box-thm">
+        <div class="box-title">Case 2: Repeated Linear Factors</div>
+        <p>
+          If the denominator contains a repeated linear factor $(x - a)^2$, we write:
+          $$\frac{px + q}{(x - a)^2} = \frac{A}{x - a} + \frac{B}{(x - a)^2}$$
+          Integrating term by term gives:
+          $$A\ln|x - a| - \frac{B}{x - a} + C$$
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="note-section">
+    <h2>2. Interactive Demo: Partial Fractions &amp; Initial Value Curves</h2>
+    <p>
+      Explore how a rational function decomposes into partial fractions (Examples 9 &amp; 12) or how initial conditions select a unique solution curve $y = f(x)$ from a family of antiderivatives (Examples 13 &amp; 14).
+    </p>
+
+    <div class="demo" id="demo-ch10-pf">
+      <div class="demo-controls">
+        <label>
+          Textbook Problem:
+          <select data-control="prob">
+            <option value="ex9">Ex 9: ∫ 1 / (x² + 2x - 3) dx  [Distinct Factors]</option>
+            <option value="ex13">Ex 13: f'(x) = (x - 1)/√x with f(1) = 0</option>
+            <option value="ex14">Ex 14: f''(x) = (e^x - e^-x)/2 with f'(0)=1, f(0)=1</option>
+          </select>
+        </label>
+        <label>
+          Probe $x_0$:
+          <input type="range" data-control="x0" min="0.2" max="2.8" step="0.02" value="1.50" />
+          <span data-Val="x0">1.50</span>
+        </label>
+      </div>
+      <canvas width="640" height="360" aria-label="Partial fractions and initial value problem curves"></canvas>
+      <div class="output" aria-live="polite"></div>
+    </div>
+
+    <script src="/static/js/demos/geom.js"></script>
+    <script src="/static/js/demos/plot.js"></script>
+    <script>
+      (function () {
+        var root = document.getElementById('demo-ch10-pf');
+        if (!root || !window.NotePlot) return;
+        var canvas = root.querySelector('canvas');
+        var out = root.querySelector('.output');
+        var selProb = root.querySelector('[data-control="prob"]');
+        var sliderX0 = root.querySelector('[data-control="x0"]');
+        var valX0 = root.querySelector('[data-Val="x0"]');
+
+        var mode = 'ex9';
+        var x0 = 1.5;
+
+        function mainCurve(x) {
+          if (mode === 'ex9') {
+            if (Math.abs(x + 3) < 0.08 || Math.abs(x - 1) < 0.08) return NaN;
+            return 0.25 * Math.log(Math.abs((x - 1) / (x + 3)));
+          }
+          if (mode === 'ex13') {
+            return x > 0 ? (2 / 3) * Math.pow(x, 1.5) - 2 * Math.sqrt(x) + 4 / 3 : NaN;
+          }
+          return 0.5 * (Math.exp(x) - Math.exp(-x)) + 1;
+        }
+
+        function derivCurve(x) {
+          if (mode === 'ex9') {
+            if (Math.abs(x + 3) < 0.12 || Math.abs(x - 1) < 0.12) return NaN;
+            return 1 / ((x + 3) * (x - 1));
+          }
+          if (mode === 'ex13') {
+            return x > 0.05 ? (x - 1) / Math.sqrt(x) : NaN;
+          }
+          return 0.5 * (Math.exp(x) + Math.exp(-x));
+        }
+
+        var plot = NotePlot.graph(canvas, {
+          x: [-3.8, 3.6],
+          y: [-3.2, 3.8],
+          points: { P: [x0, mainCurve(x0)] },
+          constrain: {
+            P: function (p) {
+              var cx = Math.max(0.2, Math.min(2.8, p[0]));
+              if (mode === 'ex9' && Math.abs(cx - 1) < 0.12) cx = 1.15;
+              x0 = cx;
+              sliderX0.value = cx.toFixed(2);
+              valX0.textContent = cx.toFixed(2);
+              return [cx, mainCurve(cx)];
+            }
+          },
+          draw: function (g, P) {
+            var x = P.P[0];
+            var fy = mainCurve(x);
+            var dy = derivCurve(x);
+
+            if (mode === 'ex9') {
+              g.vline(-3, 'rgba(225, 29, 72, 0.35)', { dash: true });
+              g.vline(1, 'rgba(225, 29, 72, 0.35)', { dash: true });
+            } else if (mode === 'ex13') {
+              g.dot([1, 0], '#0d9488', 'Initial f(1) = 0');
+            } else {
+              g.dot([0, 1], '#0d9488', 'Initial f(0) = 1');
+            }
+
+            g.fn(function (t) { return derivCurve(t); }, '#d97706', { dash: true });
+            g.fn(function (t) { return mainCurve(t); }, '#2563eb');
+            if (isFinite(fy)) {
+              g.dot([x, fy], '#e11d48', 'F(x₀)');
+            }
+
+            if (mode === 'ex9') {
+              out.textContent =
+                'x₀ = ' + x.toFixed(2) + '  |  1/((x+3)(x-1)) = -1/(4(x+3)) + 1/(4(x-1)) = ' +
+                (isFinite(dy) ? dy.toFixed(3) : 'undef') +
+                '  |  F(x₀) = ¼ ln|(x-1)/(x+3)| = ' + (isFinite(fy) ? fy.toFixed(3) : 'undef');
+            } else if (mode === 'ex13') {
+              out.textContent =
+                'x₀ = ' + x.toFixed(2) + '  |  f\'(x₀) = ' + dy.toFixed(3) +
+                '  |  Unique Solution (C = 4/3): f(x₀) = (2/3)x^(3/2) - 2√x + 4/3 = ' + fy.toFixed(3);
+            } else {
+              out.textContent =
+                'x₀ = ' + x.toFixed(2) + '  |  f\'(x₀) = ½(e^x + e^-x) = ' + dy.toFixed(3) +
+                '  |  Unique Solution: f(x₀) = ½(e^x - e^-x) + 1 = ' + fy.toFixed(3);
+            }
+          }
+        });
+
+        function sync() {
+          x0 = parseFloat(sliderX0.value);
+          if (mode === 'ex9' && Math.abs(x0 - 1) < 0.12) x0 = 1.15;
+          valX0.textContent = x0.toFixed(2);
+          plot.move('P', [x0, mainCurve(x0)]);
+        }
+
+        selProb.addEventListener('change', function () {
+          mode = selProb.value;
+          sliderX0.value = mode === 'ex9' ? '1.80' : '1.00';
+          sync();
+        });
+        sliderX0.addEventListener('input', sync);
+        sync();
+      })();
+    </script>
+  </section>
+
+  <section class="note-section">
+    <h2>3. Worked Textbook Examples (Partial Fractions)</h2>
+
+    <div class="box-ex">
+      <div class="box-title">Example 9 &amp; Example 10 (Textbook pp. 187–189) — Distinct Linear Factors</div>
+      <p>
+        <strong>(a) Example 9: Evaluate $\displaystyle \int \frac{1}{x^2 + 2x - 3}\,dx$.</strong><br />
+        Since $x^2 + 2x - 3 = (x + 3)(x - 1)$, we write:
+        $$\frac{1}{(x + 3)(x - 1)} = \frac{A}{x + 3} + \frac{B}{x - 1} \implies 1 = A(x - 1) + B(x + 3)$$
+        Equating coefficients gives $A + B = 0$ and $-A + 3B = 1$, so $A = -\dfrac{1}{4}$ and $B = \dfrac{1}{4}$. Therefore:
+        $$\int \frac{1}{x^2 + 2x - 3}\,dx = -\frac{1}{4}\int \frac{1}{x + 3}\,dx + \frac{1}{4}\int \frac{1}{x - 1}\,dx = -\frac{1}{4}\ln|x + 3| + \frac{1}{4}\ln|x - 1| + C = \frac{1}{4}\ln\left|\frac{x - 1}{x + 3}\right| + C$$
+      </p>
+      <p>
+        <strong>(b) Example 10: Evaluate $\displaystyle \int \frac{1}{2x^2 + 3x + 1}\,dx$.</strong><br />
+        Factor $2x^2 + 3x + 1 = (2x + 1)(x + 1)$ and write:
+        $$\frac{1}{(2x + 1)(x + 1)} = \frac{A}{2x + 1} + \frac{B}{x + 1} \implies 1 = A(x + 1) + B(2x + 1)$$
+        Setting $x = -1$ gives $1 = B(-1) \implies B = -1$. Setting $x = -\dfrac{1}{2}$ gives $1 = A\left(\dfrac{1}{2}\right) \implies A = 2$. Thus:
+        $$\int \frac{1}{2x^2 + 3x + 1}\,dx = \int \frac{2}{2x + 1}\,dx - \int \frac{1}{x + 1}\,dx = \ln|2x + 1| - \ln|x + 1| + C = \ln\left|\frac{2x + 1}{x + 1}\right| + C$$
+      </p>
+    </div>
+
+    <div class="box-ex">
+      <div class="box-title">Example 11 &amp; Example 12 (Textbook pp. 189–191) — Improper Rational &amp; Repeated Factor</div>
+      <p>
+        <strong>(a) Example 11: Evaluate $\displaystyle \int \frac{x^3 - 4x + 4}{x^2 - 4}\,dx$.</strong><br />
+        Divide first: $\dfrac{x^3 - 4x + 4}{x^2 - 4} = x + \dfrac{4}{x^2 - 4}$. Next, decompose $\dfrac{4}{(x + 2)(x - 2)} = \dfrac{A}{x + 2} + \dfrac{B}{x - 2} = -\dfrac{1}{x + 2} + \dfrac{1}{x - 2}$. Integrating:
+        $$\int \left(x - \frac{1}{x + 2} + \frac{1}{x - 2}\right)dx = \frac{1}{2}x^2 - \ln|x + 2| + \ln|x - 2| + C = \frac{1}{2}x^2 + \ln\left|\frac{x - 2}{x + 2}\right| + C$$
+      </p>
+      <p>
+        <strong>(b) Example 12: Evaluate $\displaystyle \int \frac{2x + 1}{(x - 1)^2}\,dx$.</strong><br />
+        Write $\dfrac{2x + 1}{(x - 1)^2} = \dfrac{A}{x - 1} + \dfrac{B}{(x - 1)^2} \implies 2x + 1 = A(x - 1) + B = Ax + (-A + B)$.<br />
+        Equating coefficients gives $A = 2$ and $-A + B = 1 \implies B = 3$. Therefore:
+        $$\int \frac{2x + 1}{(x - 1)^2}\,dx = \int \frac{2}{x - 1}\,dx + \int \frac{3}{(x - 1)^2}\,dx = 2\ln|x - 1| - \frac{3}{x - 1} + C$$
+      </p>
+    </div>
+  </section>
+
+  <section class="note-section">
+    <h2>4. Finding $f(x)$ from Initial Conditions (Examples 13 &amp; 14)</h2>
+
+    <div class="box-ex">
+      <div class="box-title">Example 13 (Textbook p. 191) — First-Order Initial Value Problem</div>
+      <p>
+        Find the function $f(x)$ satisfying the equation $f'(x) = \dfrac{x - 1}{\sqrt{x}}$ with $f(1) = 0$.
+      </p>
+      <p><strong>Solution:</strong></p>
+      <p>
+        Integrating $f'(x)$ with respect to $x$:
+        $$f(x) = \int \frac{x - 1}{\sqrt{x}}\,dx = \int \left(x^{1/2} - x^{-1/2}\right)dx = \frac{2}{3}x^{3/2} - 2x^{1/2} + C$$
+        Since $f(1) = 0$, we substitute $x = 1$:
+        $$0 = \frac{2}{3}(1)^{3/2} - 2(1)^{1/2} + C \implies C = 2 - \frac{2}{3} = \frac{4}{3}$$
+        Therefore, $f(x) = \dfrac{2}{3}x^{3/2} - 2x^{1/2} + \dfrac{4}{3}$.
+      </p>
+    </div>
+
+    <div class="box-ex">
+      <div class="box-title">Example 14 (Textbook pp. 191–192) — Second-Order Initial Value Problem</div>
+      <p>
+        Find the function $f(x)$ satisfying $f''(x) = \dfrac{e^x - e^{-x}}{2}$ with $f'(0) = 1$ and $f(0) = 1$.
+      </p>
+      <p><strong>Solution:</strong></p>
+      <p>
+        Integrating $f''(x)$ once gives:
+        $$f'(x) = \int \frac{e^x - e^{-x}}{2}\,dx = \frac{1}{2}\left(e^x + e^{-x}\right) + C_1$$
+        Using $f'(0) = 1$:
+        $$1 = \frac{1}{2}\left(e^0 + e^0\right) + C_1 = 1 + C_1 \implies C_1 = 0 \implies f'(x) = \frac{1}{2}\left(e^x + e^{-x}\right)$$
+        Integrating a second time gives:
+        $$f(x) = \int \frac{e^x + e^{-x}}{2}\,dx = \frac{1}{2}\left(e^x - e^{-x}\right) + C_2$$
+        Using $f(0) = 1$:
+        $$1 = \frac{1}{2}\left(e^0 - e^0\right) + C_2 = 0 + C_2 \implies C_2 = 1$$
+        Therefore, $f(x) = \dfrac{1}{2}\left(e^x - e^{-x}\right) + 1$.
+      </p>
+    </div>
+  </section>
+</article>
