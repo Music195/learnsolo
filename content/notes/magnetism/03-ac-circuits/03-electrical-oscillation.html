@@ -1,0 +1,297 @@
+<!-- tags: AC Circuits -->
+<!-- =====================================================================
+     NOTE: Electrical Oscillation
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="AC Circuits">Electrical Oscillation</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>A coil and a capacitor pass energy back and forth, like a mass on a spring, with period $T = 2\pi\sqrt{LC}$</h2>
+    <p>Join a coil $L$ and a charged capacitor $C$ (or start a current in the coil). The capacitor pushes current through the coil; the coil will not let the current change suddenly, so it keeps the current going after the capacitor is empty and charges it up the other way round. Then the whole thing runs backwards. The current and the capacitor voltage swing back and forth for ever (if there is no resistance). This is <strong>electrical oscillation</strong>.</p>
+    <p>It is the same mathematics as a <strong>mass on a spring</strong>:</p>
+    <ul>
+      <li>charge $q$ on the capacitor ↔ stretch $x$ of the spring;</li>
+      <li>current $I$ ↔ speed $v$;</li>
+      <li>coil $L$ ↔ mass $m$ (both resist changes: in current, in speed);</li>
+      <li>$1/C$ ↔ spring constant $k$ (a small capacitor is a stiff spring).</li>
+    </ul>
+    <p>So the spring's $T = 2\pi\sqrt{m/k}$ becomes $T = 2\pi\sqrt{LC}$, and its energy $\tfrac12mv^2 + \tfrac12kx^2$ becomes $\tfrac12LI^2 + \dfrac{q^2}{2C}$. That total stays the same; it just moves between the coil (magnetic energy) and the capacitor (electric energy).</p>
+    <p><strong>A typical set-up.</strong> A battery $V$ and resistor $R$ feed a coil, with a capacitor connected across the coil. After switch $S_1$ has been closed for a long time, the coil acts as a plain wire: the current through it is $I_0 = V/R$ and the capacitor has no voltage. Opening $S_1$ leaves the coil and capacitor alone together, starting with current $I_0$ and charge 0, which is like a spring passing its middle at top speed.</p>
+  </section>
+
+  <!-- FORMULA: period and energy -->
+  <div class="note-formula">
+    <h3>Coil and capacitor alone (no resistance)</h3>
+    <div class="formula-main">$$T = 2\pi\sqrt{LC}, \quad \omega = \frac{1}{\sqrt{LC}}, \qquad \tfrac12LI^2 + \frac{q^2}{2C} = \text{constant}$$</div>
+    <p class="symbols">$L$: self-inductance (H). $C$: capacitance (F). $I$: current in the coil (A). $q$: charge on the capacitor (C). Starting from $I_0$, $q = 0$: $I = I_0\cos\omega t$ and the largest capacitor voltage is $I_0\sqrt{L/C}$.</p>
+  </div>
+
+  <!-- PROOF: Kirchhoff gives simple harmonic motion -->
+  <div class="note-proof">
+    <ol>
+      <li>The coil and capacitor share the same two ends, so their voltages are equal. Take $q$ as the charge on the plate the current flows into, so $I = \dfrac{dq}{dt}$.</li>
+      <li>Going round the loop: $L\dfrac{dI}{dt} + \dfrac{q}{C} = 0$, so $\dfrac{d^2q}{dt^2} = -\dfrac{1}{LC}\,q$.</li>
+      <li>Compare a spring: $\dfrac{d^2x}{dt^2} = -\dfrac{k}{m}x$. This is simple harmonic motion with $\omega^2 = \dfrac{1}{LC}$, so $T = \dfrac{2\pi}{\omega} = 2\pi\sqrt{LC}$.</li>
+      <li>Multiply step 2 by $I = dq/dt$: $LI\dfrac{dI}{dt} + \dfrac{q}{C}\dfrac{dq}{dt} = 0$, which is $\dfrac{d}{dt}\left(\tfrac12LI^2 + \dfrac{q^2}{2C}\right) = 0$. The total energy does not change.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: oscillation after opening the switch; code at the bottom -->
+  <div class="note-demo">
+    <h2>V = 6 V, R = 3 Ω, L = 20 mH, capacitor across the coil. S₁ is opened at t = 0 (slowed right down)</h2>
+    <div class="controls choices" id="ocChoices">
+      <button type="button" data-c="50" class="active">C = 50 μF</button>
+      <button type="button" data-c="200">C = 200 μF</button>
+    </div>
+    <canvas id="ocCanvas"></canvas>
+    <div class="output table-text" id="ocOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A coil of 20 mH is joined to a capacitor of 50 μF. Find the period of the oscillation.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$LC = 0.020 \times 50\times10^{-6} = 1.0\times10^{-6}$, so $\sqrt{LC} = 1.0\times10^{-3}$ s.</li>
+        <li>$T = 2\pi \times 1.0\times10^{-3}$.</li>
+      </ol>
+      <p class="answer">$6.3\times10^{-3}$ s (about 160 oscillations per second)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">In the demo's circuit ($V = 6$ V, $R = 3$ Ω, the coil with the capacitor across it), $S_1$ has been closed for a long time. Find the current through the coil and the charge on the capacitor.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Once nothing is changing, the coil has no voltage across it: it is just a wire.</li>
+        <li>The capacitor is across the coil, so its voltage is 0 too: $q = 0$.</li>
+        <li>All the current goes through $R$ and the coil: $I_0 = V/R = 6/3$.</li>
+      </ol>
+      <p class="answer">$I_0 = 2.0$ A; $q = 0$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">$S_1$ is now opened. With $L = 20$ mH and $C = 50$ μF, find the largest voltage the capacitor reaches.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>When the capacitor voltage is largest, the current is 0, so all the energy is in the capacitor.</li>
+        <li>$\tfrac12LI_0^2 = \tfrac12CV_{\max}^2$, so $V_{\max} = I_0\sqrt{L/C} = 2.0 \times \sqrt{\dfrac{0.020}{50\times10^{-6}}} = 2.0 \times 20$.</li>
+      </ol>
+      <p class="answer">40 V</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">In Example 3, what is the size of the capacitor voltage at the moment the current has dropped to $I_0/2$?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Energy: $\tfrac12LI_0^2 = \tfrac12L\left(\dfrac{I_0}{2}\right)^2 + \tfrac12CV_C^2$.</li>
+        <li>So $\tfrac12CV_C^2 = \tfrac34 \times \tfrac12LI_0^2$, giving $V_C = \sqrt{\dfrac{3L}{4C}}\,I_0 = \dfrac{\sqrt3}{2} \times 40$.</li>
+        <li>In letters, with $I_0 = V/R$: $V_C = \dfrac{V}{2R}\sqrt{\dfrac{3L}{C}}$.</li>
+      </ol>
+      <p class="answer">About 35 V</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">How long after opening $S_1$ does the current first drop to $I_0/2$?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The current starts at its peak: $I = I_0\cos\omega t$.</li>
+        <li>$\cos\omega t = \tfrac12$ first when $\omega t = \pi/3$, which is one sixth of a full turn: $t = T/6$.</li>
+        <li>$t = \dfrac{\pi}{3}\sqrt{LC} = \dfrac{\pi}{3} \times 1.0\times10^{-3}$.</li>
+      </ol>
+      <p class="answer">$T/6 = 1.0\times10^{-3}$ s (the dashed line in the demo)</p>
+    </details>
+  </div>
+
+  <!-- WARNING: where the energy is -->
+  <div class="note-warning">
+    When the current is largest the capacitor is empty, and when the capacitor voltage is largest the current is zero. They are a quarter cycle apart; never take both peaks at the same moment.
+  </div>
+
+  <!-- TIP: use the spring -->
+  <div class="note-tip">
+    Stuck? Translate to a mass on a spring ($L \to m$, $1/C \to k$, $q \to x$, $I \to v$), solve the spring problem you already know, and translate back.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$T = 2\pi\sqrt{LC}$.</li>
+      <li>$\tfrac12LI^2 + q^2/(2C)$ stays constant.</li>
+      <li>After a long time in DC, a coil is a wire and a capacitor is a break.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Electrical oscillation" demo (the TRY IT block above).
+  // Before t = 0, S₁ is closed: I₀ = V/R = 2 A flows down through the coil, the capacitor is empty.
+  // After S₁ opens, the coil and capacitor are alone:
+  //   I = I₀ cos ωt (down through the coil),  V_C = L dI/dt = −I₀√(L/C) sin ωt (top minus bottom)
+  // with ω = 1/√(LC). The clock runs about 2000 times slower than real life.
+  // Right: graphs of I (red) and V_C (blue) from −2 ms to 15 ms. Bottom left: energy bars.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('ocCanvas');
+    const output = document.getElementById('ocOutput');
+    const V = 6, R = 3, L = 0.020, I0 = V / R, TSTART = -2, TEND = 15, SLOW = 0.48;   // ms, display s per ms
+    const GX0 = 315, GW = 195, YI = 95, SI = 28, YV = 245, SV = 1.4, EMAX = 0.5 * L * I0 * I0;
+    const RED = '#dc2626', BLUE = '#2563eb', ORANGE = '#ea580c', DARK = '#0f172a', THING = '#475569', GREY = '#cbd5e1';
+    let C = 50e-6, t = TSTART, hold = 0, lastText = '';
+
+    // current (A, down through the coil) and capacitor voltage (V, top minus bottom) at time s in ms
+    function state(s) {
+      if (s < 0) return [I0, 0];
+      const w = 1 / Math.sqrt(L * C), th = w * s / 1000;
+      return [I0 * Math.cos(th), -I0 * Math.sqrt(L / C) * Math.sin(th)];
+    }
+    const sgn = (x, d) => (Math.abs(x) < 0.5 * Math.pow(10, -d) ? (0).toFixed(d) : x.toFixed(d).replace('-', '−'));
+    function resistor(g, p, q) {
+      const len = NoteGeom.dist(p, q), u = [(q[0] - p[0]) / len, (q[1] - p[1]) / len], n = [-u[1], u[0]];
+      let prev = p;
+      for (let k = 0; k < 6; k++) {
+        const tt = (k + 0.5) / 6 * len, sd = k % 2 ? -7 : 7;
+        const pt = [p[0] + u[0] * tt + n[0] * sd, p[1] + u[1] * tt + n[1] * sd];
+        g.seg(prev, pt, DARK, { width: 2 });
+        prev = pt;
+      }
+      g.seg(prev, q, DARK, { width: 2 });
+    }
+    function arrow(g, p, q, col) {
+      if (NoteGeom.dist(p, q) < 4) return;
+      g.seg(p, q, col, { width: 3 });
+      const a = Math.atan2(q[1] - p[1], q[0] - p[0]);
+      for (const s of [-1, 1]) g.seg(q, [q[0] - 9 * Math.cos(a + s * 0.45), q[1] - 9 * Math.sin(a + s * 0.45)], col, { width: 3 });
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const [I, vc] = state(t), closed = t < 0, T = 2 * Math.PI * Math.sqrt(L * C) * 1000;
+
+        // circuit: top wire y = 40, bottom y = 240; coil at x = 180, capacitor at x = 240
+        g.seg([40, 40], [40, 130], DARK, { width: 3 });
+        g.seg([22, 130], [58, 130], DARK, { width: 2 });          // cell: + at the top
+        g.seg([31, 140], [49, 140], DARK, { width: 5 });
+        g.text([66, 122], '+', DARK);
+        g.text([16, 152], 'V', THING);
+        g.seg([40, 140], [40, 240], DARK, { width: 3 });
+        g.seg([40, 40], [60, 40], DARK, { width: 3 });
+        resistor(g, [60, 40], [105, 40]);
+        g.text([82, 22], 'R', THING);
+        g.seg([105, 40], [120, 40], DARK, { width: 3 });
+        g.dot([120, 40], DARK);
+        g.dot([150, 40], DARK);
+        g.seg([120, 40], closed ? [150, 40] : [145, 20], DARK, { width: 3 });   // the switch S₁
+        g.text([135, 62], 'S₁', THING);
+        g.seg([150, 40], [240, 40], DARK, { width: 3 });
+        g.seg([40, 240], [240, 240], DARK, { width: 3 });
+        // coil
+        g.seg([180, 40], [180, 110], DARK, { width: 3 });
+        for (let k = 0; k < 4; k++) {
+          let prev = [180, 110 + 15 * k];
+          for (let j = 1; j <= 8; j++) {
+            const a = Math.PI * j / 8, p = [180 + 10 * Math.sin(a), 110 + 15 * k + 7.5 * (1 - Math.cos(a))];
+            g.seg(prev, p, DARK, { width: 2 });
+            prev = p;
+          }
+        }
+        g.seg([180, 170], [180, 240], DARK, { width: 3 });
+        g.text([164, 140], 'L', THING);
+        // capacitor, with + and − on its plates once it holds charge
+        g.seg([240, 40], [240, 133], DARK, { width: 3 });
+        g.seg([222, 133], [258, 133], DARK, { width: 4 });
+        g.seg([222, 147], [258, 147], DARK, { width: 4 });
+        g.seg([240, 147], [240, 240], DARK, { width: 3 });
+        g.text([270, 140], 'C', THING);
+        if (Math.abs(vc) > 3) {
+          g.text([226, 124], vc > 0 ? '+' : '−', RED);
+          g.text([226, 160], vc > 0 ? '−' : '+', RED);
+        }
+        // current arrow beside the coil (down = positive), length ∝ I
+        arrow(g, [205, 140 - 22 * I / I0], [205, 140 + 22 * I / I0], RED);
+
+        // energy bars
+        const eL = 0.5 * L * I * I, eC = 0.5 * C * vc * vc, BW = 150;
+        g.text([30, 282], '½LI²', THING);
+        g.text([30, 312], 'q²/2C', THING);
+        g.seg([60, 282], [60 + BW * eL / EMAX, 282], ORANGE, { width: 12 });
+        g.seg([60, 312], [60 + BW * eC / EMAX, 312], BLUE, { width: 12 });
+        g.seg([60 + BW, 270], [60 + BW, 324], GREY, { width: 1, dash: true });
+
+        // graphs
+        const X = (s) => GX0 + GW * (s - TSTART) / (TEND - TSTART);
+        g.seg([GX0, YI], [GX0 + GW, YI], DARK, { width: 1 });
+        g.seg([GX0, YV], [GX0 + GW, YV], DARK, { width: 1 });
+        g.seg([X(0), 30], [X(0), 320], GREY, { width: 1 });
+        g.text([X(0), 333], 'opened', THING);
+        g.seg([X(T / 6), 30], [X(T / 6), 320], GREY, { width: 1, dash: true });
+        g.text([X(T / 6) + 14, 22], 'T/6', THING);
+        g.text([GX0 + GW - 24, 22], 'I (A)', RED);
+        g.text([GX0 + GW - 30, 172], 'V_C (V)', BLUE);
+        g.text([GX0 - 14, YI - SI * 2], '2', THING);
+        g.text([GX0 - 14, YI + SI * 2], '−2', THING);
+        g.text([GX0 - 16, YV - SV * 40], '40', THING);
+        g.text([GX0 - 16, YV + SV * 40], '−40', THING);
+        let pi = null, pv = null;
+        for (let j = 0; j <= 300; j++) {
+          const s = TSTART + (TEND - TSTART) * j / 300;
+          if (s > t) break;
+          const [a, b] = state(s), qi = [X(s), YI - SI * a], qv = [X(s), YV - SV * b];
+          if (pi) { g.seg(pi, qi, RED, { width: 2.5 }); g.seg(pv, qv, BLUE, { width: 2.5 }); }
+          pi = qi; pv = qv;
+        }
+
+        const head = closed
+          ? `S₁ closed: I₀ = ${V}/${R} = ${I0.toFixed(1)} A down through the coil, capacitor empty`
+          : `t = ${t.toFixed(2)} ms after opening (T = ${T.toFixed(2)} ms):  I = ${sgn(I, 2)} A,  V_C = ${sgn(vc, 1)} V`;
+        const text = head + '\n' +
+          `energy: ½LI² = ${eL.toFixed(3)} J + q²/(2C) = ${eC.toFixed(3)} J = ${(eL + eC).toFixed(3)} J\n` +
+          `largest V_C = I₀√(L/C) = ${(I0 * Math.sqrt(L / C)).toFixed(0)} V;  when I = I₀/2 (t = T/6), |V_C| = ${(I0 * Math.sqrt(L / C) * Math.sqrt(3) / 2).toFixed(1)} V`;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Slowed clock: 1 ms of circuit time takes 0.48 s. Run to 15 ms, hold 3 s, repeat.
+    let last = performance.now();
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.max(0, Math.min((now - last) / 1000, 0.05));
+      last = now;
+      if (t < TEND) t = Math.min(TEND, t + dt / SLOW);
+      else { hold += dt; if (hold > 3) { t = TSTART; hold = 0; } }
+      board.redraw();
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    document.querySelectorAll('#ocChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#ocChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      C = Number(b.dataset.c) * 1e-6;
+      t = TSTART;
+      hold = 0;
+      board.redraw();
+    }));
+  })();
+</script>
