@@ -1,0 +1,208 @@
+<!-- tags: Particles and Waves -->
+<!-- =====================================================================
+     NOTE: Producing X-Rays
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Particles and Waves">Producing X-Rays</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Fast electrons slamming into a metal give a smooth X-ray spectrum that starts at $\lambda_0 = hc/(eV)$, plus sharp peaks set by the metal</h2>
+    <p><strong>X-rays</strong> are electromagnetic waves of very short wavelength (about $10^{-11}$ to $10^{-8}$ m). In an X-ray tube, electrons leave a hot cathode, are accelerated by a high voltage $V$ (tens of kilovolts) and crash into a metal <strong>target</strong> (the anode). Plotting X-ray intensity against wavelength shows two parts.</p>
+    <p><strong>Continuous X-rays.</strong> A smooth hump over a range of wavelengths. An electron that is suddenly stopped gives off radiation: a large acceleration (here, a violent slowing down) makes a charge emit light. Accelerating gently across the tube is not enough; the sudden stop is, a bit like a car's airbag, which opens in a crash but not when you press the accelerator. An electron can give at most all of its kinetic energy $eV$ to one photon, so there is a <strong>shortest wavelength</strong> $\lambda_0$, with $eV = hc/\lambda_0$. Raise the voltage and $\lambda_0$ gets shorter.</p>
+    <p><strong>Characteristic X-rays.</strong> Sharp, tall peaks at particular wavelengths. An incoming electron knocks an electron out of an inner shell of a target atom, leaving a gap. An electron from a higher energy level drops into the gap and gives out one photon with energy equal to the difference between the levels. Those levels belong to the atom, so the peak wavelengths <strong>depend only on the target metal</strong>, not on the voltage (as long as the voltage is high enough to knock out the inner electron at all).</p>
+    <p><strong>Is this the photoelectric effect backwards?</strong> Not really. In the photoelectric effect a photon frees an electron that was already in the metal. Here, there were no X-ray photons waiting in the metal: they are created by the sudden stop or by the drop between levels.</p>
+    <p><strong>The electron volt.</strong> Joules are too large for single particles, so we use the electron volt: 1 eV is the energy an electron gains crossing 1 V. 1 eV = $1.6\times10^{-19}$ J (the elementary charge times 1 V).</p>
+  </section>
+
+  <!-- FORMULA: the shortest wavelength -->
+  <div class="note-formula">
+    <h3>Shortest wavelength of the continuous X-rays</h3>
+    <div class="formula-main">$$eV = \frac{hc}{\lambda_0}, \qquad \lambda_0 = \frac{hc}{eV}, \qquad 1\ \text{eV} = 1.6\times10^{-19}\ \text{J}$$</div>
+    <p class="symbols">$V$: accelerating voltage (V). $\lambda_0$: shortest X-ray wavelength (m). Characteristic peaks: $hf = E_{\text{upper}} - E_{\text{lower}}$ (levels of the target atom).</p>
+  </div>
+
+  <!-- PROOF: where λ₀ comes from -->
+  <div class="note-proof">
+    <ol>
+      <li>Crossing the tube, the electron gains kinetic energy $eV$.</li>
+      <li>On hitting the target, it may give out one photon or several; the most it can put into a single photon is all of $eV$.</li>
+      <li>The highest photon energy means the shortest wavelength: $\dfrac{hc}{\lambda_0} = eV$, so $\lambda_0 = \dfrac{hc}{eV}$.</li>
+      <li>$\lambda_0$ depends only on $V$, not on the metal. Doubling $V$ halves $\lambda_0$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: X-ray spectrum; code at the bottom -->
+  <div class="note-demo">
+    <h2>X-ray spectrum from a tube: change the voltage and the target metal</h2>
+    <div class="controls choices" id="xrChoices">
+      <button type="button" data-t="cu" class="active">copper target</button>
+      <button type="button" data-t="mo">molybdenum target</button>
+    </div>
+    <div class="controls">
+      <label>accelerating voltage (kV) = <input type="range" id="xrV" min="10" max="40" step="1" value="30"></label>
+    </div>
+    <canvas id="xrCanvas"></canvas>
+    <div class="output table-text" id="xrOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Electrons are accelerated through 20 kV. Find the kinetic energy of each one in eV and in J.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Crossing $2.0\times10^4$ V gives $2.0\times10^4$ eV = 20 keV.</li>
+        <li>In joules: $2.0\times10^4 \times 1.6\times10^{-19} = 3.2\times10^{-15}$ J.</li>
+      </ol>
+      <p class="answer">20 keV = $3.2\times10^{-15}$ J</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find the shortest X-ray wavelength from a tube run at 20 kV. ($h = 6.6\times10^{-34}$ J·s, $c = 3.0\times10^8$ m/s)</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\lambda_0 = \dfrac{hc}{eV} = \dfrac{6.6\times10^{-34} \times 3.0\times10^8}{3.2\times10^{-15}}$.</li>
+      </ol>
+      <p class="answer">$6.2\times10^{-11}$ m</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">The tube voltage is doubled. What happens to $\lambda_0$ and to the wavelengths of the characteristic peaks?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\lambda_0 = hc/(eV)$: doubling $V$ halves $\lambda_0$, so the hump starts at a shorter wavelength.</li>
+        <li>The peaks come from the target's energy levels, so their wavelengths stay where they are.</li>
+      </ol>
+      <p class="answer">$\lambda_0$ halves; the peaks don't move</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Find the energy, in keV, of an X-ray photon of wavelength $1.0\times10^{-10}$ m.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$E = \dfrac{hc}{\lambda} = \dfrac{1.98\times10^{-25}}{1.0\times10^{-10}} = 1.98\times10^{-15}$ J.</li>
+        <li>$\dfrac{1.98\times10^{-15}}{1.6\times10^{-19}} = 1.2\times10^4$ eV.</li>
+      </ol>
+      <p class="answer">About 12 keV</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">A copper target gives a strong characteristic peak at $1.54\times10^{-10}$ m. Find the energy difference (in keV) between the two levels involved.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>One photon carries the whole difference: $\Delta E = \dfrac{hc}{\lambda} = \dfrac{1.98\times10^{-25}}{1.54\times10^{-10}} = 1.29\times10^{-15}$ J.</li>
+        <li>$\dfrac{1.29\times10^{-15}}{1.6\times10^{-19}} = 8.0\times10^3$ eV.</li>
+      </ol>
+      <p class="answer">About 8.0 keV</p>
+    </details>
+  </div>
+
+  <!-- WARNING: what moves and what doesn't -->
+  <div class="note-warning">
+    Graph questions love this: raising the voltage moves $\lambda_0$ to the left and makes the hump bigger, but the characteristic peaks stay at the same wavelengths. Changing the <strong>metal</strong> moves the peaks but not $\lambda_0$.
+  </div>
+
+  <!-- TIP: quick λ₀ -->
+  <div class="note-tip">
+    A handy shortcut: $hc/e = 1.24\times10^{-6}$ V·m, so $\lambda_0 \approx \dfrac{1.24\times10^{-6}}{V}$ m. At 20 kV that gives $6.2\times10^{-11}$ m.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Continuous X-rays: from the sudden stop; shortest wavelength $\lambda_0 = hc/(eV)$.</li>
+      <li>Characteristic X-rays: from electrons dropping into an inner gap; set by the target metal.</li>
+      <li>1 eV = $1.6\times10^{-19}$ J.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "X-ray spectrum" demo (the TRY IT block above).
+  // Shortest wavelength λ₀ = hc/(eV) = 1.2375 × 10⁻⁶ / V metres (h = 6.6e-34, c = 3.0e8, e = 1.6e-19).
+  // Continuous part: a smooth hump (λ − λ₀)/λ³, which is 0 at λ₀ and highest at 1.5 λ₀,
+  // scaled so a higher voltage gives a bigger hump.
+  // Characteristic peaks (×10⁻¹⁰ m): copper 1.39 and 1.54 (need about 9 kV),
+  // molybdenum 0.63 and 0.71 (need about 20 kV). Below that voltage they don't appear.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('xrCanvas');
+    const output = document.getElementById('xrOutput');
+    const vBox = document.getElementById('xrV');
+    const TARGETS = {
+      cu: { name: 'copper', peaks: [1.39, 1.54], need: 9 },
+      mo: { name: 'molybdenum', peaks: [0.63, 0.71], need: 20 },
+    };
+    const GX0 = 50, GW = 440, GY0 = 290, LMAX = 2.0, HUMP = 90;
+    const BLUE = '#2563eb', RED = '#dc2626', ORANGE = '#ea580c', DARK = '#0f172a', THING = '#475569';
+    let target = 'cu', lastText = '';
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const kV = Number(vBox.value), l0 = 1.2375e-6 / (kV * 1e3) * 1e10;   // in 10⁻¹⁰ m
+        const T = TARGETS[target];
+        const X = (l) => GX0 + GW * l / LMAX;
+        // hump height grows with the voltage; its shape is (λ − λ₀)/λ³ with peak value 4/(27 λ₀²)
+        const top = HUMP * kV / 40;
+        const I = (l) => (l <= l0 ? 0 : top * ((l - l0) / Math.pow(l, 3)) / (4 / (27 * l0 * l0)));
+
+        g.seg([GX0, GY0], [GX0 + GW, GY0], DARK, { width: 1 });
+        g.seg([GX0, GY0], [GX0, 30], DARK, { width: 1 });
+        for (const l of [0.5, 1.0, 1.5, 2.0]) g.text([X(l), GY0 + 16], l.toFixed(1), THING);
+        g.text([GX0 + GW - 40, GY0 + 34], 'λ (×10⁻¹⁰ m)', THING);
+        g.text([GX0 + 40, 24], 'X-ray intensity', THING);
+
+        const on = kV >= T.need;
+        let prev = null;
+        for (let j = 0; j <= 600; j++) {
+          const l = LMAX * j / 600;
+          let y = I(l);
+          if (on) for (const pk of T.peaks) y += 160 * Math.exp(-Math.pow((l - pk) / 0.008, 2)) * (pk === T.peaks[1] ? 1 : 0.55);
+          const p = [X(l), GY0 - Math.min(y, 255)];
+          if (prev) g.seg(prev, p, BLUE, { width: 2 });
+          prev = p;
+        }
+        g.seg([X(l0), GY0], [X(l0), GY0 - 40], RED, { width: 1.5, dash: true });
+        g.text([X(l0), GY0 - 48], 'λ₀', RED);
+        if (on) T.peaks.forEach((pk, i) => g.text([X(pk) + (i ? 22 : -22), i ? 50 : 80], pk.toFixed(2), ORANGE));
+
+        const text =
+          `${kV} kV: each electron arrives with ${kV} keV = ${(kV * 0.16).toFixed(1)}×10⁻¹⁵ J\n` +
+          `λ₀ = hc/(eV) = 1.24×10⁻⁶ / ${kV * 1000} = ${l0.toFixed(3)}×10⁻¹⁰ m  (moves with the voltage)\n` +
+          (on
+            ? `${T.name} peaks at ${T.peaks[0]} and ${T.peaks[1]} ×10⁻¹⁰ m  (fixed by the metal)`
+            : `below about ${T.need} kV: too little energy to empty an inner shell of ${T.name}, so no peaks`);
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    document.querySelectorAll('#xrChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#xrChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      target = b.dataset.t;
+      board.redraw();
+    }));
+    vBox.addEventListener('input', () => board.redraw());
+  })();
+</script>
