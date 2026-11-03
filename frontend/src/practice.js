@@ -5,6 +5,8 @@
 //      typed answers such as 45, 2√7, sqrt(28), 5/2 or 2.5
 //   2. "I got it" / "Review later" buttons, shown once the student has
 //      checked an answer or opened the solution
+//   3. Clickable choices (only if the problem has <ol class="choices">
+//      and data-choice), for multiple-choice papers such as JLPT
 // Progress is saved in this browser, or in your account (src/progress.js).
 //
 // This code changes the set's HTML directly with DOM functions
@@ -127,6 +129,45 @@ export function setUpProblems(holder, path, onChange) {
         showMark()
       })
       card.insertBefore(box, card.querySelector('details.hint') || solution)
+    }
+
+    // 3. Multiple choice (JLPT papers): <ol class="choices"> with one <li>
+    //    per choice, and data-choice="3" on the problem for the right one.
+    //    Each choice becomes a button; a wrong pick turns red and the
+    //    student can try again, the right one turns green.
+    const choiceList = card.querySelector('ol.choices')
+    if (choiceList && card.dataset.choice) {
+      const right = Number(card.dataset.choice)
+      const result = document.createElement('p')
+      result.className = 'check-result choice-result'
+      result.setAttribute('role', 'status')
+      ;[...choiceList.children].forEach((li, k) => {
+        const button = document.createElement('button')
+        button.type = 'button'
+        button.className = 'choice-btn'
+        // Move the choice's text into the button, after its number
+        const num = document.createElement('span')
+        num.className = 'choice-num'
+        num.textContent = k + 1
+        const text = document.createElement('span')
+        text.append(...li.childNodes)
+        button.append(num, text)
+        li.append(button)
+        button.addEventListener('click', () => {
+          if (k + 1 === right) {
+            li.classList.add('right')
+            result.className = 'check-result choice-result right'
+            result.textContent = 'Correct! Open the explanation to see why.'
+            setState(i, 'solved')
+          } else {
+            li.classList.add('wrong')
+            result.className = 'check-result choice-result wrong'
+            result.textContent = 'Not quite. Try another choice.'
+          }
+          showMark()
+        })
+      })
+      choiceList.after(result)
     }
 
     // Show what was saved last time

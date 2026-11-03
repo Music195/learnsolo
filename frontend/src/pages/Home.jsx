@@ -171,6 +171,10 @@ function HomeContent({ subjects, stats }) {
               <i className="fas fa-file-pen"></i>
               <span><strong>Past questions</strong><span>EJU mock papers and university exam problems.</span></span>
             </Link>
+            <Link className="more-card" to="/past/jlpt">
+              <i className="fas fa-language"></i>
+              <span><strong>JLPT N2 mock tests</strong><span>Vocabulary, grammar and reading, with explanations.</span></span>
+            </Link>
             <a className="more-card" href="https://hide-channel.studio.site/" target="_blank" rel="noopener">
               <i className="fas fa-external-link-alt"></i>
               <span><strong>HIDE Channel</strong><span>Opens in a new tab.</span></span>
