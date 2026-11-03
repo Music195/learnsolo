@@ -1,0 +1,280 @@
+<!-- tags: Particles and Waves -->
+<!-- =====================================================================
+     NOTE: The Photoelectric Effect
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Particles and Waves">The Photoelectric Effect</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Light comes in packets (photons) of energy $hf$; one photon frees one electron, giving $hf = W + K_{\max}$</h2>
+    <p>Everything up to Magnetism was <strong>classical physics</strong>. Atomic physics is the first step into <strong>modern physics</strong>, where pictures from everyday life stop working. Don't try too hard to imagine it; follow the experiments and the equations.</p>
+    <p><strong>Particles and waves.</strong> A <em>particle</em> can be counted (1, 2, 3, ...) and can collide; the electron is the classic example. A <em>wave</em> shows diffraction and interference; light was shown to be a wave by Young's double slit. The energy a wave carries depends on its <strong>frequency and amplitude</strong>; for light, a bigger amplitude means brighter (more intense) light.</p>
+    <p><strong>The photoelectric effect</strong>: light shining on a metal knocks electrons out of it. (A negatively charged electroscope with a zinc plate collapses under ultraviolet light: its extra electrons fly off.) The experiments found:</p>
+    <ol>
+      <li>below a certain frequency $f_0$ (the <strong>threshold frequency</strong>), no electrons come out, however bright the light;</li>
+      <li>above $f_0$, electrons come out at once, however dim the light;</li>
+      <li>the largest kinetic energy of the electrons depends only on the frequency, not on the brightness.</li>
+    </ol>
+    <p>If light were only a wave, a bright enough light (large amplitude) should always free electrons. It doesn't: only the frequency matters. <strong>Einstein</strong> solved this by saying light also behaves as particles, called <strong>photons</strong>:</p>
+    <ul>
+      <li>each photon carries energy $E = hf$ ($h$ = Planck's constant); the amplitude does not appear;</li>
+      <li>brighter light means <strong>more photons</strong>, not stronger ones;</li>
+      <li>one photon hits one electron and gives it all its energy. The electron needs at least the <strong>work function</strong> $W$ to escape from the metal (it is held by the positive nuclei); whatever is left becomes kinetic energy.</li>
+    </ul>
+    <p>Electrons that lose some energy on the way out (bumping into atoms) come out slower, so the formula gives the <strong>largest</strong> kinetic energy. Think of it as being given money for a train ticket: if the money is less than the fare $W$, you can't go at all, no matter how many people are each given that small amount. If it is more, you travel and keep the change; the one who wasted nothing on the way has the most left.</p>
+    <p><strong>The phototube.</strong> In a phototube, light hits the cathode and the freed electrons cross to the anode, making a <strong>photocurrent</strong>. Raising the anode voltage collects more of them, until all are collected (the <strong>saturation current</strong>, set by the number of photons). Reversing the voltage pushes the electrons back; the reverse voltage $V_0$ that just stops even the fastest ones is the <strong>stopping voltage</strong>, with $eV_0 = K_{\max}$.</p>
+  </section>
+
+  <!-- FORMULA: Einstein's equation -->
+  <div class="note-formula">
+    <h3>Photon energy and Einstein's photoelectric equation</h3>
+    <div class="formula-main">$$E = hf = \frac{hc}{\lambda}, \qquad hf = W + K_{\max}, \qquad K_{\max} = eV_0, \qquad W = hf_0$$</div>
+    <p class="symbols">$h = 6.6\times10^{-34}$ J·s (Planck's constant). $f$: frequency of the light (Hz). $W$: work function of the metal (J or eV). $K_{\max}$: largest kinetic energy of the freed electrons. $V_0$: stopping voltage. $f_0$: threshold frequency. $1\ \text{eV} = 1.6\times10^{-19}$ J.</p>
+  </div>
+
+  <!-- PROOF: reading the graph of K_max against f -->
+  <div class="note-proof">
+    <ol>
+      <li>Energy is conserved when one photon frees one electron: photon energy = energy to escape + kinetic energy left, so $hf = W + K_{\max}$.</li>
+      <li>Rearranged: $K_{\max} = hf - W$. This is a straight line $y = ax + b$ in $f$, with slope $a = h$ and intercept $b = -W$.</li>
+      <li>So the graph of $K_{\max}$ (or $eV_0$) against $f$ has the <strong>same slope $h$ for every metal</strong>; only the intercept $-W$ changes. That is how $h$ is measured.</li>
+      <li>The line meets the axis ($K_{\max} = 0$) at $f_0 = W/h$: below that frequency there is no photoelectric effect.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: photons on a metal; code at the bottom -->
+  <div class="note-demo">
+    <h2>Light on a metal: change the frequency and the brightness. Right: $K_{\max}$ against $f$</h2>
+    <div class="controls choices" id="peChoices">
+      <button type="button" data-w="2.3" class="active">sodium (W = 2.3 eV)</button>
+      <button type="button" data-w="2.9">calcium (W = 2.9 eV)</button>
+      <button type="button" data-w="4.3">zinc (W = 4.3 eV)</button>
+    </div>
+    <div class="controls">
+      <label>frequency $f$ (×10¹⁴ Hz) = <input type="range" id="peF" min="3" max="15" step="0.5" value="8"></label>
+      <label>brightness = <input type="range" id="peN" min="1" max="5" step="1" value="3"></label>
+    </div>
+    <canvas id="peCanvas"></canvas>
+    <div class="output table-text" id="peOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find the energy of one photon of light of wavelength $5.0\times10^{-7}$ m, in joules and in electron volts. ($h = 6.6\times10^{-34}$ J·s, $c = 3.0\times10^8$ m/s, $e = 1.6\times10^{-19}$ C)</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$E = \dfrac{hc}{\lambda} = \dfrac{6.6\times10^{-34} \times 3.0\times10^8}{5.0\times10^{-7}} = 4.0\times10^{-19}$ J.</li>
+        <li>In eV: $\dfrac{3.96\times10^{-19}}{1.6\times10^{-19}} = 2.5$ eV.</li>
+      </ol>
+      <p class="answer">$4.0\times10^{-19}$ J = 2.5 eV</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">The work function of sodium is 2.3 eV. Find its threshold frequency and the longest wavelength that frees electrons.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$W = 2.3 \times 1.6\times10^{-19} = 3.68\times10^{-19}$ J.</li>
+        <li>$f_0 = \dfrac{W}{h} = \dfrac{3.68\times10^{-19}}{6.6\times10^{-34}} = 5.6\times10^{14}$ Hz.</li>
+        <li>$\lambda_0 = \dfrac{c}{f_0} = \dfrac{3.0\times10^8}{5.58\times10^{14}} = 5.4\times10^{-7}$ m (green light). Longer wavelengths have lower frequency, so they don't work.</li>
+      </ol>
+      <p class="answer">$5.6\times10^{14}$ Hz; $5.4\times10^{-7}$ m</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Light of frequency $1.0\times10^{15}$ Hz falls on sodium ($W = 2.3$ eV). Find the largest kinetic energy of the electrons and the stopping voltage.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$hf = 6.6\times10^{-34} \times 1.0\times10^{15} = 6.6\times10^{-19}$ J $= 4.1$ eV.</li>
+        <li>$K_{\max} = hf - W = 4.1 - 2.3 = 1.8$ eV.</li>
+        <li>$eV_0 = K_{\max}$, so $V_0 = 1.8$ V.</li>
+      </ol>
+      <p class="answer">$K_{\max} = 1.8$ eV ($2.9\times10^{-19}$ J); $V_0 = 1.8$ V</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">In Example 3 the light is made twice as bright, keeping the same frequency. What happens to the stopping voltage and to the saturation current?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Brighter light = twice as many photons, each with the same energy $hf$.</li>
+        <li>Each electron still gets the same energy, so $K_{\max}$ and $V_0$ do not change.</li>
+        <li>Twice as many electrons are freed each second, so the saturation current doubles.</li>
+      </ol>
+      <p class="answer">Stopping voltage unchanged (1.8 V); saturation current doubles</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">For one metal, the stopping voltage is 1.0 V at $8.0\times10^{14}$ Hz and 2.0 V at $10.4\times10^{14}$ Hz. Find Planck's constant and the work function (in eV).</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$eV_0 = hf - W$, so the slope of $eV_0$ against $f$ is $h$: $h = \dfrac{e\,\Delta V_0}{\Delta f} = \dfrac{1.6\times10^{-19} \times 1.0}{2.4\times10^{14}} = 6.7\times10^{-34}$ J·s.</li>
+        <li>$W = hf - eV_0 = 6.67\times10^{-34} \times 8.0\times10^{14} - 1.6\times10^{-19} = 3.73\times10^{-19}$ J.</li>
+        <li>In eV: $3.73\times10^{-19} / 1.6\times10^{-19} = 2.3$ eV.</li>
+      </ol>
+      <p class="answer">$h = 6.7\times10^{-34}$ J·s; $W = 2.3$ eV</p>
+    </details>
+  </div>
+
+  <!-- WARNING: brightness vs frequency -->
+  <div class="note-warning">
+    Brightness (intensity) changes the <strong>number</strong> of photons and so the number of electrons (the current). Only the <strong>frequency</strong> changes the energy of each electron. Never say "brighter light gives faster electrons".
+  </div>
+
+  <!-- TIP: eV saves work -->
+  <div class="note-tip">
+    Work in electron volts: an electron crossing a voltage $V$ gains $eV$ joules, which is simply $V$ electron volts. So $K_{\max}$ in eV is the stopping voltage in volts.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Photon energy $E = hf = hc/\lambda$; more intense light = more photons.</li>
+      <li>$hf = W + K_{\max}$; $K_{\max} = eV_0$; threshold $f_0 = W/h$.</li>
+      <li>$K_{\max}$–$f$ graph: slope $h$ for every metal, intercept $-W$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Photons on a metal" demo (the TRY IT block above).
+  // Photon energy hf in eV = h f / e with h = 6.6 × 10⁻³⁴ J·s, e = 1.6 × 10⁻¹⁹ C.
+  // Left: photons (wavy dots, coloured by frequency) fly to a metal plate. If hf > W,
+  // each one frees one electron, which leaves with a speed up to the largest one
+  // (speed ∝ √K, and some lose energy on the way out, so they come out slower).
+  // Brightness = how many photons per second; it never changes an electron's energy.
+  // Right: the graph K_max = hf − W (eV) against f, for the chosen metal, with the
+  // other metals faint: the same slope h, different intercepts.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('peCanvas');
+    const output = document.getElementById('peOutput');
+    const fBox = document.getElementById('peF');
+    const nBox = document.getElementById('peN');
+    const H_EV = 6.6e-34 / 1.6e-19;                      // eV per Hz
+    const PLATE = 60, GX0 = 300, GW = 200, GY0 = 175, GSX = GW / 15, GSY = 25;
+    const BLUE = '#2563eb', DARK = '#0f172a', THING = '#475569', GREY = '#cbd5e1';
+    let W = 2.3, photons = [], electrons = [], spawn = 0, lastText = '';
+
+    // colour of light by frequency (×10¹⁴ Hz): infrared dark red, visible rainbow, UV violet
+    function colour(f) {
+      if (f < 4) return '#7f1d1d';
+      if (f > 7.5) return '#7c3aed';
+      const hue = Math.round(0 + (f - 4) / 3.5 * 270);
+      return `hsl(${hue}, 85%, 45%)`;
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const f = Number(fBox.value), hf = H_EV * f * 1e14, K = hf - W, col = colour(f);
+
+        // metal plate and the particles
+        g.poly([[PLATE - 18, 50], [PLATE, 50], [PLATE, 300], [PLATE - 18, 300]], '#94a3b8');
+        g.text([PLATE - 9, 320], 'metal', THING);
+        for (const p of photons) {
+          g.circle(p.pos, 4, col, { fill: col });
+          // a short wiggle behind each photon, so it reads as "a packet of wave"
+          let prev = null;
+          for (let j = 0; j <= 10; j++) {
+            const s = j * 2.5, q = [p.pos[0] + s * p.u[0] - 4 * Math.sin(j * 1.3) * p.u[1], p.pos[1] + s * p.u[1] + 4 * Math.sin(j * 1.3) * p.u[0]];
+            if (prev) g.seg(prev, q, col, { width: 1.5 });
+            prev = q;
+          }
+        }
+        for (const el of electrons) {
+          g.circle(el.pos, 5, BLUE, { fill: BLUE });
+        }
+        g.text([170, 24], K > 0 ? 'electrons freed' : 'no electrons: hf < W', K > 0 ? BLUE : '#dc2626');
+
+        // graph of K_max against f
+        const P = (fx, k) => [GX0 + GSX * fx, GY0 - GSY * k];
+        g.seg(P(0, 0), P(15, 0), DARK, { width: 1 });
+        g.seg(P(0, -4.5), P(0, 3.3), DARK, { width: 1 });
+        g.text([GX0 + GW + 6, GY0 - 10], 'f', THING);
+        g.text([GX0 + 40, GY0 - GSY * 3.3 - 6], 'K_max (eV)', THING);
+        for (const fx of [5, 10, 15]) g.text([GX0 + GSX * fx, GY0 + 16], String(fx), THING);
+        for (const k of [-4, -2, 2]) g.text([GX0 - 14, GY0 - GSY * k], String(k), THING);
+        for (const w of [2.3, 2.9, 4.3]) {
+          const on = w === W, f0 = w / (H_EV * 1e14);
+          const fEnd = Math.min(15, (3.3 + w) / (H_EV * 1e14));
+          g.seg(P(0, -w), P(f0, 0), on ? DARK : GREY, { width: 1, dash: true });
+          g.seg(P(f0, 0), P(fEnd, H_EV * fEnd * 1e14 - w), on ? BLUE : GREY, { width: on ? 2.5 : 1.5 });
+        }
+        if (K > 0) g.dot(P(f, K), col);
+        else g.dot(P(f, 0), col);
+
+        const f0 = W / (H_EV * 1e14);
+        const text =
+          `photon energy hf = 6.6×10⁻³⁴ × ${f.toFixed(1)}×10¹⁴ J = ${hf.toFixed(2)} eV;  work function W = ${W} eV\n` +
+          (K > 0
+            ? `K_max = hf − W = ${K.toFixed(2)} eV, so the stopping voltage V₀ = ${K.toFixed(2)} V\n`
+            : `hf < W: no electrons, however bright (threshold f₀ = ${f0.toFixed(1)}×10¹⁴ Hz)\n`) +
+          `brightness ${nBox.value}: more photons per second → more electrons, but the same K_max`;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Animation: photons arrive at a rate set by the brightness; each frees one electron if hf > W.
+    let last = performance.now();
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.max(0, Math.min((now - last) / 1000, 0.05));
+      last = now;
+      const f = Number(fBox.value), K = H_EV * f * 1e14 - W;
+      spawn += dt * 1.5 * Number(nBox.value);
+      while (spawn >= 1) {
+        spawn -= 1;
+        const target = [PLATE, 80 + Math.random() * 190], start = [250, 30 + Math.random() * 60];
+        const d = NoteGeom.dist(start, target);
+        photons.push({ pos: start, u: [(start[0] - target[0]) / d, (start[1] - target[1]) / d], target });
+      }
+      for (const p of photons) {
+        p.pos = [p.pos[0] - 220 * dt * p.u[0], p.pos[1] - 220 * dt * p.u[1]];
+        if (p.pos[0] <= PLATE + 4) {
+          p.gone = true;
+          if (K > 0) {
+            const speed = (25 + 70 * Math.sqrt(K)) * (0.4 + 0.6 * Math.random());
+            const a = (Math.random() - 0.5) * 1.2;
+            electrons.push({ pos: [PLATE + 6, p.pos[1]], v: [speed * Math.cos(a), speed * Math.sin(a)] });
+          }
+        }
+      }
+      photons = photons.filter((p) => !p.gone);
+      for (const el of electrons) el.pos = [el.pos[0] + el.v[0] * dt, el.pos[1] + el.v[1] * dt];
+      electrons = electrons.filter((el) => el.pos[0] < 255 && el.pos[1] > 35 && el.pos[1] < 320);
+      board.redraw();
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    document.querySelectorAll('#peChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#peChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      W = Number(b.dataset.w);
+      electrons = [];
+      board.redraw();
+    }));
+    fBox.addEventListener('input', () => board.redraw());
+    nBox.addEventListener('input', () => board.redraw());
+  })();
+</script>

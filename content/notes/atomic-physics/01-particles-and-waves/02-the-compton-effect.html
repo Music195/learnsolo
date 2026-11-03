@@ -1,0 +1,228 @@
+<!-- tags: Particles and Waves -->
+<!-- =====================================================================
+     NOTE: The Compton Effect
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Particles and Waves">The Compton Effect</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>An X-ray photon bounces off an electron like a ball: momentum and energy are conserved, and the photon's wavelength grows by $\frac{h}{mc}(1 - \cos\phi)$</h2>
+    <p>In the <strong>Compton effect</strong>, X-rays fired at electrons come out scattered with a <strong>longer wavelength</strong>, and the electrons are knocked moving. A longer wavelength means less energy ($E = hc/\lambda$), so the photon has handed some energy to the electron, exactly as in a collision between two balls.</p>
+    <p>To treat it as a collision, the photon needs a momentum as well as an energy:</p>
+    <ul>
+      <li>electron: energy $\tfrac12mv^2$, momentum $mv$ (as in mechanics);</li>
+      <li>photon: energy $hf = \dfrac{hc}{\lambda}$, momentum $\dfrac{hf}{c} = \dfrac{h}{\lambda}$.</li>
+    </ul>
+    <p><strong>A way to remember the photon momentum:</strong> energy and momentum differ by a speed in their units (for the electron, $\tfrac12mv^2 \to mv$ is "divide by a speed", apart from the ½). Divide the photon energy by its speed $c$: $\dfrac{hf}{c} = \dfrac{h}{\lambda}$.</p>
+    <p>The collision is elastic, so three equations hold: momentum along $x$, momentum along $y$, and energy. Solving them always follows the same three steps (below). This derivation is one to practise until you can write it on a blank sheet.</p>
+  </section>
+
+  <!-- FORMULA: Compton's formula -->
+  <div class="note-formula">
+    <h3>Photon momentum and the Compton shift</h3>
+    <div class="formula-main">$$p = \frac{h}{\lambda}, \qquad \Delta\lambda = \lambda' - \lambda = \frac{h}{mc}(1 - \cos\phi)$$</div>
+    <p class="symbols">$\lambda$, $\lambda'$: X-ray wavelength before and after. $\phi$: angle the photon is turned through. $m$: electron mass ($9.1\times10^{-31}$ kg). $\dfrac{h}{mc} = 2.4\times10^{-12}$ m.</p>
+  </div>
+
+  <!-- PROOF: three equations, three steps -->
+  <div class="note-proof">
+    <ol>
+      <li>The photon (wavelength $\lambda$) comes in along $x$; afterwards it goes at angle $\phi$ above the axis with $\lambda'$, and the electron at angle $\theta$ below with speed $v$.
+        <br>① $x$: $\dfrac{h}{\lambda} = \dfrac{h}{\lambda'}\cos\phi + mv\cos\theta$
+        <br>② $y$: $0 = \dfrac{h}{\lambda'}\sin\phi - mv\sin\theta$
+        <br>③ energy: $\dfrac{hc}{\lambda} = \dfrac{hc}{\lambda'} + \tfrac12mv^2$</li>
+      <li><strong>Step 1, remove $\theta$ using ① and ②.</strong> Write $mv\cos\theta = \dfrac{h}{\lambda} - \dfrac{h}{\lambda'}\cos\phi$ and $mv\sin\theta = \dfrac{h}{\lambda'}\sin\phi$, square both and add ($\cos^2 + \sin^2 = 1$):
+        $(mv)^2 = \left(\dfrac{h}{\lambda}\right)^2 - \dfrac{2h^2}{\lambda\lambda'}\cos\phi + \left(\dfrac{h}{\lambda'}\right)^2$.</li>
+      <li><strong>Step 2, remove $v$ using ③.</strong> ③ says $\dfrac{(mv)^2}{2m} = \dfrac{hc}{\lambda} - \dfrac{hc}{\lambda'} = hc\,\dfrac{\lambda' - \lambda}{\lambda\lambda'}$. Put in $(mv)^2$ from step 1 and multiply by $\dfrac{\lambda\lambda'}{hc}$:
+        $\lambda' - \lambda = \dfrac{h}{2mc}\left(\dfrac{\lambda'}{\lambda} + \dfrac{\lambda}{\lambda'} - 2\cos\phi\right)$.</li>
+      <li><strong>Step 3, approximate.</strong> $\lambda'$ is very close to $\lambda$, so $\dfrac{\lambda'}{\lambda} + \dfrac{\lambda}{\lambda'} \approx 2$. That gives $\Delta\lambda = \dfrac{h}{mc}(1 - \cos\phi)$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: Compton scattering; code at the bottom -->
+  <div class="note-demo">
+    <h2>An X-ray photon ($\lambda = 7.0\times10^{-12}$ m) hits an electron at rest. Drag the angle; right: the momentum arrows</h2>
+    <div class="controls">
+      <label>scattering angle $\phi$ (°) = <input type="range" id="cpPhi" min="0" max="180" step="5" value="90"></label>
+    </div>
+    <canvas id="cpCanvas"></canvas>
+    <div class="output table-text" id="cpOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find the momentum and the energy of an X-ray photon of wavelength $1.0\times10^{-10}$ m. ($h = 6.6\times10^{-34}$ J·s, $c = 3.0\times10^8$ m/s)</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$p = \dfrac{h}{\lambda} = \dfrac{6.6\times10^{-34}}{1.0\times10^{-10}} = 6.6\times10^{-24}$ kg·m/s.</li>
+        <li>$E = pc = 6.6\times10^{-24} \times 3.0\times10^8 = 2.0\times10^{-15}$ J.</li>
+      </ol>
+      <p class="answer">$6.6\times10^{-24}$ kg·m/s; $2.0\times10^{-15}$ J</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find $\dfrac{h}{mc}$ for an electron ($m = 9.1\times10^{-31}$ kg), and so the wavelength change when the photon is scattered through 90°.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\dfrac{h}{mc} = \dfrac{6.6\times10^{-34}}{9.1\times10^{-31} \times 3.0\times10^8} = 2.4\times10^{-12}$ m.</li>
+        <li>At 90°, $\cos\phi = 0$, so $\Delta\lambda = \dfrac{h}{mc} = 2.4\times10^{-12}$ m.</li>
+      </ol>
+      <p class="answer">$2.4\times10^{-12}$ m for both</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">At what angle is the change in wavelength largest, and what is it? What happens at $\phi = 0$?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$1 - \cos\phi$ is largest (= 2) at $\phi = 180°$: the photon bounces straight back. $\Delta\lambda = 2 \times 2.4\times10^{-12} = 4.8\times10^{-12}$ m.</li>
+        <li>At $\phi = 0$, $\Delta\lambda = 0$: the photon misses and nothing changes.</li>
+      </ol>
+      <p class="answer">At 180°: $4.8\times10^{-12}$ m; at 0°: no change</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">X-rays of wavelength $5.0\times10^{-11}$ m are scattered through 90°. Find the new wavelength and the kinetic energy given to the electron.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\lambda' = 5.0\times10^{-11} + 0.24\times10^{-11} = 5.24\times10^{-11}$ m.</li>
+        <li>Energy lost by the photon: $hc\left(\dfrac1\lambda - \dfrac1{\lambda'}\right) = 1.98\times10^{-25} \times (2.000 - 1.908)\times10^{10} = 1.8\times10^{-16}$ J.</li>
+        <li>That is the electron's kinetic energy (about 1.1 keV).</li>
+      </ol>
+      <p class="answer">$5.2\times10^{-11}$ m; $1.8\times10^{-16}$ J</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">A student writes the $x$-momentum of the scattered photon as $\dfrac{h}{\lambda'\cos\phi}$. What is wrong, and what is right?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The student split the wavelength into components. A wavelength is not a vector.</li>
+        <li>Split the <strong>momentum vector</strong> instead: it has size $\dfrac{h}{\lambda'}$ along the angle $\phi$.</li>
+        <li>Components: $\dfrac{h}{\lambda'}\cos\phi$ along $x$ and $\dfrac{h}{\lambda'}\sin\phi$ along $y$.</li>
+      </ol>
+      <p class="answer">It should be $\dfrac{h}{\lambda'}\cos\phi$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: momentum, not wavelength -->
+  <div class="note-warning">
+    Resolve the photon's momentum $h/\lambda'$ into components, never the wavelength. $\dfrac{h}{\lambda'\cos\phi}$ is a classic mistake.
+  </div>
+
+  <!-- TIP: the three steps -->
+  <div class="note-tip">
+    The order never changes: ① and ② → remove the electron's angle (square and add); then ③ → remove $v$; then use $\dfrac{\lambda'}{\lambda} + \dfrac{\lambda}{\lambda'} \approx 2$.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Photon momentum $p = h/\lambda = hf/c$.</li>
+      <li>Elastic collision: momentum ($x$ and $y$) and energy are conserved.</li>
+      <li>$\Delta\lambda = \dfrac{h}{mc}(1 - \cos\phi)$; the scattered X-ray always has the longer wavelength.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Compton scattering" demo (the TRY IT block above).
+  // Incoming photon λ = 7.0 × 10⁻¹² m; after scattering through φ:
+  //   λ' = λ + (h/mc)(1 − cos φ), h/mc = 6.6e-34 / (9.1e-31 × 3.0e8) = 2.42 × 10⁻¹² m
+  // Electron momentum = (photon momentum before) − (photon momentum after), as vectors.
+  // Left: the collision. Wavy lines are drawn with 2.5 pixels per 10⁻¹² m of wavelength.
+  // Right: momentum triangle, h/λ (orange) = h/λ' (red) + electron (blue), drawn to scale.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('cpCanvas');
+    const output = document.getElementById('cpOutput');
+    const phiBox = document.getElementById('cpPhi');
+    const L0 = 7.0, LC = 6.6e-34 / (9.1e-31 * 3.0e8) * 1e12, HC = 6.6e-34 * 3.0e8;   // λ in 10⁻¹² m
+    const E = [170, 150], T0 = [380, 260], TS = 1200;                                 // triangle start, px per (1/λ)
+    const ORANGE = '#ea580c', RED = '#dc2626', BLUE = '#2563eb', DARK = '#0f172a', THING = '#475569', GREY = '#cbd5e1';
+    let lastText = '';
+
+    function arrow(g, p, q, col, w = 3) {
+      if (NoteGeom.dist(p, q) < 4) return;
+      g.seg(p, q, col, { width: w });
+      const a = Math.atan2(q[1] - p[1], q[0] - p[0]);
+      for (const s of [-1, 1]) g.seg(q, [q[0] - 10 * Math.cos(a + s * 0.45), q[1] - 10 * Math.sin(a + s * 0.45)], col, { width: w });
+    }
+    // a wavy line from p in direction u, length len, wavelength wl pixels
+    function wave(g, p, u, len, wl, col) {
+      let prev = null;
+      for (let s = 0; s <= len; s += 1) {
+        const off = 6 * Math.sin(2 * Math.PI * s / wl);
+        const q = [p[0] + u[0] * s - u[1] * off, p[1] + u[1] * s + u[0] * off];
+        if (prev) g.seg(prev, q, col, { width: 2 });
+        prev = q;
+      }
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const phi = Number(phiBox.value) * Math.PI / 180;
+        const L1 = L0 + LC * (1 - Math.cos(phi));
+        // momenta in units of h × 10¹² /m (that is, 1/λ with λ in 10⁻¹² m)
+        const p0 = [1 / L0, 0], p1 = [Math.cos(phi) / L1, Math.sin(phi) / L1];
+        const pe = [p0[0] - p1[0], p0[1] - p1[1]];
+        const th = Math.atan2(pe[1], pe[0]);
+
+        // left: incoming wave, scattered wave (up at angle φ), electron going down at θ
+        wave(g, [20, E[1]], [1, 0], E[0] - 30, L0 * 2.5, ORANGE);
+        arrow(g, [E[0] - 26, E[1]], [E[0] - 12, E[1]], ORANGE, 2);
+        const u1 = [Math.cos(phi), -Math.sin(phi)];
+        wave(g, [E[0] + 12 * u1[0], E[1] + 12 * u1[1]], u1, 110, L1 * 2.5, RED);
+        const ue = [Math.cos(th), -Math.sin(th)];                  // screen y points down
+        arrow(g, E, [E[0] + 80 * ue[0], E[1] + 80 * ue[1]], BLUE);
+        g.circle(E, 7, BLUE, { fill: BLUE });
+        g.seg([E[0], E[1]], [E[0] + 60, E[1]], GREY, { width: 1, dash: true });
+        g.text([E[0] + 30, E[1] - 30], 'φ', THING);
+        g.text([60, E[1] - 22], 'λ', ORANGE);
+        g.text([E[0] + 135 * u1[0], E[1] + 135 * u1[1] - 6], "λ'", RED);
+        g.text([E[0] + 100 * ue[0], E[1] + 100 * ue[1] + 6], 'electron', BLUE);
+
+        // right: momentum triangle  h/λ = h/λ' + electron
+        const S = (v) => [T0[0] + TS * v[0] - 60, T0[1] - TS * v[1]];
+        const A = S([0, 0]), B = S(p0), Cp = S(p1);
+        arrow(g, A, B, ORANGE);
+        arrow(g, A, Cp, RED);
+        arrow(g, Cp, B, BLUE);
+        g.text([(A[0] + B[0]) / 2, A[1] + 18], 'h/λ', ORANGE);
+        g.text([(A[0] + Cp[0]) / 2 - 22, (A[1] + Cp[1]) / 2], "h/λ'", RED);
+        g.text([(Cp[0] + B[0]) / 2 + 30, (Cp[1] + B[1]) / 2], 'mv', BLUE);
+        g.text([T0[0] + 40, 300], 'momentum arrows', THING);
+
+        const Ein = HC / (L0 * 1e-12), Eout = HC / (L1 * 1e-12);
+        const text =
+          `φ = ${phiBox.value}°:  Δλ = 2.42×10⁻¹² × (1 − cos φ) = ${(LC * (1 - Math.cos(phi))).toFixed(2)}×10⁻¹² m\n` +
+          `λ' = ${L1.toFixed(2)}×10⁻¹² m;  photon energy ${(Ein / 1.6e-19 / 1000).toFixed(1)} keV → ${(Eout / 1.6e-19 / 1000).toFixed(1)} keV\n` +
+          `electron gets ${((Ein - Eout) / 1.6e-19 / 1000).toFixed(1)} keV, moving at ${Math.abs(th * 180 / Math.PI).toFixed(0)}° below the axis`;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    phiBox.addEventListener('input', () => board.redraw());
+  })();
+</script>

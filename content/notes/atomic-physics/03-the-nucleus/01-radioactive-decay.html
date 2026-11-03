@@ -1,0 +1,245 @@
+<!-- tags: The Nucleus -->
+<!-- =====================================================================
+     NOTE: Radioactive Decay
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="The Nucleus">Radioactive Decay</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Unstable nuclei give out α (a helium nucleus), β (an electron) or γ (light); each changes the mass number and atomic number in its own way</h2>
+    <p><strong>Writing a nucleus.</strong> ${}^{A}_{Z}\mathrm{X}$: X is the element's symbol, $Z$ the <strong>atomic number</strong> (number of protons) and $A$ the <strong>mass number</strong> (protons + neutrons).</p>
+    <p>Some nuclei are unstable and change by themselves, giving out radiation. The three kinds were named before anyone knew what they were; now we do:</p>
+    <ul>
+      <li><strong>α decay</strong>: an α particle is a helium nucleus ${}^4_2\mathrm{He}$ (2 protons + 2 neutrons). The nucleus loses them: $A$ drops by 4, $Z$ by 2. α rays carry positive charge.
+        $${}^{A}_{Z}\mathrm{X} \to {}^{A-4}_{Z-2}\mathrm{Y} + {}^4_2\mathrm{He}$$</li>
+      <li><strong>β decay</strong>: a β particle is an <strong>electron</strong>. A nucleus has no electrons, so where does it come from? A neutron turns into a proton and an electron, and the electron is thrown out. One more proton, one less neutron: $Z$ goes up by 1, $A$ stays the same. β rays carry negative charge.
+        $${}^{A}_{Z}\mathrm{X} \to {}^{A}_{Z+1}\mathrm{Y} + e^-$$</li>
+      <li><strong>γ decay</strong>: γ rays are electromagnetic waves (very short-wavelength light), with no charge. Nothing leaves the nucleus but energy: it stays the same element with the same $A$ and $Z$, in a lower energy state.</li>
+    </ul>
+    <p><strong>In a field.</strong> α and β are charged, so an electric field bends them (α towards the negative plate, β towards the positive plate) and a magnetic field turns them in circles (the Lorentz force) in opposite directions. γ has no charge and goes straight on in both.</p>
+  </section>
+
+  <!-- FORMULA: the three decays -->
+  <div class="note-formula">
+    <h3>What each decay does to $A$ and $Z$</h3>
+    <div class="formula-main">$$\alpha:\ A - 4,\ Z - 2 \qquad \beta:\ A \text{ same},\ Z + 1 \qquad \gamma:\ \text{no change}$$</div>
+    <p class="symbols">$A$: mass number (protons + neutrons). $Z$: atomic number (protons). α = ${}^4_2\mathrm{He}$ nucleus (charge $+2e$), β = electron (charge $-e$), γ = electromagnetic wave (no charge).</p>
+  </div>
+
+  <!-- PROOF: counting a decay chain -->
+  <div class="note-proof">
+    <ol>
+      <li>Only α decay changes $A$, by 4 each time. So in a chain, number of α decays = (drop in $A$) ÷ 4.</li>
+      <li>Each α lowers $Z$ by 2 and each β raises it by 1. So $Z_{\text{end}} = Z_{\text{start}} - 2(\text{number of }\alpha) + (\text{number of }\beta)$.</li>
+      <li>Find the α's from $A$ first, then the β's from $Z$. (γ decays don't count: they change neither.)</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: three decays; code at the bottom -->
+  <div class="note-demo">
+    <h2>Pick a decay. Left: what leaves the nucleus. Right: the three rays passing between charged plates</h2>
+    <div class="controls choices" id="rdChoices">
+      <button type="button" data-k="a" class="active">α decay</button>
+      <button type="button" data-k="b">β decay</button>
+      <button type="button" data-k="g">γ decay</button>
+    </div>
+    <canvas id="rdCanvas"></canvas>
+    <div class="output table-text" id="rdOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Radium ${}^{226}_{88}\mathrm{Ra}$ undergoes α decay. What nucleus is left?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$A$: $226 - 4 = 222$. $Z$: $88 - 2 = 86$, which is radon.</li>
+      </ol>
+      <p class="answer">${}^{222}_{86}\mathrm{Rn}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Carbon-14 (${}^{14}_{6}\mathrm{C}$) undergoes β decay. What nucleus is formed?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$A$ stays 14. $Z$: $6 + 1 = 7$, which is nitrogen.</li>
+      </ol>
+      <p class="answer">${}^{14}_{7}\mathrm{N}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">${}^{238}_{92}\mathrm{U}$ becomes ${}^{206}_{82}\mathrm{Pb}$ after a series of decays. How many α decays and β decays happen?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$A$ drops by $238 - 206 = 32$, so there are $32 / 4 = 8$ α decays.</li>
+        <li>8 α decays alone would give $Z = 92 - 16 = 76$. The end is 82, so $82 - 76 = 6$ β decays.</li>
+      </ol>
+      <p class="answer">8 α decays and 6 β decays</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">α, β and γ rays move to the right into a uniform magnetic field pointing out of the page. Which way does each turn?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>For a positive charge, the force is along $\vec v \times \vec B$: right × out of the page = down the page. So α curves downwards (in a circle).</li>
+        <li>β is negative: the force is the other way, so it curves upwards (more tightly, being much lighter).</li>
+        <li>γ has no charge: straight on.</li>
+      </ol>
+      <p class="answer">α turns down, β turns up, γ goes straight</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">${}^{232}_{90}\mathrm{Th}$ undergoes one α decay and then two β decays. What is the final nucleus?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>α: ${}^{228}_{88}\mathrm{Ra}$. β: ${}^{228}_{89}\mathrm{Ac}$. β: ${}^{228}_{90}\mathrm{Th}$.</li>
+        <li>It is thorium again, but a lighter isotope.</li>
+      </ol>
+      <p class="answer">${}^{228}_{90}\mathrm{Th}$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: β electrons -->
+  <div class="note-warning">
+    β decay does not mean an orbiting electron leaves. The electron is made in the nucleus when a neutron turns into a proton, which is why $Z$ goes <strong>up</strong> by 1.
+  </div>
+
+  <!-- TIP: α first -->
+  <div class="note-tip">
+    In decay-chain questions, count α decays from the mass number first; β decays then follow from the atomic number.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>α = ${}^4_2\mathrm{He}$: $A - 4$, $Z - 2$, positive.</li>
+      <li>β = electron (neutron → proton + electron): $Z + 1$, $A$ same, negative.</li>
+      <li>γ = electromagnetic wave: no change, no charge, not deflected.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Three decays" demo (the TRY IT block above).
+  // Left: a nucleus (red protons, grey neutrons) throws out the chosen particle every 2 s.
+  //   α: 2 protons + 2 neutrons fly out; β: a neutron turns red (proton) and an electron flies out;
+  //   γ: a wavy packet of light flies out and nothing else changes.
+  // Right: rays enter between plates (top negative, bottom positive) and bend:
+  //   α a little towards the negative plate, β a lot towards the positive plate, γ straight on.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('rdCanvas');
+    const output = document.getElementById('rdOutput');
+    const C = [130, 175], PX0 = 300, PX1 = 500, PY = 175;
+    const RED = '#dc2626', BLUE = '#2563eb', ORANGE = '#ea580c', DARK = '#0f172a', THING = '#475569', GREY = '#cbd5e1', N = '#94a3b8';
+    const INFO = {
+      a: { eq: '²²⁶₈₈Ra → ²²²₈₆Rn + ⁴₂He', change: 'A − 4, Z − 2 (2 protons and 2 neutrons leave)', col: RED, bend: -60 },
+      b: { eq: '¹⁴₆C → ¹⁴₇N + e⁻', change: 'A same, Z + 1 (a neutron became a proton)', col: BLUE, bend: 130 },
+      g: { eq: '⁶⁰₂₈Ni* → ⁶⁰₂₈Ni + γ', change: 'A and Z the same (only energy leaves)', col: ORANGE, bend: 0 },
+    };
+    // a small cluster: positions of 14 nucleons, alternating protons and neutrons
+    const SPOTS = [];
+    for (let i = 0; i < 14; i++) {
+      const a = i * 2.4, rr = 7 * Math.sqrt(i + 0.5);
+      SPOTS.push([C[0] + rr * Math.cos(a), C[1] + rr * Math.sin(a)]);
+    }
+    let kind = 'a', t = 0, lastText = '';
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const info = INFO[kind], phase = t % 2, s = Math.min(phase / 1.5, 1);
+        // the nucleus; after a β decay one neutron has become a proton
+        SPOTS.forEach((p, i) => {
+          const proton = i % 2 === 0 || (kind === 'b' && i === 13 && phase > 0.2);
+          g.circle(p, 7, proton ? RED : N, { fill: proton ? RED : N });
+        });
+        // what flies out (up and to the right)
+        const out = [C[0] + 20 + 120 * s, C[1] - 20 - 100 * s];
+        if (kind === 'a') {
+          for (const [dx, dy, pr] of [[-5, -5, 1], [5, -5, 0], [-5, 5, 0], [5, 5, 1]]) g.circle([out[0] + dx, out[1] + dy], 6, pr ? RED : N, { fill: pr ? RED : N });
+          g.text([out[0], out[1] - 20], 'α (⁴₂He)', RED);
+        } else if (kind === 'b') {
+          g.circle(out, 4, BLUE, { fill: BLUE });
+          g.text([out[0], out[1] - 16], 'β (e⁻)', BLUE);
+        } else {
+          let prev = null;
+          for (let j = 0; j <= 30; j++) {
+            const q = [out[0] - j * 0.77 + 5 * Math.sin(j * 0.9) * 0.64, out[1] + j * 0.64 + 5 * Math.sin(j * 0.9) * 0.77];
+            if (prev) g.seg(prev, q, ORANGE, { width: 2 });
+            prev = q;
+          }
+          g.text([out[0] + 10, out[1] - 14], 'γ', ORANGE);
+        }
+        g.text([C[0], 320], 'red: protons, grey: neutrons', THING);
+
+        // plates and the three paths
+        g.poly([[PX0, 70], [PX1, 70], [PX1, 80], [PX0, 80]], '#94a3b8');
+        g.poly([[PX0, 270], [PX1, 270], [PX1, 280], [PX0, 280]], '#94a3b8');
+        g.text([PX1 + 10, 75], '−', DARK);
+        g.text([PX1 + 10, 275], '+', DARK);
+        g.seg([PX0 - 40, PY], [PX0, PY], DARK, { width: 2 });
+        for (const k of ['a', 'b', 'g']) {
+          const inf = INFO[k], on = k === kind;
+          let prev = [PX0, PY];
+          for (let j = 1; j <= 40; j++) {
+            const x = (PX1 - PX0) * j / 40, y = PY + inf.bend * Math.pow(x / (PX1 - PX0), 2);
+            if (y > 268 || y < 82) break;                 // it has hit a plate
+            const p = [PX0 + x, y];
+            g.seg(prev, p, on ? inf.col : GREY, { width: on ? 3 : 1.5 });
+            prev = p;
+          }
+        }
+        g.text([PX1 - 20, PY - 75], 'α', RED);
+        g.text([PX1 - 60, PY + 80], 'β', BLUE);
+        g.text([PX1 - 10, PY - 12], 'γ', ORANGE);
+
+        const text =
+          `${kind === 'a' ? 'α' : kind === 'b' ? 'β' : 'γ'} decay:  ${info.eq}\n` +
+          `${info.change}\n` +
+          (kind === 'a' ? 'α is positive: it bends towards the negative plate'
+            : kind === 'b' ? 'β is negative and light: it bends strongly towards the positive plate'
+            : 'γ has no charge: it goes straight between the plates');
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    let last = performance.now();
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      t += Math.max(0, Math.min((now - last) / 1000, 0.05));
+      last = now;
+      board.redraw();
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    document.querySelectorAll('#rdChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#rdChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      kind = b.dataset.k;
+      t = 0;
+      board.redraw();
+    }));
+  })();
+</script>

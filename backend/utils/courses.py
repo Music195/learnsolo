@@ -41,6 +41,10 @@ COURSES = {
     "electricity": {"name": "Electricity", "subject": "Physics"},
     # Magnetism: magnetic fields and forces, electromagnetic induction, AC circuits
     "magnetism": {"name": "Magnetism", "subject": "Physics"},
+    # Atomic Physics: particles and waves (photoelectric effect, Compton effect,
+    # matter waves, X-rays), the atom (Bohr model, spectra), the nucleus
+    # (radioactive decay, half-life, binding energy, nuclear reactions)
+    "atomic-physics": {"name": "Atomic Physics", "subject": "Physics"},
     # Grade 12 Myanmar: complex numbers, mathematical induction, solid geometry,
     # vector algebra, permutations and combinations, conic sections,
     # trigonometric functions, logarithmic and exponential functions,

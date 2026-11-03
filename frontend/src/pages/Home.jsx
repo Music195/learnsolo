@@ -20,6 +20,11 @@ const COURSE_STYLE = {
   'Math B': ['fa-list-ol', '#0d9488'],
   'Math C': ['fa-location-arrow', '#16a34a'],
   'Mechanics Basic': ['fa-weight-hanging', '#0891b2'],
+  'Heat': ['fa-temperature-half', '#dc2626'],
+  'Waves': ['fa-water', '#0284c7'],
+  'Electricity': ['fa-bolt', '#ca8a04'],
+  'Magnetism': ['fa-magnet', '#7c3aed'],
+  'Atomic Physics': ['fa-atom', '#db2777'],
   'Mathematics': ['fa-graduation-cap', '#4f46e5'],
 }
 

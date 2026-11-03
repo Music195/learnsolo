@@ -1,0 +1,224 @@
+<!-- tags: The Nucleus -->
+<!-- =====================================================================
+     NOTE: Half-Life
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="The Nucleus">Half-Life</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Every half-life, half of the nuclei that are <em>still left</em> decay: $N = N_0(1/2)^{t/T}$</h2>
+    <p>You can't say when one particular nucleus will decay; it is a matter of chance. But with huge numbers of nuclei the pattern is very regular: in any fixed time, the same <strong>fraction</strong> of the remaining nuclei decays.</p>
+    <p>The <strong>half-life</strong> $T$ is the time for the number of <strong>remaining</strong> (undecayed) radioactive nuclei to fall to half. It depends on the kind of nucleus: seconds, days, or billions of years.</p>
+    <ul>
+      <li>after $T$: $\tfrac12$ left;</li>
+      <li>after $2T$: half of that, $\tfrac14$ left;</li>
+      <li>after $3T$: $\tfrac18$ left; and so on, never quite reaching zero.</li>
+    </ul>
+    <p>The graph of $N$ against $t$ is a curve that halves every $T$ (not a straight line).</p>
+    <p>Always ask: is the question about the nuclei <strong>left</strong> or the nuclei that have <strong>decayed</strong>? If $\tfrac14$ has decayed, $\tfrac34$ is left, and that $\tfrac34$ is what goes into the formula.</p>
+  </section>
+
+  <!-- FORMULA: decay law -->
+  <div class="note-formula">
+    <h3>Number of nuclei remaining after time $t$</h3>
+    <div class="formula-main">$$N = N_0\left(\frac12\right)^{t/T}$$</div>
+    <p class="symbols">$N_0$: number of radioactive nuclei at the start. $N$: number <strong>still undecayed</strong> after time $t$. $T$: half-life (same time unit as $t$).</p>
+  </div>
+
+  <!-- PROOF: halving step by step, and using logs -->
+  <div class="note-proof">
+    <ol>
+      <li>Each half-life multiplies the number left by $\tfrac12$. After $t$, there have been $t/T$ half-lives, so $N = N_0 \times \left(\tfrac12\right)^{t/T}$.</li>
+      <li>This also works when $t/T$ is not a whole number. To find $t$, take logs: $\log\dfrac{N}{N_0} = \dfrac{t}{T}\log\dfrac12$, so $t = T\,\dfrac{\log(N_0/N)}{\log 2}$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: random decay; code at the bottom -->
+  <div class="note-demo">
+    <h2>400 radioactive nuclei decaying at random. Right: number left (dots) and $N_0(1/2)^{t/T}$ (line)</h2>
+    <div class="controls choices" id="hlChoices">
+      <button type="button" data-t="2" class="active">half-life 2 s</button>
+      <button type="button" data-t="4">half-life 4 s</button>
+    </div>
+    <canvas id="hlCanvas"></canvas>
+    <div class="output table-text" id="hlOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A substance has a half-life of 5 days. What fraction is left after 20 days?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$t/T = 20/5 = 4$ half-lives.</li>
+        <li>$\left(\tfrac12\right)^4 = \tfrac1{16}$.</li>
+      </ol>
+      <p class="answer">$\tfrac1{16}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">After 15 years, $\tfrac18$ of a sample is left. Find the half-life.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\tfrac18 = \left(\tfrac12\right)^3$, so 15 years is 3 half-lives.</li>
+        <li>$T = 15/3$.</li>
+      </ol>
+      <p class="answer">5 years</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">The half-life of radium is $1.6\times10^3$ years. How long until $\tfrac14$ of a sample has <strong>decayed</strong>? ($\log 2 = 0.301$, $\log 3 = 0.477$)</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The trap: $\tfrac14$ decayed means $\tfrac34$ is <strong>left</strong>, not $\tfrac14$ left (that would be 2 half-lives).</li>
+        <li>$\tfrac34 = \left(\tfrac12\right)^{t/1600}$. Take logs: $\log 3 - 2\log 2 = -\dfrac{t}{1600}\log 2$.</li>
+        <li>$t = 1600 \times \dfrac{2\log2 - \log3}{\log2} = 1600 \times \dfrac{0.602 - 0.477}{0.301} = 1600 \times 0.415$.</li>
+        <li>(With the rougher values $\log 2 = 0.30$, $\log 3 = 0.48$ you get $1600 \times 0.40 = 640$ years.)</li>
+      </ol>
+      <p class="answer">About $6.6\times10^2$ years</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Carbon-14 has a half-life of 5730 years. Old wood has $\tfrac14$ of the carbon-14 that living wood has. How old is it?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Here $\tfrac14$ is what is <strong>left</strong>: $\left(\tfrac12\right)^2$, so 2 half-lives.</li>
+        <li>$2 \times 5730 = 11460$ years.</li>
+      </ol>
+      <p class="answer">About $1.1\times10^4$ years</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">A sample starts with $8.0\times10^6$ radioactive nuclei; the half-life is 10 minutes. How many nuclei have <strong>decayed</strong> after 30 minutes?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>3 half-lives: left $= 8.0\times10^6 \times \tfrac18 = 1.0\times10^6$.</li>
+        <li>Decayed $= 8.0\times10^6 - 1.0\times10^6$.</li>
+      </ol>
+      <p class="answer">$7.0\times10^6$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: left vs decayed -->
+  <div class="note-warning">
+    The formula gives the number <strong>left</strong>. If a question says "$\tfrac14$ has decayed", put $\tfrac34$ into it, not $\tfrac14$.
+  </div>
+
+  <!-- TIP: whole half-lives first -->
+  <div class="note-tip">
+    If the fraction left is $\tfrac12$, $\tfrac14$, $\tfrac18$, ..., just count half-lives. Use logs only when it isn't a power of $\tfrac12$.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$N = N_0(1/2)^{t/T}$, where $N$ is the number <strong>remaining</strong>.</li>
+      <li>Each half-life halves what is left: $\tfrac12$, $\tfrac14$, $\tfrac18$, ...</li>
+      <li>Decayed = $N_0 - N$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Random decay" demo (the TRY IT block above).
+  // Each of 400 nuclei gets its own random decay time −(T/ln 2) ln(u), u random in (0, 1):
+  // that is exactly the rule "the chance of decaying in the next moment never changes".
+  // The clock runs from 0 to 12 s, holds 3 s, then starts again.
+  // Left: the nuclei (orange = still radioactive, grey = decayed).
+  // Right: the number left, measured (dots every 0.25 s) and N₀(1/2)^(t/T) (line).
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('hlCanvas');
+    const output = document.getElementById('hlOutput');
+    const N0 = 400, TEND = 12, GX0 = 300, GW = 200, GY0 = 290, GH = 240;
+    const ORANGE = '#ea580c', BLUE = '#2563eb', DARK = '#0f172a', THING = '#475569', GREY = '#cbd5e1';
+    let T = 2, t = 0, hold = 0, times = [], lastText = '';
+
+    function newSample() {
+      times = [];
+      for (let i = 0; i < N0; i++) times.push(-(T / Math.LN2) * Math.log(1 - Math.random()));
+    }
+    const left = (s) => times.filter((x) => x > s).length;
+    newSample();
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        // the nuclei, 20 × 20
+        for (let i = 0; i < N0; i++) {
+          const p = [30 + (i % 20) * 12, 60 + Math.floor(i / 20) * 12];
+          const alive = times[i] > t;
+          g.circle(p, 4.5, alive ? ORANGE : GREY, { fill: alive ? ORANGE : GREY });
+        }
+        g.text([144, 40], 'orange: not yet decayed', ORANGE);
+
+        // graph
+        const P = (s, n) => [GX0 + GW * s / TEND, GY0 - GH * n / N0];
+        g.seg([GX0, GY0], [GX0 + GW, GY0], DARK, { width: 1 });
+        g.seg([GX0, GY0], [GX0, GY0 - GH - 10], DARK, { width: 1 });
+        for (const [n, lab] of [[N0, '400'], [N0 / 2, '200'], [N0 / 4, '100']]) {
+          g.seg(P(0, n), P(TEND, n), GREY, { width: 1, dash: true });
+          g.text([GX0 - 18, P(0, n)[1]], lab, THING);
+        }
+        for (let k = 1; k * T <= TEND; k++) g.text([P(k * T, 0)[0], GY0 + 16], `${k}T`, THING);
+        g.text([GX0 + GW + 6, GY0 - 10], 't', THING);
+        let prev = null;
+        for (let j = 0; j <= 120; j++) {
+          const s = TEND * j / 120, p = P(s, N0 * Math.pow(0.5, s / T));
+          if (prev) g.seg(prev, p, BLUE, { width: 2 });
+          prev = p;
+        }
+        for (let s = 0; s <= t + 1e-9; s += 0.25) g.circle(P(s, left(s)), 2.5, ORANGE, { fill: ORANGE });
+
+        const n = left(t), theory = N0 * Math.pow(0.5, t / T);
+        const text =
+          `t = ${t.toFixed(1)} s = ${(t / T).toFixed(2)} half-lives (T = ${T} s)\n` +
+          `left: ${n} (formula 400 × (1/2)^(t/T) = ${theory.toFixed(0)});  decayed: ${N0 - n}\n` +
+          'each nucleus decays at a random moment, yet the total halves every T';
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    let last = performance.now();
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.max(0, Math.min((now - last) / 1000, 0.05));
+      last = now;
+      if (t < TEND) t = Math.min(TEND, t + dt);
+      else { hold += dt; if (hold > 3) { t = 0; hold = 0; newSample(); } }
+      board.redraw();
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    document.querySelectorAll('#hlChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#hlChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      T = Number(b.dataset.t);
+      t = 0;
+      hold = 0;
+      newSample();
+      board.redraw();
+    }));
+  })();
+</script>
