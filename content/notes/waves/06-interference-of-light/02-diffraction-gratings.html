@@ -1,0 +1,211 @@
+<!-- tags: Interference of Light -->
+<!-- =====================================================================
+     NOTE: Diffraction Gratings
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Interference of Light">Diffraction Gratings</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Thousands of evenly spaced slits send light only in a few sharp directions</h2>
+    <p>A <strong>diffraction grating</strong> is a sheet of glass or plastic with a huge number of fine, equally spaced lines ruled on it, often hundreds per millimetre. The clear gaps between the lines act as slits. The distance from one slit to the next is the <strong>grating spacing</strong> $d$ (if there are $N$ lines per metre, $d = 1/N$).</p>
+    <p>Light leaving the slits in a direction at angle $\theta$ to straight ahead: each slit's light has travelled $d\sin\theta$ further than its neighbour's. If that is a whole number of wavelengths, the light from <em>all</em> the slits arrives in step and adds up to a very bright line. At almost every other angle, the thousands of waves arrive at all different stages and cancel out.</p>
+    <ul>
+      <li>So a grating gives a few <strong>very sharp, bright</strong> lines (orders $m = 0, \pm1, \pm2, \dots$), with darkness in between: much sharper than a double slit.</li>
+      <li>Each colour goes to a different angle, so a grating splits white light into spectra and is used to measure wavelengths precisely. The rainbow colours on a CD are the same effect.</li>
+      <li>Since $\sin\theta$ can't exceed 1, only orders with $m\lambda &lt; d$ appear.</li>
+    </ul>
+  </section>
+
+  <!-- FORMULA: grating equation -->
+  <div class="note-formula">
+    <h3>Grating equation</h3>
+    <div class="formula-main">$$d\sin\theta = m\lambda \qquad (m = 0, \pm1, \pm2, \dots)$$</div>
+    <p class="symbols">$d$: grating spacing (m); $\theta$: angle of the bright line from straight ahead; $m$: order; $\lambda$: wavelength. Highest order: the largest whole number $m$ with $m &lt; d/\lambda$.</p>
+  </div>
+
+  <!-- PROOF: path difference between neighbours -->
+  <div class="note-proof">
+    <ol>
+      <li>Take light leaving two neighbouring slits at angle $\theta$, heading to a far-away screen (so the two rays are parallel).</li>
+      <li>Drop a perpendicular from one slit to the neighbour's ray: the extra path is the side opposite $\theta$ in a right-angled triangle with hypotenuse $d$, i.e. $d\sin\theta$.</li>
+      <li>If $d\sin\theta = m\lambda$, every pair of neighbours is in step, so all slits are: a bright line.</li>
+      <li>Move $\theta$ slightly and the many slits' waves drift out of step across the grating, adding up to nearly zero. That is why the lines are so sharp.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: grating orders; code at the bottom -->
+  <div class="note-demo">
+    <h2>Light hits a grating from the left: where are the bright orders?</h2>
+    <div class="controls choices" id="grChoices">
+      <button type="button" data-n="300">300 lines/mm</button>
+      <button type="button" data-n="500" class="active">500 lines/mm</button>
+      <button type="button" data-n="600">600 lines/mm</button>
+    </div>
+    <div class="controls">
+      <label>wavelength (nm) = <input type="range" id="grL" min="400" max="700" step="20" value="600"></label>
+    </div>
+    <canvas id="grCanvas"></canvas>
+    <div class="output table-text" id="grOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A grating has 500 lines per millimetre. Find the grating spacing.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>500 lines per mm $= 5.0 \times 10^{5}$ lines per metre.</li>
+        <li>$d = 1/(5.0 \times 10^{5})$.</li>
+      </ol>
+      <p class="answer">$d = 2.0 \times 10^{-6}$ m</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Light of wavelength 600 nm falls on that grating. Find the angle of the first-order bright line.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\sin\theta_1 = \dfrac{\lambda}{d} = \dfrac{6.0 \times 10^{-7}}{2.0 \times 10^{-6}} = 0.30$.</li>
+      </ol>
+      <p class="answer">$\theta_1 \approx 17.5°$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">For the same grating and light, what is the highest order that can be seen, and how many bright lines are there in total?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\sin\theta = m\lambda/d \le 1$, so $m \le d/\lambda = 3.33$. The highest order is 3 ($\sin\theta_3 = 0.90$, $\theta_3 \approx 64°$).</li>
+        <li>Lines: $m = 0, \pm1, \pm2, \pm3$.</li>
+      </ol>
+      <p class="answer">3rd order; 7 bright lines</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Light of wavelength $\lambda$ hits a grating with 600 lines per mm. The first-order line is at 20.0°. Find $\lambda$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$d = 1/(6.0 \times 10^{5}) = 1.67 \times 10^{-6}$ m.</li>
+        <li>$\lambda = d\sin20.0° = 1.67 \times 10^{-6} \times 0.342$.</li>
+      </ol>
+      <p class="answer">$\lambda \approx 5.7 \times 10^{-7}$ m $= 570$ nm</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">White light (400 nm to 700 nm) falls on a grating. Show that the 2nd-order and 3rd-order spectra overlap.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The 2nd order ends with red: $d\sin\theta = 2 \times 700 = 1400$ nm.</li>
+        <li>The 3rd order starts with violet: $d\sin\theta = 3 \times 400 = 1200$ nm.</li>
+        <li>1200 &lt; 1400, so the start of the 3rd order lies inside the 2nd (whatever the value of $d$).</li>
+      </ol>
+      <p class="answer">They overlap; the 1st and 2nd orders do not ($1 \times 700 &lt; 2 \times 400$)</p>
+    </details>
+  </div>
+
+  <!-- WARNING: lines per mm -->
+  <div class="note-warning">
+    "$N$ lines per mm" is not $d$. Convert: $d = 1/N$ in mm, then into metres. 500 lines/mm gives $d = 0.002$ mm $= 2.0 \times 10^{-6}$ m.
+  </div>
+
+  <!-- TIP: no small-angle trick -->
+  <div class="note-tip">
+    Grating angles are large, so don't use the "$\sin\theta \approx \tan\theta$" shortcut of the double slit. Use $\sin$ directly.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Grating: many slits, spacing $d = 1/N$.</li>
+      <li>Bright lines: $d\sin\theta = m\lambda$; very sharp because of the many slits.</li>
+      <li>Highest order: largest $m$ with $m &lt; d/\lambda$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Grating" demo (the TRY IT block above).
+  // The grating is a vertical line at x = 60 (centre y = 170); light comes from the
+  // left. For each order m with |mλ/d| < 1, a ray leaves at θ = asin(mλ/d), drawn
+  // in the light's colour (thicker for m = 0). Rays that reach the screen at
+  // x = 470 mark a bright spot there; steeper ones leave the top or bottom.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('grCanvas');
+    const output = document.getElementById('grOutput');
+    const lBox = document.getElementById('grL');
+    const GX = 60, GY = 170, SCR = 470;
+    const THING = '#475569';
+    let lines = 500, lastText = '';
+
+    function colour(nm) {
+      let r = 0, g = 0, b = 0;
+      if (nm < 440) { r = (440 - nm) / 60; b = 1; }
+      else if (nm < 490) { g = (nm - 440) / 50; b = 1; }
+      else if (nm < 510) { g = 1; b = (510 - nm) / 20; }
+      else if (nm < 580) { r = (nm - 510) / 70; g = 1; }
+      else if (nm < 645) { r = 1; g = (645 - nm) / 65; }
+      else r = 1;
+      const h = (v) => Math.round(220 * v).toString(16).padStart(2, '0');
+      return `#${h(r)}${h(g)}${h(b)}`;
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const nm = Number(lBox.value), d = 1e-3 / lines, lam = nm * 1e-9, col = colour(nm);
+        g.seg([0, GY], [GX, GY], col, { width: 4 });
+        g.seg([GX, 30], [GX, 310], THING, { width: 3 });
+        for (let y = 34; y <= 306; y += 6) g.seg([GX - 4, y], [GX + 4, y], THING, { width: 1 });
+        g.seg([SCR, 20], [SCR, 320], THING, { width: 2 });
+        g.text([SCR + 24, 30], 'screen', THING);
+        const angles = [];
+        const mMax = Math.floor(d / lam - 1e-9);
+        for (let m = -mMax; m <= mMax; m++) {
+          const th = Math.asin(m * lam / d);
+          angles.push([m, th]);
+          const dir = [Math.cos(th), -Math.sin(th)];
+          const sHit = (SCR - GX) / dir[0], yHit = GY + sHit * dir[1];
+          const reach = yHit > 20 && yHit < 320;
+          const end = reach ? [SCR, yHit] : [GX + 400 * dir[0], GY + 400 * dir[1]];
+          g.seg([GX, GY], end, col, { width: m === 0 ? 4 : 2.5 });
+          if (reach) g.circle([SCR, yHit], 6, col, { fill: col });
+          g.text([GX + 120 * dir[0] + 14, GY + 120 * dir[1]], `${m > 0 ? '+' : m < 0 ? '−' : ''}${Math.abs(m)}`, THING);
+        }
+
+        const first = angles.find(([m]) => m === 1);
+        const text =
+          `${lines} lines/mm → d = 1/${lines} mm = ${(d * 1e6).toFixed(2)} × 10⁻⁶ m;  λ = ${nm} nm\n` +
+          (first ? `1st order: sin θ = λ/d = ${(lam / d).toFixed(3)},  θ = ${(first[1] * 180 / Math.PI).toFixed(1)}°` : 'λ > d: only the straight-through beam') + '\n' +
+          `highest order: d/λ = ${(d / lam).toFixed(2)} → m = ${mMax}  (${2 * mMax + 1} bright lines)`;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    document.querySelectorAll('#grChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#grChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      lines = Number(b.dataset.n);
+      board.redraw();
+    }));
+    lBox.addEventListener('input', () => board.redraw());
+  })();
+</script>

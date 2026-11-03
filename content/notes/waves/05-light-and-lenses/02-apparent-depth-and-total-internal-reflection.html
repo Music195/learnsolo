@@ -1,0 +1,228 @@
+<!-- tags: Light and Lenses -->
+<!-- =====================================================================
+     NOTE: Apparent Depth and Total Internal Reflection
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Light and Lenses">Apparent Depth and Total Internal Reflection</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Water looks shallower than it is, and light trying to leave at a steep slant can't get out</h2>
+    <p>Light from a fish in a pond bends <strong>away</strong> from the normal as it leaves the water (it speeds up). Your brain assumes light travels in straight lines, so you trace the rays straight back and "see" the fish higher than it really is. Seen from straight above, an object at real depth $h$ appears at the <strong>apparent depth</strong> $h' = h/n$. A pool 2.0 m deep looks only 1.5 m deep, which is why it is dangerous to judge by eye.</p>
+    <p>Now send light from inside water towards the surface at a larger and larger angle. The refracted ray leaves at an even larger angle, bending more and more towards the surface. At one particular angle of incidence, the <strong>critical angle</strong> $\theta_c$, the refracted ray just skims along the surface (90°). Beyond it no light can leave at all: it is all reflected back into the water. This is <strong>total internal reflection</strong>.</p>
+    <ul>
+      <li>It only happens going from a <strong>slower</strong> medium (larger $n$) into a <strong>faster</strong> one (smaller $n$).</li>
+      <li>A lamp at the bottom of a pool lights up only a <strong>circle</strong> of the surface. Outside that circle, its light is totally reflected.</li>
+      <li><strong>Optical fibres</strong> trap light by total internal reflection at the walls of a thin glass thread, carrying signals for kilometres with little loss.</li>
+    </ul>
+  </section>
+
+  <!-- FORMULA: depth and critical angle -->
+  <div class="note-formula">
+    <h3>Apparent depth (viewed from straight above) and critical angle (into air)</h3>
+    <div class="formula-main">$$h' = \frac hn \qquad \sin\theta_c = \frac1n \qquad R = \frac{h}{\sqrt{n^2 - 1}}$$</div>
+    <p class="symbols">$h$: real depth; $h'$: apparent depth; $n$: refractive index of the water or glass (water $n = 4/3$, glass about 1.5). $\theta_c$: critical angle. $R$: radius of the lit circle on the surface above a point source at depth $h$.</p>
+  </div>
+
+  <!-- PROOF: the three results -->
+  <div class="note-proof">
+    <ol>
+      <li>A ray from the object at depth $h$ meets the surface a distance $x$ from the point straight above it, with $\tan\theta_1 = x/h$ in the water. It leaves at $\theta_2$, and traced back it seems to come from depth $h'$ with $\tan\theta_2 = x/h'$.</li>
+      <li>Near the vertical, $\tan \approx \sin$, so $\dfrac{h}{h'} = \dfrac{\tan\theta_2}{\tan\theta_1} \approx \dfrac{\sin\theta_2}{\sin\theta_1} = n$, giving $h' = h/n$.</li>
+      <li>Critical angle: $n\sin\theta_c = 1 \times \sin90°$, so $\sin\theta_c = 1/n$.</li>
+      <li>Lit circle: $R = h\tan\theta_c$. With $\sin\theta_c = 1/n$, $\cos\theta_c = \sqrt{n^2-1}/n$, so $\tan\theta_c = 1/\sqrt{n^2 - 1}$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: rays leaving water; code at the bottom -->
+  <div class="note-demo">
+    <h2>Light leaving water (n = 4/3) or glass (n = 1.5)</h2>
+    <div class="controls choices" id="tiChoices">
+      <button type="button" data-k="depth" class="active">apparent depth</button>
+      <button type="button" data-k="water">critical angle: water</button>
+      <button type="button" data-k="glass">critical angle: glass</button>
+    </div>
+    <div class="controls">
+      <label>angle in the water or glass (°) = <input type="range" id="tiA" min="0" max="76" step="2" value="30"></label>
+    </div>
+    <canvas id="tiCanvas"></canvas>
+    <div class="output table-text" id="tiOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A pool is 2.0 m deep. How deep does it look from directly above? (Water: $n = 4/3$.)</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$h' = h/n = 2.0 \div \dfrac43 = 2.0 \times \dfrac34$.</li>
+      </ol>
+      <p class="answer">1.5 m</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find the critical angle for light going from water ($n = 4/3$) into air, and from glass ($n = 1.5$) into air.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Water: $\sin\theta_c = 3/4 = 0.75$, so $\theta_c \approx 48.6°$.</li>
+        <li>Glass: $\sin\theta_c = 1/1.5 = 0.667$, so $\theta_c \approx 41.8°$.</li>
+      </ol>
+      <p class="answer">About 48.6° and 41.8°</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A small lamp is 0.70 m below the surface of water ($n = 4/3$). Find the radius of the circle of surface through which its light escapes.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$n^2 - 1 = \dfrac{16}{9} - 1 = \dfrac79$, so $\sqrt{n^2 - 1} \approx 0.882$.</li>
+        <li>$R = 0.70/0.882$.</li>
+      </ol>
+      <p class="answer">$R \approx 0.79$ m</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">A coin lies under a glass block 6.0 cm thick ($n = 1.5$). How far below the top of the block does it appear, looking straight down?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$h' = 6.0/1.5$.</li>
+      </ol>
+      <p class="answer">4.0 cm (it seems raised by 2.0 cm)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">Light travels along a glass optical fibre ($n = 1.5$) in air. It hits the wall at 60° to the normal. Does it escape?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The critical angle for glass to air is 41.8°.</li>
+        <li>60° &gt; 41.8°, so the light is totally reflected.</li>
+      </ol>
+      <p class="answer">No: it is totally reflected and stays in the fibre</p>
+    </details>
+  </div>
+
+  <!-- WARNING: direction matters -->
+  <div class="note-warning">
+    Total internal reflection is only possible going from the <strong>larger</strong> $n$ to the smaller $n$ (water → air, glass → air). Light going from air into water always gets in.
+  </div>
+
+  <!-- TIP: h/n -->
+  <div class="note-tip">
+    $h' = h/n$ only works for viewing from (nearly) straight above. At a slant, the bottom looks even shallower. Try it in the demo.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Apparent depth from above: $h' = h/n$.</li>
+      <li>Critical angle into air: $\sin\theta_c = 1/n$; beyond it, total internal reflection.</li>
+      <li>Lit circle above a lamp at depth $h$: $R = h/\sqrt{n^2-1}$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Leaving the water" demo (the TRY IT block above).
+  // Surface along y = S = 120; water (or glass) below. 1 m = 100 pixels.
+  //   depth: a fish at depth h = 2.0 m (x = 260). Two rays leave it at ±θ1 (slider),
+  //          refract at the surface (n sinθ1 = sinθ2), and are traced back (dashed)
+  //          to where they seem to come from: depth h' = h·tanθ1/tanθ2 (→ h/n near 0°).
+  //   water/glass: one ray from a lamp at (40, 230) at angle θ1. Below θc it
+  //          refracts out (plus a faint reflection); beyond θc it is all reflected.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('tiCanvas');
+    const output = document.getElementById('tiOutput');
+    const aBox = document.getElementById('tiA');
+    const S = 120, PX = 100;
+    const YELLOW = '#d97706', RED = '#dc2626', THING = '#475569', BLUE = '#2563eb';
+    let k = 'depth', lastText = '';
+    const n = () => (k === 'glass' ? 1.5 : 4 / 3);
+    const rad = (d) => d * Math.PI / 180, deg = (r) => r * 180 / Math.PI;
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const nn = n(), th1 = rad(Number(aBox.value)), s2 = nn * Math.sin(th1);
+        g.poly([[0, S], [520, S], [520, 340], [0, 340]], k === 'glass' ? '#e2e8f0' : '#dbeafe');
+        g.seg([0, S], [520, S], THING, { width: 2 });
+        g.text([40, S - 14], 'air', THING);
+        g.text([50, S + 18], k === 'glass' ? 'glass' : 'water', THING);
+        let text;
+        if (k === 'depth') {
+          const h = 2.0, F = [260, S + h * PX];
+          g.circle(F, 8, RED, { fill: RED });
+          g.text([F[0] + 34, F[1]], 'fish', RED);
+          g.seg([260, S - 40], [260, 340], '#94a3b8', { width: 1, dash: true });
+          if (s2 >= 1) {
+            text = `θ1 = ${deg(th1).toFixed(0)}° is beyond the critical angle (48.6°): no light leaves\n` +
+              'reduce the angle to see the image\nreal depth 2.0 m';
+          } else if (th1 < 1e-6) {
+            g.seg(F, [260, 0], YELLOW, { width: 2.5 });
+            text = 'straight up: the ray doesn\'t bend\napparent depth from above: h/n = 2.0 / (4/3) = 1.50 m\nreal depth 2.0 m';
+          } else {
+            const th2 = Math.asin(s2), x = h * Math.tan(th1), hp = x / Math.tan(th2);
+            for (const sgn of [1, -1]) {
+              const H = [260 + sgn * x * PX, S];
+              g.seg(F, H, YELLOW, { width: 2.5 });
+              g.seg(H, [H[0] + sgn * 140 * Math.sin(th2), S - 140 * Math.cos(th2)], YELLOW, { width: 2.5 });
+              g.seg(H, [260, S + hp * PX], YELLOW, { width: 1.2, dash: true });
+            }
+            g.circle([260, S + hp * PX], 7, '#fca5a5', { fill: '#fca5a5' });
+            g.text([200, S + hp * PX], 'image', RED);
+            text = `θ1 = ${deg(th1).toFixed(0)}° in water → θ2 = ${deg(th2).toFixed(1)}° in air\n` +
+              `traced back, the fish seems to be ${hp.toFixed(2)} m deep (real depth 2.0 m)\n` +
+              `from straight above: h/n = 1.50 m; at a slant it looks even shallower`;
+          }
+        } else {
+          const L = [40, 230], thc = Math.asin(1 / nn);
+          const H = [L[0] + (S - 0 - L[1]) * -Math.tan(th1), S];
+          g.circle(L, 8, YELLOW, { fill: YELLOW });
+          g.text([L[0], L[1] + 22], 'lamp', YELLOW);
+          g.seg([H[0], S - 90], [H[0], S + 90], '#94a3b8', { width: 1, dash: true });
+          g.seg(L, H, YELLOW, { width: 3 });
+          const refl = [H[0] + 260 * Math.sin(th1), S + 260 * Math.cos(th1)];
+          if (s2 < 1) {
+            const th2 = Math.asin(s2);
+            g.seg(H, [H[0] + 200 * Math.sin(th2), S - 200 * Math.cos(th2)], YELLOW, { width: 3 });
+            g.seg(H, refl, '#fcd34d', { width: 1.2 });
+            text = `θ1 = ${deg(th1).toFixed(0)}°  <  θc = ${deg(thc).toFixed(1)}° (sin θc = 1/${k === 'glass' ? '1.5' : '(4/3)'})\n` +
+              `refracted out at θ2 = ${deg(th2).toFixed(1)}° (plus a weak reflection)\n `;
+          } else {
+            g.seg(H, refl, YELLOW, { width: 3 });
+            text = `θ1 = ${deg(th1).toFixed(0)}°  ≥  θc = ${deg(thc).toFixed(1)}° (sin θc = 1/${k === 'glass' ? '1.5' : '(4/3)'})\n` +
+              'TOTAL INTERNAL REFLECTION: no light leaves\n ';
+          }
+        }
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    document.querySelectorAll('#tiChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#tiChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      k = b.dataset.k;
+      board.redraw();
+    }));
+    aBox.addEventListener('input', () => board.redraw());
+    board.redraw();
+  })();
+</script>

@@ -33,6 +33,9 @@ COURSES = {
     "mechanics-basic": {"name": "Mechanics Basic", "subject": "Physics"},
     # Heat: temperature and heat, ideal gases, thermodynamics
     "heat": {"name": "Heat", "subject": "Physics"},
+    # Waves: wave basics, superposition and standing waves, wave phenomena,
+    # sound, light and lenses, interference of light
+    "waves": {"name": "Waves", "subject": "Physics"},
 }
 
 # Past question folders (content/past/<folder>/) -> name, icon and description.

@@ -1,0 +1,211 @@
+<!-- tags: Wave Basics -->
+<!-- =====================================================================
+     NOTE: Phase and the Motion of the Medium
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Wave Basics">Phase and the Motion of the Medium</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Every piece of the medium does simple harmonic motion; its phase says which stage it is at</h2>
+    <p>Look closely at one piece of the medium: it goes up and down exactly like a mass on a spring. It is doing <strong>simple harmonic motion</strong> (SHM), with the wave's amplitude $A$ and period $T$.</p>
+    <p>From mechanics, SHM is the shadow of a point going round a circle at steady speed (the reference circle). The <strong>angle</strong> of that point on its circle is called the <strong>phase</strong>. It tells you which stage of the vibration the piece is at: phase $90^\circ$ means "at the top", $270^\circ$ means "at the bottom", and so on. Phase is <em>not</em> the same as displacement: two pieces at the same height can have different phases (one going up, one coming down).</p>
+    <ul>
+      <li>Pieces further along the wave lag behind: a distance $\lambda$ along the wave is a whole turn ($360^\circ$) of lag. So two pieces a distance $d$ apart differ in phase by $360^\circ \times d/\lambda$.</li>
+      <li><strong>In phase</strong> (same phase): always doing the same thing; $d = \lambda, 2\lambda, \ldots$</li>
+      <li><strong>Antiphase</strong> (opposite phase, $180^\circ$ apart): always doing the opposite; $d = \tfrac12\lambda, \tfrac32\lambda, \ldots$</li>
+    </ul>
+    <p>Because each piece does SHM, its speed is greatest ($A\omega$) as it passes the rest line, and zero at a crest or trough.</p>
+  </section>
+
+  <!-- FORMULA: phase and speed of the medium -->
+  <div class="note-formula">
+    <h3>Phase difference and the speed of the medium</h3>
+    <div class="formula-main">$$\Delta\phi = 2\pi\frac{d}{\lambda}\ \left(= 360^\circ \times \frac{d}{\lambda}\right) \qquad v_{\text{medium, max}} = A\omega = \frac{2\pi A}{T}$$</div>
+    <p class="symbols">$d$: distance between two pieces along the wave. $\omega = 2\pi/T = 2\pi f$: angular frequency. $v_{\text{medium, max}}$ is the top speed of a piece of the medium, a different thing from the wave speed $v = f\lambda$.</p>
+  </div>
+
+  <!-- PROOF: from the reference circle -->
+  <div class="note-proof">
+    <ol>
+      <li>A piece's displacement is $y = A\sin\phi$, where $\phi$ is the angle of its point on the reference circle. The point turns at $\omega = 2\pi/T$.</li>
+      <li>The wave needs time $d/v$ to reach a piece a distance $d$ further on, so that piece lags by an angle $\omega\,\dfrac dv = \dfrac{2\pi}{T}\cdot\dfrac{d}{\lambda/T} = 2\pi\dfrac d\lambda$.</li>
+      <li>The point on the circle moves at speed $A\omega$. The piece's velocity is the vertical part of that, which is largest when the point is at the side of the circle, i.e. when $y = 0$: $v_{\max} = A\omega$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: two pieces and their reference circles; code at the bottom -->
+  <div class="note-demo">
+    <h2>Pieces P and Q on a wave moving right ($\lambda = 4.0$ cm, $T = 2.0$ s)</h2>
+    <div class="controls choices" id="phChoices">
+      <button type="button" data-d="1" class="active">Q is λ/4 after P</button>
+      <button type="button" data-d="2">Q is λ/2 after P</button>
+      <button type="button" data-d="4">Q is λ after P</button>
+    </div>
+    <canvas id="phCanvas"></canvas>
+    <div class="output table-text" id="phOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A wave has amplitude 2.0 cm and period 2.0 s. Find the greatest speed of a piece of the medium.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\omega = 2\pi/T = \pi$ rad/s.</li>
+        <li>$v_{\max} = A\omega = 2.0 \times \pi$.</li>
+      </ol>
+      <p class="answer">$2\pi \approx 6.3\ \mathrm{cm/s}$ (in cm/s because $A$ is in cm)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">A wave has wavelength 4.0 m. Find the phase difference between two pieces 1.0 m apart along it.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\Delta\phi = 360^\circ \times \dfrac{1.0}{4.0}$.</li>
+      </ol>
+      <p class="answer">$90^\circ$ ($\pi/2$ rad)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A wave with $\lambda = 0.80$ m travels along a rope. Which pieces move in antiphase with the piece at $x = 0$? Give the first two positions on the positive side.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Antiphase means $d = \tfrac12\lambda, \tfrac32\lambda, \ldots$</li>
+      </ol>
+      <p class="answer">$x = 0.40$ m and $x = 1.2$ m</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">A wave has $A = 0.050$ m, $f = 10$ Hz and $\lambda = 2.0$ m. Compare the wave speed with the greatest speed of the medium.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Wave speed: $v = f\lambda = 20$ m/s.</li>
+        <li>Medium: $A\omega = 0.050 \times 2\pi \times 10 \approx 3.1$ m/s.</li>
+      </ol>
+      <p class="answer">Wave 20 m/s; medium at most about 3.1 m/s. Different things!</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">On a y–x graph, where are the pieces that are moving fastest, and where are the ones at rest?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>In SHM the speed is greatest at the centre of the motion and zero at the ends.</li>
+      </ol>
+      <p class="answer">Fastest where the curve crosses $y = 0$; momentarily at rest at crests and troughs</p>
+    </details>
+  </div>
+
+  <!-- WARNING: phase is not displacement -->
+  <div class="note-warning">
+    "Same displacement" does not mean "same phase". A piece going up through $y = 1$ cm and a piece coming down through $y = 1$ cm have different phases. In phase means doing the same thing at every moment.
+  </div>
+
+  <!-- TIP: fractions of a wavelength -->
+  <div class="note-tip">
+    Think in fractions of a wavelength: $\tfrac14\lambda$ apart → $90^\circ$; $\tfrac12\lambda$ → $180^\circ$ (antiphase); $\lambda$ → $360^\circ$ (in phase again).
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Each piece of the medium does SHM; its phase is the angle on the reference circle.</li>
+      <li>Phase difference $= 360^\circ \times d/\lambda$: in phase at whole wavelengths, antiphase at half-odd wavelengths.</li>
+      <li>Top speed of the medium $A\omega = 2\pi A/T$, at $y = 0$; zero at crests and troughs.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Two pieces and their reference circles" demo (the TRY IT block above).
+  // Wave: y = A sin φ with φ = 2π(t/T − x/λ), A = 2 cm, λ = 4 cm, T = 2 s.
+  // Top: the wave from x = 0 to 8 cm (50 pixels per cm, 1 cm of y = 20 pixels),
+  // with P at x = 2 cm and Q a distance d further on. Below: one reference circle
+  // for each (radius = A). The dot on each circle is at angle φ (measured
+  // anticlockwise from the right); its height is the piece's displacement.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('phCanvas');
+    const output = document.getElementById('phOutput');
+    const A = 2, LAM = 4, T = 2, X0 = 60, Y0 = 90, SX = 50, SY = 20, XP = 2, R = 40, CY = 255;
+    const THING = '#475569', BLUE = '#2563eb', RED = '#dc2626', PURPLE = '#7c3aed';
+    let d = 1, t = 0, lastText = '';
+    const phi = (x) => 2 * Math.PI * (t / T - x / LAM);
+
+    function circle(g, cx, x, color, name) {
+      const ph = phi(x), p = [cx + R * Math.cos(ph), CY - R * Math.sin(ph)];
+      g.circle([cx, CY], R, '#cbd5e1');
+      g.seg([cx - R - 10, CY], [cx + R + 10, CY], '#e2e8f0', { width: 1 });
+      g.seg([cx, CY], p, color, { width: 2 });
+      g.circle(p, 6, color, { fill: color });
+      g.seg(p, [cx + R + 30, p[1]], color, { width: 1, dash: true });
+      g.circle([cx + R + 30, p[1]], 5, color, { fill: color });
+      const deg = ((ph * 180 / Math.PI) % 360 + 360) % 360;
+      g.text([cx, CY + R + 18], `${name}: phase ${deg.toFixed(0)}°`, color);
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        g.seg([X0, Y0], [X0 + 400, Y0], '#cbd5e1', { width: 1, dash: true });
+        let prev = null;
+        for (let x = 0; x <= 8; x += 0.05) { const p = [X0 + x * SX, Y0 - A * Math.sin(phi(x)) * SY]; if (prev) g.seg(prev, p, BLUE, { width: 2 }); prev = p; }
+        const pp = [X0 + XP * SX, Y0 - A * Math.sin(phi(XP)) * SY], qq = [X0 + (XP + d) * SX, Y0 - A * Math.sin(phi(XP + d)) * SY];
+        g.circle(pp, 7, RED, { fill: RED });
+        g.circle(qq, 7, PURPLE, { fill: PURPLE });
+        g.text([pp[0], Y0 + 60], 'P', RED);
+        g.text([qq[0], Y0 + 60], 'Q', PURPLE);
+        g.text([X0 + 380, Y0 - 58], '→', BLUE);
+        circle(g, 130, XP, RED, 'P');
+        circle(g, 340, XP + d, PURPLE, 'Q');
+
+        const dphi = 360 * d / LAM;
+        const yP = A * Math.sin(phi(XP)), yQ = A * Math.sin(phi(XP + d));
+        const text =
+          `d = ${d} cm = ${['', 'λ/4', 'λ/2', '', 'λ'][d]}:  phase difference = 360° × ${d}/4 = ${dphi}°` +
+          (d === 2 ? '  (antiphase)' : d === 4 ? '  (in phase)' : '') + '\n' +
+          `y_P = ${yP.toFixed(2).replace('-', '−')} cm,  y_Q = ${yQ.toFixed(2).replace('-', '−')} cm\n` +
+          `top speed of a piece: Aω = 2 × 2π/2 = ${(2 * Math.PI).toFixed(2)} cm/s (as it passes y = 0)`;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Run the clock. Stop when the page has changed.
+    let last = performance.now();
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.max(0, Math.min((now - last) / 1000, 0.05));
+      last = now;
+      t += dt * 0.5;            // half speed, so the circles are easy to follow
+      board.redraw();
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    document.querySelectorAll('#phChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#phChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      d = Number(b.dataset.d);
+      board.redraw();
+    }));
+  })();
+</script>

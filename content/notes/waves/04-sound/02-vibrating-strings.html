@@ -1,0 +1,213 @@
+<!-- tags: Sound -->
+<!-- =====================================================================
+     NOTE: Vibrating Strings
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Sound">Vibrating Strings</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Both ends of a string are nodes, so only whole numbers of half-wavelengths fit</h2>
+    <p>Pluck a guitar string. Waves run along it, reflect at the two fixed ends and overlap, making a <strong>standing wave</strong>. Since both ends are fixed, both must be <strong>nodes</strong>.</p>
+    <p>Node to node is $\lambda/2$, so the string length must hold a whole number of "loops": $L = n\dfrac{\lambda}{2}$, with $n = 1, 2, 3, \dots$ Only these wavelengths (and their frequencies) can survive. They are the string's <strong>natural frequencies</strong>.</p>
+    <ul>
+      <li>$n = 1$: one loop, the <strong>fundamental</strong> (the lowest note, also called the 1st harmonic).</li>
+      <li>$n = 2, 3, \dots$: the 2nd, 3rd, … <strong>harmonics</strong> (overtones), at 2, 3, … times the fundamental frequency.</li>
+    </ul>
+    <p>The speed of waves on the string depends on how tight it is and how heavy it is: $v = \sqrt{S/\rho}$, where $S$ is the tension and $\rho$ the mass per metre. A tighter or lighter string gives faster waves and a higher note; a shorter string also gives a higher note.</p>
+  </section>
+
+  <!-- FORMULA: string frequencies -->
+  <div class="note-formula">
+    <h3>A string fixed at both ends</h3>
+    <div class="formula-main">$$\lambda_n = \frac{2L}{n} \qquad f_n = \frac{v}{\lambda_n} = \frac{nv}{2L} \qquad v = \sqrt{\frac{S}{\rho}}$$</div>
+    <p class="symbols">$L$: length of the vibrating string (m). $n = 1, 2, 3, \dots$ (number of loops). $v$: wave speed on the string (m/s). $S$: tension (N). $\rho$: linear density, mass per unit length (kg/m).</p>
+  </div>
+
+  <!-- PROOF: v = √(S/ρ) from units -->
+  <div class="note-proof">
+    <ol>
+      <li>Guess that $v$ depends only on $S$ and $\rho$: $v = kS^a\rho^b$, with $k$ a pure number.</li>
+      <li>Units: $\mathrm{m\,s^{-1}} = (\mathrm{kg\,m\,s^{-2}})^a(\mathrm{kg\,m^{-1}})^b$.</li>
+      <li>Match powers. kg: $a + b = 0$. m: $a - b = 1$. s: $-2a = -1$.</li>
+      <li>So $a = \tfrac12$, $b = -\tfrac12$, and $v = k\sqrt{S/\rho}$. A full calculation shows $k = 1$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: harmonics on a string; code at the bottom -->
+  <div class="note-demo">
+    <h2>A string of length 0.50 m, ρ = 1.0 × 10⁻³ kg/m</h2>
+    <div class="controls choices" id="stChoices">
+      <button type="button" data-n="1" class="active">n = 1</button>
+      <button type="button" data-n="2">n = 2</button>
+      <button type="button" data-n="3">n = 3</button>
+      <button type="button" data-n="4">n = 4</button>
+    </div>
+    <div class="controls">
+      <label>tension $S$ (N) = <input type="range" id="stS" min="10" max="90" step="10" value="40"></label>
+    </div>
+    <canvas id="stCanvas"></canvas>
+    <div class="output table-text" id="stOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A string has linear density $1.0 \times 10^{-3}$ kg/m and tension 40 N. Find the wave speed on it.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$v = \sqrt{40/(1.0 \times 10^{-3})} = \sqrt{4.0 \times 10^{4}}$.</li>
+      </ol>
+      <p class="answer">$v = 200\ \mathrm{m/s}$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">That string is 0.50 m long between its fixed ends. Find its fundamental frequency and the frequency of its 3rd harmonic.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$f_1 = \dfrac{v}{2L} = \dfrac{200}{1.0}$.</li>
+        <li>$f_3 = 3f_1$.</li>
+      </ol>
+      <p class="answer">200 Hz and 600 Hz</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A 0.60 m string vibrates at 300 Hz with 3 loops. Find the wavelength and the wave speed.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>3 loops: $L = 3\lambda/2$, so $\lambda = 2 \times 0.60/3 = 0.40$ m.</li>
+        <li>$v = f\lambda = 300 \times 0.40$.</li>
+      </ol>
+      <p class="answer">$\lambda = 0.40$ m; $v = 120$ m/s</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">The tension in a string is made 4 times larger. What happens to its fundamental frequency?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$v = \sqrt{S/\rho}$: $S \times 4$ gives $v \times 2$.</li>
+        <li>$f_1 = v/(2L)$ with the same $L$: $f_1 \times 2$.</li>
+      </ol>
+      <p class="answer">It doubles (one octave higher)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">A string driven at a fixed frequency shows 2 loops. How must the tension change so that it shows 4 loops at the same frequency?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>4 loops in the same length: $\lambda$ halves.</li>
+        <li>Same $f$, so $v = f\lambda$ halves.</li>
+        <li>$v \propto \sqrt S$, so $S$ must become $(1/2)^2 = 1/4$ of before.</li>
+      </ol>
+      <p class="answer">Reduce the tension to a quarter</p>
+    </details>
+  </div>
+
+  <!-- WARNING: which v -->
+  <div class="note-warning">
+    $v$ here is the speed of waves <strong>on the string</strong>, not the speed of sound in air. The string's frequency is passed on to the air, but the wavelength in air is $340/f$, which is different.
+  </div>
+
+  <!-- TIP: draw it -->
+  <div class="note-tip">
+    For any string or pipe problem, first draw the standing wave (nodes at fixed ends), count loops, and read off $\lambda$. Then use $f = v/\lambda$.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>String fixed at both ends: $L = n\lambda/2$, so $f_n = nv/(2L)$.</li>
+      <li>$v = \sqrt{S/\rho}$: tighter or lighter → faster → higher note.</li>
+      <li>All whole-number harmonics are possible.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "String harmonics" demo (the TRY IT block above).
+  // The string runs from x = 40 to 480 pixels (L = 0.50 m) between two fixed pegs.
+  // Mode n: y = A sin(nπx/L) cos(2π t'), shown slowed down to one swing per second
+  // (t' is real time; the true frequency is in the readout). A = 60 pixels.
+  // The loose outline (grey) shows the largest shape; nodes are green dots.
+  // v = √(S/ρ) with ρ = 1.0e-3 kg/m; f_n = n v / (2L).
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('stCanvas');
+    const output = document.getElementById('stOutput');
+    const sBox = document.getElementById('stS');
+    const XL = 40, XR = 480, Y0 = 160, A = 60, L = 0.5, RHO = 1e-3;
+    const DARK = '#0f172a', GREEN = '#16a34a', THING = '#475569', ORANGE = '#ea580c';
+    let n = 1, t = 0, lastText = '';
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const shape = (x) => Math.sin(n * Math.PI * (x - XL) / (XR - XL));
+        let p1 = null, p2 = null, ps = null;
+        for (let x = XL; x <= XR + 0.1; x += 2) {
+          const q1 = [x, Y0 - A * shape(x)], q2 = [x, Y0 + A * shape(x)], qs = [x, Y0 - A * shape(x) * Math.cos(2 * Math.PI * t)];
+          if (p1) { g.seg(p1, q1, '#cbd5e1', { width: 1.5 }); g.seg(p2, q2, '#cbd5e1', { width: 1.5 }); g.seg(ps, qs, DARK, { width: 3 }); }
+          p1 = q1; p2 = q2; ps = qs;
+        }
+        for (let k = 0; k <= n; k++) g.circle([XL + k * (XR - XL) / n, Y0], 5, GREEN, { fill: GREEN });
+        for (const x of [XL, XR]) g.poly([[x, Y0], [x - 10, Y0 + 24], [x + 10, Y0 + 24]], THING);
+        // one wavelength marker
+        const lamPx = 2 * (XR - XL) / n;
+        if (lamPx <= XR - XL + 1) {
+          g.seg([XL, Y0 + 95], [XL + lamPx, Y0 + 95], ORANGE, { width: 2 });
+          g.text([XL + lamPx / 2, Y0 + 112], 'λ', ORANGE);
+        } else {
+          g.seg([XL, Y0 + 95], [XR, Y0 + 95], ORANGE, { width: 2 });
+          g.text([(XL + XR) / 2, Y0 + 112], 'L = λ/2', ORANGE);
+        }
+        g.text([(XL + XR) / 2, 40], 'L = 0.50 m (slowed down)', THING);
+
+        const S = Number(sBox.value), v = Math.sqrt(S / RHO), lam = 2 * L / n, f = v / lam;
+        const text =
+          `v = √(S/ρ) = √(${S}/1.0e-3) = ${v.toFixed(0)} m/s\n` +
+          `n = ${n}:  λ = 2L/${n} = ${lam.toFixed(3)} m,  f = v/λ = ${f.toFixed(0)} Hz\n` +
+          `fundamental f₁ = v/2L = ${(v / (2 * L)).toFixed(0)} Hz, so f = ${n} × f₁`;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Run the slowed-down clock. Stop when the page has changed.
+    let last = performance.now();
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.max(0, Math.min((now - last) / 1000, 0.05));
+      last = now;
+      t += dt;
+      board.redraw();
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    document.querySelectorAll('#stChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#stChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      n = Number(b.dataset.n);
+      board.redraw();
+    }));
+    sBox.addEventListener('input', () => board.redraw());
+  })();
+</script>

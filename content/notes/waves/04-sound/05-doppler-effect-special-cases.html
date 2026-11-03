@@ -1,0 +1,218 @@
+<!-- tags: Sound -->
+<!-- =====================================================================
+     NOTE: Doppler Effect: Special Cases
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Sound">Doppler Effect: Special Cases</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Wind, moving reflectors and sideways motion all reduce to the same formula</h2>
+    <p>The basic formula $f' = \dfrac{V - v_o}{V - v_s}f$ (positive from source to observer) handles three trickier situations once you think about what each one changes.</p>
+    <ul>
+      <li><strong>Wind</strong>: the wind carries the sound, so relative to the ground the sound moves at $V + w$ (wind blowing from source to observer, $w &gt; 0$) or $V - w$ (blowing the other way). Replace $V$ by $V \pm w$ everywhere. If neither source nor observer moves, the wind changes nothing: $f' = f$.</li>
+      <li><strong>A moving reflector</strong> (a wall, a car, a ball): do it in <strong>two steps</strong>. First the reflector is an <em>observer</em> and receives $f_1$. Then it is a <em>source</em> sending $f_1$ back. If you also hear the original sound, the two frequencies make <strong>beats</strong>.</li>
+      <li><strong>Moving at an angle</strong>: only the part of the velocity <strong>along the line joining source and observer</strong> matters. Use $v\cos\theta$, where $\theta$ is the angle between the velocity and that line.</li>
+    </ul>
+  </section>
+
+  <!-- FORMULA: the three variants -->
+  <div class="note-formula">
+    <h3>Three variants (positive direction: source → observer)</h3>
+    <div class="formula-main">$$\text{wind: } f' = \frac{V + w - v_o}{V + w - v_s}f \qquad \text{at an angle: } v \to v\cos\theta$$</div>
+    <div class="formula-main">$$\text{reflector approaching at } u:\ f_1 = \frac{V + u}{V}f,\quad f_2 = \frac{V}{V - u}f_1 = \frac{V + u}{V - u}f$$</div>
+    <p class="symbols">$w$: wind speed, positive if it blows from source to observer. $\theta$: angle between a velocity and the source–observer line. $u$: speed of the reflector towards the source; $f_2$ is what comes back to the source.</p>
+  </div>
+
+  <!-- PROOF: the reflector in two steps -->
+  <div class="note-proof">
+    <ol>
+      <li>Step 1: source at rest, wall = observer moving <em>towards</em> it. Positive: source → wall, so $v_o = -u$: $f_1 = \dfrac{V + u}{V}f$.</li>
+      <li>Step 2: wall = source of frequency $f_1$, moving towards the listener next to the original source. Positive: wall → listener, so $v_s = +u$: $f_2 = \dfrac{V}{V - u}f_1$.</li>
+      <li>Combine: $f_2 = \dfrac{V + u}{V - u}f$.</li>
+      <li>The listener hears $f$ directly and $f_2$ by reflection: beats at $f_2 - f$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: reflection from a moving wall; code at the bottom -->
+  <div class="note-demo">
+    <h2>Sound from S reflects off a moving wall (top lane: outgoing, bottom lane: returning)</h2>
+    <div class="controls choices" id="dsChoices">
+      <button type="button" data-u="1" class="active">wall approaches</button>
+      <button type="button" data-u="0">wall at rest</button>
+      <button type="button" data-u="-1">wall moves away</button>
+    </div>
+    <canvas id="dsCanvas"></canvas>
+    <div class="output table-text" id="dsOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A 500 Hz source is at rest. A wall moves towards it at 10 m/s. $V = 340$ m/s. Find the frequency the wall receives, the frequency reflected back to the source, and the beat frequency heard at the source.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$f_1 = \dfrac{340 + 10}{340} \times 500 \approx 514.7$ Hz.</li>
+        <li>$f_2 = \dfrac{340}{340 - 10} \times f_1 = \dfrac{350}{330} \times 500 \approx 530.3$ Hz.</li>
+        <li>Beats: $530 - 500$.</li>
+      </ol>
+      <p class="answer">About 515 Hz, 530 Hz, and 30 beats per second</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">A wind of 10 m/s blows from a 500 Hz source towards an observer. The source moves towards the observer at 30 m/s. $V = 340$ m/s in still air. Find the frequency heard.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The sound moves at $340 + 10 = 350$ m/s towards the observer.</li>
+        <li>$f' = \dfrac{350 - 0}{350 - 30} \times 500 = \dfrac{350}{320} \times 500$.</li>
+      </ol>
+      <p class="answer">$f' \approx 547$ Hz</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A wind blows steadily from a stationary 500 Hz source to a stationary observer. What frequency does the observer hear?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$v_o = v_s = 0$: $f' = \dfrac{V + w}{V + w}f = f$.</li>
+        <li>The wind stretches the wavelength and speeds the sound up by the same factor.</li>
+      </ol>
+      <p class="answer">500 Hz, unchanged</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">A 680 Hz source moves at 40 m/s in a direction that makes 60° with the line from it to a stationary observer (it is heading roughly towards them). $V = 340$ m/s. Find the frequency heard at that instant.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Component towards the observer: $40\cos60° = 20$ m/s.</li>
+        <li>$f' = \dfrac{340}{340 - 20} \times 680$.</li>
+      </ol>
+      <p class="answer">$f' \approx 723$ Hz</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">A car passes a person at the roadside at constant speed, sounding its horn. At the instant the car is closest (moving at right angles to the line joining them), what frequency does the person hear?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\theta = 90°$, so the component along the line is $v\cos90° = 0$.</li>
+      </ol>
+      <p class="answer">The true frequency $f$ (for sound emitted at that instant): the pitch is passing from high to low</p>
+    </details>
+  </div>
+
+  <!-- WARNING: don't do the reflector in one go -->
+  <div class="note-warning">
+    For a moving reflector, never try to write one formula straight away. Do it in <strong>two steps</strong> (reflector as observer, then as source), and reset the positive direction for each step.
+  </div>
+
+  <!-- TIP: speed guns -->
+  <div class="note-tip">
+    Police speed guns and medical ultrasound use exactly this idea: they measure the beat frequency between the sent and reflected waves to find a speed.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Wind: replace $V$ by $V \pm w$.</li>
+      <li>Moving reflector: observer first, then source; beats at $|f_2 - f|$.</li>
+      <li>At an angle: use the component $v\cos\theta$ along the source–observer line.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Moving wall" demo (the TRY IT block above).
+  // Picture scale: sound 90 pixels per second, the wall 27 pixels per second (0.3 V,
+  // exaggerated), a crest every 0.5 s. S is at x = 50; the wall starts at x = 420
+  // (300 when it moves away), moving left = towards S when approaching.
+  // A crest sent at time te reaches the wall at t_h = (XW − XS + V·te)/(V + u) where the
+  // wall is at XW − u·t (u > 0 approaching), and then travels back at V.
+  // Top lane: outgoing crests (blue). Bottom lane: returning crests (orange).
+  // The readout uses the real numbers: f = 500 Hz, V = 340 m/s, u = 10 m/s.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('dsCanvas');
+    const output = document.getElementById('dsOutput');
+    const VPX = 90, UPX = 27, TE = 0.5, XS = 50, Y1 = 120, Y2 = 230;
+    const BLUE = '#2563eb', ORANGE = '#ea580c', RED = '#dc2626', THING = '#475569';
+    let dir = 1, t = 0, lastText = '';
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const XW = dir < 0 ? 300 : 420, u = dir * UPX, xw = XW - u * t;
+        g.text([XS, Y1 - 50], 'outgoing →', BLUE);
+        g.text([XS + 10, Y2 + 50], '← returning', ORANGE);
+        g.seg([XS, Y1], [xw, Y1], '#e2e8f0', { width: 1 });
+        g.seg([XS, Y2], [xw, Y2], '#e2e8f0', { width: 1 });
+        for (let n = 0; n * TE <= t; n++) {
+          const te = n * TE, th = (XW - XS + VPX * te) / (VPX + u);
+          if (t < th) {
+            const x = XS + VPX * (t - te);
+            g.seg([x, Y1 - 30], [x, Y1 + 30], BLUE, { width: 2.5 });
+          } else {
+            const x = (XW - u * th) - VPX * (t - th);
+            if (x > XS) g.seg([x, Y2 - 30], [x, Y2 + 30], ORANGE, { width: 2.5 });
+          }
+        }
+        g.circle([XS, (Y1 + Y2) / 2], 10, RED, { fill: RED });
+        g.text([XS, (Y1 + Y2) / 2 + 26], 'S', RED);
+        g.seg([xw, 60], [xw, 290], THING, { width: 8 });
+        if (dir) {
+          // arrow above the wall showing which way it moves (dir = 1: left, towards S)
+          const tip = xw - dir * 36;
+          g.seg([xw, 40], [tip + dir * 6, 40], THING, { width: 3 });
+          g.poly([[tip, 40], [tip + dir * 10, 33], [tip + dir * 10, 47]], THING);
+        }
+        g.text([xw + 30, 300], 'wall', THING);
+
+        const F = 500, V = 340, U = 10 * dir;
+        const f1 = (V + U) / V * F, f2 = V / (V - U) * f1;
+        const text =
+          `real numbers: f = 500 Hz, V = 340 m/s, wall speed ${Math.abs(U)} m/s\n` +
+          `wall receives f₁ = (340 ${U >= 0 ? '+' : '−'} ${Math.abs(U)})/340 × 500 = ${f1.toFixed(1)} Hz\n` +
+          `sent back: f₂ = 340/(340 ${U >= 0 ? '−' : '+'} ${Math.abs(U)}) × f₁ = ${f2.toFixed(1)} Hz;  beats ${Math.abs(f2 - F).toFixed(1)} per second`;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Run the clock; restart after 7 s. Stop when the page has changed.
+    let last = performance.now();
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.max(0, Math.min((now - last) / 1000, 0.05));
+      last = now;
+      t += dt;
+      if (t > 7) t = 0;
+      board.redraw();
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    document.querySelectorAll('#dsChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#dsChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      dir = Number(b.dataset.u);
+      t = 0;
+      board.redraw();
+    }));
+  })();
+</script>
