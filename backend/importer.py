@@ -75,8 +75,10 @@ def parse_set(path, content):
         "moved_from": _first(r'data-moved-from="([^"]*)"', content),
         # the last set of a topic, a mix of the whole topic
         "is_review": path.endswith("-topic-review"),
-        # past papers: what each problem practises, from <span class="exam-label">I Q1 · Quadratics</span>
-        "labels": [l.split("·")[-1].strip() for l in re.findall(r'class="exam-label">([^<]*)<', body)],
+        # past papers: what each problem practises, from <span class="exam-label">I Q1 · Quadratics</span>,
+        # each name once (a JLPT paper has several "Kanji reading" questions)
+        "labels": list(dict.fromkeys(
+            l.split("·")[-1].strip() for l in re.findall(r'class="exam-label">([^<]*)<', body))),
     }
 
 

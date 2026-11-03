@@ -63,6 +63,13 @@ PAST_CATEGORIES = {
                  "Mathematics Course 1 and Course 2, six problems each.",
         "groups": {"course-1": "Course 1 (Basic)", "course-2": "Course 2 (Advanced)"},
     },
+    "jlpt": {
+        "name": "JLPT Mock Tests",
+        "icon": "fa-language",
+        "about": "Original mock tests in the style of the JLPT (Japanese-Language Proficiency Test): "
+                 "vocabulary, grammar and reading, 25 multiple-choice questions each, explained in English.",
+        "groups": {"n2": "N2"},
+    },
     "university": {
         "name": "University Past Questions",
         "icon": "fa-building-columns",
