@@ -89,7 +89,6 @@ function HomeContent({ subjects, stats }) {
             </p>
             <div className="hero-actions">
               <a className="btn-main" href="#subjects">Start learning <i className="fas fa-arrow-down"></i></a>
-              <Link className="btn-ghost" to="/practice"><i className="fas fa-puzzle-piece"></i> Practice problems</Link>
             </div>
             <ul className="stats">
               <li><strong>{stats.notes}</strong> notes</li>
