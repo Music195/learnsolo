@@ -1,0 +1,158 @@
+<!-- tags: Sources of Energy and Environmental Impacts, G12 Physics Myanmar -->
+<!-- Grade 12 Physics textbook, Chapter 4, section 4.1 (pages 42–44) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Sources of Energy and Environmental Impacts">Energy Demand and Crisis</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Energy Demand and the Looming Global Crisis</span>
+  <p>Energy is the fundamental necessity driving human civilization, technological progress, and industrial development:</p>
+  <ul>
+    <li><strong>Energy Demand:</strong> The aggregate rate at which human society consumes various forms of energy (for electricity generation, heating, transportation, agriculture, and manufacturing).
+      <ul>
+        <li><strong>Socioeconomic Drivers:</strong> Energy demand is driven by rapid global population growth, urbanization, widespread industrialization, rising per capita income, and the expansion of digital and automation technologies.</li>
+        <li><strong>Demand vs. Supply Gap:</strong> Global energy demand is expanding exponentially year after year. Conventional fossil fuel reserves are finite and being extracted far faster than natural geological replenishment, leading to supply shortages and steep price volatility.</li>
+      </ul>
+    </li>
+    <li><strong>The Energy Crisis:</strong> The alarming situation where global demand for energy outstrips available production capacity while finite natural reserves diminish. This disruption threatens national security, escalates fuel and electricity prices, and destabilizes global economic growth.</li>
+    <li><strong>Classification of Energy Resources:</strong>
+      <ul>
+        <li><strong>Non-Renewable Resources:</strong> Natural resources that exist in finite, exhaustible quantities and are consumed millions of times faster than they naturally form (e.g., coal, crude oil, natural gas, uranium). Once depleted, they cannot be replaced within a human timescale.</li>
+        <li><strong>Renewable Resources:</strong> Natural energy flows replenished continuously by ecological and astronomical processes (e.g., solar, wind, hydropower, tidal, geothermal, biomass). They can be harvested repeatedly without depleting earth's natural capital.</li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formulas &mdash; Energy and Power Conversions</span>
+  <div class="formula-main">
+    $$1\text{ Btu} = 1055\text{ J} \qquad\qquad 1\text{ year} \approx 3.15 \times 10^7\text{ s} \qquad\qquad 1\text{ kWh} = 3.6 \times 10^6\text{ J}$$
+  </div>
+  <ul class="symbols">
+    <li>$\text{Btu}$ = British Thermal Unit (imperial unit of heat energy)</li>
+    <li>$\text{W}$ = Watt ($\mathrm{J\,s^{-1}}$); $1\mathrm{kW} = 10^3\mathrm{W}$; $1\mathrm{MW} = 10^6\mathrm{W}$; $1\mathrm{GW} = 10^9\mathrm{W}$</li>
+    <li>Power $P = \frac{\Delta E}{\Delta t}$ = rate of energy generation or consumption ($\mathrm{J\,s^{-1}}$ or $\mathrm{W}$)</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Visualization &mdash; Global Energy Supply vs. Demand Projection</span>
+  <p class="demo-instruction">Adjust the annual demand growth rate slider below. Observe how quickly rising demand overtakes dwindling conventional fossil fuel supplies, accelerating the onset of the global energy deficit unless compensated by renewable deployment.</p>
+
+  <div id="demand-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
+
+  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
+    <label style="color: #cbd5e1; font-weight: 500;">
+      Annual Demand Growth: 
+      <input id="growth-slider" type="range" min="1.0" max="4.0" step="0.5" value="2.5" style="vertical-align: middle;">
+      <span id="growth-val" style="color: #38bdf8; font-weight: 700;">2.5%</span>
+    </label>
+    <div style="color: #f8fafc; font-size: 0.9rem;">
+      Fossil Depletion Horizon: <span id="depletion-stat" style="color: #f87171; font-weight: 700;">~2065</span>
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    let board = JXG.JSXGraph.initBoard('demand-board', {
+      boundingbox: [-5, 120, 55, -10],
+      axis: true,
+      defaultAxes: {
+        x: { name: 'Years from Today', withLabel: true, label: { position: 'rt', offset: [-20, -15], color: '#cbd5e1' } },
+        y: { name: 'Energy (PWh/yr)', withLabel: true, label: { position: 'rt', offset: [-10, -10], color: '#cbd5e1' } }
+      },
+      showNavigation: false,
+      showCopyright: false
+    });
+
+    let rate = 0.025; // 2.5%
+
+    // Demand curve
+    let demandCurve = board.create('curve', [
+      function(t) { return t; },
+      function(t) { return 40 * Math.exp(rate * t); },
+      0, 50
+    ], { strokeColor: '#f87171', strokeWidth: 3, name: 'Demand' });
+
+    // Fossil Fuel Supply (peaking and decaying: Hubbert bell curve)
+    let fossilCurve = board.create('curve', [
+      function(t) { return t; },
+      function(t) { return 50 * Math.exp(-Math.pow((t - 15) / 18, 2)); },
+      0, 50
+    ], { strokeColor: '#94a3b8', strokeWidth: 2.5, dash: 2 });
+
+    // Renewable Supply (expanding)
+    let renewCurve = board.create('curve', [
+      function(t) { return t; },
+      function(t) { return 10 + 1.2 * t + 0.03 * t * t; },
+      0, 50
+    ], { strokeColor: '#4ade80', strokeWidth: 3 });
+
+    board.create('text', [35, 95, 'Global Demand'], { color: '#f87171', fontSize: 12 });
+    board.create('text', [35, 20, 'Fossil Fuels'], { color: '#94a3b8', fontSize: 12 });
+    board.create('text', [35, 60, 'Renewables'], { color: '#4ade80', fontSize: 12 });
+
+    let slider = document.getElementById('growth-slider');
+    slider.addEventListener('input', function() {
+      rate = parseFloat(this.value) / 100;
+      document.getElementById('growth-val').textContent = this.value + '%';
+      let yearCross = Math.round(2026 + 25 / (parseFloat(this.value) / 2));
+      document.getElementById('depletion-stat').textContent = '~' + yearCross;
+      board.update();
+    });
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Textbook Worked Examples &mdash; Rate of Formation vs. Consumption</span>
+
+  <div class="example-item">
+    <p class="example-title"><strong>Example 4.1:</strong> At present day, the rate of formation of fossil fuels (coal, petroleum, natural gas) is estimated to be about $4\text{ billion kW}$ ($4 \times 10^9\text{ kW}$) and the world's annual consumption of energy is of the order of $10^{17}\text{ Btu/year}$. Show that the rate of consumption of fossil fuel is of the same order of magnitude as the rate of their formation and these energy sources are therefore non-renewable.</p>
+    <p class="solution"><strong>Solution:</strong><br>
+      Given:<br>
+      World consumption rate $= 10^{17}\text{ Btu/year}$.<br>
+      Conversion factors:<br>
+      $1\text{ Btu} = 1055\text{ J}$<br>
+      $1\text{ year} \approx 365.25 \times 24 \times 3600 \approx 3.15 \times 10^7\text{ s}$<br><br>
+      Convert consumption rate into Watts ($\mathrm{J\,s^{-1}}$):
+      $$\text{Rate of consumption} = \frac{10^{17} \times 1055\text{ J}}{1 \times 3.15 \times 10^7\text{ s}} \approx 3.35 \times 10^{12}\text{ W}$$
+      Convert Watts into kilowatts ($1\text{ kW} = 10^3\text{ W}$):
+      $$\text{Rate of consumption} = \frac{3.35 \times 10^{12}}{10^3} = 3.35 \times 10^9\text{ kW}$$
+      Comparing the two rates:
+      <ul>
+        <li>Rate of formation $\approx 4 \times 10^9\text{ kW}$</li>
+        <li>Rate of consumption $\approx 3.35 \times 10^9\text{ kW}$</li>
+      </ul>
+      Both values are of the same order of magnitude ($\sim 10^9\text{ kW}$). Because humanity consumes fossil reserves stored over hundreds of millions of years at virtually the same rate as the entire planetary biological synthesis, accessible deposits are being depleted rapidly. Hence, fossil fuels cannot replenish on a human timescale and are strictly <strong>non-renewable</strong>.
+    </p>
+  </div>
+
+  <div class="example-item">
+    <p class="example-title"><strong>Reviewed Exercise:</strong></p>
+    <p class="solution">
+      <strong>Why does energy demand increase year by year?</strong><br>
+      Energy demand increases continuously due to several compounding socioeconomic factors:
+      <ol>
+        <li><strong>Population Growth:</strong> The expanding global human population requires more domestic electricity, cooking fuel, heating, and potable water.</li>
+        <li><strong>Urbanization and Industrialization:</strong> Emerging economies are transitioning from agrarian to energy-intensive industrial infrastructures, factories, and commercial centers.</li>
+        <li><strong>Rising Living Standards:</strong> Higher per capita income increases ownership of vehicles, air conditioning, home appliances, and refrigeration.</li>
+        <li><strong>Technological Expansion:</strong> The rapid growth of data centers, artificial intelligence computing, telecommunications, and electrified transport networks commands enormous electrical power supplies.</li>
+      </ol>
+    </p>
+  </div>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>Energy demand describes global energy consumption driven by population growth, urbanization, and industrial technology.</li>
+    <li>An energy crisis occurs when rising demand exhausts limited natural resources, disrupting supplies and inflating prices.</li>
+    <li>Non-renewable fuels (coal, petroleum, natural gas, uranium) take millions of years to form and cannot be regenerated within human lifespans.</li>
+    <li>Renewable resources (solar, wind, hydro, ocean, geothermal, biomass) are continuously replenished by natural cycles.</li>
+    <li>Converting units: $1\text{ Btu} = 1055\text{ J}$, $1\text{ year} \approx 3.15 \times 10^7\text{ s}$, $10^{17}\text{ Btu/year} \approx 3.35 \times 10^9\text{ kW}$.</li>
+  </ul>
+</div>
+
+</article>

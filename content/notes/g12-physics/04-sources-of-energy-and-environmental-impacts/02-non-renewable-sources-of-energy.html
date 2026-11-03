@@ -1,0 +1,176 @@
+<!-- tags: Sources of Energy and Environmental Impacts, G12 Physics Myanmar -->
+<!-- Grade 12 Physics textbook, Chapter 4, section 4.3 (pages 44–45) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Sources of Energy and Environmental Impacts">Non-Renewable Sources of Energy</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Finite Geological and Nuclear Reserves</span>
+  <p><strong>Non-renewable energy resources</strong> exist in fixed, finite geological quantities. Once extracted and consumed, they cannot be replenished on a human timescale:</p>
+  <ul>
+    <li><strong>1. Fossil Fuels:</strong> Hydrocarbon deposits formed over hundreds of millions of years from the buried remains of prehistoric plants and microorganisms under intense heat and tectonic pressure:
+      <ul>
+        <li><strong>Coal:</strong> Solid combustible rock formed through <em>coalification</em> of decomposed ancient swamp vegetation. It has high carbon content, is non-uniform across geographical seams, and is widely combusted in thermal power stations and metallurgical blast furnaces.</li>
+        <li><strong>Petroleum (Crude Oil):</strong> Liquid hydrocarbon mixture drilled from underground reservoirs. Fractional distillation yields vital transport fuels (gasoline, kerosene, diesel) and essential <em>petrochemical feedstocks</em> used to manufacture plastics, synthetic fibers, polyurethane, fertilizers, and industrial solvents.</li>
+        <li><strong>Natural Gas:</strong> Composed predominantly of methane ($\mathrm{CH_4}$). Found trapped above oil deposits or in dedicated shale and gas reservoirs. It burns cleaner than coal or oil with lower carbon dioxide emissions per unit of heat generated.</li>
+      </ul>
+    </li>
+    <li><strong>2. Nuclear Energy:</strong> Energy released from the binding forces inside atomic nuclei during controlled <strong>nuclear fission</strong> reactions (primarily involving uranium-235 or plutonium-239 isotopes):
+      <ul>
+        <li><strong>Non-renewable nature:</strong> Uranium ore deposits in the Earth's crust are finite and non-replenishable.</li>
+        <li><strong>High Energy Density:</strong> Complete fission of $1\mathrm{kg}$ of uranium-235 produces roughly $20\text{ to }30\text{ million times}$ more energy than combusting $1\mathrm{kg}$ of coal.</li>
+        <li><strong>Key Applications:</strong>
+          <ul>
+            <li><strong>Electricity Generation:</strong> Controlled chain reactions in nuclear reactors boil pressurized water to generate high-pressure steam that drives turbogenerators.</li>
+            <li><strong>Marine Propulsion:</strong> Powers submarines, aircraft carriers, and Arctic icebreakers, enabling them to cruise submerged or traverse oceans for 20+ years without refueling.</li>
+            <li><strong>Medical and Agricultural Radioisotopes:</strong> By-products of nuclear reactors provide radioisotopes for cancer radiotherapy (e.g. Cobalt-60), diagnostic imaging (Technetium-99m), food sterilization, and tracer research.</li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formulas &mdash; Energy Density and Nuclear Fission</span>
+  <div class="formula-main">
+    $$\text{Mass-Energy Equivalence: } E = \Delta m \, c^2 \qquad\qquad {}^{235}_{\ 92}\text{U} + {}^1_0\text{n} \longrightarrow {}^{141}_{\ 56}\text{Ba} + {}^{92}_{36}\text{Kr} + 3\ {}^1_0\text{n} + 200\text{ MeV}$$
+  </div>
+  <ul class="symbols">
+    <li>$\Delta m$ = mass defect converted to energy ($\mathrm{kg}$)</li>
+    <li>$c = 3.0 \times 10^8\mathrm{m\,s^{-1}}$ = speed of light in vacuum</li>
+    <li>$1\mathrm{eV} = 1.6 \times 10^{-19}\mathrm{J} \implies 1\mathrm{MeV} = 1.6 \times 10^{-13}\mathrm{J}$</li>
+    <li>Each fission of a single U-235 nucleus releases approximately $200\text{ MeV} \approx 3.2 \times 10^{-11}\text{ J}$</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Visualization &mdash; Nuclear Fission Chain Reaction</span>
+  <p class="demo-instruction">Click "Initiate Fission" to trigger an incident neutron hitting a Uranium-235 nucleus. Observe how the splitting nucleus releases large amounts of energy alongside 3 prompt neutrons that go on to induce a sustained chain reaction.</p>
+
+  <div id="fission-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
+
+  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
+    <button id="btn-fission" class="btn" style="padding: 0.4rem 1.2rem; font-weight: 600; background: #0284c7; color: white; border-radius: 6px; border: none; cursor: pointer;">Initiate Fission</button>
+    <button id="btn-reset" class="btn" style="padding: 0.4rem 1rem; font-weight: 600; background: #64748b; color: white; border-radius: 6px; border: none; cursor: pointer;">Reset Reaction</button>
+    <span id="fission-stat" style="font-size: 0.9rem; font-weight: 600; color: #38bdf8;">Status: Ready for neutron strike</span>
+  </div>
+
+  <script>
+  (function() {
+    let board = JXG.JSXGraph.initBoard('fission-board', {
+      boundingbox: [-2, 6, 10, -6],
+      axis: false,
+      showNavigation: false,
+      showCopyright: false
+    });
+
+    let elements = [];
+
+    function drawInitial() {
+      board.suspendUpdate();
+      for (let el of elements) board.removeObject(el);
+      elements = [];
+
+      // Target U-235 nucleus at (3, 0)
+      let u235 = board.create('circle', [[3, 0], 1.2], {
+        fillColor: '#8b5cf6',
+        fillOpacity: 0.8,
+        strokeColor: '#c084fc',
+        strokeWidth: 2
+      });
+      let uText = board.create('text', [3, 0, 'U-235'], { color: '#ffffff', fontSize: 13, anchorX: 'middle', anchorY: 'middle', fontWeight: 'bold' });
+      elements.push(u235, uText);
+
+      // Incoming incident neutron at (0, 0)
+      let neutron = board.create('circle', [[0, 0], 0.25], {
+        fillColor: '#38bdf8',
+        fillOpacity: 1,
+        strokeColor: '#0284c7',
+        strokeWidth: 1.5
+      });
+      let nArrow = board.create('arrow', [[0, 0], [1.5, 0]], { strokeColor: '#38bdf8', strokeWidth: 2 });
+      let nText = board.create('text', [0, 0.5, 'Incident Neutron (n)'], { color: '#38bdf8', fontSize: 11 });
+      elements.push(neutron, nArrow, nText);
+
+      board.unsuspendUpdate();
+    }
+
+    drawInitial();
+
+    document.getElementById('btn-fission').addEventListener('click', function() {
+      board.suspendUpdate();
+      for (let el of elements) board.removeObject(el);
+      elements = [];
+
+      // Fission fragments
+      // Ba-141 (upward-right)
+      let ba = board.create('circle', [[5, 2.5], 0.8], { fillColor: '#10b981', fillOpacity: 0.85, strokeColor: '#34d399', strokeWidth: 2 });
+      let baText = board.create('text', [5, 2.5, 'Ba-141'], { color: '#ffffff', fontSize: 11, anchorX: 'middle', anchorY: 'middle', fontWeight: 'bold' });
+
+      // Kr-92 (downward-right)
+      let kr = board.create('circle', [[5, -2.5], 0.65], { fillColor: '#f59e0b', fillOpacity: 0.85, strokeColor: '#fbbf24', strokeWidth: 2 });
+      let krText = board.create('text', [5, -2.5, 'Kr-92'], { color: '#ffffff', fontSize: 11, anchorX: 'middle', anchorY: 'middle', fontWeight: 'bold' });
+
+      // Energy burst in center
+      let burst = board.create('text', [3, 0, '+200 MeV Energy!'], { color: '#f87171', fontSize: 14, fontWeight: 'bold', anchorX: 'middle', anchorY: 'middle' });
+
+      // 3 secondary neutrons
+      let n1 = board.create('circle', [[7, 4], 0.2], { fillColor: '#38bdf8', fillOpacity: 1, strokeWidth: 0 });
+      let a1 = board.create('arrow', [[3, 0], [7, 4]], { strokeColor: '#38bdf8', strokeWidth: 2, dash: 1 });
+      let n2 = board.create('circle', [[7.5, 0], 0.2], { fillColor: '#38bdf8', fillOpacity: 1, strokeWidth: 0 });
+      let a2 = board.create('arrow', [[3, 0], [7.5, 0]], { strokeColor: '#38bdf8', strokeWidth: 2, dash: 1 });
+      let n3 = board.create('circle', [[7, -4], 0.2], { fillColor: '#38bdf8', fillOpacity: 1, strokeWidth: 0 });
+      let a3 = board.create('arrow', [[3, 0], [7, -4]], { strokeColor: '#38bdf8', strokeWidth: 2, dash: 1 });
+
+      let secText = board.create('text', [7.8, 0, '3 fast neutrons trigger next fission'], { color: '#38bdf8', fontSize: 11 });
+
+      elements.push(ba, baText, kr, krText, burst, n1, a1, n2, a2, n3, a3, secText);
+      board.unsuspendUpdate();
+
+      document.getElementById('fission-stat').textContent = 'Status: Fission complete! 200 MeV released + 3 neutrons';
+      document.getElementById('fission-stat').style.color = '#4ade80';
+    });
+
+    document.getElementById('btn-reset').addEventListener('click', function() {
+      drawInitial();
+      document.getElementById('fission-stat').textContent = 'Status: Ready for neutron strike';
+      document.getElementById('fission-stat').style.color = '#38bdf8';
+    });
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Reviewed Exercises &mdash; Non-Renewable Energy Characteristics</span>
+
+  <div class="example-item">
+    <p class="example-title"><strong>Exercise 1:</strong> What are the main characteristics of fossil fuels?</p>
+    <p class="solution"><strong>Answer:</strong>
+      <ul>
+        <li><strong>High Chemical Energy Density:</strong> Concentrated carbon-hydrogen bonds release large amounts of heat upon combustion.</li>
+        <li><strong>Finite and Non-Renewable:</strong> Formed over geological epochs (hundreds of millions of years); cannot be restored within human lifetimes.</li>
+        <li><strong>Versatile Uses:</strong> Provide fuel for thermal electricity, ground/air/marine transport, and raw chemical feedstocks for plastics, fertilizers, and pharmaceuticals.</li>
+        <li><strong>Environmental Pollutants:</strong> Combustion releases greenhouse gases ($\mathrm{CO_2}$, $\mathrm{CH_4}$), sulfur dioxide ($\mathrm{SO_2}$), and nitrogen oxides ($\mathrm{NO_x}$), causing global warming and acid rain.</li>
+      </ul>
+    </p>
+  </div>
+
+  <div class="example-item">
+    <p class="example-title"><strong>Exercise 2:</strong> Why is nuclear energy classified as a non-renewable resource despite releasing zero carbon dioxide during operation?</p>
+    <p class="solution"><strong>Answer:</strong> Nuclear power relies on fissile mineral fuel, primarily Uranium-235 ($^{235}\text{U}$), which exists in limited, exhaustible ore deposits inside the Earth's crust. Once uranium atoms undergo fission in reactor cores, they are consumed and cannot be regenerated by natural cycles. Hence, nuclear energy is technically non-renewable.</p>
+  </div>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>Fossil fuels (coal, oil, natural gas) store prehistoric solar chemical energy in carbon bonds.</li>
+    <li>Petroleum refining produces essential petrochemical precursors for polymers, plastics, and solvents.</li>
+    <li>Natural gas (methane) has lower carbon emissions per unit heat than coal and oil.</li>
+    <li>Nuclear fission provides high-density, carbon-free baseload electricity, marine propulsion, and diagnostic radioisotopes.</li>
+    <li>Both fossil fuels and uranium are non-renewable because their finite deposits cannot replenish within human timescales.</li>
+  </ul>
+</div>
+
+</article>
