@@ -1,0 +1,234 @@
+<!-- tags: Electric Force and Field -->
+<!-- =====================================================================
+     NOTE: Uniform Fields and Charged Particles
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Electric Force and Field">Uniform Fields and Charged Particles</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Between charged plates the field is the same everywhere, so a particle moves like a falling ball</h2>
+    <p><strong>A charged plane.</strong> Spread charge evenly over a large flat sheet. Each bit of charge sends field out in all directions. Next to the sheet, the sideways parts from neighbouring bits cancel, leaving only the part <strong>perpendicular</strong> to the sheet. The field lines are straight and evenly spaced, and they stay that way however far you go. A field that is the same size and direction everywhere is called a <strong>uniform field</strong>. Two parallel plates with $+Q$ and $-Q$ make a uniform field between them.</p>
+    <p><strong>Same maths as gravity.</strong> Near the ground, gravity is a uniform field too:</p>
+    <ul>
+      <li>gravity: force $mg$; lifting through height $h$ takes work $mgh$, so $U = mgh$;</li>
+      <li>uniform field: force $qE$; moving against the field through distance $d$ takes work $qEd$, so $U = qEd$.</li>
+    </ul>
+    <p>For $q = +1$ C the energy $Ed$ is the potential difference, so $V = Ed$. Also $U = qV$, the same rule as for point charges.</p>
+    <p><strong>A charged particle between plates</strong> feels a constant force $qE$, so it has a constant acceleration $a = qE/m$. It moves exactly like an object in free fall, so all the constant-acceleration formulas work. Gravity also acts, but for an electron or a proton it is millions of times smaller than $qE$, so we ignore it. (A charged steel ball is a different story: there gravity often matters.)</p>
+  </section>
+
+  <!-- FORMULA: uniform field relations -->
+  <div class="note-formula">
+    <h3>In a uniform field</h3>
+    <div class="formula-main">$$V = Ed \qquad U = qV \qquad a = \frac{qE}{m} \qquad \tfrac12 mv^2 = qV$$</div>
+    <p class="symbols">$E$: field (N/C = V/m). $d$: distance measured along the field (m). $V$: potential difference across that distance (V). The last formula gives the speed of a particle that starts at rest and crosses a potential difference $V$.</p>
+  </div>
+
+  <!-- PROOF: speed from energy and from kinematics agree -->
+  <div class="note-proof">
+    <ol>
+      <li>A particle (charge $q$, mass $m$) starts at rest at one plate and crosses the gap $d$ to the other.</li>
+      <li>Kinematics: $d = \tfrac12 at^2$ gives $t = \sqrt{\dfrac{2md}{qE}}$, and then $v = at = \dfrac{qE}{m}\sqrt{\dfrac{2md}{qE}} = \sqrt{\dfrac{2qEd}{m}}$.</li>
+      <li>Energy: the field does work $qEd = qV$, which becomes kinetic energy: $\tfrac12 mv^2 = qEd$, so again $v = \sqrt{\dfrac{2qEd}{m}}$.</li>
+      <li>Both routes agree. If you only need the speed, energy is faster. If you need the time, use kinematics.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: particle between plates; code at the bottom -->
+  <div class="note-demo">
+    <h2>Plates 0.020 m apart. Released from rest (the motion is slowed down)</h2>
+    <div class="controls choices" id="ufChoices">
+      <button type="button" data-p="proton" class="active">proton</button>
+      <button type="button" data-p="electron">electron</button>
+    </div>
+    <div class="controls">
+      <label>voltage $V$ (V) = <input type="range" id="ufV" min="50" max="200" step="50" value="100"></label>
+    </div>
+    <canvas id="ufCanvas"></canvas>
+    <div class="output table-text" id="ufOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Two parallel plates 0.010 m apart are connected to 200 V. Find the field between them.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$E = V/d = 200/0.010$.</li>
+      </ol>
+      <p class="answer">$E = 2.0 \times 10^{4}$ V/m (N/C)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">An electron starts at rest and is accelerated through 100 V. Find its kinetic energy and speed. (electron mass $9.1 \times 10^{-31}$ kg)</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\tfrac12 mv^2 = eV = 1.6 \times 10^{-19} \times 100 = 1.6 \times 10^{-17}$ J.</li>
+        <li>$v = \sqrt{\dfrac{2 \times 1.6 \times 10^{-17}}{9.1 \times 10^{-31}}} = \sqrt{3.5 \times 10^{13}}$.</li>
+      </ol>
+      <p class="answer">$1.6 \times 10^{-17}$ J; $v \approx 5.9 \times 10^{6}$ m/s</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A proton is released at the positive plate. The plates are 0.020 m apart at 100 V. Find its acceleration and the time to reach the other plate. (proton mass $1.67 \times 10^{-27}$ kg)</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$E = 100/0.020 = 5.0 \times 10^{3}$ N/C, so $a = \dfrac{qE}{m} = \dfrac{1.6 \times 10^{-19} \times 5.0 \times 10^{3}}{1.67 \times 10^{-27}} \approx 4.8 \times 10^{11}$ m/s².</li>
+        <li>$t = \sqrt{2d/a} = \sqrt{\dfrac{0.040}{4.8 \times 10^{11}}} \approx 2.9 \times 10^{-7}$ s.</li>
+      </ol>
+      <p class="answer">$a \approx 4.8 \times 10^{11}$ m/s²; $t \approx 2.9 \times 10^{-7}$ s</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">In Example 3, compare the electric force on the proton with its weight. ($g = 9.8$ m/s²)</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$qE = 1.6 \times 10^{-19} \times 5.0 \times 10^{3} = 8.0 \times 10^{-16}$ N.</li>
+        <li>$mg = 1.67 \times 10^{-27} \times 9.8 \approx 1.6 \times 10^{-26}$ N.</li>
+        <li>Ratio $\approx 5 \times 10^{10}$: gravity is negligible.</li>
+      </ol>
+      <p class="answer">The electric force is about $5 \times 10^{10}$ times the weight</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">A particle (mass $m$, charge $q > 0$) is released from rest at the positive plate of a pair $d$ apart with a uniform field $E$. Find (1) its acceleration, (2) the time to reach the negative plate, (3) its speed there.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>(1) Equation of motion, taking the field direction as positive: $ma = qE$, so $a = qE/m$. It is constant: this is "free fall".</li>
+        <li>(2) $d = \tfrac12 at^2$, so $t = \sqrt{2md/(qE)}$.</li>
+        <li>(3) Energy: $qEd = \tfrac12 mv^2$, so $v = \sqrt{2qEd/m}$ (the same as $v = at$).</li>
+      </ol>
+      <p class="answer">$a = \dfrac{qE}{m}$, $t = \sqrt{\dfrac{2md}{qE}}$, $v = \sqrt{\dfrac{2qEd}{m}}$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: V = Ed limits -->
+  <div class="note-warning">
+    $V = Ed$ works only in a <strong>uniform</strong> field, and $d$ must be measured <strong>along</strong> the field. Moving parallel to the plates (across the field) does not change the potential.
+  </div>
+
+  <!-- TIP: energy first -->
+  <div class="note-tip">
+    If a question asks only for a <em>speed</em>, use energy ($\tfrac12 mv^2 = qV$) straight away. Use acceleration and kinematics only when it asks for a <em>time</em>.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Parallel plates: uniform field, $V = Ed$, $U = qV$.</li>
+      <li>Charged particle: $a = qE/m$, constant, like free fall.</li>
+      <li>Speed after crossing $V$: $\tfrac12 mv^2 = qV$; ignore gravity for particles.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Particle between plates" demo (the TRY IT block above).
+  // Top plate positive (y = 60), bottom plate negative (y = 280); field points down.
+  // A proton starts at rest on the top plate and moves down; an electron starts
+  // on the bottom plate and moves up. Real trip times are tiny, so every trip is
+  // shown in 2 s of screen time (then a 1 s pause). Constant acceleration means
+  // distance ∝ time², so the particle covers d × (τ/2)² after τ seconds of screen time.
+  // The readout gives the real E, a, t and v from the formulas.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('ufCanvas');
+    const output = document.getElementById('ufOutput');
+    const vBox = document.getElementById('ufV');
+    const YTOP = 60, YBOT = 280, D = 0.020, E_CHARGE = 1.6e-19;
+    const MASS = { proton: 1.67e-27, electron: 9.1e-31 };
+    const RED = '#dc2626', BLUE = '#2563eb', GREEN = '#16a34a', THING = '#475569';
+    let kind = 'proton', tau = 0, lastText = '';
+
+    function arrow(g, p, q, col, w) {
+      if (NoteGeom.dist(p, q) < 2) return;
+      g.seg(p, q, col, { width: w });
+      const a = Math.atan2(q[1] - p[1], q[0] - p[0]);
+      for (const s of [-1, 1]) g.seg(q, [q[0] - 9 * Math.cos(a + s * 0.45), q[1] - 9 * Math.sin(a + s * 0.45)], col, { width: w });
+    }
+
+    // ×10ⁿ formatting, two significant figures
+    const SUP = { '-': '⁻', 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴', 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹' };
+    function sci(x) {
+      let e = Math.floor(Math.log10(Math.abs(x))), m = (x / 10 ** e).toFixed(1);
+      if (Math.abs(Number(m)) >= 10) { e += 1; m = (x / 10 ** e).toFixed(1); }
+      return `${m} × 10${String(e).split('').map((c) => SUP[c]).join('')}`;
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        // plates and their charges
+        g.poly([[60, YTOP - 8], [460, YTOP - 8], [460, YTOP], [60, YTOP]], RED);
+        g.poly([[60, YBOT], [460, YBOT], [460, YBOT + 8], [60, YBOT + 8]], BLUE);
+        for (let x = 80; x <= 440; x += 40) {
+          g.text([x, YTOP - 20], '+', RED);
+          g.text([x, YBOT + 22], '−', BLUE);
+        }
+        // the uniform field: equal, parallel arrows
+        for (let x = 100; x <= 420; x += 80) if (x !== 260) arrow(g, [x, YTOP + 20], [x, YBOT - 20], '#cbd5e1', 2);
+        g.text([470, 170], 'E', '#94a3b8');
+
+        // the particle: fraction s of the gap covered after tau seconds (tau ≤ 2)
+        const s = Math.min(tau / 2, 1) ** 2;
+        const down = kind === 'proton';
+        const y = down ? YTOP + 12 + s * (YBOT - YTOP - 24) : YBOT - 12 - s * (YBOT - YTOP - 24);
+        const vlen = 80 * Math.min(tau / 2, 1);              // speed grows in proportion to time
+        arrow(g, [260, y], [260, y + (down ? vlen : -vlen)], GREEN, 3);
+        g.circle([260, y], 10, '#ffffff', { fill: down ? RED : BLUE });
+        g.text([260, y], down ? '+' : '−', '#ffffff');
+        g.text([300, y], kind, THING);
+
+        const V = Number(vBox.value), E = V / D, m = MASS[kind];
+        const a = E_CHARGE * E / m, t = Math.sqrt(2 * D / a), v = Math.sqrt(2 * E_CHARGE * V / m);
+        const text =
+          `E = V/d = ${V}/0.020 = ${sci(E)} N/C (${down ? 'proton pushed along E' : 'electron pushed against E'})\n` +
+          `a = eE/m = ${sci(a)} m/s²,  t = √(2d/a) = ${sci(t)} s\n` +
+          `v = √(2eV/m) = ${sci(v)} m/s  (gravity ignored)`;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Screen clock: 2 s of motion then 1 s at the far plate. Stop when the page has changed.
+    let last = performance.now();
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.max(0, Math.min((now - last) / 1000, 0.05));
+      last = now;
+      tau += dt;
+      if (tau > 3) tau = 0;
+      board.redraw();
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    document.querySelectorAll('#ufChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#ufChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      kind = b.dataset.p;
+      tau = 0;
+      board.redraw();
+    }));
+    vBox.addEventListener('input', () => { tau = 0; board.redraw(); });
+  })();
+</script>

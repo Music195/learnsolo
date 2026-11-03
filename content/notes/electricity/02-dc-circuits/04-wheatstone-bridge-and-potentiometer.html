@@ -1,0 +1,237 @@
+<!-- tags: DC Circuits -->
+<!-- =====================================================================
+     NOTE: Wheatstone Bridge and Potentiometer
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="DC Circuits">Wheatstone Bridge and Potentiometer</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>When a meter reads zero, its two ends are at the same potential, and that gives a ratio</h2>
+    <p><strong>Wheatstone bridge.</strong> Two paths run side by side between the same two points: $R_1$ then $R_3$ on one, $R_2$ then $R_4$ on the other. A "bridge" (a galvanometer, or a resistor $R_5$) joins their midpoints. Adjust a resistor until <strong>no current crosses the bridge</strong>. Then:</p>
+    <ul>
+      <li>no current through the bridge means no potential difference across it, so both midpoints share a colour;</li>
+      <li>so $R_1$ and $R_2$ have equal drops, and so do $R_3$ and $R_4$;</li>
+      <li>this gives $\dfrac{R_1}{R_3} = \dfrac{R_2}{R_4}$, which is easy to remember as the four resistors in the same positions as on the diagram.</li>
+    </ul>
+    <p>Look for this shape even when the diagram isn't drawn as a diamond. A plain rectangle with a cross-link is the same circuit.</p>
+    <p><strong>Potentiometer.</strong> A uniform resistance wire AB carries a steady current $I$ from a driver cell. A cell to be tested is connected, through a galvanometer, between A and a sliding contact C. Slide C until the galvanometer reads zero. Then the test cell has no current, so no voltage is lost inside it: its emf exactly equals the drop along AC, which is proportional to the length AC. Do this with a known cell $E_0$ (balance length $L_0$) and an unknown cell $E$ (balance length $L$): $E/E_0 = L/L_0$.</p>
+  </section>
+
+  <!-- FORMULA: bridge and potentiometer -->
+  <div class="note-formula">
+    <h3>Balance conditions</h3>
+    <div class="formula-main">$$\frac{R_1}{R_3} = \frac{R_2}{R_4}\ \ (\text{i.e. } R_1R_4 = R_2R_3) \qquad E = \frac{L}{L_0}E_0$$</div>
+    <p class="symbols">Bridge: $R_1$, $R_3$ on one path, $R_2$, $R_4$ on the other, no current through the bridge. Potentiometer: $L_0$, $L$ = balance lengths for the known emf $E_0$ and the unknown emf $E$.</p>
+  </div>
+
+  <!-- PROOF: both balance conditions -->
+  <div class="note-proof">
+    <ol>
+      <li><strong>Bridge.</strong> With no bridge current, $R_1$ and $R_3$ carry the same current $I$; $R_2$ and $R_4$ carry the same current $I'$.</li>
+      <li>The midpoints are at equal potential, so the drops from the top match: $R_1I = R_2I'$. Same for the drops to the bottom: $R_3I = R_4I'$.</li>
+      <li>Divide: $\dfrac{R_1}{R_3} = \dfrac{R_2}{R_4}$. The unknown currents cancel.</li>
+      <li><strong>Potentiometer.</strong> Let the wire have resistance $r$ per metre. At balance with no test current, $E_0 = rL_0I$ and $E = rLI$. Divide: $E/E_0 = L/L_0$. Here $r$, $I$ and the test cells' internal resistances all cancel.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: bridge; code at the bottom -->
+  <div class="note-demo">
+    <h2>12 V cell; R₁ = 10 Ω, R₂ = 20 Ω, R₃ = 30 Ω; galvanometer 10 Ω. Adjust R₄</h2>
+    <div class="controls">
+      <label>$R_4$ (Ω) = <input type="range" id="wbR" min="10" max="120" step="5" value="40"></label>
+    </div>
+    <canvas id="wbCanvas"></canvas>
+    <div class="output table-text" id="wbOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">In the demo bridge, find $R_4$ that makes the galvanometer read zero.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$R_1R_4 = R_2R_3$: $10R_4 = 20 \times 30$.</li>
+      </ol>
+      <p class="answer">$R_4 = 60$ Ω (try it on the slider)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">With the bridge balanced as in Example 1, find the current drawn from the 12 V cell. (Ignore its internal resistance.)</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>No bridge current, so the bridge can be removed: two separate paths.</li>
+        <li>Path 1: $10 + 30 = 40$ Ω, so 0.30 A. Path 2: $20 + 60 = 80$ Ω, so 0.15 A.</li>
+      </ol>
+      <p class="answer">0.45 A</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A metre bridge: an unknown resistor $X$ and a 20 Ω resistor are in the two gaps; a 100 cm uniform wire forms the other two arms. Balance is 60 cm from the end next to $X$. Find $X$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The wire's resistance is proportional to length, so the two wire arms are in ratio 60 : 40.</li>
+        <li>$\dfrac{X}{20} = \dfrac{60}{40}$.</li>
+      </ol>
+      <p class="answer">$X = 30$ Ω</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">A potentiometer balances a known 100 V cell at AC = 50 cm. An unknown cell balances at 40 cm. Find its emf.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$E = \dfrac{L}{L_0}E_0 = \dfrac{40}{50} \times 100$.</li>
+      </ol>
+      <p class="answer">$E = 80$ V</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">A standard cell of 1.02 V balances at 51.0 cm; a dry cell balances at 75.0 cm. Find the dry cell's emf. Why doesn't its internal resistance matter?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$E = \dfrac{75.0}{51.0} \times 1.02 = 1.50$ V.</li>
+        <li>At balance no current flows through the dry cell, so its internal resistance drops no voltage ($rI = 0$). We measure the true emf, which an ordinary voltmeter (which draws some current) can't do.</li>
+      </ol>
+      <p class="answer">1.50 V; no current through it at balance</p>
+    </details>
+  </div>
+
+  <!-- WARNING: only at balance -->
+  <div class="note-warning">
+    $R_1/R_3 = R_2/R_4$ is true <strong>only when the bridge current is zero</strong>. If the bridge carries current, use Kirchhoff's laws instead.
+  </div>
+
+  <!-- TIP: zero current → same colour -->
+  <div class="note-tip">
+    Whenever a question says "the galvanometer reads zero", colour both ends of that branch the same. That one step usually solves the problem.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Balanced bridge: the midpoints share a potential, so $R_1/R_3 = R_2/R_4$.</li>
+      <li>Potentiometer: $E/E_0 = L/L_0$; at balance no current, so internal resistance doesn't matter.</li>
+      <li>Zero current in a branch → no potential difference across its resistors.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Wheatstone bridge" demo (the TRY IT block above).
+  // Top wire T at 12 V, bottom wire B at 0 V (the cell is on the left).
+  // Path 1 (x = 170): R₁ from T to M₁, R₃ from M₁ to B.
+  // Path 2 (x = 350): R₂ from T to M₂, R₄ (slider) from M₂ to B.
+  // The galvanometer (10 Ω) joins M₁ and M₂. Kirchhoff's first law at M₁ and M₂:
+  //   (E − a)/R₁ = a/R₃ + (a − b)/Rg   and   (E − b)/R₂ = b/R₄ + (b − a)/Rg,
+  // two equations for the unknown potentials a (at M₁) and b (at M₂), solved directly.
+  // Wires are coloured by potential: at balance M₁ and M₂ get the same colour.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('wbCanvas');
+    const output = document.getElementById('wbOutput');
+    const rBox = document.getElementById('wbR');
+    const E = 12, R1 = 10, R2 = 20, R3 = 30, RG = 10;
+    const DARK = '#0f172a', ORANGE = '#ea580c';
+    const COLS = ['#dc2626', '#2563eb', '#16a34a', '#ca8a04'];   // highest potential first
+    let lastText = '';
+
+    function wire(g, pts, col) {
+      for (let i = 1; i < pts.length; i++) g.seg(pts[i - 1], pts[i], col, { width: 4 });
+    }
+    // side = -1 puts the label on the left of the zigzag, +1 on the right;
+    // the right-hand label is longer ("R₄ = 40"), so it sits further out
+    function resistor(g, p, q, label, side = -1) {
+      const L = NoteGeom.dist(p, q), u = [(q[0] - p[0]) / L, (q[1] - p[1]) / L], n = [-u[1], u[0]];
+      let prev = p;
+      for (let k = 0; k < 6; k++) {
+        const t = (k + 0.5) / 6 * L, s = k % 2 ? -8 : 8;
+        const pt = [p[0] + u[0] * t + n[0] * s, p[1] + u[1] * t + n[1] * s];
+        g.seg(prev, pt, DARK, { width: 2 });
+        prev = pt;
+      }
+      g.seg(prev, q, DARK, { width: 2 });
+      g.text([(p[0] + q[0]) / 2 + (side < 0 ? -34 : 46), (p[1] + q[1]) / 2], label, DARK);
+    }
+    function arrow(g, p, q, col) {
+      g.seg(p, q, col, { width: 2.5 });
+      const a = Math.atan2(q[1] - p[1], q[0] - p[0]);
+      for (const s of [-1, 1]) g.seg(q, [q[0] - 9 * Math.cos(a + s * 0.45), q[1] - 9 * Math.sin(a + s * 0.45)], col, { width: 2.5 });
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const R4 = Number(rBox.value);
+        // solve  A11 a + A12 b = c1,  A21 a + A22 b = c2  by Cramer's rule
+        const A11 = 1 / R1 + 1 / R3 + 1 / RG, A12 = -1 / RG, c1 = E / R1;
+        const A21 = -1 / RG, A22 = 1 / R2 + 1 / R4 + 1 / RG, c2 = E / R2;
+        const det = A11 * A22 - A12 * A21;
+        const a = (c1 * A22 - A12 * c2) / det, b = (A11 * c2 - c1 * A21) / det;
+        const Ig = (a - b) / RG;
+
+        const key = (x) => Math.round(x * 100) / 100;
+        const levels = [...new Set([E, a, b, 0].map(key))].sort((x, y) => y - x);
+        const col = (x) => COLS[levels.indexOf(key(x))];
+
+        // cell on the left (+ at the top) and the two rails
+        wire(g, [[40, 165], [40, 60], [350, 60], [350, 80]], col(E));
+        wire(g, [[170, 60], [170, 80]], col(E));
+        wire(g, [[40, 175], [40, 290], [350, 290], [350, 270]], col(0));
+        wire(g, [[170, 290], [170, 270]], col(0));
+        g.seg([22, 165], [58, 165], DARK, { width: 2 });
+        g.seg([31, 175], [49, 175], DARK, { width: 5 });
+        g.text([72, 170], '12 V', DARK);
+
+        // the two paths and their midpoints
+        wire(g, [[170, 140], [170, 210]], col(a));
+        wire(g, [[350, 140], [350, 210]], col(b));
+        resistor(g, [170, 80], [170, 140], 'R₁');
+        resistor(g, [170, 210], [170, 270], 'R₃');
+        resistor(g, [350, 80], [350, 140], 'R₂');
+        resistor(g, [350, 210], [350, 270], `R₄ = ${R4}`, 1);
+
+        // the bridge with the galvanometer
+        wire(g, [[170, 175], [242, 175]], col(a));
+        wire(g, [[278, 175], [350, 175]], col(b));
+        g.circle([260, 175], 18, DARK, { fill: '#ffffff', width: 2 });
+        g.text([260, 175], 'G', DARK);
+        if (Math.abs(Ig) > 1e-4) {
+          const right = Ig > 0;
+          arrow(g, [right ? 225 : 295, 205], [right ? 295 : 225, 205], ORANGE);
+        }
+        g.text([260, 228], `${(Math.abs(Ig) * 1000).toFixed(1)} mA`, ORANGE);
+        g.text([150, 175], 'M₁', DARK);
+        g.text([372, 175], 'M₂', DARK);
+
+        const balanced = Math.abs(Ig) < 1e-4;
+        const text =
+          `R₁R₄ = 10 × ${R4} = ${R1 * R4},  R₂R₃ = 20 × 30 = ${R2 * R3}  →  ${balanced ? 'equal: BALANCED' : 'not equal'}\n` +
+          `potential of M₁ = ${a.toFixed(2)} V,  of M₂ = ${b.toFixed(2)} V\n` +
+          `galvanometer current = (V_M₁ − V_M₂)/10 Ω = ${(Ig * 1000).toFixed(1)} mA`;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    rBox.addEventListener('input', () => board.redraw());
+  })();
+</script>

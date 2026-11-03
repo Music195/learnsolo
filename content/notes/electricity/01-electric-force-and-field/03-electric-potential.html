@@ -1,0 +1,221 @@
+<!-- tags: Electric Force and Field -->
+<!-- =====================================================================
+     NOTE: Electric Potential
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Electric Force and Field">Electric Potential</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Potential is the potential energy of +1 C, and it adds as plain numbers</h2>
+    <p><strong>Potential energy.</strong> Take a charge $q$ from very far away ("infinity", where the force is zero) and push it slowly to a distance $r$ from a charge $Q$. If both are positive, you must push against the repulsion; the work you do is stored as <strong>electric potential energy</strong>. Taking infinity as the zero level, it works out to $U = kQq/r$. This is the same calculation as for gravitational potential energy.</p>
+    <p><strong>Potential</strong> $V$ is the potential energy that <strong>+1 C</strong> would have at a point: $V = U/q$, so $U = qV$. Its unit is the volt (V = J/C). For a point charge, $V = kQ/r$.</p>
+    <p>Potential and energy are <strong>scalars</strong>: no direction. But a scalar can still be negative, just as a temperature can be −20 °C. So:</p>
+    <ul>
+      <li>put charges in <strong>with their signs</strong>: near a negative charge the potential is negative;</li>
+      <li>with several charges, just <strong>add the numbers</strong>. No arrows, no parallelogram.</li>
+    </ul>
+    <p>Compare this with force and field. They are vectors: their formulas give sizes only, and you add them as arrows.</p>
+  </section>
+
+  <!-- FORMULA: energy and potential -->
+  <div class="note-formula">
+    <h3>Potential energy and potential of a point charge (zero at infinity)</h3>
+    <div class="formula-main">$$U = k\frac{Qq}{r} \qquad V = k\frac{Q}{r} \qquad U = qV$$</div>
+    <p class="symbols">$U$: potential energy of $q$ (J). $V$: potential (V). Charges go in with their signs. Moving $q$ slowly from potential $V_A$ to $V_B$ takes work $W = q(V_B - V_A)$ by the outside force. $U = qV$ holds for any field; the $kQ/r$ forms only for point charges.</p>
+  </div>
+
+  <!-- PROOF: integrate the work from infinity -->
+  <div class="note-proof">
+    <ol>
+      <li>Put $Q$ at the origin and $q$ on the $x$-axis. Both positive: the repulsion is $kQq/x^2$ in the $+x$ direction.</li>
+      <li>Move $q$ slowly in from infinity. The outside force must balance the repulsion, so it is $-kQq/x^2$ (pointing in $-x$).</li>
+      <li>Work done from $\infty$ to $r$: $W = \displaystyle\int_{\infty}^{r} \left(-\frac{kQq}{x^2}\right)dx = \left[\frac{kQq}{x}\right]_{\infty}^{r} = \frac{kQq}{r} - 0$.</li>
+      <li>This work is stored, so $U(r) = kQq/r$ with $U(\infty) = 0$. Dividing by $q$: $V = kQ/r$.</li>
+      <li>Memory hook: the energy formulas came from <em>integrating</em> $1/x^2$, so they have $r$, not $r^2$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: potential map; code at the bottom -->
+  <div class="note-demo">
+    <h2>Drag P. Red: positive potential, blue: negative. Charges 1.0 nC, 1.0 m apart</h2>
+    <div class="controls choices" id="epChoices">
+      <button type="button" data-s="1,-1" class="active">+Q and −Q</button>
+      <button type="button" data-s="1,1">+Q and +Q</button>
+    </div>
+    <canvas id="epCanvas"></canvas>
+    <div class="output table-text" id="epOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find the potential 0.20 m from a charge of $+3.0 \times 10^{-9}$ C.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$V = 9.0 \times 10^{9} \times \dfrac{3.0 \times 10^{-9}}{0.20} = \dfrac{27}{0.20}$.</li>
+      </ol>
+      <p class="answer">$V = 135$ V</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">A charge of $+2.0 \times 10^{-6}$ C sits at the point of Example 1. Find its potential energy. What if the source charge were $-3.0 \times 10^{-9}$ C instead?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$U = qV = 2.0 \times 10^{-6} \times 135 = 2.7 \times 10^{-4}$ J.</li>
+        <li>With $-3.0 \times 10^{-9}$ C the potential is $-135$ V, so $U = -2.7 \times 10^{-4}$ J. Negative: the charges attract, and you would have to do work to pull them apart.</li>
+      </ol>
+      <p class="answer">$+2.7 \times 10^{-4}$ J; $-2.7 \times 10^{-4}$ J</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">How much work must an outside force do to bring $+1.0 \times 10^{-6}$ C slowly from infinity to 0.10 m from a charge of $+2.0 \times 10^{-8}$ C?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Potential there: $V = 9.0 \times 10^{9} \times 2.0 \times 10^{-8}/0.10 = 1800$ V. At infinity, 0.</li>
+        <li>$W = q(V_B - V_A) = 1.0 \times 10^{-6} \times (1800 - 0)$.</li>
+      </ol>
+      <p class="answer">$W = 1.8 \times 10^{-3}$ J</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">$-Q$ is at $(-a, 0)$ and $+Q$ is at $(a, 0)$. Find the potential at A $(0, a)$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Both are $\sqrt2\,a$ away. Add the potentials, with signs.</li>
+        <li>$V = \dfrac{k(+Q)}{\sqrt2 a} + \dfrac{k(-Q)}{\sqrt2 a} = 0$.</li>
+        <li>The field at A is <em>not</em> zero (it is $\sqrt2 kQ/(2a^2)$ to the left), but the potential is. Zero potential does not mean zero field.</li>
+      </ol>
+      <p class="answer">$V = 0$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">Same charges. Find the potential at B $(2a, 0)$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>B is $a$ from $+Q$ and $3a$ from $-Q$.</li>
+        <li>$V = \dfrac{kQ}{a} + \dfrac{k(-Q)}{3a} = \dfrac{3kQ - kQ}{3a}$.</li>
+      </ol>
+      <p class="answer">$V = \dfrac{2kQ}{3a}$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: two different rules -->
+  <div class="note-warning">
+    Force and field: sizes from the formula ($|Q|$), add as <strong>arrows</strong>. Potential and potential energy: put charges in <strong>with signs</strong>, add as <strong>numbers</strong>. Mixing these rules is the most common mistake here.
+  </div>
+
+  <!-- TIP: the side-by-side table -->
+  <div class="note-tip">
+    Learn the four point-charge formulas as a 2 × 2 table. $F = kQq/r^2$ and $E = kQ/r^2$ are vectors with $r^2$. $U = kQq/r$ and $V = kQ/r$ are scalars with $r$. In each row, the second formula is the first divided by $q$. Only $F = qE$ and $U = qV$ work for every kind of field.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$U = kQq/r$ and $V = kQ/r$, zero at infinity; $U = qV$.</li>
+      <li>Potential is a scalar: signed values, simple addition.</li>
+      <li>Work by an outside force: $W = q(V_B - V_A)$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Potential map" demo (the TRY IT block above).
+  // Two 1.0 nC charges sit 1.0 m apart (200 pixels = 1 m). The background is
+  // coloured cell by cell (10 × 10 pixels): red where V > 0, blue where V < 0,
+  // stronger colour for larger |V| (full colour at 60 V). P can be dragged; the
+  // readout adds the two potentials with their signs, V = 9.0/r with r in metres,
+  // and gives the potential energy U = qV of a +2.0 nC charge placed at P.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('epCanvas');
+    const output = document.getElementById('epOutput');
+    const KQ = 9.0, PX = 200, C1 = [160, 170], C2 = [360, 170], CELL = 10, QTEST = 2.0e-9;
+    const RED = '#dc2626', BLUE = '#2563eb', THING = '#475569';
+    let s1 = 1, s2 = -1, cells = [], lastText = '';
+
+    // potential (volts) at pixel point p
+    function pot(p) {
+      const r1 = Math.max(NoteGeom.dist(p, C1), 4) / PX, r2 = Math.max(NoteGeom.dist(p, C2), 4) / PX;
+      return { r1, r2, V1: s1 * KQ / r1, V2: s2 * KQ / r2 };
+    }
+
+    // colour every cell once per choice of signs
+    function makeCells() {
+      cells = [];
+      for (let x = 0; x < 520; x += CELL) {
+        for (let y = 0; y < 340; y += CELL) {
+          const p = pot([x + CELL / 2, y + CELL / 2]), V = p.V1 + p.V2;
+          const a = Math.min(1, Math.abs(V) / 60) * 0.55;
+          if (a > 0.01) cells.push({ x, y, fill: V > 0 ? `rgba(220, 38, 38, ${a})` : `rgba(37, 99, 235, ${a})` });
+        }
+      }
+    }
+
+    // ×10ⁿ formatting for small numbers like 2.7 × 10⁻⁸
+    const SUP = { '-': '⁻', 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴', 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹' };
+    function sci(x) {
+      if (Math.abs(x) < 1e-30) return '0';
+      let e = Math.floor(Math.log10(Math.abs(x))), m = (x / 10 ** e).toFixed(1);
+      if (Math.abs(Number(m)) >= 10) { e += 1; m = (x / 10 ** e).toFixed(1); }
+      return `${m} × 10${String(e).split('').map((c) => SUP[c]).join('')}`;
+    }
+
+    makeCells();   // before the board, because the board draws straight away
+    const board = NoteGeom.board(canvas, {
+      points: { P: [260, 90] },
+      constrain: {
+        P: (p) => {
+          for (const c of [C1, C2]) if (NoteGeom.dist(p, c) < 25) p = NoteGeom.onCircle(p, c, 25);
+          return p;
+        },
+      },
+      draw(g, pts) {
+        const P = pts.P;   // the draggable point
+        for (const c of cells) g.poly([[c.x, c.y], [c.x + CELL, c.y], [c.x + CELL, c.y + CELL], [c.x, c.y + CELL]], c.fill);
+        for (const [c, s] of [[C1, s1], [C2, s2]]) {
+          g.circle(c, 14, '#ffffff', { fill: s > 0 ? RED : BLUE });
+          g.text(c, s > 0 ? '+' : '−', '#ffffff');
+        }
+        g.seg(P, C1, THING, { width: 1, dash: true });
+        g.seg(P, C2, THING, { width: 1, dash: true });
+
+        const p = pot(P), V = p.V1 + p.V2;
+        const f = (v) => (v >= 0 ? '+' : '−') + Math.abs(v).toFixed(1);
+        const text =
+          `charge 1: V₁ = ${s1 > 0 ? '+' : '−'}9.0/${p.r1.toFixed(2)} = ${f(p.V1)} V\n` +
+          `charge 2: V₂ = ${s2 > 0 ? '+' : '−'}9.0/${p.r2.toFixed(2)} = ${f(p.V2)} V\n` +
+          `V = V₁ + V₂ = ${f(V)} V;  a +2.0 nC charge at P has U = qV = ${sci(QTEST * V)} J`;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    document.querySelectorAll('#epChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#epChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      [s1, s2] = b.dataset.s.split(',').map(Number);
+      makeCells();
+      board.redraw();
+    }));
+  })();
+</script>
