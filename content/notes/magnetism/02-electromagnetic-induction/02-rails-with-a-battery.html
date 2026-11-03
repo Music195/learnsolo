@@ -1,0 +1,258 @@
+<!-- tags: Electromagnetic Induction -->
+<!-- =====================================================================
+     NOTE: Rails with a Battery
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Electromagnetic Induction">Rails with a Battery</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>A battery pushes the rod, the moving rod makes a back emf, and it speeds up until the current falls to zero</h2>
+    <p>A rod lies on rails in a field $B$, in a circuit with a battery $E$ and a resistor $R$. It is held still and then released. Follow the chain of cause and effect:</p>
+    <ol>
+      <li>The battery drives a current $I$ through the rod.</li>
+      <li>A current in a field: the rod feels the electromagnetic force $IBL$.</li>
+      <li>A force gives the rod an <strong>acceleration</strong>, which means its velocity <strong>changes</strong>: it picks up a speed $v$.</li>
+      <li>A conductor moving in a field: the rod makes an induced emf $vBL$. It points <strong>against</strong> the battery (a "back emf").</li>
+      <li>The back emf <strong>weakens the current</strong>: $I = (E - vBL)/R$.</li>
+      <li>Smaller current, smaller force, smaller acceleration.</li>
+    </ol>
+    <p>The acceleration keeps shrinking until it reaches zero. Then the speed is constant, $v_1$. With nothing else pushing or pulling, zero acceleration means zero force, which means <strong>zero current</strong>. So the back emf exactly matches the battery: $v_1BL = E$.</p>
+    <p>If something else acts on the rod (a load on a string, or gravity on a slope), the current at the steady speed is <em>not</em> zero. Use the balance of forces instead: $IBL$ = the other force.</p>
+  </section>
+
+  <!-- FORMULA: current with a back emf -->
+  <div class="note-formula">
+    <h3>Battery $E$, resistor $R$, rod moving at $v$</h3>
+    <div class="formula-main">$$I = \frac{E - vBL}{R}, \qquad \text{free rod: } v_1 = \frac{E}{BL} \;(I = 0), \qquad \text{with a load } F\text{: } IBL = F$$</div>
+    <p class="symbols">$E$: battery emf (V). $vBL$: the rod's back emf, opposing $E$. $B$: field (T). $L$: rod length between the rails (m). $F$: a steady force the rod must overcome (N).</p>
+  </div>
+
+  <!-- PROOF: why the current stops -->
+  <div class="note-proof">
+    <ol>
+      <li>Kirchhoff's second law round the loop: $E - vBL = RI$.</li>
+      <li>The rod's motion: $M\dfrac{\Delta v}{\Delta t} = IBL$ (free rod).</li>
+      <li>Steady speed means $\Delta v/\Delta t = 0$, so $I = 0$. Then $E = v_1BL$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: rod driven by a battery; code at the bottom -->
+  <div class="note-demo">
+    <h2>E = 1.5 V, R = 0.50 Ω, B = 0.50 T, L = 0.40 m, rod 0.020 kg; released from rest (slowed down 3 times)</h2>
+    <div class="controls choices" id="rbChoices">
+      <button type="button" data-f="0" class="active">free rod</button>
+      <button type="button" data-f="0.20">rod pulling a 0.20 N load</button>
+    </div>
+    <canvas id="rbCanvas"></canvas>
+    <div class="output table-text" id="rbOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">In the demo's circuit ($E = 1.5$ V, $R = 0.50$ Ω, $B = 0.50$ T, $L = 0.40$ m, rod 0.020 kg), find the current, the force and the acceleration just after the rod is released.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>At rest, there is no back emf: $I = 1.5/0.50 = 3.0$ A.</li>
+        <li>$F = IBL = 3.0 \times 0.50 \times 0.40 = 0.60$ N.</li>
+        <li>$a = F/M = 0.60/0.020 = 30$ m/s².</li>
+      </ol>
+      <p class="answer">3.0 A; 0.60 N; 30 m/s²</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find the current and the force when the rod has reached 3.0 m/s.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Back emf: $vBL = 3.0 \times 0.50 \times 0.40 = 0.60$ V.</li>
+        <li>$I = (1.5 - 0.60)/0.50 = 1.8$ A, so $F = 1.8 \times 0.20 = 0.36$ N.</li>
+      </ol>
+      <p class="answer">1.8 A; 0.36 N</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Find the rod's final steady speed $v_1$ in symbols, and then with the numbers.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Steady speed means no acceleration, so no force, so no current.</li>
+        <li>No current means the back emf equals the battery: $v_1BL = E$, so $v_1 = \dfrac{E}{BL}$.</li>
+        <li>$v_1 = 1.5/(0.50 \times 0.40) = 7.5$ m/s.</li>
+      </ol>
+      <p class="answer">$v_1 = E/(BL) = 7.5$ m/s</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">The rod now has to pull a steady load of 0.20 N. Find the current and the speed when it moves steadily.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Steady: $IBL = 0.20$ N, so $I = 0.20/0.20 = 1.0$ A. The current is not zero this time.</li>
+        <li>$E - vBL = RI$: $1.5 - 0.20v = 0.50$, so $v = 5.0$ m/s.</li>
+      </ol>
+      <p class="answer">1.0 A; 5.0 m/s</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">At the steady speed of Example 4, where does the battery's power go?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Battery: $EI = 1.5 \times 1.0 = 1.5$ W.</li>
+        <li>Heat in the resistor: $I^2R = 0.50$ W. Work on the load: $Fv = 0.20 \times 5.0 = 1.0$ W.</li>
+        <li>$0.50 + 1.0 = 1.5$ W ✓. This is how an electric motor works.</li>
+      </ol>
+      <p class="answer">0.50 W as heat, 1.0 W into the load</p>
+    </details>
+  </div>
+
+  <!-- WARNING: zero current only if nothing else acts -->
+  <div class="note-warning">
+    "Steady speed, so the current is zero" is only true when nothing else acts on the rod. With a load, a slope or a hanging mass, use the force balance $IBL = F$.
+  </div>
+
+  <!-- TIP: chain -->
+  <div class="note-tip">
+    Write the chain out once: current → force → acceleration → speed → back emf → less current. Every rail problem is this chain, run until something balances.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$I = (E - vBL)/R$: the moving rod opposes the battery.</li>
+      <li>Free rod: it speeds up until $vBL = E$ and $I = 0$.</li>
+      <li>With a load: steady when $IBL = F$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Battery-driven rod" demo (the TRY IT block above).
+  // Seen from above: B out of the page (dots), cell E and resistor R on the left,
+  // the rod on the right. Released from rest:
+  //   I = (E − vBL)/R,   M dv/dt = IBL − F   (F = 0 or a 0.20 N load)
+  // Stepped in small time steps; real time is shown 3 times slower.
+  // Top: the circuit. Bottom: v–t graph with the steady speed dashed.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('rbCanvas');
+    const output = document.getElementById('rbOutput');
+    const E = 1.5, R = 0.50, B = 0.50, L = 0.40, M = 0.020;
+    const TMAX = 1.5, SLOW = 3;
+    const GX0 = 60, GY0 = 320, GW = 400, GH = 110, VMAX = 8;
+    const RED = '#dc2626', BLUE = '#2563eb', ORANGE = '#ea580c', GREEN = '#16a34a';
+    const DARK = '#0f172a', THING = '#475569', GREY = '#cbd5e1';
+    let F = 0, t = 0, v = 0, x = 0, hold = 0, trail = [], lastText = '';
+
+    function reset() { t = 0; v = 0; x = 0; hold = 0; trail = [[0, 0]]; }
+    function arrow(g, p, q, col) {
+      if (NoteGeom.dist(p, q) < 4) return;
+      g.seg(p, q, col, { width: 2.5 });
+      const a = Math.atan2(q[1] - p[1], q[0] - p[0]);
+      for (const s of [-1, 1]) g.seg(q, [q[0] - 9 * Math.cos(a + s * 0.45), q[1] - 9 * Math.sin(a + s * 0.45)], col, { width: 2.5 });
+    }
+    const steady = () => (F === 0 ? E / (B * L) : (E - F / (B * L) * R) / (B * L));
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const I = (E - v * B * L) / R;
+        for (let px = 100; px <= 480; px += 40) for (let py = 52; py <= 152; py += 33) g.circle([px, py], 2, GREY, { fill: GREY });
+        // rails, and on the left a cell (+ at the bottom, so the current goes UP the rod
+        // and B out of the page pushes it to the right) in series with R
+        g.seg([60, 40], [490, 40], DARK, { width: 3 });
+        g.seg([60, 160], [490, 160], DARK, { width: 3 });
+        g.seg([60, 40], [60, 62], DARK, { width: 3 });
+        g.seg([51, 62], [69, 62], DARK, { width: 5 });          // short plate: −
+        g.seg([42, 72], [78, 72], DARK, { width: 2 });          // long plate: +
+        g.seg([60, 72], [60, 100], DARK, { width: 3 });
+        let prev = [60, 100];
+        for (let k = 0; k < 6; k++) {
+          const p = [60 + (k % 2 ? -8 : 8), 100 + (k + 0.5) * 40 / 6];
+          g.seg(prev, p, DARK, { width: 2 });
+          prev = p;
+        }
+        g.seg(prev, [60, 140], DARK, { width: 2 });
+        g.seg([60, 140], [60, 160], DARK, { width: 3 });
+        g.text([28, 67], 'E', DARK);
+        g.text([30, 120], 'R', DARK);
+
+        const rx = 140 + (x * 40) % 300;                          // 40 pixels per metre, wrapping
+        g.seg([rx, 34], [rx, 166], ORANGE, { width: 6 });
+        arrow(g, [rx - 22, 130], [rx - 22, 130 - Math.min(60, 30 * I)], RED);  // current up the rod
+        arrow(g, [rx, 100], [rx + Math.min(90, 250 * I * B * L), 100], BLUE);  // force IBL
+        if (F > 0) arrow(g, [rx, 120], [rx - 250 * F, 120], GREEN);           // the load
+        g.text([370, 182], F > 0 ? 'red: I   blue: IBL   green: load' : 'red: I   blue: IBL', THING);
+
+        // v–t graph
+        const P = (tt, vv) => [GX0 + GW * tt / TMAX, GY0 - GH * vv / VMAX];
+        g.seg([GX0, GY0], [GX0 + GW, GY0], DARK, { width: 1.5 });
+        g.seg([GX0, GY0], [GX0, GY0 - GH - 10], DARK, { width: 1.5 });
+        g.seg(P(0, steady()), P(TMAX, steady()), GREY, { width: 1, dash: true });
+        g.text([GX0 - 26, P(0, steady())[1]], steady().toFixed(1), THING);
+        g.text([GX0 - 28, GY0 - GH - 10], 'v (m/s)', THING);
+        g.text([GX0 + GW + 20, GY0], 't (s)', THING);
+        g.text([P(TMAX, 0)[0], GY0 + 12], '1.5', THING);
+        for (let k = 1; k < trail.length; k++) g.seg(P(...trail[k - 1]), P(...trail[k]), BLUE, { width: 2.5 });
+
+        const text =
+          `v = ${v.toFixed(2)} m/s:  back emf vBL = ${(v * B * L).toFixed(2)} V against the cell's ${E} V\n` +
+          `I = (E − vBL)/R = ${I.toFixed(2)} A,  force IBL = ${(I * B * L).toFixed(3)} N${F > 0 ? `,  load ${F.toFixed(2)} N` : ''}\n` +
+          (F === 0
+            ? `steady when I = 0, i.e. vBL = E:  v₁ = E/(BL) = ${steady().toFixed(1)} m/s`
+            : `steady when IBL = ${F.toFixed(2)} N:  I = ${(F / (B * L)).toFixed(1)} A,  v = ${steady().toFixed(1)} m/s`);
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Screen clock: simulate in small steps; hold 3 s at the end, then repeat. Stop when the page has changed.
+    let last = performance.now();
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.max(0, Math.min((now - last) / 1000, 0.05));
+      last = now;
+      if (t < TMAX) {
+        const steps = 20, h = dt / SLOW / steps;
+        for (let k = 0; k < steps; k++) {
+          const I = (E - v * B * L) / R;
+          v += (I * B * L - F) / M * h;
+          x += v * h;
+          t += h;
+        }
+        trail.push([Math.min(t, TMAX), v]);
+      } else {
+        hold += dt;
+        if (hold > 3) reset();
+      }
+      board.redraw();
+      requestAnimationFrame(tick);
+    }
+    reset();
+    requestAnimationFrame(tick);
+
+    document.querySelectorAll('#rbChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#rbChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      F = Number(b.dataset.f);
+      reset();
+      board.redraw();
+    }));
+  })();
+</script>

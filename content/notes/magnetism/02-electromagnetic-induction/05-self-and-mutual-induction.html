@@ -1,0 +1,199 @@
+<!-- tags: Electromagnetic Induction -->
+<!-- =====================================================================
+     NOTE: Self and Mutual Induction
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Electromagnetic Induction">Self and Mutual Induction</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>A changing current makes an emf in its own coil ($L\,\Delta I/\Delta t$) and in a neighbouring coil ($M\,\Delta I/\Delta t$)</h2>
+    <p>Wind two coils on the same core: a <strong>primary</strong> coil ($N_1$ turns, length $l$, cross-section $S$) and a <strong>secondary</strong> coil ($N_2$ turns). Follow the formulas you already know, one after another:</p>
+    <ol>
+      <li>field inside the primary: $H = \dfrac{N_1}{l}I$ (turns per metre × current);</li>
+      <li>flux density: $B = \mu H = \mu\dfrac{N_1}{l}I$;</li>
+      <li>flux through each turn: $\Phi = BS = \mu\dfrac{N_1S}{l}I$.</li>
+    </ol>
+    <p>If $I$ changes, this flux changes, and by Lenz's law <strong>both</strong> coils get an emf that fights the change.</p>
+    <ul>
+      <li>In the primary itself, this is <strong>self-induction</strong>: $V_1 = N_1\dfrac{\Delta\Phi}{\Delta t} = \mu\dfrac{N_1^2S}{l}\dfrac{\Delta I}{\Delta t}$. Everything in front of $\Delta I/\Delta t$ is fixed by the coil's shape, so it is collected into one constant, the <strong>self-inductance</strong> $L$.</li>
+      <li>In the secondary, it is <strong>mutual induction</strong>: $V_2 = N_2\dfrac{\Delta\Phi}{\Delta t} = \mu\dfrac{N_1N_2S}{l}\dfrac{\Delta I}{\Delta t}$. The constant is the <strong>mutual inductance</strong> $M$.</li>
+    </ul>
+    <p>Both are measured in <strong>henries</strong> (H). An emf appears only while the current is <strong>changing</strong>. A steady current, however large, gives none. This is why a meter needle only flicks while you push a magnet in or pull it out.</p>
+  </section>
+
+  <!-- FORMULA: L and M -->
+  <div class="note-formula">
+    <h3>Self- and mutual inductance</h3>
+    <div class="formula-main">$$V_1 = L\frac{\Delta I}{\Delta t}, \quad L = \mu\frac{N_1^2S}{l} \qquad\qquad V_2 = M\frac{\Delta I_1}{\Delta t}, \quad M = \mu\frac{N_1N_2S}{l}$$</div>
+    <p class="symbols">$\Delta I/\Delta t$: rate of change of the primary current (A/s), the slope of its $I$–$t$ graph. $L$, $M$ in henries (H = V·s/A). Directions: by Lenz's law, the emf opposes the change.</p>
+  </div>
+
+  <!-- PROOF: only I changes -->
+  <div class="note-proof">
+    <ol>
+      <li>Faraday: $V_1 = N_1\dfrac{\Delta\Phi}{\Delta t}$ with $\Phi = \mu\dfrac{N_1S}{l}I$.</li>
+      <li>$\mu$, $N_1$, $S$ and $l$ do not change while the current changes. Only $I$ varies, so the rest can be taken outside: $V_1 = \mu\dfrac{N_1^2S}{l}\dfrac{\Delta I}{\Delta t}$.</li>
+      <li>The secondary has the same flux through each of its $N_2$ turns, so $V_2 = N_2\dfrac{\Delta\Phi}{\Delta t}$, which gives $M$. (If the two coils have different areas, use the area the shared flux actually passes through.)</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: primary current graph; code at the bottom -->
+  <div class="note-demo">
+    <h2>Drag A and B to shape the primary current. M = 4.0 H; graph below: potential of Q relative to P</h2>
+    <canvas id="smCanvas"></canvas>
+    <div class="output table-text" id="smOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">An air-cored solenoid has 500 turns, length 0.25 m and cross-section $4.0\times10^{-4}$ m². Find its self-inductance. ($\mu_0 = 4\pi\times10^{-7}$ N/A²)</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$L = \mu_0\dfrac{N^2S}{l} = 4\pi\times10^{-7} \times \dfrac{500^2 \times 4.0\times10^{-4}}{0.25}$.</li>
+        <li>$= 4\pi\times10^{-7} \times 400 = 5.0\times10^{-4}$ H.</li>
+      </ol>
+      <p class="answer">$5.0\times10^{-4}$ H</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">A second coil of 100 turns is wound over the solenoid in Example 1. Find the mutual inductance.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$M = \mu_0\dfrac{N_1N_2S}{l}$. Compared with $L$, one $N_1$ is replaced by $N_2$, so $M = L\times\dfrac{N_2}{N_1}$.</li>
+        <li>$M = 5.0\times10^{-4} \times \dfrac{100}{500} = 1.0\times10^{-4}$ H.</li>
+      </ol>
+      <p class="answer">$1.0\times10^{-4}$ H</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A current of 3.0 A in a 0.20 H coil is switched off and falls to zero in 0.010 s. Find the self-induced emf.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$V = L\dfrac{\Delta I}{\Delta t} = 0.20 \times \dfrac{3.0}{0.010}$.</li>
+        <li>$= 60$ V, from a much smaller supply. This is why switches on coils can spark.</li>
+      </ol>
+      <p class="answer">60 V</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">With $M = 4.0$ H, the primary current rises steadily from 0 to 2.0 A in 3.0 s, stays at 2.0 A for 2.0 s, then falls to 0 in 2.0 s. Find the size of the secondary emf in each stage.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Slopes: $2.0/3.0 = 0.67$ A/s, then 0, then $2.0/2.0 = 1.0$ A/s.</li>
+        <li>$V_2 = M \times$ slope: $4.0 \times 0.67 = 2.7$ V, then 0, then 4.0 V.</li>
+      </ol>
+      <p class="answer">2.7 V, 0, 4.0 V</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">In Example 4, the secondary's terminal P is the higher one while the primary current is rising. Give the potential of Q relative to P in each stage.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Rising: P is higher, so Q is lower: $-2.7$ V.</li>
+        <li>Steady: no change, no emf: 0.</li>
+        <li>Falling: the flux decreases instead of increasing, so Lenz's law reverses the emf: $+4.0$ V.</li>
+      </ol>
+      <p class="answer">$-2.7$ V, 0, $+4.0$ V (the demo's default graph)</p>
+    </details>
+  </div>
+
+  <!-- WARNING: change, not size -->
+  <div class="note-warning">
+    The emf depends on how fast the current <strong>changes</strong>, not on how big it is. A large steady current gives no emf. A small current switched off suddenly can give a large one.
+  </div>
+
+  <!-- TIP: read slopes -->
+  <div class="note-tip">
+    With an $I$–$t$ graph, just read off the slopes. Each straight piece gives a constant emf: $M$ (or $L$) times the slope. The sign flips between rising and falling pieces.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Self: $V = L\,\Delta I/\Delta t$, $L = \mu N^2S/l$.</li>
+      <li>Mutual: $V_2 = M\,\Delta I_1/\Delta t$, $M = \mu N_1N_2S/l$.</li>
+      <li>No change in current, no emf; the emf always opposes the change.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Primary current graph" demo (the TRY IT block above).
+  // The primary current goes 0 → A (at t = 3 s) → B (at t = 5 s) → 0 (at t = 7 s),
+  // in straight pieces. A and B can be dragged up and down (0 to 3 A).
+  // Secondary emf in each piece = M × slope, M = 4.0 H. Sign: while the current
+  // rises, P is the higher terminal, so V_Q − V_P = −M × slope.
+  // Top graph: I₁ (30 pixels per A). Bottom graph: V_Q − V_P (8 pixels per V).
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('smCanvas');
+    const output = document.getElementById('smOutput');
+    const M = 4.0, X0 = 60, SX = 52.5, IY0 = 140, SI = 30, VY0 = 260, SV = 8;
+    const BLUE = '#2563eb', RED = '#dc2626', DARK = '#0f172a', THING = '#475569', GREY = '#cbd5e1';
+    let lastText = '';
+
+    const X = (t) => X0 + SX * t;
+    const fix = (x, n) => x.toFixed(n).replace('-', '−');   // a proper minus sign
+    // keep a dragged corner on its time line, with 0 ≤ I ≤ 3 A
+    const onLine = (t) => (p) => [X(t), Math.max(IY0 - 3 * SI, Math.min(IY0, p[1]))];
+    const amps = (p) => (IY0 - p[1]) / SI;
+
+    const board = NoteGeom.board(canvas, {
+      points: { A: [X(3), IY0 - 2 * SI], B: [X(5), IY0 - 2 * SI] },
+      constrain: { A: onLine(3), B: onLine(5) },
+      draw(g, pts) {
+        const ia = amps(pts.A), ib = amps(pts.B);
+        const pieces = [[0, 3, 0, ia], [3, 5, ia, ib], [5, 7, ib, 0]];
+        // axes and grid
+        for (let t = 1; t <= 8; t++) {
+          g.seg([X(t), IY0 - 3 * SI - 5], [X(t), VY0 + 55], GREY, { width: 1 });
+          g.text([X(t), VY0 + 68], String(t), THING);
+        }
+        g.seg([X0, IY0], [X(8), IY0], DARK, { width: 1.5 });
+        g.seg([X0, VY0], [X(8), VY0], DARK, { width: 1.5 });
+        g.text([X0 - 30, IY0 - 3 * SI], 'I₁ (A)', THING);
+        g.text([X0 - 30, IY0 - 2 * SI], '2', THING);
+        g.text([X0 + 40, VY0 - 75], 'V_Q − V_P (V)', THING);
+        g.text([X(8) + 20, VY0 + 14], 't (s)', THING);
+        // the current graph and the emf graph
+        g.seg([X0, IY0], pts.A, BLUE, { width: 3 });
+        g.seg(pts.A, pts.B, BLUE, { width: 3 });
+        g.seg(pts.B, [X(7), IY0], BLUE, { width: 3 });
+        g.seg([X(7), IY0], [X(8), IY0], BLUE, { width: 3 });
+        const lines = [];
+        for (const [t1, t2, i1, i2] of pieces) {
+          const slope = (i2 - i1) / (t2 - t1), v = -M * slope + 0;   // + 0 turns −0 into 0
+          g.seg([X(t1), VY0 - SV * v], [X(t2), VY0 - SV * v], RED, { width: 3 });
+          g.text([(X(t1) + X(t2)) / 2, VY0 - SV * v + (v >= 0 ? -12 : 14)], `${fix(v, 1)} V`, RED);
+          lines.push(`${t1}–${t2} s: slope ${fix(slope, 2)} A/s → ${fix(v, 2)} V`);
+        }
+
+        const text =
+          `V_Q − V_P = −M × (slope of I₁), M = 4.0 H; a flat piece gives no emf\n` + lines.join('\n');
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+  })();
+</script>

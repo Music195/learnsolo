@@ -38,6 +38,8 @@ COURSES = {
     "waves": {"name": "Waves", "subject": "Physics"},
     # Electricity: electric force and field, DC circuits, capacitors
     "electricity": {"name": "Electricity", "subject": "Physics"},
+    # Magnetism: magnetic fields and forces, electromagnetic induction, AC circuits
+    "magnetism": {"name": "Magnetism", "subject": "Physics"},
 }
 
 # Past question folders (content/past/<folder>/) -> name, icon and description.
@@ -65,6 +67,8 @@ TOPIC_NAMES = {
     "03-newtons-laws": "Newton's Laws",
     # "dc" must stay capitals
     "02-dc-circuits": "DC Circuits",
+    # "ac" must stay capitals
+    "03-ac-circuits": "AC Circuits",
 }
 
 _SMALL_WORDS = {"and", "of", "the", "in", "on", "to", "a", "an", "for"}

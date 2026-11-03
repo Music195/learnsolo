@@ -1,0 +1,301 @@
+<!-- tags: Electromagnetic Induction -->
+<!-- =====================================================================
+     NOTE: Transients in RC and RL Circuits
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Electromagnetic Induction">Transients in RC and RL Circuits</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Just after switching, a capacitor acts as a wire and a coil as a break; long after, the other way round</h2>
+    <p>When a switch is closed or opened, capacitors and coils take time to settle. This settling is a <strong>transient</strong>. Most problems only ask about two moments, and each part has a simple rule for each.</p>
+    <p><strong>Capacitor</strong> ($Q = CV$):</p>
+    <ul>
+      <li><strong>Just after closing</strong>, an uncharged capacitor has $Q = 0$, so $V = 0$. It acts like a <strong>wire</strong>, and current rushes in.</li>
+      <li><strong>Long after</strong>, it is full and no more charge flows in. It acts like a <strong>break</strong>, and any resistor in series with it has no voltage across it.</li>
+      <li>So the current comes first and the voltage builds up later.</li>
+    </ul>
+    <p><strong>Coil</strong> ($V = L\,\Delta I/\Delta t$): a coil <strong>hates change</strong> in its current.</p>
+    <ul>
+      <li><strong>Just after closing</strong>, its current was 0 and it tries to keep it 0. It makes a back emf that stops the current, so it acts like a <strong>break</strong>.</li>
+      <li><strong>Long after</strong>, the current is steady, so there is no emf. It is just coiled wire: a <strong>wire</strong>.</li>
+      <li><strong>Just after opening</strong>, it tries to keep its current flowing. It drives the <strong>same current</strong> round whatever path is left, even if that needs a large emf.</li>
+      <li>So the voltage comes first and the current builds up later.</li>
+    </ul>
+    <p>In between, the change is gradual. Currents and voltages approach their final values along curves that start steep and flatten out. The time scale is $RC$ for a capacitor and $L/R$ for a coil.</p>
+  </section>
+
+  <!-- FORMULA: the four rules -->
+  <div class="note-formula">
+    <h3>The two moments</h3>
+    <div class="formula-main">$$\begin{array}{lcc} & \text{just after closing} & \text{long after} \\ \text{capacitor (uncharged)} & \text{wire } (V = 0) & \text{break } (I = 0) \\ \text{coil} & \text{break } (I \text{ unchanged}) & \text{wire } (V = 0) \end{array}$$</div>
+    <p class="symbols">Just after a switch moves, a capacitor keeps its <strong>voltage</strong> (its charge cannot jump) and a coil keeps its <strong>current</strong>. After opening, a charged capacitor acts like a battery of its voltage; a coil acts like a source of its current.</p>
+  </div>
+
+  <!-- PROOF: why the rules hold -->
+  <div class="note-proof">
+    <ol>
+      <li>Capacitor: $V = Q/C$, and $Q$ can only change by current flowing for some time. So $V$ cannot jump. Starting at $Q = 0$ means $V = 0$, like a wire.</li>
+      <li>When it is full, $V$ stops changing, so no more charge flows: $I = 0$, like a break.</li>
+      <li>Coil: a sudden jump in $I$ would need $\Delta I/\Delta t \to \infty$, which means an infinite emf. So $I$ cannot jump; it keeps its old value for an instant.</li>
+      <li>When the current is steady, $\Delta I/\Delta t = 0$, so $V = 0$, like a wire.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: RC and RL transient; code at the bottom -->
+  <div class="note-demo">
+    <h2>12 V cell, switch, R₁ = 4 Ω, then R₂ = 8 Ω in parallel with a part. Closed at t = 0, opened at t = 3 s</h2>
+    <div class="controls choices" id="trChoices">
+      <button type="button" data-k="C" class="active">capacitor 0.15 F</button>
+      <button type="button" data-k="L">coil 1.0 H</button>
+    </div>
+    <canvas id="trCanvas"></canvas>
+    <div class="output table-text" id="trOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A 12 V cell, a switch and $R_1 = 4.0$ Ω are in series with $R_2 = 8.0$ Ω, and an uncharged capacitor is connected across $R_2$. Find the current through $R_1$ just after the switch closes.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The capacitor acts as a wire, so both ends of $R_2$ are at the same potential and $R_2$ carries no current.</li>
+        <li>All the current goes through $R_1$ and into the capacitor: $I = 12/4.0 = 3.0$ A.</li>
+      </ol>
+      <p class="answer">3.0 A</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Find the current, and the capacitor's voltage, a long time later.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The capacitor acts as a break: $I = 12/(4.0 + 8.0) = 1.0$ A through $R_1$ and $R_2$.</li>
+        <li>The capacitor has the same voltage as $R_2$: $8.0 \times 1.0 = 8.0$ V.</li>
+      </ol>
+      <p class="answer">1.0 A; 8.0 V</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">The switch is then opened. Find the current through $R_2$ just afterwards.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The cell is cut off. The capacitor still has 8.0 V and acts as a battery, discharging round the loop through $R_2$.</li>
+        <li>$I = 8.0/8.0 = 1.0$ A. (In general $\dfrac{R_2}{R_1 + R_2}V \div R_2 = \dfrac{V}{R_1 + R_2}$.)</li>
+      </ol>
+      <p class="answer">1.0 A</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">The capacitor is replaced by a coil of negligible resistance. Find the current through $R_1$ just after closing, and a long time later.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Just after: the coil acts as a break, so the current goes through $R_1$ and $R_2$: $12/12 = 1.0$ A.</li>
+        <li>Long after: the coil acts as a wire, which shorts out $R_2$: $12/4.0 = 3.0$ A, all through the coil.</li>
+      </ol>
+      <p class="answer">1.0 A, then 3.0 A</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">Now the switch is opened. Find the current through $R_2$ just afterwards, and the coil's emf.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The coil keeps its 3.0 A flowing, and the only path left is round through $R_2$. So $R_2$ carries 3.0 A, in the opposite direction to before.</li>
+        <li>The coil's emf is $R_2 I = 8.0 \times 3.0 = 24$ V: twice the cell's voltage.</li>
+      </ol>
+      <p class="answer">3.0 A; 24 V</p>
+    </details>
+  </div>
+
+  <!-- WARNING: which moment -->
+  <div class="note-warning">
+    The rules swap between the two parts. A capacitor is a wire at first and a break later; a coil is a break at first and a wire later. Mixing them up is the most common mistake.
+  </div>
+
+  <!-- TIP: colour the potentials -->
+  <div class="note-tip">
+    Replace each capacitor or coil by a wire or a break for the moment asked, then colour the wires by potential. A resistor with the same colour at both ends carries no current.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Capacitor: keeps its voltage; wire at first, break later.</li>
+      <li>Coil: keeps its current; break at first, wire later.</li>
+      <li>Opening the switch: a coil drives its old current through what is left.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Switch on, switch off" demo (the TRY IT block above).
+  // Circuit: cell V = 12 V, switch, R₁ = 4 Ω, then R₂ = 8 Ω in parallel with a part
+  // (capacitor C = 0.15 F or coil L = 1.0 H). Switch closed at t = 0, opened at t = 3 s.
+  // Exact formulas (exponential approach):
+  //   capacitor closed: Vc = 8(1 − e^(−t/τ)), τ = (R₁R₂/(R₁+R₂))C = 0.40 s
+  //   capacitor opened: Vc = Vc0 e^(−t'/(R₂C)), discharging through R₂
+  //   coil closed:      I_L = 3(1 − e^(−t/τ)), τ = L(R₁+R₂)/(R₁R₂) = 0.375 s
+  //   coil opened:      I_L = I_L0 e^(−t'R₂/L), the current goes round through R₂
+  // Graph: currents through R₁ (orange), R₂ (green, downwards = +) and the part (blue).
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('trCanvas');
+    const output = document.getElementById('trOutput');
+    const V = 12, R1 = 4, R2 = 8, C = 0.15, L = 1.0, TOPEN = 3, TEND = 6;
+    const RP = R1 * R2 / (R1 + R2);
+    const GX0 = 60, GW = 420, GY0 = 262, GS = 22;
+    const ORANGE = '#ea580c', GREEN = '#16a34a', BLUE = '#2563eb', DARK = '#0f172a', THING = '#475569', GREY = '#cbd5e1';
+    let kind = 'C', t = 0, hold = 0, lastText = '';
+
+    // the three currents at time s: [through R₁, through R₂ (down +), through the part (down +)]
+    function currents(s) {
+      if (kind === 'C') {
+        const tau = RP * C, vf = V * R2 / (R1 + R2);
+        if (s < TOPEN) {
+          const vc = vf * (1 - Math.exp(-s / tau));
+          const i1 = (V - vc) / R1, i2 = vc / R2;
+          return [i1, i2, i1 - i2];
+        }
+        const vc0 = vf * (1 - Math.exp(-TOPEN / tau));
+        const vc = vc0 * Math.exp(-(s - TOPEN) / (R2 * C));
+        return [0, vc / R2, -vc / R2];
+      }
+      const tau = L / RP, iF = V / R1;
+      if (s < TOPEN) {
+        const il = iF * (1 - Math.exp(-s / tau));
+        const vp = (V - R1 * il) * R2 / (R1 + R2);   // voltage across R₂ and the coil
+        return [il + vp / R2, vp / R2, il];
+      }
+      const il0 = iF * (1 - Math.exp(-TOPEN / tau));
+      const il = il0 * Math.exp(-(s - TOPEN) * R2 / L);
+      return [0, -il, il];
+    }
+    const fix = (x) => (Math.abs(x) < 0.005 ? '0.00' : x.toFixed(2).replace('-', '−'));
+    function resistor(g, p, q) {
+      const len = NoteGeom.dist(p, q), u = [(q[0] - p[0]) / len, (q[1] - p[1]) / len], n = [-u[1], u[0]];
+      let prev = p;
+      for (let k = 0; k < 6; k++) {
+        const tt = (k + 0.5) / 6 * len, sd = k % 2 ? -7 : 7;
+        const pt = [p[0] + u[0] * tt + n[0] * sd, p[1] + u[1] * tt + n[1] * sd];
+        g.seg(prev, pt, DARK, { width: 2 });
+        prev = pt;
+      }
+      g.seg(prev, q, DARK, { width: 2 });
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const [i1, i2, ip] = currents(t);
+        const closed = t < TOPEN;
+        // circuit: top wire y = 30, bottom y = 150
+        g.seg([40, 30], [40, 80], DARK, { width: 3 });
+        g.seg([22, 80], [58, 80], DARK, { width: 2 });          // cell: + at the top
+        g.text([66, 70], '+', DARK);
+        g.seg([31, 90], [49, 90], DARK, { width: 5 });
+        g.seg([40, 90], [40, 150], DARK, { width: 3 });
+        g.seg([40, 30], [80, 30], DARK, { width: 3 });
+        g.dot([80, 30], DARK);
+        g.dot([115, 30], DARK);
+        g.seg([80, 30], closed ? [115, 30] : [110, 12], DARK, { width: 3 });   // the switch
+        g.seg([115, 30], [140, 30], DARK, { width: 3 });
+        resistor(g, [140, 30], [200, 30]);
+        g.seg([200, 30], [400, 30], DARK, { width: 3 });
+        g.seg([40, 150], [400, 150], DARK, { width: 3 });
+        g.seg([270, 30], [270, 60], DARK, { width: 3 });
+        resistor(g, [270, 60], [270, 120]);
+        g.seg([270, 120], [270, 150], DARK, { width: 3 });
+        if (kind === 'C') {
+          g.seg([400, 30], [400, 83], DARK, { width: 3 });
+          g.seg([380, 83], [420, 83], DARK, { width: 4 });
+          g.seg([380, 97], [420, 97], DARK, { width: 4 });
+          g.seg([400, 97], [400, 150], DARK, { width: 3 });
+        } else {
+          g.seg([400, 30], [400, 60], DARK, { width: 3 });
+          for (let k = 0; k < 4; k++) {                    // four bumps of the coil
+            let prev = [400, 60 + 15 * k];
+            for (let j = 1; j <= 8; j++) {
+              const a = Math.PI * j / 8, p = [400 + 10 * Math.sin(a), 60 + 15 * k + 7.5 * (1 - Math.cos(a))];
+              g.seg(prev, p, DARK, { width: 2 });
+              prev = p;
+            }
+          }
+          g.seg([400, 120], [400, 150], DARK, { width: 3 });
+        }
+        g.text([170, 52], `R₁: ${fix(i1)} A`, ORANGE);
+        g.text([326, 90], `R₂: ${fix(i2)} A`, GREEN);
+        g.text([465, 90], `${kind === 'C' ? 'C' : 'L'}: ${fix(ip)} A`, BLUE);
+        g.text([97, 52], closed ? 'closed' : 'open', THING);
+
+        // graph of the three currents
+        const P = (s, i) => [GX0 + GW * s / TEND, GY0 - GS * i];
+        g.seg([GX0, GY0], [GX0 + GW, GY0], DARK, { width: 1 });
+        g.seg([P(TOPEN, 0)[0], 180], [P(TOPEN, 0)[0], 335], GREY, { width: 1, dash: true });
+        g.text([P(TOPEN, 0)[0], 335], 'opened', THING);
+        for (const i of [1, 2, 3, -1, -2, -3]) g.text([GX0 - 18, GY0 - GS * i], String(i), THING);
+        g.text([GX0 - 12, 175], 'I (A)', THING);
+        for (const [k, col] of [[0, ORANGE], [1, GREEN], [2, BLUE]]) {
+          let prev = null;
+          for (let j = 0; j <= 240; j++) {
+            const s = TEND * j / 240;
+            if (s > t) break;
+            const p = P(s, currents(s)[k]);
+            // break the line at the switching moment so the jumps show as gaps
+            if (prev && !(s >= TOPEN && s - TEND / 240 < TOPEN)) g.seg(prev, p, col, { width: 2.5 });
+            prev = p;
+          }
+        }
+
+        const rules = kind === 'C'
+          ? 'just after closing: C is a wire, so R₂ gets 0 and R₁ gets 12/4 = 3 A\n' +
+            'long after: C is a break, 12/(4 + 8) = 1 A through R₁ and R₂, C at 8 V\n' +
+            'just after opening: C acts as an 8 V battery, 8/8 = 1 A through R₂'
+          : 'just after closing: L is a break, 12/(4 + 8) = 1 A through R₁ and R₂\n' +
+            'long after: L is a wire, 12/4 = 3 A through L, R₂ gets 0\n' +
+            'just after opening: L keeps its 3 A, now backwards through R₂ (8 × 3 = 24 V)';
+        const text = `t = ${t.toFixed(2)} s, switch ${closed ? 'closed' : 'open'}\n` + rules;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Real-time clock: run 6 s, hold 3 s, repeat. Stop when the page has changed.
+    let last = performance.now();
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.max(0, Math.min((now - last) / 1000, 0.05));
+      last = now;
+      if (t < TEND) t = Math.min(TEND, t + dt);
+      else { hold += dt; if (hold > 3) { t = 0; hold = 0; } }
+      board.redraw();
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    document.querySelectorAll('#trChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#trChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      kind = b.dataset.k;
+      t = 0;
+      hold = 0;
+      board.redraw();
+    }));
+  })();
+</script>

@@ -1,0 +1,241 @@
+<!-- tags: AC Circuits -->
+<!-- =====================================================================
+     NOTE: Resistors, Capacitors and Coils in AC
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="AC Circuits">Resistors, Capacitors and Coils in AC</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>On an AC supply, each part acts like a resistance ($R$, $1/\omega C$, $\omega L$), and the current is in step, a quarter cycle ahead, or a quarter cycle behind</h2>
+    <p><strong>Direct current (DC)</strong> always flows the same way. In <strong>alternating current (AC)</strong>, the voltage and current reverse direction over and over. We describe them with $\sin$ and $\cos$: $V = V_0\sin\omega t$, where $\omega = 2\pi f$ is the angular frequency.</p>
+    <p><strong>A link with mechanics.</strong> Displacement → velocity → acceleration: each is the rate of change of the one before. In circuits, the same chain is charge $q$ → current $I$ → rate of change of current $\Delta I/\Delta t$. Each of the three parts uses one of these:</p>
+    <ul>
+      <li>resistor: $V = RI$ (current);</li>
+      <li>capacitor: $q = CV$ (charge);</li>
+      <li>coil: $V = L\,\Delta I/\Delta t$ (rate of change of current).</li>
+    </ul>
+    <p>Put $V = V_0\sin\omega t$ across each one:</p>
+    <ul>
+      <li><strong>Resistor:</strong> $I = \dfrac{V_0}{R}\sin\omega t$. The current is <strong>in step</strong> with the voltage: both peak at the same moment.</li>
+      <li><strong>Capacitor:</strong> $q = CV_0\sin\omega t$, and the current is its rate of change: $I = \omega CV_0\cos\omega t$. The current <strong>leads</strong> the voltage by a quarter cycle ($\pi/2$). This matches the transient rule: current first, then voltage.</li>
+      <li><strong>Coil:</strong> $I = -\dfrac{V_0}{\omega L}\cos\omega t$. The current <strong>lags</strong> by $\pi/2$. Again it matches the transient rule: voltage first, then current.</li>
+    </ul>
+    <p>In each case the peak current is $V_0$ divided by something that acts like a resistance. It is called the <strong>reactance</strong>: $1/(\omega C)$ for a capacitor and $\omega L$ for a coil, both in ohms.</p>
+    <p><strong>Writing the answer quickly.</strong> You only need two facts for each part: its reactance, and whether the current is in step, ahead or behind. Picture the phase as an arrow going round anticlockwise. Starting from $\sin$, a quarter turn ahead is $\cos$ and a quarter turn behind is $-\cos$.</p>
+  </section>
+
+  <!-- FORMULA: reactances and phases -->
+  <div class="note-formula">
+    <h3>With $V = V_0\sin\omega t$ across the part</h3>
+    <div class="formula-main">$$I_R = \frac{V_0}{R}\sin\omega t, \qquad I_C = \frac{V_0}{1/\omega C}\cos\omega t, \qquad I_L = -\frac{V_0}{\omega L}\cos\omega t$$</div>
+    <p class="symbols">Reactances: $X_C = \dfrac{1}{\omega C}$, $X_L = \omega L$ (Ω). $\omega = 2\pi f$ (rad/s). The current is in step for R, leads by $\pi/2$ for C, lags by $\pi/2$ for L. If instead $I = I_0\sin\omega t$ is given, the voltage lags for C ($-\cos$) and leads for L ($+\cos$).</p>
+  </div>
+
+  <!-- PROOF: the capacitor and the coil -->
+  <div class="note-proof">
+    <ol>
+      <li>Capacitor: $q = CV_0\sin\omega t$. The rate of change of $\sin\omega t$ is $\omega\cos\omega t$, so $I = \omega CV_0\cos\omega t = \dfrac{V_0}{1/(\omega C)}\cos\omega t$.</li>
+      <li>Coil: $\dfrac{\Delta I}{\Delta t} = \dfrac{V_0}{L}\sin\omega t$. We need a current whose rate of change is this, and $-\cos\omega t$ has rate of change $\omega\sin\omega t$. So $I = -\dfrac{V_0}{\omega L}\cos\omega t$.</li>
+      <li>$\cos\omega t$ reaches its peak a quarter cycle before $\sin\omega t$ does (lead), and $-\cos\omega t$ a quarter cycle after (lag).</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: phase and reactance; code at the bottom -->
+  <div class="note-demo">
+    <h2>V = 10 sin ωt (blue) across R = 50 Ω, C = 100 μF or L = 0.10 H; current in red (slowed right down)</h2>
+    <div class="controls choices" id="acChoices">
+      <button type="button" data-k="R" class="active">resistor</button>
+      <button type="button" data-k="C">capacitor</button>
+      <button type="button" data-k="L">coil</button>
+    </div>
+    <div class="controls">
+      <label>frequency $f$ (Hz) = <input type="range" id="acF" min="10" max="200" step="10" value="50"></label>
+    </div>
+    <canvas id="acCanvas"></canvas>
+    <div class="output table-text" id="acOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">$V = 10\sin(100\pi t)$ V is applied across a 50 Ω resistor. Write the current.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>In step, with peak $10/50 = 0.20$ A.</li>
+      </ol>
+      <p class="answer">$I = 0.20\sin(100\pi t)$ A</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">The same voltage is applied across a 100 μF capacitor. Find the reactance and write the current.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$X_C = \dfrac{1}{\omega C} = \dfrac{1}{100\pi \times 100\times10^{-6}} = 31.8$ Ω.</li>
+        <li>Peak $10/31.8 = 0.31$ A, leading by $\pi/2$: $\sin \to \cos$.</li>
+      </ol>
+      <p class="answer">31.8 Ω; $I = 0.31\cos(100\pi t)$ A</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">The same voltage is applied across a 0.10 H coil. Find the reactance and write the current.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$X_L = \omega L = 100\pi \times 0.10 = 31.4$ Ω.</li>
+        <li>Peak $10/31.4 = 0.32$ A, lagging by $\pi/2$: $\sin \to -\cos$.</li>
+      </ol>
+      <p class="answer">31.4 Ω; $I = -0.32\cos(100\pi t)$ A</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">What happens to the capacitor's and the coil's reactance if the frequency is doubled?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$X_C = 1/(\omega C)$ halves: a capacitor lets high frequencies through more easily.</li>
+        <li>$X_L = \omega L$ doubles: a coil blocks high frequencies more. Try this with the slider.</li>
+      </ol>
+      <p class="answer">$X_C$ halves; $X_L$ doubles</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">This time the current is given: $I = I_0\sin\omega t$. Write the voltage across a resistor $R$, a capacitor $C$ and a coil $L$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Now the current is the reference, so "current leads" becomes "voltage lags", and the other way round.</li>
+        <li>Resistor: $V_R = RI_0\sin\omega t$.</li>
+        <li>Capacitor: the voltage lags by $\pi/2$: $V_C = -\dfrac{I_0}{\omega C}\cos\omega t$.</li>
+        <li>Coil: the voltage leads by $\pi/2$: $V_L = \omega LI_0\cos\omega t$.</li>
+      </ol>
+      <p class="answer">$RI_0\sin\omega t$, $-\dfrac{I_0}{\omega C}\cos\omega t$, $\omega LI_0\cos\omega t$</p>
+    </details>
+  </div>
+
+  <!-- WARNING: which is the reference -->
+  <div class="note-warning">
+    "Leads" and "lags" depend on which one you start from. Relative to the voltage, a capacitor's current leads. Relative to the current, a capacitor's voltage lags. Always check which quantity is given as $\sin\omega t$.
+  </div>
+
+  <!-- TIP: phase circle -->
+  <div class="note-tip">
+    Picture an arrow going round a circle anticlockwise, as in the demo. $\sin\omega t$ is the arrow that starts pointing right (its height starts at 0 and rises). A quarter turn ahead of it is $\cos$, half a turn is $-\sin$, and three quarters is $-\cos$. With this you can write any of the four without calculus.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Reactance: $R$, $1/(\omega C)$, $\omega L$.</li>
+      <li>Current vs voltage: in step (R), leads by $\pi/2$ (C), lags by $\pi/2$ (L).</li>
+      <li>Peak current = peak voltage ÷ reactance.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Phase and reactance" demo (the TRY IT block above).
+  // V = V₀ sin ωt with V₀ = 10 V across one part. Reactance X = R, 1/(ωC) or ωL,
+  // peak current I₀ = V₀/X, and the current's phase is +0, +π/2 or −π/2.
+  // Left: the phase circle. The blue arrow (voltage, 8 pixels per V) and the red
+  // arrow (current, 100 pixels per A, never longer than 95) go round anticlockwise; their heights are V and I.
+  // Right: V and I against time over two cycles, with a marker at "now".
+  // One cycle is shown as 2 s, whatever the real frequency.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('acCanvas');
+    const output = document.getElementById('acOutput');
+    const fBox = document.getElementById('acF');
+    const V0 = 10, R = 50, C = 100e-6, L = 0.10, SV = 8, SI = 100;
+    const O = [100, 170], GX0 = 215, GW = 290, GY0 = 170;
+    const BLUE = '#2563eb', RED = '#dc2626', DARK = '#0f172a', THING = '#475569', GREY = '#cbd5e1';
+    let kind = 'R', tau = 0, lastText = '';
+
+    function arrow(g, p, q, col) {
+      if (NoteGeom.dist(p, q) < 4) return;
+      g.seg(p, q, col, { width: 3 });
+      const a = Math.atan2(q[1] - p[1], q[0] - p[0]);
+      for (const s of [-1, 1]) g.seg(q, [q[0] - 10 * Math.cos(a + s * 0.45), q[1] - 10 * Math.sin(a + s * 0.45)], col, { width: 3 });
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const f = Number(fBox.value), w = 2 * Math.PI * f;
+        const X = kind === 'R' ? R : kind === 'C' ? 1 / (w * C) : w * L;
+        const I0 = V0 / X, iPix = Math.min(I0 * SI, 95), lead = kind === 'R' ? 0 : kind === 'C' ? Math.PI / 2 : -Math.PI / 2;
+        const th = Math.PI * tau;                       // phase now (one cycle per 2 s)
+
+        // phase circle: arrows at angle th (voltage) and th + lead (current), anticlockwise
+        g.circle(O, V0 * SV, GREY, { width: 1 });
+        g.seg([O[0] - 90, O[1]], [O[0] + 90, O[1]], GREY, { width: 1 });
+        const tipV = [O[0] + V0 * SV * Math.cos(th), O[1] - V0 * SV * Math.sin(th)];
+        const tipI = [O[0] + iPix * Math.cos(th + lead), O[1] - iPix * Math.sin(th + lead)];
+        arrow(g, O, tipV, BLUE);
+        arrow(g, O, tipI, RED);
+        g.seg(tipV, [GX0 + GW * ((th % (4 * Math.PI)) / (4 * Math.PI)), tipV[1]], BLUE, { width: 1, dash: true });
+
+        // graphs over two cycles
+        g.seg([GX0, GY0], [GX0 + GW, GY0], DARK, { width: 1 });
+        let pv = null, pi = null;
+        for (let k = 0; k <= 200; k++) {
+          const ph = 4 * Math.PI * k / 200, x = GX0 + GW * k / 200;
+          const a = [x, GY0 - V0 * SV * Math.sin(ph)], b = [x, GY0 - iPix * Math.sin(ph + lead)];
+          if (pv) { g.seg(pv, a, BLUE, { width: 2 }); g.seg(pi, b, RED, { width: 2 }); }
+          pv = a; pi = b;
+        }
+        const xNow = GX0 + GW * ((th % (4 * Math.PI)) / (4 * Math.PI));
+        g.seg([xNow, GY0 - 95], [xNow, GY0 + 95], GREY, { width: 1, dash: true });
+        g.text([GX0 + 20, 40], 'V', BLUE);
+        g.text([GX0 + 40, 40], 'I', RED);
+        g.text([GX0 + GW, GY0 + 14], 't', THING);
+
+        const name = { R: 'resistor', C: 'capacitor', L: 'coil' }[kind];
+        const formula = { R: 'R', C: '1/(ωC)', L: 'ωL' }[kind];
+        const fn = { R: 'sin ωt', C: 'cos ωt', L: '(−cos ωt)' }[kind];
+        const phaseWords = { R: 'is in step with the voltage', C: 'leads the voltage by π/2 (peaks a quarter cycle earlier)', L: 'lags the voltage by π/2 (peaks a quarter cycle later)' }[kind];
+        const text =
+          `${name}: reactance ${formula} = ${X.toFixed(1)} Ω at ${f} Hz (ω = ${w.toFixed(0)} rad/s)\n` +
+          `peak current I₀ = 10/${X.toFixed(1)} = ${I0.toFixed(3)} A,  I = ${I0.toFixed(3)} × ${fn}\n` +
+          `the current ${phaseWords}`;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Screen clock (one cycle per 2 s). Stop when the page has changed.
+    let last = performance.now();
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.max(0, Math.min((now - last) / 1000, 0.05));
+      last = now;
+      tau = (tau + dt) % 4;
+      board.redraw();
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    document.querySelectorAll('#acChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#acChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      kind = b.dataset.k;
+      board.redraw();
+    }));
+    fBox.addEventListener('input', () => board.redraw());
+  })();
+</script>
