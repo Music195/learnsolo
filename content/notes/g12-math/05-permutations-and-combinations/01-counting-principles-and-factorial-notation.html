@@ -1,0 +1,230 @@
+<!-- tags: Permutations and Combinations, G12 Math Myanmar -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Permutations and Combinations">Counting Principles and Factorial Notation</h1>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Fundamental Counting Principles &amp; Factorial Notation</span>
+  <p>Combinatorics (ရေတွက်ခြင်းဆိုင်ရာ သင်္ချာ) begins with two fundamental rules for counting possibilities without listing every outcome individually:</p>
+  <ul>
+    <li><strong>The Multiplication Principle (မြှောက်လဒ်နိယာမ — "AND / In Succession"):</strong> Suppose a first task can be performed in $m$ ways, and no matter how it has been performed, a second task can then be performed in $n$ ways. Then the number of ways to perform both tasks in succession is $m \times n$. (Extends to any finite sequence of tasks: $n_1 \times n_2 \times \cdots \times n_k$.)</li>
+    <li><strong>The Addition Principle (ပေါင်းလဒ်နိယာမ — "OR / Disjoint Cases"):</strong> Suppose the outcomes of a counting problem split into $k$ <strong>pairwise disjoint cases</strong> (no arrangement belongs to two cases at once) with $n_1, n_2, \dots, n_k$ elements respectively. Then the total number of elements is $n_1 + n_2 + \cdots + n_k$.</li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formulas &mdash; Factorial Notation ($n!$)</span>
+  <ul>
+    <li><strong>Definition of $n$ Factorial ($n!$):</strong> For any positive integer $n$, $n!$ is the product of the first $n$ positive integers:
+      $$n! = n(n - 1)(n - 2)\cdots 3 \cdot 2 \cdot 1$$
+    </li>
+    <li><strong>Zero Factorial Convention:</strong> By definition,
+      $$0! = 1$$
+    </li>
+    <li><strong>Recursive Reduction Identity:</strong> Any factorial can be factored by peeling off its leading terms:
+      $$n! = n \cdot (n - 1)! = n(n - 1) \cdot (n - 2)!$$
+      For example, $6! = 6 \cdot 5 \cdot 4!$ and $\dfrac{13 \cdot 12 \cdot 11}{3 \cdot 2} = \dfrac{13 \cdot 12 \cdot 11 \cdot 10!}{3! \cdot 10!} = \dfrac{13!}{3!\,10!}$.
+    </li>
+  </ul>
+</div>
+
+<div class="note-proof">
+  <span class="block-label">Justification &mdash; Why $n$ Distinct Pictures on $n$ Nails Gives $n!$ Ways</span>
+  <p>Suppose there are $n$ picture nails in a row and $n$ distinct pictures. By the Multiplication Principle:</p>
+  <ul>
+    <li>The $1^{\text{st}}$ nail can hold any of the $n$ pictures ($n$ choices).</li>
+    <li>The $2^{\text{nd}}$ nail can hold any of the remaining $n - 1$ pictures ($n - 1$ choices).</li>
+    <li>Continuing down to the $n^{\text{th}}$ nail, only $1$ picture remains ($1$ choice).</li>
+  </ul>
+  <p>Multiplying the choices for all $n$ successive tasks gives $n \times (n - 1) \times (n - 2) \times \cdots \times 2 \times 1 = n!$ arrangements.</p>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; Multiplication Tree vs. Disjoint Case Addition</span>
+  <p>Adjust $m$ (Stage 1 choices) and $n$ (Stage 2 choices) or switch between textbook counting scenarios to visualize how sequential choices multiply ($m \times n$) while mutually exclusive cases add ($n_1 + n_2 + \cdots$).</p>
+  <canvas id="g12-ch5-01-canvas"></canvas>
+  <div class="controls">
+    <label>Stage 1 (m) <input type="range" id="ch5-01-m" min="2" max="6" value="4" step="1"></label>
+    <label>Stage 2 (n) <input type="range" id="ch5-01-n" min="2" max="5" value="3" step="1"></label>
+    <button type="button" class="pill active" data-mode="mult">Multiplication Tree (m × n)</button>
+    <button type="button" class="pill" data-mode="fact">Factorial Growth (n!)</button>
+  </div>
+  <div class="output table-text" id="ch5-01-out"></div>
+</div>
+
+<script>
+(function() {
+  var canvas = document.getElementById('g12-ch5-01-canvas');
+  var mIn = document.getElementById('ch5-01-m');
+  var nIn = document.getElementById('ch5-01-n');
+  var out = document.getElementById('ch5-01-out');
+  if (!canvas) return;
+
+  var mode = 'mult';
+
+  function fact(k) {
+    var r = 1;
+    for (var i = 2; i <= k; i++) r *= i;
+    return r;
+  }
+
+  function box(g, x1, y1, x2, y2, fill, strokeCol) {
+    var pts = [[x1, y1], [x2, y1], [x2, y2], [x1, y2]];
+    g.poly(pts, fill);
+    g.seg([x1, y1], [x2, y1], strokeCol, { width: 1.8 });
+    g.seg([x2, y1], [x2, y2], strokeCol, { width: 1.8 });
+    g.seg([x2, y2], [x1, y2], strokeCol, { width: 1.8 });
+    g.seg([x1, y2], [x1, y1], strokeCol, { width: 1.8 });
+  }
+
+  var board = NoteGeom.board(canvas, {
+    points: {},
+    draw: function(g) {
+      var m = parseInt(mIn.value, 10);
+      var n = parseInt(nIn.value, 10);
+
+      if (mode === 'mult') {
+        var start = [65, 175];
+        g.dot(start, '#0f172a');
+        g.text([35, 175], 'Start', '#0f172a');
+
+        var x1 = 225, x2 = 435;
+        for (var i = 0; i < m; i++) {
+          var y1 = 48 + (i + 0.5) * (255 / m);
+          var p1 = [x1, y1];
+          g.seg(start, p1, '#2563eb', { width: 1.8 });
+          g.dot(p1, '#2563eb');
+          g.text([x1 - 16, y1 - 10], 'A' + (i + 1), '#2563eb');
+
+          var span = (230 / m);
+          var top2 = y1 - span * 0.42;
+          for (var j = 0; j < n; j++) {
+            var y2 = n === 1 ? y1 : top2 + (j / (n - 1)) * (span * 0.84);
+            var p2 = [x2, y2];
+            g.seg(p1, p2, '#0d9488', { width: 1.4 });
+            g.dot(p2, '#0d9488');
+          }
+        }
+        g.text([185, 22], 'Stage 1: ' + m + ' ways', '#2563eb');
+        g.text([375, 22], 'Stage 2: ' + n + ' ways → ' + (m * n) + ' leaves', '#0d9488');
+
+        out.textContent =
+          'Multiplication Principle: Stage 1 has m = ' + m + ' choices; for each, Stage 2 has n = ' + n +
+          ' choices   →   Total successive ways = ' + m + ' × ' + n + ' = ' + (m * n);
+      } else {
+        var maxN = 6;
+        var vals = [1, 1, 2, 6, 24, 120, 720];
+        var baseY = 285;
+        for (var k = 0; k <= maxN; k++) {
+          var x = 55 + k * 68;
+          var h = Math.max(8, Math.round((vals[k] / 720) * 215));
+          var col = (k === m) ? '#e11d48' : '#0d9488';
+          var fill = (k === m) ? 'rgba(225, 29, 72, 0.25)' : 'rgba(13, 148, 136, 0.18)';
+          box(g, x - 20, baseY - h, x + 20, baseY, fill, col);
+          g.text([x, baseY + 18], k + '!', col);
+          g.text([x, baseY - h - 12], String(vals[k]), col);
+        }
+        var chain = [];
+        for (var c = m; c >= 1; c--) chain.push(c);
+        out.textContent =
+          'Highlighted: ' + m + '! = ' + chain.join(' × ') + ' = ' + fact(m) +
+          '   |   Notice: ' + m + '! = ' + m + ' × ' + (m - 1) + '! = ' + m + ' × ' + fact(m - 1);
+      }
+    }
+  });
+
+  mIn.addEventListener('input', function() { board.redraw(); });
+  nIn.addEventListener('input', function() { board.redraw(); });
+  var btns = canvas.parentElement.querySelectorAll('.pill[data-mode]');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].addEventListener('click', function() {
+      for (var j = 0; j < btns.length; j++) btns[j].classList.remove('active');
+      this.classList.add('active');
+      mode = this.getAttribute('data-mode');
+      board.redraw();
+    });
+  }
+})();
+</script>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Textbook Examples 2, 4, 5, 6 &amp; 7</span>
+
+  <p><strong>Example 2 (Three-Stage Multiplication Principle):</strong> There are four blood types ($A, B, AB, O$). Blood can also be $\text{Rh}(+)$ or $\text{Rh}(-)$, and a donor can be classified as male or female. In how many different ways can a donor have his or her blood labeled?</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p>There are $4$ possibilities for blood type, $2$ possibilities for the Rh factor, and $2$ possibilities for gender. By the Multiplication Principle:</p>
+    $$\text{Total ways} = 4 \times 2 \times 2 = 16$$
+    <p class="answer">Answer: $16$ ways.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 4 (Combining Multiplication and Addition Principles):</strong> How many different numbers can be formed using the digits $2, 4, 6, 8,$ and $9$ such that the numbers contain two or three digits without any repetition?</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p>Split the problem into two disjoint cases:</p>
+    <ul>
+      <li><strong>Case 1 (Two-digit numbers):</strong> $5 \times 4 = 20$ ways.</li>
+      <li><strong>Case 2 (Three-digit numbers):</strong> $5 \times 4 \times 3 = 60$ ways.</li>
+    </ul>
+    <p>By the Addition Principle, total numbers $= 20 + 60 = 80$.</p>
+    <p class="answer">Answer: $80$ different numbers.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 5 (Careful Case Breakdown with Digit Restrictions):</strong> How many integers between $0$ and $100$ have the digit $5$ <em>only once</em>?</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p>Partition into three pairwise disjoint cases:</p>
+    <ul>
+      <li><strong>Case 1 (One-digit integer):</strong> Only the integer $5$ itself $\implies 1$ integer.</li>
+      <li><strong>Case 2 (Two-digit integer with $5$ in the tens place):</strong> Tens digit is $5$ ($1$ choice); ones digit can be any digit except $5$ ($0,1,2,3,4,6,7,8,9 \implies 9$ choices) $\implies 1 \times 9 = 9$ integers.</li>
+      <li><strong>Case 3 (Two-digit integer with $5$ in the ones place):</strong> Tens digit can be any digit except $0$ and $5$ ($1,2,3,4,6,7,8,9 \implies 8$ choices); ones digit is $5$ ($1$ choice) $\implies 8 \times 1 = 8$ integers.</li>
+    </ul>
+    <p>By the Addition Principle, total integers $= 1 + 9 + 8 = 18$.</p>
+    <p class="answer">Answer: $18$ integers.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 6 &amp; 7 (Manipulating Factorials):</strong><br>
+  (a) Evaluate $\dfrac{10!}{8!\,3!}$. &nbsp; (b) Evaluate $\dfrac{6! + 5! - 4!}{4!}$. &nbsp; (c) Express $\dfrac{13 \cdot 12 \cdot 11}{3 \cdot 2}$ in factorial form.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p><strong>(a)</strong> Expand $10! = 10 \cdot 9 \cdot 8!$ and cancel $8!$:</p>
+    $$\frac{10!}{8!\,3!} = \frac{10 \cdot 9 \cdot 8!}{8! \cdot (3 \cdot 2 \cdot 1)} = \frac{90}{6} = 15$$
+    <p><strong>(b)</strong> Factor out the smallest factorial $4!$ from the numerator:</p>
+    $$\frac{6! + 5! - 4!}{4!} = \frac{6 \cdot 5 \cdot 4! + 5 \cdot 4! - 4!}{4!} = \frac{(30 + 5 - 1) \cdot 4!}{4!} = 34$$
+    <p><strong>(c)</strong> Multiply numerator and denominator by $10! \cdot 1$ to complete both factorials:</p>
+    $$\frac{13 \cdot 12 \cdot 11}{3 \cdot 2} = \frac{13 \cdot 12 \cdot 11 \cdot 10!}{(3 \cdot 2 \cdot 1) \cdot 10!} = \frac{13!}{3!\,10!}$$
+    <p class="answer">Answer: (a) $15$, (b) $34$, (c) $\dfrac{13!}{3!\,10!}$.</p>
+  </details>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>Forbidden Cancelation Inside Factorials:</strong> Never distribute or cancel across addition before factoring out the common factorial! For example, $\frac{6! + 5!}{4!} \neq 6! + 5$; always factor out $4!$ first: $\frac{4!(6\cdot 5 + 5)}{4!} = 35$.</li>
+    <li><strong>Leading Zero in Multi-Digit Numbers:</strong> A two-digit or three-digit integer cannot begin with $0$ in its highest place value (unlike a keypad PIN code, which <em>can</em> start with $0$).</li>
+  </ul>
+</div>
+
+<div class="note-tip">
+  <span class="block-label">Exam Tip &mdash; When to Multiply vs. When to Add</span>
+  <p>Ask yourself whether a single complete arrangement requires performing <strong>both steps in sequence</strong> ("Step 1 <em>AND then</em> Step 2" $\implies$ <strong>Multiply</strong>) or choosing between <strong>mutually exclusive alternatives</strong> ("Case 1 <em>OR</em> Case 2" $\implies$ <strong>Add</strong>).</p>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways (မှတ်သားရန် အချက်များ)</span>
+  <ul>
+    <li><strong>Multiplication Principle (မြှောက်လဒ်နိယာမ):</strong> Successive tasks with $m$ and $n$ choices can be performed in $m \times n$ ways.</li>
+    <li><strong>Addition Principle (ပေါင်းလဒ်နိယာမ):</strong> Pairwise disjoint cases with $n_1, n_2, \dots, n_k$ ways give $n_1 + n_2 + \cdots + n_k$ total ways.</li>
+    <li><strong>Factorial Identity (ဖက်တိုရီယယ်):</strong> $n! = n(n-1)\cdots 2\cdot 1 = n(n-1)!$, with $0! = 1$.</li>
+  </ul>
+</div>
+</article>

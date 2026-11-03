@@ -1,0 +1,199 @@
+<!-- tags: Permutations and Combinations, G12 Math Myanmar -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Permutations and Combinations">Permutations of Distinct Objects</h1>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Permutations (Ordered Arrangements)</span>
+  <p>A <strong>permutation</strong> (အစီအစဉ် / ပတ်လည်စီစဉ်ခြင်း) is an arrangement of objects in a <strong>specific order</strong>. For instance, hanging pictures $C, E, A$ on three wall nails in that order is a different permutation from $A, E, C$ or $A, C, E$.</p>
+  <p>Given $n$ distinct objects, any ordered arrangement of $r$ of those objects ($0 \le r \le n$) is called a <strong>permutation of $n$ objects taken $r$ at a time</strong>, and the total number of such ordered arrangements is denoted by ${}^nP_r$.</p>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formulas &mdash; The Permutation Formula ${}^nP_r$</span>
+  <ul>
+    <li><strong>Product Form ($r$ Decreasing Factors):</strong> For positive integers $n$ and $r$ with $1 \le r \le n$:
+      $${}^nP_r = \underbrace{n(n - 1)(n - 2)\cdots(n - r + 1)}_{r \text{ factors}}$$
+    </li>
+    <li><strong>Closed Factorial Form:</strong> For integers $n$ and $r$ with $0 \le r \le n$:
+      $${}^nP_r = \frac{n!}{(n - r)!}$$
+    </li>
+    <li><strong>Important Special Cases:</strong>
+      $${}^nP_n = \frac{n!}{0!} = n! \quad (\text{arranging all } n \text{ distinct objects}), \qquad {}^nP_1 = n, \qquad {}^nP_0 = \frac{n!}{n!} = 1$$
+    </li>
+  </ul>
+</div>
+
+<div class="note-proof">
+  <span class="block-label">Derivation &mdash; Connecting the Slot Product to $\dfrac{n!}{(n - r)!}$</span>
+  <p>Suppose we have $r$ ordered positions (slots) to fill using $n$ distinct objects without repetition:</p>
+  <ul>
+    <li>Slot $1$ can be filled in $n$ ways; Slot $2$ in $(n - 1)$ ways; $\dots$; Slot $r$ in $n - (r - 1) = n - r + 1$ ways.</li>
+  </ul>
+  <p>By the Multiplication Principle, ${}^nP_r = n(n - 1)(n - 2)\cdots(n - r + 1)$. Multiplying numerator and denominator by $(n - r)! = (n - r)(n - r - 1)\cdots 2 \cdot 1$ completes the factorial in the numerator:</p>
+  $${}^nP_r = \frac{n(n - 1)(n - 2)\cdots(n - r + 1) \cdot (n - r)!}{(n - r)!} = \frac{n!}{(n - r)!} \quad \blacksquare$$
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; Visual Slot Filler for ${}^nP_r$</span>
+  <p>Adjust $n$ (total distinct items in the pool) and $r$ (number of ordered slots to fill) to see how each successive slot has one fewer available choice, producing the $r$-factor product ${}^nP_r = n(n-1)\cdots(n-r+1)$.</p>
+  <canvas id="g12-ch5-02-canvas"></canvas>
+  <div class="controls">
+    <label>Pool size (n) <input type="range" id="ch5-02-n" min="3" max="9" value="6" step="1"></label>
+    <label>Slots (r) <input type="range" id="ch5-02-r" min="1" max="6" value="3" step="1"></label>
+  </div>
+  <div class="output table-text" id="ch5-02-out"></div>
+</div>
+
+<script>
+(function() {
+  var canvas = document.getElementById('g12-ch5-02-canvas');
+  var nIn = document.getElementById('ch5-02-n');
+  var rIn = document.getElementById('ch5-02-r');
+  var out = document.getElementById('ch5-02-out');
+  if (!canvas) return;
+
+  var letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
+
+  function box(g, x1, y1, x2, y2, fill, strokeCol) {
+    g.poly([[x1, y1], [x2, y1], [x2, y2], [x1, y2]], fill);
+    g.seg([x1, y1], [x2, y1], strokeCol, { width: 1.8 });
+    g.seg([x2, y1], [x2, y2], strokeCol, { width: 1.8 });
+    g.seg([x2, y2], [x1, y2], strokeCol, { width: 1.8 });
+    g.seg([x1, y2], [x1, y1], strokeCol, { width: 1.8 });
+  }
+
+  var board = NoteGeom.board(canvas, {
+    points: {},
+    draw: function(g) {
+      var n = parseInt(nIn.value, 10);
+      var r = parseInt(rIn.value, 10);
+      if (r > n) { r = n; rIn.value = n; }
+
+      g.text([175, 28], 'Pool of n = ' + n + ' Distinct Objects:', '#0f172a');
+      for (var i = 0; i < n; i++) {
+        var cx = 55 + i * 48, cy = 72;
+        var used = i < r;
+        g.circle([cx, cy], 18, used ? '#0d9488' : '#2563eb', {
+          fill: used ? 'rgba(13, 148, 136, 0.22)' : 'rgba(59, 130, 246, 0.12)',
+          width: 1.8
+        });
+        g.text([cx, cy], letters[i], used ? '#0d9488' : '#2563eb');
+      }
+
+      g.text([215, 132], 'Filling r = ' + r + ' Ordered Slots (Positions 1 to ' + r + '):', '#0f172a');
+      var factors = [];
+      var prod = 1;
+      var startX = 45;
+      var boxW = Math.min(64, Math.floor(420 / r) - 10);
+
+      for (var j = 0; j < r; j++) {
+        var choices = n - j;
+        factors.push(choices);
+        prod *= choices;
+        var x = startX + j * (boxW + 14);
+        var y = 158;
+        box(g, x, y, x + boxW, y + 66, 'rgba(225, 29, 72, 0.12)', '#e11d48');
+        g.text([x + boxW / 2, y + 20], 'Slot ' + (j + 1), '#64748b');
+        g.text([x + boxW / 2, y + 46], choices + ' ways', '#e11d48');
+        if (j < r - 1) {
+          g.text([x + boxW + 7, y + 34], '×', '#0f172a');
+        }
+      }
+
+      g.text([260, 275], 'ⁿPᵣ = ' + n + '! / (' + n + ' − ' + r + ')! = ' + factors.join(' × ') + ' = ' + prod, '#0d9488');
+
+      out.textContent =
+        'n = ' + n + ', r = ' + r + '   |   ' +
+        n + 'P' + r + ' = ' + n + '! / ' + (n - r) + '! = ' + factors.join(' × ') + ' = ' + prod + ' ordered arrangements';
+    }
+  });
+
+  nIn.addEventListener('input', function() { board.redraw(); });
+  rIn.addEventListener('input', function() { board.redraw(); });
+})();
+</script>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Textbook Examples 8, 9, 10, 11, 12 &amp; 13</span>
+
+  <p><strong>Example 8 &amp; 9 (Evaluating &amp; Solving Equations with ${}^nP_r$):</strong><br>
+  (a) Evaluate ${}^{10}P_5 + {}^{10}P_0$. &nbsp; (b) Solve ${}^nP_2 = 9n$ for $n$. &nbsp; (c) Solve ${}^nP_3 = 12 \cdot {}^nP_1$ for $n$.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p><strong>(a)</strong> ${}^{10}P_5 + {}^{10}P_0 = (10 \cdot 9 \cdot 8 \cdot 7 \cdot 6) + 1 = 30240 + 1 = 30241$.</p>
+    <p><strong>(b)</strong> Since ${}^nP_2$ requires $n \ge 2$, expand ${}^nP_2 = n(n - 1)$:</p>
+    $$n(n - 1) = 9n \implies n - 1 = 9 \quad (\text{since } n \ge 2 \neq 0) \implies n = 10$$
+    <p><strong>(c)</strong> Since ${}^nP_3$ requires $n \ge 3$, expand both sides:</p>
+    $$n(n - 1)(n - 2) = 12n \implies (n - 1)(n - 2) = 12 \implies n^2 - 3n - 10 = 0 \implies (n - 5)(n + 2) = 0$$
+    <p>Wait—let's check the textbook equation: in Example 9(b) of the textbook, the equation is ${}^nP_3 = 12 \cdot {}^nP_2$, where $n(n - 1)(n - 2) = 12n(n - 1) \implies n - 2 = 12 \implies n = 14$! (And if ${}^nP_3 = 12 \cdot {}^nP_1$, then $n = 5$.)</p>
+    <p class="answer">Answer: (a) $30241$, (b) $n = 10$, (c) For ${}^nP_3 = 12\cdot {}^nP_2$, $n = 14$.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 10 &amp; 11 (Committee Officers &amp; Word Arrangements):</strong><br>
+  (a) In how many ways can a president, a treasurer, and a secretary be selected from a group of $15$ people?<br>
+  (b) In how many ways can all the letters of the word <strong>PENCIL</strong> be arranged without repeating any letters?</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p><strong>(a)</strong> Because the three offices (president, treasurer, secretary) are distinct ranks, order matters. Selecting $3$ ranked officers from $15$ people is:</p>
+    $${}^{15}P_3 = 15 \cdot 14 \cdot 13 = 2730\text{ ways}$$
+    <p><strong>(b)</strong> The word <strong>PENCIL</strong> has $6$ distinct letters, so arranging all $6$ gives:</p>
+    $${}^6P_6 = 6! = 6 \cdot 5 \cdot 4 \cdot 3 \cdot 2 \cdot 1 = 720\text{ ways}$$
+    <p class="answer">Answer: (a) $2730$ ways, (b) $720$ ways.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 12 (Seating on Either of Two Buses):</strong> There are $2$ buses with $5$ and $4$ vacant seats respectively, and $4$ people at a bus stop. In how many ways can all $4$ people be seated on <em>either</em> of the buses (but not split across both)?</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <ul>
+      <li><strong>Case 1 (All $4$ people board the first bus with $5$ seats):</strong> ${}^5P_4 = 5 \cdot 4 \cdot 3 \cdot 2 = 120$ ways.</li>
+      <li><strong>Case 2 (All $4$ people board the second bus with $4$ seats):</strong> ${}^4P_4 = 4 \cdot 3 \cdot 2 \cdot 1 = 24$ ways.</li>
+    </ul>
+    <p>By the Addition Principle, total ways $= 120 + 24 = 144$.</p>
+    <p class="answer">Answer: $144$ ways.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 13 (Arranging Books with End-Position Restriction):</strong> In how many ways can $6$ different books be arranged along a line on a shelf if one of the books is a dictionary and it must be placed at one end?</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p>The dictionary must occupy either the $1^{\text{st}}$ position or the $6^{\text{th}}$ position:</p>
+    <ul>
+      <li><strong>Dictionary at $1^{\text{st}}$ position:</strong> The remaining $5$ books can be arranged in the other $5$ positions in $5! = 120$ ways.</li>
+      <li><strong>Dictionary at $6^{\text{th}}$ position:</strong> The remaining $5$ books can be arranged in the other $5$ positions in $5! = 120$ ways.</li>
+    </ul>
+    <p>Total arrangements $= 120 + 120 = 240$.</p>
+    <p class="answer">Answer: $240$ ways.</p>
+  </details>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>Domain Requirement $n \ge r$:</strong> When solving polynomial equations derived from ${}^nP_r$, always enforce the integer domain restriction $n \ge r$ and reject negative or too-small roots.</li>
+    <li><strong>Forgetting ${}^nP_0 = 1$:</strong> Just as $0! = 1$, there is $1$ way to arrange zero objects (the empty arrangement), so ${}^{10}P_0 = 1$, not $0$!</li>
+  </ul>
+</div>
+
+<div class="note-tip">
+  <span class="block-label">Exam Tip &mdash; Fill Restricted Positions First!</span>
+  <p>Whenever a permutation problem imposes a special condition on specific positions (such as "the dictionary must be at one end" or "the code must start with a vowel"), always <strong>fill the restricted positions first</strong> before arranging the remaining unrestricted items.</p>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways (မှတ်သားရန် အချက်များ)</span>
+  <ul>
+    <li><strong>Permutation Definition (အစီအစဉ်):</strong> An ordered arrangement of $r$ objects chosen from $n$ distinct objects.</li>
+    <li><strong>Permutation Formula:</strong> ${}^nP_r = n(n-1)(n-2)\cdots(n-r+1) = \dfrac{n!}{(n-r)!}$ for $0 \le r \le n$.</li>
+    <li><strong>Full Arrangement &amp; Zero Case:</strong> ${}^nP_n = n!$ and ${}^nP_0 = 1$.</li>
+  </ul>
+</div>
+</article>

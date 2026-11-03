@@ -1,0 +1,192 @@
+<!-- tags: Logarithmic and Exponential Functions, G12 Math Myanmar -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Logarithmic and Exponential Functions">Differentiation of Logarithmic Functions</h1>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Euler's Number $e$, Natural Logarithms &amp; Logarithmic Derivatives</span>
+  <p>When differentiating $y = \log_b x$ from first principles, the limit of the difference quotient naturally introduces the fundamental constant $e$ (Euler's number, အွိုင်လာကိန်းသေ), defined by:</p>
+  $$e = \lim_{t \to 0}(1 + t)^{\frac{1}{t}} \approx 2.7182818\dots$$
+  <p>The logarithm with base $e$ is called the <strong>natural logarithm</strong> (သဘာဝ လော့ဂရစ်သမ်) and is denoted by $\ln x = \log_e x$. Because $\ln e = \log_e e = 1$, choosing base $b = e$ makes the derivative formula extraordinarily clean: $\dfrac{d}{dx}(\ln x) = \dfrac{1}{x}$.</p>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formulas &mdash; Derivatives of $\ln u$ and $\log_b u$ &amp; Logarithmic Differentiation</span>
+  <ul>
+    <li><strong>Derivative of Natural Logarithm ($b = e$):</strong> For $x > 0$ and any positive differentiable function $u = u(x) > 0$:
+      $$\frac{d}{dx}(\ln x) = \frac{1}{x}, \qquad \frac{d}{dx}\big(\ln u(x)\big) = \frac{1}{u(x)} \cdot \frac{du}{dx} = \frac{u'(x)}{u(x)}$$
+      <em>(More generally, for $u(x) \neq 0$, $\dfrac{d}{dx}\ln|u(x)| = \dfrac{1}{u(x)}\dfrac{du}{dx}$.)</em>
+    </li>
+    <li><strong>Derivative of General Base-$b$ Logarithm ($b > 0, b \neq 1$):</strong>
+      $$\frac{d}{dx}(\log_b x) = \frac{1}{x}\log_b e = \frac{1}{x\ln b}, \qquad \frac{d}{dx}\big(\log_b u(x)\big) = \frac{1}{u(x)}\log_b e \cdot \frac{du}{dx}$$
+    </li>
+    <li><strong>Logarithmic Differentiation Procedure:</strong> To differentiate a complicated positive function $y = f(x)$ involving products, quotients, powers, or radicals:
+      <ol>
+        <li>Take the natural logarithm $\ln$ of both sides: $\ln y = \ln f(x)$.</li>
+        <li>Expand the right-hand side using log laws ($\ln(AB) = \ln A + \ln B$, $\ln(A/B) = \ln A - \ln B$, $\ln(A^p) = p\ln A$).</li>
+        <li>Differentiate both sides implicitly with respect to $x$: $\dfrac{1}{y}\dfrac{dy}{dx} = \dfrac{d}{dx}[\ln f(x)]$, and multiply through by $y$.</li>
+      </ol>
+    </li>
+  </ul>
+</div>
+
+<div class="note-proof">
+  <span class="block-label">Proof &mdash; First-Principles Derivation of $\dfrac{d}{dx}(\log_b x) = \dfrac{1}{x}\log_b e$</span>
+  <p>Let $y = \log_b x$ ($x > 0$) and let $\delta x$ be a small increment in $x$. Using the logarithm quotient and power rules:</p>
+  $$\delta y = \log_b(x + \delta x) - \log_b x = \log_b\!\left(\frac{x + \delta x}{x}\right) = \log_b\!\left(1 + \frac{\delta x}{x}\right)$$
+  <p>Set $t = \dfrac{\delta x}{x}$, so that $\delta x = xt$ and $t \to 0$ as $\delta x \to 0$. Then the difference quotient becomes:</p>
+  $$\frac{\delta y}{\delta x} = \frac{1}{xt}\log_b(1 + t) = \frac{1}{x} \cdot \frac{1}{t}\log_b(1 + t) = \frac{1}{x}\log_b\big((1 + t)^{1/t}\big)$$
+  <p>Taking the limit as $\delta x \to 0$ (so $t \to 0$) and using the continuity of $\log_b$ together with $\lim_{t \to 0}(1 + t)^{1/t} = e$:</p>
+  $$\frac{dy}{dx} = \lim_{t \to 0}\frac{1}{x}\log_b\big((1 + t)^{1/t}\big) = \frac{1}{x}\log_b\!\left(\lim_{t \to 0}(1 + t)^{1/t}\right) = \frac{1}{x}\log_b e \quad \blacksquare$$
+  <p>In particular, when $b = e$, $\log_e e = \ln e = 1$, which gives $\dfrac{d}{dx}(\ln x) = \dfrac{1}{x}$.</p>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; Tangent Slope of $y = \ln x$ is $\frac{1}{x}$ &amp; Convergence of $(1 + t)^{1/t} \to e$</span>
+  <p>Slide $x_0 > 0$ to watch the rose tangent line to $y = \ln x$ (blue) have exact slope $\frac{1}{x_0}$ matching the hyperbola $y = \frac{1}{x}$ (teal), or switch to the limit curve $(1 + t)^{1/t}$ approaching Euler's number $e \approx 2.71828$ as $t \to 0$.</p>
+  <canvas id="g12-ch8-02-canvas"></canvas>
+  <div class="controls">
+    <label>Point x₀ <input type="range" id="ch8-02-x" min="0.4" max="5" value="1.5" step="0.1"></label>
+    <button type="button" class="pill active" data-mode="deriv">d/dx (ln x) = 1/x</button>
+    <button type="button" class="pill" data-mode="euler">Limit (1 + t)^(1/t) → e</button>
+  </div>
+  <div class="output table-text" id="ch8-02-out"></div>
+</div>
+
+<script>
+(function() {
+  var canvas = document.getElementById('g12-ch8-02-canvas');
+  var xIn = document.getElementById('ch8-02-x');
+  var out = document.getElementById('ch8-02-out');
+  if (!canvas) return;
+
+  var mode = 'deriv';
+
+  var plot = NotePlot.graph(canvas, {
+    x: [-1.5, 6.2],
+    y: [-2.5, 3.8],
+    draw: function(g) {
+      var x0 = parseFloat(xIn.value);
+
+      if (mode === 'deriv') {
+        g.fn(function(x) { return x > 0.04 ? Math.log(x) : NaN; }, '#2563eb', { width: 2.8 });
+        g.fn(function(x) { return x > 0.15 ? 1 / x : NaN; }, '#0d9488', { width: 2.2, dash: true });
+
+        var y0 = Math.log(x0), m = 1 / x0;
+        var dx = 1.4;
+        g.seg([x0 - dx, y0 - m * dx], [x0 + dx, y0 + m * dx], '#e11d48', { width: 2.4 });
+        g.vline(x0, '#94a3b8', { dash: true, width: 1.2 });
+
+        g.dot([x0, y0], '#2563eb', 'ln(x₀)');
+        g.dot([x0, m], '#0d9488', '1/x₀');
+        g.dot([Math.E, 1], '#d97706', '(e, 1)');
+
+        out.textContent =
+          'At x₀ = ' + x0.toFixed(2) + ':   f(x₀) = ln(' + x0.toFixed(2) + ') = ' + y0.toFixed(3) +
+          '   |   Tangent slope f\'(x₀) = 1/x₀ = 1/' + x0.toFixed(2) + ' = ' + m.toFixed(3) +
+          '   |   Note: At x₀ = 1, slope = 1; at x₀ = e ≈ 2.72, ln(e) = 1';
+      } else {
+        g.hline(Math.E, '#e11d48', { dash: true, width: 2 });
+        g.text([4.5, Math.E + 0.3], 'y = e ≈ 2.71828', '#e11d48');
+
+        g.fn(function(t) {
+          if (t <= -0.95 || Math.abs(t) < 0.005) return NaN;
+          return Math.pow(1 + t, 1 / t);
+        }, '#2563eb', { width: 2.6 });
+
+        g.hollow([0, Math.E], '#e11d48');
+        var tVal = Math.max(0.05, x0 * 0.4);
+        var approxE = Math.pow(1 + tVal, 1 / tVal);
+        g.dot([tVal, approxE], '#0d9488', 't=' + tVal.toFixed(2));
+
+        out.textContent =
+          'Limit Definition of e:   lim (t → 0) (1 + t)^(1/t) = e ≈ 2.7182818   |   ' +
+          'At t = ' + tVal.toFixed(2) + ':  (1 + ' + tVal.toFixed(2) + ')^(1/' + tVal.toFixed(2) + ') = ' + approxE.toFixed(5);
+      }
+    }
+  });
+
+  xIn.addEventListener('input', function() { plot.redraw(); });
+  var btns = canvas.parentElement.querySelectorAll('.pill[data-mode]');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].addEventListener('click', function() {
+      for (var j = 0; j < btns.length; j++) btns[j].classList.remove('active');
+      this.classList.add('active');
+      mode = this.getAttribute('data-mode');
+      plot.redraw();
+    });
+  }
+})();
+</script>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Textbook Examples 3, 4 &amp; 5</span>
+
+  <p><strong>Example 3 (Differentiating Natural and Base-$b$ Logarithms):</strong> Differentiate with respect to $x$:<br>
+  (a) $\log_3(3x^2 + 1)$ &emsp; (b) $\ln\sqrt{4x^2 + 1}$ &emsp; (c) $\ln x \cdot \log_{10} x$ &emsp; (d) $\ln\frac{x}{\sqrt{x^2 + 2}}$.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p><strong>(a)</strong> Using $\dfrac{d}{dx}\log_b u = \dfrac{1}{u}\log_b e \cdot \dfrac{du}{dx}$:</p>
+    $$\frac{d}{dx}\log_3(3x^2 + 1) = \frac{1}{3x^2 + 1}\log_3 e \cdot \frac{d}{dx}(3x^2 + 1) = \frac{6x}{3x^2 + 1}\log_3 e$$
+    <p><strong>(b)</strong> First simplify using $\ln\sqrt{4x^2 + 1} = \frac{1}{2}\ln(4x^2 + 1)$:</p>
+    $$\frac{d}{dx}\left[\frac{1}{2}\ln(4x^2 + 1)\right] = \frac{1}{2} \cdot \frac{1}{4x^2 + 1} \cdot (8x) = \frac{4x}{4x^2 + 1}$$
+    <p><strong>(c)</strong> By the product rule:</p>
+    $$\frac{d}{dx}(\ln x \cdot \log_{10} x) = \ln x \cdot \left(\frac{1}{x}\log_{10} e\right) + \log_{10} x \cdot \left(\frac{1}{x}\right) = \frac{\ln x\,\log_{10} e + \log_{10} x}{x}$$
+    <p><strong>(d)</strong> Using the textbook chain/quotient method (or expanding $\ln x - \frac{1}{2}\ln(x^2 + 2)$ first):</p>
+    $$\frac{d}{dx}\left[\ln x - \frac{1}{2}\ln(x^2 + 2)\right] = \frac{1}{x} - \frac{1}{2}\cdot\frac{2x}{x^2 + 2} = \frac{(x^2 + 2) - x^2}{x(x^2 + 2)} = \frac{2}{x(x^2 + 2)}$$
+    <p class="answer">Answer: (a) $\dfrac{6x}{3x^2 + 1}\log_3 e$, (b) $\dfrac{4x}{4x^2 + 1}$, (c) $\dfrac{\ln x\log_{10}e + \log_{10}x}{x}$, (d) $\dfrac{2}{x(x^2 + 2)}$.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 4 (Logarithmic Differentiation of a Radical Product):</strong> Find $\dfrac{dy}{dx}$ if $y = \sqrt{(x^2 + 1)(x - 1)^3}$.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p>Take the natural logarithm of both sides and expand using logarithm laws:</p>
+    $$\ln y = \ln\big[(x^2 + 1)(x - 1)^3\big]^{1/2} = \frac{1}{2}\ln(x^2 + 1) + \frac{3}{2}\ln(x - 1)$$
+    <p>Differentiate both sides with respect to $x$:</p>
+    $$\frac{1}{y}\frac{dy}{dx} = \frac{1}{2}\cdot\frac{2x}{x^2 + 1} + \frac{3}{2}\cdot\frac{1}{x - 1} = \frac{x}{x^2 + 1} + \frac{3}{2(x - 1)}$$
+    <p>Multiply both sides by $y = \sqrt{(x^2 + 1)(x - 1)^3}$:</p>
+    $$\frac{dy}{dx} = \sqrt{(x^2 + 1)(x - 1)^3}\left(\frac{x}{x^2 + 1} + \frac{3}{2(x - 1)}\right)$$
+    <p class="answer">Answer: $\dfrac{dy}{dx} = \sqrt{(x^2 + 1)(x - 1)^3}\left(\dfrac{x}{x^2 + 1} + \dfrac{3}{2(x - 1)}\right)$.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 5 (Logarithmic Differentiation with Trigonometric Factors):</strong> Find $\dfrac{dy}{dx}$ if $y = \dfrac{x\sin x}{\sqrt{\sec x}}$ for $0 < x < \dfrac{\pi}{2}$.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p>Take $\ln$ of both sides and expand:</p>
+    $$\ln y = \ln\!\left(\frac{x\sin x}{\sqrt{\sec x}}\right) = \ln x + \ln(\sin x) - \frac{1}{2}\ln(\sec x)$$
+    <p>Differentiate both sides with respect to $x$:</p>
+    $$\frac{1}{y}\frac{dy}{dx} = \frac{1}{x} + \frac{\cos x}{\sin x} - \frac{1}{2}\cdot\frac{\sec x\tan x}{\sec x} = \frac{1}{x} + \cot x - \frac{1}{2}\tan x$$
+    <p>Multiply by $y$:</p>
+    <p class="answer">Answer: $\dfrac{dy}{dx} = \dfrac{x\sin x}{\sqrt{\sec x}}\left(\dfrac{1}{x} + \cot x - \dfrac{1}{2}\tan x\right)$.</p>
+  </details>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>Forgetting the Factor $\log_b e$ When $b \neq e$:</strong> For $\log_{10} x$ or $\log_3 x$, the derivative is $\frac{1}{x}\log_{10} e$ or $\frac{1}{x}\log_3 e$, NOT simply $\frac{1}{x}$! Only the natural logarithm $\ln x$ has derivative $\frac{1}{x}$.</li>
+    <li><strong>Forgetting to Multiply Back by $y$ in Logarithmic Differentiation:</strong> Differentiating $\ln y$ gives $\frac{1}{y}\frac{dy}{dx}$ on the left side; always multiply the right side by the original expression for $y$ at the final step!</li>
+  </ul>
+</div>
+
+<div class="note-tip">
+  <span class="block-label">Exam Tip &mdash; Expand Logarithms BEFORE Differentiating!</span>
+  <p>Whenever you need to differentiate $\ln\!\left(\frac{A^p B^q}{C^r}\right)$, always expand it into $p\ln A + q\ln B - r\ln C$ <em>before</em> taking any derivatives. This completely avoids messy quotient-rule and radical-chain-rule algebra!</p>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways (မှတ်သားရန် အချက်များ)</span>
+  <ul>
+    <li><strong>Euler's Number:</strong> $e = \displaystyle\lim_{t \to 0}(1 + t)^{1/t} \approx 2.71828$, and $\ln x = \log_e x$.</li>
+    <li><strong>Natural Log Derivative:</strong> $\dfrac{d}{dx}(\ln u) = \dfrac{1}{u}\dfrac{du}{dx}$.</li>
+    <li><strong>General Base-$b$ Log Derivative:</strong> $\dfrac{d}{dx}(\log_b u) = \dfrac{1}{u}\log_b e \cdot \dfrac{du}{dx} = \dfrac{1}{u\ln b}\dfrac{du}{dx}$.</li>
+  </ul>
+</div>
+</article>
