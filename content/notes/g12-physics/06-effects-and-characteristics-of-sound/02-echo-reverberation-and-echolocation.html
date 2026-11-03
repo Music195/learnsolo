@@ -1,0 +1,165 @@
+<!-- tags: Effects and Characteristics of Sound, G12 Physics Myanmar -->
+<!-- Grade 12 Physics textbook, Chapter 6, section 6.2 (pages 88–90) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Effects and Characteristics of Sound">Echo, Reverberation, and Echolocation</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Reflection of Acoustic Waves</span>
+  <p>When sound waves encounter a boundary between different media (such as a hard cliff face, masonry wall, or metal hull), part of the acoustic energy is reflected back into the originating medium according to the laws of reflection:</p>
+  <ul>
+    <li><strong>Echo:</strong> The distinct repetition of a sound caused by the reflection of sound waves from a distant, rigid surface.
+      <ul>
+        <li><strong>Persistence of Hearing:</strong> The human auditory system retains a sound sensation for approximately $0.1\mathrm{s}$ ($1/10\text{th}$ of a second). To perceive an echo as a distinct separate sound rather than a smeared continuation, the reflected pulse must arrive at the listener at least $0.1\mathrm{s}$ after the original direct sound.</li>
+        <li><strong>Minimum Distance for Echo:</strong> In air at $20^\circ\mathrm{C}$ where $v \approx 340\mathrm{m\,s^{-1}}$, the sound must travel a round-trip distance of at least $2d = v \Delta t = 340 \times 0.1 = 34\mathrm{m}$, meaning the reflecting surface must be at least $d_{\min} \approx 17\mathrm{m}$ away from the source.</li>
+      </ul>
+    </li>
+    <li><strong>Reverberation:</strong> The continuous persistence and gradual decay of sound in an enclosed room or auditorium caused by multiple overlapping reflections bouncing rapidly between hard walls, ceilings, and floors.
+      <ul>
+        <li><strong>Acoustic Remediation:</strong> Excessive reverberation blurs words and musical notes. Concert halls and lecture theatres control reverberation time by lining surfaces with acoustic foam, heavy curtains, perforated panels, carpets, and upholstered seating that absorb incident sound energy.</li>
+      </ul>
+    </li>
+    <li><strong>Biological Echolocation:</strong>
+      Certain mammals (bats, dolphins, toothed whales) emit rapid bursts of high-frequency ultrasound pulses. By measuring the elapsed time delay, amplitude decay, and directional Doppler shift of returning echoes, their brains construct detailed mental spatial maps of their surroundings to navigate in pitch darkness and target flying insects.
+    </li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formulas &mdash; Echo Ranging</span>
+  <div class="formula-main">
+    $$2d = v \cdot t \qquad\iff\qquad d = \frac{v \cdot t}{2}$$
+  </div>
+  <ul class="symbols">
+    <li>$d$ = one-way distance to the reflecting surface ($\mathrm{m}$)</li>
+    <li>$v$ = speed of sound in the intervening medium ($\mathrm{m\,s^{-1}}$)</li>
+    <li>$t$ = total elapsed round-trip time between emission and echo reception ($\mathrm{s}$)</li>
+    <li>For a moving source (e.g. flying bat) moving at speed $v_b$ towards a stationary target:
+      $$d_{\text{sound}} + d_{\text{bat}} = 2 d_0 \implies v_s t + v_b t = 2 d_0 \implies d_0 = \frac{(v_s + v_b)t}{2}$$
+    </li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Visualization &mdash; Echo Reflection and Round-Trip Delay</span>
+  <p class="demo-instruction">Adjust the distance $d$ to the vertical cliff and click "Emit Pulse". Observe the traveling sound wavefront, the reflection off the rock face, and the exact round-trip echo time $t = 2d / v$.</p>
+
+  <div id="echo-board" style="width: 100%; height: 360px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
+
+  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
+    <label style="color: #cbd5e1; font-weight: 500;">
+      Cliff Distance $d$: 
+      <input id="dist-slider" type="range" min="20" max="150" step="10" value="85" style="vertical-align: middle;">
+      <span id="dist-val" style="color: #38bdf8; font-weight: 700;">85 m</span>
+    </label>
+    <div style="color: #f8fafc; font-size: 0.9rem;">
+      Round-trip Time ($v = 340\text{ m/s}$): <span id="echo-time" style="color: #4ade80; font-weight: 700;">0.50 s</span>
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    let board = JXG.JSXGraph.initBoard('echo-board', {
+      boundingbox: [-10, 5, 170, -2],
+      axis: true,
+      defaultAxes: {
+        x: { name: 'Distance (m)', withLabel: true, label: { position: 'rt', offset: [-15, -15], color: '#cbd5e1' } },
+        y: { visible: false }
+      },
+      showNavigation: false,
+      showCopyright: false
+    });
+
+    let d_val = 85;
+    const v_sound = 340;
+
+    // Observer at x = 0
+    board.create('point', [0, 1.5], { name: 'Source / Observer', fillColor: '#38bdf8', strokeColor: '#fff', size: 5, fixed: true });
+
+    // Cliff wall at x = d_val
+    let cliffWall = board.create('segment', [
+      [function() { return d_val; }, 0],
+      [function() { return d_val; }, 4]
+    ], { strokeColor: '#94a3b8', strokeWidth: 8 });
+    board.create('text', [function() { return d_val + 2; }, 2.0, 'Reflecting Cliff'], { color: '#cbd5e1', fontSize: 11 });
+
+    // Round-trip pulse path
+    let fwdArrow = board.create('arrow', [[0, 2.2], [function() { return d_val; }, 2.2]], { strokeColor: '#38bdf8', strokeWidth: 2.5 });
+    board.create('text', [function() { return d_val / 2; }, 2.6, 'Outgoing Wave (vt/2)'], { color: '#38bdf8', fontSize: 11, anchorX: 'middle' });
+
+    let backArrow = board.create('arrow', [[function() { return d_val; }, 0.8], [0, 0.8]], { strokeColor: '#fb923c', strokeWidth: 2.5, dash: 2 });
+    board.create('text', [function() { return d_val / 2; }, 0.4, 'Returning Echo'], { color: '#fb923c', fontSize: 11, anchorX: 'middle' });
+
+    function update() {
+      document.getElementById('dist-val').textContent = d_val + ' m';
+      let t = (2 * d_val) / v_sound;
+      document.getElementById('echo-time').textContent = t.toFixed(2) + ' s';
+      board.update();
+    }
+
+    document.getElementById('dist-slider').addEventListener('input', function() {
+      d_val = parseFloat(this.value);
+      update();
+    });
+
+    update();
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Textbook Worked Examples &mdash; Echo and Echolocation Calculations</span>
+
+  <div class="example-item">
+    <p class="example-title"><strong>Example 6.5:</strong> A bat flying at a speed of $20\text{ m\,s}^{-1}$ towards a stationary moth emits an ultrasonic chirp traveling at $340\text{ m\,s}^{-1}$. The bat detects the returning echo $0.4\text{ s}$ later.<br>
+    (i) Calculate the distance traveled by the bat in $0.4\text{ s}$.<br>
+    (ii) Calculate the distance traveled by the sound wave in $0.4\text{ s}$.<br>
+    (iii) Determine the initial distance between the bat and the moth at the moment of emission.</p>
+    <p class="solution"><strong>Solution:</strong><br>
+      Given: Speed of bat $v_b = 20\text{ m\,s}^{-1}$, speed of sound $v_s = 340\text{ m\,s}^{-1}$, time $t = 0.4\text{ s}$.<br><br>
+      (i) Distance traveled by the bat:
+      $$d_{\text{bat}} = v_b t = 20\text{ m\,s}^{-1} \times 0.4\text{ s} = 8\text{ m}$$
+      (ii) Total distance traveled by the sound wave:
+      $$d_{\text{sound}} = v_s t = 340\text{ m\,s}^{-1} \times 0.4\text{ s} = 136\text{ m}$$
+      (iii) Finding initial distance $d_0$:<br>
+      The sound travels from the bat's initial position to the moth ($d_0$) and then reflects back to the bat's new position after it has advanced $8\text{ m}$ toward the moth ($d_0 - d_{\text{bat}}$):
+      $$d_{\text{sound}} = d_0 + (d_0 - d_{\text{bat}}) = 2 d_0 - d_{\text{bat}}$$
+      $$2 d_0 = d_{\text{sound}} + d_{\text{bat}} = 136\text{ m} + 8\text{ m} = 144\text{ m}$$
+      $$d_0 = \frac{144\text{ m}}{2} = 72\text{ m}$$
+    </p>
+  </div>
+
+  <div class="example-item">
+    <p class="example-title"><strong>Reviewed Exercises:</strong></p>
+    <p class="solution">
+      <strong>1. The sole survivor of a shipwreck swims to an island situated $3000\text{ m}$ from a vertical cliff. A ship is anchored between the island and the cliff. A horn blast from the ship is heard twice by the survivor with a time difference of $4\text{ s}$. Calculate the distance between the ship and the survivor. (Speed of sound $v = 330\text{ m\,s}^{-1}$).</strong><br>
+      Let distance from survivor to ship be $x$, and distance from ship to cliff be $y$.<br>
+      Total distance from survivor to cliff: $x + y = 3000\text{ m} \implies y = 3000 - x$.<br>
+      1. First sound heard is the direct sound:
+      $$t_1 = \frac{x}{v} = \frac{x}{330}$$
+      2. Second sound heard is the echo reflected off the cliff face:
+      The sound travels from ship to cliff ($y$) and then from cliff to survivor ($3000\text{ m}$):
+      $$d_{\text{echo}} = y + 3000 = (3000 - x) + 3000 = 6000 - x$$
+      $$t_2 = \frac{6000 - x}{330}$$
+      3. The elapsed time difference $\Delta t = t_2 - t_1 = 4\text{ s}$:
+      $$\frac{6000 - x}{330} - \frac{x}{330} = 4 \implies \frac{6000 - 2x}{330} = 4$$
+      $$6000 - 2x = 4 \times 330 = 1320 \implies 2x = 6000 - 1320 = 4680 \implies x = 2340\text{ m}$$
+      The ship is anchored $2340\text{ m}$ from the survivor.
+      <br><br>
+      <strong>2. Why are the walls and ceiling of an auditorium covered with sound-absorbent materials?</strong><br>
+      Uncovered hard walls reflect sound repeatedly, creating prolonged reverberations and flutter echoes that overlap with ongoing speech or music, causing acoustic smearing and making speech unintelligible. Sound-absorbent materials absorb acoustic energy and lower reverberation time to an optimal level ($\approx 1\text{ to }2\text{ seconds}$).
+    </p>
+  </div>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>An echo is the distinct repetition of sound reflected from an obstacle at least $17\mathrm{m}$ away ($0.1\mathrm{s}$ persistence of hearing).</li>
+    <li>Echo distance formula: $2d = v \cdot t \implies d = \frac{v t}{2}$.</li>
+    <li>Reverberation is the gradual decay of sound in an enclosure caused by multiple surface reflections, controlled by acoustic absorbers.</li>
+    <li>Bats and marine mammals use ultrasonic echolocation to determine prey distance and spatial topography.</li>
+  </ul>
+</div>
+
+</article>

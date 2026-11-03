@@ -1,0 +1,179 @@
+<!-- tags: Effects and Characteristics of Sound, G12 Physics Myanmar -->
+<!-- Grade 12 Physics textbook, Chapter 6, section 6.4 (pages 92–95) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Effects and Characteristics of Sound">The Doppler Effect</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Frequency Shifts Due to Relative Motion</span>
+  <p>First analyzed mathematically by Austrian physicist Christian Doppler in 1842, the <strong>Doppler effect</strong> is the apparent shift in observed wave frequency when there is relative motion between a wave source and a receiver:</p>
+  <ul>
+    <li><strong>Physical Origin:</strong>
+      <ul>
+        <li><strong>When approaching:</strong> The source catches up to the sound waves it previously emitted. Wavefronts are crowded closer together (shorter apparent wavelength $\lambda'$), so more crests reach the observer per second, raising the observed pitch ($f_o > f_s$).</li>
+        <li><strong>When receding:</strong> The source moves away from emitted wavefronts, stretching them further apart (longer apparent wavelength $\lambda'$), so fewer crests reach the observer per second, lowering the observed pitch ($f_o < f_s$).</li>
+      </ul>
+    </li>
+    <li><strong>Everyday Manifestation:</strong> The sudden dropping pitch of an ambulance or police siren as it speeds past a stationary pedestrian (from a high-pitched whine on approach to a low-pitched drone on departure).</li>
+    <li><strong>Applications Across Science:</strong>
+      <ul>
+        <li><strong>Astronomy (Cosmological Redshift):</strong> Light emitted by distant receding galaxies is shifted to longer, redder wavelengths, providing conclusive observational proof of the expanding universe.</li>
+        <li><strong>Police Radar & Speed Traps:</strong> Radar guns bounce microwaves off approaching vehicles; the measured Doppler frequency shift reveals instantaneous vehicle velocity ($\Delta f \propto v_{\text{car}}$).</li>
+        <li><strong>Cardiovascular Medicine (Doppler Ultrasound):</strong> Ultrasonic pulses reflected by flowing red blood cells exhibit frequency shifts that measure hemodynamic blood velocity, revealing arterial blockages, carotid stenosis, and cardiac valve insufficiency.</li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formulas &mdash; The General Doppler Equation</span>
+  <div class="formula-main">
+    $$f_o = f_s \left(\frac{v \pm v_o}{v \mp v_s}\right)$$
+  </div>
+  <ul class="symbols">
+    <li>$f_o$ = apparent frequency heard by the observer ($\mathrm{Hz}$)</li>
+    <li>$f_s$ = intrinsic frequency emitted by the sound source ($\mathrm{Hz}$)</li>
+    <li>$v$ = speed of sound in the stationary medium ($\mathrm{m\,s^{-1}}$)</li>
+    <li>$v_o$ = speed of the observer relative to the medium ($\mathrm{m\,s^{-1}}$)</li>
+    <li>$v_s$ = speed of the source relative to the medium ($\mathrm{m\,s^{-1}}$)</li>
+    <li><strong>Sign Convention Rule:</strong>
+      <ul>
+        <li><strong>Numerator (Observer):</strong> Use $+v_o$ if the observer moves <em>toward</em> the source; use $-v_o$ if moving <em>away</em>.</li>
+        <li><strong>Denominator (Source):</strong> Use $-v_s$ if the source moves <em>toward</em> the observer; use $+v_s$ if moving <em>away</em>.</li>
+        <li><em>Memory rule:</em> Any approach motion increases $f_o$; any receding motion decreases $f_o$.</li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Visualization &mdash; Doppler Wavefront Compression</span>
+  <p class="demo-instruction">Use the slider to adjust the source velocity $v_s$. Observe how moving to the right crowds the circular wavefronts ahead (high frequency / blue shift) while stretching them out behind (low frequency / red shift).</p>
+
+  <div id="doppler-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
+
+  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
+    <label style="color: #cbd5e1; font-weight: 500;">
+      Source Speed $v_s$: 
+      <input id="vs-slider" type="range" min="0" max="200" step="20" value="100" style="vertical-align: middle;">
+      <span id="vs-val" style="color: #38bdf8; font-weight: 700;">100 m/s</span>
+    </label>
+    <div style="color: #f8fafc; font-size: 0.9rem;">
+      Ahead: <span id="ahead-stat" style="color: #38bdf8; font-weight: 700;">708 Hz (+42%)</span> &bull; Behind: <span id="behind-stat" style="color: #f87171; font-weight: 700;">386 Hz (-23%)</span>
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    let board = JXG.JSXGraph.initBoard('doppler-board', {
+      boundingbox: [-7, 5, 7, -5],
+      axis: false,
+      showNavigation: false,
+      showCopyright: false
+    });
+
+    let vs = 100;
+    const vSound = 340;
+    const f0 = 500;
+    let circles = [];
+
+    function renderWavefronts() {
+      board.suspendUpdate();
+      for (let c of circles) board.removeObject(c);
+      circles = [];
+
+      let mach = vs / vSound;
+      // Draw 5 successive emitted wavefronts
+      for (let k = 1; k <= 5; k++) {
+        let centerShift = (5 - k) * mach * 0.9;
+        let radius = (6 - k) * 0.9;
+        let c = board.create('circle', [[centerShift, 0], radius], {
+          strokeColor: '#38bdf8',
+          strokeWidth: 1.8,
+          dash: 0
+        });
+        circles.push(c);
+      }
+
+      // Moving source position
+      let sPt = board.create('point', [5 * mach * 0.9, 0], {
+        fillColor: '#fbbf24',
+        strokeColor: '#fff',
+        size: 5,
+        name: 'Source'
+      });
+      circles.push(sPt);
+
+      board.unsuspendUpdate();
+    }
+
+    renderWavefronts();
+
+    function update() {
+      document.getElementById('vs-val').textContent = vs + ' m/s';
+      let fAhead = Math.round(f0 * (vSound / (vSound - vs)));
+      let fBehind = Math.round(f0 * (vSound / (vSound + vs)));
+      let diffAhead = Math.round(((fAhead - f0) / f0) * 100);
+      let diffBehind = Math.round(((fBehind - f0) / f0) * 100);
+
+      document.getElementById('ahead-stat').textContent = fAhead + ' Hz (+' + diffAhead + '%)';
+      document.getElementById('behind-stat').textContent = fBehind + ' Hz (' + diffBehind + '%)';
+      renderWavefronts();
+    }
+
+    document.getElementById('vs-slider').addEventListener('input', function() {
+      vs = parseFloat(this.value);
+      update();
+    });
+
+    update();
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Textbook Worked Examples &mdash; Doppler Shift Calculations</span>
+
+  <div class="example-item">
+    <p class="example-title"><strong>Example 6.7:</strong> An ambulance traveling at $44\text{ m\,s}^{-1}$ approaches a car driving ahead in the same direction at $28\text{ m\,s}^{-1}$. The ambulance siren sounds at $550\text{ Hz}$. At what frequency does the driver of the car hear the siren? Take the speed of sound $v = 330\text{ m\,s}^{-1}$.</p>
+    <p class="solution"><strong>Solution:</strong><br>
+      Given:<br>
+      Source (ambulance): $v_s = 44\text{ m\,s}^{-1}$ moving <em>towards</em> the car $\implies -v_s$ in denominator.<br>
+      Observer (car): $v_o = 28\text{ m\,s}^{-1}$ moving <em>away from</em> the ambulance $\implies -v_o$ in numerator.<br>
+      Frequency $f_s = 550\text{ Hz}$, $v = 330\text{ m\,s}^{-1}$.<br><br>
+      Applying the general Doppler equation:
+      $$f_o = f_s \left(\frac{v - v_o}{v - v_s}\right)$$
+      $$f_o = 550 \times \left(\frac{330 - 28}{330 - 44}\right) = 550 \times \left(\frac{302}{286}\right)$$
+      $$f_o = 550 \times 1.05594 \approx 580.77\text{ Hz} \approx 581\text{ Hz}$$
+    </p>
+  </div>
+
+  <div class="example-item">
+    <p class="example-title"><strong>Reviewed Exercises:</strong></p>
+    <p class="solution">
+      <strong>1. In Example 6.7, what will be the frequency of the siren heard by the car driver after the ambulance overtakes and speeds away from the car?</strong><br>
+      Once the ambulance passes the car:<br>
+      Source (ambulance) moves <em>away from</em> the car $\implies +v_s$ in denominator.<br>
+      Observer (car) moves <em>towards</em> the ambulance ahead $\implies +v_o$ in numerator.<br>
+      $$f_o = f_s \left(\frac{v + v_o}{v + v_s}\right) = 550 \times \left(\frac{330 + 28}{330 + 44}\right) = 550 \times \left(\frac{358}{374}\right) \approx 550 \times 0.95722 \approx 526.47\text{ Hz}$$
+      The heard pitch drops sharply from $581\text{ Hz}$ to $526.5\text{ Hz}$ as it overtakes.
+      <br><br>
+      <strong>2. A monorail approaches a passenger platform at a speed of $50\text{ m\,s}^{-1}$ while blowing its whistle. A person standing stationary on the platform ($v_o = 0$) hears the whistle at $261\text{ Hz}$. The temperature is $0^\circ\text{C}$ where the speed of sound is $332\text{ m\,s}^{-1}$. What is the true rest frequency emitted by the whistle?</strong><br>
+      Given: $v_s = 50\text{ m\,s}^{-1}$ (approaching), $v_o = 0$, $v = 332\text{ m\,s}^{-1}$, $f_o = 261\text{ Hz}$.<br>
+      $$f_o = f_s \left(\frac{v}{v - v_s}\right) \implies 261 = f_s \left(\frac{332}{332 - 50}\right) = f_s \left(\frac{332}{282}\right)$$
+      $$f_s = 261 \times \left(\frac{282}{332}\right) \approx 261 \times 0.8494 \approx 221.7\text{ Hz}$$
+    </p>
+  </div>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>The Doppler effect is the perceived frequency shift caused by relative motion between source and observer.</li>
+    <li>General formula: $f_o = f_s \left(\frac{v \pm v_o}{v \mp v_s}\right)$.</li>
+    <li>Approaching motion always raises the observed pitch ($f_o > f_s$); receding motion lowers the pitch ($f_o < f_s$).</li>
+    <li>Applications include astronomical galactic red shifts, traffic speed radars, and medical Doppler echocardiography of blood flow.</li>
+  </ul>
+</div>
+
+</article>

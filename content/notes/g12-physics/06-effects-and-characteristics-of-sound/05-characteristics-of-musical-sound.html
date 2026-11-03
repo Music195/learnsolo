@@ -1,0 +1,182 @@
+<!-- tags: Effects and Characteristics of Sound, G12 Physics Myanmar -->
+<!-- Grade 12 Physics textbook, Chapter 6, section 6.5 & Exercises (pages 95–98) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Effects and Characteristics of Sound">Characteristics of Musical Sound</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; The Three Objective and Subjective Dimensions of Sound</span>
+  <p>Every musical sound is characterized by three distinct perceptual properties that correspond directly to physical wave parameters:</p>
+  <ul>
+    <li><strong>1. Pitch (related to Frequency):</strong>
+      The subjective sensation of how "sharp", "shrill", or "deep" a sound is:
+      <ul>
+        <li>Pitch is determined strictly by the fundamental frequency of vibration ($f$).</li>
+        <li>High frequency produces high pitch (e.g. bird chirp, flute, mosquito buzz, piccolo); low frequency produces low pitch (e.g. bass drum, toad croak, tuba, bull roar).</li>
+      </ul>
+    </li>
+    <li><strong>2. Loudness (related to Amplitude and Intensity):</strong>
+      The subjective physiological perception of sound energy received by the human ear:
+      <ul>
+        <li>Loudness depends on physical sound intensity ($I$), which in turn is proportional to the square of wave amplitude ($I \propto A^2$).</li>
+        <li>Doubling the physical displacement amplitude of vibrating air quadruples the transmitted energy flux ($2^2 = 4$). Unlike objective intensity ($\mathrm{W\,m^{-2}}$), perceived loudness is subjective and varies across individuals and across frequencies according to equal-loudness hearing curves.</li>
+      </ul>
+    </li>
+    <li><strong>3. Quality or Timbre (related to Waveform and Harmonics):</strong>
+      The characteristic that enables a listener to distinguish between two notes of identical pitch (same fundamental frequency) and identical loudness played on two different musical instruments (e.g. a middle C played on a flute versus a violin):
+      <ul>
+        <li>Timbre is governed by the composite acoustic waveform, which depends on the number, relative intensities, and phases of higher <strong>harmonics and overtones</strong> superimposed on the fundamental frequency.</li>
+        <li>A tuning fork emits an almost pure sinusoidal wave with zero overtones; a flute produces few harmonics; while a violin or trumpet produces rich waveforms with prominent higher harmonics.</li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formulas &mdash; Wave Intensity and Harmonic Equations</span>
+  <div class="formula-main">
+    $$I = \frac{1}{2}\rho v \omega^2 A^2 = 2\pi^2 \rho v f^2 A^2 \qquad\qquad \lambda = \frac{v}{f}$$
+  </div>
+  <ul class="symbols">
+    <li>$I$ = sound wave intensity ($\mathrm{W\,m^{-2}}$)</li>
+    <li>$\rho$ = density of medium ($1.29\mathrm{kg\,m^{-3}}$ for air at STP)</li>
+    <li>$v$ = speed of sound in the medium ($\mathrm{m\,s^{-1}}$)</li>
+    <li>$\omega = 2\pi f$ = angular frequency of the acoustic wave ($\mathrm{rad\,s^{-1}}$)</li>
+    <li>$A$ = physical displacement amplitude of air molecules ($\mathrm{m}$)</li>
+    <li>$f$ = fundamental frequency ($\mathrm{Hz}$)</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Visualization &mdash; Waveform and Timbre Synthesizer</span>
+  <p class="demo-instruction">Select different instruments to observe how adding harmonic overtones transforms a simple sine wave into the distinctive acoustic timbre of a flute, guitar, or violin.</p>
+
+  <div id="timbre-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
+
+  <div class="demo-controls" style="display: flex; gap: 0.8rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
+    <button id="btn-pure" class="btn" style="padding: 0.35rem 0.8rem; font-weight: 600; background: #0284c7; color: white; border-radius: 6px; border: none; cursor: pointer;">Tuning Fork (Pure Sine)</button>
+    <button id="btn-flute" class="btn" style="padding: 0.35rem 0.8rem; font-weight: 600; background: #64748b; color: white; border-radius: 6px; border: none; cursor: pointer;">Flute</button>
+    <button id="btn-violin" class="btn" style="padding: 0.35rem 0.8rem; font-weight: 600; background: #64748b; color: white; border-radius: 6px; border: none; cursor: pointer;">Violin (Rich Overtones)</button>
+  </div>
+  <div style="text-align: center; margin-top: 0.5rem; color: #38bdf8; font-weight: 600; font-size: 0.95rem;" id="timbre-desc">
+    Tuning Fork: Pure fundamental frequency $f_1$ with zero harmonic overtones.
+  </div>
+
+  <script>
+  (function() {
+    let board = JXG.JSXGraph.initBoard('timbre-board', {
+      boundingbox: [-0.5, 3.5, 7.0, -3.5],
+      axis: true,
+      defaultAxes: {
+        x: { name: 'Time t (ms)', withLabel: true, label: { position: 'rt', offset: [-15, -15], color: '#cbd5e1' } },
+        y: { name: 'Wave Amplitude', withLabel: true, label: { position: 'rt', offset: [-10, -10], color: '#cbd5e1' } }
+      },
+      showNavigation: false,
+      showCopyright: false
+    });
+
+    let currentInst = 'pure';
+    let waveCurve = null;
+
+    function renderWave() {
+      board.suspendUpdate();
+      if (waveCurve) board.removeObject(waveCurve);
+
+      waveCurve = board.create('curve', [
+        function(t) { return t; },
+        function(t) {
+          if (currentInst === 'pure') {
+            return 2.0 * Math.sin(t * 2);
+          } else if (currentInst === 'flute') {
+            return 1.8 * Math.sin(t * 2) + 0.6 * Math.sin(t * 4);
+          } else {
+            // Violin: rich harmonics
+            return 1.5 * Math.sin(t * 2) + 0.8 * Math.sin(t * 4) + 0.5 * Math.sin(t * 6) + 0.3 * Math.sin(t * 8);
+          }
+        },
+        0, 6.5
+      ], {
+        strokeColor: currentInst === 'pure' ? '#38bdf8' : (currentInst === 'flute' ? '#4ade80' : '#fb923c'),
+        strokeWidth: 3
+      });
+
+      board.unsuspendUpdate();
+    }
+
+    renderWave();
+
+    function setBtn(activeId) {
+      ['btn-pure', 'btn-flute', 'btn-violin'].forEach(id => {
+        document.getElementById(id).style.background = (id === activeId ? '#0284c7' : '#64748b');
+      });
+    }
+
+    document.getElementById('btn-pure').addEventListener('click', function() {
+      currentInst = 'pure'; setBtn('btn-pure');
+      document.getElementById('timbre-desc').textContent = 'Tuning Fork: Pure fundamental frequency with zero harmonic overtones.';
+      renderWave();
+    });
+
+    document.getElementById('btn-flute').addEventListener('click', function() {
+      currentInst = 'flute'; setBtn('btn-flute');
+      document.getElementById('timbre-desc').textContent = 'Flute: Smooth tone dominated by fundamental with a gentle 2nd harmonic.';
+      renderWave();
+    });
+
+    document.getElementById('btn-violin').addEventListener('click', function() {
+      currentInst = 'violin'; setBtn('btn-violin');
+      document.getElementById('timbre-desc').textContent = 'Violin: Rich, warm acoustic quality resulting from multiple prominent higher harmonics.';
+      renderWave();
+    });
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Textbook Worked Examples &mdash; Molecular Displacement and Acoustics</span>
+
+  <div class="example-item">
+    <p class="example-title"><strong>Example 6.8:</strong> Calculate the displacement amplitude $A$ of air molecules for a sound wave having a frequency of $1000\text{ Hz}$ at the threshold of human hearing ($I = 1 \times 10^{-12}\text{ W\,m}^{-2}$). The speed of sound in air is $343\text{ m\,s}^{-1}$ at $20^\circ\text{C}$ and the density of air is $1.29\text{ kg\,m}^{-3}$.</p>
+    <p class="solution"><strong>Solution:</strong><br>
+      Given:<br>
+      $f = 1000\text{ Hz}$, $I = 10^{-12}\text{ W\,m}^{-2}$, $v = 343\text{ m\,s}^{-1}$, $\rho = 1.29\text{ kg\,m}^{-3}$.<br>
+      Angular frequency:
+      $$\omega = 2\pi f = 2 \times 3.142 \times 1000 \approx 6284\text{ rad\,s}^{-1}$$
+      Using the sound wave intensity equation:
+      $$I = \frac{1}{2}\rho v \omega^2 A^2 \implies A^2 = \frac{2 I}{\rho v \omega^2}$$
+      $$A^2 = \frac{2 \times 10^{-12}}{(1.29)(343)(6284)^2} = \frac{2 \times 10^{-12}}{(442.47)(3.9488 \times 10^7)} = \frac{2 \times 10^{-12}}{1.747 \times 10^{10}} \approx 1.145 \times 10^{-22}\text{ m}^2$$
+      Taking the square root:
+      $$A = \sqrt{1.145 \times 10^{-22}} \approx 1.07 \times 10^{-11}\text{ m}$$
+      <em>Physical Insight:</em> At the threshold of hearing, the human ear is capable of detecting mechanical vibrations of air molecules that are smaller than $0.02\text{ nm}$ &mdash; less than one tenth the diameter of an individual atom!
+    </p>
+  </div>
+
+  <div class="example-item">
+    <p class="example-title"><strong>Chapter Exercises:</strong></p>
+    <p class="solution">
+      <strong>Exercise 1: Sound travels faster in moist (humid) air than in dry air. Why is this?</strong><br>
+      Water molecules ($\mathrm{H_2O}$) have a molar mass of $18\mathrm{g\,mol^{-1}}$, whereas the diatomic nitrogen ($\mathrm{N_2}$, $28\mathrm{g\,mol^{-1}}$) and oxygen ($\mathrm{O_2}$, $32\mathrm{g\,mol^{-1}}$) that dominate dry air have an average molar mass of $\approx 29\mathrm{g\,mol^{-1}}$. When water vapor replaces dry air molecules at identical pressure and temperature, the overall density $\rho$ of the air decreases. Because sound speed $v = \sqrt{\gamma p / \rho}$ is inversely proportional to $\sqrt{\rho}$, sound travels faster through lighter moist air.<br><br>
+      <strong>Exercise 3: The speed of sound in a particular liquid is $1.6 \times 10^3\text{ m\,s}^{-1}$. If the bulk modulus of the liquid is $0.15 \times 10^{10}\text{ N\,m}^{-2}$, what is the density of the liquid?</strong><br>
+      Using $v = \sqrt{B / \rho} \implies \rho = \frac{B}{v^2}$:<br>
+      $$\rho = \frac{0.15 \times 10^{10}\text{ N\,m}^{-2}}{(1.6 \times 10^3\text{ m\,s}^{-1})^2} = \frac{1.5 \times 10^9}{2.56 \times 10^6} \approx 585.9\text{ kg\,m}^{-3}$$
+      <br>
+      <strong>Reviewed Exercise: Compare the sounds of a mosquito flying near your ear and a croaking toad in terms of pitch and loudness.</strong><br>
+      <ul>
+        <li><strong>Mosquito:</strong> High pitch (rapid wingbeats $\sim 600\mathrm{Hz}$) but low loudness (very small acoustic amplitude and intensity).</li>
+        <li><strong>Toad:</strong> Low pitch (slow vocal sac resonance $\sim 100\mathrm{Hz}$) but high loudness (large acoustic amplitude and power).</li>
+      </ul>
+    </p>
+  </div>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>Pitch is the subjective perception of fundamental wave frequency ($f$).</li>
+    <li>Loudness is the subjective perception of sound wave amplitude ($A$) and intensity ($I \propto A^2$).</li>
+    <li>Quality or timbre is the acoustic fingerprint that distinguishes instruments of identical pitch and loudness, governed by waveform harmonic overtones.</li>
+    <li>At the threshold of human hearing, molecular displacement amplitude is on the order of $10^{-11}\mathrm{m}$.</li>
+  </ul>
+</div>
+
+</article>

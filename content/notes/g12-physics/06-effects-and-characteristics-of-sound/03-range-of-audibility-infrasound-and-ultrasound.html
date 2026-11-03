@@ -1,0 +1,172 @@
+<!-- tags: Effects and Characteristics of Sound, G12 Physics Myanmar -->
+<!-- Grade 12 Physics textbook, Chapter 6, section 6.3 (pages 90–93) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Effects and Characteristics of Sound">Range of Audibility, Infrasound, and Ultrasound</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; The Acoustic Frequency Spectrum</span>
+  <p>Acoustic waves span a vast frequency spectrum, divided into distinct categories based on human auditory perception:</p>
+  <ul>
+    <li><strong>Range of Audibility (Human Hearing Range):</strong>
+      For healthy young human ears, the audible frequency band spans from a lower limit of <strong>$20\mathrm{Hz}$</strong> to an upper limit of approximately <strong>$20\,000\mathrm{Hz}$ ($20\mathrm{kHz}$)</strong>. Frequencies outside this interval cannot be registered by the human cochlea.
+    </li>
+    <li><strong>Infrasound ($f < 20\mathrm{Hz}$):</strong>
+      Sound waves with frequencies below the lower threshold of human audibility:
+      <ul>
+        <li><strong>Physical Properties:</strong> Infrasound possesses extremely long wavelengths ($\lambda > 17\mathrm{m}$ in air). Long wavelengths suffer minimal atmospheric absorption, scattering, and attenuation, allowing infrasonic signals to travel vast distances (hundreds to thousands of kilometers) around the globe.</li>
+        <li><strong>Biological and Natural Sources:</strong> Used for long-range herd communication by elephants ($15\mathrm{Hz}$ up to $4\mathrm{km}$), rhinoceroses ($10\mathrm{Hz}$), and whales; generated geologically by earthquakes, volcanic eruptions, tsunamis, and severe storm fronts.</li>
+      </ul>
+    </li>
+    <li><strong>Ultrasound ($f > 20\,000\mathrm{Hz}$):</strong>
+      Sound waves with frequencies above the upper threshold of human audibility ($20\mathrm{kHz}$ to several hundred $\mathrm{MHz}$):
+      <ul>
+        <li><strong>Physical Properties:</strong> Extremely short wavelengths ($\lambda$ in millimeters or micrometers) enable ultrasound to form sharp, narrow, highly directional beams that resolve fine microscopic details and detect tiny flaws.</li>
+        <li><strong>Industrial and Medical Applications:</strong>
+          <ul>
+            <li><strong>Non-Destructive Testing (NDT) & Quality Control:</strong> Probing concrete slabs, aircraft alloys, welded joints, and subterranean pipelines for hidden hairline cracks and internal voids.</li>
+            <li><strong>Medical Diagnostic Sonography:</strong> Piezoelectric transducers transmit $1\text{ to }15\mathrm{MHz}$ pulses through biological soft tissue; differential acoustic reflections produce real-time cross-sectional images of internal organs and developing fetuses without ionizing radiation hazards.</li>
+            <li><strong>Ultrasonic Scalers in Dentistry:</strong> High-frequency microscopic mechanical vibrations shatter stubborn dental calculus and plaque, flushed away by a continuous antiseptic water spray.</li>
+            <li><strong>Ultrasonic Cleaning & Cavitation:</strong> Intense ultrasound creates millions of microscopic vacuum vapor bubbles during the rarefaction phase. These bubbles implode violently during subsequent compression cycles, producing localized micro-jets that scrub microscopic grime from delicate watch mechanisms, jewelry, surgical scalpels, and optical components.</li>
+            <li><strong>SONAR (Sound Navigation and Ranging):</strong> Marine navigation systems emit high-frequency pulses through water to gauge seabed bathymetry ($d = \frac{v t}{2}$), detect shipwrecks, and track submarines.</li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formulas &mdash; Wave Relations in Acoustic Diagnostics</span>
+  <div class="formula-main">
+    $$v = f \lambda \qquad\iff\qquad \lambda = \frac{v}{f} \qquad\qquad d = \frac{v \cdot t}{2}$$
+  </div>
+  <ul class="symbols">
+    <li>$v$ = acoustic velocity in biological tissue or medium ($\mathrm{m\,s^{-1}}$)</li>
+    <li>$f$ = wave frequency ($\mathrm{Hz}$ or $\mathrm{MHz}$, $1\mathrm{MHz} = 10^6\mathrm{Hz}$)</li>
+    <li>$\lambda$ = acoustic wavelength ($\mathrm{m}$ or $\mathrm{mm}$) &mdash; sets the fundamental limit of spatial image resolution</li>
+    <li>$d$ = depth of reflecting tissue interface or seabed target ($\mathrm{m}$)</li>
+    <li>$t$ = round-trip echo return time ($\mathrm{s}$)</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Visualization &mdash; The Audio Frequency Spectrum</span>
+  <p class="demo-instruction">Drag the frequency cursor across the acoustic spectrum ($1\text{ Hz}$ to $100\text{ kHz}$) to compare the hearing capabilities of different animal species and explore key technological applications.</p>
+
+  <div id="spectrum-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
+
+  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
+    <label style="color: #cbd5e1; font-weight: 500;">
+      Frequency: 
+      <input id="freq-slider" type="range" min="0" max="5" step="0.1" value="3.0" style="vertical-align: middle;">
+      <span id="freq-val" style="color: #38bdf8; font-weight: 700;">1000 Hz</span>
+    </label>
+    <div style="color: #f8fafc; font-size: 0.9rem;">
+      Regime: <span id="regime-stat" style="color: #4ade80; font-weight: 700;">Human Audible Range</span>
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    let board = JXG.JSXGraph.initBoard('spectrum-board', {
+      boundingbox: [-0.5, 6, 5.5, -1],
+      axis: true,
+      defaultAxes: {
+        x: { name: 'Log10 Frequency (log Hz)', withLabel: true, label: { position: 'rt', offset: [-15, -15], color: '#cbd5e1' } },
+        y: { visible: false }
+      },
+      showNavigation: false,
+      showCopyright: false
+    });
+
+    // Infrasound region: log(1) = 0 to log(20) = 1.30
+    board.create('polygon', [[0, 0.5], [1.30, 0.5], [1.30, 4.5], [0, 4.5]], {
+      fillColor: '#818cf8', fillOpacity: 0.25, strokeWidth: 1, strokeColor: '#818cf8', vertices: { visible: false }
+    });
+    board.create('text', [0.65, 2.5, 'INFRASOUND\n(< 20 Hz)\nElephants, Earthquakes'], { color: '#818cf8', fontSize: 11, anchorX: 'middle' });
+
+    // Audible region: log(20) = 1.30 to log(20000) = 4.30
+    board.create('polygon', [[1.30, 0.5], [4.30, 0.5], [4.30, 4.5], [1.30, 4.5]], {
+      fillColor: '#4ade80', fillOpacity: 0.25, strokeWidth: 1, strokeColor: '#4ade80', vertices: { visible: false }
+    });
+    board.create('text', [2.8, 2.5, 'HUMAN AUDIBLE RANGE\n(20 Hz – 20,000 Hz)\nSpeech, Music'], { color: '#4ade80', fontSize: 12, anchorX: 'middle', fontWeight: 'bold' });
+
+    // Ultrasound region: log(20000) = 4.30 to log(100000) = 5.0
+    board.create('polygon', [[4.30, 0.5], [5.2, 0.5], [5.2, 4.5], [4.30, 4.5]], {
+      fillColor: '#f43f5e', fillOpacity: 0.25, strokeWidth: 1, strokeColor: '#f43f5e', vertices: { visible: false }
+    });
+    board.create('text', [4.75, 2.5, 'ULTRASOUND\n(> 20 kHz)\nBats, Medical Sonar'], { color: '#f43f5e', fontSize: 11, anchorX: 'middle' });
+
+    let logVal = 3.0;
+    let cursorLine = board.create('segment', [
+      [function() { return logVal; }, 0.2],
+      [function() { return logVal; }, 5.2]
+    ], { strokeColor: '#fbbf24', strokeWidth: 3 });
+
+    function update() {
+      let freq = Math.round(Math.pow(10, logVal));
+      let fStr = (freq >= 1000 ? (freq/1000).toFixed(1) + ' kHz' : freq + ' Hz');
+      document.getElementById('freq-val').textContent = fStr;
+      let stat = document.getElementById('regime-stat');
+      if (freq < 20) {
+        stat.textContent = 'Infrasound (Inaudible to Humans)';
+        stat.style.color = '#818cf8';
+      } else if (freq <= 20000) {
+        stat.textContent = 'Audible Sound (Detectable by Human Ear)';
+        stat.style.color = '#4ade80';
+      } else {
+        stat.textContent = 'Ultrasound (Inaudible to Humans)';
+        stat.style.color = '#f43f5e';
+      }
+      board.update();
+    }
+
+    document.getElementById('freq-slider').addEventListener('input', function() {
+      logVal = parseFloat(this.value);
+      update();
+    });
+
+    update();
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Textbook Worked Examples &mdash; Frequency and Wavelength Calculations</span>
+
+  <div class="example-item">
+    <p class="example-title"><strong>Example 6.6:</strong> Elephants communicate over long distances (up to $4\text{ km}$) using infrasonic calls with fundamental frequencies as low as $15\text{ Hz}$. A rhinoceros utilizes frequencies down to $10\text{ Hz}$.<br>
+    (i) Why are elephants able to communicate over such extensive distances?<br>
+    (ii) Can a rhinoceros communicate over even greater distances than an elephant? Explain.</p>
+    <p class="solution"><strong>Solution:</strong><br>
+      (i) Infrasound waves ($f < 20\text{ Hz}$) have very long acoustic wavelengths ($\lambda = v/f \approx 340 / 15 \approx 22.7\text{ m}$). Long-wavelength waves bend smoothly around obstacles (trees, hills) via diffraction and experience negligible atmospheric absorption and viscous scattering compared to higher audible frequencies. Consequently, elephants communicate reliably over distances exceeding $4\text{ km}$.<br>
+      (ii) <strong>Yes.</strong> The rhinoceros emits frequencies down to $10\text{ Hz}$, which corresponds to an even longer wavelength ($\lambda \approx 340 / 10 = 34\text{ m}$). Lower frequencies experience even less atmospheric attenuation, allowing rhinoceros signals to propagate over distances exceeding $4\text{ km}$.
+    </p>
+  </div>
+
+  <div class="example-item">
+    <p class="example-title"><strong>Reviewed Exercises:</strong></p>
+    <p class="solution">
+      <strong>1. Why can infrasound not be heard by human ears?</strong><br>
+      Human auditory physiology requires sound frequencies of at least $20\mathrm{Hz}$ to induce resonance and mechanical stimulation of the basilar membrane and stereocilia hair cells inside the cochlea. Below $20\mathrm{Hz}$, the pressure oscillations occur too slowly to trigger auditory nerve action potentials.<br><br>
+      <strong>2. A piezoelectric medical transducer produces ultrasound at a frequency of $10\text{ MHz}$. Calculate the wavelength of this ultrasound in blood if the speed of sound in blood is $1560\text{ m\,s}^{-1}$.</strong><br>
+      Given: $f = 10\text{ MHz} = 10 \times 10^6\text{ Hz} = 10^7\text{ Hz}$, $v = 1560\text{ m\,s}^{-1}$.<br>
+      Using the wave equation $v = f \lambda$:
+      $$\lambda = \frac{v}{f} = \frac{1560\text{ m\,s}^{-1}}{10^7\text{ s}^{-1}} = 1.56 \times 10^{-4}\text{ m} = 0.156\text{ mm} = 156\ \mu\text{m}$$
+      This sub-millimeter wavelength enables ultrasonic imaging to resolve tiny anatomical structures inside blood vessels.
+    </p>
+  </div>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>The human audibility range extends from $20\mathrm{Hz}$ to $20\,000\mathrm{Hz}$ ($20\mathrm{kHz}$).</li>
+    <li>Infrasound ($f < 20\mathrm{Hz}$) has long wavelengths that travel kilometers with minimal attenuation (used by elephants and rhinos).</li>
+    <li>Ultrasound ($f > 20\mathrm{kHz}$) has millimeter-scale wavelengths that permit precise directional beaming.</li>
+    <li>Key applications of ultrasound: non-destructive flaw testing, prenatal imaging, dental scaling, cavitation cleaning, and SONAR depth sounding.</li>
+  </ul>
+</div>
+
+</article>
