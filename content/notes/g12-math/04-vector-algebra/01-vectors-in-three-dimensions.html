@@ -1,0 +1,206 @@
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Vectors in Three-Dimensional Space ($\mathbb{R}^3$)</span>
+  <p>A <strong>vector</strong> (ဗက်တာ) in three-dimensional space is a directed quantity possessing both <strong>magnitude</strong> (ပမာဏ) and <strong>direction</strong> (ဦးတည်ချက်). We define the three <strong>standard unit vectors</strong> along the positive coordinate axes as:</p>
+  $$\hat{i} = \begin{pmatrix} 1 \\ 0 \\ 0 \end{pmatrix}, \qquad \hat{j} = \begin{pmatrix} 0 \\ 1 \\ 0 \end{pmatrix}, \qquad \hat{k} = \begin{pmatrix} 0 \\ 0 \\ 1 \end{pmatrix}$$
+  <p>For any point $P(x, y, z)$ in space, the directed segment $\overrightarrow{OP}$ from the origin $O(0,0,0)$ to $P$ is called the <strong>position vector</strong> (တည်နေရာဗက်တာ) of $P$, written in column vector or unit-vector component form as:</p>
+  $$\overrightarrow{OP} = \vec{p} = \begin{pmatrix} x \\ y \\ z \end{pmatrix} = x\hat{i} + y\hat{j} + z\hat{k}$$
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formulas &mdash; Displacement, Magnitude, Unit Vectors &amp; Parallelism</span>
+  <ul>
+    <li><strong>Displacement Vector Between Two Points:</strong> Given $A(x_1, y_1, z_1)$ and $B(x_2, y_2, z_2)$:
+      $$\overrightarrow{AB} = \overrightarrow{OB} - \overrightarrow{OA} = \begin{pmatrix} x_2 \\ y_2 \\ z_2 \end{pmatrix} - \begin{pmatrix} x_1 \\ y_1 \\ z_1 \end{pmatrix} = \begin{pmatrix} x_2 - x_1 \\ y_2 - y_1 \\ z_2 - z_1 \end{pmatrix}$$
+    </li>
+    <li><strong>Magnitude (Modulus) of a Vector:</strong> For $\vec{a} = \begin{pmatrix} x \\ y \\ z \end{pmatrix} = x\hat{i} + y\hat{j} + z\hat{k}$:
+      $$|\vec{a}| = \sqrt{x^2 + y^2 + z^2}$$
+    </li>
+    <li><strong>Unit Vector in the Direction of $\vec{a}$:</strong> For any nonzero vector $\vec{a} \neq \vec{0}$, the unit vector $\hat{a}$ (with $|\hat{a}| = 1$) in the same direction as $\vec{a}$ is:
+      $$\hat{a} = \frac{1}{|\vec{a}|}\vec{a} = \frac{\vec{a}}{\sqrt{x^2 + y^2 + z^2}}$$
+    </li>
+    <li><strong>Parallel Vectors &amp; Collinear Points:</strong> Two nonzero vectors $\vec{a}$ and $\vec{b}$ are parallel ($\vec{a} \parallel \vec{b}$) if and only if $\vec{a} = k\vec{b}$ for some nonzero scalar $k \in \mathbb{R}$ ($k > 0$: same direction; $k < 0$: opposite direction). Three points $A, B, C$ are <strong>collinear</strong> if $\overrightarrow{BC} = k\overrightarrow{AB}$ (since they share point $B$).</li>
+  </ul>
+</div>
+
+<div class="note-proof">
+  <span class="block-label">Derivation &mdash; Triangle Rule for $\overrightarrow{AB} = \overrightarrow{OB} - \overrightarrow{OA}$ &amp; Parallelogram Rule</span>
+  <p><strong>1. Position-to-Displacement Identity:</strong> By the triangle law of vector addition on $\triangle OAB$, moving from $O$ to $A$ and then from $A$ to $B$ yields the same resultant displacement as moving directly from $O$ to $B$:</p>
+  $$\overrightarrow{OA} + \overrightarrow{AB} = \overrightarrow{OB} \implies \overrightarrow{AB} = \overrightarrow{OB} - \overrightarrow{OA}$$
+  <p><strong>2. Parallelogram Vertex Rule:</strong> In a parallelogram $ABCD$ (with vertices labeled consecutively in order around the perimeter), opposite sides are equal in magnitude and direction:</p>
+  $$\overrightarrow{AB} = \overrightarrow{DC} \iff \overrightarrow{OB} - \overrightarrow{OA} = \overrightarrow{OC} - \overrightarrow{OD}$$
+  <p>This gives the rapid coordinate identity $\vec{a} + \vec{c} = \vec{b} + \vec{d}$, allowing any missing fourth vertex of a parallelogram to be found immediately.</p>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; 3D Position Vectors, $\overrightarrow{AB} = \overrightarrow{OB} - \overrightarrow{OA}$ &amp; Unit Vector $\hat{u}$</span>
+  <p>Rotate the 3D coordinate frame or switch between preset pairs of points $A$ and $B$ to visualize position vectors $\overrightarrow{OA}$, $\overrightarrow{OB}$, the displacement vector $\overrightarrow{AB} = \overrightarrow{OB} - \overrightarrow{OA}$, and its unit vector $\hat{u}$.</p>
+  <canvas id="g12-ch4-01-canvas"></canvas>
+  <div class="controls">
+    <label>turn view <input type="range" id="ch4-01-az" min="-150" max="150" value="35" step="1"></label>
+    <button type="button" class="pill active" data-pair="0">Ex 5: A(1,-1,-3), B(4,-3,1)</button>
+    <button type="button" class="pill" data-pair="1">Ex 6: O(0,0,0), P(-2,1,2)</button>
+    <button type="button" class="pill" data-pair="2">Collinear: A(0,-2,4), B(1,-3,2)</button>
+  </div>
+  <div class="output table-text" id="ch4-01-out"></div>
+</div>
+
+<script>
+(function() {
+  var canvas = document.getElementById('g12-ch4-01-canvas');
+  var azIn = document.getElementById('ch4-01-az');
+  var out = document.getElementById('ch4-01-out');
+  if (!canvas) return;
+
+  var pairs = [
+    { A: [1, -1, -3], B: [4, -3, 1], label: 'Example 5: A(1, −1, −3), B(4, −3, 1)' },
+    { A: [0, 0, 0], B: [-2, 1, 2], label: 'Example 6: Origin O(0,0,0) to P(−2, 1, 2)' },
+    { A: [0, -2, 4], B: [1, -3, 2], label: 'Example 7: A(0, −2, 4), B(1, −3, 2)' }
+  ];
+  var cur = 0;
+
+  var view = function(az, el) {
+    return function(pt) {
+      var x = pt[0], y = pt[1], z = pt[2];
+      return [
+        -x * Math.sin(az) + y * Math.cos(az),
+        -(x * Math.cos(az) + y * Math.sin(az)) * Math.sin(el) + z * Math.cos(el)
+      ];
+    };
+  };
+
+  var plot = NotePlot.graph(canvas, {
+    x: [-5.4, 5.4],
+    y: [-3.6, 3.6],
+    plain: true,
+    draw: function(g) {
+      var az = parseFloat(azIn.value) * Math.PI / 180;
+      var P3 = view(az, 0.42);
+      var O = P3([0, 0, 0]);
+      var X = P3([4.2, 0, 0]), Y = P3([0, 4.2, 0]), Z = P3([0, 0, 3.6]);
+
+      g.line(O, X, g.palette.muted, 1.3);
+      g.line(O, Y, g.palette.muted, 1.3);
+      g.line(O, Z, g.palette.muted, 1.3);
+      g.label('x', X, [6, -4], g.palette.muted);
+      g.label('y', Y, [6, -4], g.palette.muted);
+      g.label('z', Z, [6, -4], g.palette.muted);
+
+      var A3 = pairs[cur].A, B3 = pairs[cur].B;
+      var sc = 0.72;
+      var pA = P3([A3[0] * sc, A3[1] * sc, A3[2] * sc]);
+      var pB = P3([B3[0] * sc, B3[1] * sc, B3[2] * sc]);
+
+      var dx = B3[0] - A3[0], dy = B3[1] - A3[1], dz = B3[2] - A3[2];
+      var mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+      if (A3[0] !== 0 || A3[1] !== 0 || A3[2] !== 0) {
+        g.vector(O, pA, g.palette.blue);
+        g.point(pA, g.palette.blue, 4.5);
+        g.label('A', pA, [-14, -8], g.palette.blue);
+      }
+      g.vector(O, pB, g.palette.amber);
+      g.point(pB, g.palette.amber, 4.5);
+      g.label('B', pB, [8, -8], g.palette.amber);
+
+      g.vector(pA, pB, g.palette.teal);
+      g.label('AB', [(pA[0] + pB[0]) / 2, (pA[1] + pB[1]) / 2], [8, 12], g.palette.teal);
+
+      out.textContent =
+        pairs[cur].label + '   |   ' +
+        'AB = OB − OA = (' + dx + ', ' + dy + ', ' + dz + ')   |   ' +
+        '|AB| = √(' + (dx*dx) + '+' + (dy*dy) + '+' + (dz*dz) + ') = √' + (dx*dx + dy*dy + dz*dz) + ' ≈ ' + mag.toFixed(2) + '   |   ' +
+        'û = (1/√' + (dx*dx + dy*dy + dz*dz) + ')(' + dx + 'î + ' + dy + 'ĵ + ' + dz + 'k̂)';
+    }
+  });
+
+  azIn.addEventListener('input', function() { plot.redraw(); });
+  var btns = canvas.parentElement.querySelectorAll('.pill[data-pair]');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].addEventListener('click', function() {
+      for (var j = 0; j < btns.length; j++) btns[j].classList.remove('active');
+      this.classList.add('active');
+      cur = parseInt(this.getAttribute('data-pair'), 10);
+      plot.redraw();
+    });
+  }
+})();
+</script>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Textbook Examples 4, 5, 6 &amp; 7</span>
+
+  <p><strong>Example 4 (Solving a Vector Equation):</strong> Given $\vec{p} = \begin{pmatrix} -1 \\ 2 \\ 1 \end{pmatrix}$, $\vec{q} = \begin{pmatrix} 3 \\ 0 \\ -2 \end{pmatrix}$, and $\vec{r} = \begin{pmatrix} 5 \\ -4 \\ 2 \end{pmatrix}$, find the vector $\vec{x}$ such that $2\vec{p} - \vec{x} = \vec{q} - 3\vec{r}$.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p>Rearranging the equation for $\vec{x}$ gives $\vec{x} = 2\vec{p} - \vec{q} + 3\vec{r}$:</p>
+    $$\vec{x} = 2\begin{pmatrix} -1 \\ 2 \\ 1 \end{pmatrix} - \begin{pmatrix} 3 \\ 0 \\ -2 \end{pmatrix} + 3\begin{pmatrix} 5 \\ -4 \\ 2 \end{pmatrix} = \begin{pmatrix} -2 - 3 + 15 \\ 4 - 0 - 12 \\ 2 - (-2) + 6 \end{pmatrix} = \begin{pmatrix} 10 \\ -8 \\ 10 \end{pmatrix}$$
+    <p class="answer">Answer: $\vec{x} = \begin{pmatrix} 10 \\ -8 \\ 10 \end{pmatrix}$.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 5 (Fourth Vertex of a Parallelogram):</strong> Find the coordinates of vertex $D$ if $A(1, -1, -3)$, $B(4, -3, 1)$, and $C(3, 1, 2)$ are the first three vertices of parallelogram $ABCD$.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p>Let $D(x, y, z)$ be the fourth vertex. Since $ABCD$ is a parallelogram, $\overrightarrow{AB} = \overrightarrow{DC}$:</p>
+    $$\overrightarrow{OB} - \overrightarrow{OA} = \overrightarrow{OC} - \overrightarrow{OD} \implies \begin{pmatrix} 4 \\ -3 \\ 1 \end{pmatrix} - \begin{pmatrix} 1 \\ -1 \\ -3 \end{pmatrix} = \begin{pmatrix} 3 \\ 1 \\ 2 \end{pmatrix} - \begin{pmatrix} x \\ y \\ z \end{pmatrix}$$
+    $$\begin{pmatrix} 3 \\ -2 \\ 4 \end{pmatrix} = \begin{pmatrix} 3 - x \\ 1 - y \\ 2 - z \end{pmatrix} \implies \begin{cases} 3 - x = 3 \implies x = 0 \\ 1 - y = -2 \implies y = 3 \\ 2 - z = 4 \implies z = -2 \end{cases}$$
+    <p class="answer">Answer: $D(0, 3, -2)$.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 6 (Scaling Using Unit Vectors):</strong> Given $\vec{a} = -2\hat{i} + \hat{j} + 2\hat{k}$, find:<br>
+  (a) the unit vector $\hat{a}$ in the direction of $\vec{a}$,<br>
+  (b) a vector of magnitude $6$ in the direction of $\vec{a}$, and<br>
+  (c) a vector of magnitude $6$ in the direction opposite to $\vec{a}$.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p><strong>(a)</strong> First compute the magnitude $|\vec{a}|$:</p>
+    $$|\vec{a}| = \sqrt{(-2)^2 + 1^2 + 2^2} = \sqrt{4 + 1 + 4} = \sqrt{9} = 3$$
+    $$\hat{a} = \frac{1}{|\vec{a}|}\vec{a} = \frac{1}{3}(-2\hat{i} + \hat{j} + 2\hat{k}) = -\frac{2}{3}\hat{i} + \frac{1}{3}\hat{j} + \frac{2}{3}\hat{k}$$
+    <p><strong>(b)</strong> A vector of magnitude $6$ in the same direction is $6\hat{a}$:</p>
+    $$6\hat{a} = 6\left(-\frac{2}{3}\hat{i} + \frac{1}{3}\hat{j} + \frac{2}{3}\hat{k}\right) = -4\hat{i} + 2\hat{j} + 4\hat{k}$$
+    <p><strong>(c)</strong> A vector of magnitude $6$ in the opposite direction is $-6\hat{a}$:</p>
+    $$-6\hat{a} = 4\hat{i} - 2\hat{j} - 4\hat{k}$$
+    <p class="answer">Answer: (a) $\hat{a} = -\frac{2}{3}\hat{i} + \frac{1}{3}\hat{j} + \frac{2}{3}\hat{k}$, (b) $-4\hat{i} + 2\hat{j} + 4\hat{k}$, (c) $4\hat{i} - 2\hat{j} - 4\hat{k}$.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 7 (Proving Collinearity of Three Points):</strong> Prove that the points $A(0, -2, 4)$, $B(1, -3, 2)$, and $C(3, -5, -2)$ are collinear.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p>Compute the displacement vectors $\overrightarrow{AB}$ and $\overrightarrow{BC}$:</p>
+    $$\overrightarrow{AB} = \overrightarrow{OB} - \overrightarrow{OA} = \begin{pmatrix} 1 \\ -3 \\ 2 \end{pmatrix} - \begin{pmatrix} 0 \\ -2 \\ 4 \end{pmatrix} = \begin{pmatrix} 1 \\ -1 \\ -2 \end{pmatrix}$$
+    $$\overrightarrow{BC} = \overrightarrow{OC} - \overrightarrow{OB} = \begin{pmatrix} 3 \\ -5 \\ -2 \end{pmatrix} - \begin{pmatrix} 1 \\ -3 \\ 2 \end{pmatrix} = \begin{pmatrix} 2 \\ -2 \\ -4 \end{pmatrix} = 2\begin{pmatrix} 1 \\ -1 \\ -2 \end{pmatrix} = 2\overrightarrow{AB}$$
+    <p>Since $\overrightarrow{BC} = 2\overrightarrow{AB}$, the vectors $\overrightarrow{AB}$ and $\overrightarrow{BC}$ are parallel and share the common point $B$.</p>
+    <p class="answer">Answer: Therefore $A, B,$ and $C$ are collinear.</p>
+  </details>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>Order of Subtraction in $\overrightarrow{AB}$:</strong> Always subtract the <em>initial point</em> from the <em>terminal point</em> ($\overrightarrow{AB} = \overrightarrow{OB} - \overrightarrow{OA}$, read as "head minus tail"). Reversing the subtraction gives $\overrightarrow{BA} = -\overrightarrow{AB}$.</li>
+    <li><strong>Vertex Order in Parallelogram $ABCD$:</strong> In parallelogram $ABCD$, $\overrightarrow{AB} = \overrightarrow{DC}$ (not $\overrightarrow{CD}$!). Drawing a quick sketch of the loop $A \to B \to C \to D$ prevents sign errors.</li>
+    <li><strong>Proving Collinearity vs. Parallelism:</strong> Showing $\overrightarrow{BC} = k\overrightarrow{AB}$ is not complete until you explicitly state that the two parallel segments <strong>share the common point $B$</strong>.</li>
+  </ul>
+</div>
+
+<div class="note-tip">
+  <span class="block-label">Exam Tip &mdash; Rapid Unit-Vector Scaling</span>
+  <p>Whenever a problem asks for "a vector of magnitude $L$ in the direction of $\vec{a}$", compute the unit vector $\hat{a} = \frac{\vec{a}}{|\vec{a}|}$ first, then multiply by $\pm L$: $\vec{v} = \pm L\hat{a} = \pm \frac{L}{|\vec{a}|}\vec{a}$.</p>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways (မှတ်သားရန် အချက်များ)</span>
+  <ul>
+    <li><strong>Position &amp; Displacement Vector (တည်နေရာနှင့် ရွေ့လျားမှုဗက်တာ):</strong> $\overrightarrow{OP} = x\hat{i} + y\hat{j} + z\hat{k}$ and $\overrightarrow{AB} = \overrightarrow{OB} - \overrightarrow{OA}$.</li>
+    <li><strong>Magnitude &amp; Unit Vector (ပမာဏနှင့် ယူနစ်ဗက်တာ):</strong> $|\vec{a}| = \sqrt{x^2 + y^2 + z^2}$ and $\hat{a} = \dfrac{\vec{a}}{|\vec{a}|}$.</li>
+    <li><strong>Parallel &amp; Collinear Condition (အပြိုင်နှင့် တစ်ဖြောင့်တည်းဖြစ်ခြင်း):</strong> $\vec{a} \parallel \vec{b} \iff \vec{a} = k\vec{b}$ ($k \neq 0$); points $A, B, C$ are collinear if $\overrightarrow{BC} = k\overrightarrow{AB}$.</li>
+  </ul>
+</div>

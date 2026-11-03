@@ -1,0 +1,228 @@
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Vector Equations of Lines and Planes in Space</span>
+  <p>Vectors provide an elegant, unified language for describing <strong>straight lines</strong> (မျဉ်းဖြောင့်များ) and <strong>planes</strong> (ပြင်ညီများ) in three-dimensional space:</p>
+  <ul>
+    <li><strong>Line in 3D Space:</strong> A line passing through a fixed point $A(a_1, a_2, a_3)$ with position vector $\vec{a} = \overrightarrow{OA}$ and parallel to a <strong>direction vector</strong> $\vec{b} = \begin{pmatrix} b_1 \\ b_2 \\ b_3 \end{pmatrix}$ consists of all points $R(x, y, z)$ with position vector $\vec{r} = \overrightarrow{OR}$ such that $\overrightarrow{AR} = t\vec{b}$, giving $\vec{r} = \vec{a} + t\vec{b}$ ($t \in \mathbb{R}$).</li>
+    <li><strong>Plane in 3D Space:</strong> A plane passing through $A(\vec{a})$ can be specified either by <strong>two nonparallel direction vectors</strong> $\vec{d}_1, \vec{d}_2$ lying in the plane ($\vec{r} = \vec{a} + t_1\vec{d}_1 + t_2\vec{d}_2$) or by a single <strong>normal vector</strong> $\vec{n}$ perpendicular to the plane ($(\vec{r} - \vec{a})\cdot\vec{n} = 0$).</li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formulas &mdash; Vector, Parametric &amp; Cartesian Forms</span>
+  <ul>
+    <li><strong>Equations of a Line Through $A(a_1, a_2, a_3)$ Parallel to $\vec{b} = (b_1, b_2, b_3)^T$:</strong>
+      $$\textbf{Vector: } \vec{r} = \vec{a} + t\vec{b} \iff \begin{pmatrix} x \\ y \\ z \end{pmatrix} = \begin{pmatrix} a_1 \\ a_2 \\ a_3 \end{pmatrix} + t\begin{pmatrix} b_1 \\ b_2 \\ b_3 \end{pmatrix}$$
+      $$\textbf{Parametric: } \begin{cases} x = a_1 + tb_1 \\ y = a_2 + tb_2 \\ z = a_3 + tb_3 \end{cases} \qquad \textbf{Cartesian: } \frac{x - a_1}{b_1} = \frac{y - a_2}{b_2} = \frac{z - a_3}{b_3} \; (= t)$$
+    </li>
+    <li><strong>Parametric Vector Equation of a Plane (Two Direction Vectors $\vec{d}_1, \vec{d}_2$):</strong>
+      $$\vec{r} = \vec{a} + t_1\vec{d}_1 + t_2\vec{d}_2 \quad (t_1, t_2 \in \mathbb{R})$$
+      If the plane passes through three noncollinear points $A, B, C$, take $\vec{a} = \overrightarrow{OA}$, $\vec{d}_1 = \overrightarrow{AB}$, and $\vec{d}_2 = \overrightarrow{AC}$.
+    </li>
+    <li><strong>Normal &amp; Cartesian Equation of a Plane with Normal $\vec{n} = (n_1, n_2, n_3)^T$:</strong>
+      $$(\vec{r} - \vec{a}) \cdot \vec{n} = 0 \iff \vec{r} \cdot \vec{n} = \vec{a} \cdot \vec{n} = d \iff n_1x + n_2y + n_3z = d$$
+      Note: Given two spanning vectors $\vec{d}_1$ and $\vec{d}_2$ in the plane, a normal vector is $\vec{n} = \vec{d}_1 \times \vec{d}_2$.
+    </li>
+  </ul>
+</div>
+
+<div class="note-proof">
+  <span class="block-label">Derivation &mdash; Equivalence of Spanning-Vector Form and Normal Form of a Plane</span>
+  <p>Suppose $R(x, y, z)$ lies on the plane through $A(\vec{a})$ with normal vector $\vec{n} = \begin{pmatrix} n_1 \\ n_2 \\ n_3 \end{pmatrix}$. Since the displacement vector $\overrightarrow{AR} = \vec{r} - \vec{a}$ lies completely inside the plane and $\vec{n}$ is perpendicular to every line in the plane:</p>
+  $$\overrightarrow{AR} \perp \vec{n} \implies (\vec{r} - \vec{a}) \cdot \vec{n} = 0 \implies \vec{r} \cdot \vec{n} = \vec{a} \cdot \vec{n}$$
+  <p>Writing $\vec{r} = \begin{pmatrix} x \\ y \\ z \end{pmatrix}$ and setting the constant scalar $\vec{a}\cdot\vec{n} = d$ yields the Cartesian equation $n_1x + n_2y + n_3z = d$.</p>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; 3D Line $\vec{r} = \vec{a} + t\vec{b}$ &amp; Plane $\vec{r}\cdot\vec{n} = d$</span>
+  <p>Rotate the 3D view and slide parameter $t$ to watch point $R(t)$ trace the line $\vec{r} = \vec{a} + t\vec{b}$, or switch to the 3D plane view showing spanning vectors $\vec{d}_1, \vec{d}_2$ and normal vector $\vec{n} = \vec{d}_1 \times \vec{d}_2$.</p>
+  <canvas id="g12-ch4-04-canvas"></canvas>
+  <div class="controls">
+    <label>turn view <input type="range" id="ch4-04-az" min="-150" max="150" value="35" step="1"></label>
+    <label>parameter t <input type="range" id="ch4-04-t" min="-1.5" max="1.5" value="0.8" step="0.1"></label>
+    <button type="button" class="pill active" data-mode="line">Ex 16 Line: r = a + tb</button>
+    <button type="button" class="pill" data-mode="plane">Ex 22 Plane: r · n = d</button>
+  </div>
+  <div class="output table-text" id="ch4-04-out"></div>
+</div>
+
+<script>
+(function() {
+  var canvas = document.getElementById('g12-ch4-04-canvas');
+  var azIn = document.getElementById('ch4-04-az');
+  var tIn = document.getElementById('ch4-04-t');
+  var out = document.getElementById('ch4-04-out');
+  if (!canvas) return;
+
+  var mode = 'line';
+  var view = function(az, el) {
+    return function(pt) {
+      var x = pt[0], y = pt[1], z = pt[2];
+      return [
+        -x * Math.sin(az) + y * Math.cos(az),
+        -(x * Math.cos(az) + y * Math.sin(az)) * Math.sin(el) + z * Math.cos(el)
+      ];
+    };
+  };
+
+  var plot = NotePlot.graph(canvas, {
+    x: [-5.4, 5.4],
+    y: [-3.6, 3.6],
+    plain: true,
+    draw: function(g) {
+      var az = parseFloat(azIn.value) * Math.PI / 180;
+      var t = parseFloat(tIn.value);
+      var P3 = view(az, 0.42);
+      var O = P3([0, 0, 0]);
+      g.line(O, P3([4.2, 0, 0]), g.palette.muted, 1.2);
+      g.line(O, P3([0, 4.2, 0]), g.palette.muted, 1.2);
+      g.line(O, P3([0, 0, 3.5]), g.palette.muted, 1.2);
+
+      if (mode === 'line') {
+        var a = [1, 4, -1], b = [3, 2, 5], sc = 0.45;
+        var pL1 = P3([(a[0] - 1.6 * b[0]) * sc, (a[1] - 1.6 * b[1]) * sc, (a[2] - 1.6 * b[2]) * sc]);
+        var pL2 = P3([(a[0] + 1.6 * b[0]) * sc, (a[1] + 1.6 * b[1]) * sc, (a[2] + 1.6 * b[2]) * sc]);
+        g.line(pL1, pL2, g.palette.teal, 2.2);
+
+        var pA = P3([a[0] * sc, a[1] * sc, a[2] * sc]);
+        var rx = a[0] + t * b[0], ry = a[1] + t * b[1], rz = a[2] + t * b[2];
+        var pR = P3([rx * sc, ry * sc, rz * sc]);
+
+        g.vector(O, pA, g.palette.blue);
+        g.vector(pA, pR, g.palette.amber);
+        g.vector(O, pR, g.palette.rose);
+        g.point(pA, g.palette.blue, 4.5);
+        g.point(pR, g.palette.rose, 5);
+        g.label('A(1,4,-1)', pA, [8, -8], g.palette.blue);
+        g.label('R(t)', pR, [8, -8], g.palette.rose);
+
+        out.textContent =
+          'Line (Ex 16): r = (1, 4, −1) + t(3, 2, 5)   |   t = ' + t.toFixed(1) +
+          '   →   R(t) = (' + rx.toFixed(1) + ', ' + ry.toFixed(1) + ', ' + rz.toFixed(1) + ')' +
+          '   |   Cartesian: (x − 1)/3 = (y − 4)/2 = (z + 1)/5';
+      } else {
+        var A = [0.6, -1.0, 0.8];
+        var d1 = [1.6, 0.4, 0.5], d2 = [-0.4, 1.5, 0.7];
+        var c1 = P3([A[0] - d1[0] - d2[0], A[1] - d1[1] - d2[1], A[2] - d1[2] - d2[2]]);
+        var c2 = P3([A[0] + d1[0] - d2[0], A[1] + d1[1] - d2[1], A[2] + d1[2] - d2[2]]);
+        var c3 = P3([A[0] + d1[0] + d2[0], A[1] + d1[1] + d2[1], A[2] + d1[2] + d2[2]]);
+        var c4 = P3([A[0] - d1[0] + d2[0], A[1] - d1[1] + d2[1], A[2] - d1[2] + d2[2]]);
+        g.polygon([c1, c2, c3, c4], 'rgba(13, 148, 136, 0.18)', g.palette.teal);
+
+        var pA2 = P3(A);
+        var pD1 = P3([A[0] + d1[0], A[1] + d1[1], A[2] + d1[2]]);
+        var pD2 = P3([A[0] + d2[0], A[1] + d2[1], A[2] + d2[2]]);
+        var pN = P3([A[0] - 0.6, A[1] - 1.2, A[2] + 1.8]);
+
+        g.vector(pA2, pD1, g.palette.blue);
+        g.vector(pA2, pD2, g.palette.amber);
+        g.vector(pA2, pN, g.palette.rose);
+        g.point(pA2, g.palette.teal, 4.5);
+        g.label('A', pA2, [-14, 10], g.palette.teal);
+        g.label('d₁', pD1, [6, -6], g.palette.blue);
+        g.label('d₂', pD2, [6, -6], g.palette.amber);
+        g.label('n (normal)', pN, [8, -6], g.palette.rose);
+
+        out.textContent =
+          'Plane (Ex 22): A(1, −3, 2), normal n = (2, 4, −2)   |   ' +
+          'd = a · n = 1(2) + (−3)(4) + 2(−2) = −14   |   ' +
+          'Cartesian: 2x + 4y − 2z = −14  (or x + 2y − z = −7)';
+      }
+    }
+  });
+
+  azIn.addEventListener('input', function() { plot.redraw(); });
+  tIn.addEventListener('input', function() { plot.redraw(); });
+  var btns = canvas.parentElement.querySelectorAll('.pill[data-mode]');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].addEventListener('click', function() {
+      for (var j = 0; j < btns.length; j++) btns[j].classList.remove('active');
+      this.classList.add('active');
+      mode = this.getAttribute('data-mode');
+      plot.redraw();
+    });
+  }
+})();
+</script>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Textbook Examples 16, 18, 19, 20 &amp; 22</span>
+
+  <p><strong>Example 16 (Vector to Cartesian Equation of a Line):</strong> Find the Cartesian equation of the line with vector equation $\vec{r} = \begin{pmatrix} 1 \\ 4 \\ -1 \end{pmatrix} + t\begin{pmatrix} 3 \\ 2 \\ 5 \end{pmatrix}$.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p>Writing $\vec{r} = \begin{pmatrix} x \\ y \\ z \end{pmatrix}$ gives the parametric equations:</p>
+    $$\begin{cases} x = 1 + 3t \implies t = \dfrac{x - 1}{3} \\[4pt] y = 4 + 2t \implies t = \dfrac{y - 4}{2} \\[4pt] z = -1 + 5t \implies t = \dfrac{z + 1}{5} \end{cases}$$
+    <p>Equating the three expressions for $t$ gives the Cartesian equation:</p>
+    <p class="answer">Answer: $\dfrac{x - 1}{3} = \dfrac{y - 4}{2} = \dfrac{z + 1}{5}$.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 18 &amp; 19 (Vector &amp; Cartesian Equation of a Plane Through Three Points):</strong> Find the vector equation and Cartesian equation of the plane containing points $M(2, 2, -2)$, $N(1, -1, 3)$, and $P(4, 0, 2)$.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p><strong>Step 1 (Vector Equation):</strong> Choose $\vec{a} = \overrightarrow{OM} = \begin{pmatrix} 2 \\ 2 \\ -2 \end{pmatrix}$ and form two in-plane direction vectors from $M$:</p>
+    $$\vec{d}_1 = \overrightarrow{MN} = \overrightarrow{ON} - \overrightarrow{OM} = \begin{pmatrix} 1 - 2 \\ -1 - 2 \\ 3 - (-2) \end{pmatrix} = \begin{pmatrix} -1 \\ -3 \\ 5 \end{pmatrix}, \qquad \vec{d}_2 = \overrightarrow{MP} = \overrightarrow{OP} - \overrightarrow{OM} = \begin{pmatrix} 4 - 2 \\ 0 - 2 \\ 2 - (-2) \end{pmatrix} = \begin{pmatrix} 2 \\ -2 \\ 4 \end{pmatrix}$$
+    <p>Thus the parametric vector equation of the plane is:</p>
+    $$\vec{r} = \begin{pmatrix} 2 \\ 2 \\ -2 \end{pmatrix} + t_1\begin{pmatrix} -1 \\ -3 \\ 5 \end{pmatrix} + t_2\begin{pmatrix} 2 \\ -2 \\ 4 \end{pmatrix}$$
+    <p><strong>Step 2 (Cartesian Equation by Eliminating $t_1, t_2$):</strong> From components:</p>
+    $$(1)\; x = 2 - t_1 + 2t_2, \qquad (2)\; y = 2 - 3t_1 - 2t_2, \qquad (3)\; z = -2 + 5t_1 + 4t_2$$
+    <p>Adding $(1) + (2)$ eliminates $t_2$: $x + y = 4 - 4t_1$ $(4)$.<br>
+    Multiplying $(2)$ by $2$ and adding $(3)$ also eliminates $t_2$: $2y + z = 2 - t_1$ $(5)$.<br>
+    Eliminating $t_1$ between $(4)$ and $4 \times (5)$: $(x + y) - 4(2y + z) = 4 - 8 \implies x - 7y - 4z = -4$.<br>
+    <em>(Alternative check via normal vector: $\vec{n} = \vec{d}_1 \times \vec{d}_2 = (-2, 14, 8)^T = -2(1, -7, -4)^T$, so $x - 7y - 4z = 2 - 7(2) - 4(-2) = -4$.)</em></p>
+    <p class="answer">Answer: Vector form $\vec{r} = \begin{pmatrix} 2 \\ 2 \\ -2 \end{pmatrix} + t_1\begin{pmatrix} -1 \\ -3 \\ 5 \end{pmatrix} + t_2\begin{pmatrix} 2 \\ -2 \\ 4 \end{pmatrix}$; Cartesian form $x - 7y - 4z = -4$.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 20 (Testing Whether Four Points Are Coplanar):</strong> Determine whether the points $A(3, -1, 4)$, $B(2, 1, 1)$, $C(4, 3, 1)$, and $D(-3, 1, 4)$ lie in the same plane.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p>First form the plane containing $A, B, C$ using $\overrightarrow{AB} = \begin{pmatrix} -1 \\ 2 \\ -3 \end{pmatrix}$ and $\overrightarrow{AC} = \begin{pmatrix} 1 \\ 4 \\ -3 \end{pmatrix}$:</p>
+    $$\vec{r} = \begin{pmatrix} 3 \\ -1 \\ 4 \end{pmatrix} + t_1\begin{pmatrix} -1 \\ 2 \\ -3 \end{pmatrix} + t_2\begin{pmatrix} 1 \\ 4 \\ -3 \end{pmatrix}$$
+    <p>Test if $D(-3, 1, 4)$ satisfies this equation:</p>
+    $$(1)\; 3 - t_1 + t_2 = -3 \implies -t_1 + t_2 = -6$$
+    $$(2)\; -1 + 2t_1 + 4t_2 = 1 \implies 2t_1 + 4t_2 = 2$$
+    $$(3)\; 4 - 3t_1 - 3t_2 = 4 \implies -3t_1 - 3t_2 = 0$$
+    <p>Solving $(1)$ and $(2)$ gives $2(-t_1 + t_2) + (2t_1 + 4t_2) = -12 + 2 \implies 6t_2 = -10 \implies t_2 = -\frac{5}{3}$ and $t_1 = \frac{13}{3}$. Substituting into the left side of $(3)$ gives $4 - 3\left(\frac{13}{3}\right) - 3\left(-\frac{5}{3}\right) = -4 \neq 4$.</p>
+    <p class="answer">Answer: Since equation $(3)$ is not satisfied, $D$ does not lie on the same plane as $A, B,$ and $C$.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 22 (Plane from Normal Vector and Point):</strong> Vector $\vec{n} = \begin{pmatrix} 2 \\ 4 \\ -2 \end{pmatrix}$ is perpendicular to the plane containing $A(1, -3, 2)$.<br>
+  (a) Write an equation of the plane in the form $\vec{r}\cdot\vec{n} = d$. &nbsp; (b) Find the Cartesian equation of the plane.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p><strong>(a)</strong> Compute $d = \vec{a}\cdot\vec{n} = \begin{pmatrix} 1 \\ -3 \\ 2 \end{pmatrix} \cdot \begin{pmatrix} 2 \\ 4 \\ -2 \end{pmatrix} = 1(2) + (-3)(4) + 2(-2) = 2 - 12 - 4 = -14$. Thus:</p>
+    $$\vec{r} \cdot \begin{pmatrix} 2 \\ 4 \\ -2 \end{pmatrix} = -14$$
+    <p><strong>(b)</strong> Substituting $\vec{r} = \begin{pmatrix} x \\ y \\ z \end{pmatrix}$ gives $2x + 4y - 2z = -14$ (or $x + 2y - z = -7$).</p>
+    <p class="answer">Answer: (a) $\vec{r}\cdot\begin{pmatrix} 2 \\ 4 \\ -2 \end{pmatrix} = -14$, (b) $2x + 4y - 2z = -14$.</p>
+  </details>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>Confusing Line Direction Vector with Plane Normal Vector:</strong> A line in 3D is defined by a single <em>parallel direction vector</em> $\vec{b}$ ($\vec{r} = \vec{a} + t\vec{b}$), whereas the single-vector equation of a plane uses a <em>perpendicular normal vector</em> $\vec{n}$ ($\vec{r}\cdot\vec{n} = \vec{a}\cdot\vec{n}$).</li>
+    <li><strong>Reading $\vec{a}$ and $\vec{b}$ from Non-Standard Cartesian Line Equations:</strong> In $\frac{2 - x}{3} = \frac{y + 4}{2} = \frac{z - 1}{5}$, rewrite $2 - x = -(x - 2)$ as $\frac{x - 2}{-3}$ first so the direction vector is $(-3, 2, 5)^T$, not $(3, 2, 5)^T$!</li>
+  </ul>
+</div>
+
+<div class="note-tip">
+  <span class="block-label">Exam Tip &mdash; Instant Normal Vector via Cross Product</span>
+  <p>Even when solving for the Cartesian equation of a plane $\vec{r} = \vec{a} + t_1\vec{d}_1 + t_2\vec{d}_2$ by eliminating $t_1$ and $t_2$, always compute $\vec{n} = \vec{d}_1 \times \vec{d}_2$ on the side as a 10-second check: the coefficients of $x, y, z$ in your final Cartesian equation must be proportional to the components of $\vec{d}_1 \times \vec{d}_2$!</p>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways (မှတ်သားရန် အချက်များ)</span>
+  <ul>
+    <li><strong>Equation of a Line (မျဉ်းဖြောင့်ညီမျှခြင်း):</strong> $\vec{r} = \vec{a} + t\vec{b} \iff \dfrac{x - a_1}{b_1} = \dfrac{y - a_2}{b_2} = \dfrac{z - a_3}{b_3}$.</li>
+    <li><strong>Parametric Plane Equation (ပြင်ညီ၏ ဗက်တာညီမျှခြင်း):</strong> $\vec{r} = \vec{a} + t_1\vec{d}_1 + t_2\vec{d}_2$.</li>
+    <li><strong>Normal &amp; Cartesian Plane Equation (နော်မယ်ဗက်တာသုံး ပြင်ညီညီမျှခြင်း):</strong> $\vec{r}\cdot\vec{n} = \vec{a}\cdot\vec{n} = d \iff n_1x + n_2y + n_3z = d$.</li>
+  </ul>
+</div>
