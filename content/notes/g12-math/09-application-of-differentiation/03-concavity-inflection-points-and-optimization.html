@@ -1,0 +1,258 @@
+<article class="note-page">
+  <header class="note-header">
+    <div class="note-eyebrow">Chapter 9: Application of Differentiation</div>
+    <h1 class="note-title" data-topic="Concavity, Inflection Points and Optimization">9.3 Concavity, Points of Inflection, Second Derivative Test &amp; Optimization</h1>
+    <p class="note-lede">
+      The second derivative $f''(x)$ measures how the slope $f'(x)$ itself changes, determining the concavity of a curve, locating points of inflection, and solving real-world optimization problems.
+    </p>
+  </header>
+
+  <section class="note-section">
+    <h2>1. Concavity and the Second Derivative</h2>
+    <p>
+      Even when two curves are both increasing on an interval, one may bend upward while the other bends downward. This bending property is called <strong>concavity</strong>.
+    </p>
+
+    <div class="box-def">
+      <div class="box-title">Definition — Concave Up and Concave Down</div>
+      <p>
+        Let $f$ be differentiable on an open interval $I$:
+      </p>
+      <ul>
+        <li>
+          The graph of $f$ is <strong>concave up</strong> on $I$ if $f'$ is <em>increasing</em> on $I$ (the curve lies above its tangent lines on $I$).
+        </li>
+        <li>
+          The graph of $f$ is <strong>concave down</strong> on $I$ if $f'$ is <em>decreasing</em> on $I$ (the curve lies below its tangent lines on $I$).
+        </li>
+      </ul>
+    </div>
+
+    <div class="box-thm">
+      <div class="box-title">Test for Concavity</div>
+      <p>
+        Let $f$ be a function whose second derivative $f''$ exists on an open interval $I$:
+      </p>
+      <ul>
+        <li>If $f''(x) > 0$ for all $x \in I$, then the graph of $f$ is <strong>concave up</strong> on $I$.</li>
+        <li>If $f''(x) < 0$ for all $x \in I$, then the graph of $f$ is <strong>concave down</strong> on $I$.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="note-section">
+    <h2>2. Points of Inflection</h2>
+
+    <div class="box-def">
+      <div class="box-title">Definition — Point of Inflection</div>
+      <p>
+        A point $P(c, f(c))$ on a curve $y = f(x)$ is called a <strong>point of inflection</strong> (or inflection point) if $f$ is continuous at $c$ and the curve changes concavity from concave up to concave down (or from concave down to concave up) at $P$.
+      </p>
+      <p>
+        At any point of inflection $(c, f(c))$, either:
+        $$f''(c) = 0 \qquad \text{or} \qquad f''(c) \text{ does not exist.}$$
+      </p>
+      <p>
+        <em>Caution (Example 13):</em> The condition $f''(c) = 0$ is necessary (when $f''$ exists) but <strong>not sufficient</strong>! For $f(x) = x^6$, $f''(x) = 30x^4$ satisfies $f''(0) = 0$, yet $f''(x) > 0$ for all $x \ne 0$. Since concavity does not change at $x = 0$, $(0, 0)$ is <strong>not</strong> an inflection point.
+      </p>
+    </div>
+  </section>
+
+  <section class="note-section">
+    <h2>3. The Second Derivative Test for Local Extrema</h2>
+
+    <div class="box-thm">
+      <div class="box-title">Second Derivative Test</div>
+      <p>
+        Suppose $f''$ is continuous on an open interval containing $x = c$, with $f'(c) = 0$:
+      </p>
+      <ol>
+        <li>If $f''(c) < 0$, then $f$ has a <strong>local maximum</strong> at $x = c$ (graph is concave down).</li>
+        <li>If $f''(c) > 0$, then $f$ has a <strong>local minimum</strong> at $x = c$ (graph is concave up).</li>
+        <li>If $f''(c) = 0$, the test <strong>fails</strong> (is inconclusive); $f$ may have a local maximum, a local minimum, or neither — use the First Derivative Test instead.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="note-section">
+    <h2>4. Interactive Demo: Concavity &amp; Inflection Point Visualizer</h2>
+    <p>
+      Select a textbook function below. Blue-shaded regions indicate <strong>concave up</strong> ($f''(x) > 0$), amber-shaded regions indicate <strong>concave down</strong> ($f''(x) < 0$), and purple dots mark points of inflection where concavity reverses.
+    </p>
+
+    <div class="demo" id="demo-ch9-concavity">
+      <div class="demo-controls">
+        <label>
+          Function:
+          <select data-control="curve">
+            <option value="witch">Ex 11: f(x) = 1 / (x² + 1)</option>
+            <option value="quartic">Ex 14: f(x) = x⁴ - 4x³ + 5</option>
+            <option value="sixth">Ex 13: f(x) = x⁶ (No inflection at 0)</option>
+          </select>
+        </label>
+        <label>
+          Probe $x$:
+          <input type="range" data-control="x" min="-2.2" max="3.2" step="0.02" value="0.58" />
+          <span data-Val="x">0.58</span>
+        </label>
+      </div>
+      <canvas width="640" height="360" aria-label="Concavity and inflection points interactive plot"></canvas>
+      <div class="output" aria-live="polite"></div>
+    </div>
+
+    <script src="/static/js/demos/geom.js"></script>
+    <script src="/static/js/demos/plot.js"></script>
+    <script>
+      (function () {
+        var root = document.getElementById('demo-ch9-concavity');
+        if (!root || !window.NotePlot) return;
+        var canvas = root.querySelector('canvas');
+        var out = root.querySelector('.output');
+        var selCurve = root.querySelector('[data-control="curve"]');
+        var sliderX = root.querySelector('[data-control="x"]');
+        var valX = root.querySelector('[data-Val="x"]');
+
+        var mode = 'witch';
+        var xp = 1 / Math.sqrt(3);
+
+        function f(x) {
+          if (mode === 'witch') return 3 / (x * x + 1); // scaled by 3 for visual clarity while preserving roots of f''
+          if (mode === 'quartic') return 0.15 * (Math.pow(x, 4) - 4 * Math.pow(x, 3) + 5);
+          return 0.25 * Math.pow(x, 6);
+        }
+
+        function realF(x) {
+          if (mode === 'witch') return 1 / (x * x + 1);
+          if (mode === 'quartic') return Math.pow(x, 4) - 4 * Math.pow(x, 3) + 5;
+          return Math.pow(x, 6);
+        }
+
+        function realD2F(x) {
+          if (mode === 'witch') return (6 * x * x - 2) / Math.pow(x * x + 1, 3);
+          if (mode === 'quartic') return 12 * x * (x - 2);
+          return 30 * Math.pow(x, 4);
+        }
+
+        var plot = NotePlot.graph(canvas, {
+          x: [-2.6, 3.6],
+          y: [-3.8, 3.8],
+          points: { P: [xp, f(xp)] },
+          constrain: {
+            P: function (p) {
+              var cx = Math.max(-2.4, Math.min(3.4, p[0]));
+              xp = cx;
+              sliderX.value = cx.toFixed(2);
+              valX.textContent = cx.toFixed(2);
+              return [cx, f(cx)];
+            }
+          },
+          draw: function (g, P) {
+            var x = P.P[0];
+            var y = f(x);
+            var d2 = realD2F(x);
+
+            if (mode === 'witch') {
+              var s3 = 1 / Math.sqrt(3);
+              g.band(-2.6, -s3, 'rgba(37, 99, 235, 0.08)');
+              g.band(-s3, s3, 'rgba(217, 119, 6, 0.09)');
+              g.band(s3, 3.6, 'rgba(37, 99, 235, 0.08)');
+              g.dot([-s3, f(-s3)], '#0d9488', 'Inflection (-1/√3, 3/4)');
+              g.dot([s3, f(s3)], '#0d9488', 'Inflection (1/√3, 3/4)');
+            } else if (mode === 'quartic') {
+              g.band(-2.6, 0, 'rgba(37, 99, 235, 0.08)');
+              g.band(0, 2, 'rgba(217, 119, 6, 0.09)');
+              g.band(2, 3.6, 'rgba(37, 99, 235, 0.08)');
+              g.dot([0, f(0)], '#0d9488', 'Inflection (0, 5)');
+              g.dot([2, f(2)], '#0d9488', 'Inflection (2, -11)');
+              g.dot([3, f(3)], '#e11d48', 'Min (3, -22)');
+            } else {
+              g.band(-2.6, 3.6, 'rgba(37, 99, 235, 0.08)');
+              g.dot([0, 0], '#d97706', 'Min (0, 0) [Not inflection]');
+            }
+
+            g.fn(function (t) { return f(t); }, '#2563eb');
+            g.dot([x, y], '#e11d48', 'P');
+
+            var conc = Math.abs(d2) < 0.03 ? 'f\'\'(x) ≈ 0' : (d2 > 0 ? 'Concave Up (f\'\' > 0)' : 'Concave Down (f\'\' < 0)');
+            out.textContent =
+              'x = ' + x.toFixed(2) + '  |  f(x) = ' + realF(x).toFixed(3) +
+              '  |  f\'\'(x) = ' + d2.toFixed(3) + '  →  ' + conc;
+          }
+        });
+
+        function sync() {
+          xp = parseFloat(sliderX.value);
+          valX.textContent = xp.toFixed(2);
+          plot.move('P', [xp, f(xp)]);
+        }
+
+        selCurve.addEventListener('change', function () {
+          mode = selCurve.value;
+          if (mode === 'witch') sliderX.value = (1 / Math.sqrt(3)).toFixed(2);
+          else if (mode === 'quartic') sliderX.value = '2.00';
+          else sliderX.value = '0.00';
+          sync();
+        });
+
+        sliderX.addEventListener('input', sync);
+        sync();
+      })();
+    </script>
+  </section>
+
+  <section class="note-section">
+    <h2>5. Worked Textbook Examples</h2>
+
+    <div class="box-ex">
+      <div class="box-title">Example 11 (Textbook p. 158) — Concavity of $f(x) = \dfrac{1}{x^2 + 1}$</div>
+      <p>
+        Determine the intervals on which the graph of $f(x) = \dfrac{1}{x^2 + 1}$ is concave up or concave down, and find its points of inflection.
+      </p>
+      <p><strong>Solution:</strong></p>
+      <p>
+        Differentiating twice:
+        $$f'(x) = -\frac{2x}{(x^2 + 1)^2}$$
+        $$f''(x) = -\frac{(x^2 + 1)^2(2) - 2x \cdot 2(x^2 + 1)(2x)}{(x^2 + 1)^4} = \frac{2(3x^2 - 1)}{(x^2 + 1)^3}$$
+        Setting $f''(x) = 0$ gives $3x^2 - 1 = 0 \implies x = -\dfrac{1}{\sqrt{3}}$ or $x = \dfrac{1}{\sqrt{3}}$.
+      </p>
+      <ul>
+        <li>On $\left(-\infty, -\dfrac{1}{\sqrt{3}}\right)$ and $\left(\dfrac{1}{\sqrt{3}}, \infty\right)$: $f''(x) > 0 \implies$ <strong>concave up</strong>.</li>
+        <li>On $\left(-\dfrac{1}{\sqrt{3}}, \dfrac{1}{\sqrt{3}}\right)$: $f''(x) < 0 \implies$ <strong>concave down</strong>.</li>
+        <li>The points of inflection are $\left(-\dfrac{1}{\sqrt{3}}, \dfrac{3}{4}\right)$ and $\left(\dfrac{1}{\sqrt{3}}, \dfrac{3}{4}\right)$.</li>
+      </ul>
+    </div>
+
+    <div class="box-ex">
+      <div class="box-title">Example 14 (Textbook p. 160) — $f(x) = x^4 - 4x^3 + 5$</div>
+      <p>
+        Find the critical points, inflection points, and local extrema of $f(x) = x^4 - 4x^3 + 5$.
+      </p>
+      <p><strong>Solution:</strong></p>
+      <p>
+        We compute $f'(x) = 4x^3 - 12x^2 = 4x^2(x - 3)$ and $f''(x) = 12x^2 - 24x = 12x(x - 2)$.
+      </p>
+      <ul>
+        <li><strong>Critical points:</strong> $f'(x) = 0 \implies x = 0, 3$, giving $(0, 5)$ and $(3, -22)$.</li>
+        <li><strong>Second Derivative Test:</strong> At $x = 3$, $f''(3) = 36 > 0 \implies f(3) = -22$ is a <strong>local minimum value</strong>. At $x = 0$, $f''(0) = 0$ (test fails); since $f'(x) < 0$ on both $(-1, 0)$ and $(0, 3)$, there is no local extremum at $x = 0$.</li>
+        <li><strong>Inflection points:</strong> $f''(x) = 0 \implies x = 0, 2$. Since $f''(x)$ changes sign at both $x = 0$ and $x = 2$, $(0, 5)$ and $(2, -11)$ are <strong>points of inflection</strong>.</li>
+      </ul>
+    </div>
+
+    <div class="box-ex">
+      <div class="box-title">Example 15 &amp; Example 16 (Textbook pp. 161–162) — Range and Applied Optimization</div>
+      <p>
+        <strong>(a) Example 15:</strong> Find the range of the function $f(x) = \ln x - x$.<br />
+        <strong>Solution:</strong> The domain is $(0, \infty)$. Differentiating gives $f'(x) = \dfrac{1}{x} - 1 = 0 \implies x = 1$. Since $f''(x) = -\dfrac{1}{x^2} < 0$ for all $x > 0$, $f''(1) = -1 < 0$, so $f(1) = \ln 1 - 1 = -1$ is the global maximum value on $(0, \infty)$. Thus the range is $\{y \in \mathbb{R} : y \le -1\}$ or $(-\infty, -1]$.
+      </p>
+      <p>
+        <strong>(b) Example 16:</strong> An open cylindrical vessel is to be made of thin sheet metal to hold $400\pi\text{ cm}^3$ of water. Find the radius $r$ and minimum surface area $A$ of sheet metal required.<br />
+        <strong>Solution:</strong> The volume is $V = \pi r^2 h = 400\pi \implies h = \dfrac{400}{r^2}$. The surface area of the open cylinder (circular base + curved side) is:
+        $$A(r) = \pi r^2 + 2\pi r h = \pi r^2 + 2\pi r\left(\frac{400}{r^2}\right) = \pi r^2 + \frac{800\pi}{r} \qquad (r > 0)$$
+        Differentiating with respect to $r$:
+        $$A'(r) = 2\pi r - \frac{800\pi}{r^2} = 0 \implies 2\pi r^3 = 800\pi \implies r^3 = 400 \implies r = \sqrt[3]{400}\text{ cm}$$
+        Since $A''(r) = 2\pi + \dfrac{1600\pi}{r^3} > 0$ for all $r > 0$, $r = \sqrt[3]{400}\text{ cm}$ gives the absolute minimum surface area:
+        $$A_{\min} = \pi(400)^{2/3} + \frac{800\pi}{(400)^{1/3}} = \pi(400)^{2/3} + 2\pi(400)^{2/3} = 3\pi(400)^{2/3}\text{ cm}^2$$
+      </p>
+    </div>
+  </section>
+</article>

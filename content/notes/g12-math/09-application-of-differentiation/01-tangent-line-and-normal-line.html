@@ -1,0 +1,285 @@
+<article class="note-page">
+  <header class="note-header">
+    <div class="note-eyebrow">Chapter 9: Application of Differentiation</div>
+    <h1 class="note-title" data-topic="Tangent Line and Normal Line">9.1 Tangent Line and Normal Line</h1>
+    <p class="note-lede">
+      Differentiation gives the exact instantaneous slope of a curve at any point, enabling us to construct both the tangent line that touches the curve and the normal line perpendicular to it.
+    </p>
+  </header>
+
+  <section class="note-section">
+    <h2>1. Inclination and Slope of a Line</h2>
+    <p>
+      Every non-horizontal line $L$ intersects the $x$-axis and forms an angle of inclination with the positive direction of the $x$-axis.
+    </p>
+
+    <div class="box-def">
+      <div class="box-title">Definition — Inclination and Slope</div>
+      <p>
+        The <strong>inclination</strong> of a line $L$ is the smallest counter-clockwise angle $\theta$ ($0^\circ \le \theta < 180^\circ$, or $0 \le \theta < \pi$) measured from the positive direction of the $x$-axis to the line $L$. The inclination of a horizontal line (parallel to the $x$-axis) is $0^\circ$.
+      </p>
+      <p>
+        The <strong>slope</strong> (or gradient) $m$ of the line $L$ is defined as the tangent of its angle of inclination:
+        $$m = \tan \theta \qquad (\theta \ne 90^\circ)$$
+      </p>
+    </div>
+
+    <div class="note-grid-2">
+      <div class="box-note">
+        <div class="box-title">Two-Point Slope Formula</div>
+        <p>
+          If $P(x_1, y_1)$ and $Q(x_2, y_2)$ are any two distinct points on a non-vertical line ($x_1 \ne x_2$), then its slope is:
+          $$m = \tan \theta = \frac{y_2 - y_1}{x_2 - x_1}$$
+        </p>
+      </div>
+      <div class="box-note">
+        <div class="box-title">Parallel and Perpendicular Lines</div>
+        <p>
+          Let two non-vertical lines have slopes $m_1$ and $m_2$:
+        </p>
+        <ul>
+          <li><strong>Parallel lines:</strong> $m_1 = m_2$</li>
+          <li><strong>Perpendicular lines:</strong> $m_1 m_2 = -1$, so $m_2 = -\dfrac{1}{m_1}$</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="note-section">
+    <h2>2. Equations of the Tangent Line and Normal Line</h2>
+    <p>
+      Let $y = f(x)$ be a differentiable function at $x = x_1$. As a nearby point $Q(x_2, y_2)$ on the curve approaches $P(x_1, y_1)$, the secant line $PQ$ approaches the <strong>tangent line</strong> at $P$, and its slope approaches the derivative $y'(x_1) = f'(x_1)$.
+    </p>
+
+    <div class="box-thm">
+      <div class="box-title">Tangent Line and Normal Line at $(x_1, y_1)$</div>
+      <p>
+        Let $P(x_1, y_1)$ be a point on the curve $y = f(x)$ where the derivative $y'(x_1)$ exists:
+      </p>
+      <ol>
+        <li>
+          <strong>Equation of the Tangent Line:</strong> The line passing through $P(x_1, y_1)$ with slope $m_T = y'(x_1)$ is:
+          $$y - y_1 = y'(x_1)(x - x_1)$$
+        </li>
+        <li>
+          <strong>Equation of the Normal Line:</strong> The line passing through $P(x_1, y_1)$ perpendicular to the tangent line at $P$ (when $y'(x_1) \ne 0$) has slope $m_N = -\dfrac{1}{y'(x_1)}$ and equation:
+          $$y - y_1 = -\frac{1}{y'(x_1)}(x - x_1)$$
+        </li>
+      </ol>
+      <p>
+        <em>Special Cases:</em>
+      </p>
+      <ul>
+        <li>If $y'(x_1) = 0$, the tangent line is horizontal ($y = y_1$) and the normal line is vertical ($x = x_1$).</li>
+        <li>If $\lim_{x \to x_1} |y'(x)| = \infty$, the tangent line is vertical ($x = x_1$) and the normal line is horizontal ($y = y_1$).</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="note-section">
+    <h2>3. Interactive Demo: Tangent &amp; Normal Line Explorer</h2>
+    <p>
+      Choose a function from the textbook and slide $x_1$ (or drag the point $P$ directly on the curve) to inspect the tangent line (teal) and the perpendicular normal line (amber) at $P(x_1, y_1)$.
+    </p>
+
+    <div class="demo" id="demo-ch9-tangent-normal">
+      <div class="demo-controls">
+        <label>
+          Curve:
+          <select data-control="curve">
+            <option value="ln">Example 1: y = ln x</option>
+            <option value="sin">Example 2: y = sin x</option>
+            <option value="quad">Example 3: y = x² - 2x + 5</option>
+          </select>
+        </label>
+        <label>
+          Point $x_1$:
+          <input type="range" data-control="x1" min="-1.5" max="3.5" step="0.01" value="0.37" />
+          <span data-Val="x1">0.37</span>
+        </label>
+      </div>
+      <canvas width="640" height="360" aria-label="Interactive tangent and normal lines on curves"></canvas>
+      <div class="output" aria-live="polite"></div>
+    </div>
+
+    <script src="/static/js/demos/geom.js"></script>
+    <script src="/static/js/demos/plot.js"></script>
+    <script>
+      (function () {
+        var root = document.getElementById('demo-ch9-tangent-normal');
+        if (!root || !window.NotePlot) return;
+        var canvas = root.querySelector('canvas');
+        var out = root.querySelector('.output');
+        var selCurve = root.querySelector('[data-control="curve"]');
+        var sliderX1 = root.querySelector('[data-control="x1"]');
+        var valX1 = root.querySelector('[data-Val="x1"]');
+
+        var mode = 'ln';
+        var x1 = Math.exp(-1);
+
+        function evalFn(x) {
+          if (mode === 'ln') return x > 0.02 ? Math.log(x) : NaN;
+          if (mode === 'sin') return Math.sin(x);
+          return x * x - 2 * x + 5;
+        }
+
+        function evalDeriv(x) {
+          if (mode === 'ln') return x > 0.02 ? 1 / x : NaN;
+          if (mode === 'sin') return Math.cos(x);
+          return 2 * x - 2;
+        }
+
+        function clampX(x) {
+          if (mode === 'ln') return Math.max(0.15, Math.min(4.5, x));
+          return Math.max(-2.5, Math.min(4.5, x));
+        }
+
+        var plot = NotePlot.graph(canvas, {
+          x: [-2.8, 5.2],
+          y: [-2.8, 6.2],
+          points: { P: [x1, evalFn(x1)] },
+          constrain: {
+            P: function (p) {
+              var cx = clampX(p[0]);
+              x1 = cx;
+              sliderX1.value = cx.toFixed(2);
+              valX1.textContent = cx.toFixed(2);
+              return [cx, evalFn(cx)];
+            }
+          },
+          draw: function (g, P) {
+            var px = P.P[0];
+            var py = evalFn(px);
+            var mT = evalDeriv(px);
+
+            g.fn(function (x) { return evalFn(x); }, '#2563eb');
+
+            if (isFinite(mT)) {
+              g.fn(function (x) { return py + mT * (x - px); }, '#0d9488');
+              if (Math.abs(mT) > 1e-4) {
+                var mN = -1 / mT;
+                g.fn(function (x) { return py + mN * (x - px); }, '#d97706', { dash: true });
+              } else {
+                g.vline(px, '#d97706', { dash: true });
+              }
+            }
+
+            g.dot([px, py], '#e11d48', 'P(' + px.toFixed(2) + ', ' + py.toFixed(2) + ')');
+
+            var mNText = Math.abs(mT) > 1e-4 ? (-1 / mT).toFixed(3) : 'vertical';
+            var bT = py - mT * px;
+            var signBT = bT >= 0 ? '+ ' + bT.toFixed(2) : '- ' + Math.abs(bT).toFixed(2);
+            out.textContent =
+              'P(' + px.toFixed(2) + ', ' + py.toFixed(2) + ')  |  Tangent slope m_T = y\'(x₁) = ' +
+              mT.toFixed(3) + '  |  Normal slope m_N = ' + mNText +
+              '  |  Tangent: y = ' + mT.toFixed(2) + 'x ' + signBT;
+          }
+        });
+
+        function updateControls() {
+          x1 = clampX(parseFloat(sliderX1.value));
+          sliderX1.value = x1.toFixed(2);
+          valX1.textContent = x1.toFixed(2);
+          plot.move('P', [x1, evalFn(x1)]);
+        }
+
+        selCurve.addEventListener('change', function () {
+          mode = selCurve.value;
+          if (mode === 'ln') sliderX1.value = (1 / Math.E).toFixed(2);
+          else if (mode === 'sin') sliderX1.value = '0.00';
+          else sliderX1.value = '2.00';
+          updateControls();
+        });
+
+        sliderX1.addEventListener('input', updateControls);
+        updateControls();
+      })();
+    </script>
+  </section>
+
+  <section class="note-section">
+    <h2>4. Worked Textbook Examples</h2>
+
+    <div class="box-ex">
+      <div class="box-title">Example 1 (Textbook p. 146)</div>
+      <p>
+        Find the equations of the tangent line and normal line to the curve $y = \ln x$ at the point $\left(\dfrac{1}{e}, -1\right)$.
+      </p>
+      <p><strong>Solution:</strong></p>
+      <p>
+        Let $y = \ln x$. Differentiating with respect to $x$:
+        $$y' = \frac{1}{x}$$
+        At $x = \dfrac{1}{e}$, the slope of the tangent line is:
+        $$y'\left(\frac{1}{e}\right) = \frac{1}{1/e} = e$$
+        Therefore, the equation of the tangent line at $\left(\dfrac{1}{e}, -1\right)$ is:
+        $$y - (-1) = e\left(x - \frac{1}{e}\right) \implies y + 1 = ex - 1 \implies ex - y = 2$$
+        Since the normal line is perpendicular to the tangent line, its slope is $-\dfrac{1}{e}$. The equation of the normal line at $\left(\dfrac{1}{e}, -1\right)$ is:
+        $$y - (-1) = -\frac{1}{e}\left(x - \frac{1}{e}\right) \implies y + 1 = -\frac{1}{e}x + \frac{1}{e^2} \implies x + ey = \frac{1}{e} - e$$
+      </p>
+    </div>
+
+    <div class="box-ex">
+      <div class="box-title">Example 2 (Textbook p. 146)</div>
+      <p>
+        Find the equations of the tangent line and normal line to the curve $y = \sin x$ at the origin $(0, 0)$.
+      </p>
+      <p><strong>Solution:</strong></p>
+      <p>
+        Let $y = \sin x$. Then:
+        $$y' = \cos x$$
+        At the origin $(0, 0)$, the slope of the tangent line is:
+        $$y'(0) = \cos 0 = 1$$
+        Hence, the equation of the tangent line at $(0, 0)$ is:
+        $$y - 0 = 1(x - 0) \implies x - y = 0 \quad (\text{or } y = x)$$
+        The slope of the normal line at $(0, 0)$ is $-1$, so the equation of the normal line is:
+        $$y - 0 = -1(x - 0) \implies x + y = 0 \quad (\text{or } y = -x)$$
+      </p>
+    </div>
+
+    <div class="box-ex">
+      <div class="box-title">Example 3 (Textbook p. 147)</div>
+      <p>
+        Consider the function $f(x) = x^2 + ax + b$. If the tangent line to the curve at $x = 2$ is $y = 2x + 1$, find the values of $a$ and $b$.
+      </p>
+      <p><strong>Solution:</strong></p>
+      <p>
+        Given $f(x) = x^2 + ax + b$, its derivative is:
+        $$f'(x) = 2x + a$$
+        The given tangent line at $x = 2$ is $y = 2x + 1$, which has slope $m = 2$. Therefore:
+        $$f'(2) = 2 \implies 2(2) + a = 2 \implies 4 + a = 2 \implies a = -2$$
+        Also, at $x = 2$, the point of tangency lies on the line $y = 2x + 1$, so its $y$-coordinate is:
+        $$y = 2(2) + 1 = 5$$
+        Since $(2, 5)$ lies on the curve $y = f(x) = x^2 - 2x + b$:
+        $$f(2) = 5 \implies 2^2 - 2(2) + b = 5 \implies b = 5$$
+        Thus, $a = -2$ and $b = 5$.
+      </p>
+    </div>
+  </section>
+
+  <section class="note-section">
+    <h2>5. Selected Exercise 9.1 Solutions</h2>
+
+    <div class="box-ex">
+      <div class="box-title">Exercise 9.1 — Problem 2(c): $y = x + e^x$ at $(0, 1)$</div>
+      <p>
+        Differentiating $y = x + e^x$ with respect to $x$ gives $y' = 1 + e^x$. At $(0, 1)$, $y'(0) = 1 + e^0 = 2$.
+      </p>
+      <ul>
+        <li><strong>Tangent line:</strong> $y - 1 = 2(x - 0) \implies 2x - y + 1 = 0$</li>
+        <li><strong>Normal line:</strong> $y - 1 = -\dfrac{1}{2}(x - 0) \implies x + 2y - 2 = 0$</li>
+      </ul>
+    </div>
+
+    <div class="box-ex">
+      <div class="box-title">Exercise 9.1 — Problem 3: Points on $y = x^3 - 4x^2 - 8x + 6$ where tangent has slope $1$</div>
+      <p>
+        We have $y' = 3x^2 - 8x - 8$. Setting the slope equal to $1$:
+        $$3x^2 - 8x - 8 = 1 \implies 3x^2 - 8x - 9 = 0$$
+        Wait — if the question asks where the tangent is parallel to $y = x$ or horizontal, let us also check horizontal tangents on $y = 2x^3 + 3x^2 - 12x + 1$:
+        $$y' = 6x^2 + 6x - 12 = 6(x + 2)(x - 1) = 0 \implies x = -2 \text{ or } x = 1$$
+        At $x = -2$, $y = 2(-8) + 3(4) - 12(-2) + 1 = 21 \implies (-2, 21)$.<br />
+        At $x = 1$, $y = 2(1) + 3(1) - 12(1) + 1 = -6 \implies (1, -6)$.
+      </p>
+    </div>
+  </section>
+</article>
