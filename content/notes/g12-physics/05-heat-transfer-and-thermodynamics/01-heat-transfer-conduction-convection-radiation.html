@@ -1,0 +1,211 @@
+<!-- tags: Heat Transfer and Thermodynamics, G12 Physics Myanmar -->
+<!-- Grade 12 Physics textbook, Chapter 5, section 5.1 (pages 63–71) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Heat Transfer and Thermodynamics">Heat Transfer — Conduction, Convection, and Radiation</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; The Three Mechanisms of Thermal Energy Transfer</span>
+  <p>Heat is thermal energy in transit between physical bodies as a direct consequence of a temperature difference ($T_1 \ne T_2$). There are three fundamental mechanisms by which heat is transferred:</p>
+  <ul>
+    <li><strong>1. Heat Conduction (in Solids):</strong>
+      Thermal energy is transferred internally through microscopic collisions of adjacent atoms/molecules and the migration of mobile free conduction electrons, without macroscopic translation of the material itself:
+      <ul>
+        <li><strong>Thermal Conductors vs. Insulators:</strong> Metals (silver, copper, aluminum) contain high concentrations of free electrons that transport heat rapidly ($k$ is large). Insulators (wood, rubber, glass, air, styrofoam) have tightly bound electrons and exhibit low thermal conductivity ($k$ is small).</li>
+        <li><strong>Fourier's Law:</strong> The rate of conductive heat flow $H_{\text{cond}}$ through a cross-sectional area $A$ is directly proportional to $A$ and the temperature gradient $\frac{\Delta T}{l}$.</li>
+      </ul>
+    </li>
+    <li><strong>2. Heat Convection (in Fluids):</strong>
+      Heat is transferred through bulk physical movement of a liquid or gas. When a fluid is heated, it expands, its density decreases, and buoyant forces cause the warmer fluid to rise while cooler, denser fluid sinks to take its place (forming <em>convection currents</em>):
+      <ul>
+        <li><strong>Natural (Free) Convection:</strong> Driven solely by buoyant density differences (e.g. sea breezes, home radiators, atmospheric cloud formation).</li>
+        <li><strong>Forced Convection:</strong> Fluid circulation is actively driven by mechanical blowers, fans, or coolant pumps (e.g. computer CPU fans, automobile car radiators).</li>
+      </ul>
+    </li>
+    <li><strong>3. Heat Radiation (Electromagnetic Waves):</strong>
+      Transfer of energy via electromagnetic waves (predominantly infrared). Radiation requires <em>no material medium</em> and travels across empty space at the speed of light ($c \approx 3 \times 10^8\mathrm{m\,s^{-1}}$), which is how solar energy reaches Earth:
+      <ul>
+        <li><strong>Blackbody:</strong> An idealized physical body that absorbs $100\%$ of all incident electromagnetic radiation regardless of wavelength or angle of incidence, and acts as the most efficient emitter of thermal radiation at any given temperature ($e = 1$).</li>
+        <li><strong>Emissivity ($e$):</strong> The ratio of total radiant energy emitted by a real surface to that emitted by a blackbody at identical temperature ($0 < e \le 1$). Dark, matte surfaces have $e \approx 1$ (good absorbers and emitters); polished, shiny, reflective surfaces have $e \ll 1$ (poor absorbers and emitters).</li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formulas &mdash; Governing Equations of Heat Transfer</span>
+  <div class="formula-main">
+    $$H_{\text{cond}} = k A \frac{T_2 - T_1}{l} \qquad H_{\text{conv}} = q A (T_s - T_f) \qquad H_{\text{rad}} = e \sigma A T^4$$
+  </div>
+  <ul class="symbols">
+    <li>$H = \frac{\Delta Q}{\Delta t}$ = rate of heat transfer or heat current ($\mathrm{W} = \mathrm{J\,s^{-1}}$)</li>
+    <li>$k$ = thermal conductivity of material ($\mathrm{W\,m^{-1}\,K^{-1}}$)</li>
+    <li>$A$ = surface area perpendicular to heat flow ($\mathrm{m^2}$)</li>
+    <li>$l$ = slab thickness ($\mathrm{m}$); $\frac{T_2 - T_1}{l}$ = spatial temperature gradient ($\mathrm{K\,m^{-1}}$)</li>
+    <li>$q$ = convective heat transfer coefficient ($\mathrm{W\,m^{-2}\,K^{-1}}$)</li>
+    <li>$T_s, T_f$ = temperatures of surface and surrounding fluid ($\mathrm{K}$)</li>
+    <li>$e$ = surface emissivity ($0 < e \le 1$; dimensionless; $e = 1$ for a blackbody)</li>
+    <li>$\sigma = 5.685 \times 10^{-8}\mathrm{W\,m^{-2}\,K^{-4}}$ = Stefan-Boltzmann constant</li>
+    <li><strong>Net Radiative Exchange:</strong>
+      $$H_{\text{net}} = e \sigma A \left(T^4 - T_{\text{surr}}^4\right)$$
+    </li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Visualization &mdash; Steady-State Conduction Temperature Profile</span>
+  <p class="demo-instruction">Select the wall material and adjust slab thickness $l$ and hot-side temperature $T_2$. Observe the resulting linear temperature gradient across the slab and the instantaneous conducted heat current $H_{\text{cond}}$.</p>
+
+  <div id="conduction-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
+
+  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
+    <label style="color: #cbd5e1; font-weight: 500;">
+      Material: 
+      <select id="mat-select" style="background: #1e293b; color: white; border: 1px solid #475569; padding: 0.3rem 0.6rem; border-radius: 4px;">
+        <option value="401">Copper (k = 401 W/m·K)</option>
+        <option value="237">Aluminum (k = 237 W/m·K)</option>
+        <option value="0.78" selected>Glass (k = 0.78 W/m·K)</option>
+        <option value="0.17">Wood (k = 0.17 W/m·K)</option>
+        <option value="0.026">Air/Foam (k = 0.026 W/m·K)</option>
+      </select>
+    </label>
+    <label style="color: #cbd5e1; font-weight: 500;">
+      Thickness $l$: 
+      <input id="thick-slider" type="range" min="0.01" max="0.10" step="0.01" value="0.04" style="vertical-align: middle;">
+      <span id="thick-val" style="color: #38bdf8; font-weight: 700;">4.0 cm</span>
+    </label>
+    <div style="color: #f8fafc; font-size: 0.9rem;">
+      Heat Current ($A = 1\text{ m}^2$): <span id="h-stat" style="color: #4ade80; font-weight: 700;">975 W</span>
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    let board = JXG.JSXGraph.initBoard('conduction-board', {
+      boundingbox: [-1, 110, 11, -10],
+      axis: true,
+      defaultAxes: {
+        x: { name: 'Distance into slab x (cm)', withLabel: true, label: { position: 'rt', offset: [-20, -15], color: '#cbd5e1' } },
+        y: { name: 'Temperature T (°C)', withLabel: true, label: { position: 'rt', offset: [-10, -10], color: '#cbd5e1' } }
+      },
+      showNavigation: false,
+      showCopyright: false
+    });
+
+    let k_val = 0.78;
+    let l_cm = 4.0;
+    const T_hot = 80;
+    const T_cold = 30;
+
+    function calcH() {
+      let l_m = l_cm * 0.01;
+      return (k_val * 1.0 * (T_hot - T_cold)) / l_m;
+    }
+
+    // Slab region polygon
+    let slabPoly = board.create('polygon', [
+      [0, 0], [function() { return l_cm; }, 0],
+      [function() { return l_cm; }, 100], [0, 100]
+    ], {
+      fillColor: '#38bdf8',
+      fillOpacity: 0.15,
+      strokeColor: '#64748b',
+      strokeWidth: 2,
+      vertices: { visible: false }
+    });
+
+    // Temperature profile line
+    let tLine = board.create('segment', [
+      [0, T_hot],
+      [function() { return l_cm; }, T_cold]
+    ], { strokeColor: '#f87171', strokeWidth: 3 });
+
+    board.create('point', [0, T_hot], { name: 'T_hot = 80°C', fillColor: '#ef4444', strokeColor: '#fff', size: 4 });
+    board.create('point', [function() { return l_cm; }, T_cold], { name: 'T_cold = 30°C', fillColor: '#38bdf8', strokeColor: '#fff', size: 4 });
+
+    function update() {
+      document.getElementById('thick-val').textContent = l_cm.toFixed(1) + ' cm';
+      let h = calcH();
+      document.getElementById('h-stat').textContent = (h > 1000 ? (h/1000).toFixed(2) + ' kW' : h.toFixed(0) + ' W');
+      board.update();
+    }
+
+    document.getElementById('mat-select').addEventListener('change', function() {
+      k_val = parseFloat(this.value);
+      update();
+    });
+
+    document.getElementById('thick-slider').addEventListener('input', function() {
+      l_cm = parseFloat(this.value) * 100;
+      update();
+    });
+
+    update();
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Textbook Worked Examples &mdash; Conduction, Convection, and Radiation</span>
+
+  <div class="example-item">
+    <p class="example-title"><strong>Example 5.1:</strong> A person walking at a regular speed generates heat at the rate of $0.07\text{ W}$. If the surface area of the body is $1.5\text{ m}^2$ and heat is generated $0.03\text{ m}$ below the skin, what should be the temperature difference between the skin and the interior of the body if heat is to be conducted to the skin surface? Take $k = 5 \times 10^{-3}\text{ W\,m}^{-1}\text{K}^{-1}$.</p>
+    <p class="solution"><strong>Solution:</strong><br>
+      Given:<br>
+      $H_{\text{cond}} = 0.07\text{ W}$, $A = 1.5\text{ m}^2$, $l = 0.03\text{ m}$, $k = 5 \times 10^{-3}\text{ W\,m}^{-1}\text{K}^{-1}$.<br>
+      Using Fourier's conduction formula:
+      $$H_{\text{cond}} = k A \frac{\Delta T}{l} \implies \Delta T = \frac{H_{\text{cond}} \cdot l}{k A}$$
+      $$\Delta T = \frac{0.07 \times 0.03}{(5 \times 10^{-3}) \times 1.5} = \frac{0.0021}{0.0075} = 0.28\text{ K} = 0.28^\circ\text{C}$$
+      <em>Physiological Note:</em> Conduction through biological tissue alone is very slow; the human body relies primarily on convective heat transport via warm blood circulation to regulate core body temperature.
+    </p>
+  </div>
+
+  <div class="example-item">
+    <p class="example-title"><strong>Example 5.2:</strong> A new computer microchip with a surface area of $1\text{ cm}^2$ generates $10\text{ W}$ of heat. Determine the convective heat transfer coefficient $q$ required to keep the chip's temperature within $20^\circ\text{C}$ above ambient room temperature. Can this chip be cooled with natural air convection (where $q_{\text{air}} \approx 2.5\text{ to }25\text{ W\,m}^{-2}\text{K}^{-1}$), or will it require forced convection?</p>
+    <p class="solution"><strong>Solution:</strong><br>
+      Given:<br>
+      $A = 1\text{ cm}^2 = 1 \times 10^{-4}\text{ m}^2$, $H_{\text{conv}} = -10\text{ W}$ (heat lost by chip), $\Delta T = T_s - T_f = 20\text{ K}$.<br>
+      Using Newton's law of cooling:
+      $$H_{\text{conv}} = q A (T_s - T_f) \implies q = \frac{H_{\text{conv}}}{A \Delta T} = \frac{10\text{ W}}{(1 \times 10^{-4}\text{ m}^2)(20\text{ K})} = \frac{10}{0.002} = 5000\text{ W\,m}^{-2}\text{K}^{-1}$$
+      Because $5000\text{ W\,m}^{-2}\text{K}^{-1}$ is vastly greater than the maximum coefficient for still air ($25\text{ W\,m}^{-2}\text{K}^{-1}$), the chip cannot be cooled by natural air convection and strictly requires <strong>forced convection</strong> (e.g. high-speed fans with heat sinks or liquid coolant circulation).
+    </p>
+  </div>
+
+  <div class="example-item">
+    <p class="example-title"><strong>Example 5.3:</strong> In a room, the temperature of water in an electric kettle is $80^\circ\text{C}$ while room temperature is $30^\circ\text{C}$. The surface area of the kettle is $0.02\text{ m}^2$ and its emissivity is $e = 0.9$. Find the net rate of heat loss due to radiation. ($\sigma = 5.685 \times 10^{-8}\text{ W\,m}^{-2}\text{K}^{-4}$).</p>
+    <p class="solution"><strong>Solution:</strong><br>
+      Absolute temperatures:<br>
+      $T_{\text{kettle}} = 80 + 273 = 353\text{ K}$<br>
+      $T_{\text{room}} = 30 + 273 = 303\text{ K}$<br>
+      1. Rate of heat radiation emitted by kettle:
+      $$H_{\text{out}} = e \sigma A T_2^4 = 0.9 \times (5.685 \times 10^{-8}) \times 0.02 \times (353)^4 \approx 15.89\text{ W}$$
+      2. Rate of heat radiation absorbed from room:
+      $$H_{\text{in}} = e \sigma A T_1^4 = 0.9 \times (5.685 \times 10^{-8}) \times 0.02 \times (303)^4 \approx 8.63\text{ W}$$
+      3. Net rate of radiative heat loss:
+      $$H_{\text{net}} = H_{\text{out}} - H_{\text{in}} = 15.89\text{ W} - 8.63\text{ W} = 7.26\text{ W}$$
+    </p>
+  </div>
+
+  <div class="example-item">
+    <p class="example-title"><strong>Reviewed Exercises:</strong></p>
+    <p class="solution">
+      <strong>1. Why is ceramic an ideal choice for electric stove cooktops?</strong><br>
+      Ceramic has moderate thermal conductivity: high enough to conduct heat directly upward from hidden heating elements into the bottom of a cooking pot, but low enough laterally to prevent heat from spreading dangerously across the entire countertop surface.<br><br>
+      <strong>2. What is the relation between total emissive power of an object and of a blackbody at the same temperature?</strong><br>
+      The total emissive power $E$ of a real body is equal to the product of its emissivity $e$ and the emissive power $E_b$ of a blackbody at that temperature: $E = e E_b$, where $0 < e \le 1$.
+    </p>
+  </div>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>Conduction transfers heat in solids via lattice vibrations and free electrons: $H_{\text{cond}} = k A \frac{\Delta T}{l}$.</li>
+    <li>Convection transfers heat in liquids and gases through fluid movement driven by buoyant density changes: $H_{\text{conv}} = q A \Delta T$.</li>
+    <li>Radiation transfers heat as electromagnetic waves across vacuum governed by Stefan-Boltzmann's law: $H = e \sigma A T^4$.</li>
+    <li>A blackbody is an ideal emitter and absorber with emissivity $e = 1$.</li>
+    <li>Net radiative transfer between a body and surroundings is $H_{\text{net}} = e \sigma A (T^4 - T_{\text{surr}}^4)$.</li>
+  </ul>
+</div>
+
+</article>
