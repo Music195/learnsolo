@@ -67,6 +67,15 @@
     };
   };
 
+  function arrow(g, p, q, col) {
+    g.seg(p, q, col, { width: 2.5 });
+    var dx = q[0] - p[0], dy = q[1] - p[1], L = Math.hypot(dx, dy);
+    if (L < 0.15) return;
+    var ux = dx / L, uy = dy / L, s = 0.22;
+    g.seg(q, [q[0] - s * (ux - 0.45 * uy), q[1] - s * (uy + 0.45 * ux)], col, { width: 2 });
+    g.seg(q, [q[0] - s * (ux + 0.45 * uy), q[1] - s * (uy - 0.45 * ux)], col, { width: 2 });
+  }
+
   var plot = NotePlot.graph(canvas, {
     x: [-5.4, 5.4],
     y: [-3.6, 3.6],
@@ -76,27 +85,25 @@
       var t = parseFloat(tIn.value);
       var P3 = view(az, 0.42);
       var O = P3([0, 0, 0]);
-      g.line(O, P3([4.2, 0, 0]), g.palette.muted, 1.2);
-      g.line(O, P3([0, 4.2, 0]), g.palette.muted, 1.2);
-      g.line(O, P3([0, 0, 3.5]), g.palette.muted, 1.2);
+      g.seg(O, P3([4.2, 0, 0]), '#94a3b8', { width: 1.2 });
+      g.seg(O, P3([0, 4.2, 0]), '#94a3b8', { width: 1.2 });
+      g.seg(O, P3([0, 0, 3.5]), '#94a3b8', { width: 1.2 });
 
       if (mode === 'line') {
         var a = [1, 4, -1], b = [3, 2, 5], sc = 0.45;
         var pL1 = P3([(a[0] - 1.6 * b[0]) * sc, (a[1] - 1.6 * b[1]) * sc, (a[2] - 1.6 * b[2]) * sc]);
         var pL2 = P3([(a[0] + 1.6 * b[0]) * sc, (a[1] + 1.6 * b[1]) * sc, (a[2] + 1.6 * b[2]) * sc]);
-        g.line(pL1, pL2, g.palette.teal, 2.2);
+        g.seg(pL1, pL2, '#0d9488', { width: 2.2 });
 
         var pA = P3([a[0] * sc, a[1] * sc, a[2] * sc]);
         var rx = a[0] + t * b[0], ry = a[1] + t * b[1], rz = a[2] + t * b[2];
         var pR = P3([rx * sc, ry * sc, rz * sc]);
 
-        g.vector(O, pA, g.palette.blue);
-        g.vector(pA, pR, g.palette.amber);
-        g.vector(O, pR, g.palette.rose);
-        g.point(pA, g.palette.blue, 4.5);
-        g.point(pR, g.palette.rose, 5);
-        g.label('A(1,4,-1)', pA, [8, -8], g.palette.blue);
-        g.label('R(t)', pR, [8, -8], g.palette.rose);
+        arrow(g, O, pA, '#2563eb');
+        arrow(g, pA, pR, '#d97706');
+        arrow(g, O, pR, '#e11d48');
+        g.dot(pA, '#2563eb', 'A(1,4,-1)');
+        g.dot(pR, '#e11d48', 'R(t)');
 
         out.textContent =
           'Line (Ex 16): r = (1, 4, −1) + t(3, 2, 5)   |   t = ' + t.toFixed(1) +
@@ -109,21 +116,24 @@
         var c2 = P3([A[0] + d1[0] - d2[0], A[1] + d1[1] - d2[1], A[2] + d1[2] - d2[2]]);
         var c3 = P3([A[0] + d1[0] + d2[0], A[1] + d1[1] + d2[1], A[2] + d1[2] + d2[2]]);
         var c4 = P3([A[0] - d1[0] + d2[0], A[1] - d1[1] + d2[1], A[2] - d1[2] + d2[2]]);
-        g.polygon([c1, c2, c3, c4], 'rgba(13, 148, 136, 0.18)', g.palette.teal);
+        g.poly([c1, c2, c3, c4], 'rgba(13, 148, 136, 0.18)');
+        g.seg(c1, c2, '#0d9488', { width: 1.4 });
+        g.seg(c2, c3, '#0d9488', { width: 1.4 });
+        g.seg(c3, c4, '#0d9488', { width: 1.4 });
+        g.seg(c4, c1, '#0d9488', { width: 1.4 });
 
         var pA2 = P3(A);
         var pD1 = P3([A[0] + d1[0], A[1] + d1[1], A[2] + d1[2]]);
         var pD2 = P3([A[0] + d2[0], A[1] + d2[1], A[2] + d2[2]]);
         var pN = P3([A[0] - 0.6, A[1] - 1.2, A[2] + 1.8]);
 
-        g.vector(pA2, pD1, g.palette.blue);
-        g.vector(pA2, pD2, g.palette.amber);
-        g.vector(pA2, pN, g.palette.rose);
-        g.point(pA2, g.palette.teal, 4.5);
-        g.label('A', pA2, [-14, 10], g.palette.teal);
-        g.label('d₁', pD1, [6, -6], g.palette.blue);
-        g.label('d₂', pD2, [6, -6], g.palette.amber);
-        g.label('n (normal)', pN, [8, -6], g.palette.rose);
+        arrow(g, pA2, pD1, '#2563eb');
+        arrow(g, pA2, pD2, '#d97706');
+        arrow(g, pA2, pN, '#e11d48');
+        g.dot(pA2, '#0d9488', 'A');
+        g.dot(pD1, '#2563eb', 'd₁');
+        g.dot(pD2, '#d97706', 'd₂');
+        g.dot(pN, '#e11d48', 'n (normal)');
 
         out.textContent =
           'Plane (Ex 22): A(1, −3, 2), normal n = (2, 4, −2)   |   ' +

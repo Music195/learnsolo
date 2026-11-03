@@ -73,6 +73,15 @@
     };
   };
 
+  function arrow(g, p, q, col) {
+    g.seg(p, q, col, { width: 2.5 });
+    var dx = q[0] - p[0], dy = q[1] - p[1], L = Math.hypot(dx, dy);
+    if (L < 0.15) return;
+    var ux = dx / L, uy = dy / L, s = 0.22;
+    g.seg(q, [q[0] - s * (ux - 0.45 * uy), q[1] - s * (uy + 0.45 * ux)], col, { width: 2 });
+    g.seg(q, [q[0] - s * (ux + 0.45 * uy), q[1] - s * (uy - 0.45 * ux)], col, { width: 2 });
+  }
+
   var plot = NotePlot.graph(canvas, {
     x: [-5.4, 5.4],
     y: [-3.6, 3.6],
@@ -81,9 +90,9 @@
       var az = parseFloat(azIn.value) * Math.PI / 180;
       var P3 = view(az, 0.44);
       var O = P3([0, 0, 0]);
-      g.line(O, P3([4.2, 0, 0]), g.palette.muted, 1.2);
-      g.line(O, P3([0, 4.2, 0]), g.palette.muted, 1.2);
-      g.line(O, P3([0, 0, 3.5]), g.palette.muted, 1.2);
+      g.seg(O, P3([4.2, 0, 0]), '#94a3b8', { width: 1.2 });
+      g.seg(O, P3([0, 4.2, 0]), '#94a3b8', { width: 1.2 });
+      g.seg(O, P3([0, 0, 3.5]), '#94a3b8', { width: 1.2 });
 
       var pr = presets[cur];
       var a = pr.a, b = pr.b, sc = pr.sc, nsc = pr.nsc;
@@ -98,16 +107,18 @@
       var pAB = P3([(a[0] + b[0]) * sc, (a[1] + b[1]) * sc, (a[2] + b[2]) * sc]);
       var pN = P3([cx * nsc, cy * nsc, cz * nsc]);
 
-      g.polygon([O, pA, pAB, pB], 'rgba(13, 148, 136, 0.20)', g.palette.teal);
-      g.dashed(O, pAB, g.palette.teal);
+      g.poly([O, pA, pAB, pB], 'rgba(13, 148, 136, 0.20)');
+      g.seg(pA, pAB, '#0d9488', { dash: true, width: 1.5 });
+      g.seg(pB, pAB, '#0d9488', { dash: true, width: 1.5 });
+      g.seg(O, pAB, '#0d9488', { dash: true, width: 1.2 });
 
-      g.vector(O, pA, g.palette.blue);
-      g.vector(O, pB, g.palette.amber);
-      g.vector(O, pN, g.palette.rose);
+      arrow(g, O, pA, '#2563eb');
+      arrow(g, O, pB, '#d97706');
+      arrow(g, O, pN, '#e11d48');
 
-      g.label('a', pA, [6, -6], g.palette.blue);
-      g.label('b', pB, [6, -6], g.palette.amber);
-      g.label('a × b', pN, [8, -6], g.palette.rose);
+      g.dot(pA, '#2563eb', 'a');
+      g.dot(pB, '#d97706', 'b');
+      g.dot(pN, '#e11d48', 'a×b');
 
       out.textContent =
         pr.title + ': a = (' + a.join(', ') + '), b = (' + b.join(', ') + ')   |   ' +

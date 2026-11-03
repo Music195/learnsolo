@@ -59,6 +59,15 @@
     return [Math.round(p[0] * 2) / 2, Math.round(p[1] * 2) / 2];
   };
 
+  function arrow(g, p, q, col) {
+    g.seg(p, q, col, { width: 2.5 });
+    var dx = q[0] - p[0], dy = q[1] - p[1], L = Math.hypot(dx, dy);
+    if (L < 0.15) return;
+    var ux = dx / L, uy = dy / L, s = 0.24;
+    g.seg(q, [q[0] - s * (ux - 0.45 * uy), q[1] - s * (uy + 0.45 * ux)], col, { width: 2 });
+    g.seg(q, [q[0] - s * (ux + 0.45 * uy), q[1] - s * (uy - 0.45 * ux)], col, { width: 2 });
+  }
+
   var plot = NotePlot.graph(canvas, {
     x: [-6.2, 6.2],
     y: [-4, 4],
@@ -74,19 +83,13 @@
       if (ma > 0.01 && mb > 0.01) {
         var projScale = dot / (ma * ma);
         var proj = [a[0] * projScale, a[1] * projScale];
-        g.dashed(b, proj, g.palette.muted);
-        g.line(O, proj, g.palette.teal, 3);
-        g.point(proj, g.palette.teal, 4);
-
-        var angA = Math.atan2(a[1], a[0]);
-        var angB = Math.atan2(b[1], b[0]);
-        g.arc(O, 0.85, angA, angB, g.palette.rose);
+        g.seg(b, proj, '#94a3b8', { dash: true, width: 1.5 });
+        g.seg(O, proj, '#0d9488', { width: 3.5 });
+        g.dot(proj, '#0d9488', 'proj');
       }
 
-      g.vector(O, a, g.palette.blue);
-      g.vector(O, b, g.palette.amber);
-      g.label('a (' + a[0] + ', ' + a[1] + ')', a, [8, -8], g.palette.blue);
-      g.label('b (' + b[0] + ', ' + b[1] + ')', b, [8, -8], g.palette.amber);
+      arrow(g, O, a, '#2563eb');
+      arrow(g, O, b, '#d97706');
 
       var cosT = (ma > 0.01 && mb > 0.01) ? Math.max(-1, Math.min(1, dot / (ma * mb))) : 1;
       var deg = Math.acos(cosT) * 180 / Math.PI;
@@ -108,9 +111,8 @@
   for (var i = 0; i < btns.length; i++) {
     btns[i].addEventListener('click', function() {
       var k = this.getAttribute('data-preset');
-      plot.points.a[0] = presets[k].a[0]; plot.points.a[1] = presets[k].a[1];
-      plot.points.b[0] = presets[k].b[0]; plot.points.b[1] = presets[k].b[1];
-      plot.redraw();
+      plot.move('a', presets[k].a);
+      plot.move('b', presets[k].b);
     });
   }
 })();

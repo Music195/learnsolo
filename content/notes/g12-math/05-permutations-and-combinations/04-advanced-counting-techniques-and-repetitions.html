@@ -58,10 +58,9 @@
 <script>
 (function() {
   var canvas = document.getElementById('g12-ch5-04-canvas');
-  var out = document.getElementById('ch4-04-out') || document.getElementById('ch5-04-out');
+  var out = document.getElementById('ch5-04-out');
   if (!canvas) return;
 
-  var b = NoteGeom.board(canvas, { height: 310 });
   var cur = 'KEENNESS';
 
   function fact(k) {
@@ -70,67 +69,77 @@
     return r;
   }
 
-  function render() {
-    b.clear();
-    if (cur !== 'SUBSETS') {
-      var counts = {};
-      var order = [];
-      for (var i = 0; i < cur.length; i++) {
-        var ch = cur[i];
-        if (!counts[ch]) { counts[ch] = 0; order.push(ch); }
-        counts[ch]++;
-      }
-      var n = cur.length;
-      b.label('Word: "' + cur + '"   (Total letters n = ' + n + ')', [35, 34], [0, 0], b.palette.ink, 14);
-
-      for (var k = 0; k < cur.length; k++) {
-        var x = 40 + k * 44;
-        b.polygon([[x, 52], [x + 36, 52], [x + 36, 90], [x, 90]], 'rgba(59, 130, 246, 0.14)', b.palette.blue, 1.8);
-        b.label(cur[k], [x + 12, 76], [0, 0], b.palette.blue, 14);
-      }
-
-      b.label('Letter Frequencies & Repeated Group Factorials:', [35, 130], [0, 0], b.palette.ink, 13);
-      var denomProd = 1;
-      var denomStr = [];
-      for (var j = 0; j < order.length; j++) {
-        var L = order[j];
-        var c = counts[L];
-        denomProd *= fact(c);
-        if (c > 1) denomStr.push(c + '!');
-        var bx = 40 + j * 82;
-        var col = c > 1 ? b.palette.rose : b.palette.teal;
-        var fill = c > 1 ? 'rgba(225, 29, 72, 0.16)' : 'rgba(13, 148, 136, 0.14)';
-        b.polygon([[bx, 148], [bx + 70, 148], [bx + 70, 215], [bx, 215]], fill, col, 1.8);
-        b.label(L + ' × ' + c, [bx + 14, 174], [0, 0], col, 13);
-        b.label(c + '! = ' + fact(c), [bx + 12, 200], [0, 0], b.palette.muted, 11);
-      }
-
-      var totalPerms = Math.round(fact(n) / denomProd);
-      var dText = denomStr.length ? denomStr.join(' · ') : '1!';
-      b.label('Distinct Permutations = ' + n + '! / (' + dText + ') = ' + fact(n) + ' / ' + denomProd + ' = ' + totalPerms, [35, 265], [0, 0], b.palette.teal, 14);
-
-      out.textContent =
-        'Word "' + cur + '": n = ' + n + ' letters   |   Formula: ' + n + '! / (' + dText + ') = ' + totalPerms + ' distinct permutations';
-    } else {
-      var nSet = 9;
-      var cVals = [1, 9, 36, 84, 126, 126, 84, 36, 9, 1];
-      b.label('Example 22: Subsets of a 9-Element Set A  (Total = 2⁹ = 512)', [35, 30], [0, 0], b.palette.ink, 13);
-      var baseY = 235;
-      for (var r = 0; r <= nSet; r++) {
-        var x2 = 42 + r * 45;
-        var h2 = Math.max(10, Math.round((cVals[r] / 126) * 150));
-        var isAtMost2 = (r <= 2);
-        var col2 = isAtMost2 ? b.palette.amber : b.palette.teal;
-        var fill2 = isAtMost2 ? 'rgba(217, 119, 6, 0.24)' : 'rgba(13, 148, 136, 0.20)';
-        b.polygon([[x2, baseY], [x2 + 32, baseY], [x2 + 32, baseY - h2], [x2, baseY - h2]], fill2, col2, 1.8);
-        b.label('9C' + r, [x2 + 4, baseY + 18], [0, 0], col2, 10);
-        b.label(String(cVals[r]), [x2 + 4, baseY - h2 - 8], [0, 0], col2, 11);
-      }
-      b.label('Amber (r ≤ 2): ⁹C₀+⁹C₁+⁹C₂ = 1+9+36 = 46   |   Teal (r ≥ 3): 2⁹ − 46 = 512 − 46 = 466', [35, 282], [0, 0], b.palette.ink, 12);
-      out.textContent =
-        'Example 22 (|A| = 9): At most 2 elements = ⁹C₀ + ⁹C₁ + ⁹C₂ = 1 + 9 + 36 = 46   |   At least 3 elements = 2⁹ − 46 = 512 − 46 = 466';
-    }
+  function box(g, x1, y1, x2, y2, fill, strokeCol) {
+    g.poly([[x1, y1], [x2, y1], [x2, y2], [x1, y2]], fill);
+    g.seg([x1, y1], [x2, y1], strokeCol, { width: 1.8 });
+    g.seg([x2, y1], [x2, y2], strokeCol, { width: 1.8 });
+    g.seg([x2, y2], [x1, y2], strokeCol, { width: 1.8 });
+    g.seg([x1, y2], [x1, y1], strokeCol, { width: 1.8 });
   }
+
+  var board = NoteGeom.board(canvas, {
+    points: {},
+    draw: function(g) {
+      if (cur !== 'SUBSETS') {
+        var counts = {};
+        var order = [];
+        for (var i = 0; i < cur.length; i++) {
+          var ch = cur[i];
+          if (!counts[ch]) { counts[ch] = 0; order.push(ch); }
+          counts[ch]++;
+        }
+        var n = cur.length;
+        g.text([260, 28], 'Word: "' + cur + '"   (Total letters n = ' + n + ')', '#0f172a');
+
+        for (var k = 0; k < cur.length; k++) {
+          var x = 40 + k * 44;
+          box(g, x, 50, x + 36, 88, 'rgba(59, 130, 246, 0.14)', '#2563eb');
+          g.text([x + 18, 69], cur[k], '#2563eb');
+        }
+
+        g.text([215, 126], 'Letter Frequencies & Repeated Group Factorials:', '#0f172a');
+        var denomProd = 1;
+        var denomStr = [];
+        for (var j = 0; j < order.length; j++) {
+          var L = order[j];
+          var c = counts[L];
+          denomProd *= fact(c);
+          if (c > 1) denomStr.push(c + '!');
+          var bx = 40 + j * 76;
+          var col = c > 1 ? '#e11d48' : '#0d9488';
+          var fill = c > 1 ? 'rgba(225, 29, 72, 0.16)' : 'rgba(13, 148, 136, 0.14)';
+          box(g, bx, 146, bx + 68, 214, fill, col);
+          g.text([bx + 34, 168], L + ' × ' + c, col);
+          g.text([bx + 34, 194], c + '! = ' + fact(c), '#64748b');
+        }
+
+        var totalPerms = Math.round(fact(n) / denomProd);
+        var dText = denomStr.length ? denomStr.join(' · ') : '1!';
+        g.text([260, 268], 'Distinct Permutations = ' + n + '! / (' + dText + ') = ' + totalPerms, '#0d9488');
+
+        out.textContent =
+          'Word "' + cur + '": n = ' + n + ' letters   |   Formula: ' + n + '! / (' + dText + ') = ' + totalPerms + ' distinct permutations';
+      } else {
+        var nSet = 9;
+        var cVals = [1, 9, 36, 84, 126, 126, 84, 36, 9, 1];
+        g.text([260, 26], 'Example 22: Subsets of a 9-Element Set A  (Total = 2⁹ = 512)', '#0f172a');
+        var baseY = 238;
+        for (var r = 0; r <= nSet; r++) {
+          var x2 = 42 + r * 45;
+          var h2 = Math.max(10, Math.round((cVals[r] / 126) * 150));
+          var isAtMost2 = (r <= 2);
+          var col2 = isAtMost2 ? '#d97706' : '#0d9488';
+          var fill2 = isAtMost2 ? 'rgba(217, 119, 6, 0.24)' : 'rgba(13, 148, 136, 0.20)';
+          box(g, x2, baseY - h2, x2 + 32, baseY, fill2, col2);
+          g.text([x2 + 16, baseY + 18], '9C' + r, col2);
+          g.text([x2 + 16, baseY - h2 - 10], String(cVals[r]), col2);
+        }
+        g.text([260, 290], 'Amber (r ≤ 2): 1+9+36 = 46   |   Teal (r ≥ 3): 512 − 46 = 466', '#0f172a');
+        out.textContent =
+          'Example 22 (|A| = 9): At most 2 elements = ⁹C₀ + ⁹C₁ + ⁹C₂ = 1 + 9 + 36 = 46   |   At least 3 elements = 2⁹ − 46 = 512 − 46 = 466';
+      }
+    }
+  });
 
   var btns = canvas.parentElement.querySelectorAll('.pill[data-word]');
   for (var i = 0; i < btns.length; i++) {
@@ -138,10 +147,9 @@
       for (var j = 0; j < btns.length; j++) btns[j].classList.remove('active');
       this.classList.add('active');
       cur = this.getAttribute('data-word');
-      render();
+      board.redraw();
     });
   }
-  render();
 })();
 </script>
 

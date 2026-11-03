@@ -51,53 +51,64 @@
   var out = document.getElementById('ch5-02-out');
   if (!canvas) return;
 
-  var b = NoteGeom.board(canvas, { height: 300 });
   var letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
 
-  function render() {
-    b.clear();
-    var n = parseInt(nIn.value, 10);
-    var r = parseInt(rIn.value, 10);
-    if (r > n) { r = n; rIn.value = n; }
-
-    b.label('Pool of n = ' + n + ' Distinct Objects:', [35, 32], [0, 0], b.palette.ink, 13);
-    for (var i = 0; i < n; i++) {
-      var cx = 55 + i * 48, cy = 68;
-      var used = i < r;
-      b.circle([cx, cy], 18, used ? 'rgba(13, 148, 136, 0.22)' : 'rgba(59, 130, 246, 0.12)', used ? b.palette.teal : b.palette.blue, 1.8);
-      b.label(letters[i], [cx - 5, cy + 4], [0, 0], used ? b.palette.teal : b.palette.blue, 13);
-    }
-
-    b.label('Filling r = ' + r + ' Ordered Slots (Nail / Position 1 to ' + r + '):', [35, 132], [0, 0], b.palette.ink, 13);
-    var factors = [];
-    var prod = 1;
-    var startX = 45;
-    var boxW = Math.min(64, Math.floor(420 / r) - 10);
-
-    for (var j = 0; j < r; j++) {
-      var choices = n - j;
-      factors.push(choices);
-      prod *= choices;
-      var x = startX + j * (boxW + 14);
-      var y = 155;
-      b.polygon([[x, y], [x + boxW, y], [x + boxW, y + 64], [x, y + 64]], 'rgba(225, 29, 72, 0.12)', b.palette.rose, 2);
-      b.label('Slot ' + (j + 1), [x + 8, y + 20], [0, 0], b.palette.muted, 11);
-      b.label(choices + ' ways', [x + 8, y + 46], [0, 0], b.palette.rose, 13);
-      if (j < r - 1) {
-        b.label('×', [x + boxW + 3, y + 38], [0, 0], b.palette.ink, 14);
-      }
-    }
-
-    b.label('ⁿPᵣ = ' + n + '! / (' + n + ' − ' + r + ')! = ' + factors.join(' × ') + ' = ' + prod, [35, 260], [0, 0], b.palette.teal, 14);
-
-    out.textContent =
-      'n = ' + n + ', r = ' + r + '   |   ' +
-      n + 'P' + r + ' = ' + n + '! / ' + (n - r) + '! = ' + factors.join(' × ') + ' = ' + prod + ' ordered arrangements';
+  function box(g, x1, y1, x2, y2, fill, strokeCol) {
+    g.poly([[x1, y1], [x2, y1], [x2, y2], [x1, y2]], fill);
+    g.seg([x1, y1], [x2, y1], strokeCol, { width: 1.8 });
+    g.seg([x2, y1], [x2, y2], strokeCol, { width: 1.8 });
+    g.seg([x2, y2], [x1, y2], strokeCol, { width: 1.8 });
+    g.seg([x1, y2], [x1, y1], strokeCol, { width: 1.8 });
   }
 
-  nIn.addEventListener('input', render);
-  rIn.addEventListener('input', render);
-  render();
+  var board = NoteGeom.board(canvas, {
+    points: {},
+    draw: function(g) {
+      var n = parseInt(nIn.value, 10);
+      var r = parseInt(rIn.value, 10);
+      if (r > n) { r = n; rIn.value = n; }
+
+      g.text([175, 28], 'Pool of n = ' + n + ' Distinct Objects:', '#0f172a');
+      for (var i = 0; i < n; i++) {
+        var cx = 55 + i * 48, cy = 72;
+        var used = i < r;
+        g.circle([cx, cy], 18, used ? '#0d9488' : '#2563eb', {
+          fill: used ? 'rgba(13, 148, 136, 0.22)' : 'rgba(59, 130, 246, 0.12)',
+          width: 1.8
+        });
+        g.text([cx, cy], letters[i], used ? '#0d9488' : '#2563eb');
+      }
+
+      g.text([215, 132], 'Filling r = ' + r + ' Ordered Slots (Positions 1 to ' + r + '):', '#0f172a');
+      var factors = [];
+      var prod = 1;
+      var startX = 45;
+      var boxW = Math.min(64, Math.floor(420 / r) - 10);
+
+      for (var j = 0; j < r; j++) {
+        var choices = n - j;
+        factors.push(choices);
+        prod *= choices;
+        var x = startX + j * (boxW + 14);
+        var y = 158;
+        box(g, x, y, x + boxW, y + 66, 'rgba(225, 29, 72, 0.12)', '#e11d48');
+        g.text([x + boxW / 2, y + 20], 'Slot ' + (j + 1), '#64748b');
+        g.text([x + boxW / 2, y + 46], choices + ' ways', '#e11d48');
+        if (j < r - 1) {
+          g.text([x + boxW + 7, y + 34], '×', '#0f172a');
+        }
+      }
+
+      g.text([260, 275], 'ⁿPᵣ = ' + n + '! / (' + n + ' − ' + r + ')! = ' + factors.join(' × ') + ' = ' + prod, '#0d9488');
+
+      out.textContent =
+        'n = ' + n + ', r = ' + r + '   |   ' +
+        n + 'P' + r + ' = ' + n + '! / ' + (n - r) + '! = ' + factors.join(' × ') + ' = ' + prod + ' ordered arrangements';
+    }
+  });
+
+  nIn.addEventListener('input', function() { board.redraw(); });
+  rIn.addEventListener('input', function() { board.redraw(); });
 })();
 </script>
 
