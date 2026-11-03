@@ -1,0 +1,196 @@
+<article class="note-page">
+  <header class="note-header">
+    <div class="note-eyebrow">Chapter 11: Application of Integration</div>
+    <h1 class="note-title" data-topic="Application of Integration">Area Between a Curve and the x-Axis</h1>
+    <p class="note-lede">
+      Definite integration measures the geometric area bounded by a curve $y = f(x)$ and the $x$-axis. When a curve dips below the $x$-axis, we split the interval at its roots and sum the absolute values of each sub-integral.
+    </p>
+  </header>
+
+  <section class="note-section">
+    <h2>1. Area Above and Below the $x$-Axis</h2>
+    <p>
+      If $f(x)$ is continuous and non-negative ($f(x) \ge 0$) on the closed interval $[a, b]$, then the area bounded by the curve $y = f(x)$, the $x$-axis, and the vertical lines $x = a$ and $x = b$ is:
+      $$\text{Area} = \int_a^b f(x)\,dx$$
+      However, on any interval where $f(x) < 0$ (below the $x$-axis), the definite integral $\int f(x)\,dx$ is <strong>negative</strong>. Since geometric area is always non-negative, we must take the absolute value of the integral over negative regions.
+    </p>
+
+    <div class="box-thm">
+      <div class="box-title">4-Step Procedure to Find the Total Area Between $y = f(x)$ and the $x$-Axis on $[a, b]$</div>
+      <ol>
+        <li><strong>Step 1:</strong> Find the $x$-intercepts of the graph by solving $f(x) = 0$ on $(a, b)$.</li>
+        <li><strong>Step 2:</strong> Divide the interval $[a, b]$ into subintervals at the zeros of $f$.</li>
+        <li><strong>Step 3:</strong> Integrate $f(x)$ over each subinterval separately.</li>
+        <li><strong>Step 4:</strong> Add the <strong>absolute values</strong> of the integrals from Step 3:
+          $$\text{Total Area} = \int_a^b |f(x)|\,dx = \left|\int_a^{c_1} f(x)\,dx\right| + \left|\int_{c_1}^b f(x)\,dx\right|$$
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="note-section">
+    <h2>2. Interactive Demo: Net Integral vs. Total Enclosed Area</h2>
+    <p>
+      Compare the <strong>net definite integral</strong> $\int_a^b f(x)\,dx$ (where regions below the $x$-axis subtract from regions above) with the <strong>total geometric area</strong> $\int_a^b |f(x)|\,dx$ (where all enclosed regions add positively).
+    </p>
+
+    <div class="demo" id="demo-ch11-area-xaxis">
+      <div class="demo-controls">
+        <label>
+          Textbook Curve:
+          <select data-control="curve">
+            <option value="ex4">Ex 4: f(x) = x² - 2x  (Zero at x = 2)</option>
+            <option value="ex5">Ex 5: f(x) = cos x  (Zero at x = π/2 ≈ 1.57)</option>
+            <option value="ex3c">Ex 3(c): f(x) = -x² + 4  on [-2, 2]</option>
+          </select>
+        </label>
+        <label>
+          Upper Limit $b$:
+          <input type="range" data-control="b" min="0.5" max="3.5" step="0.05" value="2.50" />
+          <span data-Val="b">2.50</span>
+        </label>
+      </div>
+      <canvas width="640" height="360" aria-label="Area between curve and x-axis with positive and negative lobes"></canvas>
+      <div class="output" aria-live="polite"></div>
+    </div>
+
+    <script src="/static/js/demos/geom.js"></script>
+    <script src="/static/js/demos/plot.js"></script>
+    <script>
+      (function () {
+        var root = document.getElementById('demo-ch11-area-xaxis');
+        if (!root || !window.NotePlot) return;
+        var canvas = root.querySelector('canvas');
+        var out = root.querySelector('.output');
+        var selCurve = root.querySelector('[data-control="curve"]');
+        var sliderB = root.querySelector('[data-control="b"]');
+        var valB = root.querySelector('[data-Val="b"]');
+
+        var mode = 'ex4';
+        var bVal = 2.5;
+
+        function f(x) {
+          if (mode === 'ex4') return x * x - 2 * x;
+          if (mode === 'ex5') return 2 * Math.cos(x); // scaled vertically for clarity
+          return -x * x + 4;
+        }
+
+        function exactAntideriv(x) {
+          if (mode === 'ex4') return (x * x * x) / 3 - x * x;
+          if (mode === 'ex5') return Math.sin(x);
+          return -(x * x * x) / 3 + 4 * x;
+        }
+
+        var plot = NotePlot.graph(canvas, {
+          x: [-2.4, 4.8],
+          y: [-2.6, 4.5],
+          draw: function (g) {
+            var a = mode === 'ex3c' ? -2.0 : 0.0;
+            var rootX = mode === 'ex4' ? 2.0 : (mode === 'ex5' ? Math.PI / 2 : 2.0);
+
+            if (bVal <= rootX) {
+              var col = mode === 'ex4' ? 'rgba(225, 29, 72, 0.16)' : 'rgba(13, 148, 136, 0.16)';
+              g.fill(function (x) { return f(x); }, a, bVal, col);
+            } else {
+              var col1 = mode === 'ex4' ? 'rgba(225, 29, 72, 0.16)' : 'rgba(13, 148, 136, 0.16)';
+              var col2 = mode === 'ex4' ? 'rgba(13, 148, 136, 0.16)' : 'rgba(225, 29, 72, 0.16)';
+              g.fill(function (x) { return f(x); }, a, rootX, col1);
+              g.fill(function (x) { return f(x); }, rootX, bVal, col2);
+            }
+
+            g.fn(function (x) { return f(x); }, '#2563eb');
+            g.dot([rootX, 0], '#d97706', 'Root');
+            g.dot([bVal, f(bVal)], '#e11d48', 'x = b');
+
+            var netInt, totalArea;
+            if (bVal <= rootX) {
+              netInt = exactAntideriv(bVal) - exactAntideriv(a);
+              totalArea = Math.abs(netInt);
+            } else {
+              var i1 = exactAntideriv(rootX) - exactAntideriv(a);
+              var i2 = exactAntideriv(bVal) - exactAntideriv(rootX);
+              netInt = i1 + i2;
+              totalArea = Math.abs(i1) + Math.abs(i2);
+            }
+
+            out.textContent =
+              'Interval [' + a.toFixed(1) + ', ' + bVal.toFixed(2) + ']  |  Net Integral ∫ f(x) dx = ' +
+              netInt.toFixed(4) + '  |  Total Geometric Area = ' + totalArea.toFixed(4) + ' unit²';
+          }
+        });
+
+        function sync() {
+          bVal = parseFloat(sliderB.value);
+          valB.textContent = bVal.toFixed(2);
+          plot.redraw();
+        }
+
+        selCurve.addEventListener('change', function () {
+          mode = selCurve.value;
+          if (mode === 'ex4') sliderB.value = '2.50';
+          else if (mode === 'ex5') sliderB.value = '4.71';
+          else sliderB.value = '2.00';
+          sync();
+        });
+        sliderB.addEventListener('input', sync);
+        sync();
+      })();
+    </script>
+  </section>
+
+  <section class="note-section">
+    <h2>3. Worked Textbook Examples</h2>
+
+    <div class="box-ex">
+      <div class="box-title">Example 3 (Textbook p. 199) — Area Above the $x$-Axis</div>
+      <ul>
+        <li>
+          <strong>(a) $f(x) = 3$ over $[1, 4]$:</strong>
+          $$\text{Area} = \int_1^4 3\,dx = \bigl[3x\bigr]_1^4 = 12 - 3 = 9\text{ unit}^2$$
+        </li>
+        <li>
+          <strong>(b) $f(x) = 3x + 2$ over $\left[-\dfrac{2}{3}, 0\right]$:</strong>
+          $$\text{Area} = \int_{-2/3}^0 (3x + 2)\,dx = \left[\frac{3}{2}x^2 + 2x\right]_{-2/3}^0 = 0 - \left[\frac{3}{2}\left(\frac{4}{9}\right) - \frac{4}{3}\right] = \frac{2}{3}\text{ unit}^2$$
+        </li>
+        <li>
+          <strong>(c) $f(x) = -x^2 + 4$ over $[-2, 2]$:</strong>
+          $$\text{Area} = \int_{-2}^2 (-x^2 + 4)\,dx = \left[-\frac{x^3}{3} + 4x\right]_{-2}^2 = \left(-\frac{8}{3} + 8\right) - \left(\frac{8}{3} - 8\right) = \frac{32}{3} = 10\frac{2}{3}\text{ unit}^2$$
+        </li>
+      </ul>
+    </div>
+
+    <div class="box-ex">
+      <div class="box-title">Example 4 (Textbook pp. 200–201) — Net Integral vs. Total Area for $f(x) = x^2 - 2x$ on $\left[0, \dfrac{5}{2}\right]$</div>
+      <p>
+        <strong>(a) Compute the definite integral $\displaystyle \int_0^{5/2} (x^2 - 2x)\,dx$:</strong>
+        $$\int_0^{5/2} (x^2 - 2x)\,dx = \left[\frac{x^3}{3} - x^2\right]_0^{5/2} = \frac{1}{3}\left(\frac{5}{2}\right)^3 - \left(\frac{5}{2}\right)^2 = \frac{125}{24} - \frac{25}{4} = -\frac{25}{24} = -1\frac{1}{24}$$
+      </p>
+      <p>
+        <strong>(b) Find the total area enclosed between $f(x) = x^2 - 2x$ and the $x$-axis over $\left[0, \dfrac{5}{2}\right]$:</strong><br />
+        Setting $f(x) = x(x - 2) = 0$ gives $x = 0, 2$. Thus we split $\left[0, \dfrac{5}{2}\right]$ into $[0, 2]$ (where $f(x) \le 0$) and $\left[2, \dfrac{5}{2}\right]$ (where $f(x) \ge 0$):
+        $$\int_0^2 (x^2 - 2x)\,dx = \left[\frac{x^3}{3} - x^2\right]_0^2 = \frac{8}{3} - 4 = -\frac{4}{3}$$
+        $$\int_2^{5/2} (x^2 - 2x)\,dx = \left[\frac{x^3}{3} - x^2\right]_2^{5/2} = -\frac{25}{24} - \left(-\frac{4}{3}\right) = \frac{7}{24}$$
+        Therefore, the total enclosed area is:
+        $$\text{Area} = \left|-\frac{4}{3}\right| + \left|\frac{7}{24}\right| = \frac{32}{24} + \frac{7}{24} = \frac{39}{24} = \frac{13}{8} = 1\frac{5}{8}\text{ unit}^2$$
+      </p>
+    </div>
+
+    <div class="box-ex">
+      <div class="box-title">Example 5 &amp; Example 6 (Textbook pp. 201–202) — Cosine Area &amp; Finding an Unknown Constant</div>
+      <p>
+        <strong>(a) Example 5:</strong> For $f(x) = \cos x$:
+      </p>
+      <ul>
+        <li>Area from $x = 0$ to $x = \dfrac{\pi}{2}$: $\displaystyle \int_0^{\pi/2} \cos x\,dx = \bigl[\sin x\bigr]_0^{\pi/2} = 1\text{ unit}^2$.</li>
+        <li>Area from $x = \dfrac{\pi}{2}$ to $x = \dfrac{3\pi}{2}$: $\displaystyle \int_{\pi/2}^{3\pi/2} \cos x\,dx = \bigl[\sin x\bigr]_{\pi/2}^{3\pi/2} = -1 - 1 = -2 \implies \text{Area} = |-2| = 2\text{ unit}^2$.</li>
+        <li>Total area from $x = 0$ to $x = \dfrac{3\pi}{2}$: $1 + 2 = 3\text{ unit}^2$, whereas the net definite integral is $\displaystyle \int_0^{3\pi/2} \cos x\,dx = 1 + (-2) = -1$.</li>
+      </ul>
+      <p>
+        <strong>(b) Example 6:</strong> The shaded area under $f(x) = k\sqrt{x}$ from $x = 0$ to $x = 4$ is $16\text{ unit}^2$. Find $k$.<br />
+        <strong>Solution:</strong>
+        $$\int_0^4 k\sqrt{x}\,dx = \left[\frac{2k}{3}x^{3/2}\right]_0^4 = \frac{2k}{3}(8) - 0 = \frac{16k}{3}$$
+        Since the area is $16$, we have $\dfrac{16k}{3} = 16 \implies k = 3$.
+      </p>
+    </div>
+  </section>
+</article>

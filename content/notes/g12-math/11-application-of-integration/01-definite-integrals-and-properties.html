@@ -1,0 +1,196 @@
+<article class="note-page">
+  <header class="note-header">
+    <div class="note-eyebrow">Chapter 11: Application of Integration</div>
+    <h1 class="note-title" data-topic="Application of Integration">Definite Integrals and Properties</h1>
+    <p class="note-lede">
+      While an indefinite integral represents a family of antiderivatives, a definite integral $\int_a^b f(x)\,dx$ computes a single exact numerical value determined by the net change $F(b) - F(a)$ of an antiderivative over the interval $[a, b]$.
+    </p>
+  </header>
+
+  <section class="note-section">
+    <h2>1. The Definite Integral</h2>
+    <p>
+      Let $f(x)$ be a continuous function defined on a closed interval $[a, b]$. If $F(x)$ is any antiderivative of $f(x)$ (so that $F'(x) = f(x)$), then the <strong>definite integral</strong> of $f(x)$ from $a$ to $b$ is defined by:
+    </p>
+
+    <div class="box-thm">
+      <div class="box-title">Fundamental Evaluation Formula for Definite Integrals</div>
+      <p>
+        $$\int_a^b f(x)\,dx = \bigl[F(x)\bigr]_a^b = F(b) - F(a)$$
+        where $a$ is called the <strong>lower limit</strong> of integration and $b$ is called the <strong>upper limit</strong> of integration. Notice that the constant of integration $C$ cancels out in subtraction:
+        $$\bigl(F(b) + C\bigr) - \bigl(F(a) + C\bigr) = F(b) - F(a)$$
+      </p>
+    </div>
+
+    <div class="box-thm">
+      <div class="box-title">Rules for Definite Integration</div>
+      <p>Suppose $f$ and $g$ are continuous on $[a, b]$ and $k \in \mathbb{R}$:</p>
+      <ol>
+        <li><strong>Constant Multiple Rule:</strong> $\displaystyle \int_a^b k f(x)\,dx = k \int_a^b f(x)\,dx$</li>
+        <li><strong>Sum and Difference Rule:</strong> $\displaystyle \int_a^b \bigl[f(x) \pm g(x)\bigr]\,dx = \int_a^b f(x)\,dx \pm \int_a^b g(x)\,dx$</li>
+        <li><strong>Zero-Width Interval:</strong> $\displaystyle \int_a^a f(x)\,dx = 0$</li>
+        <li><strong>Reversing Limits:</strong> $\displaystyle \int_b^a f(x)\,dx = -\int_a^b f(x)\,dx$</li>
+        <li><strong>Additivity over Adjacent Intervals:</strong> $\displaystyle \int_a^b f(x)\,dx = \int_a^c f(x)\,dx + \int_c^b f(x)\,dx$ where $c \in (a, b)$.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="note-section">
+    <h2>2. Interactive Demo: Definite Integral $\int_a^b f(x)\,dx = F(b) - F(a)$</h2>
+    <p>
+      Select a textbook definite integral and adjust the lower limit $a$ and upper limit $b$. The shaded region shows $\int_a^b f(x)\,dx$ on the curve $y = f(x)$ (blue), while the teal curve shows the antiderivative $F(x)$ whose height difference $F(b) - F(a)$ equals the integral.
+    </p>
+
+    <div class="demo" id="demo-ch11-definite">
+      <div class="demo-controls">
+        <label>
+          Integrand:
+          <select data-control="fn">
+            <option value="sin">Ex 1(b): ∫ sin x dx</option>
+            <option value="quad">Ex 1(a): ∫ (x² / 4) dx</option>
+            <option value="sqrt">Ex 1(c): ∫ √(x + 2) dx</option>
+          </select>
+        </label>
+        <label>
+          Lower limit $a$:
+          <input type="range" data-control="a" min="-1.5" max="1.5" step="0.05" value="0.00" />
+          <span data-Val="a">0.00</span>
+        </label>
+        <label>
+          Upper limit $b$:
+          <input type="range" data-control="b" min="0.5" max="3.5" step="0.05" value="3.14" />
+          <span data-Val="b">3.14</span>
+        </label>
+      </div>
+      <canvas width="640" height="360" aria-label="Definite integral and antiderivative net change"></canvas>
+      <div class="output" aria-live="polite"></div>
+    </div>
+
+    <script src="/static/js/demos/geom.js"></script>
+    <script src="/static/js/demos/plot.js"></script>
+    <script>
+      (function () {
+        var root = document.getElementById('demo-ch11-definite');
+        if (!root || !window.NotePlot) return;
+        var canvas = root.querySelector('canvas');
+        var out = root.querySelector('.output');
+        var selFn = root.querySelector('[data-control="fn"]');
+        var sliderA = root.querySelector('[data-control="a"]');
+        var sliderB = root.querySelector('[data-control="b"]');
+        var valA = root.querySelector('[data-Val="a"]');
+        var valB = root.querySelector('[data-Val="b"]');
+
+        var mode = 'sin';
+        var a = 0.0;
+        var b = 3.14;
+
+        function f(x) {
+          if (mode === 'sin') return Math.sin(x);
+          if (mode === 'quad') return 0.25 * x * x;
+          return x >= -2 ? Math.sqrt(x + 2) : NaN;
+        }
+
+        function F(x) {
+          if (mode === 'sin') return -Math.cos(x);
+          if (mode === 'quad') return (1 / 12) * x * x * x;
+          return x >= -2 ? (2 / 3) * Math.pow(x + 2, 1.5) : NaN;
+        }
+
+        var plot = NotePlot.graph(canvas, {
+          x: [-2.2, 4.2],
+          y: [-2.2, 4.2],
+          draw: function (g) {
+            g.fill(function (x) { return f(x); }, a, b, 'rgba(37, 99, 235, 0.16)');
+            g.vline(a, 'rgba(37, 99, 235, 0.45)', { dash: true });
+            g.vline(b, 'rgba(37, 99, 235, 0.45)', { dash: true });
+
+            g.fn(function (x) { return f(x); }, '#2563eb');
+            g.fn(function (x) { return F(x); }, '#0d9488', { dash: true });
+
+            var Fa = F(a);
+            var Fb = F(b);
+            g.dot([a, Fa], '#0d9488', 'F(a)');
+            g.dot([b, Fb], '#e11d48', 'F(b)');
+
+            var val = Fb - Fa;
+            out.textContent =
+              'Limits: a = ' + a.toFixed(2) + ', b = ' + b.toFixed(2) +
+              '  |  F(b) = ' + Fb.toFixed(3) + ',  F(a) = ' + Fa.toFixed(3) +
+              '  |  ∫ f(x) dx = F(b) - F(a) = ' + val.toFixed(4);
+          }
+        });
+
+        function sync() {
+          a = parseFloat(sliderA.value);
+          b = parseFloat(sliderB.value);
+          valA.textContent = a.toFixed(2);
+          valB.textContent = b.toFixed(2);
+          plot.redraw();
+        }
+
+        selFn.addEventListener('change', function () {
+          mode = selFn.value;
+          if (mode === 'sin') {
+            sliderA.value = '0.00';
+            sliderB.value = '3.14';
+          } else if (mode === 'quad') {
+            sliderA.value = '1.00';
+            sliderB.value = '3.00';
+          } else {
+            sliderA.value = '-1.00';
+            sliderB.value = '2.00';
+          }
+          sync();
+        });
+        sliderA.addEventListener('input', sync);
+        sliderB.addEventListener('input', sync);
+        sync();
+      })();
+    </script>
+  </section>
+
+  <section class="note-section">
+    <h2>3. Worked Textbook Examples</h2>
+
+    <div class="box-ex">
+      <div class="box-title">Example 1 (Textbook pp. 195–196) — Evaluating Definite Integrals</div>
+      <ul>
+        <li>
+          <strong>(a) $\displaystyle \int_2^4 x^2\,dx$:</strong>
+          $$\int_2^4 x^2\,dx = \left[\frac{x^3}{3}\right]_2^4 = \frac{4^3}{3} - \frac{2^3}{3} = \frac{64}{3} - \frac{8}{3} = \frac{56}{3} = 18\frac{2}{3}$$
+        </li>
+        <li>
+          <strong>(b) $\displaystyle \int_0^\pi \sin x\,dx$:</strong>
+          $$\int_0^\pi \sin x\,dx = \bigl[-\cos x\bigr]_0^\pi = (-\cos \pi) - (-\cos 0) = 1 - (-1) = 2$$
+        </li>
+        <li>
+          <strong>(c) $\displaystyle \int_{-1}^4 \sqrt{x + 2}\,dx$:</strong>
+          $$\int_{-1}^4 (x + 2)^{1/2}\,dx = \left[\frac{2}{3}(x + 2)^{3/2}\right]_{-1}^4 = \frac{2}{3}\left(6^{3/2} - 1^{3/2}\right) = \frac{2}{3}\left(6\sqrt{6} - 1\right)$$
+        </li>
+        <li>
+          <strong>(d) $\displaystyle \int_{\pi/6}^{3\pi/4} |\cos x|\,dx$:</strong><br />
+          On $\left[\dfrac{\pi}{6}, \dfrac{\pi}{2}\right]$, $\cos x \ge 0$, so $|\cos x| = \cos x$. On $\left[\dfrac{\pi}{2}, \dfrac{3\pi}{4}\right]$, $\cos x \le 0$, so $|\cos x| = -\cos x$. By Rule 5:
+          $$\int_{\pi/6}^{3\pi/4} |\cos x|\,dx = \int_{\pi/6}^{\pi/2} \cos x\,dx + \int_{\pi/2}^{3\pi/4} (-\cos x)\,dx = \bigl[\sin x\bigr]_{\pi/6}^{\pi/2} - \bigl[\sin x\bigr]_{\pi/2}^{3\pi/4}$$
+          $$= \left(\sin\frac{\pi}{2} - \sin\frac{\pi}{6}\right) - \left(\sin\frac{3\pi}{4} - \sin\frac{\pi}{2}\right) = \left(1 - \frac{1}{2}\right) - \left(\frac{\sqrt{2}}{2} - 1\right) = \frac{3 - \sqrt{2}}{2}$$
+        </li>
+      </ul>
+    </div>
+
+    <div class="box-ex">
+      <div class="box-title">Example 2 (Textbook pp. 196–197) — Substitution in Definite Integrals (Two Methods)</div>
+      <p>
+        Evaluate $\displaystyle \int_1^2 x\sqrt{2 - x}\,dx$.
+      </p>
+      <p>
+        <strong>Method 1 (Find Indefinite Integral First):</strong> Let $u = 2 - x \implies x = 2 - u$ and $du = -dx$. Then:
+        $$\int x\sqrt{2 - x}\,dx = \int (2 - u)u^{1/2}(-du) = \int \left(u^{3/2} - 2u^{1/2}\right)du = \frac{2}{5}(2 - x)^{5/2} - \frac{4}{3}(2 - x)^{3/2} + C$$
+        Applying the limits $x = 1$ to $x = 2$:
+        $$\int_1^2 x\sqrt{2 - x}\,dx = \left[\frac{2}{5}(2 - x)^{5/2} - \frac{4}{3}(2 - x)^{3/2}\right]_1^2 = 0 - \left(\frac{2}{5} - \frac{4}{3}\right) = \frac{14}{15}$$
+      </p>
+      <p>
+        <strong>Method 2 (Change the Limits of Integration):</strong> Let $u = 2 - x \implies du = -dx$. When $x = 1$, $u = 2 - 1 = 1$; when $x = 2$, $u = 2 - 2 = 0$. Therefore:
+        $$\int_1^2 x\sqrt{2 - x}\,dx = -\int_1^0 (2 - u)u^{1/2}\,du = \int_0^1 \left(2u^{1/2} - u^{3/2}\right)du = \left[\frac{4}{3}u^{3/2} - \frac{2}{5}u^{5/2}\right]_0^1 = \frac{4}{3} - \frac{2}{5} = \frac{14}{15}$$
+      </p>
+    </div>
+  </section>
+</article>

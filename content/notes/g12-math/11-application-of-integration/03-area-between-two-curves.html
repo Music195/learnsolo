@@ -1,0 +1,188 @@
+<article class="note-page">
+  <header class="note-header">
+    <div class="note-eyebrow">Chapter 11: Application of Integration</div>
+    <h1 class="note-title" data-topic="Application of Integration">Area Between Two Curves</h1>
+    <p class="note-lede">
+      To find the area of a region trapped between two curves $y = f(x)$ and $y = g(x)$, we integrate the vertical height difference $\bigl[y_{\text{top}}(x) - y_{\text{bottom}}(x)\bigr]$ between their points of intersection.
+    </p>
+  </header>
+
+  <section class="note-section">
+    <h2>1. Area Bounded by Two Curves</h2>
+    <p>
+      Suppose $f$ and $g$ are continuous functions on $[a, b]$ with $f(x) \ge g(x)$ (so $y = f(x)$ lies on top of $y = g(x)$) throughout $[a, b]$. Then the area of the region bounded above by $y = f(x)$, below by $y = g(x)$, and on the sides by $x = a$ and $x = b$ is:
+      $$\text{Area} = \int_a^b \bigl[f(x) - g(x)\bigr]\,dx$$
+    </p>
+
+    <div class="box-thm">
+      <div class="box-title">3-Step Procedure to Find the Area Between $y = f(x)$ and $y = g(x)$</div>
+      <ol>
+        <li><strong>Step 1:</strong> Find the $x$-coordinates of the intersection points of $y = f(x)$ and $y = g(x)$ by solving $f(x) = g(x)$.</li>
+        <li><strong>Step 2:</strong> Divide the interval $[a, b]$ at any interior intersection points and determine which function is on top on each subinterval.</li>
+        <li><strong>Step 3:</strong> Integrate $\bigl(f(x) - g(x)\bigr)$ where $f$ is on top, and $\bigl(g(x) - f(x)\bigr)$ where $g$ is on top, then sum the results.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="note-section">
+    <h2>2. Interactive Demo: Area Between Two Curves Explorer</h2>
+    <p>
+      Choose a textbook problem below and slide $x_0$ across the region between the intersection points. The vertical segment shows the instantaneous slice height $\Delta y = f(x_0) - g(x_0)$ being integrated.
+    </p>
+
+    <div class="demo" id="demo-ch11-two-curves">
+      <div class="demo-controls">
+        <label>
+          Region:
+          <select data-control="reg">
+            <option value="ex7">Ex 7: y = 2x - 1 and y = x² - 2x + 2 on [1, 3]</option>
+            <option value="ex8">Ex 8: y = sin x and y = cos x on [π/4, 5π/4]</option>
+            <option value="parab">Parabola &amp; Line: y = 4 - x² and y = x + 2 on [-2, 1]</option>
+          </select>
+        </label>
+        <label>
+          Slice $x_0$:
+          <input type="range" data-control="x0" min="1.0" max="3.0" step="0.02" value="2.00" />
+          <span data-Val="x0">2.00</span>
+        </label>
+      </div>
+      <canvas width="640" height="360" aria-label="Area between two curves with vertical slice"></canvas>
+      <div class="output" aria-live="polite"></div>
+    </div>
+
+    <script src="/static/js/demos/geom.js"></script>
+    <script src="/static/js/demos/plot.js"></script>
+    <script>
+      (function () {
+        var root = document.getElementById('demo-ch11-two-curves');
+        if (!root || !window.NotePlot) return;
+        var canvas = root.querySelector('canvas');
+        var out = root.querySelector('.output');
+        var selReg = root.querySelector('[data-control="reg"]');
+        var sliderX0 = root.querySelector('[data-control="x0"]');
+        var valX0 = root.querySelector('[data-Val="x0"]');
+
+        var mode = 'ex7';
+        var x0 = 2.0;
+
+        function fTop(x) {
+          if (mode === 'ex7') return 2 * x - 1;
+          if (mode === 'ex8') return Math.sin(x);
+          return 4 - x * x;
+        }
+
+        function gBot(x) {
+          if (mode === 'ex7') return x * x - 2 * x + 2;
+          if (mode === 'ex8') return Math.cos(x);
+          return x + 2;
+        }
+
+        function bounds() {
+          if (mode === 'ex7') return [1, 3, '4/3 ≈ 1.3333'];
+          if (mode === 'ex8') return [Math.PI / 4, (5 * Math.PI) / 4, '2√2 ≈ 2.8284'];
+          return [-2, 1, '9/2 = 4.5000'];
+        }
+
+        var plot = NotePlot.graph(canvas, {
+          x: [-2.6, 4.4],
+          y: [-1.8, 5.4],
+          draw: function (g) {
+            var b = bounds();
+            var xA = b[0];
+            var xB = b[1];
+
+            var pts = [];
+            var N = 50;
+            for (var i = 0; i <= N; i++) {
+              var tx = xA + (xB - xA) * (i / N);
+              pts.push([tx, fTop(tx)]);
+            }
+            for (var j = N; j >= 0; j--) {
+              var bx = xA + (xB - xA) * (j / N);
+              pts.push([bx, gBot(bx)]);
+            }
+            g.poly(pts, 'rgba(13, 148, 136, 0.16)');
+
+            g.fn(function (x) { return fTop(x); }, '#2563eb');
+            g.fn(function (x) { return gBot(x); }, '#d97706');
+
+            var yT = fTop(x0);
+            var yB = gBot(x0);
+            g.seg([x0, yB], [x0, yT], '#e11d48');
+            g.dot([x0, yT], '#2563eb', 'Top');
+            g.dot([x0, yB], '#d97706', 'Bottom');
+
+            out.textContent =
+              'At x₀ = ' + x0.toFixed(2) + ':  y_top - y_bottom = ' +
+              yT.toFixed(3) + ' - (' + yB.toFixed(3) + ') = ' + (yT - yB).toFixed(3) +
+              '  |  Total Area on [' + xA.toFixed(2) + ', ' + xB.toFixed(2) + '] = ' + b[2] + ' unit²';
+          }
+        });
+
+        function sync() {
+          x0 = parseFloat(sliderX0.value);
+          valX0.textContent = x0.toFixed(2);
+          plot.redraw();
+        }
+
+        selReg.addEventListener('change', function () {
+          mode = selReg.value;
+          var b = bounds();
+          sliderX0.min = b[0].toFixed(2);
+          sliderX0.max = b[1].toFixed(2);
+          sliderX0.value = ((b[0] + b[1]) / 2).toFixed(2);
+          sync();
+        });
+        sliderX0.addEventListener('input', sync);
+        sync();
+      })();
+    </script>
+  </section>
+
+  <section class="note-section">
+    <h2>3. Worked Textbook Examples</h2>
+
+    <div class="box-ex">
+      <div class="box-title">Example 7 (Textbook p. 203) — Area Between a Parabola and a Line</div>
+      <p>
+        Find the area enclosed between $y = x^2 - 2x + 2$ and $y = 2x - 1$.
+      </p>
+      <p><strong>Solution:</strong></p>
+      <p>
+        First, find the $x$-coordinates of the points of intersection by setting the two equations equal:
+        $$x^2 - 2x + 2 = 2x - 1 \implies x^2 - 4x + 3 = 0 \implies (x - 1)(x - 3) = 0 \implies x = 1, 3$$
+        On $[1, 3]$, the line $y = 2x - 1$ lies above the parabola $y = x^2 - 2x + 2$. Therefore:
+        $$\text{Area} = \int_1^3 \bigl[(2x - 1) - (x^2 - 2x + 2)\bigr]\,dx = \int_1^3 \left(-x^2 + 4x - 3\right)dx$$
+        $$= \left[-\frac{x^3}{3} + 2x^2 - 3x\right]_1^3 = (-9 + 18 - 9) - \left(-\frac{1}{3} + 2 - 3\right) = 0 - \left(-\frac{4}{3}\right) = \frac{4}{3} = 1\frac{1}{3}\text{ unit}^2$$
+      </p>
+    </div>
+
+    <div class="box-ex">
+      <div class="box-title">Example 8 (Textbook pp. 203–204) — Area Between $y = \sin x$ and $y = \cos x$</div>
+      <p>
+        Find the area between $y = \sin x$ and $y = \cos x$ for $\dfrac{\pi}{4} \le x \le \dfrac{5\pi}{4}$.
+      </p>
+      <p><strong>Solution:</strong></p>
+      <p>
+        For $\dfrac{\pi}{4} \le x \le \dfrac{5\pi}{4}$, we have $\sin x \ge \cos x$. Thus:
+        $$\text{Area} = \int_{\pi/4}^{5\pi/4} (\sin x - \cos x)\,dx = \bigl[-\cos x - \sin x\bigr]_{\pi/4}^{5\pi/4}$$
+        $$= \left(-\cos\frac{5\pi}{4} - \sin\frac{5\pi}{4}\right) - \left(-\cos\frac{\pi}{4} - \sin\frac{\pi}{4}\right) = \left(\frac{\sqrt{2}}{2} + \frac{\sqrt{2}}{2}\right) - \left(-\frac{\sqrt{2}}{2} - \frac{\sqrt{2}}{2}\right) = 2\sqrt{2}\text{ unit}^2$$
+      </p>
+    </div>
+
+    <div class="box-ex">
+      <div class="box-title">Exercise 11.2 — Problem 5: Area Enclosed by $f(x) = x^3 - 2x^2 + 2x$ and $g(x) = x^2$</div>
+      <p>
+        <strong>Solution:</strong> Set $f(x) = g(x)$ to find the intersection points:
+        $$x^3 - 2x^2 + 2x = x^2 \implies x^3 - 3x^2 + 2x = 0 \implies x(x - 1)(x - 2) = 0 \implies x = 0, 1, 2$$
+      </p>
+      <ul>
+        <li>On $[0, 1]$: $f(x) \ge g(x)$, so $\displaystyle \int_0^1 (x^3 - 3x^2 + 2x)\,dx = \left[\frac{x^4}{4} - x^3 + x^2\right]_0^1 = \frac{1}{4}$.</li>
+        <li>On $[1, 2]$: $g(x) \ge f(x)$, so $\displaystyle \int_1^2 (3x^2 - x^3 - 2x)\,dx = \left[x^3 - \frac{x^4}{4} - x^2\right]_1^2 = 0 - \left(-\frac{1}{4}\right) = \frac{1}{4}$.</li>
+      </ul>
+      <p>
+        Hence, the total enclosed area is $\dfrac{1}{4} + \dfrac{1}{4} = \dfrac{1}{2}\text{ unit}^2$.
+      </p>
+    </div>
+  </section>
+</article>
