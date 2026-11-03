@@ -1,0 +1,230 @@
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Advanced Counting Techniques: Repetitions, Exclusion &amp; Subsets</span>
+  <p>Section 5.4 equips us with four powerful techniques for solving complex counting problems:</p>
+  <ol>
+    <li><strong>Permutations with Repetitions (ထပ်နေသော အရာဝတ္ထုများပါဝင်သည့် အစီအစဉ်):</strong> Arranging $n$ objects when some of them are identical (indistinguishable), such as the letters in <strong>KEENNESS</strong> or <strong>EXCELLENCE</strong>.</li>
+    <li><strong>The Exclusion Principle (ဖယ်ထုတ်ခြင်း နိယာမ — Complementary Counting):</strong> Counting arrangements where a property is <em>prohibited</em> by subtracting the unwanted arrangements from the unrestricted total.</li>
+    <li><strong>Counting Subsets of a Finite Set (အစုပိုင်းများ ရေတွက်ခြင်း):</strong> Using the binary "Include / Exclude" decision for each element to show that an $n$-element set has $2^n$ subsets.</li>
+    <li><strong>Block ("Tie-Together") &amp; Gap/Template Methods:</strong> Grouping items that must stay together into a single super-unit, or setting up fixed spacing templates.</li>
+  </ol>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formulas &mdash; Multinomial Permutations, Exclusion &amp; Subset Sum</span>
+  <ul>
+    <li><strong>Permutations of $n$ Objects with Repetitions:</strong> Given $n$ objects where $n_1$ are identical of the $1^{\text{st}}$ kind, $n_2$ of the $2^{\text{nd}}$ kind, $\dots$, and $n_r$ of the $r^{\text{th}}$ kind ($n_1 + n_2 + \cdots + n_r = n$), the number of distinct permutations of all $n$ objects is:
+      $$\frac{n!}{n_1!\,n_2!\,\cdots\,n_r!}$$
+    </li>
+    <li><strong>The Exclusion Principle:</strong>
+      $$\text{Count}(\text{Allowed}) = \text{Count}(\text{Total Unrestricted}) - \text{Count}(\text{Prohibited / Unwanted})$$
+    </li>
+    <li><strong>Number of Subsets of an $n$-Element Set:</strong> For any finite set $X$ with $n \ge 0$ elements:
+      $${}^nC_0 + {}^nC_1 + {}^nC_2 + \cdots + {}^nC_n = 2^n$$
+    </li>
+  </ul>
+</div>
+
+<div class="note-proof">
+  <span class="block-label">Proof &mdash; Two Derivations: Repeated-Letter Permutations &amp; The $2^n$ Subset Identity</span>
+  <p><strong>1. Why Repeated Letters Divide by $n_1!n_2!\cdots n_r!$:</strong> Consider the $8$-letter word <strong>KEENNESS</strong> ($1$ K, $3$ E's, $2$ N's, $2$ S's). To place these letters into $8$ positions:</p>
+  <ul>
+    <li>Choose $1$ position out of $8$ for K in ${}^8C_1$ ways;</li>
+    <li>Choose $3$ positions out of the remaining $7$ for the three E's in ${}^7C_3$ ways;</li>
+    <li>Choose $2$ positions out of the remaining $4$ for the two N's in ${}^4C_2$ ways;</li>
+    <li>Choose $2$ positions out of the last $2$ for the two S's in ${}^2C_2$ ways.</li>
+  </ul>
+  <p>Multiplying these combinations gives:</p>
+  $${}^8C_1 \cdot {}^7C_3 \cdot {}^4C_2 \cdot {}^2C_2 = \frac{8!}{1!\,7!} \cdot \frac{7!}{3!\,4!} \cdot \frac{4!}{2!\,2!} \cdot \frac{2!}{2!\,0!} = \frac{8!}{1!\,3!\,2!\,2!}$$
+  <p><strong>2. Double Counting Proof of ${}^nC_0 + {}^nC_1 + \cdots + {}^nC_n = 2^n$:</strong> Every subset of an $n$-element set $X$ has size $r \in \{0, 1, \dots, n\}$. Since there are ${}^nC_r$ subsets of size $r$, the Addition Principle gives ${}^nC_0 + {}^nC_1 + \cdots + {}^nC_n$ total subsets. On the other hand, when constructing a subset element-by-element, each of the $n$ elements has exactly $2$ choices (<em>Include</em> or <em>Exclude</em>). By the Multiplication Principle, there are $\underbrace{2 \cdot 2 \cdots 2}_{n \text{ times}} = 2^n$ subsets.</p>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; Word Anagram Counter &amp; $2^n$ Subset Sum Visualizer</span>
+  <p>Switch between textbook words with repeated letters (to see the frequency breakdown and factorial division $\frac{n!}{n_1!n_2!\cdots}$) or the $2^n$ subset-size distribution bar chart.</p>
+  <canvas id="g12-ch5-04-canvas"></canvas>
+  <div class="controls">
+    <button type="button" class="pill active" data-word="KEENNESS">KEENNESS (8 letters)</button>
+    <button type="button" class="pill" data-word="EXCELLENCE">EXCELLENCE (Ex 20)</button>
+    <button type="button" class="pill" data-word="PROGRAM">PROGRAM (Ex 21)</button>
+    <button type="button" class="pill" data-word="INTERNET">INTERNET (Ex 26)</button>
+    <button type="button" class="pill" data-word="SUBSETS">Subsets Sum = 2⁹ (Ex 22)</button>
+  </div>
+  <div class="output table-text" id="ch5-04-out"></div>
+</div>
+
+<script>
+(function() {
+  var canvas = document.getElementById('g12-ch5-04-canvas');
+  var out = document.getElementById('ch4-04-out') || document.getElementById('ch5-04-out');
+  if (!canvas) return;
+
+  var b = NoteGeom.board(canvas, { height: 310 });
+  var cur = 'KEENNESS';
+
+  function fact(k) {
+    var r = 1;
+    for (var i = 2; i <= k; i++) r *= i;
+    return r;
+  }
+
+  function render() {
+    b.clear();
+    if (cur !== 'SUBSETS') {
+      var counts = {};
+      var order = [];
+      for (var i = 0; i < cur.length; i++) {
+        var ch = cur[i];
+        if (!counts[ch]) { counts[ch] = 0; order.push(ch); }
+        counts[ch]++;
+      }
+      var n = cur.length;
+      b.label('Word: "' + cur + '"   (Total letters n = ' + n + ')', [35, 34], [0, 0], b.palette.ink, 14);
+
+      for (var k = 0; k < cur.length; k++) {
+        var x = 40 + k * 44;
+        b.polygon([[x, 52], [x + 36, 52], [x + 36, 90], [x, 90]], 'rgba(59, 130, 246, 0.14)', b.palette.blue, 1.8);
+        b.label(cur[k], [x + 12, 76], [0, 0], b.palette.blue, 14);
+      }
+
+      b.label('Letter Frequencies & Repeated Group Factorials:', [35, 130], [0, 0], b.palette.ink, 13);
+      var denomProd = 1;
+      var denomStr = [];
+      for (var j = 0; j < order.length; j++) {
+        var L = order[j];
+        var c = counts[L];
+        denomProd *= fact(c);
+        if (c > 1) denomStr.push(c + '!');
+        var bx = 40 + j * 82;
+        var col = c > 1 ? b.palette.rose : b.palette.teal;
+        var fill = c > 1 ? 'rgba(225, 29, 72, 0.16)' : 'rgba(13, 148, 136, 0.14)';
+        b.polygon([[bx, 148], [bx + 70, 148], [bx + 70, 215], [bx, 215]], fill, col, 1.8);
+        b.label(L + ' × ' + c, [bx + 14, 174], [0, 0], col, 13);
+        b.label(c + '! = ' + fact(c), [bx + 12, 200], [0, 0], b.palette.muted, 11);
+      }
+
+      var totalPerms = Math.round(fact(n) / denomProd);
+      var dText = denomStr.length ? denomStr.join(' · ') : '1!';
+      b.label('Distinct Permutations = ' + n + '! / (' + dText + ') = ' + fact(n) + ' / ' + denomProd + ' = ' + totalPerms, [35, 265], [0, 0], b.palette.teal, 14);
+
+      out.textContent =
+        'Word "' + cur + '": n = ' + n + ' letters   |   Formula: ' + n + '! / (' + dText + ') = ' + totalPerms + ' distinct permutations';
+    } else {
+      var nSet = 9;
+      var cVals = [1, 9, 36, 84, 126, 126, 84, 36, 9, 1];
+      b.label('Example 22: Subsets of a 9-Element Set A  (Total = 2⁹ = 512)', [35, 30], [0, 0], b.palette.ink, 13);
+      var baseY = 235;
+      for (var r = 0; r <= nSet; r++) {
+        var x2 = 42 + r * 45;
+        var h2 = Math.max(10, Math.round((cVals[r] / 126) * 150));
+        var isAtMost2 = (r <= 2);
+        var col2 = isAtMost2 ? b.palette.amber : b.palette.teal;
+        var fill2 = isAtMost2 ? 'rgba(217, 119, 6, 0.24)' : 'rgba(13, 148, 136, 0.20)';
+        b.polygon([[x2, baseY], [x2 + 32, baseY], [x2 + 32, baseY - h2], [x2, baseY - h2]], fill2, col2, 1.8);
+        b.label('9C' + r, [x2 + 4, baseY + 18], [0, 0], col2, 10);
+        b.label(String(cVals[r]), [x2 + 4, baseY - h2 - 8], [0, 0], col2, 11);
+      }
+      b.label('Amber (r ≤ 2): ⁹C₀+⁹C₁+⁹C₂ = 1+9+36 = 46   |   Teal (r ≥ 3): 2⁹ − 46 = 512 − 46 = 466', [35, 282], [0, 0], b.palette.ink, 12);
+      out.textContent =
+        'Example 22 (|A| = 9): At most 2 elements = ⁹C₀ + ⁹C₁ + ⁹C₂ = 1 + 9 + 36 = 46   |   At least 3 elements = 2⁹ − 46 = 512 − 46 = 466';
+    }
+  }
+
+  var btns = canvas.parentElement.querySelectorAll('.pill[data-word]');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].addEventListener('click', function() {
+      for (var j = 0; j < btns.length; j++) btns[j].classList.remove('active');
+      this.classList.add('active');
+      cur = this.getAttribute('data-word');
+      render();
+    });
+  }
+  render();
+})();
+</script>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Textbook Examples 20, 21, 22, 23, 24, 25 &amp; 26</span>
+
+  <p><strong>Example 20 &amp; 21 (Permutations with Repetitions &amp; The Exclusion Principle):</strong><br>
+  (a) In how many ways can all the letters of the word <strong>EXCELLENCE</strong> be arranged?<br>
+  (b) How many permutations of the letters of <strong>PROGRAM</strong> do <em>not</em> end in (i) two R's? (ii) MAP?</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p><strong>(a) EXCELLENCE</strong> has $10$ letters: four E's, two C's, two L's, one X, and one N. Thus:</p>
+    $$\text{Number of permutations} = \frac{10!}{4!\,1!\,2!\,2!\,1!} = \frac{10 \cdot 9 \cdot 8 \cdot 7 \cdot 6 \cdot 5 \cdot 4!}{4! \cdot 2 \cdot 2} = 37800$$
+    <p><strong>(b) PROGRAM</strong> has $7$ letters with two R's and all other letters distinct, so the total unrestricted number of permutations is $\dfrac{7!}{2!} = 2520$.</p>
+    <ul>
+      <li><strong>(i) Not ending in RR:</strong> If the last two positions are fixed as RR, the remaining $5$ distinct letters (P, O, G, A, M) can be arranged in $5! = 120$ ways. By the Exclusion Principle, $2520 - 120 = 2400$.</li>
+      <li><strong>(ii) Not ending in MAP:</strong> If the last three positions are fixed as MAP, the remaining $4$ letters (R, R, O, G, which contain two R's) can be arranged in $\dfrac{4!}{2!} = 12$ ways. By the Exclusion Principle, $2520 - 12 = 2508$.</li>
+    </ul>
+    <p class="answer">Answer: (a) $37800$; (b)(i) $2400$, (b)(ii) $2508$.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 22 (Counting Subsets with "At Most" and "At Least"):</strong> If $A$ is a set containing $9$ distinct elements, how many subsets of $A$ contain:<br>
+  (a) at most $2$ elements? &nbsp; (b) at least $3$ elements?</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p><strong>(a) At most $2$ elements ($0, 1,$ or $2$ elements):</strong></p>
+    $${}^9C_0 + {}^9C_1 + {}^9C_2 = 1 + 9 + \frac{9 \cdot 8}{2 \cdot 1} = 1 + 9 + 36 = 46$$
+    <p><strong>(b) At least $3$ elements:</strong> The total number of subsets of $A$ is $2^9 = 512$. By the Exclusion Principle, subtract the subsets with at most $2$ elements:</p>
+    $$2^9 - 46 = 512 - 46 = 466$$
+    <p class="answer">Answer: (a) $46$ subsets, (b) $466$ subsets.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 23 (4-Digit Even Numbers Greater Than $4000$):</strong> How many $4$-digit even numbers greater than $4000$ can be formed using the digits $1, 2, 3, 4,$ and $5$ without repeating any digit?</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p>To be greater than $4000$, the first digit must be $4$ or $5$; to be even, the last digit must be $2$ or $4$. Because $4$ satisfies <em>both</em> conditions, we split by the choice of the first digit:</p>
+    <ul>
+      <li><strong>Case 1 (First digit is $4$):</strong> Since $4$ is already used as the first digit, the last (even) digit must be $2$ ($1$ way). The $2^{\text{nd}}$ and $3^{\text{rd}}$ digits are filled from the remaining $3$ digits in $3 \times 2 = 6$ ways $\implies 1 \times 3 \times 2 \times 1 = 6$ numbers.</li>
+      <li><strong>Case 2 (First digit is $5$):</strong> The last (even) digit can be either $2$ or $4$ ($2$ ways). The $2^{\text{nd}}$ and $3^{\text{rd}}$ digits are filled from the remaining $3$ digits in $3 \times 2 = 6$ ways $\implies 1 \times 3 \times 2 \times 2 = 12$ numbers.</li>
+    </ul>
+    <p>Total numbers $= 6 + 12 = 18$.</p>
+    <p class="answer">Answer: $18$ numbers.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 24, 25 &amp; 26 (Grouping Blocks &amp; Spacing Templates):</strong><br>
+  (a) <strong>(Ex 24)</strong> In how many ways can $2$ different chemistry books, $4$ different mathematics books, and $3$ different physics books be arranged on a shelf if books of the same subject must stay together?<br>
+  (b) <strong>(Ex 25)</strong> How many permutations of the letters $S, U, N, D, A, Y$ have the two vowels ($U, A$) placed together?<br>
+  (c) <strong>(Ex 26)</strong> Find the number of permutations of all letters of <strong>INTERNET</strong> such that there are <em>exactly $4$ letters between the two T's</em>.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p><strong>(a) Subject Blocks Together:</strong> Within each subject block, the books can be arranged in $2!\cdot 4!\cdot 3! = 2 \cdot 24 \cdot 6 = 288$ ways. The $3$ subject blocks themselves can be ordered in $3! = 6$ ways. Total $= 6 \times 288 = 1728$ ways.</p>
+    <p><strong>(b) Vowels Together in SUNDAY:</strong> Tie $U$ and $A$ into a single block $[UA]$. Together with $S, N, D, Y$, there are $5$ units, which can be arranged in $5! = 120$ ways. Inside the vowel block, $U$ and $A$ can be ordered in $2! = 2$ ways ($UA$ or $AU$). Total $= 120 \times 2 = 240$ ways.</p>
+    <p><strong>(c) Exactly $4$ Letters Between the Two T's in INTERNET:</strong> The $8$-letter pattern must take one of $3$ template positions for the two T's:</p>
+    $$\text{Form 1: }\; \mathbf{T}\;*\;*\;*\;*\;\mathbf{T}\;*\;* \qquad \text{Form 2: }\; *\;\mathbf{T}\;*\;*\;*\;*\;\mathbf{T}\;* \qquad \text{Form 3: }\; *\;*\;\mathbf{T}\;*\;*\;*\;*\;\mathbf{T}$$
+    <p>In each form, the $6$ starred positions ($*$) are filled by the remaining $6$ letters ($2$ N's, $2$ E's, $1$ I, $1$ R) in $\dfrac{6!}{2!\,2!} = \dfrac{720}{4} = 180$ ways. Across all $3$ forms, total permutations $= 3 \times 180 = 540$.</p>
+    <p class="answer">Answer: (a) $1728$, (b) $240$, (c) $540$.</p>
+  </details>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>Overlapping Digit Restrictions (Example 23):</strong> When both the first digit ($4$ or $5$) and the last digit ($2$ or $4$) can use the digit $4$, you <strong>cannot</strong> simply multiply $2 \times 3 \times 2 \times 2$! Always split into disjoint cases depending on whether the shared digit ($4$) is used in the first slot or not.</li>
+    <li><strong>Forgetting Internal Permutations of Tied Blocks:</strong> When $k$ distinct items are tied together as a single block, remember to multiply by $k!$ for the arrangements <em>inside</em> the block (unless the items inside the block are identical!).</li>
+  </ul>
+</div>
+
+<div class="note-tip">
+  <span class="block-label">Exam Tip &mdash; Spotting Exclusion Principle Keywords</span>
+  <p>Phrases like <em>"at least one"</em>, <em>"not ending in..."</em>, <em>"have repeated digits"</em>, or <em>"not all vowels together"</em> are classic signals to use the <strong>Exclusion Principle</strong>: compute the unrestricted total first, then subtract the single complementary case.</p>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways (မှတ်သားရန် အချက်များ)</span>
+  <ul>
+    <li><strong>Permutations with Repetitions (ထပ်နေသော အရာများစီစဉ်ခြင်း):</strong> $\dfrac{n!}{n_1!\,n_2!\,\cdots\,n_r!}$.</li>
+    <li><strong>Exclusion Principle (ဖယ်ထုတ်ခြင်း နိယာမ):</strong> $\text{Valid} = \text{Total} - \text{Unwanted}$.</li>
+    <li><strong>Subsets of an $n$-Element Set (အစုပိုင်း အရေအတွက်):</strong> ${}^nC_0 + {}^nC_1 + \cdots + {}^nC_n = 2^n$.</li>
+  </ul>
+</div>
