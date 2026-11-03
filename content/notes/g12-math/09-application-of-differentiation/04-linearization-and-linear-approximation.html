@@ -1,278 +1,237 @@
+<!-- tags: Application of Differentiation, G12 Math Myanmar -->
 <article class="note-page">
-  <header class="note-header">
-    <div class="note-eyebrow">Chapter 9: Application of Differentiation</div>
-    <h1 class="note-title" data-topic="Application of Differentiation">Linearization and Linear Approximation</h1>
-    <p class="note-lede">
-      When we zoom in closely on a differentiable curve near a point $(a, f(a))$, the curve looks nearly indistinguishable from its tangent line — allowing us to approximate complicated function values with a simple linear formula.
-    </p>
-  </header>
 
-  <section class="note-section">
-    <h2>1. The Linearization of a Function</h2>
-    <p>
-      Suppose $f$ is differentiable at $x = a$. The tangent line to the curve $y = f(x)$ at the point $(a, f(a))$ has equation:
-      $$y - f(a) = f'(a)(x - a) \implies y = f(a) + f'(a)(x - a)$$
-      For values of $x$ sufficiently close to $a$, the height of the tangent line closely approximates the true value $f(x)$.
-    </p>
+  <h1 class="note-title" data-topic="Application of Differentiation">Linearization and Linear Approximation</h1>
 
-    <div class="box-def">
-      <div class="box-title">Definition — Linearization and Standard Linear Approximation</div>
-      <p>
-        If $f$ is differentiable at $x = a$, then the approximating linear function:
-        $$L(x) = f(a) + f'(a)(x - a)$$
-        is called the <strong>linearization</strong> of $f$ at $x = a$.
-      </p>
-      <p>
-        The approximation:
-        $$f(x) \approx L(x) = f(a) + f'(a)(x - a) \qquad (\text{for } x \text{ near } a)$$
-        is called the <strong>standard linear approximation</strong> (or <strong>tangent line approximation</strong>) of $f$ at $x = a$. The point $x = a$ is called the <strong>center</strong> of the approximation, and the approximation error is $|f(x) - L(x)|$.
-      </p>
-    </div>
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
 
-    <div class="box-note">
-      <div class="box-title">How Concavity Affects Linear Approximation</div>
-      <ul>
-        <li>If $f$ is <strong>concave up</strong> ($f''(x) > 0$) near $a$, the tangent line lies <em>below</em> the curve, so $L(x) \le f(x)$ (underestimate).</li>
-        <li>If $f$ is <strong>concave down</strong> ($f''(x) < 0$) near $a$, the tangent line lies <em>above</em> the curve, so $L(x) \ge f(x)$ (overestimate).</li>
-      </ul>
-    </div>
-  </section>
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Linearization (Tangent Line Approximation)</span>
+  <p>When we zoom in closely on a smooth curve $y = f(x)$ near a point of tangency $(a, f(a))$, the curve lies extremely close to its tangent line. We can therefore use the equation of the tangent line at $x = a$ as a simple <strong>linear approximation</strong> for $f(x)$ when $x$ is near $a$:</p>
+  <ul>
+    <li><strong>Linearization of $f$ at $x = a$:</strong> The linear function
+      $$L(x) = f(a) + f'(a)(x - a)$$
+      whose graph is the tangent line to $y = f(x)$ at $(a, f(a))$.</li>
+    <li><strong>Standard Linear Approximation:</strong> $f(x) \approx L(x) = f(a) + f'(a)(x - a)$ for $x$ near the <strong>center</strong> $a$.</li>
+    <li><strong>Approximation Error:</strong> $|f(x) - L(x)|$, which shrinks quadratically as $x \to a$.</li>
+  </ul>
+</div>
 
-  <section class="note-section">
-    <h2>2. Interactive Demo: Linear Approximation &amp; Error Inspector</h2>
-    <p>
-      Compare the true curve $y = f(x)$ (blue) with its linearization $y = L(x)$ centered at $x = a$ (teal). Move $x$ closer to or further from $a$ to observe how rapidly the error $|f(x) - L(x)|$ shrinks as $x \to a$.
-    </p>
+<div class="note-formula">
+  <span class="block-label">Core Formulas &mdash; Linearization &amp; Error Behavior</span>
+  <div class="formula-main">
+    $$L(x) = f(a) + f'(a)(x - a) \qquad\qquad f(x) \approx f(a) + f'(a)(x - a) \quad (x \text{ near } a)$$
+  </div>
+  <ul class="symbols">
+    <li><strong>$a$:</strong> Center of the approximation (chosen near $x$ so that $f(a)$ and $f'(a)$ are easy to compute exactly).</li>
+    <li><strong>Concave Up ($f''(a) > 0$):</strong> The tangent line lies below the curve near $a$, so $L(x) \le f(x)$ (underestimate).</li>
+    <li><strong>Concave Down ($f''(a) < 0$):</strong> The tangent line lies above the curve near $a$, so $L(x) \ge f(x)$ (overestimate).</li>
+  </ul>
+</div>
 
-    <div class="demo" id="demo-ch9-linearization">
-      <div class="demo-controls">
-        <label>
-          Example:
-          <select data-control="ex">
-            <option value="quad">Ex 17: f(x) = x² + 2x at a = 2</option>
-            <option value="sqrt">Ex 19: f(x) = √x at a = 4</option>
-            <option value="sin">Trig: f(x) = sin x at a = 0</option>
-          </select>
-        </label>
-        <label>
-          Target $x$:
-          <input type="range" data-control="x" min="0.5" max="4.0" step="0.02" value="2.50" />
-          <span data-Val="x">2.50</span>
-        </label>
-      </div>
-      <canvas width="640" height="360" aria-label="Linearization tangent line approximation vs true curve"></canvas>
-      <div class="output" aria-live="polite"></div>
-    </div>
+<div class="note-proof">
+  <span class="block-label">Why the Linear Approximation Error Vanishes Faster Than $|x - a|$</span>
+  <p>By definition of the derivative at $x = a$:</p>
+  $$\lim_{x \to a} \frac{f(x) - L(x)}{x - a} = \lim_{x \to a} \left[\frac{f(x) - f(a)}{x - a} - f'(a)\right] = f'(a) - f'(a) = 0$$
+  <p>Thus the vertical gap $|f(x) - L(x)|$ between the curve and its tangent line not only approaches $0$ as $x \to a$, but becomes negligible even compared to the horizontal distance $|x - a|$ (for instance, in Example 17, dividing $|x - 2|$ by $10$ divides the error $|f(x) - L(x)| = (x - 2)^2$ by $100$).</p>
+</div>
 
-    <script src="/static/js/demos/geom.js"></script>
-    <script src="/static/js/demos/plot.js"></script>
-    <script>
-      (function () {
-        var root = document.getElementById('demo-ch9-linearization');
-        if (!root || !window.NotePlot) return;
-        var canvas = root.querySelector('canvas');
-        var out = root.querySelector('[class="output"]');
-        var selEx = root.querySelector('[data-control="ex"]');
-        var sliderX = root.querySelector('[data-control="x"]');
-        var valX = root.querySelector('[data-Val="x"]');
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; True Curve $f(x)$ vs. Linearization $L(x) = f(a) + f'(a)(x - a)$</span>
+  <p>Drag point $Q$ along the curve (or slide $x$ and switch between presets). Compare the true height $f(x)$ (blue dot) with the tangent line approximation $L(x)$ (amber dot) and watch the dashed rose error segment $|f(x) - L(x)|$ vanish as $x$ approaches the center $a$.</p>
+  <canvas id="g12-ch9-04-canvas"></canvas>
+  <div class="controls">
+    <label>Target $x$ <input type="range" id="ch9-04-x" min="0.2" max="4.5" value="2.20" step="0.02"></label>
+    <button type="button" class="pill active" data-mode="sqrt">f(x) = √x at Center a = 1</button>
+    <button type="button" class="pill" data-mode="quad">f(x) = x² − 2x at Center a = 1</button>
+    <button type="button" class="pill" data-mode="sin">f(x) = sin x at Center a = 0</button>
+  </div>
+  <div class="output table-text" id="ch9-04-out"></div>
+</div>
 
-        var mode = 'quad';
-        var xVal = 2.5;
+<script>
+(function() {
+  var canvas = document.getElementById('g12-ch9-04-canvas');
+  var xIn = document.getElementById('ch9-04-x');
+  var out = document.getElementById('ch9-04-out');
+  if (!canvas || !window.NotePlot) return;
 
-        function getCenter() {
-          if (mode === 'quad') return 2;
-          if (mode === 'sqrt') return 4;
-          return 0;
-        }
+  var mode = 'sqrt';
+  var xVal = 2.2;
 
-        function f(x) {
-          if (mode === 'quad') return 0.25 * (x * x + 2 * x); // scaled on plot, exact in readout
-          if (mode === 'sqrt') return x >= 0 ? Math.sqrt(x) : NaN;
-          return 2 * Math.sin(x);
-        }
+  function getCenter() {
+    return mode === 'sin' ? 0 : 1;
+  }
 
-        function df(x) {
-          if (mode === 'quad') return 0.25 * (2 * x + 2);
-          if (mode === 'sqrt') return x > 0 ? 1 / (2 * Math.sqrt(x)) : NaN;
-          return 2 * Math.cos(x);
-        }
+  // Exact unscaled functions on the coordinate grid
+  function f(x) {
+    if (mode === 'sqrt') return x >= 0 ? Math.sqrt(x) : NaN;
+    if (mode === 'quad') return x * x - 2 * x;
+    return Math.sin(x);
+  }
 
-        function exactF(x) {
-          if (mode === 'quad') return x * x + 2 * x;
-          if (mode === 'sqrt') return x >= 0 ? Math.sqrt(x) : NaN;
-          return Math.sin(x);
-        }
+  function df(x) {
+    if (mode === 'sqrt') return x > 0 ? 1 / (2 * Math.sqrt(x)) : NaN;
+    if (mode === 'quad') return 2 * x - 2 + 1e-9; // wait: at a=1.5 for quad so slope is non-horizontal!
+    return Math.cos(x);
+  }
 
-        function exactDF(x) {
-          if (mode === 'quad') return 2 * x + 2;
-          if (mode === 'sqrt') return x > 0 ? 1 / (2 * Math.sqrt(x)) : NaN;
-          return Math.cos(x);
-        }
+  function centerForMode() {
+    if (mode === 'sqrt') return 1.0;
+    if (mode === 'quad') return 2.0;
+    return 0.0;
+  }
 
-        var plot = NotePlot.graph(canvas, {
-          x: [-1.5, 6.2],
-          y: [-1.8, 5.2],
-          points: { Q: [xVal, f(xVal)] },
-          constrain: {
-            Q: function (p) {
-              var minX = mode === 'sqrt' ? 0.2 : -1.2;
-              var cx = Math.max(minX, Math.min(5.8, p[0]));
-              xVal = cx;
-              sliderX.value = cx.toFixed(2);
-              valX.textContent = cx.toFixed(2);
-              return [cx, f(cx)];
-            }
-          },
-          draw: function (g, P) {
-            var a = getCenter();
-            var fa = f(a);
-            var dfa = df(a);
-            var x = P.Q[0];
-            var fx = f(x);
-            var lx = fa + dfa * (x - a);
+  function dfExact(x) {
+    if (mode === 'sqrt') return x > 0 ? 1 / (2 * Math.sqrt(x)) : NaN;
+    if (mode === 'quad') return 2 * x - 2;
+    return Math.cos(x);
+  }
 
-            g.fn(function (t) { return f(t); }, '#2563eb');
-            g.fn(function (t) { return fa + dfa * (t - a); }, '#0d9488');
+  function clampX(x) {
+    if (mode === 'sqrt') return Math.max(0.1, Math.min(4.8, x));
+    return Math.max(-1.8, Math.min(3.4, x));
+  }
 
-            g.seg([x, fx], [x, lx], '#e11d48', { dash: true });
-            g.dot([a, fa], '#0d9488', 'Center a=' + a);
-            g.dot([x, fx], '#2563eb', 'f(x)');
-            g.dot([x, lx], '#d97706', 'L(x)');
+  var plot = NotePlot.graph(canvas, {
+    x: [-2.2, 5.2],
+    y: [-2.0, 3.8],
+    points: { Q: [xVal, f(xVal)] },
+    constrain: {
+      Q: function(p) {
+        var cx = clampX(p[0]);
+        xVal = cx;
+        xIn.value = cx.toFixed(2);
+        return [cx, f(cx)];
+      }
+    },
+    draw: function(g, P) {
+      var a = centerForMode();
+      var fa = f(a);
+      var dfa = dfExact(a);
+      var x = P.Q[0];
+      var fx = f(x);
+      var lx = fa + dfa * (x - a);
 
-            var eFa = exactF(a);
-            var eDFa = exactDF(a);
-            var eFx = exactF(x);
-            var eLx = eFa + eDFa * (x - a);
-            var err = Math.abs(eFx - eLx);
+      g.fn(function(t) { return f(t); }, '#2563eb', { width: 2.6 });
+      g.fn(function(t) { return fa + dfa * (t - a); }, '#0d9488', { width: 2.2 });
 
-            out.textContent =
-              'Center a = ' + a + '  |  At x = ' + x.toFixed(2) +
-              ':  True f(x) = ' + eFx.toFixed(5) +
-              '  |  Linear L(x) = ' + eLx.toFixed(5) +
-              '  |  Error |f(x) - L(x)| = ' + err.toFixed(5);
-          }
-        });
+      g.seg([x, fx], [x, lx], '#e11d48', { dash: true, width: 2 });
+      g.dot([a, fa], '#0d9488', 'Center (' + a + ', ' + fa.toFixed(1) + ')');
+      g.dot([x, fx], '#2563eb', 'f(x)');
+      g.dot([x, lx], '#d97706', 'L(x)');
 
-        function sync() {
-          xVal = parseFloat(sliderX.value);
-          valX.textContent = xVal.toFixed(2);
-          plot.move('Q', [xVal, f(xVal)]);
-        }
+      var err = Math.abs(fx - lx);
+      out.textContent =
+        'Center a = ' + a + '   |   At x = ' + x.toFixed(2) +
+        ':   True f(x) = ' + fx.toFixed(5) +
+        '   |   Linear L(x) = ' + lx.toFixed(5) +
+        '   |   Error |f(x) − L(x)| = ' + err.toFixed(5);
+    }
+  });
 
-        selEx.addEventListener('change', function () {
-          mode = selEx.value;
-          if (mode === 'quad') {
-            sliderX.min = '0.5';
-            sliderX.max = '4.0';
-            sliderX.value = '2.50';
-          } else if (mode === 'sqrt') {
-            sliderX.min = '0.5';
-            sliderX.max = '5.8';
-            sliderX.value = '4.20';
-          } else {
-            sliderX.min = '-1.2';
-            sliderX.max = '1.8';
-            sliderX.value = '0.30';
-          }
-          sync();
-        });
+  function sync() {
+    xVal = clampX(parseFloat(xIn.value));
+    xIn.value = xVal.toFixed(2);
+    plot.move('Q', [xVal, f(xVal)]);
+  }
 
-        sliderX.addEventListener('input', sync);
-        sync();
-      })();
-    </script>
-  </section>
+  xIn.addEventListener('input', sync);
+  var btns = canvas.parentElement.querySelectorAll('.pill[data-mode]');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].addEventListener('click', function() {
+      for (var j = 0; j < btns.length; j++) btns[j].classList.remove('active');
+      this.classList.add('active');
+      mode = this.getAttribute('data-mode');
+      if (mode === 'sqrt') { xIn.min = '0.1'; xIn.max = '4.8'; xIn.value = '2.20'; }
+      else if (mode === 'quad') { xIn.min = '-1.0'; xIn.max = '3.2'; xIn.value = '2.70'; }
+      else { xIn.min = '-1.8'; xIn.max = '1.8'; xIn.value = '0.80'; }
+      sync();
+    });
+  }
+})();
+</script>
 
-  <section class="note-section">
-    <h2>3. Worked Textbook Examples</h2>
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Textbook Examples 17, 18 &amp; 19</span>
 
-    <div class="box-ex">
-      <div class="box-title">Example 17 (Textbook p. 165) — Linearization of $f(x) = x^2 + 2x$ at $x = 2$</div>
-      <p>
-        Find the linearization of $f(x) = x^2 + 2x$ at $x = 2$, and use it to approximate $f(2.5)$, $f(2.05)$, and $f(2.005)$. Compare the approximations with the exact values.
-      </p>
-      <p><strong>Solution:</strong></p>
-      <p>
-        Here $a = 2$, $f(2) = 2^2 + 2(2) = 8$, and $f'(x) = 2x + 2 \implies f'(2) = 6$. Therefore, the linearization at $x = 2$ is:
-        $$L(x) = f(2) + f'(2)(x - 2) = 8 + 6(x - 2) = 6x - 4$$
-      </p>
-      <table class="note-table">
-        <thead>
-          <tr>
-            <th>$x$</th>
-            <th>Linear Approximation $L(x) = 6x - 4$</th>
-            <th>Actual Value $f(x) = x^2 + 2x$</th>
-            <th>Error $|f(x) - L(x)|$</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>$2.5$</td>
-            <td>$L(2.5) = 6(2.5) - 4 = 11$</td>
-            <td>$f(2.5) = 11.25$</td>
-            <td>$0.25 = (0.5)^2$</td>
-          </tr>
-          <tr>
-            <td>$2.05$</td>
-            <td>$L(2.05) = 6(2.05) - 4 = 8.3$</td>
-            <td>$f(2.05) = 8.3025$</td>
-            <td>$0.0025 = (0.05)^2$</td>
-          </tr>
-          <tr>
-            <td>$2.005$</td>
-            <td>$L(2.005) = 6(2.005) - 4 = 8.03$</td>
-            <td>$f(2.005) = 8.030025$</td>
-            <td>$0.000025 = (0.005)^2$</td>
-          </tr>
-        </tbody>
-      </table>
-      <p>
-        Notice that each time the distance $|x - 2|$ is divided by $10$, the approximation error is divided by $100$.
-      </p>
-    </div>
+  <p><strong>Example 17 (Textbook p. 165):</strong> Find the linearization of $f(x) = x^2 + 2x$ at $x = 2$, and use it to approximate $f(2.5)$, $f(2.05)$, and $f(2.005)$.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p>Here $a = 2$, $f(2) = 2^2 + 2(2) = 8$, and $f'(x) = 2x + 2 \implies f'(2) = 6$. Therefore, the linearization at $x = 2$ is:</p>
+    $$L(x) = f(2) + f'(2)(x - 2) = 8 + 6(x - 2) = 6x - 4$$
+    <table>
+      <thead>
+        <tr>
+          <th>$x$</th>
+          <th>Linear Approximation $L(x) = 6x - 4$</th>
+          <th>Actual Value $f(x) = x^2 + 2x$</th>
+          <th>Error $|f(x) - L(x)|$</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>$2.5$</td>
+          <td>$L(2.5) = 11$</td>
+          <td>$f(2.5) = 11.25$</td>
+          <td>$0.25 = (0.5)^2$</td>
+        </tr>
+        <tr>
+          <td>$2.05$</td>
+          <td>$L(2.05) = 8.3$</td>
+          <td>$f(2.05) = 8.3025$</td>
+          <td>$0.0025 = (0.05)^2$</td>
+        </tr>
+        <tr>
+          <td>$2.005$</td>
+          <td>$L(2.005) = 8.03$</td>
+          <td>$f(2.005) = 8.030025$</td>
+          <td>$0.000025 = (0.005)^2$</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="answer">Answer: $L(x) = 6x - 4$; $L(2.5) = 11$, $L(2.05) = 8.3$, $L(2.005) = 8.03$.</p>
+  </details>
 
-    <div class="box-ex">
-      <div class="box-title">Example 18 (Textbook p. 166) — Approximating Circle Area</div>
-      <p>
-        The radius $r$ of a circle increases from $r = 5\text{ m}$ to $r = 5.01\text{ m}$. Find the linear approximation of the area $A(r) = \pi r^2$ at $r = 5$, estimate the area of the enlarged circle, and find the error of approximation.
-      </p>
-      <p><strong>Solution:</strong></p>
-      <p>
-        Let $A(r) = \pi r^2$. Then $A'(r) = 2\pi r$. At $r = 5$, $A(5) = 25\pi$ and $A'(5) = 10\pi$. The linearization of $A(r)$ at $r = 5$ is:
-        $$L(r) = A(5) + A'(5)(r - 5) = 25\pi + 10\pi(r - 5) = 10\pi r - 25\pi$$
-        At $r = 5.01\text{ m}$:
-        $$L(5.01) = 25\pi + 10\pi(0.01) = 25.1\pi\text{ m}^2$$
-        Since the actual area is $A(5.01) = \pi(5.01)^2 = 25.1001\pi\text{ m}^2$, the error is:
-        $$|A(5.01) - L(5.01)| = |25.1001\pi - 25.1\pi| = 0.0001\pi\text{ m}^2$$
-      </p>
-    </div>
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
 
-    <div class="box-ex">
-      <div class="box-title">Example 19 (Textbook p. 166) — Estimating $\sqrt{101}$</div>
-      <p>
-        Use linear approximation to estimate the value of $\sqrt{101}$.
-      </p>
-      <p><strong>Solution:</strong></p>
-      <p>
-        Consider $f(x) = \sqrt{x}$ and choose the nearby perfect square $a = 100$. We have:
-        $$f(100) = \sqrt{100} = 10, \qquad f'(x) = \frac{1}{2\sqrt{x}} \implies f'(100) = \frac{1}{2\sqrt{100}} = \frac{1}{20} = 0.05$$
-        The linearization of $f(x) = \sqrt{x}$ at $a = 100$ is:
-        $$L(x) = f(100) + f'(100)(x - 100) = 10 + \frac{1}{20}(x - 100)$$
-        Setting $x = 101$:
-        $$\sqrt{101} \approx L(101) = 10 + \frac{1}{20}(101 - 100) = 10 + 0.05 = 10.05$$
-        (Compare with the actual value $\sqrt{101} \approx 10.0498756\dots$, an error of only $0.000124$!)
-      </p>
-    </div>
-  </section>
+  <p><strong>Example 18 (Textbook p. 166):</strong> The radius $r$ of a circle increases from $r = 5\text{ m}$ to $r = 5.01\text{ m}$. Find the linear approximation of the area $A(r) = \pi r^2$ at $r = 5$, estimate the enlarged area, and find the error.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p>For $A(r) = \pi r^2$, we have $A'(r) = 2\pi r$. At $r = 5$, $A(5) = 25\pi$ and $A'(5) = 10\pi$. Thus:</p>
+    $$L(r) = A(5) + A'(5)(r - 5) = 25\pi + 10\pi(r - 5) = 10\pi r - 25\pi$$
+    <p>At $r = 5.01\text{ m}$, $L(5.01) = 25\pi + 10\pi(0.01) = 25.1\pi\text{ m}^2$. Since the actual area is $A(5.01) = \pi(5.01)^2 = 25.1001\pi\text{ m}^2$, the error is $0.0001\pi\text{ m}^2$.</p>
+    <p class="answer">Answer: $L(5.01) = 25.1\pi\text{ m}^2$, error $= 0.0001\pi\text{ m}^2$.</p>
+  </details>
 
-  <section class="note-section">
-    <h2>4. Chapter 9 Summary</h2>
-    <ul>
-      <li><strong>Tangent &amp; Normal Lines at $(x_1, y_1)$:</strong> Tangent is $y - y_1 = y'(x_1)(x - x_1)$; Normal is $y - y_1 = -\dfrac{1}{y'(x_1)}(x - x_1)$.</li>
-      <li><strong>Monotonicity:</strong> $f'(x) > 0 \implies f$ increasing; $f'(x) < 0 \implies f$ decreasing.</li>
-      <li><strong>Critical Points:</strong> $(c, f(c))$ where $c \in \text{dom}(f)$ and $f'(c) = 0$ or $f'(c)$ is undefined.</li>
-      <li><strong>Concavity &amp; Inflection:</strong> $f''(x) > 0 \implies$ concave up; $f''(x) < 0 \implies$ concave down; concavity changes at an inflection point.</li>
-      <li><strong>Linearization at $x = a$:</strong> $L(x) = f(a) + f'(a)(x - a)$.</li>
-    </ul>
-  </section>
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 19 (Textbook p. 166):</strong> Use linear approximation to estimate the value of $\sqrt{101}$.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p>Let $f(x) = \sqrt{x}$ and choose the nearby perfect square $a = 100$. Then $f(100) = 10$ and $f'(x) = \dfrac{1}{2\sqrt{x}} \implies f'(100) = \dfrac{1}{20} = 0.05$:</p>
+    $$L(x) = f(100) + f'(100)(x - 100) = 10 + \frac{1}{20}(x - 100)$$
+    $$\sqrt{101} \approx L(101) = 10 + \frac{1}{20}(101 - 100) = 10.05$$
+    <p class="answer">Answer: $\sqrt{101} \approx 10.05$.</p>
+  </details>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>Using Degrees Instead of Radians in Trigonometric Linearizations:</strong> When approximating $\sin x$, $\cos x$, or $\tan x$ near $x = a$, $(x - a)$ must always be expressed in <strong>radians</strong>.</li>
+    <li><strong>Choosing a Center $a$ Too Far from $x$:</strong> Linearization $L(x)$ is accurate only when $|x - a|$ is small.</li>
+  </ul>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>The linearization of $f$ at $x = a$ is $L(x) = f(a) + f'(a)(x - a)$.</li>
+    <li>For $x$ close to $a$, the standard linear approximation is $f(x) \approx f(a) + f'(a)(x - a)$.</li>
+    <li>The approximation error $|f(x) - L(x)|$ decreases rapidly as $x$ approaches $a$.</li>
+  </ul>
+</div>
+
 </article>
