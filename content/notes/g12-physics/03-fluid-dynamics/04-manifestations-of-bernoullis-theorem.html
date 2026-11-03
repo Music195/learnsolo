@@ -1,0 +1,203 @@
+<!-- tags: Fluid Dynamics, G12 Physics Myanmar -->
+<!-- Grade 12 Physics textbook, Chapter 3, section 3.4 (pages 31–33) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Fluid Dynamics">Manifestations of Bernoulli's Theorem</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Real-World Phenomena Driven by Pressure Gradients</span>
+  <p>Bernoulli's principle ($p + \frac{1}{2}\rho v^2 = \text{constant}$ in horizontal flow) governs diverse everyday aerodynamic and hydrodynamic phenomena:</p>
+  <ul>
+    <li><strong>1. Aerodynamic Lift on Airplane Wings (Airfoils):</strong>
+      An airplane wing is contoured with a curved upper surface and a flatter bottom surface. Air flowing over the upper curved surface must travel faster to pass the wing. By Bernoulli's equation, the high airspeed above creates a region of <em>lower pressure</em> ($p_{\text{top}}$), while the slower air below exerts <em>higher pressure</em> ($p_{\text{bottom}}$). The net upward pressure difference ($\Delta p = p_{\text{bottom}} - p_{\text{top}}$) acts on wing area $A$ to generate the upward <strong>aerodynamic lift force</strong> ($F_L = \Delta p \cdot A$).
+    </li>
+    <li><strong>2. Insect Sprayer and Perfume Atomizers:</strong>
+      A horizontal plunger forces a high-speed jet of air across the open upper tip of a narrow vertical tube immersed in liquid. The rapid air flow causes static pressure at the tip to drop drastically. Normal atmospheric pressure acting on the open liquid surface inside the bottle drives the liquid up the tube, where it meets the fast blast of air and is sheared into a fine spray or mist.
+    </li>
+    <li><strong>3. The Magnus Effect on a Spinning Ball:</strong>
+      When a ball spins as it flies through the air, viscous drag carries a thin boundary layer of air around with it:
+      <ul>
+        <li>On the side where the ball's surface moves in the <em>same direction</em> as oncoming air, the relative velocity increases $\implies$ pressure decreases.</li>
+        <li>On the opposite side where the ball's surface moves <em>against</em> the oncoming air, relative velocity decreases $\implies$ pressure increases.</li>
+      </ul>
+      This transverse pressure imbalance creates a net sideways deflecting force that curves the ball's trajectory (responsible for curveballs in baseball, topspin dips in tennis, and swerving free kicks in soccer). Named after German physicist Heinrich Gustav Magnus (1852).
+    </li>
+    <li><strong>4. Roofs Blown Away in Cyclones:</strong>
+      During severe storms, hurricane-force winds sweep violently across the roof of a house. The rapid airstream over the roof creates a drastic drop in external air pressure. Meanwhile, stagnant air inside the house remains at high atmospheric pressure. The huge upward thrust pushes the roof upward, tearing it off the structure.
+    </li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formulas &mdash; Aerodynamic Lift</span>
+  <div class="formula-main">
+    $$\Delta p = p_{\text{lower}} - p_{\text{upper}} = \frac{1}{2}\rho \left(v_{\text{upper}}^2 - v_{\text{lower}}^2\right) \qquad\implies\qquad F_{\text{lift}} = \Delta p \cdot A$$
+  </div>
+  <ul class="symbols">
+    <li>$\Delta p$ = net upward pressure difference across the wing surfaces ($\mathrm{Pa}$)</li>
+    <li>$\rho$ = density of the fluid / air ($\mathrm{kg\,m^{-3}}$, $\approx 1.2\text{ to }1.3\mathrm{kg\,m^{-3}}$ at sea level)</li>
+    <li>$v_{\text{upper}}$ = airspeed over top surface ($\mathrm{m\,s^{-1}}$)</li>
+    <li>$v_{\text{lower}}$ = airspeed under bottom surface ($\mathrm{m\,s^{-1}}$)</li>
+    <li>$A$ = effective planform wing surface area ($\mathrm{m^2}$)</li>
+    <li>$F_{\text{lift}}$ = resultant upward lifting force ($\mathrm{N}$)</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Visualization &mdash; Airfoil Flow and Dynamic Lift</span>
+  <p class="demo-instruction">Adjust the oncoming wind speed to see how the speed difference between the curved top and flat bottom surfaces creates a pressure imbalance, dynamically scaling the upward lift vector (green arrow).</p>
+
+  <div id="airfoil-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
+
+  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
+    <label style="color: #cbd5e1; font-weight: 500;">
+      Airspeed $v_{\text{lower}}$: 
+      <input id="speed-slider" type="range" min="40" max="100" step="5" value="60" style="vertical-align: middle;">
+      <span id="speed-val" style="color: #38bdf8; font-weight: 700;">60 m/s</span>
+    </label>
+    <div style="color: #f8fafc; font-size: 0.9rem;">
+      $v_{\text{upper}} \approx$ <span id="vup-stat" style="color: #38bdf8; font-weight: 700;">72 m/s</span> &bull; Lift: <span id="lift-stat" style="color: #4ade80; font-weight: 700;">12.6 kN</span>
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    let board = JXG.JSXGraph.initBoard('airfoil-board', {
+      boundingbox: [-1, 5, 9, -2],
+      axis: false,
+      showNavigation: false,
+      showCopyright: false
+    });
+
+    let vLow = 60;
+
+    // Airfoil shape: teardrop / cambered profile
+    let topAirfoil = board.create('curve', [
+      function(t) { return t; },
+      function(t) {
+        // chord from 2 to 6
+        if (t < 2 || t > 6) return 1.0;
+        let x = (t - 2) / 4;
+        return 1.0 + 1.2 * Math.sqrt(x) * (1 - x);
+      },
+      2, 6
+    ], { strokeColor: '#cbd5e1', strokeWidth: 3 });
+
+    let botAirfoil = board.create('curve', [
+      function(t) { return t; },
+      function(t) {
+        if (t < 2 || t > 6) return 1.0;
+        let x = (t - 2) / 4;
+        return 1.0 - 0.2 * x * (1 - x);
+      },
+      2, 6
+    ], { strokeColor: '#cbd5e1', strokeWidth: 3 });
+
+    // Streamlines above (crowded = fast)
+    for (let k = 1; k <= 3; k++) {
+      let yOffset = 1.0 + k * 0.7;
+      board.create('curve', [
+        function(t) { return t; },
+        function(t) {
+          let bump = Math.exp(-Math.pow((t - 3.5)/1.5, 2)) * (0.8 / k);
+          return yOffset + bump;
+        },
+        0, 8
+      ], { strokeColor: '#38bdf8', strokeWidth: 1.8 });
+    }
+
+    // Streamlines below
+    for (let k = 1; k <= 2; k++) {
+      let yOffset = 1.0 - k * 0.6;
+      board.create('curve', [
+        function(t) { return t; },
+        function(t) {
+          let dip = Math.exp(-Math.pow((t - 3.5)/1.5, 2)) * (0.2 / k);
+          return yOffset - dip;
+        },
+        0, 8
+      ], { strokeColor: '#60a5fa', strokeWidth: 1.5 });
+    }
+
+    // Labels
+    board.create('text', [3.5, 3.2, 'Low Pressure (High Speed)'], { color: '#38bdf8', fontSize: 12, anchorX: 'middle' });
+    board.create('text', [3.5, -0.2, 'High Pressure (Low Speed)'], { color: '#f87171', fontSize: 12, anchorX: 'middle' });
+
+    // Lift vector arrow
+    let liftArrow = board.create('arrow', [
+      [3.5, 1.3],
+      [3.5, function() {
+        let vUp = vLow * 1.2;
+        let dp = 0.5 * 1.2 * (vUp * vUp - vLow * vLow);
+        let len = (dp / 1000) * 0.25;
+        return 1.3 + Math.min(len, 3.2);
+      }]
+    ], { strokeColor: '#4ade80', strokeWidth: 4 });
+
+    board.create('text', [3.7, 2.5, 'Lift Force (FL)'], { color: '#4ade80', fontSize: 13, fontWeight: 'bold' });
+
+    let slider = document.getElementById('speed-slider');
+    slider.addEventListener('input', function() {
+      vLow = parseFloat(this.value);
+      document.getElementById('speed-val').textContent = vLow.toFixed(0) + ' m/s';
+      let vUp = vLow * 1.2;
+      document.getElementById('vup-stat').textContent = vUp.toFixed(0) + ' m/s';
+      let dp = 0.5 * 1.2 * (vUp * vUp - vLow * vLow);
+      let liftTotal = (dp * 16.2) / 1000;
+      document.getElementById('lift-stat').textContent = liftTotal.toFixed(1) + ' kN';
+      board.update();
+    });
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Textbook Worked Examples &mdash; Lift and Aerodynamics</span>
+
+  <div class="example-item">
+    <p class="example-title"><strong>Example 3.8:</strong> Air streams horizontally past a small airplane's wings such that the speed is $70\text{ m\,s}^{-1}$ over the top surface and $60\text{ m\,s}^{-1}$ past the bottom surface. If the plane has a total wing area of $16.2\text{ m}^2$ (on top and bottom), what is the net vertical force that the air exerts on the airplane? Take density of air $\rho = 1.2\text{ kg\,m}^{-3}$.</p>
+    <p class="solution"><strong>Solution:</strong><br>
+      Given:<br>
+      $v_{\text{top}} = 70\text{ m\,s}^{-1}$, $v_{\text{bottom}} = 60\text{ m\,s}^{-1}$, $A = 16.2\text{ m}^2$, $\rho = 1.2\text{ kg\,m}^{-3}$.<br>
+      For top and bottom surfaces, since the wing thickness is negligible ($h_{\text{top}} \approx h_{\text{bottom}}$), Bernoulli's equation gives:
+      $$p_{\text{bottom}} + \frac{1}{2}\rho v_{\text{bottom}}^2 = p_{\text{top}} + \frac{1}{2}\rho v_{\text{top}}^2$$
+      $$\Delta p = p_{\text{bottom}} - p_{\text{top}} = \frac{1}{2}\rho \left(v_{\text{top}}^2 - v_{\text{bottom}}^2\right)$$
+      $$\Delta p = \frac{1}{2}(1.2)\left[(70)^2 - (60)^2\right] = 0.6 \times (4900 - 3600) = 0.6 \times 1300 = 780\text{ Pa}$$
+      The net vertical lift force:
+      $$F = \Delta p \cdot A = 780\text{ Pa} \times 16.2\text{ m}^2 = 12\,636\text{ N}$$
+    </p>
+  </div>
+
+  <div class="example-item">
+    <p class="example-title"><strong>Reviewed Exercises:</strong></p>
+    <p class="solution">
+      <strong>1. Can a fluid flow from lower pressure to higher pressure?</strong><br>
+      <strong>Yes.</strong> Fluid can move into a higher-pressure region in two principal cases:
+      <ul>
+        <li><strong>Conversion of Kinetic Energy:</strong> In an expanding pipe (diffuser), an ideal fluid slows down ($v_2 < v_1$), converting part of its kinetic energy into static pressure energy ($p_2 > p_1$). The deceleration creates a forward momentum that carries fluid against the opposing adverse pressure gradient.</li>
+        <li><strong>External Work:</strong> When external mechanical work is supplied by a pump, compressor, or fan, fluid is actively forced from a low-pressure intake to a high-pressure discharge.</li>
+      </ul>
+      <br>
+      <strong>2. Air is streaming past a horizontal aeroplane wing such that its speed is $120\text{ m\,s}^{-1}$ at the upper surface and $90\text{ m\,s}^{-1}$ at the lower surface. If the wing is $10\text{ m}$ long and $2\text{ m}$ wide, and the density of air is $1.3\text{ kg\,m}^{-3}$, find the net lift on it.</strong><br>
+      Wing area $A = \text{length} \times \text{width} = 10\text{ m} \times 2\text{ m} = 20\text{ m}^2$.<br>
+      Upper speed $v_{\text{top}} = 120\text{ m\,s}^{-1}$, lower speed $v_{\text{bottom}} = 90\text{ m\,s}^{-1}$, $\rho = 1.3\text{ kg\,m}^{-3}$.<br>
+      Pressure difference across the wing:
+      $$\Delta p = \frac{1}{2}\rho \left(v_{\text{top}}^2 - v_{\text{bottom}}^2\right) = \frac{1}{2}(1.3)\left[(120)^2 - (90)^2\right]$$
+      $$\Delta p = 0.65 \times (14\,400 - 8100) = 0.65 \times 6300 = 4095\text{ Pa}$$
+      Net aerodynamic lift:
+      $$F_{\text{lift}} = \Delta p \cdot A = 4095\text{ Pa} \times 20\text{ m}^2 = 81\,900\text{ N}$$
+    </p>
+  </div>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>Aerodynamic lift arises because air travels faster over curved upper wing surfaces than under flat lower surfaces, creating a lower pressure zone above.</li>
+    <li>Atomizers and sprayers use localized low pressure created by a high-speed airflow to suck liquids up vertical tubes.</li>
+    <li>The Magnus effect deflects spinning balls due to asymmetric airspeed and pressure fields created by the rotating surface boundary layer.</li>
+    <li>High cyclone winds reduce exterior atmospheric pressure above rooftops, causing buildings' internal air pressure to blow roofs off.</li>
+  </ul>
+</div>
+
+</article>
