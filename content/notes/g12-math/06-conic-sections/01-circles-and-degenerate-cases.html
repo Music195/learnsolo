@@ -1,0 +1,183 @@
+<!-- tags: Conic Sections, G12 Math Myanmar -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Conic Sections">Circles and Degenerate Cases</h1>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Conic Sections &amp; The Circle</span>
+  <p>The curves obtained by intersecting a plane with a double right-circular cone (နှစ်ဖက်ချွန် ကတော့ချွန်) are called <strong>conic sections</strong> (ကတော့ချွန်ဖြတ်ပိုင်းများ): <strong>circles</strong> (စက်ဝိုင်း), <strong>ellipses</strong> (ဘဲဥပုံ), <strong>parabolas</strong> (ပါရာဘိုလာ), and <strong>hyperbolas</strong> (ဟိုက်ပါဘိုလာ). Every conic section satisfies a second-degree equation in $x$ and $y$:</p>
+  $$Ax^2 + Bxy + Cy^2 + Dx + Ey + F = 0$$
+  <p>A <strong>circle</strong> is the set of all points $(x, y)$ in a plane that are equidistant from a fixed point called the <strong>center</strong> $(h, k)$ (ဗဟိုချက်) by a fixed distance called the <strong>radius</strong> $r$ (အချင်းဝက်).</p>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formulas &mdash; Standard Form, General Form &amp; Degenerate Cases</span>
+  <ul>
+    <li><strong>Standard Form of the Equation of a Circle:</strong> With center $(h, k)$ and radius $r > 0$:
+      $$(x - h)^2 + (y - k)^2 = r^2 \qquad (\text{Unit circle at origin: } x^2 + y^2 = 1)$$
+    </li>
+    <li><strong>General Form of the Equation of a Circle ($A = C \neq 0, B = 0$):</strong>
+      $$x^2 + y^2 + 2gx + 2fy + c = 0 \iff (x + g)^2 + (y + f)^2 = g^2 + f^2 - c$$
+      Here the center is $(h, k) = (-g, -f)$ and the radius is $r = \sqrt{g^2 + f^2 - c}$.
+    </li>
+    <li><strong>Degenerate Cases of $x^2 + y^2 + 2gx + 2fy + c = 0$:</strong> Let $\Delta = g^2 + f^2 - c$:
+      <ul>
+        <li>If $g^2 + f^2 - c > 0$: the graph is a <strong>real circle</strong> with center $(-g, -f)$ and radius $\sqrt{g^2 + f^2 - c}$.</li>
+        <li>If $g^2 + f^2 - c = 0$: the graph degenerates to a <strong>single point</strong> $(-g, -f)$.</li>
+        <li>If $g^2 + f^2 - c < 0$: the equation has <strong>no real solution</strong> and therefore <strong>no graph</strong>.</li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<div class="note-proof">
+  <span class="block-label">Derivation &mdash; Completing the Square on the General Circle Equation</span>
+  <p>Starting from the standard form $(x - h)^2 + (y - k)^2 = r^2$, expanding gives $x^2 + y^2 - 2hx - 2ky + (h^2 + k^2 - r^2) = 0$. Setting $2g = -2h$, $2f = -2k$, and $c = h^2 + k^2 - r^2$ produces the general form $x^2 + y^2 + 2gx + 2fy + c = 0$.</p>
+  <p>Conversely, given $x^2 + y^2 + 2gx + 2fy + c = 0$, group the $x$- and $y$-terms and complete the square by adding $g^2 + f^2$ to both sides:</p>
+  $$(x^2 + 2gx + g^2) + (y^2 + 2fy + f^2) = g^2 + f^2 - c \implies (x + g)^2 + (y + f)^2 = g^2 + f^2 - c$$
+  <p>Comparing with $(x - h)^2 + (y - k)^2 = r^2$ immediately yields center $(-g, -f)$ and $r^2 = g^2 + f^2 - c$.</p>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; Circle Explorer &amp; Degenerate Case Classifier</span>
+  <p>Drag the center $C(h, k)$ on the coordinate plane and adjust $r^2 = g^2 + f^2 - c$ using the slider (or select textbook Example 5 cases) to see how the equation transitions between a real circle ($r^2 > 0$), a single point ($r^2 = 0$), and no real graph ($r^2 < 0$).</p>
+  <canvas id="g12-ch6-01-canvas"></canvas>
+  <div class="controls">
+    <label>r² = g² + f² − c <input type="range" id="ch6-01-r2" min="-4" max="16" value="9" step="1"></label>
+    <button type="button" class="pill active" data-case="circle">Circle (r² = 9 &gt; 0)</button>
+    <button type="button" class="pill" data-case="point">Ex 5(b): Single Point (r² = 0)</button>
+    <button type="button" class="pill" data-case="none">Ex 5(a): No Graph (r² = -4 &lt; 0)</button>
+  </div>
+  <div class="output table-text" id="ch6-01-out"></div>
+</div>
+
+<script>
+(function() {
+  var canvas = document.getElementById('g12-ch6-01-canvas');
+  var r2In = document.getElementById('ch6-01-r2');
+  var out = document.getElementById('ch6-01-out');
+  if (!canvas) return;
+
+  var snap = function(p) {
+    return [Math.round(p[0] * 2) / 2, Math.round(p[1] * 2) / 2];
+  };
+
+  var plot = NotePlot.graph(canvas, {
+    x: [-7.75, 7.75],
+    y: [-5, 5],
+    points: { C: [1, -1] },
+    constrain: { C: snap },
+    draw: function(g, P) {
+      var h = P.C[0], k = P.C[1];
+      var r2 = parseFloat(r2In.value);
+      var gg = -h, ff = -k;
+      var cVal = h * h + k * k - r2;
+
+      if (r2 > 0) {
+        var r = Math.sqrt(r2);
+        g.circle([h, k], r, '#0d9488', { width: 2.5 });
+        var Pedge = [h + r * Math.cos(0.55), k + r * Math.sin(0.55)];
+        g.seg([h, k], Pedge, '#d97706', { width: 2, dash: true });
+        g.dot(Pedge, '#d97706', 'r=' + r.toFixed(2));
+      } else if (r2 === 0) {
+        g.dot([h, k], '#e11d48', 'Single Point');
+      } else {
+        g.text([0, 2.2], 'g² + f² − c = ' + r2 + ' < 0  →  No Real Graph', '#e11d48');
+      }
+
+      var sx = h >= 0 ? '(x − ' + h + ')²' : '(x + ' + (-h) + ')²';
+      var sy = k >= 0 ? '(y − ' + k + ')²' : '(y + ' + (-k) + ')²';
+      var state = r2 > 0 ? ('Circle with radius r = √' + r2 + ' ≈ ' + Math.sqrt(r2).toFixed(2)) : (r2 === 0 ? 'Degenerate: Single Point (' + h + ', ' + k + ')' : 'Degenerate: No Real Graph');
+
+      out.textContent =
+        'Center (h, k) = (' + h + ', ' + k + ')   |   Standard: ' + sx + ' + ' + sy + ' = ' + r2 +
+        '   |   General: g = ' + gg + ', f = ' + ff + ', c = ' + cVal.toFixed(1) + '   |   ' + state;
+    }
+  });
+
+  r2In.addEventListener('input', function() { plot.redraw(); });
+  var btns = canvas.parentElement.querySelectorAll('.pill[data-case]');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].addEventListener('click', function() {
+      for (var j = 0; j < btns.length; j++) btns[j].classList.remove('active');
+      this.classList.add('active');
+      var kind = this.getAttribute('data-case');
+      if (kind === 'circle') { r2In.value = 9; plot.move('C', [1, -1]); }
+      else if (kind === 'point') { r2In.value = 0; plot.move('C', [1, -4]); }
+      else { r2In.value = -4; plot.move('C', [1, -4]); }
+    });
+  }
+})();
+</script>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Textbook Examples 1, 2, 4 &amp; 5</span>
+
+  <p><strong>Example 1 &amp; 2 (Finding the Equation of a Circle):</strong><br>
+  (a) Find an equation of the circle of radius $4$ centered at $(-1, 2)$ in standard form.<br>
+  (b) Find an equation for the circle with center $(1, -2)$ that passes through $(4, 2)$.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p><strong>(a)</strong> With $(h, k) = (-1, 2)$ and $r = 4$:</p>
+    $$(x - (-1))^2 + (y - 2)^2 = 4^2 \implies (x + 1)^2 + (y - 2)^2 = 16$$
+    <p><strong>(b)</strong> The radius $r$ is the distance from the center $(1, -2)$ to the point $(4, 2)$ on the circle:</p>
+    $$r = \sqrt{(4 - 1)^2 + (2 - (-2))^2} = \sqrt{3^2 + 4^2} = \sqrt{9 + 16} = 5$$
+    <p>Thus the standard form is $(x - 1)^2 + (y + 2)^2 = 25$, or in general form $x^2 + y^2 - 2x + 4y - 20 = 0$.</p>
+    <p class="answer">Answer: (a) $(x + 1)^2 + (y - 2)^2 = 16$; (b) $(x - 1)^2 + (y + 2)^2 = 25$ (or $x^2 + y^2 - 2x + 4y - 20 = 0$).</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 4 (Finding Center &amp; Radius by Two Methods):</strong> Find the center and radius of:<br>
+  (a) $x^2 + y^2 - 2x + 10y + 23 = 0$ &emsp; (b) $2x^2 + 2y^2 - 24x + 47 = 0$.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p><strong>(a) Method 1 (Completing the Square):</strong></p>
+    $$(x^2 - 2x + 1^2) + (y^2 + 10y + 5^2) = -23 + 1 + 25 \implies (x - 1)^2 + (y + 5)^2 = 3$$
+    <p><strong>Method 2 (Comparing with $x^2 + y^2 + 2gx + 2fy + c = 0$):</strong> Here $2g = -2 \implies g = -1$, $2f = 10 \implies f = 5$, and $c = 23$. Thus center $= (-g, -f) = (1, -5)$ and $r = \sqrt{(-1)^2 + 5^2 - 23} = \sqrt{3}$.</p>
+    <p><strong>(b) Divide by $2$ first!</strong> Dividing $2x^2 + 2y^2 - 24x + 47 = 0$ by $2$ gives:</p>
+    $$x^2 + y^2 - 12x + \frac{47}{2} = 0 \implies (x^2 - 12x + 36) + y^2 = 36 - \frac{47}{2} = \frac{25}{2}$$
+    $$(x - 6)^2 + y^2 = \left(\frac{5}{\sqrt{2}}\right)^2 \implies \text{Center } = (6, 0), \quad r = \frac{5}{\sqrt{2}} = \frac{5\sqrt{2}}{2}$$
+    <p class="answer">Answer: (a) Center $(1, -5)$, radius $\sqrt{3}$; (b) Center $(6, 0)$, radius $\dfrac{5\sqrt{2}}{2}$.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 5 (Classifying Degenerate Circle Equations):</strong> Describe the graphs of:<br>
+  (a) $(x - 1)^2 + (y + 4)^2 = -9$ &emsp; (b) $(x - 1)^2 + (y + 4)^2 = 0$ &emsp; (c) $x^2 + y^2 - 4x + 2y - 44 = 0$.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <ul>
+      <li><strong>(a)</strong> Since the right-hand side is $-9 < 0$ (and a sum of squares of real numbers is never negative), the equation has <strong>no graph</strong>.</li>
+      <li><strong>(b)</strong> A sum of two real squares is zero if and only if both terms are zero ($x = 1, y = -4$), so the graph is the <strong>single point $(1, -4)$</strong>.</li>
+      <li><strong>(c)</strong> Here $g = -2, f = 1, c = -44$, so $g^2 + f^2 - c = 4 + 1 + 44 = 49 > 0$. The graph is a <strong>circle with center $(2, -1)$ and radius $r = \sqrt{49} = 7$</strong>.</li>
+    </ul>
+    <p class="answer">Answer: (a) No graph; (b) Single point $(1, -4)$; (c) Circle with center $(2, -1)$ and radius $7$.</p>
+  </details>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>Forgetting to Divide by $A$ When $A = C \neq 1$:</strong> In $2x^2 + 2y^2 - 24x + 47 = 0$ (Example 4b), you <strong>must divide every term by $2$</strong> before reading off $2g, 2f,$ and $c$ or completing the square!</li>
+    <li><strong>Sign Reversal of Center Coordinates:</strong> In $(x + 7)^2 + (y - 2)^2 = 9$, the center is $(-7, 2)$, not $(7, -2)$. Similarly, in $x^2 + y^2 + 2gx + 2fy + c = 0$, the center is $(-g, -f)$.</li>
+  </ul>
+</div>
+
+<div class="note-tip">
+  <span class="block-label">Exam Tip &mdash; Circles Tangent to the Coordinate Axes (Exercise 6.1 #2d, 2e)</span>
+  <p>If a circle with center $(h, k)$ is <strong>tangent to the $x$-axis</strong>, its radius is the vertical distance to the $x$-axis: $r = |k|$. If it is <strong>tangent to the $y$-axis</strong>, its radius is the horizontal distance to the $y$-axis: $r = |h|$.</p>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways (မှတ်သားရန် အချက်များ)</span>
+  <ul>
+    <li><strong>Standard Circle Equation (စက်ဝိုင်း၏ စံညီမျှခြင်း):</strong> $(x - h)^2 + (y - k)^2 = r^2$, center $(h, k)$, radius $r$.</li>
+    <li><strong>General Circle Equation (ယေဘုယျညီမျှခြင်း):</strong> $x^2 + y^2 + 2gx + 2fy + c = 0$, center $(-g, -f)$, radius $\sqrt{g^2 + f^2 - c}$.</li>
+    <li><strong>Degenerate Cases:</strong> $g^2 + f^2 - c > 0$ (circle), $= 0$ (single point), $< 0$ (no graph).</li>
+  </ul>
+</div>
+</article>

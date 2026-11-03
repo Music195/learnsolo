@@ -1,0 +1,212 @@
+<!-- tags: Conic Sections, G12 Math Myanmar -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Conic Sections">Translation of Axes and Parabolas with Vertex (h, k)</h1>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Translation of Axes &amp; Shifted Parabolas</span>
+  <p>When the coordinate axes are shifted (translated) without rotation so that the new origin $O'$ is placed at $(h, k)$ in the original $xy$-plane, a new $x'y'$-coordinate system is formed. Every point $P$ has both original coordinates $(x, y)$ and translated coordinates $(x', y')$, related by the <strong>translation equations</strong> (ဝင်ရိုးရွှေ့ပြောင်းခြင်း ညီမျှခြင်းများ):</p>
+  $$x = x' + h, \quad y = y' + k \qquad \Longleftrightarrow \qquad x' = x - h, \quad y' = y - k$$
+  <p>Shifting a standard parabola so that its vertex moves from $(0, 0)$ to $V(h, k)$ simply replaces $x'$ by $(x - h)$ and $y'$ by $(y - k)$ in the standard equations.</p>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formulas &mdash; Standard Equations of a Parabola with Vertex $V(h, k)$ ($p > 0$)</span>
+  <ul>
+    <li><strong>1. Axis Parallel to the $x$-Axis (Horizontal Axis $y = k$):</strong>
+      <ul>
+        <li><strong>Opens Right:</strong> $(y - k)^2 = 4p(x - h)$ &mdash; Focus $F(h + p, k)$, Directrix $x = h - p$, Latus Rectum Endpoints $(h + p, k \pm 2p)$.</li>
+        <li><strong>Opens Left:</strong> $(y - k)^2 = -4p(x - h)$ &mdash; Focus $F(h - p, k)$, Directrix $x = h + p$, Latus Rectum Endpoints $(h - p, k \pm 2p)$.</li>
+      </ul>
+    </li>
+    <li><strong>2. Axis Parallel to the $y$-Axis (Vertical Axis $x = h$):</strong>
+      <ul>
+        <li><strong>Opens Up:</strong> $(x - h)^2 = 4p(y - k)$ &mdash; Focus $F(h, k + p)$, Directrix $y = k - p$, Latus Rectum Endpoints $(h \pm 2p, k + p)$.</li>
+        <li><strong>Opens Down:</strong> $(x - h)^2 = -4p(y - k)$ &mdash; Focus $F(h, k - p)$, Directrix $y = k + p$, Latus Rectum Endpoints $(h \pm 2p, k - p)$.</li>
+      </ul>
+    </li>
+    <li><strong>General Forms of a Parabola ($B = 0$, and either $C = 0$ or $A = 0$):</strong>
+      $$Ax^2 + Dx + Ey + F = 0 \quad (\text{vertical axis}) \qquad \text{or} \qquad Cy^2 + Dx + Ey + F = 0 \quad (\text{horizontal axis})$$
+    </li>
+  </ul>
+</div>
+
+<div class="note-proof">
+  <span class="block-label">Derivation &mdash; From $x'y'$-Coordinates to $(x - h, y - k)$ Form</span>
+  <p>Suppose a parabola has vertex $V(h, k)$ and axis of symmetry parallel to the $y$-axis. Translate the coordinate axes so that the new origin $O'$ sits at $V(h, k)$. Relative to the $x'y'$-axes, the vertex is at $(0, 0)$ and the parabola has the simple equation:</p>
+  $$(x')^2 = \pm 4py'$$
+  <p>Substituting the translation equations $x' = x - h$ and $y' = y - k$ immediately yields the $xy$-equation:</p>
+  $$(x - h)^2 = \pm 4p(y - k)$$
+  <p>Moreover, since every geometric feature shifts by $+h$ horizontally and $+k$ vertically, the focus $(0, \pm p)$ in $x'y'$-coordinates becomes $(h, k \pm p)$ in $xy$-coordinates, and the directrix $y' = \mp p$ becomes $y - k = \mp p \implies y = k \mp p$.</p>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; Drag the Vertex $V(h, k)$ of a Translated Parabola</span>
+  <p>Drag the vertex $V(h, k)$ anywhere on the coordinate plane or click the textbook Example presets to see how the focus $F$, the directrix, and the latus rectum shift together with $(h, k)$.</p>
+  <canvas id="g12-ch6-03-canvas"></canvas>
+  <div class="controls">
+    <button type="button" class="pill active" data-ex="ex9">Ex 9: (x − 1)² = −8(y − 3)</button>
+    <button type="button" class="pill" data-ex="ex8">Ex 8: (y − 3)² = 12(x + 1)</button>
+    <button type="button" class="pill" data-ex="ex11">Ex 11: (x − 2)² = 12(y − 1)</button>
+  </div>
+  <div class="output table-text" id="ch6-03-out"></div>
+</div>
+
+<script>
+(function() {
+  var canvas = document.getElementById('g12-ch6-03-canvas');
+  var out = document.getElementById('ch6-03-out');
+  if (!canvas) return;
+
+  var curMode = 'down'; // 'down', 'right', 'up'
+  var pVal = 1.5;
+
+  var snap = function(pt) {
+    return [Math.round(pt[0] * 2) / 2, Math.round(pt[1] * 2) / 2];
+  };
+
+  var plot = NotePlot.graph(canvas, {
+    x: [-7.75, 7.75],
+    y: [-5, 5],
+    points: { V: [1, 2] },
+    constrain: { V: snap },
+    draw: function(g, P) {
+      var h = P.V[0], k = P.V[1], p = pVal;
+
+      if (curMode === 'down' || curMode === 'up') {
+        var s = curMode === 'up' ? 1 : -1;
+        g.vline(h, '#94a3b8', { dash: true, width: 1.2 });
+        g.hline(k - s * p, '#e11d48', { dash: true, width: 2 });
+        g.text([4.8, k - s * p + (s > 0 ? -0.35 : 0.35)], 'Directrix y = ' + (k - s * p), '#e11d48');
+
+        g.fn(function(x) { return k + s * ((x - h) * (x - h)) / (4 * p); }, '#2563eb', { width: 2.6 });
+
+        var fy = k + s * p;
+        g.seg([h - 2 * p, fy], [h + 2 * p, fy], '#0d9488', { dash: true, width: 2 });
+        g.dot([h, fy], '#d97706', 'F(' + h + ',' + fy + ')');
+        g.dot([h - 2 * p, fy], '#0d9488', 'L₁');
+        g.dot([h + 2 * p, fy], '#0d9488', 'L₂');
+
+        out.textContent =
+          'Vertex V(' + h + ', ' + k + '),  p = ' + p + ' (Opens ' + (s > 0 ? 'Up' : 'Down') + ')   |   ' +
+          'Standard: (x − ' + h + ')² = ' + (s > 0 ? '' : '−') + (4 * p) + '(y − ' + k + ')   |   ' +
+          'Focus F(' + h + ', ' + fy + '),  Directrix: y = ' + (k - s * p) +
+          ',  Latus Rectum: (' + (h - 2 * p) + ', ' + fy + ') & (' + (h + 2 * p) + ', ' + fy + ')';
+      } else {
+        g.hline(k, '#94a3b8', { dash: true, width: 1.2 });
+        g.vline(h - p, '#e11d48', { dash: true, width: 2 });
+        g.text([h - p, 4.2], 'Directrix x = ' + (h - p), '#e11d48');
+
+        for (var i = -90; i < 90; i++) {
+          var y1 = i * 5 / 90, y2 = (i + 1) * 5 / 90;
+          var x1 = h + ((y1 - k) * (y1 - k)) / (4 * p);
+          var x2 = h + ((y2 - k) * (y2 - k)) / (4 * p);
+          if (Math.abs(x1) <= 7.7 && Math.abs(x2) <= 7.7) {
+            g.seg([x1, y1], [x2, y2], '#2563eb', { width: 2.6 });
+          }
+        }
+
+        var fx = h + p;
+        g.seg([fx, k - 2 * p], [fx, k + 2 * p], '#0d9488', { dash: true, width: 2 });
+        g.dot([fx, k], '#d97706', 'F(' + fx + ',' + k + ')');
+        g.dot([fx, k + 2 * p], '#0d9488', 'L₁');
+        g.dot([fx, k - 2 * p], '#0d9488', 'L₂');
+
+        out.textContent =
+          'Vertex V(' + h + ', ' + k + '),  p = ' + p + ' (Opens Right)   |   ' +
+          'Standard: (y − ' + k + ')² = ' + (4 * p) + '(x − ' + h + ')   |   ' +
+          'Focus F(' + fx + ', ' + k + '),  Directrix: x = ' + (h - p) +
+          ',  Latus Rectum: (' + fx + ', ' + (k - 2 * p) + ') & (' + fx + ', ' + (k + 2 * p) + ')';
+      }
+    }
+  });
+
+  var btns = canvas.parentElement.querySelectorAll('.pill[data-ex]');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].addEventListener('click', function() {
+      for (var j = 0; j < btns.length; j++) btns[j].classList.remove('active');
+      this.classList.add('active');
+      var ex = this.getAttribute('data-ex');
+      if (ex === 'ex9') { curMode = 'down'; pVal = 2; plot.move('V', [1, 3]); }
+      else if (ex === 'ex8') { curMode = 'right'; pVal = 1.5; plot.move('V', [-1, 1.5]); }
+      else { curMode = 'up'; pVal = 1.5; plot.move('V', [2, -1]); }
+    });
+  }
+})();
+</script>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Textbook Examples 8, 9, 10 &amp; 11</span>
+
+  <p><strong>Example 8 (Completing the Square on a Horizontal-Axis Parabola):</strong> Write the parabola equation $y^2 - 12x - 6y - 3 = 0$ in standard form and find its vertex, focus, directrix, and endpoints of the latus rectum.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p>Isolate the $y$-terms on the left and complete the square by adding $3^2 = 9$ to both sides:</p>
+    $$y^2 - 6y = 12x + 3 \implies y^2 - 6y + 3^2 = 12x + 3 + 9 \implies (y - 3)^2 = 12(x + 1)$$
+    <p>Comparing with $(y - k)^2 = 4p(x - h)$ gives $h = -1, k = 3,$ and $4p = 12 \implies p = 3$ (opens to the right):</p>
+    <ul>
+      <li><strong>Vertex:</strong> $V(h, k) = (-1, 3)$</li>
+      <li><strong>Focus:</strong> $F(h + p, k) = (-1 + 3, 3) = (2, 3)$</li>
+      <li><strong>Directrix:</strong> $x = h - p = -1 - 3 \implies x = -4$</li>
+      <li><strong>Endpoints of Latus Rectum:</strong> $(h + p, k \pm 2p) = (2, 3 \pm 6) \implies (2, 9)$ and $(2, -3)$.</li>
+    </ul>
+    <p class="answer">Answer: $(y - 3)^2 = 12(x + 1)$; $V(-1, 3)$, $F(2, 3)$, directrix $x = -4$, latus rectum endpoints $(2, 9)$ and $(2, -3)$.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 9 (Completing the Square on a Vertical-Axis Parabola):</strong> Write $x^2 - 2x + 8y - 23 = 0$ in standard form and find its vertex, focus, directrix, and endpoints of the latus rectum.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p>Isolate the $x$-terms on the left and complete the square by adding $1^2 = 1$ to both sides:</p>
+    $$x^2 - 2x = -8y + 23 \implies x^2 - 2x + 1 = -8y + 24 \implies (x - 1)^2 = -8(y - 3)$$
+    <p>Comparing with $(x - h)^2 = -4p(y - k)$ gives $h = 1, k = 3,$ and $4p = 8 \implies p = 2$ (opens downward):</p>
+    <ul>
+      <li><strong>Vertex:</strong> $V(1, 3)$</li>
+      <li><strong>Focus:</strong> $F(h, k - p) = (1, 3 - 2) = (1, 1)$</li>
+      <li><strong>Directrix:</strong> $y = k + p = 3 + 2 \implies y = 5$</li>
+      <li><strong>Endpoints of Latus Rectum:</strong> $(h \pm 2p, k - p) = (1 \pm 4, 1) \implies (-3, 1)$ and $(5, 1)$.</li>
+    </ul>
+    <p class="answer">Answer: $(x - 1)^2 = -8(y - 3)$; $V(1, 3)$, $F(1, 1)$, directrix $y = 5$, latus rectum endpoints $(-3, 1)$ and $(5, 1)$.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 10 &amp; 11 (Finding Parabola Equations from Vertex and Focus):</strong><br>
+  (a) Find the standard form of the parabola with vertex $(1, 2)$ and focus $(4, 2)$.<br>
+  (b) Find the general form of the parabola with vertex $(2, 1)$ and focus $(2, 4)$.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p><strong>(a)</strong> Since $V(1, 2)$ and $F(4, 2)$ share the same $y$-coordinate ($y = 2$) and the focus lies to the right of the vertex, the parabola opens to the right with $h = 1, k = 2$, and $p = 4 - 1 = 3$:</p>
+    $$(y - k)^2 = 4p(x - h) \implies (y - 2)^2 = 4(3)(x - 1) \implies (y - 2)^2 = 12(x - 1)$$
+    <p><strong>(b)</strong> Since $V(2, 1)$ and $F(2, 4)$ share the same $x$-coordinate ($x = 2$) and the focus lies above the vertex, the parabola opens upward with $h = 2, k = 1$, and $p = 4 - 1 = 3$:</p>
+    $$(x - 2)^2 = 4(3)(y - 1) \implies x^2 - 4x + 4 = 12y - 12 \implies x^2 - 4x - 12y + 16 = 0$$
+    <p class="answer">Answer: (a) $(y - 2)^2 = 12(x - 1)$; (b) $x^2 - 4x - 12y + 16 = 0$.</p>
+  </details>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>Factoring Out the Negative Coefficient Completely:</strong> In Example 9, when factoring $-8y + 24$, remember that factoring out $-8$ reverses the sign of $+24$: $-8y + 24 = -8(y - 3)$, NOT $-8(y + 3)$!</li>
+    <li><strong>Given Focus and Directrix Only (Exercise 6.3 #11, 12):</strong> When given the focus $F$ and directrix (without the vertex), remember that the vertex $V(h, k)$ is the <strong>midpoint</strong> between the focus and the directrix, and $2p$ is the total distance from focus to directrix!</li>
+  </ul>
+</div>
+
+<div class="note-tip">
+  <span class="block-label">Exam Tip &mdash; Instant Sanity Check on Focus vs. Directrix</span>
+  <p>A parabola <strong>always wraps around its focus and turns its back on its directrix</strong>. After computing $V$, $F$, and the directrix, check that $V$ is the exact midpoint between $F$ and the directrix line!</p>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways (မှတ်သားရန် အချက်များ)</span>
+  <ul>
+    <li><strong>Translation Equations (ဝင်ရိုးရွှေ့ပြောင်းခြင်း):</strong> $x' = x - h$ and $y' = y - k$.</li>
+    <li><strong>Horizontal Parabola at $V(h, k)$:</strong> $(y - k)^2 = \pm 4p(x - h)$, Focus $(h \pm p, k)$, Directrix $x = h \mp p$.</li>
+    <li><strong>Vertical Parabola at $V(h, k)$:</strong> $(x - h)^2 = \pm 4p(y - k)$, Focus $(h, k \pm p)$, Directrix $y = k \mp p$.</li>
+  </ul>
+</div>
+</article>
