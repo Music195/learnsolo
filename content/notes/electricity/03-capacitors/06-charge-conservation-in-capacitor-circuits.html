@@ -1,0 +1,212 @@
+<!-- tags: Capacitors -->
+<!-- =====================================================================
+     NOTE: Charge Conservation in Capacitor Circuits
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Capacitors">Charge Conservation in Capacitor Circuits</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Call the unknown potential $x$, write each plate's charge as $C(x - V_\text{other})$, and add them up for the island</h2>
+    <p>This is the general method behind the island idea. It works for any capacitor network, however it is drawn, so you never have to decide whether things are "in series" or "in parallel".</p>
+    <ol>
+      <li>Give every point whose potential you know its value (battery terminals, earth = 0).</li>
+      <li>Call the unknown potential of an island $x$.</li>
+      <li>Every plate on the island holds $C(x - V_\text{other})$, where $V_\text{other}$ is the potential of the plate facing it. The sign takes care of itself: a negative answer means a negative plate.</li>
+      <li>Add these charges and set the sum equal to the island's charge before the switching (often 0).</li>
+    </ol>
+    <p>With all capacitors uncharged at the start, the result is a <strong>weighted average</strong>:</p>
+    <p>$$x = \frac{C_1V_1 + C_2V_2 + C_3V_3}{C_1 + C_2 + C_3}.$$</p>
+    <p>The island sits between the potentials it is joined to, pulled hardest towards the side with the biggest capacitance.</p>
+  </section>
+
+  <!-- FORMULA: the island equation -->
+  <div class="note-formula">
+    <h3>One island at unknown potential $x$</h3>
+    <div class="formula-main">$$\sum_i C_i\,(x - V_i) = Q_\text{island} \qquad\Longrightarrow\qquad x = \frac{Q_\text{island} + \sum_i C_iV_i}{\sum_i C_i}$$</div>
+    <p class="symbols">$C_i$: each capacitor touching the island. $V_i$: the potential of its other plate. $Q_\text{island}$: the island's total charge, which stays what it was before the switching.</p>
+  </div>
+
+  <!-- PROOF: plate charge formula -->
+  <div class="note-proof">
+    <ol>
+      <li>A capacitor with plates at potentials $V_a$ and $V_b$ has voltage $V_a - V_b$. The plate at $V_a$ carries $C(V_a - V_b)$, and the other plate carries the opposite charge.</li>
+      <li>So a plate on the island carries $C_i(x - V_i)$. This is positive when the island is higher than the other side.</li>
+      <li>No charge can reach the island, so these add up to its starting total. That is one equation for the one unknown $x$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: island X; code at the bottom -->
+  <div class="note-demo">
+    <h2>Island X joined to 1 μF, 2 μF and 3 μF whose other plates are at V₁, V₂, V₃</h2>
+    <div class="controls choices" id="ncChoices">
+      <button type="button" data-q="0" class="active">island starts at 0</button>
+      <button type="button" data-q="60">starts at +60 μC</button>
+      <button type="button" data-q="-60">starts at −60 μC</button>
+    </div>
+    <div class="controls">
+      <label>$V_1$ (V) = <input type="range" id="ncV1" min="0" max="30" step="1" value="20"></label>
+      <label>$V_2$ (V) = <input type="range" id="ncV2" min="0" max="30" step="1" value="0"></label>
+      <label>$V_3$ (V) = <input type="range" id="ncV3" min="0" max="30" step="1" value="10"></label>
+    </div>
+    <canvas id="ncCanvas"></canvas>
+    <div class="output table-text" id="ncOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A 10 μF capacitor joins point X (at 20 V) to a point at 40 V. Find the charge on the plate joined to X.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$Q = C(V_X - V_\text{other}) = 10(20 - 40)$.</li>
+        <li>$= -200$ μC: X is the lower side, so its plate is negative.</li>
+      </ol>
+      <p class="answer">$-200$ μC</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">A 15 μF capacitor joins X (at 30 V) to a point at 10 V. Find the charge on the plate joined to X.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$Q = 15(30 - 10) = 300$ μC.</li>
+      </ol>
+      <p class="answer">+300 μC</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Island X is joined to three uncharged capacitors: 30 μF to a point at 60 V, 20 μF to earth, and 10 μF to earth. Find $x$ and the charge on each of X's plates.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$30(x - 60) + 20(x - 0) + 10(x - 0) = 0$.</li>
+        <li>$60x = 1800$, so $x = 30$ V.</li>
+        <li>Plates: $30(30 - 60) = -900$ μC, $20 \times 30 = 600$ μC, $10 \times 30 = 300$ μC. Check: $-900 + 600 + 300 = 0$ ✓.</li>
+      </ol>
+      <p class="answer">$x = 30$ V; $-900$, $+600$, $+300$ μC</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Island X joins an uncharged 1.0 μF to a point at 20 V and an uncharged 2.0 μF to earth. Find $x$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$1.0(x - 20) + 2.0x = 0$, so $3.0x = 20$.</li>
+        <li>$x = 6.7$ V: closer to 0 V, because the bigger capacitor goes to earth.</li>
+      </ol>
+      <p class="answer">6.7 V</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">Island X joins 2.0 μF to a point at 12 V and 4.0 μF to earth, but this time the island already holds $+12$ μC. Find $x$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$2.0(x - 12) + 4.0(x - 0) = 12$.</li>
+        <li>$6.0x - 24 = 12$, so $x = 6.0$ V. (With an uncharged island it would be 4.0 V.)</li>
+      </ol>
+      <p class="answer">6.0 V</p>
+    </details>
+  </div>
+
+  <!-- WARNING: signs -->
+  <div class="note-warning">
+    Always write <strong>(island − other side)</strong>, the same way round for every capacitor, even if you expect a negative answer. If you mix the orders, the sum is no longer the island's charge.
+  </div>
+
+  <!-- TIP: check by adding -->
+  <div class="note-tip">
+    After solving, work out each plate's charge and add them up. They must give the island's starting charge. This catches most sign slips.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Plate charge on the island $= C(x - V_\text{other})$.</li>
+      <li>Sum over the island $=$ its starting charge.</li>
+      <li>Starting at 0: $x$ is the $C$-weighted average of the other potentials.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Island X" demo (the TRY IT block above).
+  // Island X (the top wire and the three upper plates) is joined to capacitors of
+  // 1, 2 and 3 μF whose lower plates are held at V₁, V₂, V₃ (the sliders).
+  // Charge conservation on X:  1(x − V₁) + 2(x − V₂) + 3(x − V₃) = Q₀  (Q₀: the button).
+  // Units: μF, V, μC. Plate colour: red = positive, blue = negative.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('ncCanvas');
+    const output = document.getElementById('ncOutput');
+    const boxes = ['ncV1', 'ncV2', 'ncV3'].map((id) => document.getElementById(id));
+    const C = [1, 2, 3], XS = [130, 260, 390];
+    const RED = '#dc2626', BLUE = '#2563eb', GREY = '#94a3b8', PURPLE = '#7c3aed';
+    const DARK = '#0f172a', THING = '#475569';
+    let Q0 = 0, lastText = '';
+
+    const colOf = (q) => (Math.abs(q) < 0.05 ? GREY : q > 0 ? RED : BLUE);
+    const fmt = (q) => (Math.abs(q) < 0.05 ? '0' : (q > 0 ? '+' : '−') + Math.abs(q).toFixed(1));
+    const minus = (str) => String(str).replace('-', '−');   // a proper minus sign
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const V = boxes.map((b) => Number(b.value));
+        const sumC = C[0] + C[1] + C[2];
+        const sumCV = C[0] * V[0] + C[1] * V[1] + C[2] * V[2];
+        const x = (Q0 + sumCV) / sumC;
+        const q = C.map((c, i) => c * (x - V[i]));      // charge on each plate joined to X
+
+        // island X: the top wire and the upper plates, inside a dashed box
+        g.seg([XS[0], 90], [XS[2], 90], PURPLE, { width: 4 });
+        const box = [[95, 60], [470, 60], [470, 170], [95, 170], [95, 60]];
+        for (let i = 1; i < box.length; i++) g.seg(box[i - 1], box[i], PURPLE, { width: 1.5, dash: true });
+        g.text([282, 75], `island X: x = ${minus(x.toFixed(2))} V, total ${fmt(Q0)} μC`, PURPLE);
+
+        for (let i = 0; i < 3; i++) {
+          const X = XS[i];
+          g.seg([X, 90], [X, 160], PURPLE, { width: 4 });
+          g.seg([X - 30, 160], [X + 30, 160], colOf(q[i]), { width: 6 });
+          g.seg([X - 30, 184], [X + 30, 184], colOf(-q[i]), { width: 6 });
+          g.seg([X, 184], [X, 260], DARK, { width: 4 });
+          g.dot([X, 260], DARK);
+          g.text([X - 36, 220], `${C[i]} μF`, THING);
+          g.text([X + 58, 158], fmt(q[i]), colOf(q[i]));
+          g.text([X + 58, 186], fmt(-q[i]), colOf(-q[i]));
+          g.text([X, 284], `V${'₁₂₃'[i]} = ${V[i]} V`, DARK);
+        }
+
+        const text =
+          `each plate on X holds C(x − V_other);  the sum must equal the starting ${fmt(Q0)} μC\n` +
+          `1(x − ${V[0]}) + 2(x − ${V[1]}) + 3(x − ${V[2]}) = ${minus(Q0)}  →  6x = ${minus(Q0)} + ${sumCV}  →  x = ${minus(x.toFixed(2))} V\n` +
+          `plates on X: ${q.map(fmt).join(', ')} μC;  sum = ${fmt(q[0] + q[1] + q[2])} μC ✓`;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    document.querySelectorAll('#ncChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#ncChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      Q0 = Number(b.dataset.q);
+      board.redraw();
+    }));
+    boxes.forEach((b) => b.addEventListener('input', () => board.redraw()));
+  })();
+</script>

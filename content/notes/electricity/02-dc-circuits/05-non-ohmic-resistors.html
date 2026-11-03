@@ -1,0 +1,224 @@
+<!-- tags: DC Circuits -->
+<!-- =====================================================================
+     NOTE: Non-Ohmic Resistors
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="DC Circuits">Non-Ohmic Resistors</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>A bulb's I–V graph bends, so find the working point where the graph meets a straight circuit line</h2>
+    <p>For an ordinary (ohmic) resistor, $I = V/R$. The graph of current against voltage is a <strong>straight line through the origin</strong>, with slope $1/R$. A steeper line means a <em>smaller</em> resistance.</p>
+    <p>A filament lamp is <strong>non-ohmic</strong>. As the voltage goes up, more current flows and the filament heats up. A hotter metal has a higher resistance, so the current grows more and more slowly and the graph <strong>bends over</strong>. At each point, $R = V/I$ for that point.</p>
+    <p><strong>How to solve a circuit with a lamp in it.</strong> You can't write the lamp's drop as $RI$, because its $R$ changes. Instead:</p>
+    <ol>
+      <li>call the lamp's current $I$ and the potential difference across it $V$ (always do this first);</li>
+      <li>write Kirchhoff's second law for the circuit. It gives a <strong>straight line</strong> linking $I$ and $V$;</li>
+      <li>draw that line on the lamp's graph. The easiest way is to find where it meets the axes (set $I = 0$, then $V = 0$) and join the two points;</li>
+      <li>where the line crosses the curve, both are true at once: that is the actual current and voltage.</li>
+    </ol>
+  </section>
+
+  <!-- FORMULA: the circuit line -->
+  <div class="note-formula">
+    <h3>Lamp in series with a resistor $R$ on a cell $E$</h3>
+    <div class="formula-main">$$E = RI + V \qquad\Longleftrightarrow\qquad I = \frac{E - V}{R}$$</div>
+    <p class="symbols">$V$, $I$: the lamp's voltage and current. The line meets the axes at $(V, I) = (E, 0)$ and $(0, E/R)$. The lamp's resistance at its working point is $V/I$.</p>
+  </div>
+
+  <!-- PROOF: why the crossing is the answer -->
+  <div class="note-proof">
+    <ol>
+      <li>The lamp can only be at points on its own curve: that is how the lamp behaves.</li>
+      <li>The circuit (the cell and the resistor) forces $E = RI + V$, so the point must also lie on that straight line.</li>
+      <li>Only the crossing point satisfies both, so that is the lamp's voltage and current.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: load line; code at the bottom -->
+  <div class="note-demo">
+    <h2>A lamp's curve (black) and the circuit line (orange)</h2>
+    <div class="controls">
+      <label>cell $E$ (V) = <input type="range" id="nlE" min="0.4" max="1.2" step="0.1" value="1.0"></label>
+      <label>series $R$ (Ω) = <input type="range" id="nlR" min="0" max="20" step="1" value="5"></label>
+    </div>
+    <canvas id="nlCanvas"></canvas>
+    <div class="output table-text" id="nlOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">The lamp in the demo has a curve through (0.30 V, 0.14 A), (0.50 V, 0.16 A) and (1.0 V, 0.20 A). It is connected straight across a 1.0 V cell (no other resistance). Find the current.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The lamp gets the whole 1.0 V, so just read the graph at $V = 1.0$ V. (Set $R = 0$ in the demo.)</li>
+      </ol>
+      <p class="answer">0.20 A</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">The same lamp is connected in series with 5.0 Ω across the 1.0 V cell. Find the current.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Let the lamp have $I$ and $V$. Second law: $1.0 = 5.0I + V$.</li>
+        <li>Line through $(V, I) = (1.0, 0)$ and $(0, 0.20)$.</li>
+        <li>It crosses the curve at $V = 0.30$ V, $I = 0.14$ A. Check: $5.0 \times 0.14 + 0.30 = 1.0$ ✓.</li>
+      </ol>
+      <p class="answer">0.14 A (lamp voltage 0.30 V)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Find the lamp's resistance in Example 1 and in Example 2. Explain the difference.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Example 1: $1.0/0.20 = 5.0$ Ω. Example 2: $0.30/0.14 \approx 2.1$ Ω.</li>
+        <li>With more current the filament is hotter, and a hotter metal resists more.</li>
+      </ol>
+      <p class="answer">5.0 Ω and about 2.1 Ω</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Two of these lamps are connected in series across the 1.0 V cell. Find the current.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The lamps are identical and carry the same current, so they share the voltage equally: 0.50 V each.</li>
+        <li>Read the curve at 0.50 V.</li>
+      </ol>
+      <p class="answer">About 0.16 A</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">Two ohmic resistors have I–V lines through (2.0 V, 0.50 A) and (2.0 V, 0.20 A). Find their resistances. Which line is steeper?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$R = V/I$: $2.0/0.50 = 4.0$ Ω and $2.0/0.20 = 10$ Ω.</li>
+        <li>The 4.0 Ω line is steeper: a bigger current for the same voltage.</li>
+      </ol>
+      <p class="answer">4.0 Ω (steeper) and 10 Ω</p>
+    </details>
+  </div>
+
+  <!-- WARNING: axes -->
+  <div class="note-warning">
+    Read the axes carefully: here $V$ is the <strong>lamp's</strong> voltage (not the cell's) and $I$ the <strong>lamp's</strong> current. Using the cell voltage to read the graph is only right when nothing else is in series.
+  </div>
+
+  <!-- TIP: intercepts -->
+  <div class="note-tip">
+    Don't rearrange into $y = mx + c$. Just put $I = 0$ and then $V = 0$ into the Kirchhoff equation, mark the two axis points and join them with a ruler.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Ohmic: straight line through the origin, slope $1/R$.</li>
+      <li>Lamp: the curve bends because a hotter filament has a higher resistance.</li>
+      <li>Set the lamp's $I$, $V$; Kirchhoff gives a line; the crossing is the answer.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Load line" demo (the TRY IT block above).
+  // The lamp's curve is modelled by I = 0.20 V^0.3 (amps, volts), which passes through
+  // (0.30, 0.14), (0.50, 0.16) and (1.0, 0.20). With a cell E and a series
+  // resistor R, Kirchhoff gives the straight line I = (E − V)/R (for R = 0 it is
+  // the vertical line V = E). The crossing is found by halving the interval
+  // (bisection) on f(V) = curve − line, which goes from negative to positive.
+  // Graph: V from 0 to 1.2 V across 400 pixels, I from 0 to 0.25 A over 250 pixels.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('nlCanvas');
+    const output = document.getElementById('nlOutput');
+    const eBox = document.getElementById('nlE'), rBox = document.getElementById('nlR');
+    const X0 = 70, Y0 = 300, SX = 400 / 1.2, SY = 250 / 0.25;
+    const DARK = '#0f172a', ORANGE = '#ea580c', GREEN = '#16a34a', GRID = '#e2e8f0', THING = '#475569';
+    const lamp = (V) => 0.20 * Math.pow(Math.max(V, 0), 0.3);
+    const P = (V, I) => [X0 + V * SX, Y0 - I * SY];
+    let lastText = '';
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const E = Number(eBox.value), R = Number(rBox.value);
+        // grid and axes
+        for (let v = 0.2; v <= 1.21; v += 0.2) {
+          g.seg(P(v, 0), P(v, 0.25), GRID, { width: 1 });
+          g.text([P(v, 0)[0], Y0 + 16], v.toFixed(1), THING);
+        }
+        for (let i = 0.05; i <= 0.251; i += 0.05) {
+          g.seg(P(0, i), P(1.2, i), GRID, { width: 1 });
+          g.text([X0 - 24, P(0, i)[1]], i.toFixed(2), THING);
+        }
+        g.seg(P(0, 0), P(1.2, 0), DARK, { width: 1.5 });
+        g.seg(P(0, 0), P(0, 0.25), DARK, { width: 1.5 });
+        g.text([P(1.2, 0)[0], Y0 + 34], 'V (V)', THING);
+        g.text([X0, 30], 'I (A)', THING);
+
+        // the lamp's curve
+        let prev = P(0, 0);
+        for (let k = 1; k <= 240; k++) {
+          const v = 1.2 * k / 240, p = P(v, lamp(v));
+          g.seg(prev, p, DARK, { width: 2.5 });
+          prev = p;
+        }
+
+        // the circuit line and the crossing
+        let Vx;
+        if (R === 0) {
+          g.seg(P(E, 0), P(E, 0.25), ORANGE, { width: 2 });
+          Vx = E;
+        } else {
+          const I0 = E / R;
+          // clip the line to the graph area: from V = max(0, E − 0.25R) to E
+          const vStart = Math.max(0, E - 0.25 * R);
+          g.seg(P(vStart, (E - vStart) / R), P(E, 0), ORANGE, { width: 2 });
+          if (I0 <= 0.25) g.dot(P(0, I0), ORANGE);
+          let lo = 0, hi = E;
+          for (let k = 0; k < 60; k++) {
+            const mid = (lo + hi) / 2;
+            if (lamp(mid) - (E - mid) / R < 0) lo = mid; else hi = mid;
+          }
+          Vx = (lo + hi) / 2;
+        }
+        g.dot(P(E, 0), ORANGE);
+        const Ix = lamp(Vx);
+        g.seg(P(Vx, 0), P(Vx, Ix), GREEN, { width: 1.5, dash: true });
+        g.seg(P(0, Ix), P(Vx, Ix), GREEN, { width: 1.5, dash: true });
+        g.circle(P(Vx, Ix), 6, GREEN, { fill: GREEN });
+
+        const text =
+          (R === 0
+            ? `R = 0: the lamp gets the whole cell, V = ${E.toFixed(1)} V\n`
+            : `circuit line: ${E.toFixed(1)} = ${R}I + V, through (${E.toFixed(1)} V, 0) and (0, ${(E / R).toFixed(3)} A)\n`) +
+          `crossing: lamp V = ${Vx.toFixed(2)} V, I = ${Ix.toFixed(3)} A\n` +
+          `lamp resistance there = V/I = ${(Vx / Ix).toFixed(2)} Ω`;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    eBox.addEventListener('input', () => board.redraw());
+    rBox.addEventListener('input', () => board.redraw());
+  })();
+</script>

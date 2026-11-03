@@ -1,0 +1,239 @@
+<!-- tags: Capacitors -->
+<!-- =====================================================================
+     NOTE: Capacitors in DC Circuits
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Capacitors">Capacitors in DC Circuits</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Once a capacitor is fully charged, no current flows through its branch: find the potentials of its two ends</h2>
+    <p>Current cannot cross a capacitor's gap. Charge flows into one plate and out of the other only <strong>while the capacitor is charging</strong>. Two moments are easy to work out:</p>
+    <ul>
+      <li><strong>Just after the switch closes</strong>, an uncharged capacitor has $Q = 0$, so $V = Q/C = 0$. It behaves like a <strong>plain wire</strong> for that instant.</li>
+      <li><strong>A long time later</strong>, the capacitor is fully charged and the current in its branch is <strong>zero</strong>. It behaves like a <strong>break in the wire</strong>.</li>
+    </ul>
+    <p><strong>Method for the long-time (steady) state.</strong></p>
+    <ol>
+      <li>Remove the capacitor branch: no current flows in it.</li>
+      <li>Find the currents in the rest of the circuit, and from them the potentials.</li>
+      <li>The capacitor's voltage is the potential difference between the two points its branch joins. Then $Q = CV$.</li>
+    </ol>
+    <p>A resistor in series with the capacitor carries no current in the steady state, so it has <strong>no voltage across it</strong>. Treat it like a wire when you find the capacitor's voltage.</p>
+  </section>
+
+  <!-- FORMULA: the steady state -->
+  <div class="note-formula">
+    <h3>Steady state (a long time after switching)</h3>
+    <div class="formula-main">$$I_\text{capacitor branch} = 0, \qquad V_C = V_\text{one end} - V_\text{other end}, \qquad Q = CV_C$$</div>
+    <p class="symbols">At the instant of switching on, an uncharged capacitor has $V_C = 0$. In the steady state its branch carries no current. The plate joined to the higher potential is positive.</p>
+  </div>
+
+  <!-- PROOF: why the current stops -->
+  <div class="note-proof">
+    <ol>
+      <li>While current flows into the capacitor, $Q$ grows, and so does $V_C = Q/C$.</li>
+      <li>The current in the branch is driven by the difference between the voltage available and $V_C$. As $V_C$ rises, the current falls.</li>
+      <li>It stops when $V_C$ equals the potential difference between the branch's ends. Nothing then changes: this is the steady state.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: capacitor across different resistors; code at the bottom -->
+  <div class="note-demo">
+    <h2>12 V cell with R₁ = 2 Ω, R₂ = 4 Ω, R₃ = 6 Ω in series. Put C = 5 μF across…</h2>
+    <div class="controls choices" id="dcChoices">
+      <button type="button" data-a="1" data-b="2" class="active">R₂</button>
+      <button type="button" data-a="0" data-b="1">R₁</button>
+      <button type="button" data-a="2" data-b="3">R₃</button>
+      <button type="button" data-a="0" data-b="2">R₁ + R₂</button>
+      <button type="button" data-a="1" data-b="3">R₂ + R₃</button>
+    </div>
+    <canvas id="dcCanvas"></canvas>
+    <div class="output table-text" id="dcOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A 12 V cell drives 2.0 Ω, 4.0 Ω and 6.0 Ω in series. A 5.0 μF capacitor is connected across the 4.0 Ω resistor. Find its charge a long time later.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>No current in the capacitor branch: $I = 12/(2.0 + 4.0 + 6.0) = 1.0$ A.</li>
+        <li>Voltage across 4.0 Ω: $4.0 \times 1.0 = 4.0$ V. The capacitor has the same voltage.</li>
+        <li>$Q = 5.0 \times 4.0 = 20$ μC.</li>
+      </ol>
+      <p class="answer">20 μC</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">A 12 V cell drives $R_1 = 2.0$ Ω and $R_2 = 4.0$ Ω in series. Across $R_2$ is a branch made of a 10 Ω resistor in series with a 5.0 μF capacitor. Find the capacitor's charge in the steady state.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>No current in the branch, so the 10 Ω has no voltage across it.</li>
+        <li>$I = 12/6.0 = 2.0$ A, so $R_2$ has $4.0 \times 2.0 = 8.0$ V across it. The capacitor has the same voltage.</li>
+        <li>$Q = 5.0 \times 8.0 = 40$ μC.</li>
+      </ol>
+      <p class="answer">40 μC</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A 9.0 V cell drives 3.0 Ω and 6.0 Ω in series. $C_1 = 2.0$ μF is across the 3.0 Ω and $C_2 = 3.0$ μF is across the 6.0 Ω. Find both charges in the steady state.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$I = 9.0/9.0 = 1.0$ A. The voltages are 3.0 V and 6.0 V.</li>
+        <li>$Q_1 = 2.0 \times 3.0 = 6.0$ μC and $Q_2 = 3.0 \times 6.0 = 18$ μC.</li>
+      </ol>
+      <p class="answer">6.0 μC and 18 μC</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Resistors $R$, $2R$ and $3R$ are in series across a cell $V$. Find the steady charge on a capacitor $C$ connected (a) across $3R$, (b) across $2R$ and $3R$ together.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$I = V/(6R)$. The voltages are $V/6$, $V/3$ and $V/2$.</li>
+        <li>(a) $Q = C \cdot V/2 = CV/2$.</li>
+        <li>(b) $V/3 + V/2 = 5V/6$, so $Q = 5CV/6$.</li>
+      </ol>
+      <p class="answer">(a) $CV/2$ (b) $5CV/6$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">An uncharged 10 μF capacitor and a 200 Ω resistor are in series with a 6.0 V cell and a switch. Find the current just after the switch closes, and the charge a long time later.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Just after closing: $V_C = 0$, so the resistor has all 6.0 V. $I = 6.0/200 = 0.030$ A.</li>
+        <li>Long after: $I = 0$, so the resistor has 0 V and the capacitor has 6.0 V. $Q = 10 \times 6.0 = 60$ μC.</li>
+      </ol>
+      <p class="answer">30 mA at first; 60 μC in the end</p>
+    </details>
+  </div>
+
+  <!-- WARNING: which moment -->
+  <div class="note-warning">
+    Read the question for <strong>when</strong>: "just after closing" (an uncharged capacitor acts as a wire) or "a long time after" (the capacitor's branch carries no current). The two give completely different currents.
+  </div>
+
+  <!-- TIP: colour the potentials -->
+  <div class="note-tip">
+    Colour the wires by potential, as in the demo. The capacitor's voltage is just the difference between the colours at its two ends, whatever lies between them.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Just after switching on: an uncharged capacitor has $V = 0$ (like a wire).</li>
+      <li>Long after: no current in its branch (like a break).</li>
+      <li>$V_C$ is the potential difference between its ends; $Q = CV_C$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Where to connect the capacitor" demo (the TRY IT block above).
+  // Steady state: no current in the capacitor branch, so the resistors carry
+  // I = 12/(2 + 4 + 6) = 1 A. The four points along the chain (before R₁,
+  // between R₁ and R₂, between R₂ and R₃, after R₃) are at 12, 10, 6 and 0 V.
+  // The capacitor joins point a to point b (the buttons); its voltage is the
+  // potential difference between them, and Q = CV.
+  // Wires are coloured by potential: red = highest, then blue, green, orange.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('dcCanvas');
+    const output = document.getElementById('dcOutput');
+    const E = 12, R = [2, 4, 6], C = 5;
+    const I = E / (R[0] + R[1] + R[2]);
+    const POT = [E, E - R[0] * I, E - (R[0] + R[1]) * I, 0];   // the four points
+    const PX = [80, 190, 300, 410];                              // their x positions on the top wire
+    const COLS = ['#dc2626', '#2563eb', '#16a34a', '#ca8a04'];   // highest potential first
+    const DARK = '#0f172a', THING = '#475569';
+    let a = 1, b = 2, lastText = '';
+
+    function wire(g, pts, col) {
+      for (let i = 1; i < pts.length; i++) g.seg(pts[i - 1], pts[i], col, { width: 4 });
+    }
+    function resistor(g, p, q, label) {
+      const L = NoteGeom.dist(p, q), u = [(q[0] - p[0]) / L, (q[1] - p[1]) / L], n = [-u[1], u[0]];
+      let prev = p;
+      for (let k = 0; k < 6; k++) {
+        const t = (k + 0.5) / 6 * L, s = k % 2 ? -8 : 8;
+        const pt = [p[0] + u[0] * t + n[0] * s, p[1] + u[1] * t + n[1] * s];
+        g.seg(prev, pt, DARK, { width: 2 });
+        prev = pt;
+      }
+      g.seg(prev, q, DARK, { width: 2 });
+      g.text([(p[0] + q[0]) / 2 + n[0] * 24, (p[1] + q[1]) / 2 + n[1] * 24], label, DARK);
+    }
+    function cell(g, x, y1, y2) {
+      g.seg([x - 18, y1], [x + 18, y1], DARK, { width: 2 });
+      g.seg([x - 9, y2], [x + 9, y2], DARK, { width: 5 });
+      g.text([x + 26, y1 - 8], '+', DARK);
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const col = (i) => COLS[i];          // the four potentials are all different, in order
+
+        // the main loop: cell on the left, resistors along the top, back along the bottom
+        cell(g, 40, 160, 170);
+        wire(g, [[40, 160], [40, 60], [PX[0], 60], [110, 60]], col(0));
+        resistor(g, [110, 60], [160, 60], 'R₁ = 2 Ω');
+        wire(g, [[160, 60], [220, 60]], col(1));
+        resistor(g, [220, 60], [270, 60], 'R₂ = 4 Ω');
+        wire(g, [[270, 60], [330, 60]], col(2));
+        resistor(g, [330, 60], [380, 60], 'R₃ = 6 Ω');
+        wire(g, [[380, 60], [470, 60], [470, 300], [40, 300], [40, 170]], col(3));
+        for (let i = 0; i < 4; i++) {
+          g.dot([PX[i], 60], col(i));
+          g.text([PX[i], 34], `${POT[i]} V`, col(i));
+        }
+        g.text([360, 320], `I = ${I.toFixed(1)} A round the loop`, THING);
+
+        // the capacitor branch from point a down, across, and up to point b
+        const mid = (PX[a] + PX[b]) / 2, y = 200;
+        wire(g, [[PX[a], 60], [PX[a], y], [mid - 7, y]], col(a));
+        wire(g, [[mid + 7, y], [PX[b], y], [PX[b], 60]], col(b));
+        g.seg([mid - 7, y - 24], [mid - 7, y + 24], DARK, { width: 5 });
+        g.seg([mid + 7, y - 24], [mid + 7, y + 24], DARK, { width: 5 });
+        const dv = POT[a] - POT[b], q = C * dv;
+        g.text([mid - 22, y - 34], `+${q} μC`, col(a));
+        g.text([mid + 22, y + 36], `−${q} μC`, col(b));
+        g.text([mid, y + 60], 'C = 5 μF, no current', THING);
+
+        const names = ['before R₁', 'between R₁ and R₂', 'between R₂ and R₃', 'after R₃'];
+        const text =
+          `no current in the capacitor branch, so I = 12/(2 + 4 + 6) = ${I.toFixed(2)} A\n` +
+          `its ends: ${names[a]} (${POT[a]} V) and ${names[b]} (${POT[b]} V)  →  V = ${dv} V\n` +
+          `Q = CV = 5 × ${dv} = ${q} μC  (the plate on the ${POT[a]} V side is +)`;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    document.querySelectorAll('#dcChoices button').forEach((btn) => btn.addEventListener('click', () => {
+      document.querySelectorAll('#dcChoices button').forEach((z) => z.classList.toggle('active', z === btn));
+      a = Number(btn.dataset.a);
+      b = Number(btn.dataset.b);
+      board.redraw();
+    }));
+  })();
+</script>

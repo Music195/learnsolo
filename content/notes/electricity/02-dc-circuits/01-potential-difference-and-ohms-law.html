@@ -1,0 +1,266 @@
+<!-- tags: DC Circuits -->
+<!-- =====================================================================
+     NOTE: Potential Difference and Ohm's Law
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="DC Circuits">Potential Difference and Ohm's Law</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Potential is a height measured from earth; colour the circuit to see the heights</h2>
+    <p>Several quantities are measured in volts: <strong>potential</strong>, <strong>potential difference</strong>, <strong>voltage</strong>, <strong>emf</strong> and <strong>voltage drop</strong>. The odd one out is <em>potential</em>. The other four are all <em>differences</em> between two potentials; potential difference and voltage are exactly the same thing.</p>
+    <p>Picture asking "how high is this desk?". One person says 70 cm (from the floor); another, standing outside the building, says 10.7 m (from the ground). Both are right; they used different zero levels. In a circuit the zero level is the <strong>earth</strong> (ground), set to 0 V. The <strong>potential</strong> of a point is its height above earth. A <strong>potential difference</strong> is the difference between two heights, so it doesn't depend on where the zero is.</p>
+    <p><strong>The colouring method.</strong> Colour every part of the circuit by its potential, using one colour per height:</p>
+    <ul>
+      <li>a plain <strong>wire</strong> never changes colour: everything joined by wire has the same potential;</li>
+      <li>colours change only across components (cells, resistors, capacitors, coils);</li>
+      <li>a <strong>cell</strong> always has a potential difference between its terminals ($+$ is higher), whether or not current flows;</li>
+      <li>a <strong>resistor</strong> has potential difference $RI$ (Ohm's law), so it grows with the current. <strong>No current through a resistor means no potential difference across it</strong>: both ends get the same colour.</li>
+    </ul>
+    <p>Then redraw the colours as a ladder of heights, highest at the top. The cell lifts the charge up; each resistor drops it down. In series the drops add up to the cell's voltage. In parallel, each branch drops the full amount.</p>
+  </section>
+
+  <!-- FORMULA: Ohm's law and combinations -->
+  <div class="note-formula">
+    <h3>Ohm's law and combined resistance</h3>
+    <div class="formula-main">$$V = RI \qquad R_{\text{series}} = R_1 + R_2 \qquad \frac{1}{R_{\text{parallel}}} = \frac{1}{R_1} + \frac{1}{R_2}$$</div>
+    <p class="symbols">$V$: potential difference across a resistor (V). $R$: resistance (Ω). $I$: current through it (A). Current flows through a resistor from high potential to low potential.</p>
+  </div>
+
+  <!-- PROOF: combined resistance from the colours -->
+  <div class="note-proof">
+    <ol>
+      <li><strong>Series.</strong> One wire path, so the same current $I$ flows everywhere. The colours go: top of cell → (drop $R_1I$) → (drop $R_2I$) → bottom of cell, so $V = R_1I + R_2I = (R_1 + R_2)I$. A single resistor $R_1 + R_2$ would do the same.</li>
+      <li><strong>Parallel.</strong> Both resistors sit between the same two colours, so each has the full $V$: $I_1 = V/R_1$, $I_2 = V/R_2$.</li>
+      <li>The cell supplies $I = I_1 + I_2 = V\left(\dfrac{1}{R_1} + \dfrac{1}{R_2}\right)$, which matches one resistor $R$ with $\dfrac1R = \dfrac1{R_1} + \dfrac1{R_2}$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: coloured circuit + potential ladder; code at the bottom -->
+  <div class="note-demo">
+    <h2>R₁ = 4 Ω. Each colour is one potential; the ladder shows the heights</h2>
+    <div class="controls choices" id="ohChoices">
+      <button type="button" data-m="series" class="active">series</button>
+      <button type="button" data-m="parallel">parallel</button>
+      <button type="button" data-m="open">series, switch open</button>
+    </div>
+    <div class="controls">
+      <label>cell $V$ (V) = <input type="range" id="ohV" min="6" max="18" step="2" value="12"></label>
+      <label>$R_2$ (Ω) = <input type="range" id="ohR" min="2" max="12" step="2" value="8"></label>
+    </div>
+    <canvas id="ohCanvas"></canvas>
+    <div class="output table-text" id="ohOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A 12 V cell is connected to 4.0 Ω and 2.0 Ω in series. Find the current and the potential difference across each resistor.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$R = 4.0 + 2.0 = 6.0$ Ω, so $I = 12/6.0 = 2.0$ A (the same through both).</li>
+        <li>$V_1 = 4.0 \times 2.0 = 8.0$ V, $V_2 = 2.0 \times 2.0 = 4.0$ V. Check: $8.0 + 4.0 = 12$.</li>
+      </ol>
+      <p class="answer">2.0 A; 8.0 V and 4.0 V</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">The same resistors are connected in parallel to the 12 V cell. Find each current, the total current and the combined resistance.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Each has the full 12 V: $I_1 = 12/4.0 = 3.0$ A, $I_2 = 12/2.0 = 6.0$ A.</li>
+        <li>Total $I = 9.0$ A, so $R = 12/9.0 \approx 1.3$ Ω. (Check: $1/R = 1/4 + 1/2 = 3/4$.)</li>
+      </ol>
+      <p class="answer">3.0 A, 6.0 A; 9.0 A; about 1.3 Ω</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">In Example 1 the negative terminal of the cell is earthed. Find the potential of the point between the resistors. Then move the earth to that point and find the potentials of both cell terminals.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>From the + terminal (12 V), the 4.0 Ω resistor drops 8.0 V, so the middle point is at 4.0 V.</li>
+        <li>Earth at the middle (0 V): the + terminal is 8.0 V above it, so +8.0 V. The − terminal is 4.0 V below it, so −4.0 V.</li>
+        <li>The potential differences didn't change; only the zero level moved.</li>
+      </ol>
+      <p class="answer">4.0 V; then +8.0 V and −4.0 V</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">A 9.0 V cell, a 3.0 kΩ resistor and an open switch are in series. Find the potential difference across the resistor and across the switch.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The switch is open, so no current flows: $I = 0$.</li>
+        <li>Resistor: $V = RI = 0$, so both its ends share a colour.</li>
+        <li>So the colour changes only at the switch gap, which must take the whole 9.0 V.</li>
+      </ol>
+      <p class="answer">0 V across the resistor; 9.0 V across the switch</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">A 50 V cell drives current around an outer loop through a 40 Ω resistor and a variable resistor $R$ in series. A second branch, containing a 20 V cell and a galvanometer G, is connected across the 40 Ω resistor. $R$ is adjusted until G reads zero. Find $R$. (Ignore internal resistances.)</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>No current through G means no current in that whole branch. The branch's only potential difference is the 20 V cell, and it sits between the same two colours as the 40 Ω resistor.</li>
+        <li>So the 40 Ω resistor has 20 V across it: $I = 20/40 = 0.50$ A, and this current flows round the outer loop.</li>
+        <li>$R$ takes the rest: $50 - 20 = 30$ V, so $R = 30/0.50 = 60$ Ω.</li>
+      </ol>
+      <p class="answer">$R = 60$ Ω</p>
+    </details>
+  </div>
+
+  <!-- WARNING: no current, no drop -->
+  <div class="note-warning">
+    A resistor with <strong>no current</strong> has <strong>no potential difference</strong> across it. Don't give its two ends different colours just because a resistor is there. This is the key step in many circuit problems.
+  </div>
+
+  <!-- TIP: start at the + terminal -->
+  <div class="note-tip">
+    Start colouring at the + terminal of a cell and follow the wire until you reach a component. Pick a new colour only after a component. Then put the colours in height order. Most circuit questions become easy once the colours are right.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Potential: height above earth (0 V). Potential difference = voltage: a difference of heights.</li>
+      <li>Wires keep their colour; cells always lift; resistors drop $RI$, or nothing if $I = 0$.</li>
+      <li>Series: same $I$, drops add. Parallel: same $V$, currents add.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Colour the circuit" demo (the TRY IT block above).
+  // Left: the circuit. The cell (left side, + at the top) has V volts; R₁ = 4 Ω;
+  // R₂ is set by the slider. Every wire is coloured by its potential, with the
+  // negative terminal at 0 V: red = highest, then blue, then green.
+  // Right: the same colours as a ladder of heights (0 V at the bottom, 18 V at the top).
+  // "switch open": no current, so the resistors have no potential difference and
+  // the whole cell voltage appears across the switch gap.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('ohCanvas');
+    const output = document.getElementById('ohOutput');
+    const vBox = document.getElementById('ohV'), rBox = document.getElementById('ohR');
+    const R1 = 4, DARK = '#0f172a', THING = '#475569';
+    const COLS = ['#dc2626', '#2563eb', '#16a34a', '#ca8a04'];   // highest potential first
+    let mode = 'series', lastText = '';
+
+    // a wire through several points, in one colour
+    function wire(g, pts, col) {
+      for (let i = 1; i < pts.length; i++) g.seg(pts[i - 1], pts[i], col, { width: 4 });
+    }
+    // a zigzag resistor from p to q
+    function resistor(g, p, q, label) {
+      const L = NoteGeom.dist(p, q), u = [(q[0] - p[0]) / L, (q[1] - p[1]) / L], n = [-u[1], u[0]];
+      let prev = p;
+      for (let k = 0; k < 6; k++) {
+        const t = (k + 0.5) / 6 * L, s = k % 2 ? -8 : 8;
+        const pt = [p[0] + u[0] * t + n[0] * s, p[1] + u[1] * t + n[1] * s];
+        g.seg(prev, pt, DARK, { width: 2 });
+        prev = pt;
+      }
+      g.seg(prev, q, DARK, { width: 2 });
+      g.text([(p[0] + q[0]) / 2 + n[0] * 24, (p[1] + q[1]) / 2 + n[1] * 24], label, DARK);
+    }
+    // a cell on a vertical wire: long plate (+) at y1, short thick plate (−) at y2
+    function cell(g, x, y1, y2) {
+      g.seg([x - 18, y1], [x + 18, y1], DARK, { width: 2 });
+      g.seg([x - 9, y2], [x + 9, y2], DARK, { width: 5 });
+      g.text([x + 26, y1 - 8], '+', DARK);
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const V = Number(vBox.value), R2 = Number(rBox.value);
+        let I1 = 0, I2 = 0, mid = V;          // mid: potential between R₁ and R₂ (series)
+        if (mode === 'series') { I1 = I2 = V / (R1 + R2); mid = V - R1 * I1; }
+        if (mode === 'parallel') { I1 = V / R1; I2 = V / R2; }
+
+        // the distinct potentials, highest first, each with its colour
+        const levels = [...new Set([V, mid, 0].map((x) => Math.round(x * 100) / 100))].sort((a, b) => b - a);
+        const col = (x) => COLS[levels.indexOf(Math.round(x * 100) / 100)];
+
+        cell(g, 40, 160, 170);
+        if (mode === 'parallel') {
+          wire(g, [[40, 160], [40, 70], [280, 70], [280, 135]], col(V));
+          wire(g, [[170, 70], [170, 135]], col(V));
+          wire(g, [[170, 215], [170, 280]], col(0));
+          wire(g, [[280, 215], [280, 280], [40, 280], [40, 170]], col(0));
+          resistor(g, [170, 135], [170, 215], 'R₁');
+          resistor(g, [280, 135], [280, 215], 'R₂');
+        } else {
+          wire(g, [[40, 160], [40, 70], [110, 70]], col(V));
+          wire(g, [[190, 70], [280, 70], [280, 135]], col(mid));
+          resistor(g, [110, 70], [190, 70], 'R₁');
+          resistor(g, [280, 135], [280, 215], 'R₂');
+          if (mode === 'series') {
+            wire(g, [[280, 215], [280, 280], [40, 280], [40, 170]], col(0));
+          } else {
+            // an open switch: a lever lifted away from its contact
+            wire(g, [[280, 215], [280, 280], [180, 280]], col(V));
+            wire(g, [[140, 280], [40, 280], [40, 170]], col(0));
+            g.seg([140, 280], [176, 258], DARK, { width: 3 });
+            g.text([160, 300], 'switch', THING);
+          }
+        }
+
+        // the ladder of heights
+        g.text([420, 30], 'potential', THING);
+        g.seg([350, 300], [350, 50], '#cbd5e1', { width: 1.5 });
+        for (const lv of levels) {
+          const y = 300 - 240 * lv / 18;
+          g.seg([360, y], [450, y], COLS[levels.indexOf(lv)], { width: 5 });
+          g.text([485, y], `${lv.toFixed(1)} V`, COLS[levels.indexOf(lv)]);
+        }
+
+        let text;
+        if (mode === 'series') {
+          text =
+            `R = R₁ + R₂ = ${R1} + ${R2} = ${R1 + R2} Ω,  I = V/R = ${V}/${R1 + R2} = ${I1.toFixed(2)} A\n` +
+            `drop across R₁ = R₁I = ${(R1 * I1).toFixed(1)} V,  across R₂ = R₂I = ${(R2 * I2).toFixed(1)} V\n` +
+            `the drops add up to the cell: ${(R1 * I1).toFixed(1)} + ${(R2 * I2).toFixed(1)} = ${V} V`;
+        } else if (mode === 'parallel') {
+          text =
+            `both resistors sit between red and blue, so each has the full ${V} V\n` +
+            `I₁ = ${V}/${R1} = ${I1.toFixed(2)} A,  I₂ = ${V}/${R2} = ${I2.toFixed(2)} A,  total ${(I1 + I2).toFixed(2)} A\n` +
+            `combined R = V/I = ${(V / (I1 + I2)).toFixed(2)} Ω  (1/R = 1/${R1} + 1/${R2})`;
+        } else {
+          text =
+            `switch open: no current anywhere, I = 0\n` +
+            `so R₁ and R₂ have no potential difference: both ends of each are red\n` +
+            `the whole ${V} V of the cell appears across the switch gap`;
+        }
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    document.querySelectorAll('#ohChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#ohChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      mode = b.dataset.m;
+      board.redraw();
+    }));
+    vBox.addEventListener('input', () => board.redraw());
+    rBox.addEventListener('input', () => board.redraw());
+  })();
+</script>

@@ -1,0 +1,231 @@
+<!-- tags: Capacitors -->
+<!-- =====================================================================
+     NOTE: Capacitor Energy and Joule Heat
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Capacitors">Capacitor Energy and Joule Heat</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>A charged capacitor stores $\tfrac12QV$; the battery gave $QV$, so the other half became heat</h2>
+    <p><strong>Stored energy.</strong> Charging a capacitor means moving charge from one plate to the other, against the voltage already there. The first bit of charge moves across almost no voltage, so it costs almost nothing. The last bit moves across the full $V$. The voltage grows in step with the charge ($v = q/C$), so the total work is the <strong>area of the triangle</strong> under the $V$–$Q$ line:</p>
+    <p>$$U = \tfrac12QV = \tfrac12CV^2 = \frac{Q^2}{2C}.$$</p>
+    <p><strong>What the battery does.</strong> A battery pushes every bit of charge through its full voltage $V$, so its work is $W = QV$: the whole rectangle, <em>twice</em> the stored energy.</p>
+    <p><strong>Where the rest goes.</strong> Energy is conserved, so $W = U + H$. The difference $H = \tfrac12QV$ is <strong>Joule heat</strong> in the resistance of the circuit while the current flows.</p>
+    <p>The surprising part: the heat is <strong>half, whatever the resistance</strong>. A bigger resistor makes the charging slower, with a smaller current for longer, but the total heat comes out the same.</p>
+    <p><strong>Use energy conservation for any change:</strong> work done by the battery $=$ change in stored energy $+$ heat. When two charged capacitors are joined, no battery is involved, so the drop in stored energy is the heat.</p>
+  </section>
+
+  <!-- FORMULA: energy and the balance -->
+  <div class="note-formula">
+    <h3>Energy in a capacitor, and the energy balance</h3>
+    <div class="formula-main">$$U = \tfrac12QV = \tfrac12CV^2 = \frac{Q^2}{2C} \qquad\qquad W_\text{battery} = \Delta U + H$$</div>
+    <p class="symbols">$U$: stored energy (J). $W_\text{battery} = (\text{charge through the battery}) \times V$. $H$: Joule heat in the resistors. Charging from empty on a battery $V$: $W = QV$, $U = H = \tfrac12QV$.</p>
+  </div>
+
+  <!-- PROOF: triangle area -->
+  <div class="note-proof">
+    <ol>
+      <li>At a moment when the capacitor holds $q$, its voltage is $v = q/C$.</li>
+      <li>Moving a little more charge $\Delta q$ across costs $v\,\Delta q$: a thin strip under the $V$–$Q$ line.</li>
+      <li>The strips fill the triangle from $(0, 0)$ to $(Q, V)$, so $U = \tfrac12QV$. Using $Q = CV$ gives the other two forms.</li>
+      <li>The battery moves the same charge $Q$ across a constant $V$, which is the rectangle $QV$. The gap between them, $\tfrac12QV$, is the heat.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: RC charging; code at the bottom -->
+  <div class="note-demo">
+    <h2>Charging C = 100 μF from a 10 V battery through R (real time)</h2>
+    <div class="controls choices" id="ehChoices">
+      <button type="button" data-r="2000" class="active">R = 2 kΩ</button>
+      <button type="button" data-r="5000">R = 5 kΩ</button>
+      <button type="button" data-r="10000">R = 10 kΩ</button>
+    </div>
+    <canvas id="ehCanvas"></canvas>
+    <div class="output table-text" id="ehOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find the energy stored in a 200 μF capacitor charged to 10 V.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$U = \tfrac12CV^2 = \tfrac12 \times 200\times10^{-6} \times 10^2$.</li>
+      </ol>
+      <p class="answer">$1.0\times10^{-2}$ J</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">The capacitor in Example 1 was charged from empty by a 10 V battery through a resistor. Find the battery's work and the heat in the resistor.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$Q = CV = 2.0\times10^{-3}$ C, so $W = QV = 2.0\times10^{-2}$ J.</li>
+        <li>$H = W - U = 2.0\times10^{-2} - 1.0\times10^{-2} = 1.0\times10^{-2}$ J.</li>
+      </ol>
+      <p class="answer">$W = 2.0\times10^{-2}$ J, $H = 1.0\times10^{-2}$ J</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A 12 V cell, a switch S and $R_1 = 4.0$ Ω are in series with $R_2 = 8.0$ Ω. Across $R_2$ is a branch of $C = 50$ μF in series with $R_3 = 2.0$ Ω. With S closed for a long time, find the power used in the circuit and the energy stored in $C$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>No current in the capacitor branch: $I = 12/(4.0 + 8.0) = 1.0$ A, so $P = 12 \times 1.0 = 12$ W.</li>
+        <li>$R_3$ carries no current, so $C$ has the same voltage as $R_2$: $8.0 \times 1.0 = 8.0$ V.</li>
+        <li>$U = \tfrac12 \times 50\times10^{-6} \times 8.0^2 = 1.6\times10^{-3}$ J.</li>
+      </ol>
+      <p class="answer">12 W; $1.6\times10^{-3}$ J</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">S is now opened. The capacitor in Example 3 discharges around the loop through $R_3$ and $R_2$. Find the heat produced in each.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>All $1.6\times10^{-3}$ J turns into heat.</li>
+        <li>$R_2$ and $R_3$ are in series, so at every moment they carry the same current. Heat $I^2R$ splits in the ratio $8.0 : 2.0$.</li>
+        <li>$R_2$: $\tfrac{8}{10} \times 1.6\times10^{-3} = 1.28\times10^{-3}$ J. $R_3$: $\tfrac{2}{10} \times 1.6\times10^{-3} = 3.2\times10^{-4}$ J.</li>
+      </ol>
+      <p class="answer">$R_2$: $1.3\times10^{-3}$ J; $R_3$: $3.2\times10^{-4}$ J</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">A 2.0 μF capacitor charged to 5.0 V is joined to an uncharged 3.0 μF capacitor. How much energy becomes heat?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Before: $Q = 10$ μC and $U = \tfrac12 \times 2.0 \times 5.0^2 = 25$ μJ.</li>
+        <li>After: $V = 10/5.0 = 2.0$ V, so $U = \tfrac12 \times 5.0 \times 2.0^2 = 10$ μJ.</li>
+        <li>Heat $= 25 - 10 = 15$ μJ.</li>
+      </ol>
+      <p class="answer">15 μJ</p>
+    </details>
+  </div>
+
+  <!-- WARNING: QV vs ½QV -->
+  <div class="note-warning">
+    Don't mix up $QV$ and $\tfrac12QV$. $QV$ is the <strong>battery's work</strong>, because the battery's voltage is constant. $\tfrac12QV$ is the <strong>capacitor's energy</strong>, because its voltage grew from 0.
+  </div>
+
+  <!-- TIP: choose the form -->
+  <div class="note-tip">
+    Pick the form of $U$ that uses what stays fixed: $\tfrac12CV^2$ when $V$ is fixed (battery connected), $Q^2/(2C)$ when $Q$ is fixed (disconnected).
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$U = \tfrac12QV = \tfrac12CV^2 = Q^2/(2C)$: the triangle under the $V$–$Q$ line.</li>
+      <li>Charging from a battery: battery $QV$, stored $\tfrac12QV$, heat $\tfrac12QV$, whatever $R$ is.</li>
+      <li>In general: $W_\text{battery} = \Delta U + H$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "RC charging" demo (the TRY IT block above).
+  // E = 10 V, C = 100 μF, so a full charge is Q = CE = 1.0 mC. The charge at time t
+  // is q = Q(1 − e^(−t/RC)) (shown in real time: RC = 0.2, 0.5 or 1.0 s).
+  // Left: the V–Q graph. Up to the charge q so far:
+  //   battery work Eq       = the whole rectangle (width q, height E),
+  //   stored energy q²/2C   = the green triangle under the line v = q/C,
+  //   heat                  = the red part between them.
+  // Right: the same three energies as bars (full scale = EQ = 10 mJ).
+  // The run repeats: charging for 6RC, then a 1.5 s pause at full charge.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('ehCanvas');
+    const output = document.getElementById('ehOutput');
+    const E = 10, C = 100e-6, QF = C * E, WF = E * QF;
+    const X0 = 55, Y0 = 290, W = 250, H = 220;           // graph: origin and size in pixels
+    const ORANGE = '#ea580c', GREEN = '#16a34a', RED = '#dc2626', DARK = '#0f172a', THING = '#475569';
+    let R = 2000, t = 0, lastText = '';
+
+    const P = (q, v) => [X0 + W * q / QF, Y0 - H * v / E];
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const RC = R * C;
+        const q = QF * (1 - Math.exp(-Math.min(t, 6 * RC) / RC));
+        const v = q / C, I = (E - v) / R;
+        const work = E * q, stored = q * q / (2 * C), heat = work - stored;
+
+        // axes and the full-charge guide lines
+        g.seg(P(0, 0), P(QF * 1.08, 0), DARK, { width: 1.5 });
+        g.seg(P(0, 0), P(0, E * 1.1), DARK, { width: 1.5 });
+        g.text([P(QF * 1.08, 0)[0] + 4, Y0 - 14], 'Q', THING);
+        g.text([X0, Y0 - H - 34], 'V', THING);
+        g.text([X0 - 26, P(0, E)[1]], '10 V', THING);
+        g.text([P(QF, 0)[0], Y0 + 16], '1.0 mC', THING);
+        g.seg(P(0, E), P(QF, E), THING, { width: 1, dash: true });
+        g.seg(P(0, 0), P(QF, E), THING, { width: 1, dash: true });
+        g.seg(P(QF, 0), P(QF, E), THING, { width: 1, dash: true });
+
+        // the energies so far, as areas
+        if (q > 1e-9) {
+          g.poly([P(0, 0), P(q, v), P(q, E), P(0, E)], 'rgba(220, 38, 38, 0.25)');
+          g.poly([P(0, 0), P(q, 0), P(q, v)], 'rgba(22, 163, 74, 0.35)');
+          g.seg(P(0, E), P(q, E), ORANGE, { width: 3 });
+          g.seg(P(q, 0), P(q, E), ORANGE, { width: 2 });
+          g.seg(P(0, 0), P(q, v), GREEN, { width: 3 });
+          g.dot(P(q, v), GREEN);
+        }
+
+        // bars: battery, stored, heat
+        const bars = [['battery', work, ORANGE], ['stored', stored, GREEN], ['heat', heat, RED]];
+        bars.forEach(([name, val, col], k) => {
+          const x = 385 + 55 * k, h = 200 * val / WF;
+          g.poly([[x - 14, Y0], [x + 14, Y0], [x + 14, Y0 - h], [x - 14, Y0 - h]], col);
+          g.text([x, Y0 + 16], name, col);
+          g.text([x, Y0 - h - 12], (val * 1000).toFixed(1), col);
+        });
+        g.text([440, Y0 - 230], 'energy (mJ)', THING);
+
+        const text =
+          `t = ${Math.min(t, 6 * RC).toFixed(2)} s  (RC = ${RC.toFixed(1)} s):  q = ${(q * 1e6).toFixed(0)} μC,  current ${(I * 1000).toFixed(2)} mA\n` +
+          `battery Eq = ${(work * 1000).toFixed(2)} mJ = stored q²/2C ${(stored * 1000).toFixed(2)} mJ + heat ${(heat * 1000).toFixed(2)} mJ\n` +
+          `when full: ${(WF * 1000).toFixed(1)} mJ = ${(WF * 500).toFixed(1)} mJ stored + ${(WF * 500).toFixed(1)} mJ heat, for every R`;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // real-time clock; repeat after 6RC plus a short pause. Stop when the page has changed.
+    let last = performance.now();
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.max(0, Math.min((now - last) / 1000, 0.05));
+      last = now;
+      t += dt;
+      if (t > 6 * R * C + 1.5) t = 0;
+      board.redraw();
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    document.querySelectorAll('#ehChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#ehChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      R = Number(b.dataset.r);
+      t = 0;
+      board.redraw();
+    }));
+  })();
+</script>

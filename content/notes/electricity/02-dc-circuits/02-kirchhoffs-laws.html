@@ -1,0 +1,257 @@
+<!-- tags: DC Circuits -->
+<!-- =====================================================================
+     NOTE: Kirchhoff's Laws
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="DC Circuits">Kirchhoff's Laws</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Current in = current out at a junction; around a loop, the lifts equal the drops</h2>
+    <p><strong>First law (junctions).</strong> At any junction, the total current flowing in equals the total current flowing out. If 0.5 A arrives and one branch takes 0.3 A, the other must take 0.2 A.</p>
+    <p><strong>Second law (loops).</strong> Go once around any <em>closed</em> loop. The total of the <strong>emfs</strong> (cells lifting the potential) equals the total of the <strong>voltage drops</strong> (resistors lowering it). On the potential ladder: everything that goes up must come back down. An emf and a voltage drop are both potential differences; we call it an emf when the potential <em>rises</em> along our direction, a drop when it <em>falls</em>.</p>
+    <p><strong>Method when there are two or more cells</strong> (and combining resistances won't work):</p>
+    <ol>
+      <li>Choose a direction and a letter for each unknown current ($I_1$, $I_2$, …), obeying the first law at every junction. A wrong guess of direction is fine.</li>
+      <li>Choose loops and give each a direction of travel (an arrow).</li>
+      <li>For each loop write: (sum of emfs) = (sum of drops), with these signs:
+        <ul>
+          <li>cell: $+E$ if your travel goes from − to + through it, $-E$ if from + to −;</li>
+          <li>resistor: $+RI$ if you travel <em>with</em> its current arrow, $-RI$ if <em>against</em>.</li>
+        </ul>
+      </li>
+      <li>Solve. A negative answer means the current really flows the other way.</li>
+    </ol>
+    <p>Potentials need an earth (0 V). The potential differences are fixed, but the potentials change if the earth is moved.</p>
+  </section>
+
+  <!-- FORMULA: the two laws -->
+  <div class="note-formula">
+    <h3>Kirchhoff's laws</h3>
+    <div class="formula-main">$$\sum I_{\text{in}} = \sum I_{\text{out}} \qquad \sum E = \sum RI \ \ \text{(around a closed loop)}$$</div>
+    <p class="symbols">First law: at a junction. Second law: around a closed loop (an open switch breaks the loop). Signs follow the rules above.</p>
+  </div>
+
+  <!-- PROOF: why the laws hold -->
+  <div class="note-proof">
+    <ol>
+      <li><strong>First law.</strong> Charge cannot pile up at a junction in a steady circuit, so every coulomb arriving must leave. Charge per second in = charge per second out.</li>
+      <li><strong>Second law.</strong> Potential is a height. Start at a point, walk round the loop, and arrive back at the same point: you are at the same height.</li>
+      <li>So the total rise (emfs) minus the total fall (drops $RI$) is zero, which is $\sum E = \sum RI$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: two-cell circuit; code at the bottom -->
+  <div class="note-demo">
+    <h2>E₁ = 70 V, R₁ = 10 Ω, R₃ = 10 Ω, R₂ = 20 Ω; bottom wire earthed</h2>
+    <div class="controls">
+      <label>right cell $E_2$ (V) = <input type="range" id="kiE" min="0" max="80" step="10" value="10"></label>
+    </div>
+    <canvas id="kiCanvas"></canvas>
+    <div class="output table-text" id="kiOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">An 11 V cell drives current through 10 Ω, then through 20 Ω and 30 Ω in parallel. Find the current in each resistor.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Parallel part: $\dfrac{1}{R} = \dfrac1{20} + \dfrac1{30} = \dfrac{5}{60}$, so 12 Ω. Total $10 + 12 = 22$ Ω, $I = 11/22 = 0.50$ A.</li>
+        <li>The 10 Ω drops $5.0$ V. The second law says the parallel pair drops the remaining $11 - 5.0 = 6.0$ V.</li>
+        <li>$I_{20} = 6.0/20 = 0.30$ A, $I_{30} = 6.0/30 = 0.20$ A. First law: $0.30 + 0.20 = 0.50$ ✓.</li>
+      </ol>
+      <p class="answer">0.50 A, 0.30 A, 0.20 A</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">In Example 1, find the potentials of the three different colours (a) with the cell's − terminal earthed, (b) with the junction after the 10 Ω resistor earthed.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>(a) − terminal 0 V; after the parallel pair, going backwards, up 6.0 V: 6.0 V; + terminal 11 V.</li>
+        <li>(b) The junction is 0 V. The + terminal is 5.0 V above it: +5.0 V. The − terminal is 6.0 V below it: −6.0 V.</li>
+      </ol>
+      <p class="answer">(a) 11 V, 6.0 V, 0 V; (b) 5.0 V, 0 V, −6.0 V</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">The demo circuit with $E_2 = 10$ V. Three branches join a top wire and a bottom wire. Left: 70 V cell (+ upwards) and $R_1 = 10$ Ω, current $I_1$ up. Right: 10 V cell (+ upwards) and $R_2 = 20$ Ω, current $I_2$ up. Middle: $R_3 = 10$ Ω, current $I_1 + I_2$ down. Find the currents.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Loop ① (left branch up, middle down): $70 = 10I_1 + 10(I_1 + I_2)$.</li>
+        <li>Loop ② (outer: left up, right down): the 10 V cell is crossed from + to −, so $-10$; $R_2$ is crossed against $I_2$, so $-20I_2$: $70 - 10 = 10I_1 - 20I_2$.</li>
+        <li>From ①: $I_2 = 7 - 2I_1$. Into ②: $60 = 10I_1 - 140 + 40I_1$, so $I_1 = 4.0$ A and $I_2 = -1.0$ A.</li>
+      </ol>
+      <p class="answer">$I_1 = 4.0$ A up; $I_2 = 1.0$ A <em>down</em> (the minus sign); middle 3.0 A down</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">In Example 3 the bottom wire is earthed. Find the potential of the top wire and of point A, between the right cell and $R_2$.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Top wire: up through $R_3$ against its 3.0 A, a rise of $10 \times 3.0 = 30$ V. So 30 V.</li>
+        <li>A: from the bottom (0 V), the right cell lifts 10 V, so 10 V.</li>
+        <li>Check: from A to the top through $R_2$, $10 + 20 \times 1.0 = 30$ V ✓.</li>
+      </ol>
+      <p class="answer">Top wire 30 V; A = 10 V</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">Two cells, 6.0 V and 3.0 V, are connected + to + through a 2.0 Ω resistor and − to − through a 1.0 Ω resistor. Find the current and its direction.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>One loop, current $I$ guessed to leave the 6.0 V cell's + terminal.</li>
+        <li>Going round with $I$: through the 6.0 V cell − to +: $+6.0$; through the 3.0 V cell + to −: $-3.0$; drops $2.0I + 1.0I$.</li>
+        <li>$6.0 - 3.0 = 3.0I$, so $I = 1.0$ A. Positive, so the guess was right.</li>
+      </ol>
+      <p class="answer">1.0 A, out of the 6.0 V cell's + terminal (it charges the 3.0 V cell)</p>
+    </details>
+  </div>
+
+  <!-- WARNING: signs -->
+  <div class="note-warning">
+    The sign of $RI$ depends on <strong>your travel direction compared with the current arrow you drew</strong>, not on which way you think the current "really" goes. Follow the rules mechanically, and let the algebra tell you the true direction.
+  </div>
+
+  <!-- TIP: currents first, potentials after -->
+  <div class="note-tip">
+    Questions often ask for a potential, not a current. You still need the currents first: get them with Kirchhoff's laws, then colour the circuit and walk from the earth to the point, adding rises and subtracting drops.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Junction: current in = current out.</li>
+      <li>Closed loop: $\sum E = \sum RI$, with signs set by your travel direction.</li>
+      <li>A negative current means the real direction is opposite to your arrow.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Two-cell circuit" demo (the TRY IT block above).
+  // Three branches join a top wire (y = 60) and an earthed bottom wire (y = 290):
+  //   left  (x = 50):  cell E₁ = 70 V (+ up) then R₁ = 10 Ω, current I₁ taken upwards;
+  //   middle (x = 170): R₃ = 10 Ω, current I₃ taken downwards;
+  //   right (x = 290): cell E₂ (slider, + up) then R₂ = 20 Ω, current I₂ taken upwards.
+  // Kirchhoff's first law at the top wire, I₁ + I₂ = I₃, with
+  //   I₁ = (E₁ − V)/R₁, I₂ = (E₂ − V)/R₂, I₃ = V/R₃,
+  // gives the top-wire potential V = (E₁/R₁ + E₂/R₂)/(1/R₁ + 1/R₂ + 1/R₃).
+  // Arrows show the true direction of each current; wires are coloured by potential.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('kiCanvas');
+    const output = document.getElementById('kiOutput');
+    const eBox = document.getElementById('kiE');
+    const E1 = 70, R1 = 10, R2 = 20, R3 = 10, YT = 60, YB = 290;
+    const DARK = '#0f172a', THING = '#475569', ORANGE = '#ea580c';
+    const COLS = ['#dc2626', '#2563eb', '#16a34a', '#ca8a04'];   // highest potential first
+    let lastText = '';
+
+    function wire(g, pts, col) {
+      for (let i = 1; i < pts.length; i++) g.seg(pts[i - 1], pts[i], col, { width: 4 });
+    }
+    function resistor(g, p, q, label) {
+      const L = NoteGeom.dist(p, q), u = [(q[0] - p[0]) / L, (q[1] - p[1]) / L], n = [-u[1], u[0]];
+      let prev = p;
+      for (let k = 0; k < 6; k++) {
+        const t = (k + 0.5) / 6 * L, s = k % 2 ? -8 : 8;
+        const pt = [p[0] + u[0] * t + n[0] * s, p[1] + u[1] * t + n[1] * s];
+        g.seg(prev, pt, DARK, { width: 2 });
+        prev = pt;
+      }
+      g.seg(prev, q, DARK, { width: 2 });
+      g.text([(p[0] + q[0]) / 2 + n[0] * 24, (p[1] + q[1]) / 2 + n[1] * 24], label, DARK);
+    }
+    function cell(g, x, y1, y2, label) {
+      g.seg([x - 18, y1], [x + 18, y1], DARK, { width: 2 });
+      g.seg([x - 9, y2], [x + 9, y2], DARK, { width: 5 });
+      g.text([x - 34, (y1 + y2) / 2], label, DARK);
+    }
+    function arrow(g, p, q, col) {
+      g.seg(p, q, col, { width: 2.5 });
+      const a = Math.atan2(q[1] - p[1], q[0] - p[0]);
+      for (const s of [-1, 1]) g.seg(q, [q[0] - 9 * Math.cos(a + s * 0.45), q[1] - 9 * Math.sin(a + s * 0.45)], col, { width: 2.5 });
+    }
+    // a current arrow beside a vertical branch: up if I > 0 (for an "up" branch)
+    function current(g, x, up, I, name) {
+      if (Math.abs(I) < 1e-9) { g.text([x + 34, 245], `${name} = 0`, ORANGE); return; }
+      const goesUp = up === I > 0;
+      arrow(g, [x + 16, goesUp ? 262 : 228], [x + 16, goesUp ? 228 : 262], ORANGE);
+      g.text([x + 50, 245], `${Math.abs(I).toFixed(1)} A`, ORANGE);
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const E2 = Number(eBox.value);
+        const V = (E1 / R1 + E2 / R2) / (1 / R1 + 1 / R2 + 1 / R3);
+        const I1 = (E1 - V) / R1, I2 = (E2 - V) / R2, I3 = V / R3;
+
+        const key = (x) => Math.round(x * 100) / 100;
+        const levels = [...new Set([V, E1, E2, 0].map(key))].sort((a, b) => b - a);
+        const col = (x) => COLS[levels.indexOf(key(x))];
+
+        // rails and branches
+        wire(g, [[50, YT], [290, YT]], col(V));
+        wire(g, [[50, YB], [290, YB]], col(0));
+        for (const [x, E, R, name] of [[50, E1, R1, 'R₁'], [290, E2, R2, 'R₂']]) {
+          wire(g, [[x, YB], [x, 225]], col(0));
+          wire(g, [[x, 215], [x, 150]], col(E));
+          wire(g, [[x, 90], [x, YT]], col(V));
+          resistor(g, [x, 90], [x, 150], name);
+        }
+        cell(g, 50, 215, 225, 'E₁');
+        cell(g, 290, 215, 225, 'E₂');
+        wire(g, [[170, YT], [170, 135]], col(V));
+        wire(g, [[170, 215], [170, YB]], col(0));
+        resistor(g, [170, 135], [170, 215], 'R₃');
+        // earth symbol under the bottom wire
+        g.seg([170, YB], [170, YB + 16], DARK, { width: 2 });
+        for (const [w, dy] of [[14, 16], [9, 22], [4, 28]]) g.seg([170 - w, YB + dy], [170 + w, YB + dy], DARK, { width: 2 });
+
+        current(g, 50, true, I1, 'I₁');
+        current(g, 290, true, I2, 'I₂');
+        current(g, 170, false, I3, 'I₃');
+
+        // the ladder of heights (0 to 90 V)
+        g.text([420, 30], 'potential', THING);
+        g.seg([360, 300], [360, 50], '#cbd5e1', { width: 1.5 });
+        for (const lv of levels) {
+          const y = 300 - 240 * lv / 90;
+          g.seg([370, y], [440, y], col(lv), { width: 5 });
+          g.text([480, y], `${lv.toFixed(1)} V`, col(lv));
+        }
+
+        const dir = (I, pos, neg) => (I >= 0 ? pos : neg);
+        const text =
+          `junction: (70 − V)/10 + (${E2} − V)/20 = V/10  →  top wire V = ${V.toFixed(1)} V\n` +
+          `I₁ = ${I1.toFixed(2)} A (${dir(I1, 'up', 'really down')}),  I₂ = ${I2.toFixed(2)} A (${dir(I2, 'up', 'really down')}),  I₃ = ${I3.toFixed(2)} A (down)\n` +
+          `loop check: 70 = 10I₁ + 10I₃ = ${(R1 * I1).toFixed(1)} + ${(R3 * I3).toFixed(1)}`;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    eBox.addEventListener('input', () => board.redraw());
+  })();
+</script>

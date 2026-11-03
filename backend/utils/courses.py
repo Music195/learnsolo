@@ -36,6 +36,8 @@ COURSES = {
     # Waves: wave basics, superposition and standing waves, wave phenomena,
     # sound, light and lenses, interference of light
     "waves": {"name": "Waves", "subject": "Physics"},
+    # Electricity: electric force and field, DC circuits, capacitors
+    "electricity": {"name": "Electricity", "subject": "Physics"},
 }
 
 # Past question folders (content/past/<folder>/) -> name, icon and description.
@@ -61,6 +63,8 @@ PAST_CATEGORIES = {
 TOPIC_NAMES = {
     # a folder name can't hold the apostrophe
     "03-newtons-laws": "Newton's Laws",
+    # "dc" must stay capitals
+    "02-dc-circuits": "DC Circuits",
 }
 
 _SMALL_WORDS = {"and", "of", "the", "in", "on", "to", "a", "an", "for"}

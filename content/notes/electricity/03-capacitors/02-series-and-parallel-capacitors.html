@@ -1,0 +1,231 @@
+<!-- tags: Capacitors -->
+<!-- =====================================================================
+     NOTE: Series and Parallel Capacitors
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Capacitors">Series and Parallel Capacitors</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Parallel capacitors share a voltage and add their charges; series capacitors share a charge and add their voltages</h2>
+    <p><strong>Recognise the connection by potentials, not by how the drawing looks.</strong> Colour each wire by its potential, as for resistors.</p>
+    <ul>
+      <li><strong>Parallel:</strong> both capacitors sit between the same two potentials. So they have the <strong>same voltage</strong> $V$, and their charges add: $Q = C_1V + C_2V$. Together they act like one capacitor with $C = C_1 + C_2$. It is like making the plates bigger.</li>
+      <li><strong>Series:</strong> one capacitor follows the other, with a middle piece of metal between them (the lower plate of the first, the upper plate of the second, and the wire joining them). If that middle piece started <strong>uncharged</strong>, its two plates hold $-Q$ and $+Q$. So both capacitors carry the <strong>same charge</strong> $Q$, and their voltages add. Together: $\dfrac1C = \dfrac1{C_1} + \dfrac1{C_2}$. It is like making the gap wider.</li>
+    </ul>
+    <p>These are the opposite of the resistor rules: capacitors <em>add</em> in parallel and use the reciprocal rule in series.</p>
+    <p><strong>Joining charged capacitors (charge sharing).</strong> Two charged capacitors are joined plate to plate. Each joined pair of plates is cut off from everything else, so its <strong>total charge cannot change</strong>. Charge flows until both capacitors have the same voltage:</p>
+    <p>$$V = \frac{\text{total charge on the joined plates}}{C_1 + C_2}.$$</p>
+    <p>Joining $+$ to $-$ means the charges partly cancel, so you subtract them first.</p>
+  </section>
+
+  <!-- FORMULA: combined capacitance -->
+  <div class="note-formula">
+    <h3>Combined capacitance</h3>
+    <div class="formula-main">$$\text{parallel: } C = C_1 + C_2 \qquad\qquad \text{series: } \frac1C = \frac1{C_1} + \frac1{C_2}$$</div>
+    <p class="symbols">Parallel: same $V$, charges add. Series (middle piece uncharged at the start): same $Q$, voltages add. For two in series, $C = \dfrac{C_1C_2}{C_1 + C_2}$.</p>
+  </div>
+
+  <!-- PROOF: the two rules -->
+  <div class="note-proof">
+    <ol>
+      <li>Parallel: each has voltage $V$, so $Q_1 = C_1V$ and $Q_2 = C_2V$. The total charge is $(C_1 + C_2)V$, so $C = C_1 + C_2$.</li>
+      <li>Series: the middle piece of metal has total charge 0, so its plates carry $-Q$ and $+Q$. Then each capacitor holds $Q$.</li>
+      <li>The voltages are $Q/C_1$ and $Q/C_2$. They add up to $V = Q\left(\dfrac1{C_1} + \dfrac1{C_2}\right)$. Comparing with $V = Q/C$ gives the rule.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: charge sharing; code at the bottom -->
+  <div class="note-demo">
+    <h2>C₁ = 2 μF charged to V₁, C₂ = 3 μF charged to V₂. Join them</h2>
+    <div class="controls choices" id="spChoices">
+      <button type="button" data-m="before" class="active">before joining</button>
+      <button type="button" data-m="same">join + to +</button>
+      <button type="button" data-m="flip">join + to −</button>
+    </div>
+    <div class="controls">
+      <label>$V_1$ (V) = <input type="range" id="spV1" min="0" max="12" step="1" value="10"></label>
+      <label>$V_2$ (V) = <input type="range" id="spV2" min="0" max="12" step="1" value="5"></label>
+    </div>
+    <canvas id="spCanvas"></canvas>
+    <div class="output table-text" id="spOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find the combined capacitance of 2.0 μF and 3.0 μF (a) in parallel, (b) in series.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Parallel: $2.0 + 3.0 = 5.0$ μF.</li>
+        <li>Series: $\dfrac{2.0 \times 3.0}{2.0 + 3.0} = 1.2$ μF. This is smaller than either one.</li>
+      </ol>
+      <p class="answer">(a) 5.0 μF (b) 1.2 μF</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">The two uncharged capacitors of Example 1 are put in series across a 10 V battery. Find the charge on each and the voltage across each.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Combined $C = 1.2$ μF, so $Q = 1.2 \times 10 = 12$ μC. Each capacitor has this same charge.</li>
+        <li>$V_1 = 12/2.0 = 6.0$ V and $V_2 = 12/3.0 = 4.0$ V. Check: $6.0 + 4.0 = 10$ ✓.</li>
+      </ol>
+      <p class="answer">12 μC each; 6.0 V across 2.0 μF and 4.0 V across 3.0 μF</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">A 2.0 μF capacitor is charged to 10 V and a 3.0 μF capacitor to 5.0 V. They are removed from their batteries and joined $+$ to $+$ and $-$ to $-$. Find the common voltage.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Charges: $2.0 \times 10 = 20$ μC and $3.0 \times 5.0 = 15$ μC.</li>
+        <li>The joined positive plates keep their total: $20 + 15 = 35$ μC.</li>
+        <li>$V = 35/(2.0 + 3.0) = 7.0$ V.</li>
+      </ol>
+      <p class="answer">7.0 V</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">The same two capacitors (charged to 10 V and 5.0 V) are joined the other way: $+$ of one to $-$ of the other. Find the common voltage.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>One joined pair of plates is $+20$ μC and $-15$ μC, so its total is $+5$ μC.</li>
+        <li>$V = 5/(2.0 + 3.0) = 1.0$ V.</li>
+      </ol>
+      <p class="answer">1.0 V</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">You have three 6.0 μF capacitors. Find the combined capacitance with (a) all three in series, (b) all three in parallel, (c) two in parallel, then in series with the third.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>(a) $\dfrac1C = \dfrac36$, so $C = 2.0$ μF.</li>
+        <li>(b) $6 + 6 + 6 = 18$ μF.</li>
+        <li>(c) The pair gives 12 μF. In series with 6.0 μF: $\dfrac{12 \times 6}{12 + 6} = 4.0$ μF.</li>
+      </ol>
+      <p class="answer">(a) 2.0 μF (b) 18 μF (c) 4.0 μF</p>
+    </details>
+  </div>
+
+  <!-- WARNING: series needs an uncharged middle -->
+  <div class="note-warning">
+    The series rule only works if the middle piece of metal started <strong>uncharged</strong>. If it already carried charge (for example, a capacitor charged earlier and then connected in), use charge conservation on that piece instead. See the next notes.
+  </div>
+
+  <!-- TIP: energy is lost -->
+  <div class="note-tip">
+    Watch the energy in the demo when you join the capacitors: it always drops. The missing energy becomes heat in the wires while the charge rushes across. (See the note on capacitor energy.)
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Parallel: same $V$, $C = C_1 + C_2$.</li>
+      <li>Series: same $Q$, $1/C = 1/C_1 + 1/C_2$.</li>
+      <li>Joining charged capacitors: the total charge on the joined plates is kept; $V = \text{total } Q / \text{total } C$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Charge sharing" demo (the TRY IT block above).
+  // C₁ = 2 μF is charged to V₁ and C₂ = 3 μF to V₂ (the sliders). Then the
+  // upper plates are joined by one wire and the lower plates by another.
+  // "join + to −" turns C₂ upside down first, so its + plate is at the bottom.
+  // The joined upper plates keep their total charge, so the common voltage is
+  // (total charge)/(C₁ + C₂). Units: μF, V, μC and μJ (½ × μF × V² gives μJ).
+  // Plate colour: red = positive charge, blue = negative, grey = none.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('spCanvas');
+    const output = document.getElementById('spOutput');
+    const v1Box = document.getElementById('spV1'), v2Box = document.getElementById('spV2');
+    const C1 = 2, C2 = 3;
+    const RED = '#dc2626', BLUE = '#2563eb', GREY = '#94a3b8', DARK = '#0f172a', THING = '#475569';
+    let mode = 'before', lastText = '';
+
+    const plateCol = (q) => (Math.abs(q) < 1e-9 ? GREY : q > 0 ? RED : BLUE);
+    const fmt = (q) => (q > 0 ? '+' : '') + (Math.abs(q) < 1e-9 ? '0' : q.toFixed(1)) + ' μC';
+
+    // one capacitor at x: upper plate charge qTop (the lower plate has −qTop)
+    function capacitor(g, x, halfWidth, qTop, name) {
+      g.seg([x, 100], [x, 150], DARK, { width: 3 });
+      g.seg([x, 190], [x, 240], DARK, { width: 3 });
+      g.seg([x - halfWidth, 150], [x + halfWidth, 150], plateCol(qTop), { width: 6 });
+      g.seg([x - halfWidth, 190], [x + halfWidth, 190], plateCol(-qTop), { width: 6 });
+      g.text([x + halfWidth + 40, 150], fmt(qTop), plateCol(qTop));
+      g.text([x + halfWidth + 40, 190], fmt(-qTop), plateCol(-qTop));
+      g.text([x - halfWidth - 22, 170], name, DARK);
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const V1 = Number(v1Box.value), V2 = Number(v2Box.value);
+        const sign = mode === 'flip' ? -1 : 1;          // C₂ turned upside down?
+        const q1 = C1 * V1, q2 = sign * C2 * V2;        // upper-plate charges before joining
+        const total = q1 + q2, Vf = total / (C1 + C2);   // after joining (upper minus lower)
+
+        if (mode === 'before') {
+          capacitor(g, 130, 40, q1, 'C₁');
+          capacitor(g, 350, 60, q2, 'C₂');
+          g.text([130, 280], `${V1} V`, THING);
+          g.text([350, 280], `${V2} V`, THING);
+        } else {
+          // the joining wires, coloured by which side is higher
+          const top = Vf > 1e-9 ? RED : Vf < -1e-9 ? BLUE : GREY;
+          const bottom = Vf > 1e-9 ? BLUE : Vf < -1e-9 ? RED : GREY;
+          g.seg([130, 100], [350, 100], top, { width: 4 });
+          g.seg([130, 240], [350, 240], bottom, { width: 4 });
+          capacitor(g, 130, 40, C1 * Vf, 'C₁');
+          capacitor(g, 350, 60, C2 * Vf, 'C₂');
+          g.text([240, 80], `upper wire: total ${fmt(total)}`, THING);
+          g.text([240, 280], `each has ${Math.abs(Vf).toFixed(2)} V across it`, THING);
+        }
+
+        const Ub = 0.5 * C1 * V1 * V1 + 0.5 * C2 * V2 * V2;
+        let text;
+        if (mode === 'before') {
+          text =
+            `C₁: Q = C₁V₁ = 2 × ${V1} = ${q1} μC\n` +
+            `C₂: Q = C₂V₂ = 3 × ${V2} = ${C2 * V2} μC\n` +
+            `stored energy ½CV²: ${(0.5 * C1 * V1 * V1).toFixed(1)} + ${(0.5 * C2 * V2 * V2).toFixed(1)} = ${Ub.toFixed(1)} μJ`;
+        } else {
+          const Ua = 0.5 * (C1 + C2) * Vf * Vf;
+          text =
+            `joined upper plates keep their total: ${q1} ${sign > 0 ? '+' : '−'} ${C2 * V2} = ${total} μC\n` +
+            `common voltage = ${total}/(2 + 3) = ${Vf.toFixed(2)} V;  C₁ has ${(C1 * Vf).toFixed(1)} μC, C₂ has ${(C2 * Vf).toFixed(1)} μC\n` +
+            `energy ${Ub.toFixed(1)} μJ → ${Ua.toFixed(1)} μJ  (${(Ub - Ua).toFixed(1)} μJ became heat)`;
+        }
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    document.querySelectorAll('#spChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#spChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      mode = b.dataset.m;
+      board.redraw();
+    }));
+    v1Box.addEventListener('input', () => board.redraw());
+    v2Box.addEventListener('input', () => board.redraw());
+  })();
+</script>

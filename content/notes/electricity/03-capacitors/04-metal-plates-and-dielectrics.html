@@ -1,0 +1,245 @@
+<!-- tags: Capacitors -->
+<!-- =====================================================================
+     NOTE: Metal Plates and Dielectrics
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Capacitors">Metal Plates and Dielectrics</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>A metal slab removes its thickness from the gap; a dielectric weakens the field inside it by $\varepsilon_r$</h2>
+    <p><strong>A metal slab in the gap.</strong> Slide an uncharged metal slab of thickness $t$ between the plates, without touching them. The free electrons in the metal move until there is <strong>no field inside the metal</strong>. This leaves $-Q$ on the face nearer the $+Q$ plate and $+Q$ on the other face. So the field lines stop at one face and start again at the other. Outside the slab, the field is the same $E = Q/(\varepsilon_0 S)$ as before.</p>
+    <p>The field now acts only across $d - t$, so the potential difference is $V = E(d - t)$. The capacitor behaves as if the gap were only $d - t$:</p>
+    <p>$$C = \frac{\varepsilon_0 S}{d - t}.$$</p>
+    <p>Where the slab sits in the gap does not matter, only its thickness.</p>
+    <p><strong>A dielectric (an insulator) in the gap.</strong> An insulator has no free electrons, but its molecules stretch slightly (they <em>polarise</em>), with their $-$ ends towards the $+$ plate. This puts some charge on its faces, which cancels part of the field inside. The field inside is weaker by a factor $\varepsilon_r$, the <strong>relative permittivity</strong> (about 1 for air; 2–10 for plastics, glass and ceramics; about 80 for water).</p>
+    <p>If the dielectric fills the whole gap, $V$ falls by $\varepsilon_r$ for the same $Q$, so</p>
+    <p>$$C = \varepsilon_r\frac{\varepsilon_0 S}{d} = \varepsilon_r C_0.$$</p>
+    <p>A metal slab is the extreme case, $\varepsilon_r \to \infty$: no field at all inside.</p>
+  </section>
+
+  <!-- FORMULA: capacitance with a slab -->
+  <div class="note-formula">
+    <h3>Slab of thickness $t$ in a gap $d$</h3>
+    <div class="formula-main">$$\text{metal: } C = \frac{\varepsilon_0 S}{d - t} \qquad \text{dielectric: } C = \frac{\varepsilon_0 S}{(d - t) + t/\varepsilon_r} \qquad \text{full: } C = \varepsilon_r C_0$$</div>
+    <p class="symbols">$C_0 = \varepsilon_0 S/d$: the capacitance with nothing in the gap. $\varepsilon_r$: relative permittivity of the dielectric (no unit). The product $\varepsilon = \varepsilon_r\varepsilon_0$ is the dielectric's permittivity.</p>
+  </div>
+
+  <!-- PROOF: add the potential drops -->
+  <div class="note-proof">
+    <ol>
+      <li>Gauss's law at the plates: in the empty part of the gap, $E = Q/(\varepsilon_0 S)$, the same as with no slab.</li>
+      <li>Inside the slab the field is $E/\varepsilon_r$ (zero for metal).</li>
+      <li>Add the potential drops across the gap: $V = E(d - t) + \dfrac{E}{\varepsilon_r}t = \dfrac{Q}{\varepsilon_0 S}\left[(d - t) + \dfrac{t}{\varepsilon_r}\right]$.</li>
+      <li>$C = Q/V$ gives the formula. For metal, $t/\varepsilon_r = 0$. For a full dielectric, $t = d$, which gives $\varepsilon_r\varepsilon_0 S/d$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: slab in the gap; code at the bottom -->
+  <div class="note-demo">
+    <h2>A slab in the gap (top) and the potential across the gap (bottom). Charged first on 12 V</h2>
+    <div class="controls choices" id="mdChoices">
+      <button type="button" data-k="metal" data-c="on" class="active">metal, connected</button>
+      <button type="button" data-k="metal" data-c="off">metal, disconnected</button>
+      <button type="button" data-k="diel" data-c="on">dielectric εr = 4, connected</button>
+      <button type="button" data-k="diel" data-c="off">dielectric εr = 4, disconnected</button>
+    </div>
+    <div class="controls">
+      <label>slab thickness $t/d$ = <input type="range" id="mdT" min="0" max="0.8" step="0.1" value="0.5"></label>
+    </div>
+    <canvas id="mdCanvas"></canvas>
+    <div class="output table-text" id="mdOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A capacitor has capacitance $C_0$. An uncharged metal slab of thickness $d/2$ is slid into the gap, parallel to the plates. Find the new capacitance.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$C = \dfrac{\varepsilon_0 S}{d - d/2} = 2\dfrac{\varepsilon_0 S}{d}$.</li>
+      </ol>
+      <p class="answer">$2C_0$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">A capacitor is charged to $V$ and disconnected. Then the gap is completely filled with a dielectric of $\varepsilon_r = 3$. Find the new capacitance and voltage.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$C = 3C_0$.</li>
+        <li>Disconnected, so $Q$ is fixed: $V' = Q/(3C_0) = V/3$.</li>
+      </ol>
+      <p class="answer">$3C_0$; $V/3$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Half the gap (thickness $d/2$) is filled with a dielectric of $\varepsilon_r = 3$, and the capacitor is connected to a battery $V$. Find the field in the air and in the dielectric, and the voltage across each part.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Call the field in the air $E_1$. In the dielectric it is $E_2 = E_1/3$.</li>
+        <li>$V = E_1\dfrac d2 + \dfrac{E_1}{3}\cdot\dfrac d2 = \dfrac{2}{3}E_1 d$, so $E_1 = \dfrac{3V}{2d}$ and $E_2 = \dfrac{V}{2d}$.</li>
+        <li>Air part: $E_1 \cdot d/2 = 3V/4$. Dielectric part: $E_2 \cdot d/2 = V/4$. Check: $3V/4 + V/4 = V$ ✓.</li>
+      </ol>
+      <p class="answer">$E_1 = 3V/(2d)$, $E_2 = V/(2d)$; voltages $3V/4$ and $V/4$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">A capacitor $C$ is charged to $V$ and disconnected. A metal slab of thickness $d/3$ is slid in. Find the new capacitance and voltage.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$C' = \dfrac{\varepsilon_0 S}{d - d/3} = \dfrac32 C$.</li>
+        <li>$Q$ is fixed, so $V' = Q/C' = \dfrac23 V$.</li>
+      </ol>
+      <p class="answer">$C' = 3C/2$, $V' = 2V/3$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">A 6.0 μF capacitor is charged on 12 V and disconnected. Its gap is then filled with a dielectric of $\varepsilon_r = 4.0$. Find the charge, the new capacitance and the new voltage.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$Q = 6.0 \times 12 = 72$ μC, and it stays.</li>
+        <li>$C = 4.0 \times 6.0 = 24$ μF.</li>
+        <li>$V = 72/24 = 3.0$ V.</li>
+      </ol>
+      <p class="answer">72 μC; 24 μF; 3.0 V</p>
+    </details>
+  </div>
+
+  <!-- WARNING: field in the gap -->
+  <div class="note-warning">
+    The field in the <strong>air</strong> part of the gap depends only on the charge on the plates, $E = Q/(\varepsilon_0 S)$. If the capacitor is disconnected, inserting a slab leaves the field in the air the same; it only removes or weakens the field inside the slab.
+  </div>
+
+  <!-- TIP: read the V graph -->
+  <div class="note-tip">
+    On the potential graph, the slope is the field. A flat part means no field (metal). A gentle slope means a weak field (dielectric). The total drop across the gap is the capacitor's voltage.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Metal slab: $C = \varepsilon_0 S/(d - t)$, wherever it sits in the gap.</li>
+      <li>Dielectric fills the gap: $C = \varepsilon_r C_0$.</li>
+      <li>Partial dielectric: add the drops, $V = E(d - t) + Et/\varepsilon_r$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Slab in the gap" demo (the TRY IT block above).
+  // The capacitor was first charged on 12 V with nothing in the gap (C₀, Q₀, E₀).
+  // A slab of thickness t = f·d sits in the middle of the gap.
+  // The gap "acts like" (1 − f) + f/εr of its width (εr = ∞ for metal), so C/C₀ = 1/that.
+  // Connected: V stays 12 V, so Q and the field in the air both grow by C/C₀.
+  // Disconnected: Q stays Q₀, so the field in the air stays E₀ and V shrinks.
+  // Top: plates and field lines (more lines = stronger field).
+  // Bottom: potential V against position x across the gap; the slope is the field.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('mdCanvas');
+    const output = document.getElementById('mdOutput');
+    const tBox = document.getElementById('mdT');
+    const V0 = 12, ER = 4;
+    const XL = 80, XR = 440, PT = 30, PB = 150;      // plates: x positions, top and bottom
+    const GY0 = 320, GY1 = 200;                      // graph: y of 0 V and of 12 V
+    const RED = '#dc2626', BLUE = '#2563eb', ORANGE = '#ea580c', GREEN = '#16a34a';
+    const DARK = '#0f172a', THING = '#475569', METAL = '#cbd5e1', DIEL = '#fde68a';
+    let kind = 'metal', conn = 'on', lastText = '';
+
+    function arrow(g, p, q, col) {
+      if (q[0] - p[0] < 14) return;
+      g.seg(p, q, col, { width: 1.5 });
+      g.seg(q, [q[0] - 7, q[1] - 4], col, { width: 1.5 });
+      g.seg(q, [q[0] - 7, q[1] + 4], col, { width: 1.5 });
+    }
+    // n evenly spaced heights between the plate ends
+    const rows = (n) => Array.from({ length: n }, (_, k) => PT + (PB - PT) * (k + 0.5) / n);
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const f = Number(tBox.value);
+        const inside = kind === 'metal' ? 0 : 1 / ER;   // field inside the slab, as a fraction of the air field
+        const width = (1 - f) + f * inside;              // the gap "acts like" this fraction of d
+        const ratio = 1 / width;                         // C/C₀
+        const Q = conn === 'on' ? ratio : 1;             // Q/Q₀
+        const Eair = Q;                                  // E/E₀ in the air (E = Q/ε₀S)
+        const V = conn === 'on' ? V0 : V0 * width;
+        const s1 = (XL + XR) / 2 - f * (XR - XL) / 2, s2 = (XL + XR) / 2 + f * (XR - XL) / 2;
+
+        // the slab
+        if (f > 0) g.poly([[s1, PT - 8], [s2, PT - 8], [s2, PB + 8], [s1, PB + 8]], kind === 'metal' ? METAL : DIEL);
+        // field lines: 4 per E₀ in the air, fewer (or none) inside the slab
+        const nAir = Math.min(14, Math.max(1, Math.round(4 * Eair)));
+        for (const y of rows(nAir)) {
+          arrow(g, [XL + 6, y], [s1 - 4, y], ORANGE);
+          arrow(g, [s2 + 4, y], [XR - 6, y], ORANGE);
+        }
+        if (kind === 'diel' && f > 0) {
+          for (const y of rows(Math.max(1, Math.round(nAir / ER)))) arrow(g, [s1 + 4, y], [s2 - 4, y], ORANGE);
+        }
+        // the plates
+        g.seg([XL, PT], [XL, PB], RED, { width: 6 });
+        g.seg([XR, PT], [XR, PB], BLUE, { width: 6 });
+        g.text([XL, PT - 18], `+${Q.toFixed(2)} Q₀`, RED);
+        g.text([XR, PT - 18], `−${Q.toFixed(2)} Q₀`, BLUE);
+        if (f > 0) g.text([(s1 + s2) / 2, PB + 22], kind === 'metal' ? 'metal' : 'dielectric', THING);
+
+        // potential graph: V falls by Eair·(length) in air, by Eair·inside·(length) in the slab
+        const Y = (v) => GY0 - (GY0 - GY1) * v / V0;
+        g.seg([XL, GY0], [XR, GY0], DARK, { width: 1 });
+        g.seg([XL, GY0], [XL, GY1 - 12], DARK, { width: 1 });
+        g.text([XL - 30, Y(V0)], '12 V', THING);
+        g.text([XL - 30, GY0], '0', THING);
+        g.text([XR + 30, GY0], 'x', THING);
+        const drop = (px) => V0 * Eair * px / (XR - XL);   // drop across px pixels of air (V₀/d per E₀)
+        const vA = V, vB = vA - drop(s1 - XL), vC = vB - drop(s2 - s1) * inside;
+        g.seg([XL, Y(vA)], [s1, Y(vB)], GREEN, { width: 3 });
+        g.seg([s1, Y(vB)], [s2, Y(vC)], GREEN, { width: 3 });
+        g.seg([s2, Y(vC)], [XR, Y(0)], GREEN, { width: 3 });
+        g.seg([s1, GY0], [s1, GY1 - 6], THING, { width: 1, dash: true });
+        g.seg([s2, GY0], [s2, GY1 - 6], THING, { width: 1, dash: true });
+        g.text([XL + 40, Y(vA) - 12], `${vA.toFixed(1)} V`, GREEN);
+
+        const formula = kind === 'metal' ? 'C = ε₀S/(d − t)' : 'C = ε₀S/((d − t) + t/εr)';
+        const text =
+          `t = ${f.toFixed(1)}d:  ${formula}  →  C = ${ratio.toFixed(2)} C₀\n` +
+          (conn === 'on'
+            ? `connected: V stays 12 V, so Q = ${Q.toFixed(2)} Q₀ and the field in the air = ${Eair.toFixed(2)} E₀\n`
+            : `disconnected: Q and the field in the air stay Q₀ and E₀;  V = 12/${ratio.toFixed(2)} = ${V.toFixed(1)} V\n`) +
+          (kind === 'metal'
+            ? 'inside the metal E = 0: the potential is flat there'
+            : `inside the dielectric E is ${ER} times weaker: a gentler slope`);
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    document.querySelectorAll('#mdChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#mdChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      kind = b.dataset.k;
+      conn = b.dataset.c;
+      board.redraw();
+    }));
+    tBox.addEventListener('input', () => board.redraw());
+  })();
+</script>
