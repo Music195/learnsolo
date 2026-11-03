@@ -1,0 +1,215 @@
+<!-- tags: Sound -->
+<!-- =====================================================================
+     NOTE: The Doppler Effect
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Sound">The Doppler Effect</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Moving towards each other: higher pitch; moving apart: lower pitch</h2>
+    <p>An ambulance siren sounds higher as it comes towards you and drops suddenly as it passes. The siren itself never changes; what you hear changes because of the motion. This is the <strong>Doppler effect</strong>.</p>
+    <ul>
+      <li><strong>Moving source</strong>: the source chases the waves it has just sent forward, so the crests ahead of it are squeezed together (shorter wavelength) and those behind it are spread out. The speed of sound itself doesn't change.</li>
+      <li><strong>Moving observer</strong>: the wavelength is unchanged, but an observer running into the waves meets crests more often, as if the waves came past faster.</li>
+    </ul>
+    <p>One formula covers every case, as long as you use signs carefully. Take the <strong>positive direction from the source towards the observer</strong> (the direction the sound travels to reach you). Each velocity is positive if it points that way and negative otherwise.</p>
+  </section>
+
+  <!-- FORMULA: Doppler formula -->
+  <div class="note-formula">
+    <h3>Doppler formula (positive direction: source → observer)</h3>
+    <div class="formula-main">$$f' = \frac{V - v_o}{V - v_s}\,f$$</div>
+    <p class="symbols">$f$: frequency the source emits. $f'$: frequency heard. $V$: speed of sound. $v_o$: observer's velocity; $v_s$: source's velocity, both with signs. Memory aid: <strong>o</strong>bserver on t<strong>o</strong>p, source below.</p>
+  </div>
+
+  <!-- PROOF: derivation -->
+  <div class="note-proof">
+    <ol>
+      <li>The source emits $f$ crests per second. In one second the first crest moves a distance $V$ forward while the source moves $v_s$, so those $f$ crests fill a length $V - v_s$.</li>
+      <li>The wavelength in front of the source is $\lambda' = \dfrac{V - v_s}{f}$.</li>
+      <li>Relative to the observer, the waves come past at speed $V - v_o$ (the observer moving with the waves makes them pass more slowly).</li>
+      <li>Crests reaching the observer per second: $f' = \dfrac{V - v_o}{\lambda'} = \dfrac{V - v_o}{V - v_s}f$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: wavefronts from a moving source; code at the bottom -->
+  <div class="note-demo">
+    <h2>V = 340 m/s, f = 400 Hz, speeds 102 m/s (0.3 V, exaggerated to see it)</h2>
+    <div class="controls choices" id="dpChoices">
+      <button type="button" data-k="sT" class="active">source → observer</button>
+      <button type="button" data-k="sA">source moves away</button>
+      <button type="button" data-k="oT">observer → source</button>
+      <button type="button" data-k="oA">observer moves away</button>
+    </div>
+    <canvas id="dpCanvas"></canvas>
+    <div class="output table-text" id="dpOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A source of 340 Hz and an observer move towards each other: the source at 10 m/s, the observer at 6.0 m/s. The speed of sound is 330 m/s. Find the frequency heard.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Positive: from the source towards the observer. The source moves that way: $v_s = +10$. The observer moves the opposite way: $v_o = -6.0$.</li>
+        <li>$f' = \dfrac{330 - (-6.0)}{330 - 10} \times 340 = \dfrac{336}{320} \times 340$.</li>
+      </ol>
+      <p class="answer">$f' = 357$ Hz</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">Now they move apart: the source at 10 m/s, the observer at 5.0 m/s, each moving away from the other. $f = 340$ Hz, $V = 330$ m/s. Find the frequency heard.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Positive: source → observer. The observer moves away from the source, i.e. in the positive direction: $v_o = +5.0$. The source moves away from the observer: $v_s = -10$.</li>
+        <li>$f' = \dfrac{330 - 5.0}{330 - (-10)} \times 340 = \dfrac{325}{340} \times 340$.</li>
+      </ol>
+      <p class="answer">$f' = 325$ Hz</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">An ambulance siren of 680 Hz moves at 20 m/s past a person standing still. $V = 340$ m/s. Find the frequency heard while it approaches and after it has passed.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Approaching: $v_s = +20$, $f' = \dfrac{340}{320} \times 680 \approx 723$ Hz.</li>
+        <li>Moving away: $v_s = -20$, $f' = \dfrac{340}{360} \times 680 \approx 642$ Hz.</li>
+      </ol>
+      <p class="answer">About 723 Hz, then about 642 Hz</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">For the ambulance of Example 3, find the wavelength of the sound in front of it.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\lambda' = \dfrac{V - v_s}{f} = \dfrac{340 - 20}{680}$.</li>
+      </ol>
+      <p class="answer">$\lambda' \approx 0.47$ m (instead of 0.50 m)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">A cyclist rides at 34 m/s towards a stationary 500 Hz source (a rather fast cyclist!). $V = 340$ m/s. What frequency do they hear?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>The observer moves towards the source, against the positive direction: $v_o = -34$; $v_s = 0$.</li>
+        <li>$f' = \dfrac{340 + 34}{340} \times 500$.</li>
+      </ol>
+      <p class="answer">$f' = 550$ Hz</p>
+    </details>
+  </div>
+
+  <!-- WARNING: signs -->
+  <div class="note-warning">
+    Fix the positive direction as <strong>source → observer</strong> every time, and give each velocity its sign. Don't memorise "plus when approaching"; just substitute with signs into one formula.
+  </div>
+
+  <!-- TIP: check the answer -->
+  <div class="note-tip">
+    Sanity check: approaching each other must give $f' &gt; f$, moving apart $f' &lt; f$.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>$f' = \dfrac{V - v_o}{V - v_s}f$, positive direction from source to observer.</li>
+      <li>A moving source changes the wavelength; a moving observer changes how fast crests reach them.</li>
+      <li>Approaching → higher; separating → lower.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Doppler" demo (the TRY IT block above).
+  // Picture scale: sound moves 90 pixels per second, the source emits a crest
+  // every 0.4 s (slowed down), moving things move at 0.3 × 90 = 27 pixels per second.
+  // The source S starts at the left and the observer O at the right, so the
+  // positive direction (source → observer) is to the right.
+  // Each crest is a circle centred where S was when it emitted it.
+  // The readout uses the real numbers: V = 340 m/s, f = 400 Hz, speeds 102 m/s.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('dpCanvas');
+    const output = document.getElementById('dpOutput');
+    const VPX = 90, TE = 0.4, U = 27, Y = 170, V = 340, F = 400, SPEED = 102;
+    const BLUE = '#93c5fd', RED = '#dc2626', GREEN = '#16a34a', THING = '#475569';
+    let k = 'sT', t = 0, lastText = '';
+    // velocities on screen (pixels per second, + = right)
+    const vs = () => (k === 'sT' ? U : k === 'sA' ? -U : 0);
+    const vo = () => (k === 'oT' ? -U : k === 'oA' ? U : 0);
+    const xs0 = () => (k === 'sA' ? 220 : 120), xo0 = () => (k === 'oA' ? 380 : 470);
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const xs = xs0() + vs() * t, xo = xo0() + vo() * t;
+        for (let n = 0; n * TE <= t; n++) {
+          const te = n * TE, r = VPX * (t - te);
+          if (r > 2 && r < 700) g.circle([xs0() + vs() * te, Y], r, BLUE);
+        }
+        g.circle([xs, Y], 9, RED, { fill: RED });
+        g.text([xs, Y + 26], 'S', RED);
+        g.poly([[xo - 8, Y - 10], [xo + 8, Y - 10], [xo, Y + 8]], GREEN);
+        g.text([xo, Y + 26], 'O', GREEN);
+        // velocity arrows (a line plus a small triangle head)
+        const arrow = (x, s, col) => {
+          const tip = x + s * 34;
+          g.seg([x, Y - 24], [tip - s * 6, Y - 24], col, { width: 2.5 });
+          g.poly([[tip, Y - 24], [tip - s * 9, Y - 30], [tip - s * 9, Y - 18]], col);
+        };
+        if (vs()) arrow(xs, Math.sign(vs()), RED);
+        if (vo()) arrow(xo, Math.sign(vo()), GREEN);
+        g.text([260, 320], 'positive direction: source → observer (to the right)', THING);
+
+        const vS = Math.sign(vs()) * SPEED, vO = Math.sign(vo()) * SPEED;
+        const f2 = (V - vO) / (V - vS) * F;
+        const sgn = (x) => (x < 0 ? `(−${-x})` : `${x}`);
+        const text =
+          `v_s = ${vS.toString().replace('-', '−')} m/s,  v_o = ${vO.toString().replace('-', '−')} m/s\n` +
+          `f' = (V − v_o)/(V − v_s) × f = (340 − ${sgn(vO)})/(340 − ${sgn(vS)}) × 400\n` +
+          `f' = ${f2.toFixed(0)} Hz  (${f2 > F ? 'higher' : 'lower'} than 400 Hz)` +
+          (vs() ? `;  wavelength towards O = ${((V - vS) / F).toFixed(3)} m` : ';  wavelength unchanged = 0.850 m');
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Run the clock; restart after 6 s. Stop when the page has changed.
+    let last = performance.now();
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.max(0, Math.min((now - last) / 1000, 0.05));
+      last = now;
+      t += dt;
+      if (t > 6) t = 0;
+      board.redraw();
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    document.querySelectorAll('#dpChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#dpChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      k = b.dataset.k;
+      t = 0;
+      board.redraw();
+    }));
+  })();
+</script>

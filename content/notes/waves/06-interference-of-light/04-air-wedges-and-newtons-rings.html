@@ -1,0 +1,233 @@
+<!-- tags: Interference of Light -->
+<!-- =====================================================================
+     NOTE: Air Wedges and Newton's Rings
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Interference of Light">Air Wedges and Newton's Rings</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>A thin gap of air whose thickness changes steadily gives a pattern of fringes</h2>
+    <p>These are thin films made of <strong>air</strong> between two pieces of glass. Light reflects off the bottom of the upper glass and off the top of the lower glass, and the two reflections interfere.</p>
+    <ul>
+      <li>Upper reflection: glass → air (smaller $n$): not inverted.</li>
+      <li>Lower reflection: air → glass (larger $n$): inverted.</li>
+    </ul>
+    <p>That is <strong>one inversion</strong>, so where the gap has thickness $t$ (and the extra path is $2t$, since $n = 1$ for air): <strong>dark</strong> when $2t = m\lambda$, <strong>bright</strong> when $2t = (m + \frac12)\lambda$. Where the glass touches ($t = 0$) it is dark.</p>
+    <p><strong>Air wedge.</strong> Two flat plates touch along one edge and are held apart by a thin spacer (thickness $D$, a distance $L$ from the edge). The gap grows steadily, $t = Dx/L$, so we see <strong>evenly spaced straight fringes</strong> parallel to the edge. Each next dark fringe is where the gap is $\lambda/2$ thicker.</p>
+    <p><strong>Newton's rings.</strong> A lens with a gently curved face (radius of curvature $R$) rests on flat glass. The gap is zero at the centre and grows like $t \approx r^2/(2R)$ at distance $r$, so the fringes are <strong>circles</strong>, getting closer together further out. The centre is dark.</p>
+    <p>Both are used to check how flat or how curved a surface is: any wobble in the fringes shows a bump smaller than a wavelength.</p>
+  </section>
+
+  <!-- FORMULA: wedge and rings -->
+  <div class="note-formula">
+    <h3>Air wedge and Newton's rings (reflected light, $m = 0, 1, 2, \dots$)</h3>
+    <div class="formula-main">$$\text{wedge: } \Delta x = \frac{\lambda L}{2D} \qquad \text{rings: dark at } r = \sqrt{m\lambda R},\ \text{bright at } r = \sqrt{\left(m + \tfrac12\right)\lambda R}$$</div>
+    <p class="symbols">$\Delta x$: spacing of wedge fringes. $L$: distance from the contact edge to the spacer; $D$: spacer thickness. $r$: ring radius; $R$: radius of curvature of the lens. If the gap is filled with a liquid of index $n$, replace $2t$ by $2nt$.</p>
+  </div>
+
+  <!-- PROOF: both results -->
+  <div class="note-proof">
+    <ol>
+      <li>Wedge: dark when $2t = m\lambda$ with $t = Dx/L$, so $x_m = \dfrac{m\lambda L}{2D}$; neighbours are $\Delta x = \dfrac{\lambda L}{2D}$ apart.</li>
+      <li>Rings: the curved face is part of a circle of radius $R$. At distance $r$ from the contact point, $R^2 = r^2 + (R - t)^2$, so $r^2 = 2Rt - t^2 \approx 2Rt$ (the gap $t$ is tiny), giving $t = \dfrac{r^2}{2R}$.</li>
+      <li>Dark when $2t = m\lambda$: $\dfrac{r^2}{R} = m\lambda$, so $r = \sqrt{m\lambda R}$.</li>
+      <li>Bright when $2t = (m + \frac12)\lambda$: $r = \sqrt{(m + \frac12)\lambda R}$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: wedge fringes and rings; code at the bottom -->
+  <div class="note-demo">
+    <h2>Reflected light from an air gap (side view not to scale)</h2>
+    <div class="controls choices" id="nrChoices">
+      <button type="button" data-k="wedge" class="active">air wedge</button>
+      <button type="button" data-k="rings">Newton's rings</button>
+    </div>
+    <div class="controls">
+      <label>wavelength (nm) = <input type="range" id="nrL" min="400" max="700" step="20" value="600"></label>
+    </div>
+    <canvas id="nrCanvas"></canvas>
+    <div class="output table-text" id="nrOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Two glass plates touch at one edge and are separated by a 0.050 mm wire 10 cm away. Light of 600 nm falls straight down. Find the spacing of the fringes.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$\Delta x = \dfrac{\lambda L}{2D} = \dfrac{6.0 \times 10^{-7} \times 0.10}{2 \times 5.0 \times 10^{-5}}$.</li>
+      </ol>
+      <p class="answer">$\Delta x = 6.0 \times 10^{-4}$ m $= 0.60$ mm</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">In an air wedge lit by 589 nm light, the fringes are 0.50 mm apart and the spacer is 8.0 cm from the contact edge. Find the spacer's thickness.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$D = \dfrac{\lambda L}{2\Delta x} = \dfrac{5.89 \times 10^{-7} \times 0.080}{2 \times 5.0 \times 10^{-4}}$.</li>
+      </ol>
+      <p class="answer">$D \approx 4.7 \times 10^{-5}$ m (about 0.05 mm)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Why is the contact edge of an air wedge (and the centre of Newton's rings) dark in reflected light?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>There $t = 0$, so there is no extra path.</li>
+        <li>Only one of the two reflections is inverted, so they arrive half a wavelength out of step and cancel.</li>
+      </ol>
+      <p class="answer">One inversion and no path difference: the reflections cancel</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">A lens with $R = 2.0$ m rests on flat glass, lit by 600 nm light. Find the radius of the first dark ring (not counting the dark centre).</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$r = \sqrt{m\lambda R}$ with $m = 1$: $r = \sqrt{6.0 \times 10^{-7} \times 2.0} = \sqrt{1.2 \times 10^{-6}}$.</li>
+      </ol>
+      <p class="answer">$r \approx 1.1 \times 10^{-3}$ m $= 1.1$ mm</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">The gap in Example 4 is filled with water ($n = 4/3$). What happens to the radius of that ring?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Now dark when $2nt = m\lambda$ (glass → water is still smaller $n$, water → glass larger: still one inversion), so $\dfrac{nr^2}{R} = m\lambda$ and $r = \sqrt{m\lambda R/n}$.</li>
+        <li>$r$ is multiplied by $\sqrt{3/4} \approx 0.87$: $1.1 \times 0.87$.</li>
+      </ol>
+      <p class="answer">About 0.95 mm: the rings shrink</p>
+    </details>
+  </div>
+
+  <!-- WARNING: which inversion -->
+  <div class="note-warning">
+    For an air gap between glass, the inversion happens at the <strong>lower</strong> surface (air → glass), not the upper one. Either way, there is exactly one, so the centre is dark.
+  </div>
+
+  <!-- TIP: λ/2 per fringe -->
+  <div class="note-tip">
+    A quick way to think about it: each next fringe means the gap is $\lambda/2$ thicker (the light crosses it twice).
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Air gap between glass: one inversion; dark when $2t = m\lambda$.</li>
+      <li>Wedge: straight, evenly spaced fringes, $\Delta x = \lambda L/(2D)$.</li>
+      <li>Newton's rings: $t = r^2/(2R)$; dark rings at $r = \sqrt{m\lambda R}$, closer together further out.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Air gap fringes" demo (the TRY IT block above).
+  // Brightness of reflected light where the gap is t: I = (1 + cos δ)/2 with
+  // δ = 2π·2t/λ + π (one inversion), so t = 0 is dark.
+  //   wedge: L = 10 cm, D = 0.050 mm, t = D x/L. The top view shows the first 5 mm
+  //          from the contact edge (1 mm = 88 pixels); the side view above it shows
+  //          the wedge with its angle hugely exaggerated.
+  //   rings: R = 2.0 m, t = r²/(2R). Top view of radius 3 mm (1 mm = 50 pixels),
+  //          centred at (180, 180); the side view is on the right.
+  // colour(nm, I) gives the light's colour at brightness I.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('nrCanvas');
+    const output = document.getElementById('nrOutput');
+    const lBox = document.getElementById('nrL');
+    const THING = '#475569';
+    let k = 'wedge', lastText = '';
+
+    function colour(nm, I) {
+      let r = 0, g = 0, b = 0;
+      if (nm < 440) { r = (440 - nm) / 60; b = 1; }
+      else if (nm < 490) { g = (nm - 440) / 50; b = 1; }
+      else if (nm < 510) { g = 1; b = (510 - nm) / 20; }
+      else if (nm < 580) { r = (nm - 510) / 70; g = 1; }
+      else if (nm < 645) { r = 1; g = (645 - nm) / 65; }
+      else r = 1;
+      const h = (v) => Math.round(255 * (0.06 + 0.94 * v * I)).toString(16).padStart(2, '0');
+      return `#${h(r)}${h(g)}${h(b)}`;
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const nm = Number(lBox.value), lam = nm * 1e-9;
+        const I = (t) => (1 + Math.cos(2 * Math.PI * 2 * t / lam + Math.PI)) / 2;
+        let text;
+        if (k === 'wedge') {
+          const L = 0.10, D = 5e-5, X0 = 40, PXMM = 88;
+          // side view: two plates touching at the left, spacer on the right
+          g.poly([[X0, 40], [480, 40], [480, 52], [X0, 52]], '#cbd5e1');
+          g.poly([[X0, 52], [480, 82], [480, 94], [X0, 64]], '#cbd5e1');
+          g.seg([X0, 52], [480, 52], THING, { width: 1 });
+          g.seg([X0, 52], [480, 82], THING, { width: 1 });
+          g.text([440, 104], 'spacer D', THING);
+          g.text([X0 + 50, 110], 'contact edge', THING);
+          g.text([260, 130], 'side view (angle hugely exaggerated)', '#94a3b8');
+          // top view: first 5 mm
+          for (let x = X0; x <= 480; x += 1) {
+            const xm = (x - X0) / PXMM * 1e-3;
+            g.seg([x, 160], [x, 290], colour(nm, I(D * xm / L)), { width: 1.5 });
+          }
+          for (let mm = 0; mm <= 5; mm++) g.text([X0 + mm * PXMM, 306], `${mm} mm`, '#94a3b8');
+          const dx = lam * L / (2 * D) * 1e3;
+          text = `λ = ${nm} nm, L = 10 cm, D = 0.050 mm  (top view: first 5 mm)\n` +
+            `Δx = λL/2D = ${dx.toFixed(2)} mm;  dark at the contact edge (t = 0)\n` +
+            `dark where 2t = mλ: a new dark fringe each time the gap grows ${(nm / 2).toFixed(0)} nm`;
+        } else {
+          const R = 2.0, C = [170, 175], PXMM = 50;
+          for (let r = 150; r >= 0; r -= 1) {
+            const rm = r / PXMM * 1e-3;
+            g.circle(C, r + 0.5, colour(nm, I(rm * rm / (2 * R))), { fill: colour(nm, I(rm * rm / (2 * R))) });
+          }
+          g.text([C[0], 340 - 8], '1 mm = 50 pixels', '#94a3b8');
+          // side view on the right: flat glass and a curved lens face
+          g.poly([[350, 250], [510, 250], [510, 270], [350, 270]], '#cbd5e1');
+          let prev = null;
+          for (let x = 350; x <= 510; x += 4) {
+            const p = [x, 250 - ((x - 430) / 80) ** 2 * 40];
+            if (prev) g.seg(prev, p, THING, { width: 2 });
+            prev = p;
+          }
+          g.text([430, 200], 'lens', THING);
+          g.text([430, 290], 'flat glass', THING);
+          g.text([430, 316], 'side view', '#94a3b8');
+          const r1 = Math.sqrt(lam * R) * 1e3, r2 = Math.sqrt(2 * lam * R) * 1e3, r3 = Math.sqrt(3 * lam * R) * 1e3;
+          text = `λ = ${nm} nm, R = 2.0 m:  dark rings at r = √(mλR)\n` +
+            `r₁ = ${r1.toFixed(2)} mm,  r₂ = ${r2.toFixed(2)} mm,  r₃ = ${r3.toFixed(2)} mm\n` +
+            'centre dark; the rings get closer together further out';
+        }
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    document.querySelectorAll('#nrChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#nrChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      k = b.dataset.k;
+      board.redraw();
+    }));
+    lBox.addEventListener('input', () => board.redraw());
+  })();
+</script>

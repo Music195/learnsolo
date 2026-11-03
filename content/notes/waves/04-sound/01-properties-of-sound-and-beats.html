@@ -1,0 +1,214 @@
+<!-- tags: Sound -->
+<!-- =====================================================================
+     NOTE: Properties of Sound and Beats
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Sound">Properties of Sound and Beats</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Sound is a longitudinal wave in air; two close notes together swell and fade</h2>
+    <p>Sound is a <strong>longitudinal wave</strong>: a vibrating object pushes the air back and forth, making compressions and rarefactions that travel outwards. It needs a medium, so there is no sound in a vacuum. It travels faster in liquids and solids than in air.</p>
+    <p>The speed of sound in air rises with temperature:</p>
+    <ul>
+      <li>$V = 331.5 + 0.6t$ m/s, where $t$ is the temperature in °C. At room temperature this is about 340 m/s.</li>
+    </ul>
+    <p>Every sound has <strong>three properties</strong>:</p>
+    <ul>
+      <li><strong>Loudness</strong>: set by the <em>amplitude</em>. A bigger amplitude gives a louder sound.</li>
+      <li><strong>Pitch</strong>: set by the <em>frequency</em>. A higher frequency gives a higher note. Humans hear roughly 20 Hz to 20 000 Hz; above that is <strong>ultrasound</strong>.</li>
+      <li><strong>Quality</strong> (timbre): set by the <em>shape</em> of the waveform. A piano and a violin playing the same note at the same loudness still sound different.</li>
+    </ul>
+    <p><strong>Beats.</strong> Play two notes with slightly different frequencies together. Sometimes their compressions arrive together and add (loud); a little later one has slipped half a vibration behind and they cancel (quiet). The sound swells and fades regularly: these are <strong>beats</strong>. The number of beats per second is the difference between the two frequencies.</p>
+  </section>
+
+  <!-- FORMULA: speed and beats -->
+  <div class="note-formula">
+    <h3>Speed of sound and beat frequency</h3>
+    <div class="formula-main">$$V = 331.5 + 0.6t \qquad f_{\text{beat}} = |f_1 - f_2|$$</div>
+    <p class="symbols">$V$: speed of sound in air (m/s); $t$: temperature (°C). $f_{\text{beat}}$: number of loud–quiet cycles per second; $f_1$, $f_2$: the two frequencies (Hz).</p>
+  </div>
+
+  <!-- PROOF: where |f1 − f2| comes from -->
+  <div class="note-proof">
+    <ol>
+      <li>Start at a loud moment: both sources are in step.</li>
+      <li>The next loud moment comes when the faster source has made exactly <strong>one more</strong> vibration than the slower, so they are in step again. Call this time $T_b$.</li>
+      <li>In time $T_b$ the sources make $f_1T_b$ and $f_2T_b$ vibrations: $f_1T_b - f_2T_b = 1$ (with $f_1 &gt; f_2$).</li>
+      <li>So $T_b = \dfrac{1}{f_1 - f_2}$ and the beat frequency is $f_{\text{beat}} = \dfrac{1}{T_b} = f_1 - f_2$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: beats; code at the bottom -->
+  <div class="note-demo">
+    <h2>Two notes, f₁ = 40 Hz and f₂, over one second (slowed-down example)</h2>
+    <div class="controls choices" id="btChoices">
+      <button type="button" data-f="41">f₂ = 41 Hz</button>
+      <button type="button" data-f="42" class="active">f₂ = 42 Hz</button>
+      <button type="button" data-f="44">f₂ = 44 Hz</button>
+    </div>
+    <canvas id="btCanvas"></canvas>
+    <div class="output table-text" id="btOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">Find the speed of sound in air at 15 °C.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$V = 331.5 + 0.6 \times 15 = 331.5 + 9.0$.</li>
+      </ol>
+      <p class="answer">$V = 340.5\ \mathrm{m/s} \approx 341$ m/s</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">On a 30 °C day, find the wavelength of a 500 Hz sound in air.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$V = 331.5 + 0.6 \times 30 = 349.5$ m/s.</li>
+        <li>$\lambda = V/f = 349.5/500$.</li>
+      </ol>
+      <p class="answer">$\lambda \approx 0.70$ m</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Two tuning forks of 440 Hz and 443 Hz are struck together. How many beats are heard per second, and how long is one beat?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$f_{\text{beat}} = 443 - 440 = 3$ Hz.</li>
+        <li>One beat lasts $1/3$ s.</li>
+      </ol>
+      <p class="answer">3 beats per second; about 0.33 s each</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">A guitar string sounded with a 440 Hz tuning fork gives 2 beats per second. When the string is tightened slightly (raising its frequency), the beats become 3 per second. Find the string's original frequency.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>2 beats/s means the string is 438 Hz or 442 Hz.</li>
+        <li>Raising 438 Hz would move it towards 440 Hz and reduce the beats. The beats increased, so the string was already above 440 Hz.</li>
+      </ol>
+      <p class="answer">442 Hz</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">You see lightning and hear the thunder 3.0 s later. The air is at 15 °C. How far away was the lightning?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Light arrives almost instantly, so the delay is the sound's travel time.</li>
+        <li>$d = Vt = 340.5 \times 3.0 \approx 1.0 \times 10^{3}$ m.</li>
+      </ol>
+      <p class="answer">About 1.0 km</p>
+    </details>
+  </div>
+
+  <!-- WARNING: beats need close frequencies -->
+  <div class="note-warning">
+    Beats are only heard when the two frequencies are <strong>close</strong> (a difference of a few hertz). Far-apart frequencies just sound like two separate notes.
+  </div>
+
+  <!-- TIP: tuning -->
+  <div class="note-tip">
+    Musicians tune by ear using beats: adjust until the beats slow down and disappear, and the frequencies match.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Sound: longitudinal, needs a medium; $V = 331.5 + 0.6t$ in air.</li>
+      <li>Loudness ↔ amplitude; pitch ↔ frequency; quality ↔ waveform.</li>
+      <li>Beats: $f_{\text{beat}} = |f_1 - f_2|$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Beats" demo (the TRY IT block above).
+  // y1 = sin 2π f1 t (blue, f1 = 40 Hz) and y2 = sin 2π f2 t (orange) for 0 ≤ t ≤ 1 s,
+  // 1 s = 460 pixels. Below: their sum (black) with the beat envelope
+  // ±2|cos π(f2 − f1)t| (grey). A cursor sweeps across in 4 s of real time and
+  // the readout says whether that moment is loud or quiet.
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('btCanvas');
+    const output = document.getElementById('btOutput');
+    const F1 = 40, X0 = 40, W = 460, Y1 = 50, Y2 = 110, YS = 245, A = 22;
+    const BLUE = '#2563eb', ORANGE = '#ea580c', DARK = '#0f172a', THING = '#475569', GREEN = '#16a34a';
+    let f2 = 42, tc = 0, lastText = '';
+
+    function curve(g, f, y0, amp, col, width) {
+      let prev = null;
+      for (let i = 0; i <= 920; i++) {
+        const t = i / 920, p = [X0 + t * W, y0 - amp * f(t)];
+        if (prev) g.seg(prev, p, col, { width });
+        prev = p;
+      }
+    }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const df = f2 - F1;
+        curve(g, (t) => Math.sin(2 * Math.PI * F1 * t), Y1, A, BLUE, 1);
+        curve(g, (t) => Math.sin(2 * Math.PI * f2 * t), Y2, A, ORANGE, 1);
+        g.text([X0 - 22, Y1], 'f₁', BLUE);
+        g.text([X0 - 22, Y2], 'f₂', ORANGE);
+        curve(g, (t) => 2 * Math.abs(Math.cos(Math.PI * df * t)), YS, A * 1.6, '#cbd5e1', 2);
+        curve(g, (t) => -2 * Math.abs(Math.cos(Math.PI * df * t)), YS, A * 1.6, '#cbd5e1', 2);
+        curve(g, (t) => Math.sin(2 * Math.PI * F1 * t) + Math.sin(2 * Math.PI * f2 * t), YS, A * 1.6, DARK, 1);
+        g.text([X0 - 22, YS], 'sum', DARK);
+        for (let s = 0; s <= 1.001; s += 0.25) g.text([X0 + s * W, 332], `${s} s`, '#94a3b8');
+        const xc = X0 + tc * W;
+        g.seg([xc, 20], [xc, 315], GREEN, { width: 2 });
+
+        const env = Math.abs(Math.cos(Math.PI * df * tc));
+        const text =
+          `f₁ = ${F1} Hz, f₂ = ${f2} Hz:  beat frequency = |${f2} − ${F1}| = ${df} Hz\n` +
+          `${df} loud–quiet cycle${df === 1 ? '' : 's'} per second; one beat lasts ${(1 / df).toFixed(2)} s\n` +
+          `at t = ${tc.toFixed(2)} s: ${env > 0.7 ? 'LOUD (in step)' : env < 0.3 ? 'quiet (out of step)' : 'changing'}`;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Sweep the cursor over the second in 4 s of real time. Stop when the page has changed.
+    let last = performance.now();
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.max(0, Math.min((now - last) / 1000, 0.05));
+      last = now;
+      tc += dt / 4;
+      if (tc > 1) tc = 0;
+      board.redraw();
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    document.querySelectorAll('#btChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#btChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      f2 = Number(b.dataset.f);
+      tc = 0;
+      board.redraw();
+    }));
+  })();
+</script>

@@ -1,0 +1,245 @@
+<!-- tags: Interference of Light -->
+<!-- =====================================================================
+     NOTE: Thin-Film Interference
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Interference of Light">Thin-Film Interference</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>Light reflected from the top and bottom of a thin film interferes, giving colours</h2>
+    <p>Soap bubbles and oil on a wet road shine with colours. Light reflects from <strong>both surfaces</strong> of the thin film: some from the top, some from the bottom. The two reflected beams overlap and interfere. Whether a colour is strengthened or cancelled depends on the film's thickness, so different thicknesses show different colours.</p>
+    <p>Two things decide the result:</p>
+    <ul>
+      <li><strong>The extra path.</strong> The beam from the bottom goes down and back through the film: an extra $2d$, which is an optical path of $2nd$ (at normal incidence).</li>
+      <li><strong>Phase change on reflection.</strong> Light reflecting off a material with a <em>larger</em> refractive index (slower) is turned upside down, a phase change of $\pi$ (half a wavelength), like a wave at a fixed end. Reflecting off a <em>smaller</em> $n$ gives no change, like a free end.</li>
+    </ul>
+    <p><strong>Soap film in air</strong> (air → film → air): the top reflection (air→film, larger $n$) is inverted; the bottom one (film→air, smaller $n$) is not. One inversion swaps the usual conditions: bright when $2nd = (m + \frac12)\lambda$.</p>
+    <p><strong>Anti-reflection coating</strong> on glass (air → coating → glass, with $n_{\text{air}} &lt; n_{\text{coating}} &lt; n_{\text{glass}}$): <em>both</em> reflections are inverted, so the inversions cancel. To make the reflections cancel we need $2nd = (m + \frac12)\lambda$; the thinnest such coating has $d = \lambda/(4n)$. Camera lenses and glasses use this.</p>
+    <p>If light hits the film at a slant (angle of refraction $r$ inside the film), the path difference becomes $2nd\cos r$.</p>
+  </section>
+
+  <!-- FORMULA: thin film conditions -->
+  <div class="note-formula">
+    <h3>Thin film of thickness $d$, index $n$ ($m = 0, 1, 2, \dots$)</h3>
+    <div class="formula-main">$$\text{one inversion (soap film): } 2nd = \left(m + \tfrac12\right)\lambda \text{ bright}, \quad 2nd = m\lambda \text{ dark}$$</div>
+    <p class="symbols">With zero or two inversions (e.g. a coating with $n$ between air and glass), the conditions swap. At a slant, replace $2nd$ by $2nd\cos r$. $\lambda$ is the wavelength in air.</p>
+  </div>
+
+  <!-- PROOF: soap film -->
+  <div class="note-proof">
+    <ol>
+      <li>Beam 1 reflects at the top, off a larger $n$: it gains an extra half wavelength (inverted).</li>
+      <li>Beam 2 goes through the film and back: optical path $2nd$ further. It reflects off air (smaller $n$): no change.</li>
+      <li>Total difference: $2nd - \frac\lambda2$ (the sign of the half doesn't matter). In step (bright) when this is $m\lambda$, i.e. $2nd = (m + \frac12)\lambda$.</li>
+      <li>Coating: both beams are inverted, so only $2nd$ counts. They cancel when $2nd = (m + \frac12)\lambda$; the thinnest is $2nd = \lambda/2$, so $d = \lambda/(4n)$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: reflected colours of a film; code at the bottom -->
+  <div class="note-demo">
+    <h2>Reflected brightness of each colour from a thin film (light falling straight on)</h2>
+    <div class="controls choices" id="tfChoices">
+      <button type="button" data-k="soap" class="active">soap film in air (n = 1.33)</button>
+      <button type="button" data-k="coat">coating on glass (n = 1.38)</button>
+    </div>
+    <div class="controls">
+      <label>thickness $d$ (nm) = <input type="range" id="tfD" min="0" max="600" step="10" value="100"></label>
+    </div>
+    <canvas id="tfCanvas"></canvas>
+    <div class="output table-text" id="tfOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">A soap film ($n = 1.33$) is 100 nm thick. Light falls straight on it. Which visible wavelength is reflected most strongly?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>One inversion: bright when $2nd = (m + \frac12)\lambda$. $2nd = 2 \times 1.33 \times 100 = 266$ nm.</li>
+        <li>$m = 0$: $\lambda = 266/0.5 = 532$ nm. $m = 1$: $\lambda = 266/1.5 \approx 177$ nm (ultraviolet, not visible).</li>
+      </ol>
+      <p class="answer">532 nm (green)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">A glass lens ($n = 1.5$) gets an anti-reflection coating of $n = 1.38$. Find the thinnest coating that cancels the reflection of 550 nm light.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Both reflections are inverted, so cancelling needs $2nd = \frac12\lambda$ (thinnest).</li>
+        <li>$d = \dfrac{\lambda}{4n} = \dfrac{550}{4 \times 1.38} \approx 99.6$ nm.</li>
+      </ol>
+      <p class="answer">$d \approx 1.0 \times 10^{-7}$ m</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">Oil ($n = 1.5$) floats on water ($n = 1.33$). Which of the two reflections is inverted? Which condition gives bright reflection?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Top: air → oil, larger $n$: inverted.</li>
+        <li>Bottom: oil → water, smaller $n$: not inverted.</li>
+        <li>One inversion, as for a soap film.</li>
+      </ol>
+      <p class="answer">Only the top one; bright when $2nd = (m + \frac12)\lambda$</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">Just before a soap film bursts, its top part gets extremely thin and looks black in reflected light. Why?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>As $d \to 0$, the extra path $2nd \to 0$.</li>
+        <li>Only the half-wavelength from the one inversion is left, so the two reflections cancel for every colour.</li>
+      </ol>
+      <p class="answer">The two reflected beams are in antiphase for all wavelengths, so nothing is reflected</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">A soap film ($n = 1.33$, $d = 300$ nm) is viewed so that the light inside it travels at $r = 30°$ to the normal. Which visible wavelength is strongest? Compare with looking straight on.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$2nd\cos r = 2 \times 1.33 \times 300 \times 0.866 \approx 691$ nm. Bright: $(m + \frac12)\lambda = 691$: $m = 1$ gives $\lambda \approx 461$ nm.</li>
+        <li>Straight on: $2nd = 798$ nm; $m = 1$ gives $\lambda = 532$ nm.</li>
+      </ol>
+      <p class="answer">About 461 nm (blue) at a slant, 532 nm (green) straight on: the colour changes with the viewing angle</p>
+    </details>
+  </div>
+
+  <!-- WARNING: count the inversions -->
+  <div class="note-warning">
+    Always count the inversions first: <strong>one</strong> inversion swaps the bright and dark conditions; <strong>zero or two</strong> leave them as for a plain path difference.
+  </div>
+
+  <!-- TIP: fixed end / free end -->
+  <div class="note-tip">
+    Remember it with ropes: hitting a slower (larger $n$) medium is like a fixed end, inverted; hitting a faster one is like a free end, not inverted.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Reflection off a larger $n$: phase change $\pi$; off a smaller $n$: none.</li>
+      <li>Soap film (one inversion): bright when $2nd = (m + \frac12)\lambda$.</li>
+      <li>Anti-reflection coating: thinnest $d = \lambda/(4n)$.</li>
+      <li>At a slant: $2nd\cos r$.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Thin film" demo (the TRY IT block above).
+  // Left: a sketch of the film with the two reflected beams (1 from the top, 2 from
+  // the bottom), marking which is inverted.
+  // Right: a graph of reflected brightness against wavelength (400–700 nm) for two
+  // equal beams: I = (1 + cos δ)/2 with
+  //   soap film (one inversion):  δ = 2π·2nd/λ + π
+  //   coating (two inversions):   δ = 2π·2nd/λ
+  // Below it, the colour the film appears: the sum of each wavelength's colour
+  // times its brightness (a rough mix).
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('tfCanvas');
+    const output = document.getElementById('tfOutput');
+    const dBox = document.getElementById('tfD');
+    const GX0 = 230, GX1 = 500, GY0 = 50, GY1 = 220;
+    const THING = '#475569', BLUE = '#2563eb', ORANGE = '#ea580c';
+    let k = 'soap', lastText = '';
+
+    function rgb(nm) {
+      let r = 0, g = 0, b = 0;
+      if (nm < 440) { r = (440 - nm) / 60; b = 1; }
+      else if (nm < 490) { g = (nm - 440) / 50; b = 1; }
+      else if (nm < 510) { g = 1; b = (510 - nm) / 20; }
+      else if (nm < 580) { r = (nm - 510) / 70; g = 1; }
+      else if (nm < 645) { r = 1; g = (645 - nm) / 65; }
+      else r = 1;
+      return [r, g, b];
+    }
+    const hex = (c) => '#' + c.map((v) => Math.round(255 * Math.max(0, Math.min(1, v))).toString(16).padStart(2, '0')).join('');
+
+    // totals for full reflection, used to normalise the mixed colour
+    const rgbTotal = [0, 0, 0];
+    for (let w = 400; w <= 700; w += 2) { const c = rgb(w); for (let i = 0; i < 3; i++) rgbTotal[i] += c[i]; }
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const soap = k === 'soap', n = soap ? 1.33 : 1.38, d = Number(dBox.value);
+        const I = (nm) => (1 + Math.cos(2 * Math.PI * 2 * n * d / nm + (soap ? Math.PI : 0))) / 2;
+        // film sketch
+        g.text([30, 40], 'air', THING);
+        g.poly([[20, 120], [200, 120], [200, 170], [20, 170]], soap ? '#e0f2fe' : '#fef3c7');
+        g.text([110, 145], soap ? 'soap film' : 'coating', THING);
+        if (!soap) { g.poly([[20, 170], [200, 170], [200, 300], [20, 300]], '#e2e8f0'); g.text([110, 240], 'glass n = 1.5', THING); }
+        else g.text([110, 240], 'air', THING);
+        g.seg([40, 60], [80, 120], THING, { width: 2.5 });
+        g.seg([80, 120], [120, 60], BLUE, { width: 2.5 });
+        g.seg([80, 120], [105, 170], THING, { width: 2 });
+        g.seg([105, 170], [130, 120], ORANGE, { width: 2 });
+        g.seg([130, 120], [170, 60], ORANGE, { width: 2.5 });
+        g.text([122, 48], '1 (inverted)', BLUE);
+        g.text([180, 78], '2', ORANGE);
+        g.text([150, 186], soap ? 'not inverted' : 'inverted', ORANGE);
+        // brightness graph
+        g.seg([GX0, GY1], [GX1, GY1], THING, { width: 1.5 });
+        g.seg([GX0, GY0], [GX0, GY1], THING, { width: 1.5 });
+        for (const w of [400, 500, 600, 700]) g.text([GX0 + (w - 400) * 0.9, GY1 + 14], `${w}`, '#94a3b8');
+        g.text([GX0 + 135, GY1 + 32], 'wavelength (nm)', THING);
+        g.text([GX0 + 70, GY0 - 14], 'reflected brightness', THING);
+        let prev = null, mix = [0, 0, 0];
+        for (let w = 400; w <= 700; w += 2) {
+          const v = I(w), x = GX0 + (w - 400) * 0.9, c = rgb(w);
+          g.seg([x, GY1], [x, GY1 - v * (GY1 - GY0)], hex(c.map((q) => 0.35 + 0.65 * q)), { width: 2 });
+          const p = [x, GY1 - v * (GY1 - GY0)];
+          if (prev) g.seg(prev, p, THING, { width: 1.5 });
+          prev = p;
+          mix = mix.map((m, i) => m + c[i] * v);
+        }
+        // the colour seen (normalised so that "everything reflected" is white)
+        const seen = mix.map((m, i) => m / rgbTotal[i]);
+        g.poly([[GX0, 260], [GX1, 260], [GX1, 300], [GX0, 300]], hex(seen));
+        g.text([GX0 - 60, 280], 'looks:', THING);
+
+        // which wavelengths are brightest / darkest (visible ones)
+        const path = 2 * n * d, list = [];
+        for (let m = 0; m < 12; m++) {
+          const w = path / (m + 0.5);
+          if (w >= 380 && w <= 760) list.push(w.toFixed(0));
+        }
+        const cond = soap ? 'bright when 2nd = (m + ½)λ' : 'reflection cancelled when 2nd = (m + ½)λ';
+        const text =
+          `${soap ? 'soap film' : 'coating'}: n = ${n}, d = ${d} nm,  2nd = ${path.toFixed(0)} nm\n` +
+          `${cond}\n` +
+          (list.length ? `visible λ: ${list.join(', ')} nm` : 'no visible wavelength meets that condition');
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    document.querySelectorAll('#tfChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#tfChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      k = b.dataset.k;
+      board.redraw();
+    }));
+    dBox.addEventListener('input', () => board.redraw());
+    board.redraw();
+  })();
+</script>

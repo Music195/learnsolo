@@ -1,0 +1,224 @@
+<!-- tags: Sound -->
+<!-- =====================================================================
+     NOTE: Air Columns
+     Uses the shared blocks from src/styles/note-blocks.css and the
+     drawing helper /static/js/demos/geom.js.
+     Do not add a <style> block here; change note-blocks.css instead.
+     ===================================================================== -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Sound">Air Columns</h1>
+
+  <!-- CONCEPT: the main idea in plain words -->
+  <section class="note-concept">
+    <h2>An open end is an antinode, a closed end is a node</h2>
+    <p>Blow across a bottle or into a flute and the air inside the tube (the <strong>air column</strong>) vibrates as a standing sound wave. Which notes it can play depends on the ends.</p>
+    <ul>
+      <li><strong>Closed end</strong>: the air can't move into the wall, so it is a <strong>node</strong> (like a fixed end of a string).</li>
+      <li><strong>Open end</strong>: the air is free to move in and out, so it is an <strong>antinode</strong> (like a free end).</li>
+    </ul>
+    <p>We draw the standing wave as the <em>displacement</em> of the air along the tube (the transverse picture of a longitudinal wave), so these shapes are just "loops" like on a string.</p>
+    <ul>
+      <li><strong>Open pipe</strong> (both ends open): antinode at each end. The length holds whole numbers of half-wavelengths, $L = n\lambda/2$. <strong>All harmonics</strong> are possible.</li>
+      <li><strong>Closed pipe</strong> (one end closed): node at the closed end, antinode at the open end. Node to antinode is $\lambda/4$, so $L = \lambda/4, 3\lambda/4, 5\lambda/4, \dots$. <strong>Only odd harmonics</strong>.</li>
+    </ul>
+    <p>(Real antinodes sit a little beyond an open end; this "end correction" is ignored here.)</p>
+  </section>
+
+  <!-- FORMULA: pipe frequencies -->
+  <div class="note-formula">
+    <h3>Natural frequencies of air columns ($V$: speed of sound)</h3>
+    <div class="formula-main">$$\text{open: } f_n = \frac{nV}{2L}\ (n = 1, 2, 3, \dots) \qquad \text{closed: } f_m = \frac{(2m-1)V}{4L}\ (m = 1, 2, 3, \dots)$$</div>
+    <p class="symbols">$L$: length of the air column. Open pipe fundamental $V/(2L)$; closed pipe fundamental $V/(4L)$, an octave lower than an open pipe of the same length.</p>
+  </div>
+
+  <!-- PROOF: count the quarter-waves -->
+  <div class="note-proof">
+    <ol>
+      <li>Open pipe: antinode to antinode is $\lambda/2$, and any number of loops fits: $L = n\lambda/2$, so $\lambda = 2L/n$ and $f = V/\lambda = nV/(2L)$.</li>
+      <li>Closed pipe: from the node at the closed end to the antinode at the open end there must be an odd number of quarter-waves: $L = (2m - 1)\lambda/4$.</li>
+      <li>So $\lambda = 4L/(2m-1)$ and $f = (2m - 1)V/(4L)$: 1, 3, 5, … times the fundamental.</li>
+      <li>In a resonance tube experiment (water sets the length of a closed column), neighbouring resonance lengths differ by $\lambda/2$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: standing waves in pipes; code at the bottom -->
+  <div class="note-demo">
+    <h2>A pipe of length 0.85 m, V = 340 m/s (air displacement shown as loops)</h2>
+    <div class="controls choices" id="acChoices">
+      <button type="button" data-k="o1" class="active">open, n = 1</button>
+      <button type="button" data-k="o2">open, n = 2</button>
+      <button type="button" data-k="o3">open, n = 3</button>
+      <button type="button" data-k="c1">closed, 1st</button>
+      <button type="button" data-k="c3">closed, 3rd</button>
+      <button type="button" data-k="c5">closed, 5th</button>
+    </div>
+    <canvas id="acCanvas"></canvas>
+    <div class="output table-text" id="acOutput"></div>
+  </div>
+
+  <!-- EXAMPLES: worked problems; click to reveal each solution -->
+  <div class="note-example">
+    <h3>Example 1</h3>
+    <p class="question">An open pipe is 0.85 m long. The speed of sound is 340 m/s. Find its fundamental frequency and its 2nd harmonic.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$f_1 = \dfrac{V}{2L} = \dfrac{340}{1.70}$.</li>
+        <li>$f_2 = 2f_1$.</li>
+      </ol>
+      <p class="answer">200 Hz and 400 Hz</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 2</h3>
+    <p class="question">The same pipe is closed at one end. Find its fundamental frequency and the next frequency it can sound.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>$f_1 = \dfrac{V}{4L} = \dfrac{340}{3.40} = 100$ Hz.</li>
+        <li>Only odd multiples: the next is $3 \times 100$.</li>
+      </ol>
+      <p class="answer">100 Hz, then 300 Hz (no 200 Hz)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 3</h3>
+    <p class="question">In a resonance tube experiment with a tuning fork, loud sounds are heard when the air column is 17 cm and then 51 cm long. The speed of sound is 340 m/s. Find the frequency of the fork.</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Neighbouring resonances differ by $\lambda/2$: $51 - 17 = 34$ cm, so $\lambda = 68$ cm.</li>
+        <li>$f = V/\lambda = 340/0.68$.</li>
+      </ol>
+      <p class="answer">500 Hz (and 17 cm $= \lambda/4$, so here there is no end correction)</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 4</h3>
+    <p class="question">A pipe resonates at 300 Hz, 500 Hz and 700 Hz, and at no frequencies in between. Is it open or closed? Find its length ($V = 340$ m/s).</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Neighbouring frequencies differ by 200 Hz. For an open pipe that difference would be $f_1$, but 300 is not a multiple of 200.</li>
+        <li>For a closed pipe the gap is $2f_1$, so $f_1 = 100$ Hz, and 300, 500, 700 are the 3rd, 5th, 7th harmonics. Closed.</li>
+        <li>$L = V/(4f_1) = 340/400$.</li>
+      </ol>
+      <p class="answer">Closed pipe, $L = 0.85$ m</p>
+    </details>
+  </div>
+
+  <div class="note-example">
+    <h3>Example 5</h3>
+    <p class="question">A flute (an open pipe) is in tune in a cold room. The room warms up. Does its note go up or down?</p>
+    <details>
+      <summary>Show solution</summary>
+      <ol class="note-steps">
+        <li>Warmer air: larger $V = 331.5 + 0.6t$.</li>
+        <li>The length (and so $\lambda$) is fixed, so $f = V/\lambda$ goes up.</li>
+      </ol>
+      <p class="answer">Up (wind instruments go sharp as they warm)</p>
+    </details>
+  </div>
+
+  <!-- WARNING: the closed end -->
+  <div class="note-warning">
+    A closed pipe has only <strong>odd</strong> harmonics. Writing $f = nV/(4L)$ with $n = 2$ is a common slip: there is no 2nd harmonic.
+  </div>
+
+  <!-- TIP: string vs pipe -->
+  <div class="note-tip">
+    String: fixed–fixed (node–node). Open pipe: antinode–antinode. Both give $L = n\lambda/2$. Closed pipe: node–antinode, $L = (2m - 1)\lambda/4$.
+  </div>
+
+  <!-- TAKEAWAYS: what to remember -->
+  <div class="note-takeaways">
+    <ul>
+      <li>Closed end → node; open end → antinode.</li>
+      <li>Open pipe: $f_n = nV/(2L)$, all harmonics.</li>
+      <li>Closed pipe: $f = (2m-1)V/(4L)$, odd harmonics only.</li>
+    </ul>
+  </div>
+
+</article>
+
+<script src="/static/js/demos/geom.js"></script>
+<script>
+  // "Air columns" demo (the TRY IT block above).
+  // Pipe from x = 60 to 460 pixels (L = 0.85 m), walls at y = 110 and 230.
+  // Displacement shape along the pipe (u = 0 at the left end, 1 at the right):
+  //   open, n:           cos(nπu)            (antinodes at both ends)
+  //   closed (left), m:  sin((2m − 1)πu/2)   (node at the closed left end)
+  // Drawn as the largest shape (grey) and the moving shape (black), slowed down to
+  // one swing per second. N = node (green), A = antinode (red).
+  // Drawn with NoteGeom.board in canvas pixels (520 × 340, y pointing down).
+  // Wrapped in a function so these names can't clash with other page scripts.
+  (function () {
+    const canvas = document.getElementById('acCanvas');
+    const output = document.getElementById('acOutput');
+    const XL = 60, XR = 460, YC = 170, H = 50, L = 0.85, V = 340;
+    const DARK = '#0f172a', GREEN = '#16a34a', RED = '#dc2626', THING = '#475569';
+    let k = 'o1', t = 0, lastText = '';
+
+    const board = NoteGeom.board(canvas, {
+      points: {},
+      draw(g) {
+        const open = k[0] === 'o', n = Number(k.slice(1));
+        const shape = (u) => (open ? Math.cos(n * Math.PI * u) : Math.sin(n * Math.PI * u / 2));
+        // pipe walls
+        g.seg([XL, YC - 60], [XR, YC - 60], THING, { width: 4 });
+        g.seg([XL, YC + 60], [XR, YC + 60], THING, { width: 4 });
+        if (!open) g.seg([XL, YC - 62], [XL, YC + 62], THING, { width: 8 });
+        g.text([XL, YC + 84], open ? 'open' : 'closed', THING);
+        g.text([XR, YC + 84], 'open', THING);
+        g.seg([XL, YC], [XR, YC], '#e2e8f0', { width: 1 });
+        let pa = null, pb = null, pm = null;
+        for (let x = XL; x <= XR + 0.1; x += 2) {
+          const s = shape((x - XL) / (XR - XL));
+          const qa = [x, YC - H * s], qb = [x, YC + H * s], qm = [x, YC - H * s * Math.cos(2 * Math.PI * t)];
+          if (pa) { g.seg(pa, qa, '#cbd5e1', { width: 1.5 }); g.seg(pb, qb, '#cbd5e1', { width: 1.5 }); g.seg(pm, qm, DARK, { width: 3 }); }
+          pa = qa; pb = qb; pm = qm;
+        }
+        // nodes and antinodes: zeros and peaks of the shape
+        const quarter = open ? 1 / (2 * n) : 1 / n;    // node–antinode distance as a fraction of L
+        for (let i = 0; ; i++) {
+          const u = i * quarter;
+          if (u > 1 + 1e-9) break;
+          const isNode = open ? i % 2 === 1 : i % 2 === 0;
+          const x = XL + u * (XR - XL);
+          g.circle([x, YC], 5, isNode ? GREEN : RED, { fill: isNode ? GREEN : RED });
+          g.text([x, YC - 76], isNode ? 'N' : 'A', isNode ? GREEN : RED);
+        }
+
+        const lam = open ? 2 * L / n : 4 * L / n, f = V / lam;
+        const text = open
+          ? `open pipe, n = ${n}:  L = ${n} × λ/2,  λ = ${lam.toFixed(3)} m\n` +
+            `f = nV/2L = ${n} × 340 / 1.70 = ${f.toFixed(0)} Hz  (all harmonics: 200, 400, 600 …)`
+          : `closed pipe, ${n} quarter-wave${n > 1 ? 's' : ''}:  L = ${n} × λ/4,  λ = ${lam.toFixed(3)} m\n` +
+            `f = ${n === 1 ? "" : n}V/4L = ${n} × 340 / 3.40 = ${f.toFixed(0)} Hz  (odd only: 100, 300, 500 …)`;
+        if (text !== lastText) { output.textContent = text; lastText = text; }
+      },
+    });
+
+    // Run the slowed-down clock. Stop when the page has changed.
+    let last = performance.now();
+    function tick(now) {
+      if (!canvas.isConnected) return;
+      const dt = Math.max(0, Math.min((now - last) / 1000, 0.05));
+      last = now;
+      t += dt;
+      board.redraw();
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    document.querySelectorAll('#acChoices button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#acChoices button').forEach((z) => z.classList.toggle('active', z === b));
+      k = b.dataset.k;
+      board.redraw();
+    }));
+  })();
+</script>
