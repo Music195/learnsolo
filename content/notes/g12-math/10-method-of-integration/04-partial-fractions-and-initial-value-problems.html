@@ -1,0 +1,214 @@
+<!-- tags: Method of Integration, G12 Math Myanmar -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Method of Integration">Partial Fraction Method and Initial Value Problems</h1>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Partial Fraction Decomposition &amp; Initial Value Problems</span>
+  <p>This final section of Chapter 10 introduces two essential techniques:</p>
+  <ul>
+    <li><strong>Partial Fraction Method (အပိုင်းကိန်းခွဲထုတ်နည်း):</strong> Expressing a rational function $\dfrac{P(x)}{Q(x)}$ whose denominator factors into linear factors as a sum of simpler fractions that can be integrated immediately using logarithms and power rules. (If $\deg P \ge \deg Q$, perform polynomial division first, as in Example 11.)</li>
+    <li><strong>Finding $f(x)$ from Initial Conditions (Examples 13 &amp; 14):</strong> When given a derivative equation $f'(x) = g(x)$ together with a known value $f(x_0) = y_0$ (or $f''(x)$ with two conditions $f'(x_0)$ and $f(x_0)$), integrating and substituting the given point determines the unique constant $C$.</li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formulas &mdash; Partial Fraction Forms</span>
+  <ul class="symbols">
+    <li><strong>Case 1 — Distinct Linear Factors:</strong>
+      $$\frac{px + q}{(ax + b)(cx + d)} = \frac{A}{ax + b} + \frac{B}{cx + d} \implies \int \frac{px + q}{(ax + b)(cx + d)}\,dx = \frac{A}{a}\ln|ax + b| + \frac{B}{c}\ln|cx + d| + C$$
+    </li>
+    <li><strong>Case 2 — Repeated Linear Factors:</strong>
+      $$\frac{px + q}{(x - a)^2} = \frac{A}{x - a} + \frac{B}{(x - a)^2} \implies \int \frac{px + q}{(x - a)^2}\,dx = A\ln|x - a| - \frac{B}{x - a} + C$$
+    </li>
+  </ul>
+</div>
+
+<div class="note-proof">
+  <span class="block-label">How to Find the Unknown Constants $A$ and $B$</span>
+  <p>After writing $\dfrac{px + q}{(ax + b)(cx + d)} = \dfrac{A}{ax + b} + \dfrac{B}{cx + d}$, clear denominators to obtain the polynomial identity:</p>
+  $$px + q = A(cx + d) + B(ax + b)$$
+  <p>You can determine $A$ and $B$ by either of two equivalent methods:</p>
+  <ol>
+    <li><strong>Equating Coefficients (Example 9 &amp; 12):</strong> Expand the right-hand side, collect like powers of $x$, and equate coefficients of $x$ and the constant term.</li>
+    <li><strong>Strategic Substitution (Example 10 &amp; 11):</strong> Substitute the roots $x = -\frac{b}{a}$ and $x = -\frac{d}{c}$ into the identity to solve for $A$ and $B$ directly in one step.</li>
+  </ol>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; Partial Fractions &amp; Unique Solution Curves from Initial Conditions</span>
+  <p>Drag point $P$ along the solution curve $y = F(x)$ (blue) or switch between textbook Examples 9, 13, and 14. Observe how vertical asymptotes correspond to denominator roots in Example 9, and how the given initial points $(1, 0)$ and $(0, 1)$ pin down the unique curve from the family of antiderivatives in Examples 13 &amp; 14.</p>
+  <canvas id="g12-ch10-04-canvas"></canvas>
+  <div class="controls">
+    <label>Probe $x_0$ <input type="range" id="ch10-04-x0" min="0.2" max="2.8" value="1.60" step="0.02"></label>
+    <button type="button" class="pill active" data-mode="ex9">Ex 9: ∫ 1/(x² + 2x − 3) dx</button>
+    <button type="button" class="pill" data-mode="ex13">Ex 13: f'(x) = (x − 1)/√x,  f(1) = 0</button>
+    <button type="button" class="pill" data-mode="ex14">Ex 14: f''(x) = ½(e^x − e^−x),  f(0) = 1</button>
+  </div>
+  <div class="output table-text" id="ch10-04-out"></div>
+</div>
+
+<script>
+(function() {
+  var canvas = document.getElementById('g12-ch10-04-canvas');
+  var xIn = document.getElementById('ch10-04-x0');
+  var out = document.getElementById('ch10-04-out');
+  if (!canvas || !window.NotePlot) return;
+
+  var mode = 'ex9';
+  var x0 = 1.6;
+
+  function mainCurve(x) {
+    if (mode === 'ex9') {
+      if (Math.abs(x + 3) < 0.08 || Math.abs(x - 1) < 0.08) return NaN;
+      return 0.25 * Math.log(Math.abs((x - 1) / (x + 3)));
+    }
+    if (mode === 'ex13') {
+      return x > 0 ? (2 / 3) * Math.pow(x, 1.5) - 2 * Math.sqrt(x) + 4 / 3 : NaN;
+    }
+    return 0.5 * (Math.exp(x) - Math.exp(-x)) + 1;
+  }
+
+  function derivCurve(x) {
+    if (mode === 'ex9') {
+      if (Math.abs(x + 3) < 0.12 || Math.abs(x - 1) < 0.12) return NaN;
+      return 1 / ((x + 3) * (x - 1));
+    }
+    if (mode === 'ex13') {
+      return x > 0.05 ? (x - 1) / Math.sqrt(x) : NaN;
+    }
+    return 0.5 * (Math.exp(x) + Math.exp(-x));
+  }
+
+  var plot = NotePlot.graph(canvas, {
+    x: [-3.8, 3.6],
+    y: [-2.8, 3.6],
+    points: { P: [x0, mainCurve(x0)] },
+    constrain: {
+      P: function(p) {
+        var cx = Math.max(0.2, Math.min(2.8, p[0]));
+        if (mode === 'ex9' && Math.abs(cx - 1) < 0.12) cx = 1.15;
+        x0 = cx;
+        xIn.value = cx.toFixed(2);
+        return [cx, mainCurve(cx)];
+      }
+    },
+    draw: function(g, P) {
+      var x = P.P[0];
+      var fy = mainCurve(x);
+      var dy = derivCurve(x);
+
+      if (mode === 'ex9') {
+        g.vline(-3, 'rgba(225, 29, 72, 0.38)', { dash: true });
+        g.vline(1, 'rgba(225, 29, 72, 0.38)', { dash: true });
+      } else if (mode === 'ex13') {
+        g.dot([1, 0], '#0d9488', 'Initial f(1) = 0');
+      } else {
+        g.dot([0, 1], '#0d9488', 'Initial f(0) = 1');
+      }
+
+      g.fn(function(t) { return derivCurve(t); }, '#d97706', { dash: true, width: 2 });
+      g.fn(function(t) { return mainCurve(t); }, '#2563eb', { width: 2.8 });
+      if (isFinite(fy)) {
+        g.dot([x, fy], '#e11d48', 'P(' + x.toFixed(2) + ', ' + fy.toFixed(2) + ')');
+      }
+
+      if (mode === 'ex9') {
+        out.textContent =
+          'x₀ = ' + x.toFixed(2) + '   |   Integrand 1/((x+3)(x−1)) = −1/(4(x+3)) + 1/(4(x−1)) = ' +
+          (isFinite(dy) ? dy.toFixed(3) : 'undef') +
+          '   |   Antiderivative F(x₀) = ¼ ln|(x−1)/(x+3)| = ' + (isFinite(fy) ? fy.toFixed(3) : 'undef');
+      } else if (mode === 'ex13') {
+        out.textContent =
+          'x₀ = ' + x.toFixed(2) + '   |   f\'(x₀) = ' + dy.toFixed(3) +
+          '   |   Unique Solution (C = 4/3): f(x₀) = (2/3)x^(3/2) − 2√x + 4/3 = ' + fy.toFixed(3);
+      } else {
+        out.textContent =
+          'x₀ = ' + x.toFixed(2) + '   |   f\'(x₀) = ½(e^x + e^−x) = ' + dy.toFixed(3) +
+          '   |   Unique Solution (C₁=0, C₂=1): f(x₀) = ½(e^x − e^−x) + 1 = ' + fy.toFixed(3);
+      }
+    }
+  });
+
+  function sync() {
+    x0 = parseFloat(xIn.value);
+    if (mode === 'ex9' && Math.abs(x0 - 1) < 0.12) x0 = 1.15;
+    plot.move('P', [x0, mainCurve(x0)]);
+  }
+
+  xIn.addEventListener('input', sync);
+  var btns = canvas.parentElement.querySelectorAll('.pill[data-mode]');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].addEventListener('click', function() {
+      for (var j = 0; j < btns.length; j++) btns[j].classList.remove('active');
+      this.classList.add('active');
+      mode = this.getAttribute('data-mode');
+      xIn.value = mode === 'ex9' ? '1.60' : '1.00';
+      sync();
+    });
+  }
+})();
+</script>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Textbook Examples 9, 10, 11, 12, 13 &amp; 14</span>
+
+  <p><strong>Example 9 &amp; Example 10 (Textbook pp. 187–189):</strong> Evaluate:<br>
+  (a) $\displaystyle \int \frac{1}{x^2 + 2x - 3}\,dx$ &emsp; (b) $\displaystyle \int \frac{1}{2x^2 + 3x + 1}\,dx$.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p><strong>(a) Example 9:</strong> Factor $x^2 + 2x - 3 = (x + 3)(x - 1)$ and write $\dfrac{1}{(x + 3)(x - 1)} = \dfrac{A}{x + 3} + \dfrac{B}{x - 1} \implies 1 = A(x - 1) + B(x + 3)$.</p>
+    <p>Equating coefficients gives $A + B = 0$ and $-A + 3B = 1 \implies A = -\dfrac{1}{4},\; B = \dfrac{1}{4}$. Integrating gives:</p>
+    $$-\frac{1}{4}\ln|x + 3| + \frac{1}{4}\ln|x - 1| + C = \frac{1}{4}\ln\left|\frac{x - 1}{x + 3}\right| + C$$
+    <p><strong>(b) Example 10:</strong> Factor $2x^2 + 3x + 1 = (2x + 1)(x + 1)$ and write $1 = A(x + 1) + B(2x + 1)$.</p>
+    <p>Setting $x = -1 \implies B = -1$; setting $x = -\dfrac{1}{2} \implies A = 2$. Integrating gives:</p>
+    $$\int \frac{2}{2x + 1}\,dx - \int \frac{1}{x + 1}\,dx = \ln|2x + 1| - \ln|x + 1| + C = \ln\left|\frac{2x + 1}{x + 1}\right| + C$$
+    <p class="answer">Answer: (a) $\frac{1}{4}\ln\left|\frac{x-1}{x+3}\right| + C$; (b) $\ln\left|\frac{2x+1}{x+1}\right| + C$.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 11 &amp; Example 12 (Textbook pp. 189–191):</strong> Evaluate:<br>
+  (a) $\displaystyle \int \frac{x^3 - 4x + 4}{x^2 - 4}\,dx$ &emsp; (b) $\displaystyle \int \frac{2x + 1}{(x - 1)^2}\,dx$.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p><strong>(a) Example 11:</strong> Divide first: $\dfrac{x^3 - 4x + 4}{x^2 - 4} = x + \dfrac{4}{(x + 2)(x - 2)} = x - \dfrac{1}{x + 2} + \dfrac{1}{x - 2}$. Integrating gives:</p>
+    $$\frac{1}{2}x^2 - \ln|x + 2| + \ln|x - 2| + C = \frac{1}{2}x^2 + \ln\left|\frac{x - 2}{x + 2}\right| + C$$
+    <p><strong>(b) Example 12:</strong> Write $\dfrac{2x + 1}{(x - 1)^2} = \dfrac{A}{x - 1} + \dfrac{B}{(x - 1)^2} \implies 2x + 1 = A(x - 1) + B \implies A = 2,\; B = 3$. Integrating gives:</p>
+    $$\int \frac{2}{x - 1}\,dx + \int \frac{3}{(x - 1)^2}\,dx = 2\ln|x - 1| - \frac{3}{x - 1} + C$$
+    <p class="answer">Answer: (a) $\frac{1}{2}x^2 + \ln\left|\frac{x-2}{x+2}\right| + C$; (b) $2\ln|x-1| - \frac{3}{x-1} + C$.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 13 &amp; Example 14 (Textbook pp. 191–192):</strong><br>
+  (a) Find $f(x)$ satisfying $f'(x) = \dfrac{x - 1}{\sqrt{x}}$ with $f(1) = 0$.<br>
+  (b) Find $f(x)$ satisfying $f''(x) = \dfrac{e^x - e^{-x}}{2}$ with $f'(0) = 1$ and $f(0) = 1$.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p><strong>(a) Example 13:</strong> $f(x) = \displaystyle \int \left(x^{1/2} - x^{-1/2}\right)dx = \frac{2}{3}x^{3/2} - 2x^{1/2} + C$. Using $f(1) = 0 \implies \frac{2}{3} - 2 + C = 0 \implies C = \frac{4}{3}$, so $f(x) = \frac{2}{3}x^{3/2} - 2x^{1/2} + \frac{4}{3}$.</p>
+    <p><strong>(b) Example 14:</strong> Integrating once gives $f'(x) = \frac{1}{2}(e^x + e^{-x}) + C_1$. Since $f'(0) = 1 \implies 1 + C_1 = 1 \implies C_1 = 0$. Integrating again gives $f(x) = \frac{1}{2}(e^x - e^{-x}) + C_2$. Since $f(0) = 1 \implies 0 + C_2 = 1 \implies C_2 = 1$, so $f(x) = \frac{1}{2}(e^x - e^{-x}) + 1$.</p>
+    <p class="answer">Answer: (a) $f(x) = \frac{2}{3}x^{3/2} - 2x^{1/2} + \frac{4}{3}$; (b) $f(x) = \frac{1}{2}(e^x - e^{-x}) + 1$.</p>
+  </details>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>Integrating $(x - 1)^{-2}$ as a Logarithm:</strong> Only $(x - 1)^{-1}$ integrates to $\ln|x - 1|$; higher powers $(x - 1)^{-2}$ use the power rule to give $-(x - 1)^{-1}$.</li>
+    <li><strong>Applying Partial Fractions Without Checking Degree:</strong> If the degree of the numerator is greater than or equal to the degree of the denominator (as in Example 11), divide polynomials first!</li>
+  </ul>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>Distinct linear factors split as $\frac{A}{ax+b} + \frac{B}{cx+d}$; repeated linear factors split as $\frac{A}{x-a} + \frac{B}{(x-a)^2}$.</li>
+    <li>Given $f'(x)$ and an initial condition $f(x_0) = y_0$, integrate to get $F(x) + C$ and solve $F(x_0) + C = y_0$ for $C$.</li>
+  </ul>
+</div>
+
+</article>

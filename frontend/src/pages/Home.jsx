@@ -25,6 +25,7 @@ const COURSE_STYLE = {
   'Electricity': ['fa-bolt', '#ca8a04'],
   'Magnetism': ['fa-magnet', '#7c3aed'],
   'Atomic Physics': ['fa-atom', '#db2777'],
+  'Mathematics': ['fa-graduation-cap', '#4f46e5'],
 }
 
 // Subject names as English: "A", "A and B", "A, B and C"

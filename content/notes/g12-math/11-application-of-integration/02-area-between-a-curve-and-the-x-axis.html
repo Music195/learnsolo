@@ -1,0 +1,214 @@
+<!-- tags: Application of Integration, G12 Math Myanmar -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Application of Integration">Area Between a Curve and the x-Axis</h1>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Area Between $y = f(x)$ and the $x$-Axis</span>
+  <p>A definite integral $\int_a^b f(x)\,dx$ measures <em>signed area</em>: regions above the $x$-axis ($f(x) > 0$) contribute positively, while regions below the $x$-axis ($f(x) < 0$) contribute negatively. To find the <strong>total geometric area</strong> enclosed between $y = f(x)$ and the $x$-axis over $[a, b]$:</p>
+  <ul>
+    <li><strong>Case 1 ($f(x) \ge 0$ on $[a, b]$):</strong> The curve lies entirely on or above the $x$-axis, so $\text{Area} = \displaystyle \int_a^b f(x)\,dx$.</li>
+    <li><strong>Case 2 ($f(x)$ Crosses the $x$-Axis on $[a, b]$ — 4-Step Procedure, Textbook p. 202):</strong>
+      <ol>
+        <li><strong>Step 1:</strong> Find the intersection point(s) of the graph $y = f(x)$ with the $x$-axis by solving $f(x) = 0$.</li>
+        <li><strong>Step 2:</strong> Divide the interval $[a, b]$ into subintervals at the zeros of $f$.</li>
+        <li><strong>Step 3:</strong> Integrate $f(x)$ over each subinterval separately.</li>
+        <li><strong>Step 4:</strong> Add the <strong>absolute values</strong> of the integrals from Step 3.</li>
+      </ol>
+    </li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formulas &mdash; Net Signed Integral vs. Total Enclosed Area</span>
+  <div class="formula-main">
+    $$\text{Total Area} = \int_a^b |f(x)|\,dx = \left|\int_a^c f(x)\,dx\right| + \left|\int_c^b f(x)\,dx\right|$$
+  </div>
+  <ul class="symbols">
+    <li><strong>$c \in (a, b)$:</strong> An $x$-intercept ($f(c) = 0$) where $f(x)$ changes sign.</li>
+    <li><strong>Units:</strong> Geometric area is always positive and written in square units ($\text{unit}^2$).</li>
+  </ul>
+</div>
+
+<div class="note-proof">
+  <span class="block-label">Why Net Integral and Total Area Differ When $f(x)$ Changes Sign (Example 4)</span>
+  <p>Consider $f(x) = x^2 - 2x = x(x - 2)$ on $\left[0, \dfrac{5}{2}\right]$:</p>
+  <ul>
+    <li>On $[0, 2]$, the parabola lies <em>below</em> the $x$-axis ($f(x) \le 0$), so $\displaystyle \int_0^2 (x^2 - 2x)\,dx = -\frac{4}{3} < 0$.</li>
+    <li>On $\left[2, \dfrac{5}{2}\right]$, the parabola lies <em>above</em> the $x$-axis ($f(x) \ge 0$), so $\displaystyle \int_2^{5/2} (x^2 - 2x)\,dx = +\frac{7}{24} > 0$.</li>
+  </ul>
+  <p>If we integrate directly from $0$ to $\frac{5}{2}$, the two lobes partially cancel: $-\frac{4}{3} + \frac{7}{24} = -\frac{25}{24}$. Taking absolute values before adding gives the true enclosed geometric area: $\left|-\frac{4}{3}\right| + \left|\frac{7}{24}\right| = \frac{39}{24} = 1\frac{5}{8}\text{ unit}^2$.</p>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; Net Definite Integral vs. Total Enclosed Geometric Area</span>
+  <p>Drag point $B$ along the curve (or slide the upper limit $b$ and switch between textbook Examples 4, 5, and 6). Rose shading marks lobes below the $x$-axis (where $\int f(x)\,dx < 0$), and teal shading marks lobes above the $x$-axis (where $\int f(x)\,dx > 0$). All curves are plotted at their exact unscaled coordinates.</p>
+  <canvas id="g12-ch11-02-canvas"></canvas>
+  <div class="controls">
+    <label>Upper Limit $b$ <input type="range" id="ch11-02-b" min="0.5" max="4.71" value="2.50" step="0.05"></label>
+    <button type="button" class="pill active" data-mode="ex4">Ex 4: f(x) = x² − 2x on [0, 2.5]</button>
+    <button type="button" class="pill" data-mode="ex5">Ex 5: f(x) = cos x on [0, 3π/2]</button>
+    <button type="button" class="pill" data-mode="ex6">Ex 6: f(x) = 3√x on [0, 4] (Area = 16)</button>
+  </div>
+  <div class="output table-text" id="ch11-02-out"></div>
+</div>
+
+<script>
+(function() {
+  var canvas = document.getElementById('g12-ch11-02-canvas');
+  var bIn = document.getElementById('ch11-02-b');
+  var out = document.getElementById('ch11-02-out');
+  if (!canvas || !window.NotePlot) return;
+
+  var mode = 'ex4';
+  var bVal = 2.5;
+
+  // Exact unscaled textbook functions!
+  function f(x) {
+    if (mode === 'ex4') return x * x - 2 * x;
+    if (mode === 'ex5') return Math.cos(x);
+    return x >= 0 ? 3 * Math.sqrt(x) : NaN;
+  }
+
+  function F(x) {
+    if (mode === 'ex4') return (x * x * x) / 3 - x * x;
+    if (mode === 'ex5') return Math.sin(x);
+    return x >= 0 ? 2 * Math.pow(x, 1.5) : NaN;
+  }
+
+  function clampB(x) {
+    if (mode === 'ex4') return Math.max(0.2, Math.min(3.2, x));
+    if (mode === 'ex5') return Math.max(0.2, Math.min(4.71, x));
+    return Math.max(0.2, Math.min(4.0, x));
+  }
+
+  var plot = NotePlot.graph(canvas, {
+    x: [-0.8, 5.2],
+    y: [-2.0, 6.4],
+    points: { B: [bVal, f(bVal)] },
+    constrain: {
+      B: function(p) {
+        var cb = clampB(p[0]);
+        bVal = cb;
+        bIn.value = cb.toFixed(2);
+        return [cb, f(cb)];
+      }
+    },
+    draw: function(g, P) {
+      var bx = P.B[0];
+      var rootX = mode === 'ex4' ? 2.0 : (mode === 'ex5' ? Math.PI / 2 : 99);
+
+      if (bx <= rootX) {
+        var c0 = mode === 'ex4' ? 'rgba(225, 29, 72, 0.18)' : 'rgba(13, 148, 136, 0.18)';
+        g.fill(function(x) { return f(x); }, 0, bx, c0);
+      } else {
+        var c1 = mode === 'ex4' ? 'rgba(225, 29, 72, 0.18)' : 'rgba(13, 148, 136, 0.18)';
+        var c2 = mode === 'ex4' ? 'rgba(13, 148, 136, 0.18)' : 'rgba(225, 29, 72, 0.18)';
+        g.fill(function(x) { return f(x); }, 0, rootX, c1);
+        g.fill(function(x) { return f(x); }, rootX, bx, c2);
+        g.dot([rootX, 0], '#d97706', 'Zero x = ' + rootX.toFixed(2));
+      }
+
+      g.fn(function(x) { return f(x); }, '#2563eb', { width: 2.6 });
+      g.dot([bx, f(bx)], '#e11d48', 'b = ' + bx.toFixed(2));
+
+      var netInt, totalArea;
+      if (bx <= rootX) {
+        netInt = F(bx) - F(0);
+        totalArea = Math.abs(netInt);
+      } else {
+        var i1 = F(rootX) - F(0);
+        var i2 = F(bx) - F(rootX);
+        netInt = i1 + i2;
+        totalArea = Math.abs(i1) + Math.abs(i2);
+      }
+
+      out.textContent =
+        'Interval [0, ' + bx.toFixed(2) + ']   |   Net Integral ∫₀^b f(x) dx = ' + netInt.toFixed(4) +
+        '   |   Total Enclosed Area ∫₀^b |f(x)| dx = ' + totalArea.toFixed(4) + ' unit²';
+    }
+  });
+
+  function sync() {
+    bVal = clampB(parseFloat(bIn.value));
+    bIn.value = bVal.toFixed(2);
+    plot.move('B', [bVal, f(bVal)]);
+  }
+
+  bIn.addEventListener('input', sync);
+  var btns = canvas.parentElement.querySelectorAll('.pill[data-mode]');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].addEventListener('click', function() {
+      for (var j = 0; j < btns.length; j++) btns[j].classList.remove('active');
+      this.classList.add('active');
+      mode = this.getAttribute('data-mode');
+      if (mode === 'ex4') bIn.value = '2.50';
+      else if (mode === 'ex5') bIn.value = '4.71';
+      else bIn.value = '4.00';
+      sync();
+    });
+  }
+})();
+</script>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Textbook Examples 3, 4, 5 &amp; 6</span>
+
+  <p><strong>Example 3 (Textbook p. 199):</strong> Find the area enclosed between the $x$-axis and:<br>
+  (a) $f(x) = 3$ over $[1, 4]$ &emsp; (b) $f(x) = 3x + 2$ over $\left[-\dfrac{2}{3}, 0\right]$ &emsp; (c) $f(x) = -x^2 + 4$ over $[-2, 2]$.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <ul>
+      <li><strong>(a)</strong> $\displaystyle \int_1^4 3\,dx = \bigl[3x\bigr]_1^4 = 12 - 3 = 9\text{ unit}^2$.</li>
+      <li><strong>(b)</strong> $\displaystyle \int_{-2/3}^0 (3x + 2)\,dx = \left[\frac{3}{2}x^2 + 2x\right]_{-2/3}^0 = 0 - \left(\frac{2}{3} - \frac{4}{3}\right) = \frac{2}{3}\text{ unit}^2$.</li>
+      <li><strong>(c)</strong> $\displaystyle \int_{-2}^2 (-x^2 + 4)\,dx = \left[-\frac{x^3}{3} + 4x\right]_{-2}^2 = \frac{16}{3} - \left(-\frac{16}{3}\right) = 10\frac{2}{3}\text{ unit}^2$.</li>
+    </ul>
+    <p class="answer">Answer: (a) $9\text{ unit}^2$; (b) $\frac{2}{3}\text{ unit}^2$; (c) $10\frac{2}{3}\text{ unit}^2$.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 4 (Textbook pp. 200–201):</strong> For $f(x) = x^2 - 2x$ on $\left[0, \dfrac{5}{2}\right]$, compute:<br>
+  (a) the definite integral $\displaystyle \int_0^{5/2} (x^2 - 2x)\,dx$ &emsp; (b) the total area enclosed between $f(x)$ and the $x$-axis.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p><strong>(a)</strong> $\displaystyle \int_0^{5/2} (x^2 - 2x)\,dx = \left[\frac{x^3}{3} - x^2\right]_0^{5/2} = \frac{125}{24} - \frac{25}{4} = -\frac{25}{24} = -1\frac{1}{24}$.</p>
+    <p><strong>(b)</strong> Solving $x^2 - 2x = 0$ gives $x = 0, 2$. Splitting at $x = 2$:</p>
+    $$\int_0^2 (x^2 - 2x)\,dx = -\frac{4}{3}, \qquad \int_2^{5/2} (x^2 - 2x)\,dx = -\frac{25}{24} - \left(-\frac{4}{3}\right) = \frac{7}{24}$$
+    $$\text{Total Area} = \left|-\frac{4}{3}\right| + \left|\frac{7}{24}\right| = \frac{39}{24} = 1\frac{5}{8}\text{ unit}^2$$
+    <p class="answer">Answer: (a) $-1\frac{1}{24}$; (b) $1\frac{5}{8}\text{ unit}^2$.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 5 &amp; Example 6 (Textbook pp. 201–202):</strong><br>
+  (a) Find the area enclosed between $f(x) = \cos x$ and the $x$-axis from $x = 0$ to $x = \dfrac{3\pi}{2}$.<br>
+  (b) The shaded area under $f(x) = k\sqrt{x}$ over $[0, 4]$ is $16\text{ unit}^2$. Find $k$.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p><strong>(a) Example 5:</strong> Since $\cos x = 0$ at $x = \dfrac{\pi}{2}$, we integrate on $\left[0, \dfrac{\pi}{2}\right]$ and $\left[\dfrac{\pi}{2}, \dfrac{3\pi}{2}\right]$:</p>
+    $$\int_0^{\pi/2} \cos x\,dx = 1, \qquad \int_{\pi/2}^{3\pi/2} \cos x\,dx = -2 \implies \text{Total Area} = |1| + |-2| = 3\text{ unit}^2$$
+    <p><strong>(b) Example 6:</strong> $\displaystyle \int_0^4 k\sqrt{x}\,dx = \left[\frac{2k}{3}x^{3/2}\right]_0^4 = \frac{16k}{3} = 16 \implies k = 3$.</p>
+    <p class="answer">Answer: (a) $3\text{ unit}^2$ (while the net integral is $-1$); (b) $k = 3$.</p>
+  </details>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>Taking $\left|\int_a^b f(x)\,dx\right|$ Without Splitting at Zeros of $f$:</strong> Taking the absolute value of the whole integral from $a$ to $b$ still lets positive and negative lobes cancel! You must split $[a, b]$ at every interior root of $f(x) = 0$ first.</li>
+  </ul>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>When $f(x) \ge 0$ on $[a, b]$, the area between $y = f(x)$ and the $x$-axis is $\int_a^b f(x)\,dx$.</li>
+    <li>When $f(x)$ crosses the $x$-axis at $x = c$, the total enclosed area is $\left|\int_a^c f(x)\,dx\right| + \left|\int_c^b f(x)\,dx\right|$.</li>
+  </ul>
+</div>
+
+</article>

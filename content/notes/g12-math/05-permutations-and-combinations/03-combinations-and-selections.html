@@ -1,0 +1,204 @@
+<!-- tags: Permutations and Combinations, G12 Math Myanmar -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Permutations and Combinations">Combinations and Selections</h1>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Combinations (Unordered Selections)</span>
+  <p>A <strong>combination</strong> (တွဲဖက်မှု / ရွေးချယ်မှု) is a selection of objects in which the <strong>order of selection does not matter</strong>. For example, choosing a 3-person committee $\{A, B, C\}$ from 4 people $\{A, B, C, D\}$ is a single combination, even though those same 3 people can be lined up in $3! = 6$ different permutations ($ABC, ACB, BAC, BCA, CAB, CBA$).</p>
+  <p>The number of combinations of $n$ distinct objects taken $r$ at a time ($0 \le r \le n$) is denoted by ${}^nC_r$.</p>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formulas &mdash; The Combination Formula ${}^nC_r$ &amp; Symmetry Identities</span>
+  <ul>
+    <li><strong>Relation Between Permutations and Combinations:</strong> Every combination of $r$ objects can be ordered internally in $r!$ ways, so:
+      $${}^nC_r \cdot r! = {}^nP_r \implies {}^nC_r = \frac{{}^nP_r}{r!}$$
+    </li>
+    <li><strong>Factorial &amp; Practical Calculation Forms ($0 \le r \le n$):</strong>
+      $${}^nC_r = \frac{n!}{r!\,(n - r)!} = \frac{n(n - 1)(n - 2)\cdots(n - r + 1)}{r(r - 1)\cdots 2 \cdot 1}$$
+    </li>
+    <li><strong>Fundamental Identities &amp; Symmetry Law:</strong>
+      $${}^nC_0 = 1, \qquad {}^nC_n = 1, \qquad {}^nC_1 = n, \qquad {}^nC_r = {}^nC_{n - r}$$
+    </li>
+  </ul>
+</div>
+
+<div class="note-proof">
+  <span class="block-label">Proof &mdash; Why ${}^nC_r = \dfrac{n!}{r!\,(n - r)!}$ and ${}^nC_r = {}^nC_{n - r}$</span>
+  <p><strong>1. Quotient Proof:</strong> To form an ordered permutation of $r$ objects from $n$ distinct objects (${}^nP_r$ ways), we can first select an unordered subset of $r$ objects (${}^nC_r$ ways) and then arrange those $r$ chosen objects in order ($r!$ ways). By the Multiplication Principle:</p>
+  $${}^nP_r = {}^nC_r \times r! \implies {}^nC_r = \frac{{}^nP_r}{r!} = \frac{n!}{r!\,(n - r)!}$$
+  <p><strong>2. Symmetry Proof (${}^nC_r = {}^nC_{n - r}$):</strong> Choosing $r$ objects to <em>include</em> in a group automatically leaves behind $n - r$ objects to <em>exclude</em>. Algebraically, replacing $r$ by $n - r$ gives:</p>
+  $${}^nC_{n - r} = \frac{n!}{(n - r)!\,[n - (n - r)]!} = \frac{n!}{(n - r)!\,r!} = {}^nC_r \quad \blacksquare$$
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; Combinations ${}^nC_r$ vs. Permutations ${}^nP_r$ &amp; Symmetry ${}^nC_r = {}^nC_{n-r}$</span>
+  <p>Select $n$ and $r$ to inspect the $n$-row of combination values ${}^nC_0, {}^nC_1, \dots, {}^nC_n$. Notice how ${}^nC_r$ and its mirror twin ${}^nC_{n-r}$ are always equal, and how multiplying ${}^nC_r$ by $r!$ recovers ${}^nP_r$.</p>
+  <canvas id="g12-ch5-03-canvas"></canvas>
+  <div class="controls">
+    <label>Total items (n) <input type="range" id="ch5-03-n" min="3" max="8" value="6" step="1"></label>
+    <label>Choose (r) <input type="range" id="ch5-03-r" min="0" max="6" value="2" step="1"></label>
+  </div>
+  <div class="output table-text" id="ch5-03-out"></div>
+</div>
+
+<script>
+(function() {
+  var canvas = document.getElementById('g12-ch5-03-canvas');
+  var nIn = document.getElementById('ch5-03-n');
+  var rIn = document.getElementById('ch5-03-r');
+  var out = document.getElementById('ch5-03-out');
+  if (!canvas) return;
+
+  function fact(k) {
+    var res = 1;
+    for (var i = 2; i <= k; i++) res *= i;
+    return res;
+  }
+  function nCr(n, r) {
+    if (r < 0 || r > n) return 0;
+    return Math.round(fact(n) / (fact(r) * fact(n - r)));
+  }
+  function box(g, x1, y1, x2, y2, fill, strokeCol) {
+    g.poly([[x1, y1], [x2, y1], [x2, y2], [x1, y2]], fill);
+    g.seg([x1, y1], [x2, y1], strokeCol, { width: 1.8 });
+    g.seg([x2, y1], [x2, y2], strokeCol, { width: 1.8 });
+    g.seg([x2, y2], [x1, y2], strokeCol, { width: 1.8 });
+    g.seg([x1, y2], [x1, y1], strokeCol, { width: 1.8 });
+  }
+
+  var board = NoteGeom.board(canvas, {
+    points: {},
+    draw: function(g) {
+      var n = parseInt(nIn.value, 10);
+      rIn.max = n;
+      var r = parseInt(rIn.value, 10);
+      if (r > n) { r = n; rIn.value = n; }
+
+      var maxC = nCr(n, Math.floor(n / 2));
+      var baseY = 245;
+      var spanW = 430;
+      var stepX = spanW / (n + 1);
+
+      g.text([260, 26], 'Symmetry Across Row n = ' + n + ':  ⁿCᵣ (rose) = ⁿCₙ₋ᵣ (amber)', '#0f172a');
+
+      for (var k = 0; k <= n; k++) {
+        var val = nCr(n, k);
+        var x = 45 + (k + 0.5) * stepX;
+        var h = Math.max(14, Math.round((val / maxC) * 160));
+        var isR = (k === r);
+        var isSym = (k === n - r && k !== r);
+        var col = isR ? '#e11d48' : (isSym ? '#d97706' : '#0d9488');
+        var fill = isR ? 'rgba(225, 29, 72, 0.25)' : (isSym ? 'rgba(217, 119, 6, 0.25)' : 'rgba(13, 148, 136, 0.16)');
+
+        box(g, x - 18, baseY - h, x + 18, baseY, fill, col);
+        g.text([x, baseY + 18], n + 'C' + k, col);
+        g.text([x, baseY - h - 10], String(val), col);
+      }
+
+      var comb = nCr(n, r);
+      var rf = fact(r);
+      var perm = comb * rf;
+      g.text([260, 298], n + 'C' + r + ' = ' + comb + ' selections  ×  ' + r + '! (' + rf + ')  =  ' + n + 'P' + r + ' = ' + perm + ' permutations', '#2563eb');
+
+      out.textContent =
+        n + 'C' + r + ' = ' + n + '! / (' + r + '! · ' + (n - r) + '!) = ' + comb +
+        '   |   Symmetry: ' + n + 'C' + (n - r) + ' = ' + comb +
+        '   |   Relation: ' + n + 'P' + r + ' = ' + n + 'C' + r + ' × ' + r + '! = ' + comb + ' × ' + rf + ' = ' + perm;
+    }
+  });
+
+  nIn.addEventListener('input', function() { board.redraw(); });
+  rIn.addEventListener('input', function() { board.redraw(); });
+})();
+</script>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Textbook Examples 15, 16, 17, 18 &amp; 19</span>
+
+  <p><strong>Example 15 (Using Symmetry ${}^nC_r = {}^nC_{n-r}$ to Compute Large Combinations):</strong> Evaluate ${}^{21}C_{19}$.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p>Using ${}^nC_r = {}^nC_{n - r}$ with $n = 21$ and $r = 19$:</p>
+    $${}^{21}C_{19} = {}^{21}C_{21 - 19} = {}^{21}C_2 = \frac{21 \cdot 20}{2 \cdot 1} = 210$$
+    <p class="answer">Answer: $210$.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 16 (Multi-Group Selection — Multiplication of Combinations):</strong> A music class consists of $5$ piano players, $7$ guitarists, and $4$ violinists. A band of $1$ piano player, $3$ guitarists, and $2$ violinists must be chosen to play at a school concert. In how many ways can the band be chosen?</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <ul>
+      <li>Choose $1$ piano player from $5$: ${}^5C_1 = 5$ ways.</li>
+      <li>Choose $3$ guitarists from $7$: ${}^7C_3 = \dfrac{7 \cdot 6 \cdot 5}{3 \cdot 2 \cdot 1} = 35$ ways.</li>
+      <li>Choose $2$ violinists from $4$: ${}^4C_2 = \dfrac{4 \cdot 3}{2 \cdot 1} = 6$ ways.</li>
+    </ul>
+    <p>By the Multiplication Principle, total ways $= {}^5C_1 \cdot {}^7C_3 \cdot {}^4C_2 = 5 \times 35 \times 6 = 1050$.</p>
+    <p class="answer">Answer: $1050$ ways.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 17 (Same-Color Selection — Addition of Combinations):</strong> Suppose there are $4$ black cars and $7$ white cars, all distinguishable. In how many ways can $3$ cars of the <em>same color</em> be chosen?</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p>To be of the same color, the $3$ cars must be either <strong>all black</strong> OR <strong>all white</strong>:</p>
+    $$\text{Total ways} = {}^4C_3 + {}^7C_3 = \frac{4 \cdot 3 \cdot 2}{3 \cdot 2 \cdot 1} + \frac{7 \cdot 6 \cdot 5}{3 \cdot 2 \cdot 1} = 4 + 35 = 39$$
+    <p class="answer">Answer: $39$ ways.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 18 (Distributing Books Among Three Children):</strong> There are $6$ different books. In how many ways can the books be distributed among three children if the youngest receives $3$ books, the middle child receives $1$ book, and the eldest receives $2$ books?</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <ul>
+      <li>For the youngest child, choose $3$ books out of $6$: ${}^6C_3 = \dfrac{6 \cdot 5 \cdot 4}{3 \cdot 2 \cdot 1} = 20$ ways.</li>
+      <li>For the middle child, choose $1$ book from the remaining $3$ books: ${}^3C_1 = 3$ ways.</li>
+      <li>For the eldest child, choose $2$ books from the remaining $2$ books: ${}^2C_2 = 1$ way.</li>
+    </ul>
+    <p>By the Multiplication Principle, total ways $= 20 \cdot 3 \cdot 1 = 60$.</p>
+    <p class="answer">Answer: $60$ ways.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 19 (Inclusion / Exclusion of a Specific Item):</strong> In how many ways can $4$ fruits be selected out of $9$ distinct fruits so as always to:<br>
+  (a) <em>include</em> the largest fruit? &nbsp; (b) <em>exclude</em> the smallest fruit?</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p><strong>(a) Always include the largest fruit:</strong> Since the largest fruit is already chosen ($1$ way), we only need to select the remaining $4 - 1 = 3$ fruits from the other $9 - 1 = 8$ fruits:</p>
+    $${}^8C_3 = \frac{8 \cdot 7 \cdot 6}{3 \cdot 2 \cdot 1} = 56\text{ ways}$$
+    <p><strong>(b) Always exclude the smallest fruit:</strong> Set the smallest fruit aside completely and select all $4$ fruits from the remaining $8$ fruits:</p>
+    $${}^8C_4 = \frac{8 \cdot 7 \cdot 6 \cdot 5}{4 \cdot 3 \cdot 2 \cdot 1} = 70\text{ ways}$$
+    <p class="answer">Answer: (a) $56$ ways, (b) $70$ ways.</p>
+  </details>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>Confusing ${}^nP_r$ and ${}^nC_r$:</strong> If the selected items are given <em>distinct roles/positions</em> (e.g., President, Treasurer, Secretary, or a 4-digit PIN), order matters $\implies$ use ${}^nP_r$. If they form an <em>unranked group</em> (e.g., a committee, a band of guitarists, a subset of fruits, or vertices of a triangle), order does not matter $\implies$ use ${}^nC_r$.</li>
+    <li><strong>Forgetting to Reduce Both $n$ and $r$ When an Item Is Pre-Included:</strong> When $k$ specific items <em>must be included</em>, reduce the pool size to $n - k$ AND reduce the number of items still to be chosen to $r - k$, giving ${}^{n-k}C_{r-k}$.</li>
+  </ul>
+</div>
+
+<div class="note-tip">
+  <span class="block-label">Exam Tip &mdash; Geometric Counting with Combinations (Exercise 5.3 #4 &amp; #5)</span>
+  <p>Given $n$ points in a plane with no $3$ collinear: every pair of points determines a unique line (${}^nC_2$ lines), and every triple of points determines a unique triangle (${}^nC_3$ triangles). Similarly, in an $n$-team league where every team plays every other team once, there are ${}^nC_2 = \frac{n(n-1)}{2}$ games!</p>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways (မှတ်သားရန် အချက်များ)</span>
+  <ul>
+    <li><strong>Combination Formula (တွဲဖက်မှုပုံသေနည်း):</strong> ${}^nC_r = \dfrac{{}^nP_r}{r!} = \dfrac{n!}{r!\,(n - r)!}$ counts unordered selections of $r$ objects from $n$.</li>
+    <li><strong>Symmetry Identity (အချိုးညီဂုဏ်သတ္တိ):</strong> ${}^nC_r = {}^nC_{n - r}$, and ${}^nC_0 = {}^nC_n = 1$.</li>
+    <li><strong>Mandatory Inclusion vs. Exclusion:</strong> Including $1$ fixed item gives ${}^{n-1}C_{r-1}$; excluding $1$ fixed item gives ${}^{n-1}C_r$.</li>
+  </ul>
+</div>
+</article>

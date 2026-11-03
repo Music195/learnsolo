@@ -1,0 +1,214 @@
+<!-- tags: Method of Integration, G12 Math Myanmar -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Method of Integration">Substitution Method</h1>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Differentials &amp; Integration by Substitution</span>
+  <p>The substitution method transforms a complicated composite integral into a simpler integral by changing the variable of integration from $x$ to $u = g(x)$:</p>
+  <ul>
+    <li><strong>Differential of $u = g(x)$:</strong> If $g$ is differentiable, the differential $du$ is defined by $du = g'(x)\,dx$.</li>
+    <li><strong>Chain Rule in Reverse:</strong> Whenever an integrand has the composite-times-derivative structure $f(g(x))g'(x)$, setting $u = g(x)$ and $du = g'(x)\,dx$ reduces the integral to:
+      $$\int f(g(x))g'(x)\,dx = \int f(u)\,du$$
+    </li>
+    <li><strong>5-Step Substitution Procedure (Textbook p. 179):</strong>
+      <ol>
+        <li>Select a substitution $u = g(x)$ (such as an inner function under a power, radical, exponent, or denominator).</li>
+        <li>Differentiate to find $du = g'(x)\,dx$ and arrange to express $dx$ in terms of $du$.</li>
+        <li>Substitute to transform the entire integral from the $x$-variable into the $u$-variable.</li>
+        <li>Integrate with respect to $u$.</li>
+        <li>Replace $u$ by $g(x)$ to rewrite the final answer in terms of $x$.</li>
+      </ol>
+    </li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formulas &mdash; Substitution Patterns &amp; Secant/Cosecant Integrals</span>
+  <div class="formula-main">
+    $$\int f(g(x))g'(x)\,dx = \int f(u)\,du \qquad\qquad \int \frac{g'(x)}{g(x)}\,dx = \ln|g(x)| + C$$
+  </div>
+  <ul class="symbols">
+    <li><strong>Power of a Function:</strong> $\displaystyle \int \bigl[g(x)\bigr]^n g'(x)\,dx = \frac{1}{n + 1}\bigl[g(x)\bigr]^{n + 1} + C \quad (n \neq -1)$.</li>
+    <li><strong>Tangent and Cotangent:</strong> $\displaystyle \int \tan x\,dx = -\ln|\cos x| + C = \ln|\sec x| + C$, &emsp; $\displaystyle \int \cot x\,dx = \ln|\sin x| + C$.</li>
+    <li><strong>Secant and Cosecant (Textbook pp. 182–183):</strong>
+      $$\int \sec x\,dx = \ln|\sec x + \tan x| + C \qquad\qquad \int \csc x\,dx = -\ln|\csc x + \cot x| + C$$
+    </li>
+  </ul>
+</div>
+
+<div class="note-proof">
+  <span class="block-label">Proof &mdash; Evaluating $\int \sec x\,dx$ and $\int \csc x\,dx$ by Substitution</span>
+  <p><strong>(a) Integral of $\sec x$:</strong> Multiply and divide $\sec x$ by $\sec x + \tan x$:</p>
+  $$\int \sec x\,dx = \int \sec x \left(\frac{\sec x + \tan x}{\sec x + \tan x}\right)dx = \int \frac{\sec^2 x + \sec x\tan x}{\sec x + \tan x}\,dx$$
+  <p>Let $u = \sec x + \tan x$. Then $du = (\sec x\tan x + \sec^2 x)\,dx$, which is the exact numerator! Hence:</p>
+  $$\int \sec x\,dx = \int \frac{1}{u}\,du = \ln|u| + C = \ln|\sec x + \tan x| + C$$
+  <p><strong>(b) Integral of $\csc x$:</strong> Multiply and divide $\csc x$ by $\csc x + \cot x$ and set $u = \csc x + \cot x$ ($du = -(\csc x\cot x + \csc^2 x)\,dx$):</p>
+  $$\int \csc x\,dx = \int \frac{\csc^2 x + \csc x\cot x}{\csc x + \cot x}\,dx = -\int \frac{1}{u}\,du = -\ln|\csc x + \cot x| + C$$
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; Composite Integrand $f(g(x))g'(x)$ &amp; Antiderivative $F(g(x))$</span>
+  <p>Drag point $P$ along the antiderivative curve $y = F(g(x))$ (teal) or use the slider and textbook Example buttons. Both the integrand $f(g(x))g'(x)$ (blue) and its antiderivative $F(g(x))$ (teal) are plotted at their exact coordinates on the grid.</p>
+  <canvas id="g12-ch10-02-canvas"></canvas>
+  <div class="controls">
+    <label>Point $x_0$ <input type="range" id="ch10-02-x0" min="-1.5" max="1.5" value="0.90" step="0.02"></label>
+    <button type="button" class="pill active" data-mode="ex6a">Ex 6(a): ∫ x e^(x²) dx  [u = x²]</button>
+    <button type="button" class="pill" data-mode="ex6b">Ex 6(b): ∫ sin³x cos x dx  [u = sin x]</button>
+    <button type="button" class="pill" data-mode="ex6f">Ex 6(f): ∫ cos³x dx  [u = sin x]</button>
+  </div>
+  <div class="output table-text" id="ch10-02-out"></div>
+</div>
+
+<script>
+(function() {
+  var canvas = document.getElementById('g12-ch10-02-canvas');
+  var xIn = document.getElementById('ch10-02-x0');
+  var out = document.getElementById('ch10-02-out');
+  if (!canvas || !window.NotePlot) return;
+
+  var mode = 'ex6a';
+  var x0 = 0.9;
+
+  function uOf(x) {
+    if (mode === 'ex6a') return x * x;
+    return Math.sin(x);
+  }
+
+  // Exact unscaled integrand and antiderivative functions!
+  function integrand(x) {
+    if (mode === 'ex6a') return x * Math.exp(x * x);
+    if (mode === 'ex6b') return Math.pow(Math.sin(x), 3) * Math.cos(x);
+    return Math.pow(Math.cos(x), 3);
+  }
+
+  function antideriv(x) {
+    if (mode === 'ex6a') return 0.5 * Math.exp(x * x);
+    if (mode === 'ex6b') return 0.25 * Math.pow(Math.sin(x), 4);
+    var s = Math.sin(x);
+    return s - (s * s * s) / 3;
+  }
+
+  var plot = NotePlot.graph(canvas, {
+    x: [-2.4, 2.4],
+    y: [-2.2, 3.2],
+    points: { P: [x0, antideriv(x0)] },
+    constrain: {
+      P: function(p) {
+        var maxX = mode === 'ex6a' ? 1.3 : 2.1;
+        var cx = Math.max(-maxX, Math.min(maxX, p[0]));
+        x0 = cx;
+        xIn.value = cx.toFixed(2);
+        return [cx, antideriv(cx)];
+      }
+    },
+    draw: function(g, P) {
+      var x = P.P[0];
+      var iy = integrand(x);
+      var ay = antideriv(x);
+
+      g.fill(function(t) { return integrand(t); }, 0, x, 'rgba(37, 99, 235, 0.14)');
+      g.fn(function(t) { return integrand(t); }, '#2563eb', { width: 2.4 });
+      g.fn(function(t) { return antideriv(t); }, '#0d9488', { width: 2.8 });
+
+      g.dot([x, iy], '#2563eb', 'f(g(x))g\'(x)');
+      g.dot([x, ay], '#e11d48', 'F(g(x))');
+
+      out.textContent =
+        'x₀ = ' + x.toFixed(2) + '   →   Inner variable u = g(x₀) = ' + uOf(x).toFixed(3) +
+        '   |   Integrand value = ' + iy.toFixed(3) +
+        '   |   Antiderivative F(u) = ' + ay.toFixed(3);
+    }
+  });
+
+  function sync() {
+    x0 = parseFloat(xIn.value);
+    plot.move('P', [x0, antideriv(x0)]);
+  }
+
+  xIn.addEventListener('input', sync);
+  var btns = canvas.parentElement.querySelectorAll('.pill[data-mode]');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].addEventListener('click', function() {
+      for (var j = 0; j < btns.length; j++) btns[j].classList.remove('active');
+      this.classList.add('active');
+      mode = this.getAttribute('data-mode');
+      xIn.value = mode === 'ex6a' ? '0.90' : '1.10';
+      sync();
+    });
+  }
+})();
+</script>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Textbook Examples 6 &amp; 7</span>
+
+  <p><strong>Example 6(a)–(c) (Textbook pp. 179–180):</strong> Evaluate:<br>
+  (a) $\displaystyle \int x e^{x^2}\,dx$ &emsp; (b) $\displaystyle \int \sin^3 x\cos x\,dx$ &emsp; (c) $\displaystyle \int x^2\left(\frac{x^3}{18} + 1\right)^5 dx$.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <ul>
+      <li><strong>(a)</strong> Let $u = x^2 \implies du = 2x\,dx \implies x\,dx = \dfrac{1}{2}\,du$. Then $\displaystyle \int x e^{x^2}\,dx = \frac{1}{2}\int e^u\,du = \frac{1}{2}e^{x^2} + C$.</li>
+      <li><strong>(b)</strong> Let $u = \sin x \implies du = \cos x\,dx$. Then $\displaystyle \int \sin^3 x\cos x\,dx = \int u^3\,du = \frac{1}{4}u^4 + C = \frac{1}{4}\sin^4 x + C$.</li>
+      <li><strong>(c)</strong> Let $u = \dfrac{x^3}{18} + 1 \implies du = \dfrac{1}{6}x^2\,dx \implies x^2\,dx = 6\,du$. Then $\displaystyle 6\int u^5\,du = u^6 + C = \left(\frac{x^3}{18} + 1\right)^6 + C$.</li>
+    </ul>
+    <p class="answer">Answer: (a) $\frac{1}{2}e^{x^2} + C$; (b) $\frac{1}{4}\sin^4 x + C$; (c) $\left(\frac{x^3}{18} + 1\right)^6 + C$.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 6(d)–(f) (Textbook pp. 180–181):</strong> Evaluate:<br>
+  (d) $\displaystyle \int x\sqrt{1 - x}\,dx$ &emsp; (e) $\displaystyle \int 8x^3\sqrt{3x^2 + 5}\,dx$ &emsp; (f) $\displaystyle \int \cos^3 x\,dx$.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <ul>
+      <li><strong>(d)</strong> Let $u = 1 - x \implies x = 1 - u$ and $du = -dx$. Then:
+        $$\int (1 - u)u^{1/2}(-du) = \int \left(u^{3/2} - u^{1/2}\right)du = \frac{2}{5}(1 - x)^{5/2} - \frac{2}{3}(1 - x)^{3/2} + C$$
+      </li>
+      <li><strong>(e)</strong> Let $u = 3x^2 + 5 \implies x^2 = \dfrac{u - 5}{3}$ and $du = 6x\,dx \implies x\,dx = \dfrac{1}{6}\,du$. Then:
+        $$8\int \left(\frac{u - 5}{3}\right)u^{1/2}\left(\frac{1}{6}\,du\right) = \frac{4}{9}\int \left(u^{3/2} - 5u^{1/2}\right)du = \frac{8}{45}(3x^2 + 5)^{5/2} - \frac{40}{27}(3x^2 + 5)^{3/2} + C$$
+      </li>
+      <li><strong>(f)</strong> Write $\cos^3 x = (1 - \sin^2 x)\cos x$ and let $u = \sin x$ ($du = \cos x\,dx$):
+        $$\int (1 - u^2)\,du = u - \frac{1}{3}u^3 + C = \sin x - \frac{1}{3}\sin^3 x + C$$
+      </li>
+    </ul>
+    <p class="answer">Answer: (d) $\frac{2}{5}(1-x)^{5/2} - \frac{2}{3}(1-x)^{3/2} + C$; (e) $\frac{8}{45}(3x^2+5)^{5/2} - \frac{40}{27}(3x^2+5)^{3/2} + C$; (f) $\sin x - \frac{1}{3}\sin^3 x + C$.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 7 (Textbook pp. 181–182):</strong> Evaluate:<br>
+  (a) $\displaystyle \int \frac{2x - 1}{x^2 - x - 6}\,dx$ &emsp; (b) $\displaystyle \int \frac{x^2 + 2x - 1}{x^2 - 1}\,dx$ &emsp; (c) $\displaystyle \int \frac{1}{1 + e^x}\,dx$ &emsp; (d) $\displaystyle \int \tan x\,dx$.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <ul>
+      <li><strong>(a)</strong> Let $u = x^2 - x - 6 \implies du = (2x - 1)\,dx$: $\displaystyle \int \frac{du}{u} = \ln|x^2 - x - 6| + C$.</li>
+      <li><strong>(b)</strong> Rewrite as $\displaystyle \int \left(1 + \frac{2x}{x^2 - 1}\right)dx = x + \ln|x^2 - 1| + C$.</li>
+      <li><strong>(c)</strong> Multiply top and bottom by $e^{-x}$: $\displaystyle \int \frac{e^{-x}}{e^{-x} + 1}\,dx = -\ln(e^{-x} + 1) + C$ (using $u = e^{-x} + 1$, $du = -e^{-x}\,dx$).</li>
+      <li><strong>(d)</strong> Write $\tan x = \dfrac{\sin x}{\cos x}$ and set $u = \cos x$ ($du = -\sin x\,dx$): $\displaystyle -\int \frac{du}{u} = -\ln|\cos x| + C$.</li>
+    </ul>
+    <p class="answer">Answer: (a) $\ln|x^2-x-6|+C$; (b) $x+\ln|x^2-1|+C$; (c) $-\ln(e^{-x}+1)+C$; (d) $-\ln|\cos x|+C$.</p>
+  </details>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>Leaving the Final Answer in Terms of $u$:</strong> For an indefinite integral in $x$, always complete Step 5 by substituting $u = g(x)$ back into your antiderivative.</li>
+    <li><strong>Mixing $x$ and $u$ Inside the Integral:</strong> After Step 3, every $x$ and $dx$ must be converted into $u$ and $du$ before integrating.</li>
+  </ul>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>With $u = g(x)$ and $du = g'(x)\,dx$, $\int f(g(x))g'(x)\,dx = \int f(u)\,du$.</li>
+    <li>When the numerator is the derivative of the denominator, $\int \frac{g'(x)}{g(x)}\,dx = \ln|g(x)| + C$.</li>
+    <li>$\int \sec x\,dx = \ln|\sec x + \tan x| + C$ and $\int \csc x\,dx = -\ln|\csc x + \cot x| + C$.</li>
+  </ul>
+</div>
+
+</article>

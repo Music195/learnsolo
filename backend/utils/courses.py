@@ -13,6 +13,7 @@ import re
 SUBJECTS = [
     {"name": "Mathematics", "icon": "fa-square-root-variable"},
     {"name": "Physics", "icon": "fa-atom"},
+    {"name": "Grade 12 Myanmar", "icon": "fa-graduation-cap"},
 ]
 
 # Course folder -> display name and subject. A folder missing here is shown
@@ -44,6 +45,11 @@ COURSES = {
     # matter waves, X-rays), the atom (Bohr model, spectra), the nucleus
     # (radioactive decay, half-life, binding energy, nuclear reactions)
     "atomic-physics": {"name": "Atomic Physics", "subject": "Physics"},
+    # Grade 12 Myanmar: complex numbers, mathematical induction, solid geometry,
+    # vector algebra, permutations and combinations, conic sections,
+    # trigonometric functions, logarithmic and exponential functions,
+    # application of differentiation, methods of integration, application of integration
+    "g12-math": {"name": "Mathematics", "subject": "Grade 12 Myanmar"},
 }
 
 # Past question folders (content/past/<folder>/) -> name, icon and description.

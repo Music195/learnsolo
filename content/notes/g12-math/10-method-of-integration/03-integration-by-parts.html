@@ -1,0 +1,213 @@
+<!-- tags: Method of Integration, G12 Math Myanmar -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Method of Integration">Integration by Parts</h1>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Reversing the Product Rule (Integration by Parts)</span>
+  <p>When an integrand is a product of two functions that cannot be simplified by substitution — such as $x e^x$, $x \sin x$, $\ln x$, or $e^x \sin x$ — we use <strong>integration by parts</strong> (အပိုင်းလိုက်ကိန်းပြည့်ရှာခြင်း), which is derived directly from the product rule of differentiation:</p>
+  <ul>
+    <li><strong>Product Rule:</strong> $\dfrac{d}{dx}\bigl[u(x)v(x)\bigr] = u'(x)v(x) + u(x)v'(x)$.</li>
+    <li><strong>4-Step Procedure for Integration by Parts (Textbook p. 184):</strong>
+      <ol>
+        <li><strong>Step 1:</strong> Choose $u = u(x)$ and $dv = v'(x)\,dx$. (Tip: Choose $u$ so that $du$ is simpler than $u$, such as $\ln x$ or a power $x^n$, and choose $dv$ so that it is easy to integrate.)</li>
+        <li><strong>Step 2:</strong> Differentiate $u$ to find $du = u'(x)\,dx$, and integrate $dv$ to find $v = \int v'(x)\,dx$.</li>
+        <li><strong>Step 3:</strong> Substitute into the formula $\displaystyle \int u\,dv = uv - \int v\,du$.</li>
+        <li><strong>Step 4:</strong> Evaluate $\displaystyle \int v\,du$ and simplify.</li>
+      </ol>
+    </li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formulas &mdash; Integration by Parts</span>
+  <div class="formula-main">
+    $$\int u\,dv = uv - \int v\,du \qquad\Longleftrightarrow\qquad \int u(x)v'(x)\,dx = u(x)v(x) - \int v(x)u'(x)\,dx$$
+  </div>
+  <ul class="symbols">
+    <li><strong>Standard Choices for $u$ and $dv$ in Grade 12 Mathematics:</strong>
+      <ul>
+        <li>For $\int x^n e^{ax}\,dx$, $\int x^n \sin(ax)\,dx$, $\int x^n \cos(ax)\,dx$: choose $u = x^n$ and $dv = e^{ax}\,dx$ (or $\sin/\cos$).</li>
+        <li>For $\int \ln x\,dx$ or $\int x^n \ln x\,dx$: always choose $u = \ln x$ and $dv = dx$ (or $x^n\,dx$).</li>
+        <li>For $\int e^{ax}\sin(bx)\,dx$ or $\int e^{ax}\cos(bx)\,dx$: apply integration by parts <strong>twice</strong> and solve algebraically for the original integral $I$.</li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<div class="note-proof">
+  <span class="block-label">Why Cyclic Integration by Parts Works for $I = \int e^x\sin x\,dx$ (Example 8e)</span>
+  <p>Let $I = \displaystyle \int e^x\sin x\,dx$. In the first application, set $u = e^x$ ($du = e^x\,dx$) and $dv = \sin x\,dx$ ($v = -\cos x$):</p>
+  $$I = -e^x\cos x - \int (-\cos x)e^x\,dx = -e^x\cos x + \int e^x\cos x\,dx \qquad (1)$$
+  <p>In the second application on $\int e^x\cos x\,dx$, again set $u = e^x$ ($du = e^x\,dx$) and $dv = \cos x\,dx$ ($v = \sin x$):</p>
+  $$\int e^x\cos x\,dx = e^x\sin x - \int e^x\sin x\,dx = e^x\sin x - I \qquad (2)$$
+  <p>Substituting $(2)$ into $(1)$ makes the original integral $I$ reappear with a minus sign:</p>
+  $$I = -e^x\cos x + e^x\sin x - I \implies 2I = e^x(\sin x - \cos x) \implies I = \frac{1}{2}e^x(\sin x - \cos x) + C$$
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; Decomposing $\int u\,dv = u(x)v(x) - \int v\,du$</span>
+  <p>Drag point $P$ along the antiderivative curve $F(x)$ (teal) or use the slider and textbook Example 8 buttons. Compare the integrand $u(x)v'(x)$ (blue), the product term $u(x)v(x)$ (dashed amber), and the resulting antiderivative $F(x) = u(x)v(x) - \int v\,du$ (teal) at their exact coordinates.</p>
+  <canvas id="g12-ch10-03-canvas"></canvas>
+  <div class="controls">
+    <label>Point $x_0$ <input type="range" id="ch10-03-x0" min="0.2" max="2.4" value="1.20" step="0.02"></label>
+    <button type="button" class="pill active" data-mode="lnx">Ex 8(b): ∫ ln x dx = x ln x − x</button>
+    <button type="button" class="pill" data-mode="xcos">Ex 8(c): ∫ x cos x dx = x sin x + cos x</button>
+    <button type="button" class="pill" data-mode="xex">Ex 8(a): ∫ x e^x dx = (x − 1)e^x</button>
+    <button type="button" class="pill" data-mode="exsin">Ex 8(e): ∫ e^x sin x dx</button>
+  </div>
+  <div class="output table-text" id="ch10-03-out"></div>
+</div>
+
+<script>
+(function() {
+  var canvas = document.getElementById('g12-ch10-03-canvas');
+  var xIn = document.getElementById('ch10-03-x0');
+  var out = document.getElementById('ch10-03-out');
+  if (!canvas || !window.NotePlot) return;
+
+  var mode = 'lnx';
+  var x0 = 1.2;
+
+  // Exact unscaled textbook functions!
+  function integrand(x) {
+    if (mode === 'lnx') return x > 0.04 ? Math.log(x) : NaN;
+    if (mode === 'xcos') return x * Math.cos(x);
+    if (mode === 'xex') return x * Math.exp(x);
+    return Math.exp(x) * Math.sin(x);
+  }
+
+  function uvTerm(x) {
+    if (mode === 'lnx') return x > 0.04 ? x * Math.log(x) : NaN;
+    if (mode === 'xcos') return x * Math.sin(x);
+    if (mode === 'xex') return x * Math.exp(x);
+    return -Math.exp(x) * Math.cos(x);
+  }
+
+  function antideriv(x) {
+    if (mode === 'lnx') return x > 0.04 ? x * Math.log(x) - x : NaN;
+    if (mode === 'xcos') return x * Math.sin(x) + Math.cos(x);
+    if (mode === 'xex') return (x - 1) * Math.exp(x);
+    return 0.5 * Math.exp(x) * (Math.sin(x) - Math.cos(x));
+  }
+
+  function clampX(x) {
+    if (mode === 'lnx') return Math.max(0.15, Math.min(3.2, x));
+    if (mode === 'xex' || mode === 'exsin') return Math.max(-1.8, Math.min(1.4, x));
+    return Math.max(-2.2, Math.min(2.8, x));
+  }
+
+  var plot = NotePlot.graph(canvas, {
+    x: [-2.2, 3.4],
+    y: [-2.8, 3.8],
+    points: { P: [x0, antideriv(x0)] },
+    constrain: {
+      P: function(p) {
+        var cx = clampX(p[0]);
+        x0 = cx;
+        xIn.value = cx.toFixed(2);
+        return [cx, antideriv(cx)];
+      }
+    },
+    draw: function(g, P) {
+      var x = P.P[0];
+      var iy = integrand(x);
+      var uvy = uvTerm(x);
+      var fy = antideriv(x);
+
+      g.fn(function(t) { return integrand(t); }, '#2563eb', { width: 2.3 });
+      g.fn(function(t) { return uvTerm(t); }, '#d97706', { dash: true, width: 2 });
+      g.fn(function(t) { return antideriv(t); }, '#0d9488', { width: 2.8 });
+
+      if (isFinite(iy)) g.dot([x, iy], '#2563eb', 'Integrand');
+      if (isFinite(fy)) g.dot([x, fy], '#e11d48', 'F(x₀)');
+
+      var vdu = uvy - fy;
+      out.textContent =
+        'At x₀ = ' + x.toFixed(2) + ':   u(x₀)v(x₀) = ' + uvy.toFixed(3) +
+        '   |   ∫v du = ' + vdu.toFixed(3) +
+        '   |   Antiderivative F(x₀) = uv − ∫v du = ' + fy.toFixed(3);
+    }
+  });
+
+  function sync() {
+    x0 = clampX(parseFloat(xIn.value));
+    xIn.value = x0.toFixed(2);
+    plot.move('P', [x0, antideriv(x0)]);
+  }
+
+  xIn.addEventListener('input', sync);
+  var btns = canvas.parentElement.querySelectorAll('.pill[data-mode]');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].addEventListener('click', function() {
+      for (var j = 0; j < btns.length; j++) btns[j].classList.remove('active');
+      this.classList.add('active');
+      mode = this.getAttribute('data-mode');
+      xIn.min = mode === 'lnx' ? '0.15' : '-1.8';
+      xIn.max = (mode === 'xex' || mode === 'exsin') ? '1.4' : '2.8';
+      xIn.value = mode === 'lnx' ? '1.80' : '0.80';
+      sync();
+    });
+  }
+})();
+</script>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Textbook Example 8(a)–(f) (pp. 185–187)</span>
+
+  <p><strong>Example 8(a) &amp; 8(b):</strong> Evaluate:<br>
+  (a) $\displaystyle \int x e^x\,dx$ &emsp; (b) $\displaystyle \int \ln x\,dx$.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p><strong>(a) $\displaystyle \int x e^x\,dx$:</strong> Let $u = x$ and $dv = e^x\,dx$. Then $du = dx$ and $v = e^x$:</p>
+    $$\int x e^x\,dx = x e^x - \int e^x\,dx = x e^x - e^x + C = (x - 1)e^x + C$$
+    <p><strong>(b) $\displaystyle \int \ln x\,dx$:</strong> Let $u = \ln x$ and $dv = dx$. Then $du = \dfrac{1}{x}\,dx$ and $v = x$:</p>
+    $$\int \ln x\,dx = x\ln x - \int x \cdot \frac{1}{x}\,dx = x\ln x - \int 1\,dx = x\ln x - x + C$$
+    <p class="answer">Answer: (a) $x e^x - e^x + C$; (b) $x\ln x - x + C$.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 8(c) &amp; 8(d):</strong> Evaluate:<br>
+  (c) $\displaystyle \int x\cos x\,dx$ &emsp; (d) $\displaystyle \int x\sin x\,dx$.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p><strong>(c) $\displaystyle \int x\cos x\,dx$:</strong> Let $u = x$ ($du = dx$) and $dv = \cos x\,dx$ ($v = \sin x$):</p>
+    $$\int x\cos x\,dx = x\sin x - \int \sin x\,dx = x\sin x + \cos x + C$$
+    <p><strong>(d) $\displaystyle \int x\sin x\,dx$:</strong> Let $u = x$ ($du = dx$) and $dv = \sin x\,dx$ ($v = -\cos x$):</p>
+    $$\int x\sin x\,dx = -x\cos x - \int (-\cos x)\,dx = -x\cos x + \sin x + C$$
+    <p class="answer">Answer: (c) $x\sin x + \cos x + C$; (d) $-x\cos x + \sin x + C$.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 8(f):</strong> Evaluate $\displaystyle \int x^2 \ln x\,dx$.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p>Let $u = \ln x$ and $dv = x^2\,dx$. Then $du = \dfrac{1}{x}\,dx$ and $v = \dfrac{x^3}{3}$:</p>
+    $$\int x^2 \ln x\,dx = \frac{x^3}{3}\ln x - \int \frac{x^3}{3} \cdot \frac{1}{x}\,dx = \frac{x^3}{3}\ln x - \frac{1}{3}\int x^2\,dx = \frac{x^3}{3}\ln x - \frac{x^3}{9} + C$$
+    <p class="answer">Answer: $\frac{x^3}{3}\ln x - \frac{x^3}{9} + C$.</p>
+  </details>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>Choosing $u = x^2$ and $dv = \ln x\,dx$ in $\int x^2\ln x\,dx$:</strong> Whenever $\ln x$ is part of a product with $x^n$, always set $u = \ln x$ so that $du = \frac{1}{x}\,dx$ eliminates the logarithm.</li>
+    <li><strong>Switching Roles of $u$ and $dv$ Midway Through $\int e^x\sin x\,dx$:</strong> In cyclic integration by parts, if you choose $u = e^x$ in the first step, you must also choose $u = e^x$ in the second step (otherwise the second step simply undoes the first!).</li>
+  </ul>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>Integration by parts states that $\int u\,dv = uv - \int v\,du$.</li>
+    <li>To integrate $\ln x$ alone, write $\int (\ln x)(1\,dx)$ with $u = \ln x$ and $dv = dx$, obtaining $x\ln x - x + C$.</li>
+    <li>Products of exponential and sine/cosine functions require two applications of integration by parts followed by solving for $I$.</li>
+  </ul>
+</div>
+
+</article>

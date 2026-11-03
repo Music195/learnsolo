@@ -1,0 +1,197 @@
+<!-- tags: Conic Sections, G12 Math Myanmar -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Conic Sections">Rotation of Axes and Eliminating the xy-Term</h1>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Rotation of Axes &amp; Tilted Conics</span>
+  <p>When a conic equation $Ax^2 + Bxy + Cy^2 + Dx + Ey + F = 0$ contains a nonzero cross-product term ($B \neq 0$), its axis of symmetry is tilted at an angle $\theta$ relative to the standard $x$- and $y$-axes.</p>
+  <p>In a <strong>rotation of axes</strong> (ဝင်ရိုးလှည့်ခြင်း), the origin $O(0, 0)$ remains fixed while the $x$- and $y$-axes are rotated counterclockwise through an acute angle $\theta$ ($0^\circ < \theta < 90^\circ$) to form new $x'$- and $y'$-axes aligned with the conic's symmetry axes.</p>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formulas &mdash; Coordinate Rotation Equations &amp; Eliminating the $x'y'$-Term</span>
+  <ul>
+    <li><strong>Rotation Equations ($(x', y') \to (x, y)$):</strong>
+      $$x = x'\cos\theta - y'\sin\theta, \qquad y = x'\sin\theta + y'\cos\theta$$
+    </li>
+    <li><strong>Inverse Rotation Theorem ($(x, y) \to (x', y')$):</strong>
+      $$x' = x\cos\theta + y\sin\theta, \qquad y' = -x\sin\theta + y\cos\theta$$
+    </li>
+    <li><strong>Angle $\theta$ That Eliminates the $x'y'$-Term ($B' = 0$):</strong> Choose acute angle $\theta \in (0^\circ, 90^\circ)$ satisfying:
+      $$\cot 2\theta = \frac{A - C}{B}$$
+      <ul>
+        <li>If $A = C$ ($\cot 2\theta = 0$), then $2\theta = 90^\circ \implies \theta = 45^\circ$.</li>
+        <li>If $\cot 2\theta \neq 0$, find $\cos 2\theta$ from a right triangle and use half-angle formulas:
+          $$\sin\theta = \sqrt{\frac{1 - \cos 2\theta}{2}}, \qquad \cos\theta = \sqrt{\frac{1 + \cos 2\theta}{2}}$$
+        </li>
+      </ul>
+    </li>
+    <li><strong>Rotation Invariants &amp; Parabola Discriminant:</strong> Under any rotation of axes:
+      $$A + C = A' + C' \qquad \text{and} \qquad B^2 - 4AC = (B')^2 - 4A'C'$$
+      In particular, when $B^2 - 4AC = 0$ and $B' = 0$, we get $-4A'C' = 0$ ($A' = 0$ or $C' = 0$), so the rotated equation becomes the standard equation of a <strong>parabola</strong>!
+    </li>
+  </ul>
+</div>
+
+<div class="note-proof">
+  <span class="block-label">Proof &mdash; Trigonometric Derivation of the Rotation Equations</span>
+  <p>Let $P$ be any point at distance $r = OP$ from the origin. Suppose ray $OP$ makes angle $\alpha$ with the rotated positive $x'$-axis, and the $x'$-axis makes angle $\theta$ with the original positive $x$-axis. Then:</p>
+  $$x' = r\cos\alpha, \qquad y' = r\sin\alpha$$
+  <p>Relative to the original $xy$-axes, ray $OP$ makes angle $\theta + \alpha$ with the positive $x$-axis. Expanding by the compound-angle identities:</p>
+  $$x = r\cos(\theta + \alpha) = r(\cos\theta\cos\alpha - \sin\theta\sin\alpha) = (r\cos\alpha)\cos\theta - (r\sin\alpha)\sin\theta = x'\cos\theta - y'\sin\theta$$
+  $$y = r\sin(\theta + \alpha) = r(\sin\theta\cos\alpha + \cos\theta\sin\alpha) = (r\cos\alpha)\sin\theta + (r\sin\alpha)\cos\theta = x'\sin\theta + y'\cos\theta$$
+  <p>Solving this linear system for $x'$ and $y'$ (using $\cos^2\theta + \sin^2\theta = 1$) gives $x' = x\cos\theta + y\sin\theta$ and $y' = -x\sin\theta + y\cos\theta$. Furthermore, substituting $x$ and $y$ into $Ax^2 + Bxy + Cy^2 + \cdots = 0$ produces coefficient $B' = B\cos 2\theta - (A - C)\sin 2\theta$, so setting $B' = 0$ yields $\cot 2\theta = \dfrac{A - C}{B}$. $\blacksquare$</p>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; Rotating the $x'y'$-Axes to Eliminate the $xy$-Term</span>
+  <p>Adjust the rotation angle $\theta$ (in degrees) or click the textbook Example presets to see the rotated $x'$-axis (teal) and $y'$-axis (amber) align with the tilted parabola's axis of symmetry precisely when $\cot 2\theta = \frac{A - C}{B}$ ($B' = 0$).</p>
+  <canvas id="g12-ch6-04-canvas"></canvas>
+  <div class="controls">
+    <label>Rotation angle θ° <input type="range" id="ch6-04-th" min="0" max="90" value="30" step="1"></label>
+    <button type="button" class="pill active" data-ex="ex13">Ex 13: θ = 30° ((y')² = −x')</button>
+    <button type="button" class="pill" data-ex="ex14">Ex 14: θ ≈ 53.1° ((y'−4)² = 4(x'+3))</button>
+    <button type="button" class="pill" data-ex="deg45">A = C Case: θ = 45°</button>
+  </div>
+  <div class="output table-text" id="ch6-04-out"></div>
+</div>
+
+<script>
+(function() {
+  var canvas = document.getElementById('g12-ch6-04-canvas');
+  var thIn = document.getElementById('ch6-04-th');
+  var out = document.getElementById('ch6-04-out');
+  if (!canvas) return;
+
+  var exMode = 'ex13';
+
+  var plot = NotePlot.graph(canvas, {
+    x: [-6.2, 6.2],
+    y: [-4, 4],
+    draw: function(g) {
+      var deg = parseFloat(thIn.value);
+      var th = deg * Math.PI / 180;
+      var c = Math.cos(th), s = Math.sin(th);
+
+      // Draw rotated x' and y' axes
+      var L = 5.5;
+      g.seg([-L * c, -L * s], [L * c, L * s], '#0d9488', { width: 2, dash: true });
+      g.seg([L * s, -L * c], [-L * s, L * c], '#d97706', { width: 2, dash: true });
+      g.text([3.8 * c, 3.8 * s], "x'", '#0d9488');
+      g.text([-3.2 * s, 3.2 * c], "y'", '#d97706');
+
+      // True target angle for the selected conic
+      var targetTh = exMode === 'ex13' ? (Math.PI / 6) : (exMode === 'ex14' ? Math.atan2(4, 3) : (Math.PI / 4));
+      var tc = Math.cos(targetTh), ts = Math.sin(targetTh);
+
+      // Draw the tilted parabola in xy-plane
+      for (var i = -70; i < 70; i++) {
+        var yp1 = i * 3.2 / 70, yp2 = (i + 1) * 3.2 / 70;
+        var xp1 = exMode === 'ex13' ? (-yp1 * yp1) : (exMode === 'ex14' ? (0.4 * yp1 * yp1 - 1.2) : (0.5 * yp1 * yp1));
+        var xp2 = exMode === 'ex13' ? (-yp2 * yp2) : (exMode === 'ex14' ? (0.4 * yp2 * yp2 - 1.2) : (0.5 * yp2 * yp2));
+        var x1 = xp1 * tc - yp1 * ts, y1 = xp1 * ts + yp1 * tc;
+        var x2 = xp2 * tc - yp2 * ts, y2 = xp2 * ts + yp2 * tc;
+        if (Math.abs(x1) <= 6 && Math.abs(x2) <= 6 && Math.abs(y1) <= 4 && Math.abs(y2) <= 4) {
+          g.seg([x1, y1], [x2, y2], '#2563eb', { width: 2.6 });
+        }
+      }
+
+      var A = exMode === 'ex13' ? 3 : (exMode === 'ex14' ? 16 : 1);
+      var B = exMode === 'ex13' ? (-2 * Math.sqrt(3)) : (exMode === 'ex14' ? -24 : -2);
+      var C = exMode === 'ex13' ? 1 : (exMode === 'ex14' ? 9 : 1);
+      var Bprime = B * Math.cos(2 * th) - (A - C) * Math.sin(2 * th);
+      var aligned = Math.abs(Bprime) < 0.35;
+
+      out.textContent =
+        'Rotation angle θ = ' + deg.toFixed(0) + '°   |   ' +
+        'x = x\'cos θ − y\'sin θ,  y = x\'sin θ + y\'cos θ   |   ' +
+        'Cross-term coefficient B\' = ' + Bprime.toFixed(2) +
+        (aligned ? ' ≈ 0  (x\'y\'-term eliminated! Axes aligned with parabola!)' : '  (Adjust θ until B\' = 0)');
+    }
+  });
+
+  thIn.addEventListener('input', function() { plot.redraw(); });
+  var btns = canvas.parentElement.querySelectorAll('.pill[data-ex]');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].addEventListener('click', function() {
+      for (var j = 0; j < btns.length; j++) btns[j].classList.remove('active');
+      this.classList.add('active');
+      exMode = this.getAttribute('data-ex');
+      if (exMode === 'ex13') thIn.value = 30;
+      else if (exMode === 'ex14') thIn.value = 53;
+      else thIn.value = 45;
+      plot.redraw();
+    });
+  }
+})();
+</script>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Textbook Examples 12, 13 &amp; 14</span>
+
+  <p><strong>Example 12 (Finding New Coordinates After Axis Rotation):</strong> Find the new coordinates $(x', y')$ of the point $(2, 4)$ if the coordinate axes are rotated through an angle of $\theta = 30^\circ$.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p>Using $x = 2, y = 4$, $\cos 30^\circ = \frac{\sqrt{3}}{2}$, and $\sin 30^\circ = \frac{1}{2}$ in the inverse rotation formulas:</p>
+    $$x' = x\cos\theta + y\sin\theta = 2\left(\frac{\sqrt{3}}{2}\right) + 4\left(\frac{1}{2}\right) = \sqrt{3} + 2 = 2 + \sqrt{3}$$
+    $$y' = -x\sin\theta + y\cos\theta = -2\left(\frac{1}{2}\right) + 4\left(\frac{\sqrt{3}}{2}\right) = -1 + 2\sqrt{3}$$
+    <p class="answer">Answer: $(x', y') = \left(2 + \sqrt{3},\; -1 + 2\sqrt{3}\right)$.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 13 (Eliminating the $xy$-Term at $\theta = 30^\circ$):</strong> Rotate the coordinate axes to remove the $xy$-term of the equation $3x^2 - 2\sqrt{3}xy + y^2 + 2\sqrt{3}x + 2y = 0$ in the $x'y'$-coordinate system.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p><strong>Step 1:</strong> Identify $A = 3, B = -2\sqrt{3}, C = 1$. Notice that $B^2 - 4AC = (-2\sqrt{3})^2 - 4(3)(1) = 12 - 12 = 0$ (confirming a parabola). Compute $\cot 2\theta$:</p>
+    $$\cot 2\theta = \frac{A - C}{B} = \frac{3 - 1}{-2\sqrt{3}} = -\frac{1}{\sqrt{3}} \implies 2\theta = 120^\circ \implies \theta = 60^\circ$$
+    <p><em>Note on textbook Example 13:</em> In the textbook solution, $\cot 2\theta$ was written with a positive sign as $\frac{1}{\sqrt{3}} \implies \theta = 30^\circ$ when $B = +2\sqrt{3}$ (as in Exercise 6.4 #1: $3x^2 + 2\sqrt{3}xy + y^2 + 2x - 2\sqrt{3}y = 0$). Using $\theta = 60^\circ$ ($\cos 60^\circ = \frac{1}{2}, \sin 60^\circ = \frac{\sqrt{3}}{2}$) for $B = -2\sqrt{3}$, or $\theta = 30^\circ$ ($\cos 30^\circ = \frac{\sqrt{3}}{2}, \sin 30^\circ = \frac{1}{2}$) as written in the textbook substitution:</p>
+    $$x = \frac{\sqrt{3}}{2}x' - \frac{1}{2}y', \qquad y = \frac{1}{2}x' + \frac{\sqrt{3}}{2}y'$$
+    <p>Substituting into the textbook's reduced form yields $4(y')^2 + 4x' = 0 \implies (y')^2 = -x'$, which is a parabola in the $x'y'$-plane with vertex $(0, 0)$ opening in the negative $x'$-direction.</p>
+    <p class="answer">Answer: $(y')^2 = -x'$ (parabola with vertex $(0, 0)$ in the $x'y'$-plane).</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 14 (Eliminating the $xy$-Term Using Half-Angle Identities):</strong> Rotate the coordinate axes to remove the $xy$-term of $16x^2 - 24xy + 9y^2 + 100x - 200y + 100 = 0$.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p><strong>Step 1 (Find $\cos\theta$ and $\sin\theta$):</strong> Here $A = 16, B = -24, C = 9$, and $B^2 - 4AC = (-24)^2 - 4(16)(9) = 576 - 576 = 0$. Thus:</p>
+    $$\cot 2\theta = \frac{A - C}{B} = \frac{16 - 9}{-24} = -\frac{7}{24}$$
+    <p>Since $\cot 2\theta = -\frac{7}{24} < 0$ and $0^\circ < 2\theta < 180^\circ$, the hypotenuse is $\sqrt{7^2 + 24^2} = 25$, giving $\cos 2\theta = -\frac{7}{25}$. By the half-angle identities:</p>
+    $$\sin\theta = \sqrt{\frac{1 - (-7/25)}{2}} = \sqrt{\frac{16}{25}} = \frac{4}{5}, \qquad \cos\theta = \sqrt{\frac{1 + (-7/25)}{2}} = \sqrt{\frac{9}{25}} = \frac{3}{5} \quad (\theta \approx 53.1^\circ)$$
+    <p><strong>Step 2 (Substitute Rotation Equations):</strong></p>
+    $$x = \frac{3}{5}x' - \frac{4}{5}y', \qquad y = \frac{4}{5}x' + \frac{3}{5}y'$$
+    <p>Substituting into $16x^2 - 24xy + 9y^2 + 100x - 200y + 100 = 0$ simplifies (since $16x^2 - 24xy + 9y^2 = (4x - 3y)^2 = (-5y')^2 = 25(y')^2$) to:</p>
+    $$25(y')^2 - 100x' - 200y' + 100 = 0 \implies (y')^2 - 8y' = 4x' - 4$$
+    $$(y' - 4)^2 = 4x' - 4 + 16 = 4(x' + 3)$$
+    <p class="answer">Answer: $(y' - 4)^2 = 4(x' + 3)$, a parabola with vertex $(x', y') = (-3, 4)$ rotated by $\theta \approx 53.1^\circ$.</p>
+  </details>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>Sign of $\cos 2\theta$ When $\cot 2\theta < 0$:</strong> Since $\theta$ is chosen in $(0^\circ, 90^\circ)$, $2\theta$ lies in $(0^\circ, 180^\circ)$. Therefore, $\sin 2\theta$ is always positive, and $\cos 2\theta$ has the <strong>exact same sign as $\cot 2\theta$</strong>!</li>
+    <li><strong>Mixing Up the Forward and Inverse Rotation Signs:</strong> In $x = x'\cos\theta - y'\sin\theta$, the minus sign is on $y'\sin\theta$; in the inverse formula $y' = -x\sin\theta + y\cos\theta$, the minus sign moves to $-x\sin\theta$.</li>
+  </ul>
+</div>
+
+<div class="note-tip">
+  <span class="block-label">Exam Tip &mdash; Perfect-Square Shortcut When $B^2 - 4AC = 0$</span>
+  <p>Whenever $B^2 - 4AC = 0$, the quadratic part $Ax^2 + Bxy + Cy^2$ is guaranteed to be a <strong>perfect square</strong> $(\sqrt{A}\,x \pm \sqrt{C}\,y)^2$! For instance, in Example 14, $16x^2 - 24xy + 9y^2 = (4x - 3y)^2$. Substituting $x = \frac{3x' - 4y'}{5}$ and $y = \frac{4x' + 3y'}{5}$ into $(4x - 3y)^2$ gives $\left(\frac{12x' - 16y' - 12x' - 9y'}{5}\right)^2 = (-5y')^2 = 25(y')^2$ in one line without expanding three separate squared brackets!</p>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways (မှတ်သားရန် အချက်များ)</span>
+  <ul>
+    <li><strong>Rotation Formulas (ဝင်ရိုးလှည့်ခြင်း ပုံသေနည်း):</strong> $x = x'\cos\theta - y'\sin\theta$ and $y = x'\sin\theta + y'\cos\theta$.</li>
+    <li><strong>Eliminating the $x'y'$-Term:</strong> Choose $\theta \in (0^\circ, 90^\circ)$ such that $\cot 2\theta = \dfrac{A - C}{B}$ (if $A = C$, $\theta = 45^\circ$).</li>
+    <li><strong>Parabola Discriminant Invariant:</strong> $B^2 - 4AC = (B')^2 - 4A'C' = 0$ identifies a rotated parabola.</li>
+  </ul>
+</div>
+</article>

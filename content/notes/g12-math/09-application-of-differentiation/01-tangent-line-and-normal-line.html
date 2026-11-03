@@ -1,0 +1,209 @@
+<!-- tags: Application of Differentiation, G12 Math Myanmar -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Application of Differentiation">Tangent Line and Normal Line</h1>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Inclination, Slope, Tangent Line &amp; Normal Line</span>
+  <p>Differentiation provides the exact instantaneous slope of a curve $y = f(x)$ at any point $P(x_1, y_1)$ where $f$ is differentiable:</p>
+  <ul>
+    <li><strong>Inclination of a Line ($\theta$):</strong> The smallest counter-clockwise angle $\theta$ ($0^\circ \le \theta < 180^\circ$, or $0 \le \theta < \pi$) measured from the positive direction of the $x$-axis to the line $L$. The inclination of a horizontal line is $0^\circ$.</li>
+    <li><strong>Slope (Gradient) of a Line ($m$):</strong> The tangent of its angle of inclination, $m = \tan\theta$ ($\theta \neq 90^\circ$). For a line passing through $P(x_1, y_1)$ and $Q(x_2, y_2)$ with $x_1 \neq x_2$:
+      $$m = \tan\theta = \frac{y_2 - y_1}{x_2 - x_1}$$
+    </li>
+    <li><strong>Tangent Line (ဝန်းထိမျဉ်း) at $P(x_1, y_1)$:</strong> The line passing through $P(x_1, y_1)$ with slope equal to the derivative $m_T = y'(x_1) = f'(x_1)$.</li>
+    <li><strong>Normal Line (ထောင့်မှန်မျဉ်း) at $P(x_1, y_1)$:</strong> The line passing through $P(x_1, y_1)$ perpendicular to the tangent line at $P$, with slope $m_N = -\dfrac{1}{y'(x_1)}$ (provided $y'(x_1) \neq 0$).</li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formulas &mdash; Equations of the Tangent and Normal Lines at $(x_1, y_1)$</span>
+  <div class="formula-main">
+    $$\text{Tangent Line: } y - y_1 = y'(x_1)(x - x_1) \qquad\qquad \text{Normal Line: } y - y_1 = -\frac{1}{y'(x_1)}(x - x_1)$$
+  </div>
+  <ul class="symbols">
+    <li><strong>Parallel Lines:</strong> Two non-vertical lines are parallel if and only if $m_1 = m_2$.</li>
+    <li><strong>Perpendicular Lines:</strong> Two non-vertical lines are perpendicular if and only if $m_1 m_2 = -1$, so $m_N = -\dfrac{1}{m_T}$.</li>
+    <li><strong>Horizontal Tangent ($y'(x_1) = 0$):</strong> The tangent line is horizontal ($y = y_1$) and the normal line is vertical ($x = x_1$).</li>
+    <li><strong>Vertical Tangent ($\lim_{x \to x_1} |y'(x)| = \infty$):</strong> The tangent line is vertical ($x = x_1$) and the normal line is horizontal ($y = y_1$).</li>
+  </ul>
+</div>
+
+<div class="note-proof">
+  <span class="block-label">Why the Tangent Slope Equals $y'(x_1)$</span>
+  <p>Let $P(x_1, y_1)$ be a fixed point on $y = f(x)$ and let $Q(x_2, y_2)$ be a nearby point on the curve. The secant line $PQ$ has slope:</p>
+  $$m_{PQ} = \frac{y_2 - y_1}{x_2 - x_1} = \frac{f(x_2) - f(x_1)}{x_2 - x_1}$$
+  <p>As $Q$ approaches $P$ along the curve ($x_2 \to x_1$), the secant line $PQ$ rotates into its limiting position — the tangent line at $P$ — and its slope approaches the derivative:</p>
+  $$m_T = \lim_{x_2 \to x_1} \frac{f(x_2) - f(x_1)}{x_2 - x_1} = f'(x_1) = y'(x_1)$$
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; Tangent Line &amp; Perpendicular Normal Line Explorer</span>
+  <p>Drag point $P$ directly along the curve (or slide $x_1$ / click the textbook Example buttons). Because the coordinate axes use equal 1:1 scaling, the teal tangent line and dashed amber normal line always meet at a true $90^\circ$ right angle at $P(x_1, y_1)$.</p>
+  <canvas id="g12-ch9-01-canvas"></canvas>
+  <div class="controls">
+    <label>Point $x_1$ <input type="range" id="ch9-01-x1" min="-2.5" max="3.5" value="0.37" step="0.01"></label>
+    <button type="button" class="pill active" data-mode="ex1">Ex 1: y = ln x at (1/e, −1)</button>
+    <button type="button" class="pill" data-mode="ex2">Ex 2: y = sin x at (0, 0)</button>
+    <button type="button" class="pill" data-mode="ex3">Ex 3: y = x² − 2x + 1 at x = 2</button>
+  </div>
+  <div class="output table-text" id="ch9-01-out"></div>
+</div>
+
+<script>
+(function() {
+  var canvas = document.getElementById('g12-ch9-01-canvas');
+  var xIn = document.getElementById('ch9-01-x1');
+  var out = document.getElementById('ch9-01-out');
+  if (!canvas || !window.NotePlot) return;
+
+  var mode = 'ex1';
+  var x1 = 1 / Math.E;
+
+  function evalFn(x) {
+    if (mode === 'ex1') return x > 0.03 ? Math.log(x) : NaN;
+    if (mode === 'ex2') return Math.sin(x);
+    return x * x - 2 * x + 1;
+  }
+
+  function evalDeriv(x) {
+    if (mode === 'ex1') return x > 0.03 ? 1 / x : NaN;
+    if (mode === 'ex2') return Math.cos(x);
+    return 2 * x - 2;
+  }
+
+  function clampX(x) {
+    if (mode === 'ex1') return Math.max(0.15, Math.min(4.2, x));
+    if (mode === 'ex2') return Math.max(-4.2, Math.min(4.2, x));
+    return Math.max(-1.2, Math.min(3.2, x));
+  }
+
+  // Equal aspect ratio: x span = 9.6, y span = 6.14 (matches 444 : 284 inner plot area)
+  var plot = NotePlot.graph(canvas, {
+    x: [-4.0, 5.6],
+    y: [-3.07, 3.07],
+    points: { P: [x1, evalFn(x1)] },
+    constrain: {
+      P: function(p) {
+        var cx = clampX(p[0]);
+        x1 = cx;
+        xIn.value = cx.toFixed(2);
+        return [cx, evalFn(cx)];
+      }
+    },
+    draw: function(g, P) {
+      var px = P.P[0];
+      var py = evalFn(px);
+      var mT = evalDeriv(px);
+
+      g.fn(function(x) { return evalFn(x); }, '#2563eb', { width: 2.6 });
+
+      if (isFinite(mT)) {
+        // Tangent line in teal
+        g.fn(function(x) { return py + mT * (x - px); }, '#0d9488', { width: 2.2 });
+        // Normal line in dashed amber
+        if (Math.abs(mT) > 1e-4) {
+          var mN = -1 / mT;
+          g.fn(function(x) { return py + mN * (x - px); }, '#d97706', { dash: true, width: 2 });
+        } else {
+          g.vline(px, '#d97706', { dash: true, width: 2 });
+        }
+      }
+
+      g.dot([px, py], '#e11d48', 'P(' + px.toFixed(2) + ', ' + py.toFixed(2) + ')');
+
+      var mNStr = Math.abs(mT) > 1e-4 ? (-1 / mT).toFixed(3) : 'vertical (∞)';
+      var bT = py - mT * px;
+      var bTStr = (bT >= 0 ? '+ ' : '− ') + Math.abs(bT).toFixed(3);
+      out.textContent =
+        'P(' + px.toFixed(2) + ', ' + py.toFixed(2) + ')   |   Tangent slope m_T = y\'(x₁) = ' + mT.toFixed(3) +
+        '   |   Normal slope m_N = −1/m_T = ' + mNStr + '\n' +
+        'Tangent Line: y = ' + mT.toFixed(3) + 'x ' + bTStr +
+        '   |   Check orthogonality: m_T · m_N = ' + (Math.abs(mT) > 1e-4 ? '-1.000 (Perpendicular 90°)' : 'Horizontal / Vertical');
+    }
+  });
+
+  function syncFromSlider() {
+    x1 = clampX(parseFloat(xIn.value));
+    xIn.value = x1.toFixed(2);
+    plot.move('P', [x1, evalFn(x1)]);
+  }
+
+  xIn.addEventListener('input', syncFromSlider);
+  var btns = canvas.parentElement.querySelectorAll('.pill[data-mode]');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].addEventListener('click', function() {
+      for (var j = 0; j < btns.length; j++) btns[j].classList.remove('active');
+      this.classList.add('active');
+      mode = this.getAttribute('data-mode');
+      if (mode === 'ex1') xIn.value = (1 / Math.E).toFixed(2);
+      else if (mode === 'ex2') xIn.value = '0.00';
+      else xIn.value = '2.00';
+      syncFromSlider();
+    });
+  }
+})();
+</script>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Textbook Examples 1, 2 &amp; 3</span>
+
+  <p><strong>Example 1 (Textbook p. 146):</strong> Find the equations of the tangent line and normal line to the curve $y = \ln x$ at the point $\left(\dfrac{1}{e}, -1\right)$.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p>Differentiating $y = \ln x$ with respect to $x$ gives $y' = \dfrac{1}{x}$. At $x = \dfrac{1}{e}$, the slope of the tangent line is:</p>
+    $$y'\left(\frac{1}{e}\right) = \frac{1}{1/e} = e$$
+    <p><strong>Equation of the tangent line at $\left(\frac{1}{e}, -1\right)$:</strong></p>
+    $$y - (-1) = e\left(x - \frac{1}{e}\right) \implies y + 1 = ex - 1 \implies ex - y = 2$$
+    <p>Since the normal line is perpendicular to the tangent line, its slope is $m_N = -\dfrac{1}{e}$. <strong>Equation of the normal line:</strong></p>
+    $$y - (-1) = -\frac{1}{e}\left(x - \frac{1}{e}\right) \implies y + 1 = -\frac{1}{e}x + \frac{1}{e^2} \implies x + ey = \frac{1}{e} - e$$
+    <p class="answer">Answer: Tangent line: $ex - y = 2$; Normal line: $x + ey = \frac{1}{e} - e$.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 2 (Textbook p. 146):</strong> Find the equations of the tangent line and normal line to the curve $y = \sin x$ at the origin $(0, 0)$.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p>Differentiating $y = \sin x$ gives $y' = \cos x$. At $(0, 0)$, the tangent slope is $y'(0) = \cos 0 = 1$, and the normal slope is $-1$:</p>
+    <ul>
+      <li><strong>Tangent line:</strong> $y - 0 = 1(x - 0) \implies x - y = 0$ (or $y = x$).</li>
+      <li><strong>Normal line:</strong> $y - 0 = -1(x - 0) \implies x + y = 0$ (or $y = -x$).</li>
+    </ul>
+    <p class="answer">Answer: Tangent line: $x - y = 0$; Normal line: $x + y = 0$.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 3 (Textbook p. 147):</strong> Consider the function $f(x) = x^2 + ax + b$. If the tangent line to the curve at $x = 2$ is $y = 2x + 1$, find the values of $a$ and $b$.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p>We have $f'(x) = 2x + a$. Since the tangent line at $x = 2$ is $y = 2x + 1$, its slope is $m = 2$:</p>
+    $$f'(2) = 2 \implies 2(2) + a = 2 \implies a = -2$$
+    <p>At $x = 2$, the point of tangency lies on $y = 2x + 1$, so $y = 2(2) + 1 = 5$. Since $(2, 5)$ also lies on $f(x) = x^2 - 2x + b$:</p>
+    $$f(2) = 5 \implies 2^2 - 2(2) + b = 5 \implies b = 5$$
+    <p class="answer">Answer: $a = -2$ and $b = 5$.</p>
+  </details>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>Using $f'(x)$ Instead of the Constant Number $f'(x_1)$:</strong> In the tangent equation $y - y_1 = y'(x_1)(x - x_1)$, you must evaluate $y'(x_1)$ at the specific number $x = x_1$ so the equation is linear in $x$ and $y$.</li>
+    <li><strong>Forgetting the Negative Sign in the Normal Slope:</strong> The normal line slope is the <em>negative reciprocal</em> $-\dfrac{1}{y'(x_1)}$, not $+\dfrac{1}{y'(x_1)}$.</li>
+  </ul>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>The slope of a line with inclination $\theta$ is $m = \tan\theta = \dfrac{y_2 - y_1}{x_2 - x_1}$.</li>
+    <li>At $P(x_1, y_1)$ on $y = f(x)$, the tangent line is $y - y_1 = y'(x_1)(x - x_1)$ and the normal line is $y - y_1 = -\dfrac{1}{y'(x_1)}(x - x_1)$.</li>
+    <li>Horizontal tangents occur where $y'(x_1) = 0$; there the tangent line is $y = y_1$ and the normal line is $x = x_1$.</li>
+  </ul>
+</div>
+
+</article>
