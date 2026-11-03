@@ -20,6 +20,7 @@ const COURSE_STYLE = {
   'Math B': ['fa-list-ol', '#0d9488'],
   'Math C': ['fa-location-arrow', '#16a34a'],
   'Mechanics Basic': ['fa-weight-hanging', '#0891b2'],
+  'Mathematics': ['fa-graduation-cap', '#4f46e5'],
 }
 
 // Subject names as English: "A", "A and B", "A, B and C"

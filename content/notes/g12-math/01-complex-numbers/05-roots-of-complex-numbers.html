@@ -1,7 +1,8 @@
 <!-- tags: Complex Numbers, G12 Math Myanmar -->
 <!-- =====================================================================
-     NOTE: Roots of Complex Numbers (ကွန်ပလက်စ်ကိန်း၏ မူလအမြစ်များ)
+     NOTE: Roots of Complex Numbers (ကွန်ပလက်စ်ကိန်းများ၏ n ထပ်ကိန်းရင်းများ)
      Myanmar Grade 12 Mathematics (New Curriculum) - Chapter 1, Section 1.5
+     Uses shared blocks from note-blocks.css and demos/plot.js (built on demos/geom.js).
      ===================================================================== -->
 <article class="note-page">
 
@@ -9,53 +10,52 @@
 
   <!-- CONCEPT: the main idea in plain words -->
   <section class="note-concept">
-    <h2>Finding All $n$ Solutions to $w^n = z$</h2>
+    <h2>Every Non-Zero Complex Number Has Exactly $n$ Distinct $n$-th Roots</h2>
     <p>
-      In real numbers, finding an $n$-th root often yields only one or two real answers (e.g. $x^3 = 1$ gives only $x = 1$).
-      In the complex number system, however, <strong>every non-zero complex number has exactly $n$ distinct $n$-th roots</strong>.
+      To find the $n$-th roots of a complex number $z = r(\cos\theta + i\sin\theta)$, we seek all complex numbers $w = R(\cos\phi + i\sin\phi)$ such that $w^n = z$.
     </p>
     <p>
-      Because adding any multiple of $2\pi$ ($360^\circ$) gives the same angle, we write:
-      $$z = r [\cos(\theta + 2k\pi) + i\sin(\theta + 2k\pi)] \qquad (k \in \mathbb{Z})$$
-      Applying De Moivre's Theorem with power $\frac{1}{n}$ distributes the root evenly across $n$ values ($k = 0, 1, 2, \dots, n-1$).
+      By De Moivre's Theorem, $w^n = R^n(\cos n\phi + i\sin n\phi) = r(\cos(\theta + 2k\pi) + i\sin(\theta + 2k\pi))$.
+      Equating moduli and arguments gives $R = \sqrt[n]{r}$ and $\phi_k = \dfrac{\theta + 2k\pi}{n}$ for $k = 0, 1, 2, \dots, n - 1$.
     </p>
     <p>
-      <strong>Geometric Beauty:</strong> All $n$ roots have the exact same modulus $\sqrt[n]{r}$ and are spaced apart by equal angles of $\frac{2\pi}{n}$.
-      Plotted on the complex plane, they form the vertices of a <strong>regular $n$-sided polygon</strong> centered at the origin!
+      Geometrically, the $n$ roots all lie on a circle of radius $\sqrt[n]{r}$ centered at the origin, spaced equally by $\dfrac{2\pi}{n}$ radians ($\dfrac{360^\circ}{n}$), forming the vertices of a <strong>regular $n$-sided polygon</strong>!
     </p>
   </section>
 
-  <!-- FORMULA: key equations -->
+  <!-- FORMULA: n-th roots -->
   <div class="note-formula">
-    <h3>The $n$-th Roots Formula</h3>
-    <div class="formula-main" style="font-size: 0.95rem;">
-      $$w_k = \sqrt[n]{r} \left[ \cos\left(\frac{\theta + 2k\pi}{n}\right) + i\sin\left(\frac{\theta + 2k\pi}{n}\right) \right] \qquad (k = 0, 1, 2, \dots, n-1)$$
+    <h3>The $n$-th Roots Formula ($w^n = z$)</h3>
+    <div class="formula-main">
+      $$w_k = \sqrt[n]{r} \left[\cos\left(\frac{\theta + 2k\pi}{n}\right) + i\sin\left(\frac{\theta + 2k\pi}{n}\right)\right] \qquad (k = 0, 1, 2, \dots, n - 1)$$
     </div>
     <p class="symbols">
-      $r = |z|$ is the modulus &nbsp;|&nbsp; $\theta = \text{arg}(z)$ is the principal argument &nbsp;|&nbsp; $n$ is a positive integer
+      • <strong>$n$-th Roots of Unity ($z^n = 1$, where $r = 1, \theta = 0$):</strong>
+      $w_k = \cos\left(\dfrac{2k\pi}{n}\right) + i\sin\left(\dfrac{2k\pi}{n}\right)$ for $k = 0, 1, \dots, n - 1$.<br>
+      • <strong>Angular spacing:</strong> Consecutive roots differ in angle by $\Delta\theta = \dfrac{2\pi}{n} = \dfrac{360^\circ}{n}$.
     </p>
-
-    <h4 style="margin-top: 14px; font-weight: 700; color: #1e293b;">The $n$-th Roots of Unity ($z^n = 1$)</h4>
-    <p class="formula-sub">Since $1 = 1(\cos 0 + i\sin 0)$, the roots of $z^n = 1$ are:</p>
-    <div class="formula-main" style="font-size: 0.95rem;">
-      $$z_k = \cos\left(\frac{2k\pi}{n}\right) + i\sin\left(\frac{2k\pi}{n}\right) \qquad (k = 0, 1, \dots, n-1)$$
-    </div>
   </div>
 
-  <!-- DEMO: Interactive Root Visualizer (Regular Polygons) -->
+  <!-- PROOF: why k stops at n - 1 -->
+  <div class="note-proof">
+    <ol>
+      <li>For $k = 0, 1, \dots, n - 1$, the angles $\phi_k = \dfrac{\theta}{n} + \dfrac{2k\pi}{n}$ lie strictly within one full revolution of width $2\pi$, so all $n$ points are distinct.</li>
+      <li>When $k = n$, $\phi_n = \dfrac{\theta + 2n\pi}{n} = \dfrac{\theta}{n} + 2\pi \equiv \phi_0 \pmod{2\pi}$, which gives the exact same complex number as $k = 0$.</li>
+      <li>Thus, there are <strong>exactly $n$ distinct $n$-th roots</strong>.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: Interactive Roots Polygon Explorer -->
   <div class="note-demo">
-    <h2>Interactive $n$-th Roots Polygon Visualizer</h2>
-    <div class="controls">
-      <label>Choose $n$ (number of roots):
-        <select id="rootNSelect" style="padding: 4px 10px; border-radius: 6px; border: 1px solid #cbd5e1; font-weight: bold;">
-          <option value="3">n = 3 (Cube roots: Equilateral Triangle)</option>
-          <option value="4">n = 4 (Fourth roots: Square)</option>
-          <option value="5">n = 5 (Fifth roots: Regular Pentagon)</option>
-          <option value="6" selected>n = 6 (Sixth roots: Regular Hexagon)</option>
-        </select>
-      </label>
+    <h2>Drag $z$ and choose $n$: the $n$-th roots form a regular $n$-gon on the circle of radius $\sqrt[n]{r}$</h2>
+    <div class="controls choices" id="rootChoices">
+      <button type="button" data-n="2">n = 2</button>
+      <button type="button" data-n="3">n = 3 (Triangle)</button>
+      <button type="button" data-n="4">n = 4 (Square)</button>
+      <button type="button" data-n="5">n = 5 (Pentagon)</button>
+      <button type="button" data-n="6" class="active">n = 6 (Hexagon)</button>
     </div>
-    <canvas id="rootCanvas" width="480" height="280" style="width: 100%; max-width: 480px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; display: block; margin: 10px auto;"></canvas>
+    <canvas id="rootCanvas"></canvas>
     <div class="output table-text" id="rootOutput"></div>
   </div>
 
@@ -67,27 +67,14 @@
       <summary>Show solution</summary>
       <ol class="note-steps">
         <li>Find the modulus and argument of $z = -2 - 2i$:
-          $$r = \sqrt{(-2)^2 + (-2)^2} = \sqrt{4 + 4} = \sqrt{8} = 2\sqrt{2}$$
-          $$\cos\theta = \frac{-2}{2\sqrt{2}} = -\frac{1}{\sqrt{2}}, \quad \sin\theta = -\frac{1}{\sqrt{2}} \implies \theta = -\frac{3\pi}{4}$$
+          $$r = \sqrt{(-2)^2 + (-2)^2} = \sqrt{8} = 2\sqrt{2}, \qquad \theta = -\frac{3\pi}{4} \quad (\text{Quadrant III})$$
         </li>
-        <li>Write in trigonometric form with $2k\pi$:
-          $$z = 2\sqrt{2} \left[\cos\left(-\frac{3\pi}{4} + 2k\pi\right) + i\sin\left(-\frac{3\pi}{4} + 2k\pi\right)\right]$$
-        </li>
-        <li>Compute the modulus of the cube roots ($n = 3$):
-          $$\sqrt[3]{r} = \sqrt[3]{2\sqrt{2}} = \sqrt[3]{2^{3/2}} = 2^{1/2} = \sqrt{2}$$
-        </li>
-        <li>Apply the formula for $k = 0, 1, 2$:
-          $$\text{Angle } \phi_k = \frac{-\frac{3\pi}{4} + 2k\pi}{3} = -\frac{\pi}{4} + \frac{2k\pi}{3}$$
+        <li>The cube root modulus is $\sqrt[3]{r} = \sqrt[3]{2\sqrt{2}} = \sqrt[3]{(\sqrt{2})^3} = \sqrt{2}$.</li>
+        <li>Apply the formula for $n = 3$ and $k = 0, 1, 2$ with $\phi_k = \dfrac{-\frac{3\pi}{4} + 2k\pi}{3} = -\dfrac{\pi}{4} + \dfrac{2k\pi}{3}$:
           <ul>
-            <li><strong>For $k = 0$:</strong> $\phi_0 = -\frac{\pi}{4}$<br>
-              $$w_0 = \sqrt{2}\left(\cos\left(-\frac{\pi}{4}\right) + i\sin\left(-\frac{\pi}{4}\right)\right) = \sqrt{2}\left(\frac{1}{\sqrt{2}} - \frac{1}{\sqrt{2}}i\right) = 1 - i$$
-            </li>
-            <li><strong>For $k = 1$:</strong> $\phi_1 = -\frac{\pi}{4} + \frac{2\pi}{3} = \frac{5\pi}{12}$<br>
-              $$w_1 = \sqrt{2}\left(\cos\frac{5\pi}{12} + i\sin\frac{5\pi}{12}\right)$$
-            </li>
-            <li><strong>For $k = 2$:</strong> $\phi_2 = -\frac{\pi}{4} + \frac{4\pi}{3} = \frac{13\pi}{12}$<br>
-              $$w_2 = \sqrt{2}\left(\cos\frac{13\pi}{12} + i\sin\frac{13\pi}{12}\right)$$
-            </li>
+            <li><strong>$k = 0$:</strong> $w_0 = \sqrt{2}\left[\cos\left(-\frac{\pi}{4}\right) + i\sin\left(-\frac{\pi}{4}\right)\right] = 1 - i$.</li>
+            <li><strong>$k = 1$:</strong> $w_1 = \sqrt{2}\left(\cos\frac{5\pi}{12} + i\sin\frac{5\pi}{12}\right)$.</li>
+            <li><strong>$k = 2$:</strong> $w_2 = \sqrt{2}\left(\cos\frac{13\pi}{12} + i\sin\frac{13\pi}{12}\right)$.</li>
           </ul>
         </li>
       </ol>
@@ -101,133 +88,107 @@
     <details>
       <summary>Show solution</summary>
       <ol class="note-steps">
-        <li>Write $1$ in trigonometric form: $1 = 1(\cos(0 + 2k\pi) + i\sin(0 + 2k\pi))$.</li>
-        <li>Apply the $6$-th root formula ($n = 6, r = 1, \theta = 0$):
-          $$z_k = \cos\left(\frac{2k\pi}{6}\right) + i\sin\left(\frac{2k\pi}{6}\right) = \cos\left(\frac{k\pi}{3}\right) + i\sin\left(\frac{k\pi}{3}\right) \qquad (k = 0, 1, 2, 3, 4, 5)$$
-        </li>
-        <li>Evaluate for each $k$:
-          <ul>
-            <li>$k = 0$: $z_0 = \cos 0 + i\sin 0 = 1$</li>
-            <li>$k = 1$: $z_1 = \cos\frac{\pi}{3} + i\sin\frac{\pi}{3} = \frac{1}{2} + \frac{\sqrt{3}}{2}i$</li>
-            <li>$k = 2$: $z_2 = \cos\frac{2\pi}{3} + i\sin\frac{2\pi}{3} = -\frac{1}{2} + \frac{\sqrt{3}}{2}i$</li>
-            <li>$k = 3$: $z_3 = \cos\pi + i\sin\pi = -1$</li>
-            <li>$k = 4$: $z_4 = \cos\frac{4\pi}{3} + i\sin\frac{4\pi}{3} = -\frac{1}{2} - \frac{\sqrt{3}}{2}i$</li>
-            <li>$k = 5$: $z_5 = \cos\frac{5\pi}{3} + i\sin\frac{5\pi}{3} = \frac{1}{2} - \frac{\sqrt{3}}{2}i$</li>
-          </ul>
+        <li>Write $1 = \cos(0 + 2k\pi) + i\sin(0 + 2k\pi)$, so $z_k = \cos\left(\dfrac{k\pi}{3}\right) + i\sin\left(\dfrac{k\pi}{3}\right)$ for $k = 0, 1, 2, 3, 4, 5$.</li>
+        <li>Evaluate each root:
+          $z_0 = 1$, &ensp; $z_1 = \frac{1}{2} + \frac{\sqrt{3}}{2}i$, &ensp; $z_2 = -\frac{1}{2} + \frac{\sqrt{3}}{2}i$, &ensp;
+          $z_3 = -1$, &ensp; $z_4 = -\frac{1}{2} - \frac{\sqrt{3}}{2}i$, &ensp; $z_5 = \frac{1}{2} - \frac{\sqrt{3}}{2}i$.
         </li>
       </ol>
-      <p class="answer">$\pm 1, \quad \pm \frac{1}{2} \pm \frac{\sqrt{3}}{2}i$ (6 distinct roots)</p>
+      <p class="answer">$\pm 1, \quad \pm\dfrac{1}{2} \pm \dfrac{\sqrt{3}}{2}i$</p>
     </details>
   </div>
 
   <!-- WARNING -->
   <div class="note-warning">
-    <strong>Why only up to $k = n - 1$?</strong>
-    If you plug in $k = n$, the angle becomes $\frac{\theta + 2n\pi}{n} = \frac{\theta}{n} + 2\pi$, which is the exact same point as $k = 0$!
-    Roots start repeating after $k = n - 1$, so there are always exactly $n$ unique roots.
+    <strong>Include $+2k\pi$ BEFORE Dividing by $n$:</strong>
+    You must add $2k\pi$ to $\theta$ <em>before</em> dividing by $n$: $\dfrac{\theta + 2k\pi}{n} = \dfrac{\theta}{n} + \dfrac{2k\pi}{n}$, NOT $\dfrac{\theta}{n} + 2k\pi$.
   </div>
 
   <!-- TIP -->
   <div class="note-tip">
-    <strong>Sum of $n$-th Roots of Unity:</strong> The sum of all $n$-th roots of unity is always zero:
-    $$\sum_{k=0}^{n-1} z_k = 0$$
-    This corresponds to the center of gravity of the regular $n$-gon sitting right at the origin!
+    <strong>Sum of $n$-th Roots is Always Zero:</strong> For any $n \ge 2$, the sum of all $n$-th roots $w_0 + w_1 + \dots + w_{n-1} = 0$ because the center of symmetry of the regular $n$-gon is the origin.
   </div>
 
   <!-- TAKEAWAYS: bilingual summary -->
   <div class="note-takeaways">
     <ul>
-      <li>Every non-zero complex number has exactly $n$ distinct $n$-th roots (ကွန်ပလက်စ်ကိန်းတစ်ခုတွင် $n$ ထပ်ကိန်းရင်း $n$ ခု အတိအကျရှိသည်).</li>
-      <li>All roots share the same length $\sqrt[n]{r}$ and are spaced by angle $\frac{2\pi}{n}$.</li>
-      <li>Graphically, the roots form a regular $n$-sided polygon inscribed in a circle of radius $\sqrt[n]{r}$ (စက်ဝိုင်းအတွင်းရှိ ပုံမှန် $n$ ထောင့်စုံပုံသဏ္ဍာန်).</li>
+      <li>Every non-zero complex number has $n$ distinct $n$-th roots ($n$ ထပ်ကိန်းရင်း $n$ ခု အတိအကျရှိသည်).</li>
+      <li>All $n$ roots have modulus $\sqrt[n]{r}$ and angles spaced by $\dfrac{2\pi}{n}$ ($\dfrac{360^\circ}{n}$).</li>
+      <li>They form the vertices of a regular $n$-sided polygon centered at the origin (ပုံမှန် $n$ ထောင့်စုံပုံသဏ္ဍာန်).</li>
     </ul>
   </div>
 
 </article>
 
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
 <script>
+  // "n-th roots regular polygon" demo.
+  // Drag target complex number z, and click n = 2..6.
+  // Teal dashed circle has radius r^(1/n); shaded polygon connects w_0..w_(n-1).
   (function () {
-    const canvas = document.getElementById('rootCanvas');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const select = document.getElementById('rootNSelect');
     const output = document.getElementById('rootOutput');
+    const btns = document.querySelectorAll('#rootChoices button');
+    const sub = ['₀', '₁', '₂', '₃', '₄', '₅'];
+    let n = 6;
 
-    function render() {
-      const n = parseInt(select.value, 10);
-      const w = canvas.width;
-      const h = canvas.height;
-      const originX = w / 2;
-      const originY = h / 2;
-      const R = 85;
+    const cx = ([a, b]) => {
+      const A = +a.toFixed(2), B = +b.toFixed(2), bi = Math.abs(B) === 1 ? 'i' : `${Math.abs(B)}i`;
+      if (B === 0) return `${A}`.replace('-', '−');
+      if (A === 0) return (B < 0 ? '−' : '') + bi;
+      return `${A} ${B < 0 ? '−' : '+'} ${bi}`.replace('-', '−');
+    };
 
-      ctx.clearRect(0, 0, w, h);
+    const plot = NotePlot.graph(document.getElementById('rootCanvas'), {
+      x: [-4.65, 4.65], y: [-3, 3],
+      points: { z: [1, 0] },
+      draw(g, P) {
+        const [x, y] = P.z;
+        const r = Math.hypot(x, y);
+        const theta = Math.atan2(y, x);
+        const rootR = Math.pow(r, 1 / n);
 
-      // Axes
-      ctx.strokeStyle = '#94a3b8';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.moveTo(0, originY); ctx.lineTo(w, originY);
-      ctx.moveTo(originX, 0); ctx.lineTo(originX, h);
-      ctx.stroke();
+        // Draw target z vector
+        g.seg([0, 0], [x, y], '#2563eb', { width: 2.5, dash: true });
 
-      // Unit circle
-      ctx.strokeStyle = '#e2e8f0';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.arc(originX, originY, R, 0, Math.PI * 2);
-      ctx.stroke();
+        // Circle of radius r^(1/n)
+        if (rootR > 0.05) g.circle([0, 0], rootR, '#0d9488', { width: 1.5, dash: true });
 
-      // Calculate roots of unity
-      const pts = [];
-      for (let k = 0; k < n; k++) {
-        let ang = (2 * Math.PI * k) / n;
-        pts.push({
-          x: originX + R * Math.cos(ang),
-          y: originY - R * Math.sin(ang),
-          deg: Math.round((ang * 180) / Math.PI),
-          k: k
-        });
-      }
+        const roots = [];
+        for (let k = 0; k < n; k++) {
+          const phi = (theta + 2 * Math.PI * k) / n;
+          roots.push([rootR * Math.cos(phi), rootR * Math.sin(phi)]);
+        }
 
-      // Draw regular polygon connecting roots
-      ctx.strokeStyle = 'rgba(99, 102, 241, 0.4)';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(pts[0].x, pts[0].y);
-      for (let k = 1; k < n; k++) {
-        ctx.lineTo(pts[k].x, pts[k].y);
-      }
-      ctx.closePath();
-      ctx.stroke();
-      ctx.fillStyle = 'rgba(99, 102, 241, 0.05)';
-      ctx.fill();
+        // Regular polygon connecting roots
+        if (n >= 3 && rootR > 0.05) {
+          g.poly(roots, 'rgba(79, 70, 229, 0.12)');
+        }
+        for (let k = 0; k < n; k++) {
+          const next = roots[(k + 1) % n];
+          g.seg(roots[k], next, '#4f46e5', { width: 2 });
+          g.seg([0, 0], roots[k], '#cbd5e1', { width: 1 });
+          g.dot(roots[k], k === 0 ? '#ea580c' : '#7c3aed', `w${sub[k]}`);
+        }
 
-      // Draw radial lines and dots
-      pts.forEach(p => {
-        ctx.strokeStyle = '#cbd5e1';
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(originX, originY);
-        ctx.lineTo(p.x, p.y);
-        ctx.stroke();
+        const deg = +(theta * 180 / Math.PI).toFixed(1);
+        const stepDeg = +(360 / n).toFixed(1);
+        const list = roots.slice(0, 4).map((w, k) => `w${sub[k]} = ${cx(w)}`).join(',   ') + (n > 4 ? ', …' : '');
 
-        ctx.fillStyle = '#4c3fb5';
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 5.5, 0, Math.PI * 2);
-        ctx.fill();
+        output.textContent =
+          `Target z = ${cx([x, y])}   (modulus r = ${+r.toFixed(2)},  arg θ = ${deg}°)`.replace(/-/g, '−') + '\n' +
+          `${n}-th roots:  radius r^(1/${n}) = ${+rootR.toFixed(3)},   angular spacing = 360° / ${n} = ${stepDeg}°\n` +
+          `${list}`;
+      },
+    });
 
-        ctx.fillStyle = '#1e293b';
-        ctx.font = 'bold 11px system-ui, sans-serif';
-        ctx.fillText(`w${p.k}`, p.x + (p.x >= originX ? 6 : -22), p.y + (p.y >= originY ? 14 : -6));
+    btns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        btns.forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        n = parseInt(btn.getAttribute('data-n'), 10);
+        plot.redraw();
       });
-
-      output.innerHTML =
-        `<strong>Roots of $z^{${n}} = 1$:</strong> ${n} solutions evenly spaced around the circle by $360^\\circ / ${n} = ${(360 / n).toFixed(1)}^\\circ$. ` +
-        `Geometric shape: <strong>Regular ${n === 3 ? 'Triangle' : n === 4 ? 'Square' : n === 5 ? 'Pentagon' : 'Hexagon'}</strong>.`;
-    }
-
-    select.addEventListener('change', render);
-    render();
+    });
   })();
 </script>

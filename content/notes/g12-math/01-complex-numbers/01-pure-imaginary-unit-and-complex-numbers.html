@@ -2,6 +2,7 @@
 <!-- =====================================================================
      NOTE: Pure Imaginary Unit and Complex Numbers (ကွန်ပလက်စ်ကိန်းများ)
      Myanmar Grade 12 Mathematics (New Curriculum) - Chapter 1, Section 1.1 & 1.2
+     Uses shared blocks from note-blocks.css and demos/plot.js (built on demos/geom.js).
      ===================================================================== -->
 <article class="note-page">
 
@@ -11,50 +12,46 @@
   <section class="note-concept">
     <h2>Extending the Real Numbers Beyond $x^2 \ge 0$</h2>
     <p>
-      For every real number $x$, the square is always non-negative ($x^2 \ge 0$). Because of this, simple equations like $x^2 = -4$ have <strong>no real solution</strong>.
+      For every real number $x$, its square is always non-negative ($x^2 \ge 0$). Because of this, simple quadratic equations like $x^2 = -1$ or $x^2 + 4 = 0$ have <strong>no real solution</strong>.
     </p>
     <p>
-      To overcome this limitation, mathematicians introduced a <strong>pure imaginary unit</strong> denoted by $i$, defined by:
-      $$i^2 = -1 \quad (\text{or } i = \sqrt{-1})$$
+      To solve such equations, we introduce the <strong>pure imaginary unit</strong> $i$ (စိတ်ကူးယဉ်ယူနစ်), defined by the property:
+      $$i^2 = -1 \qquad (\text{so } i = \sqrt{-1})$$
     </p>
     <p>
-      With this unit, $x^2 = -4$ has two solutions: $x = 2i$ and $x = -2i$, since $(2i)^2 = 4i^2 = 4(-1) = -4$.
-      Combining real numbers with imaginary numbers gives the system of <strong>complex numbers</strong> (ကွန်ပလက်စ်ကိန်းများ).
+      Combining real numbers with the imaginary unit produces <strong>complex numbers</strong> (ကွန်ပလက်စ်ကိန်းများ) of the form $z = x + yi$, which correspond one-to-one with ordered pairs $(x, y)$ on the <strong>complex plane</strong>.
     </p>
   </section>
 
   <!-- FORMULA: definitions & operations -->
   <div class="note-formula">
-    <h3>Complex Numbers & Ordered Pairs</h3>
-    <div class="formula-main">$$z = x + yi = (x, y) \qquad (x, y \in \mathbb{R})$$</div>
-    <p class="symbols">
-      $x$ is the <strong>real part</strong> ($\text{Re}(z)$) and $y$ is the <strong>imaginary part</strong> ($\text{Im}(z)$).
-      When $y = 0$, $z$ is purely real; when $x = 0$ and $y \ne 0$, $z$ is <strong>pure imaginary</strong>.
-    </p>
-
-    <h4 style="margin-top: 14px; font-weight: 700; color: #1e293b;">1. Equality of Two Complex Numbers</h4>
-    <p class="formula-sub">$(x_1, y_1) = (x_2, y_2) \iff x_1 = x_2 \quad\text{and}\quad y_1 = y_2$</p>
-
-    <h4 style="margin-top: 10px; font-weight: 700; color: #1e293b;">2. Addition and Multiplication</h4>
-    <div class="formula-main" style="font-size: 0.95rem;">
+    <h3>Complex Numbers $z = x + yi = (x, y)$</h3>
+    <div class="formula-main">
       $$(x_1, y_1) + (x_2, y_2) = (x_1 + x_2, \; y_1 + y_2)$$
       $$(x_1, y_1)(x_2, y_2) = (x_1 x_2 - y_1 y_2, \; x_1 y_2 + x_2 y_1)$$
     </div>
-
-    <h4 style="margin-top: 10px; font-weight: 700; color: #1e293b;">3. Cyclic Powers of $i$</h4>
-    <p class="formula-sub">
-      $i^1 = i, \quad i^2 = -1, \quad i^3 = -i, \quad i^4 = 1, \quad \dots \quad i^{4k+r} = i^r$
+    <p class="symbols">
+      $x = \text{Re}(z)$ is the <strong>real part</strong> and $y = \text{Im}(z)$ is the <strong>imaginary part</strong>.<br>
+      • <strong>Equality:</strong> $(x_1, y_1) = (x_2, y_2) \iff x_1 = x_2$ and $y_1 = y_2$.<br>
+      • <strong>Cyclic Powers of $i$:</strong> $i^1 = i, \;\; i^2 = -1, \;\; i^3 = -i, \;\; i^4 = 1, \;\; i^{4k+r} = i^r$.
     </p>
   </div>
 
-  <!-- DEMO: Interactive Complex Number Explorer -->
+  <!-- PROOF: why multiplication works -->
+  <div class="note-proof">
+    <ol>
+      <li>Write $(x_1, y_1) = x_1 + y_1 i$ and $(x_2, y_2) = x_2 + y_2 i$, then expand using the distributive law:
+        $$(x_1 + y_1 i)(x_2 + y_2 i) = x_1 x_2 + x_1 y_2 i + y_1 x_2 i + y_1 y_2 i^2$$
+      </li>
+      <li>Substitute $i^2 = -1$, so $y_1 y_2 i^2 = -y_1 y_2$.</li>
+      <li>Group real and imaginary parts: $(x_1 x_2 - y_1 y_2) + (x_1 y_2 + x_2 y_1)i = (x_1 x_2 - y_1 y_2, \; x_1 y_2 + x_2 y_1)$.</li>
+    </ol>
+  </div>
+
+  <!-- DEMO: Interactive Complex Plane with Draggable Point -->
   <div class="note-demo">
-    <h2>Interactive Complex Number: Change $x$ and $y$</h2>
-    <div class="controls">
-      <label>Real part $x$: <input type="range" id="cnX" min="-5" max="5" step="1" value="3"></label>
-      <label>Imaginary part $y$: <input type="range" id="cnY" min="-5" max="5" step="1" value="2"></label>
-    </div>
-    <canvas id="cnCanvas" width="480" height="260" style="width: 100%; max-width: 480px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; display: block; margin: 10px auto;"></canvas>
+    <h2>Drag $z = (x, y)$ on the Complex Plane: projections and $90^\circ$ rotation by $i$</h2>
+    <canvas id="cnCanvas"></canvas>
     <div class="output table-text" id="cnOutput"></div>
   </div>
 
@@ -66,23 +63,22 @@
       <summary>Show solution</summary>
       <ol class="note-steps">
         <li>Complete the square: $x^2 + 2x + 1 = -5 + 1 \implies (x + 1)^2 = -4$.</li>
-        <li>Take square roots on both sides: $x + 1 = \pm \sqrt{-4} = \pm 2i$.</li>
-        <li>Isolate $x$: $x = -1 \pm 2i$.</li>
+        <li>Take square roots using $i^2 = -1$: $x + 1 = \pm \sqrt{-4} = \pm 2i$.</li>
+        <li>Solve for $x$: $x = -1 \pm 2i$.</li>
       </ol>
-      <p class="answer">Two solutions: $x = -1 + 2i$ and $x = -1 - 2i$</p>
+      <p class="answer">$x = -1 + 2i$ and $x = -1 - 2i$</p>
     </details>
   </div>
 
   <div class="note-example">
     <h3>Example 2 (Textbook Page 2)</h3>
-    <p class="question">Solve $x^2 + 2x + 3 = 0$ and check your answers.</p>
+    <p class="question">Solve $x^2 + 2x + 3 = 0$ and verify your solutions.</p>
     <details>
       <summary>Show solution</summary>
       <ol class="note-steps">
-        <li>Rewrite as: $x^2 + 2x + 1 = -2 \implies (x + 1)^2 = -2$.</li>
-        <li>$x + 1 = \pm \sqrt{2}i \implies x = -1 \pm \sqrt{2}i$.</li>
-        <li><strong>Check for $x = -1 + \sqrt{2}i$:</strong><br>
-          $(-1 + \sqrt{2}i)^2 + 2(-1 + \sqrt{2}i) + 3 = (1 - 2\sqrt{2}i - 2) - 2 + 2\sqrt{2}i + 3 = 0$. ✓
+        <li>Rewrite as $(x + 1)^2 = -2 \implies x + 1 = \pm \sqrt{2}i \implies x = -1 \pm \sqrt{2}i$.</li>
+        <li>Check $x = -1 + \sqrt{2}i$:
+          $$(-1 + \sqrt{2}i)^2 + 2(-1 + \sqrt{2}i) + 3 = (1 - 2\sqrt{2}i + 2i^2) - 2 + 2\sqrt{2}i + 3 = (1 - 2) - 2 + 3 = 0 \quad \checkmark$$
         </li>
       </ol>
       <p class="answer">$x = -1 + \sqrt{2}i$ and $x = -1 - \sqrt{2}i$</p>
@@ -91,18 +87,17 @@
 
   <div class="note-example">
     <h3>Example 3 (Textbook Page 4)</h3>
-    <p class="question">Compute $(-2, 3)(1, -2) + (1, 1)(0, 1)$ using both ordered pairs and $x + yi$ notation.</p>
+    <p class="question">Calculate $(-2, 3)(1, -2) + (1, 1)(0, 1)$ using both ordered pairs and $x + yi$ form.</p>
     <details>
       <summary>Show solution</summary>
       <ol class="note-steps">
-        <li><strong>Method 1 (Ordered pairs):</strong><br>
-          $(-2, 3)(1, -2) = ((-2)(1) - (3)(-2), \; (-2)(-2) + (3)(1)) = (-2 + 6, \; 4 + 3) = (4, 7)$.<br>
+        <li><strong>Ordered pairs:</strong><br>
+          $(-2, 3)(1, -2) = ((-2)(1) - (3)(-2), \; (-2)(-2) + (3)(1)) = (4, 7)$.<br>
           $(1, 1)(0, 1) = ((1)(0) - (1)(1), \; (1)(1) + (1)(0)) = (-1, 1)$.<br>
-          Sum: $(4, 7) + (-1, 1) = (4 - 1, \; 7 + 1) = (3, 8)$.
+          Sum: $(4, 7) + (-1, 1) = (3, 8)$.
         </li>
-        <li><strong>Method 2 ($x + yi$ notation):</strong><br>
-          $(-2 + 3i)(1 - 2i) + (1 + i)(i) = (-2 + 4i + 3i - 6i^2) + (i + i^2)$<br>
-          $= (-2 + 7i + 6) + (i - 1) = (4 + 7i) + (-1 + i) = 3 + 8i$.
+        <li><strong>Algebraic $x + yi$ form:</strong><br>
+          $(-2 + 3i)(1 - 2i) + (1 + i)i = (-2 + 7i - 6i^2) + (i + i^2) = (4 + 7i) + (-1 + i) = 3 + 8i$.
         </li>
       </ol>
       <p class="answer">$(3, 8)$ or $3 + 8i$</p>
@@ -111,129 +106,73 @@
 
   <!-- WARNING: common mistake -->
   <div class="note-warning">
-    <strong>Common Mistake:</strong> $\sqrt{-a} \cdot \sqrt{-b} \ne \sqrt{ab}$ when $a, b > 0$.<br>
-    Always write imaginary units first: $\sqrt{-4} \cdot \sqrt{-9} = (2i)(3i) = 6i^2 = -6$, NOT $\sqrt{(-4)(-9)} = \sqrt{36} = 6$.
+    <strong>Common Mistake:</strong> For positive $a, b$, $\sqrt{-a} \cdot \sqrt{-b} \ne \sqrt{(-a)(-b)}$.
+    Always extract $i$ first: $\sqrt{-4} \cdot \sqrt{-9} = (2i)(3i) = 6i^2 = -6$, not $+6$.
   </div>
 
   <!-- TIP: quick calculation -->
   <div class="note-tip">
-    <strong>Quick Power Rule for $i^n$:</strong> Divide the exponent $n$ by $4$. The remainder gives the power:<br>
-    Remainder $0 \implies i^0 = 1$ | Remainder $1 \implies i^1 = i$ | Remainder $2 \implies i^2 = -1$ | Remainder $3 \implies i^3 = -i$.<br>
-    Example: $i^{35} = i^{4 \times 8 + 3} = i^3 = -i$.
+    <strong>Quick Power Rule for $i^n$:</strong> Divide $n$ by $4$ and keep only the remainder $r \in \{0, 1, 2, 3\}$:
+    $i^0 = 1$, $i^1 = i$, $i^2 = -1$, $i^3 = -i$. For example, $i^{35} = i^{4 \times 8 + 3} = i^3 = -i$.
   </div>
 
   <!-- TAKEAWAYS: bilingual summary -->
   <div class="note-takeaways">
     <ul>
-      <li>$i$ is the pure imaginary unit: $i^2 = -1$ (စိတ်ကူးယဉ်ယူနစ် $i$).</li>
-      <li>Every complex number can be written as $z = x + yi$ or as an ordered pair $(x, y)$.</li>
-      <li>Real numbers are complex numbers with $y = 0$; purely imaginary numbers have $x = 0$.</li>
-      <li>Multiplication rule: $(x_1 + y_1 i)(x_2 + y_2 i) = (x_1 x_2 - y_1 y_2) + (x_1 y_2 + x_2 y_1)i$.</li>
+      <li>$i^2 = -1$ defines the pure imaginary unit (စိတ်ကူးယဉ်ယူနစ် $i$).</li>
+      <li>$z = x + yi = (x, y)$, with real part $x$ on the horizontal axis and imaginary part $y$ on the vertical axis.</li>
+      <li>Multiplying any complex number $z = (x, y)$ by $i$ gives $iz = (-y, x)$, a $90^\circ$ counterclockwise rotation.</li>
     </ul>
   </div>
 
 </article>
 
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
 <script>
+  // "Complex number & multiplication by i" demo.
+  // Drag z (snapped to half-integers). Blue: z = (x, y) with dashed projections to
+  // the real and imaginary axes. Purple: i·z = (−y, x), rotated 90° counterclockwise.
   (function () {
-    const canvas = document.getElementById('cnCanvas');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const xSlider = document.getElementById('cnX');
-    const ySlider = document.getElementById('cnY');
     const output = document.getElementById('cnOutput');
+    const half = ([x, y]) => [Math.round(x * 2) / 2, Math.round(y * 2) / 2];
 
-    function render() {
-      const x = parseInt(xSlider.value, 10);
-      const y = parseInt(ySlider.value, 10);
+    const cx = ([a, b]) => {
+      const A = +a.toFixed(2), B = +b.toFixed(2), bi = Math.abs(B) === 1 ? 'i' : `${Math.abs(B)}i`;
+      if (B === 0) return `${A}`.replace('-', '−');
+      if (A === 0) return (B < 0 ? '−' : '') + bi;
+      return `${A} ${B < 0 ? '−' : '+'} ${bi}`.replace('-', '−');
+    };
 
-      const w = canvas.width;
-      const h = canvas.height;
-      const originX = w / 2;
-      const originY = h / 2;
-      const scale = 22;
+    NotePlot.graph(document.getElementById('cnCanvas'), {
+      x: [-6.2, 6.2], y: [-4, 4],
+      points: { z: [3, 2] },
+      constrain: { z: half },
+      draw(g, P) {
+        const [x, y] = P.z;
+        const iz = [-y, x];
 
-      ctx.clearRect(0, 0, w, h);
+        // Dashed coordinate box projections to Real and Imaginary axes
+        g.seg([x, 0], [x, y], '#94a3b8', { dash: true, width: 1.5 });
+        g.seg([0, y], [x, y], '#94a3b8', { dash: true, width: 1.5 });
+        g.dot([x, 0], '#0d9488', `Re = ${x}`);
+        g.dot([0, y], '#ea580c', `Im = ${y}`);
 
-      // Grid lines
-      ctx.strokeStyle = '#e2e8f0';
-      ctx.lineWidth = 1;
-      for (let i = -6; i <= 6; i++) {
-        ctx.beginPath();
-        ctx.moveTo(originX + i * scale, 0);
-        ctx.lineTo(originX + i * scale, h);
-        ctx.stroke();
+        // Vector O -> z (blue) and O -> iz (purple, rotated 90 deg)
+        g.seg([0, 0], [x, y], '#2563eb', { width: 3 });
+        g.seg([0, 0], iz, '#7c3aed', { width: 2.5, dash: true });
+        g.dot(iz, '#7c3aed', `iz = (${iz[0]}, ${iz[1]})`);
 
-        ctx.beginPath();
-        ctx.moveTo(0, originY + i * scale);
-        ctx.lineTo(w, originY + i * scale);
-        ctx.stroke();
-      }
+        const kind = (x === 0 && y === 0) ? 'Zero (0)'
+          : (y === 0) ? 'Purely real number (on Real axis)'
+          : (x === 0) ? 'Pure imaginary number (on Imaginary axis)'
+          : 'Complex number';
 
-      // Axes
-      ctx.strokeStyle = '#94a3b8';
-      ctx.lineWidth = 2;
-      // Real axis
-      ctx.beginPath();
-      ctx.moveTo(0, originY);
-      ctx.lineTo(w, originY);
-      ctx.stroke();
-      // Imaginary axis
-      ctx.beginPath();
-      ctx.moveTo(originX, 0);
-      ctx.lineTo(originX, h);
-      ctx.stroke();
-
-      // Axis labels
-      ctx.fillStyle = '#64748b';
-      ctx.font = '12px system-ui, sans-serif';
-      ctx.fillText('Real axis (Re)', w - 85, originY - 8);
-      ctx.fillText('Imaginary axis (Im)', originX + 8, 16);
-
-      // Plot point (x, y)
-      const px = originX + x * scale;
-      const py = originY - y * scale;
-
-      // Dashed lines to axes
-      ctx.setLineDash([4, 4]);
-      ctx.strokeStyle = '#cbd5e1';
-      ctx.beginPath();
-      ctx.moveTo(px, originY);
-      ctx.lineTo(px, py);
-      ctx.lineTo(originX, py);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      // Arrow from origin
-      ctx.strokeStyle = '#667eea';
-      ctx.lineWidth = 2.5;
-      ctx.beginPath();
-      ctx.moveTo(originX, originY);
-      ctx.lineTo(px, py);
-      ctx.stroke();
-
-      // Dot at point
-      ctx.fillStyle = '#4c3fb5';
-      ctx.beginPath();
-      ctx.arc(px, py, 6, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Label
-      ctx.fillStyle = '#1e293b';
-      ctx.font = 'bold 13px system-ui, sans-serif';
-      ctx.fillText(`z = (${x}, ${y})`, px + 8, py - 8);
-
-      let sign = y >= 0 ? '+' : '−';
-      let absY = Math.abs(y);
-      let yStr = absY === 1 ? 'i' : `${absY}i`;
-      let textForm = y === 0 ? `${x}` : x === 0 ? (y < 0 ? `−${yStr}` : `${yStr}`) : `${x} ${sign} ${yStr}`;
-      let nature = (x === 0 && y === 0) ? 'Zero' : (y === 0) ? 'Purely Real number' : (x === 0) ? 'Pure Imaginary number' : 'Standard Complex number';
-
-      output.innerHTML = `<strong>Algebraic form:</strong> $z = ${textForm}$ &nbsp;|&nbsp; <strong>Ordered pair:</strong> $(x, y) = (${x}, ${y})$ &nbsp;|&nbsp; <strong>Type:</strong> ${nature}`;
-    }
-
-    xSlider.addEventListener('input', render);
-    ySlider.addEventListener('input', render);
-    render();
+        output.textContent =
+          `z = ${cx([x, y])} = (${x}, ${y})   [${kind}]\n` +
+          `Real part Re(z) = ${x},   Imaginary part Im(z) = ${y}\n` +
+          `Multiply by i:  i·z = (${x} + ${y}i)·i = ${cx(iz)} = (${iz[0]}, ${iz[1]})  (90° rotation)`;
+      },
+    });
   })();
 </script>
