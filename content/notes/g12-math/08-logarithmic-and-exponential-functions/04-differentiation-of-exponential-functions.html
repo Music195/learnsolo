@@ -1,0 +1,178 @@
+<!-- tags: Logarithmic and Exponential Functions, G12 Math Myanmar -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Logarithmic and Exponential Functions">Differentiation of Exponential Functions</h1>
+
+<script src="/static/js/demos/geom.js"></script>
+<script src="/static/js/demos/plot.js"></script>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; The Natural Exponential Function $y = e^x$ Is Its Own Derivative</span>
+  <p>Among all exponential functions $y = b^x$ ($b > 0, b \neq 1$), the natural exponential function $y = e^x$ (with base $e \approx 2.71828$) possesses the unique property in all of mathematics that <strong>its rate of change at every point equals its value at that point</strong>:</p>
+  $$\frac{d}{dx}(e^x) = e^x$$
+  <p>For a general base $b > 0$, the derivative of $y = b^x$ is proportional to $b^x$ with proportionality constant $\ln b$: $\dfrac{d}{dx}(b^x) = b^x\ln b$.</p>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formulas &mdash; Exponential Derivatives &amp; Variable-Base-and-Exponent Rule</span>
+  <ul>
+    <li><strong>Natural Exponential Function ($b = e$):</strong> For any differentiable function $u = u(x)$:
+      $$\frac{d}{dx}(e^x) = e^x, \qquad \frac{d}{dx}\big(e^{u(x)}\big) = e^{u(x)} \cdot \frac{du}{dx}$$
+    </li>
+    <li><strong>General Base-$b$ Exponential Function ($b > 0, b \neq 1$):</strong>
+      $$\frac{d}{dx}(b^x) = b^x\ln b, \qquad \frac{d}{dx}\big(b^{u(x)}\big) = b^{u(x)}\ln b \cdot \frac{du}{dx}$$
+    </li>
+    <li><strong>Variable in BOTH Base and Exponent ($y = [f(x)]^{g(x)}$ — Example 10):</strong><br>
+      When $x$ appears in both the base and the exponent (e.g., $y = x^{\sin x}$ or $y = x^{\ln x}$), neither the power rule $nx^{n-1}$ nor the exponential rule $b^x\ln b$ applies directly! Always use <strong>logarithmic differentiation</strong>:
+      $$\ln y = g(x)\ln f(x) \implies \frac{1}{y}\frac{dy}{dx} = g'(x)\ln f(x) + g(x)\frac{f'(x)}{f(x)}$$
+    </li>
+  </ul>
+</div>
+
+<div class="note-proof">
+  <span class="block-label">Proof &mdash; Implicit Derivation of $\dfrac{d}{dx}(b^x) = b^x\ln b$</span>
+  <p>Let $y = b^x$ ($b > 0, b \neq 1$). Taking the base-$b$ logarithm of both sides gives:</p>
+  $$x = \log_b y$$
+  <p>Differentiating both sides with respect to $x$ (using $\dfrac{d}{dy}(\log_b y) = \dfrac{1}{y}\log_b e$ and the chain rule):</p>
+  $$1 = \frac{1}{y}\log_b e \cdot \frac{dy}{dx}$$
+  <p>Solving for $\dfrac{dy}{dx}$ and using the reciprocal base-change identity $\dfrac{1}{\log_b e} = \log_e b = \ln b$:</p>
+  $$\frac{dy}{dx} = \frac{y}{\log_b e} = y\log_e b = b^x\ln b \quad \blacksquare$$
+  <p>In the special case $b = e$, since $\ln e = 1$, this simplifies immediately to $\dfrac{d}{dx}(e^x) = e^x$.</p>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; Why $y = e^x$ Matches Its Own Tangent Slope Everywhere</span>
+  <p>Adjust base $b$ and point $x_0$. Compare $f(x) = b^x$ (solid blue) with its derivative curve $f'(x) = b^x\ln b$ (dashed teal). When $b = e \approx 2.72$, $\ln b = 1$ and the two curves merge into one, with tangent slope $e^{x_0}$ equal to the height $e^{x_0}$!</p>
+  <canvas id="g12-ch8-04-canvas"></canvas>
+  <div class="controls">
+    <label>Point x₀ <input type="range" id="ch8-04-x" min="-1.5" max="1.5" value="0.5" step="0.1"></label>
+    <button type="button" class="pill active" data-b="e">Base b = e ≈ 2.718 (f' = f)</button>
+    <button type="button" class="pill" data-b="2">Base b = 2 (ln 2 ≈ 0.693)</button>
+    <button type="button" class="pill" data-b="3">Base b = 3 (ln 3 ≈ 1.099)</button>
+  </div>
+  <div class="output table-text" id="ch8-04-out"></div>
+</div>
+
+<script>
+(function() {
+  var canvas = document.getElementById('g12-ch8-04-canvas');
+  var xIn = document.getElementById('ch8-04-x');
+  var out = document.getElementById('ch8-04-out');
+  if (!canvas) return;
+
+  var bMode = 'e';
+
+  var plot = NotePlot.graph(canvas, {
+    x: [-3.5, 3.5],
+    y: [-1, 6.5],
+    draw: function(g) {
+      var x0 = parseFloat(xIn.value);
+      var b = bMode === 'e' ? Math.E : parseFloat(bMode);
+      var lnb = Math.log(b);
+
+      var f = function(x) { return Math.pow(b, x); };
+      var df = function(x) { return Math.pow(b, x) * lnb; };
+
+      g.fn(f, '#2563eb', { width: 2.8 });
+      g.fn(df, '#0d9488', { width: 2.4, dash: true });
+
+      var y0 = f(x0), m = df(x0);
+      var dx = 1.1;
+      g.seg([x0 - dx, y0 - m * dx], [x0 + dx, y0 + m * dx], '#e11d48', { width: 2.4 });
+      g.seg([x0 - 1, 0], [x0, y0], '#d97706', { dash: true, width: 1.5 });
+      g.vline(x0, '#94a3b8', { dash: true, width: 1.2 });
+
+      g.dot([x0, y0], '#2563eb', 'b^(x₀)');
+      if (bMode !== 'e') {
+        g.dot([x0, m], '#0d9488', "f'(x₀)");
+      }
+
+      var bName = bMode === 'e' ? 'e' : bMode;
+      out.textContent =
+        'f(x) = ' + bName + '^x,   f\'(x) = ' + bName + '^x ln(' + bName + ')   (ln ' + bName + ' = ' + lnb.toFixed(4) + ')   |   ' +
+        'At x₀ = ' + x0.toFixed(1) + ':  height f(x₀) = ' + y0.toFixed(3) + ',  tangent slope f\'(x₀) = ' + m.toFixed(3) +
+        (bMode === 'e' ? '  (Height = Slope everywhere!)' : '');
+    }
+  });
+
+  xIn.addEventListener('input', function() { plot.redraw(); });
+  var btns = canvas.parentElement.querySelectorAll('.pill[data-b]');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].addEventListener('click', function() {
+      for (var j = 0; j < btns.length; j++) btns[j].classList.remove('active');
+      this.classList.add('active');
+      bMode = this.getAttribute('data-b');
+      plot.redraw();
+    });
+  }
+})();
+</script>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Textbook Examples 8, 9 &amp; 10</span>
+
+  <p><strong>Example 8 (Differentiating Natural Exponential Functions):</strong> Differentiate with respect to $x$:<br>
+  (a) $e^{\sin x}$ &emsp; (b) $x^2 e^{3x}$ &emsp; (c) $e^{2x}\sin 3x$ &emsp; (d) $\dfrac{e^{2x}}{1 - 2x}$.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p><strong>(a)</strong> $\dfrac{d}{dx}(e^{\sin x}) = e^{\sin x} \cdot \dfrac{d}{dx}(\sin x) = \cos x\,e^{\sin x}$.</p>
+    <p><strong>(b)</strong> By the product rule: $\dfrac{d}{dx}(x^2 e^{3x}) = x^2(3e^{3x}) + e^{3x}(2x) = (3x^2 + 2x)e^{3x}$.</p>
+    <p><strong>(c)</strong> By the product rule: $\dfrac{d}{dx}(e^{2x}\sin 3x) = e^{2x}(3\cos 3x) + \sin 3x(2e^{2x}) = e^{2x}(3\cos 3x + 2\sin 3x)$.</p>
+    <p><strong>(d)</strong> By the quotient rule:</p>
+    $$\frac{d}{dx}\left(\frac{e^{2x}}{1 - 2x}\right) = \frac{(1 - 2x)(2e^{2x}) - e^{2x}(-2)}{(1 - 2x)^2} = \frac{(2 - 4x + 2)e^{2x}}{(1 - 2x)^2} = \frac{(4 - 4x)e^{2x}}{(1 - 2x)^2}$$
+    <p class="answer">Answer: (a) $\cos x\,e^{\sin x}$, (b) $(3x^2 + 2x)e^{3x}$, (c) $e^{2x}(3\cos 3x + 2\sin 3x)$, (d) $\dfrac{(4 - 4x)e^{2x}}{(1 - 2x)^2}$.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 9 (Base-$b$ Exponentials &amp; Implicit Differentiation):</strong> Find $\dfrac{dy}{dx}$ for:<br>
+  (a) $y = 3^{x^2 - x}$ &emsp; (b) $y = \log_{10}(2x + 1)$ &emsp; (c) $y = 2^{\sin x + \cos x}$ &emsp; (d) $xe^y + \ln(xy) = \sin x$.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p><strong>(a)</strong> $\dfrac{dy}{dx} = 3^{x^2 - x}\ln 3 \cdot \dfrac{d}{dx}(x^2 - x) = (2x - 1)3^{x^2 - x}\ln 3$.</p>
+    <p><strong>(b)</strong> $\dfrac{dy}{dx} = \dfrac{1}{2x + 1}\log_{10} e \cdot \dfrac{d}{dx}(2x + 1) = \dfrac{2}{2x + 1}\log_{10} e$.</p>
+    <p><strong>(c)</strong> $\dfrac{dy}{dx} = 2^{\sin x + \cos x}\ln 2 \cdot (\cos x - \sin x)$.</p>
+    <p><strong>(d)</strong> First expand $\ln(xy) = \ln x + \ln y$ so that $xe^y + \ln x + \ln y = \sin x$. Differentiating implicitly with respect to $x$:</p>
+    $$\left(x e^y\frac{dy}{dx} + e^y(1)\right) + \frac{1}{x} + \frac{1}{y}\frac{dy}{dx} = \cos x$$
+    $$\left(xe^y + \frac{1}{y}\right)\frac{dy}{dx} = \cos x - e^y - \frac{1}{x} \implies \frac{xye^y + 1}{y}\frac{dy}{dx} = \frac{x\cos x - xe^y - 1}{x}$$
+    $$\frac{dy}{dx} = \frac{y(x\cos x - xe^y - 1)}{x(xye^y + 1)}$$
+    <p class="answer">Answer: (a) $(2x-1)3^{x^2-x}\ln 3$, (b) $\dfrac{2\log_{10}e}{2x+1}$, (c) $(\cos x - \sin x)2^{\sin x + \cos x}\ln 2$, (d) $\dfrac{y(x\cos x - xe^y - 1)}{x(xye^y + 1)}$.</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 10 (Differentiating $y = x^{\sin x}$ via Logarithmic Differentiation):</strong> Differentiate $y = x^{\sin x}$ ($x > 0$) with respect to $x$.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p>Take the natural logarithm of both sides to bring the variable exponent $\sin x$ down:</p>
+    $$\ln y = \ln(x^{\sin x}) = \sin x \cdot \ln x$$
+    <p>Differentiate both sides with respect to $x$ using the product rule on the right:</p>
+    $$\frac{1}{y}\frac{dy}{dx} = \sin x \cdot \left(\frac{1}{x}\right) + \ln x \cdot (\cos x)$$
+    <p>Multiply by $y = x^{\sin x}$:</p>
+    $$\frac{dy}{dx} = x^{\sin x}\left(\frac{\sin x}{x} + \cos x\ln x\right) = x^{\sin x - 1}\sin x + x^{\sin x}\cos x\ln x$$
+    <p class="answer">Answer: $\dfrac{dy}{dx} = x^{\sin x - 1}\sin x + x^{\sin x}\cos x\ln x$.</p>
+  </details>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>Never Apply the Power Rule to $b^x$ or $x^x$:</strong> The derivative of $3^x$ is $3^x\ln 3$, NOT $x \cdot 3^{x - 1}$! And the derivative of $x^{\sin x}$ is NOT $(\sin x)x^{\sin x - 1}$ alone (which misses the second term $x^{\sin x}\cos x\ln x$).</li>
+    <li><strong>Remembering $\ln b$ vs. $\log_b e$:</strong> When differentiating $b^x$, multiply by $\ln b$; when differentiating $\log_b x$, multiply $\frac{1}{x}$ by $\log_b e = \frac{1}{\ln b}$.</li>
+  </ul>
+</div>
+
+<div class="note-tip">
+  <span class="block-label">Exam Tip &mdash; Second-Order Differential Equations with $e^{ax}\cos bx$ (Exercise 8.4 #2)</span>
+  <p>In problems like "Given $y = e^x\cos x$, prove that $\frac{d^2y}{dx^2} - 2\frac{dy}{dx} + 2y = 0$", substitute $y = e^x\cos x$ right back into $\frac{dy}{dx} = e^x\cos x - e^x\sin x = y - e^x\sin x$ before differentiating a second time! Then $\frac{d^2y}{dx^2} = \frac{dy}{dx} - (e^x\cos x + e^x\sin x) = \frac{dy}{dx} - y - \left(y - \frac{dy}{dx}\right) = 2\frac{dy}{dx} - 2y$, completing the proof in two lines!</p>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways (မှတ်သားရန် အချက်များ)</span>
+  <ul>
+    <li><strong>Natural Exponential Derivative:</strong> $\dfrac{d}{dx}(e^u) = e^u\dfrac{du}{dx}$.</li>
+    <li><strong>General Base-$b$ Exponential Derivative:</strong> $\dfrac{d}{dx}(b^u) = b^u\ln b\,\dfrac{du}{dx}$.</li>
+    <li><strong>Variable Base &amp; Exponent ($y = u^v$):</strong> Take $\ln y = v\ln u$ first and differentiate implicitly.</li>
+  </ul>
+</div>
+</article>
