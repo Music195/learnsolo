@@ -172,7 +172,7 @@ function HomeContent({ subjects, stats }) {
             </Link>
             <Link className="more-card" to="/past">
               <i className="fas fa-file-pen"></i>
-              <span><strong>Past questions</strong><span>EJU mock papers and university exam problems.</span></span>
+              <span><strong>Mock Questions</strong><span>EJU mock papers and university exam problems.</span></span>
             </Link>
             <Link className="more-card" to="/past/jlpt">
               <i className="fas fa-language"></i>

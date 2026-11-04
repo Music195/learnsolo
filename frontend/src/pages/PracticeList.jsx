@@ -50,7 +50,7 @@ export default function PracticeList() {
         <Link className="hub-past" to="/past">
           <span className="hub-past-icon"><i className="fas fa-file-pen"></i></span>
           <span className="hub-past-text">
-            <strong>Past questions</strong>
+            <strong>Mock Questions</strong>
             <span>EJU-style and university exam problems, to test yourself across topics.</span>
           </span>
           <span className="hub-past-go">Open <i className="fas fa-arrow-right"></i></span>

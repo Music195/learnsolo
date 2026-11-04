@@ -71,13 +71,13 @@ def build_search_index():
             "where": " · ".join([course_name(parts[0]), topic_name(parts[1]), "Practice"]),
             "url": practice_url(practice["path"]),
         })
-    # Past questions, e.g. "EJU Mock Papers · Course 1 (Basic) · Past question"
+    # Past questions, e.g. "EJU Mock Papers · Course 1 (Basic) · Mock Question"
     for paper in get_past_papers():
         category, name = paper["path"].split("/", 1)
         group = [past_group(category, name.split("/")[0])] if "/" in name else []
         index.append({
-            "title": "Past question: " + paper["title"],
-            "where": " · ".join([past_category(category)["name"]] + group + ["Past question"]),
+            "title": "Mock Question: " + paper["title"],
+            "where": " · ".join([past_category(category)["name"]] + group + ["Mock Question"]),
             "url": past_paper_url(paper["path"]),
         })
     return index

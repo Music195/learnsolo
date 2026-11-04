@@ -85,7 +85,7 @@ export default function PracticeSet() {
           // The very last set: point on to the past questions
           <Link className="pager-card pager-next" to="/past">
             <span className="pager-label">More practice <i className="fas fa-arrow-right"></i></span>
-            <strong>Past questions</strong>
+            <strong>Mock Questions</strong>
             <span className="pager-where">EJU and university exams</span>
           </Link>
         )}
