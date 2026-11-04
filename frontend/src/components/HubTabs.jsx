@@ -62,10 +62,20 @@ export function HubTabs({ tabs, rememberKey, label, renderPanel }) {
   )
 }
 
-// "Solved 2 of 6", or "✓ Done", or nothing if not started (solved = null or 0)
-export function SetProgress({ solved, count }) {
-  if (!solved) return <span className="set-progress" hidden></span>
+// "Solved 2 of 6", or "✓ Done", or "Score: 8/10 (80%)", or nothing if not started
+export function SetProgress({ solved, count, isTest }) {
+  if (solved == null) return <span className="set-progress" hidden></span>
   const done = solved >= count
+  const pct = count > 0 ? Math.round((solved / count) * 100) : 0
+  if (isTest) {
+    const passed = pct >= 60
+    return (
+      <span className={'set-progress' + (passed ? ' is-done' : ' is-review')}>
+        <i className={`fas ${done ? 'fa-check-double' : (passed ? 'fa-circle-check' : 'fa-circle-half-stroke')}`}></i>
+        {' '}Score: {solved}/{count} ({pct}%)
+      </span>
+    )
+  }
   return (
     <span className={'set-progress' + (done ? ' is-done' : '')}>
       {done ? <><i className="fas fa-check"></i> Done</> : `Solved ${solved} of ${count}`}

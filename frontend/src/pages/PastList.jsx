@@ -157,6 +157,7 @@ function PaperListCard({ groupName, papers }) {
   const solved = papers.map((paper) => solvedCount(`past/${paper.path}`, paper.moved_from))
   const groupSolved = solved.reduce((sum, n) => sum + (n || 0), 0)
   const problems = papers.reduce((sum, paper) => sum + paper.count, 0)
+  const groupPct = problems > 0 ? Math.round((groupSolved / problems) * 100) : 0
 
   return (
     <article className="topic-card">
@@ -165,7 +166,7 @@ function PaperListCard({ groupName, papers }) {
           <h2>{groupName}</h2>
           <p className="topic-meta">
             {plural(papers.length, 'test')} · {problems} problems{' '}
-            <span className="topic-solved" hidden={!groupSolved}>Solved {groupSolved} of {problems}</span>
+            <span className="topic-solved" hidden={!groupSolved}>Score: {groupSolved}/{problems} ({groupPct}%)</span>
           </p>
         </div>
       </header>
@@ -179,7 +180,7 @@ function PaperListCard({ groupName, papers }) {
                 {/* What each problem practises, from its exam label */}
                 <span>{paper.labels.length ? paper.labels.join(' · ') : paper.intro}</span>
               </span>
-              <SetProgress solved={solved[i]} count={paper.count} />
+              <SetProgress solved={solved[i]} count={paper.count} isTest />
             </Link>
           </li>
         ))}

@@ -125,6 +125,7 @@ export function setUpProblems(holder, path, onChange) {
         } else {
           box.classList.add('wrong')
           result.textContent = 'Not quite. Try again, or open the hint.'
+          setState(i, 'review')
         }
         showMark()
       })
@@ -158,11 +159,16 @@ export function setUpProblems(holder, path, onChange) {
             li.classList.add('right')
             result.className = 'check-result choice-result right'
             result.textContent = 'Correct! Open the explanation to see why.'
-            setState(i, 'solved')
+            if (saved[i] !== 'review') {
+              setState(i, 'solved')
+            }
           } else {
             li.classList.add('wrong')
             result.className = 'check-result choice-result wrong'
             result.textContent = 'Not quite. Try another choice.'
+            if (saved[i] !== 'solved') {
+              setState(i, 'review')
+            }
           }
           showMark()
         })
@@ -179,7 +185,21 @@ export function setUpProblems(holder, path, onChange) {
   return {
     // "Start again": forget every problem's mark
     reset() {
-      problems.forEach((_, i) => setState(i, null))
+      problems.forEach((card, i) => {
+        setState(i, null)
+        card.querySelectorAll('li.right, li.wrong').forEach((li) => li.classList.remove('right', 'wrong'))
+        card.querySelectorAll('.check-result').forEach((el) => {
+          el.className = el.classList.contains('choice-result') ? 'check-result choice-result' : 'check-result'
+          el.textContent = ''
+        })
+        card.querySelectorAll('.practice-check').forEach((box) => {
+          box.classList.remove('right', 'wrong')
+          const input = box.querySelector('input')
+          if (input) input.value = ''
+        })
+        card.querySelectorAll('.practice-mark').forEach((mark) => { mark.hidden = true })
+        card.querySelectorAll('details.solution, details.hint').forEach((d) => d.removeAttribute('open'))
+      })
       saved = {}
       save()
     },

@@ -14,6 +14,7 @@ import FloatBar from '../components/FloatBar.jsx'
 import LoadError from '../components/LoadError.jsx'
 import NoteContent from '../components/NoteContent.jsx'
 import { plural } from '../components/HubTabs.jsx'
+import TestScoreCard from '../components/TestScoreCard.jsx'
 import { ProgressLine } from './PracticeSet.jsx'
 
 export default function PastPaper() {
@@ -58,12 +59,21 @@ export default function PastPaper() {
             <span className="chip-practice chip-past"><i className="fas fa-file-pen"></i> Mock Question</span>
           </p>
           <h1>{title}</h1>
-          <ProgressLine progress={progress} count={count} onReset={() => problemsRef.current?.reset()} />
+          <ProgressLine progress={progress} count={count} onReset={() => problemsRef.current?.reset()} isTest />
         </div>
       </header>
 
       {/* THE PROBLEMS: the paper's HTML, with answer boxes added by src/practice.js */}
       <NoteContent html={content} style={{ fontSize: `${textSize}%` }} onReady={onReady} />
+
+      {/* SCORE CARD: Live score, accuracy %, badges, and retake/next actions */}
+      <TestScoreCard
+        progress={progress}
+        total={count}
+        onReset={() => problemsRef.current?.reset()}
+        nextUrl={nav?.next?.url}
+        nextTitle={nav?.next?.title}
+      />
 
       {/* AFTER THE PROBLEMS: back to the list, then the next paper */}
       <nav className="note-pager" aria-label="More">
