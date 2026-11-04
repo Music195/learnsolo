@@ -5,6 +5,7 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router'
 import { useAuth } from '../auth.jsx'
+import { useTheme } from '../pageHooks.js'
 import SearchBox from './SearchBox.jsx'
 import NotificationBell from './NotificationBell.jsx'
 import FeedbackModal from './FeedbackModal.jsx'
@@ -12,6 +13,7 @@ import FeedbackModal from './FeedbackModal.jsx'
 export default function FloatBar({ location, nav, onTextSize, onTopics, topicsOpen }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [feedbackOpen, setFeedbackOpen] = useState(false)
+  const [theme, toggleTheme] = useTheme()
   const closeMenu = () => setMenuOpen(false)
 
   return (
@@ -82,6 +84,18 @@ export default function FloatBar({ location, nav, onTextSize, onTopics, topicsOp
             >
               <i className="fas fa-comment-dots"></i>
               <span className="bar-feedback-text">Feedback</span>
+            </button>
+
+            {/* Dark / Light Mode Toggle */}
+            <button
+              type="button"
+              className="bar-btn bar-theme-toggle"
+              aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              title={theme === 'dark' ? 'Switch to light mode (☀️)' : 'Switch to dark mode (🌙)'}
+              onClick={toggleTheme}
+            >
+              <i className={theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon'}></i>
+              <span className="bar-theme-text">{theme === 'dark' ? 'Light' : 'Dark'}</span>
             </button>
 
             {/* Account / User Info button */}

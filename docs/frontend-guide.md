@@ -157,8 +157,8 @@ Here is what happens step-by-step in `frontend/` when a student clicks a link to
 | `api.js` | Talking to Flask: `fetchJson(url)`, `sendJson(method, url, data)`, and the `useApi(url)` hook | Changing how all requests are made |
 | `auth.jsx` | `AuthProvider` and `useAuth()`: who is logged in, `signup`, `login`, `logout`, and moving browser progress into the account | Changing what happens at log in or out |
 | `progress.js` | **The only place progress is read and saved**: in `localStorage` when logged out, in the account (`/api/progress/...`) when logged in | Changing how progress is stored |
-| `practice.js` | Adds the answer boxes (or multiple-choice option buttons when `data-choices` is set), answer checking (`toNumber`) and "I got it / Review later" buttons to a set's problems | Changing how answers are checked or marked |
-| `pageHooks.js` | Shared hooks: text size (`useTextSize`), ← / → keys (`useArrowKeys`), the tab title (`usePageTitle`), back to top (`useScrollToTop`) | Changing these behaviours on every page |
+| `practice.js` | Adds the answer boxes (or multiple-choice option buttons with `data-choice`), answer checking (`toNumber`), score updates, and "I got it / Review later" buttons to a set's problems | Changing how answers are checked or marked |
+| `pageHooks.js` | Shared hooks: dark mode (`useTheme`), text size (`useTextSize`), ← / → keys (`useArrowKeys`), the tab title (`usePageTitle`), back to top (`useScrollToTop`) | Changing these behaviours on every page |
 | `mathjax.js` | `typeset(element)`: draws formulas inside an element, once, one job at a time | Formulas draw wrongly |
 | `styles.js` | Imports every CSS file in `styles/` | Adding a new CSS file |
 
@@ -166,25 +166,30 @@ Here is what happens step-by-step in `frontend/` when a student clicks a link to
 
 | File | Address | What it shows |
 |---|---|---|
-| `Home.jsx` | `/` | Hero with a live demo (`HeroDemo`), subject tabs (`Mathematics`, `Physics`, `Grade 12 Myanmar`), course cards (icon and colour per course: `COURSE_STYLE`), "how a note works", links to Practice and Mock Questions |
+| `Home.jsx` | `/` | Hero with a live demo (`HeroDemo`), subject tabs (`Mathematics`, `Physics`, `Grade 12 Myanmar`), course cards (icon and colour per course: `COURSE_STYLE`), "how a note works", links to Practice and Mock Questions, and the full site footer (`Footer`) |
 | `Note.jsx` | `/notes/...` | Header (course, topic, title, "Note 5 of 8"), the note (`NoteContent`), "Practise this note", previous/next cards, Topics sidebar |
-| `PracticeList.jsx` | `/practice` | Course tabs; a card per topic listing its sets with "Solved n of m" |
+| `PracticeList.jsx` | `/practice` | Course tabs; a card per topic listing its sets with "Solved n of m", and the site footer |
 | `PracticeSet.jsx` | `/practice/...` | Header with "Solved 2 of 5" and "Start again", the problems, "Review the notes" and the next set |
-| `PastList.jsx` | `/past`, `/past/<exam>` | A card per exam category (`EJU Mock Papers`, `JLPT Mock Tests`, `University Mock Questions`); then one exam's papers (with tabs for EJU Course 1/2 and JLPT N2) |
-| `PastPaper.jsx` | `/past/<exam>/...` | One mock paper, like a practice set; old addresses of renamed papers redirect |
+| `PastList.jsx` | `/past`, `/past/<exam>` | A card per exam category (`EJU Mock Papers`, `JLPT Mock Tests`, `University Mock Questions`); then one exam's papers (with tabs for EJU Course 1/2 and JLPT N1–N5 levels and skill sections), and site footer |
+| `PastPaper.jsx` | `/past/<exam>/...` | One mock paper or test, with live scoring header, hints/solutions, choices, and end-of-test `<TestScoreCard />` |
 | `Account.jsx` | `/login`, `/signup` | The email + password form; goes back to the page you came from |
+| `AccountSettings.jsx` | `/account` | Logged-in user settings: avatar, email, membership date, change password form, study progress controls (reset all progress), and session logout |
 | `NotFound.jsx` | anything else | "Page not found" |
 
 ### Components (`frontend/src/components/`, reusable pieces)
 
 | File | What it is | Used by |
 |---|---|---|
-| `FloatBar.jsx` | The bar at the top: logo, where you are, search, text size, previous/next, Topics, Log in / Log out, and the ☰ phone menu | Every page |
+| `FloatBar.jsx` | The top floating bar: custom logo, where you are, search, text size, previous/next, Topics, active login date badge, notifications bell, feedback button, dark/light mode toggle, and Account button | Every page |
+| `NotificationBell.jsx` | The announcement bell: unread badge counter, popover drawer with creator announcements, and "Mark all as read" | `FloatBar` |
+| `FeedbackModal.jsx` | Feedback dialog modal: category selector, message textarea, and submission to `/api/feedback` | `FloatBar` |
+| `Footer.jsx` | Site footer: logo, platform description, About Me portfolio link (`https://music195.github.io/portfolio/`), GitHub repository, subjects, and mock exam links | `Home`, `PracticeList`, `PastList`, `AccountSettings` |
+| `TestScoreCard.jsx` | Test completion summary card: pass/review badges (`合格`/`要復習`), score stats, "Retake Test", "Jump to First Mistake", and "Next Test" | `PastPaper` |
 | `FloatingDictionary.jsx` | The floating 📖 button (bottom-right) and resizable 3-way dictionary window (English ↔ Burmese ↔ Japanese) | Every page (mounted in `App.jsx`) |
 | `SearchBox.jsx` | The search box: loads `/api/search-index` once, shows up to 8 matches, keyboard ↑ ↓ Enter Esc | `FloatBar` |
 | `TopicsSidebar.jsx` | The Topics sidebar on a note: course and topic dropdowns, the topic's notes | `Note` |
 | `NoteContent.jsx` | Puts a note's or set's HTML on the page, runs its scripts, cleans up any JSXGraph boards on unmount, then draws the formulas | `Note`, `PracticeSet`, `PastPaper` |
-| `HubTabs.jsx` | A row of tabs with a panel each (remembered in `localStorage`), and the "Solved n of m" badge | `PracticeList`, `PastList` |
+| `HubTabs.jsx` | A row of tabs with a panel each (remembered in `localStorage`), and the "Solved n of m" or "Score: X/Y (Z%)" badge | `PracticeList`, `PastList` |
 | `HeroDemo.jsx` | The draggable tangent-line demo on the home page | `Home` |
 | `LoadError.jsx` | "Sorry, this … doesn't exist" / "couldn't be loaded" | Every page with data |
 
@@ -192,7 +197,10 @@ Here is what happens step-by-step in `frontend/` when a student clicks a link to
 
 | File | Styles |
 |---|---|
-| `floatbar.css` | The floating bar and search results |
+| `floatbar.css` | The floating bar, search results, notifications popover, and feedback modal |
+| `dark-mode.css` | **Complete dark mode theme**: background colors, cards, note blocks, choices, score cards, and dictionary when `[data-theme="dark"]` |
+| `footer.css` | The 4-column responsive site footer and creator about-me portfolio links |
+| `test-score.css` | The test completion score summary card, pass/review badges, and action buttons |
 | `dictionary.css` | The floating dictionary button, popup window, resize handle and result cards |
 | `home.css` | The home page |
 | `note-page.css` | The page around a note: colours (`--brand`…), header, card width, sidebar, previous/next cards |
@@ -200,7 +208,7 @@ Here is what happens step-by-step in `frontend/` when a student clicks a link to
 | `practice.css` | A practice set or paper: problems, levels, answer boxes, multiple-choice buttons, "Practise this note" |
 | `practice-list.css` | The practice hub and the tabs on `/past/eju` and `/past/jlpt` |
 | `past.css` | The mock question lists |
-| `account.css` | The log in / sign up form and the account button |
+| `account.css` | The log in / sign up form and the account settings page (`/account`) |
 
 ---
 
@@ -235,7 +243,18 @@ Hiding where progress is stored behind `src/progress.js` is called **encapsulati
 | `practice-hub:course` | `src/components/HubTabs.jsx` | The course tab last opened on `/practice` |
 | `past-tab:<exam>` | `src/components/HubTabs.jsx` | The tab last opened on a mock-question list, e.g. `past-tab:eju` or `past-tab:jlpt` |
 | `noteFontSize` | `src/pageHooks.js` | The A−/A+ text size, from 70 to 150 (%) |
+| `theme` | `src/pageHooks.js` | User's preferred color scheme (`"dark"` or `"light"`). Pre-checked by `index.html` inline script to avoid screen flash |
+| `read_notifications` | `src/components/NotificationBell.jsx` | Array of broadcast notification IDs marked as read |
 | `learnsolo_dict_size` | `src/components/FloatingDictionary.jsx` | The user's preferred `{width, height}` size for the floating dictionary popup |
+
+### 4.4 Dark Mode Theme Switching (`useTheme` & `dark-mode.css`)
+
+LearnSolo features a complete system-aware and toggleable dark theme:
+
+- **State Hook (`src/pageHooks.js`):** `useTheme()` reads `localStorage.getItem('theme')`, falling back to the OS system preference via `window.matchMedia('(prefers-color-scheme: dark)')`. It returns `[theme, toggleTheme]` and syncs the root `data-theme="dark"` (or `"light"`) attribute on `document.documentElement`.
+- **Zero-Flash Pre-render Script (`index.html`):** An inline `<script>` in `<head>` executes before the DOM renders to immediately set `data-theme` from `localStorage`, preventing any white screen flash.
+- **Toggle Button (`FloatBar.jsx`):** Renders a sun (`fa-sun`) / moon (`fa-moon`) icon button in the top navigation bar.
+- **Theme Stylesheet (`src/styles/dark-mode.css`):** Overrides color variables and card styles when `[data-theme="dark"]` is active, providing high-contrast backgrounds for notes, the 8 note blocks, multiple choice test buttons, problem checks, test score cards, and the floating dictionary.
 
 ---
 
