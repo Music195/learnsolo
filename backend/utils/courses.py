@@ -55,6 +55,10 @@ COURSES = {
     # instruments, interference and diffraction, capacitors, electrical energy
     # and power, electromagnetic induction, digital electronics, modern physics
     "g12-physics": {"name": "Physics MM", "subject": "Grade 12 Myanmar"},
+    # Grade 12 Myanmar Chemistry: chemical bonding and intermolecular forces,
+    # energy changes, reaction rates, chemical equilibrium, acid-base reactions,
+    # transition elements, chemistry and the environment, organic compounds
+    "g12-chemistry": {"name": "Chemistry MM", "subject": "Grade 12 Myanmar"},
 }
 
 # Past question folders (content/past/<folder>/) -> name, icon and description.
