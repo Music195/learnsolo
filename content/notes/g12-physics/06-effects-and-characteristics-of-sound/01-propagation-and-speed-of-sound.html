@@ -41,69 +41,77 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Speed of Sound vs. Air Temperature & Intensity Level</span>
-  <p class="demo-instruction">Drag the temperature slider to see how sound velocity in air scales with absolute temperature ($\sqrt{T}$). Use the intensity level selector to compare representative sounds across the decibel spectrum.</p>
-
-  <div id="sound-speed-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Air Temperature: 
-      <input id="temp-slider" type="range" min="-20" max="50" step="5" value="20" style="vertical-align: middle;">
-      <span id="temp-val" style="color: #38bdf8; font-weight: 700;">20 °C</span>
-    </label>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      Speed in Air: <span id="v-stat" style="color: #4ade80; font-weight: 700;">343.4 m/s</span>
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; A Sound Wave in Air, and a Race Through Three Media</span>
+  <p class="demo-question">When sound travels, do the air particles travel with it? And why does a hammer blow reach you through a steel rail before it reaches you through the air?</p>
+  <p class="demo-instruction"><b>Top:</b> each dot is a layer of air pushed by a loudspeaker (slow motion). Follow the <b style="color:#dc2626">red</b> dots: they only move back and forth, while the crowded regions (<b>C</b>, compressions) and spread-out regions (<b>R</b>, rarefactions) travel along. Change $f$: the wavelength $\lambda = v/f$ changes. <b>Bottom:</b> press <b>Strike</b> to send a pulse 1 km through steel, water, air and a vacuum (shown 5 times slower than real).</p>
+  <div id="pk-sound1"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('sound-speed-board', {
-      boundingbox: [-25, 370, 55, 310],
-      axis: true,
-      defaultAxes: {
-        x: { name: 'Air Temperature (°C)', withLabel: true, label: { position: 'rt', offset: [-15, -15], color: '#cbd5e1' } },
-        y: { name: 'Speed of Sound (m/s)', withLabel: true, label: { position: 'rt', offset: [-10, -10], color: '#cbd5e1' } }
-      },
-      showNavigation: false,
-      showCopyright: false
-    });
+  (function () {
+    const k = PhysKit.mount('pk-sound1', { x: [-6.2, 6.2], y: [-2.6, 2.6] });
+    const C = PhysKit.C, num = k.num;
+    k.row();
+    const fS = k.slider({ label: 'f', unit: 'Hz', min: 200, max: 2000, step: 10, value: 500, digits: 0 });
+    const TS = k.slider({ label: 'air temperature', unit: '°C', min: -20, max: 60, step: 1, value: 27, digits: 0 });
+    k.button('Strike', () => { race = 0; }, { primary: true });
+    k.row();
 
-    let tc = 20;
+    // speeds: steel √(Y/ρ), water √(B/ρ) (Example 6.1), air 331√(T/273) (Example 6.2)
+    const vSteel = Math.sqrt(20e10 / 7.8e3), vWater = Math.sqrt(0.22e10 / 1e3);
+    const vAir = () => 331 * Math.sqrt((TS.value + 273) / 273);
+    let t = 0, race = 0;
+    k.loop(dt => { t += dt; race += dt * 0.2; });     // race clock runs 5× slower than real time
 
-    function calcSpeed(tempC) {
-      let tk = tempC + 273.15;
-      return 331.3 * Math.sqrt(tk / 273.15);
-    }
+    // the strip of air: 0 to 3 m across the board
+    const X0 = -5.4, X1 = 5.8, M = (X1 - X0) / 3;   // board units per metre
+    k.draw = g => {
+      const lam = vAir() / fS.value, kk = 2 * Math.PI / (lam * M), w = 2 * Math.PI * 0.7, A = 0.11;
+      // loudspeaker
+      const push = A * Math.sin(-w * t);
+      g.rect(-6.1, 0.75, 0.35, 1.3, { fill: '#334155', color: C.ink, width: 1.5, radius: 3 });
+      g.path([[-5.75 + push, 0.55], [-5.55 + push, 0.55], [-5.55 + push, 2.25], [-5.75 + push, 2.25]], { close: true, fill: '#94a3b8', color: C.ink, width: 1.5 });
+      for (let i = 0; i <= 62; i++) {
+        const x = X0 + i * (X1 - X0) / 62, red = i % 15 === 7;
+        const s = A * Math.sin(kk * (x - X0) - w * t);
+        for (let j = 0; j < 6; j++) g.dot([x + s, 0.65 + j * 0.3], red ? 3.5 : 2.5, red ? C.bad : '#64748b');
+      }
+      // labels C and R travel with the wave: compression where kx − ωt = π (mod 2π)
+      for (let n = -1; n < 12; n++) {
+        const xc = X0 + (Math.PI * (2 * n + 1) + w * t) / kk, xr = X0 + (2 * Math.PI * n + w * t) / kk;
+        if (xc > X0 + 0.2 && xc < X1 - 0.1) g.text([xc, 2.38], 'C', { bold: true, size: 13, color: C.acc });
+        if (xr > X0 + 0.2 && xr < X1 - 0.1) g.text([xr, 2.38], 'R', { bold: true, size: 13, color: C.muted });
+      }
+      // one wavelength marker under the strip (from the first compression)
+      const xc0 = X0 + ((Math.PI + w * t) % (2 * Math.PI)) / kk;
+      if (xc0 + lam * M < X1) {
+        g.line([xc0, 0.42], [xc0 + lam * M, 0.42], { color: C.acc, width: 2 });
+        g.line([xc0, 0.32], [xc0, 0.52], { color: C.acc, width: 2 }); g.line([xc0 + lam * M, 0.32], [xc0 + lam * M, 0.52], { color: C.acc, width: 2 });
+        g.text([xc0 + lam * M / 2, 0.42], `λ = ${num(lam, 2)} m`, { size: 12, bold: true, color: C.acc, bg: '#fff' });
+      }
 
-    let speedCurve = board.create('curve', [
-      function(t) { return t; },
-      function(t) { return calcSpeed(t); },
-      -20, 50
-    ], { strokeColor: '#38bdf8', strokeWidth: 3 });
+      // race over 1000 m
+      const L0 = -3.6, L1 = 5.6;
+      const lanes = [['steel rail', vSteel, '#475569'], ['water', vWater, C.fluid], [`air (${TS.value} °C)`, vAir(), '#a3a3a3'], ['vacuum', 0, '#e5e7eb']];
+      g.text([L0, -0.05], '0', { size: 11, color: C.muted }); g.text([L1, -0.05], '1000 m', { size: 11, color: C.muted });
+      g.text([(L0 + L1) / 2, -0.05], `t = ${num(Math.min(race, 3.5), 3)} s (real time)`, { size: 12, bold: true });
+      lanes.forEach(([name, v, col], i) => {
+        const y = -0.5 - i * 0.58;
+        g.text([-6.1, y], name, { align: 'left', size: 12, bold: true });
+        g.rect(L0, y - 0.16, L1 - L0, 0.32, { fill: col, color: 'none', fillAlpha: 0.35, radius: 4 });
+        if (v === 0) { g.text([(L0 + L1) / 2, y], 'no particles to pass the vibration on — no sound at all', { size: 11, color: C.muted }); return; }
+        const tArr = 1000 / v, x = L0 + (L1 - L0) * Math.min(1, race / tArr);
+        g.dot([x, y], 7, C.bad, { stroke: '#fff', width: 2 });
+        if (race >= tArr) g.text([L1 - 0.1, y + 0.02], `${num(tArr, 3)} s`, { align: 'right', size: 12, bold: true, color: C.bad, dx: -14 });
+      });
+    };
 
-    let curPoint = board.create('point', [
-      function() { return tc; },
-      function() { return calcSpeed(tc); }
-    ], { fillColor: '#4ade80', strokeColor: '#ffffff', size: 5, name: '' });
-
-    board.create('text', [function() { return tc + 2; }, function() { return calcSpeed(tc) + 2; }, function() {
-      return calcSpeed(tc).toFixed(1) + ' m/s';
-    }], { color: '#4ade80', fontSize: 13, fontWeight: 'bold' });
-
-    function update() {
-      document.getElementById('temp-val').textContent = tc + ' °C';
-      document.getElementById('v-stat').textContent = calcSpeed(tc).toFixed(1) + ' m/s';
-      board.update();
-    }
-
-    document.getElementById('temp-slider').addEventListener('input', function() {
-      tc = parseFloat(this.value);
-      update();
-    });
-
-    update();
+    k.update = () => {
+      const va = vAir();
+      k.readout([
+        `Air: v = 331 √(T/273) = 331 × √(${TS.value + 273}/273) = <b>${num(va, 1)} m/s</b>; λ = v/f = ${num(va, 1)} / ${fS.value} = <b>${num(va / fS.value, 3)} m</b>`,
+        `Steel: √(Y/ρ) = √(20×10<sup>10</sup> / 7.8×10<sup>3</sup>) = <b>${num(vSteel, 0)} m/s</b>; water: √(B/ρ) = √(0.22×10<sup>10</sup> / 10<sup>3</sup>) = <b>${num(vWater, 0)} m/s</b>`,
+        `Over 1 km: steel ${num(1000 / vSteel, 3)} s, water ${num(1000 / vWater, 3)} s, air ${num(1000 / va, 2)} s. Stiffer media pass the push on faster; warmer air is faster too (Example 6.2: 27 °C gives about 347 m/s).`
+      ]);
+    };
   })();
   </script>
 </div>

@@ -51,83 +51,88 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; The Audio Frequency Spectrum</span>
-  <p class="demo-instruction">Drag the frequency cursor across the acoustic spectrum ($1\text{ Hz}$ to $100\text{ kHz}$) to compare the hearing capabilities of different animal species and explore key technological applications.</p>
-
-  <div id="spectrum-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Frequency: 
-      <input id="freq-slider" type="range" min="0" max="5" step="0.1" value="3.0" style="vertical-align: middle;">
-      <span id="freq-val" style="color: #38bdf8; font-weight: 700;">1000 Hz</span>
-    </label>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      Regime: <span id="regime-stat" style="color: #4ade80; font-weight: 700;">Human Audible Range</span>
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; The Sound Spectrum and the Wavelength</span>
+  <p class="demo-question">Who can hear which sounds, and why do doctors use ultrasound of several MHz while elephants call with infrasound?</p>
+  <p class="demo-instruction">Drag the frequency slider (a log scale: each step of the axis is 10 times the last). The coloured bars show the hearing or working range of each animal or machine. The wave at the bottom is drawn to scale in its window: low frequencies have wavelengths of many metres, high frequencies of a fraction of a millimetre.</p>
+  <div id="pk-spectrum"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('spectrum-board', {
-      boundingbox: [-0.5, 6, 5.5, -1],
-      axis: true,
-      defaultAxes: {
-        x: { name: 'Log10 Frequency (log Hz)', withLabel: true, label: { position: 'rt', offset: [-15, -15], color: '#cbd5e1' } },
-        y: { visible: false }
-      },
-      showNavigation: false,
-      showCopyright: false
-    });
+  (function () {
+    const k = PhysKit.mount('pk-spectrum', { x: [-6.2, 6.2], y: [-2.6, 2.6] });
+    const C = PhysKit.C, num = k.num;
+    k.row();
+    const uS = k.slider({ label: 'f', min: 0, max: 7.2, step: 0.01, value: Math.log10(1000), format: u => fmtF(10 ** u) });
+    const med = k.choice(['air (340 m/s)', 'water (1480 m/s)', 'blood (1560 m/s)'], 0);
+    k.row();
+    const go = (f, m) => { uS.value = Math.log10(f); med.set(m); };
+    k.button('rhino 10 Hz', () => go(10, 0));
+    k.button('elephant 15 Hz', () => go(15, 0));
+    k.button('top of hearing 20 kHz', () => go(20000, 0));
+    k.button('bat 50 kHz', () => go(50000, 0));
+    k.button('medical 10 MHz in blood', () => go(1e7, 2));
+    const VS = [340, 1480, 1560];
+    function fmtF(f) { return f >= 1e6 ? num(f / 1e6, 2) + ' MHz' : f >= 1e3 ? num(f / 1e3, 2) + ' kHz' : num(f, f < 10 ? 1 : 0) + ' Hz'; }
+    function fmtL(l) { return l >= 1 ? num(l, 2) + ' m' : l >= 1e-2 ? num(l * 100, 2) + ' cm' : l >= 1e-3 ? num(l * 1000, 2) + ' mm' : num(l * 1e6, 0) + ' μm'; }
 
-    // Infrasound region: log(1) = 0 to log(20) = 1.30
-    board.create('polygon', [[0, 0.5], [1.30, 0.5], [1.30, 4.5], [0, 4.5]], {
-      fillColor: '#818cf8', fillOpacity: 0.25, strokeWidth: 1, strokeColor: '#818cf8', vertices: { visible: false }
-    });
-    board.create('text', [0.65, 2.5, 'INFRASOUND\n(< 20 Hz)\nElephants, Earthquakes'], { color: '#818cf8', fontSize: 11, anchorX: 'middle' });
+    const X0 = -5.8, X1 = 5.8, U1 = 7.2, xu = u => X0 + (X1 - X0) * u / U1;
+    const RANGES = [
+      ['earthquakes, storms', 1, 20, '#78716c'], ['elephant', 15, 12000, '#a16207'], ['human', 20, 20000, C.vel],
+      ['dog', 67, 45000, '#b45309'], ['bat', 2000, 110000, '#334155'], ['dolphin', 75, 150000, C.fluid], ['medical scan', 1e6, 1.5e7, C.field]
+    ];
+    let t = 0;
+    k.loop(dt => { t += dt; }, { button: false });
 
-    // Audible region: log(20) = 1.30 to log(20000) = 4.30
-    board.create('polygon', [[1.30, 0.5], [4.30, 0.5], [4.30, 4.5], [1.30, 4.5]], {
-      fillColor: '#4ade80', fillOpacity: 0.25, strokeWidth: 1, strokeColor: '#4ade80', vertices: { visible: false }
-    });
-    board.create('text', [2.8, 2.5, 'HUMAN AUDIBLE RANGE\n(20 Hz – 20,000 Hz)\nSpeech, Music'], { color: '#4ade80', fontSize: 12, anchorX: 'middle', fontWeight: 'bold' });
-
-    // Ultrasound region: log(20000) = 4.30 to log(100000) = 5.0
-    board.create('polygon', [[4.30, 0.5], [5.2, 0.5], [5.2, 4.5], [4.30, 4.5]], {
-      fillColor: '#f43f5e', fillOpacity: 0.25, strokeWidth: 1, strokeColor: '#f43f5e', vertices: { visible: false }
-    });
-    board.create('text', [4.75, 2.5, 'ULTRASOUND\n(> 20 kHz)\nBats, Medical Sonar'], { color: '#f43f5e', fontSize: 11, anchorX: 'middle' });
-
-    let logVal = 3.0;
-    let cursorLine = board.create('segment', [
-      [function() { return logVal; }, 0.2],
-      [function() { return logVal; }, 5.2]
-    ], { strokeColor: '#fbbf24', strokeWidth: 3 });
-
-    function update() {
-      let freq = Math.round(Math.pow(10, logVal));
-      let fStr = (freq >= 1000 ? (freq/1000).toFixed(1) + ' kHz' : freq + ' Hz');
-      document.getElementById('freq-val').textContent = fStr;
-      let stat = document.getElementById('regime-stat');
-      if (freq < 20) {
-        stat.textContent = 'Infrasound (Inaudible to Humans)';
-        stat.style.color = '#818cf8';
-      } else if (freq <= 20000) {
-        stat.textContent = 'Audible Sound (Detectable by Human Ear)';
-        stat.style.color = '#4ade80';
-      } else {
-        stat.textContent = 'Ultrasound (Inaudible to Humans)';
-        stat.style.color = '#f43f5e';
+    k.draw = g => {
+      const f = 10 ** uS.value, x = xu(uS.value);
+      // three bands
+      g.rect(xu(0), 1.55, xu(Math.log10(20)) - xu(0), 0.55, { fill: '#ede9fe', color: 'none' });
+      g.rect(xu(Math.log10(20)), 1.55, xu(Math.log10(20000)) - xu(Math.log10(20)), 0.55, { fill: '#dcfce7', color: 'none' });
+      g.rect(xu(Math.log10(20000)), 1.55, X1 - xu(Math.log10(20000)), 0.55, { fill: '#dbeafe', color: 'none' });
+      g.text([xu(0.65), 1.83], 'infrasound', { size: 12, bold: true, color: C.field });
+      g.text([xu(2.8), 1.83], 'audible (20 Hz – 20 kHz)', { size: 12, bold: true, color: C.vel });
+      g.text([xu(5.8), 1.83], 'ultrasound', { size: 12, bold: true, color: C.acc });
+      ['1 Hz', '10', '100', '1 kHz', '10 k', '100 k', '1 MHz', '10 M'].forEach((s, i) => {
+        g.line([xu(i), 1.55], [xu(i), 1.45], { color: C.ink });
+        g.text([xu(i), 2.33], s, { size: 11, color: C.muted });
+      });
+      // ranges
+      RANGES.forEach(([name, a, b, col], i) => {
+        const y = 1.15 - i * 0.33, xa = xu(Math.log10(a)), xb = xu(Math.log10(b)), on = f >= a && f <= b;
+        g.rect(xa, y - 0.11, xb - xa, 0.22, { fill: col, color: 'none', fillAlpha: on ? 0.95 : 0.3, radius: 4 });
+        const right = xb + 0.12 < X1 - 1.6;
+        g.text([right ? xb + 0.12 : xa - 0.12, y], name + (on ? ' ✓' : ''), { align: right ? 'left' : 'right', size: 11, bold: on, color: on ? C.ink : C.muted });
+      });
+      g.line([x, 2.1], [x, -1.1], { color: C.bad, width: 2, dash: [5, 4] });
+      g.dot([x, 2.1], 6, C.bad);
+      // wave window drawn to scale
+      const v = VS[med.value], lam = v / f;
+      const span = 10 ** (Math.floor(Math.log10(lam)) + 1);      // window shows 1 to 10 wavelengths
+      const W0 = -5.6, W1 = 5.6, y0 = -1.95, pts = [];
+      for (let i = 0; i <= 400; i++) {
+        const xx = W0 + (W1 - W0) * i / 400, s = span * i / 400;
+        pts.push([xx, y0 + 0.32 * Math.sin(2 * Math.PI * (s / lam) - t * 3)]);
       }
-      board.update();
-    }
+      g.rect(W0, y0 - 0.45, W1 - W0, 0.9, { fill: '#f8fafc', color: C.faint, radius: 6 });
+      g.path(pts, { color: C.bad, width: 2.5 });
+      g.line([W0, y0 - 0.55], [W1, y0 - 0.55], { color: C.ink, width: 1.5 });
+      g.text([0, y0 - 0.55], `window = ${fmtL(span)} wide`, { size: 11, color: C.muted, bg: '#fff' });
+      if (lam / span > 0.18) {
+        const xs = W0 + 0.1;
+        g.line([xs, y0 + 0.48], [xs + (W1 - W0) * lam / span, y0 + 0.48], { color: C.acc, width: 2 });
+        g.text([xs + (W1 - W0) * lam / span / 2, y0 + 0.48], `λ = ${fmtL(lam)}`, { size: 12, bold: true, color: C.acc, bg: '#fff' });
+      }
+    };
 
-    document.getElementById('freq-slider').addEventListener('input', function() {
-      logVal = parseFloat(this.value);
-      update();
-    });
-
-    update();
+    k.update = () => {
+      const f = 10 ** uS.value, v = VS[med.value], lam = v / f;
+      const band = f < 20 ? 'infrasound: too slow to make the ear respond' : f <= 20000 ? 'audible to a healthy young ear' : 'ultrasound: too fast for the human ear';
+      const size = lam > 10 ? 'longer than a house: bends around hills and travels far with little loss'
+        : lam > 1 ? 'about the size of a person' : lam > 0.01 ? 'hand-sized' : lam > 1e-3 ? 'millimetres: can show small details' : 'below a millimetre: forms a narrow beam that shows very fine details (scans, crack testing)';
+      k.readout([
+        `f = <b>${fmtF(f)}</b> — ${band}`,
+        `λ = v/f = ${v} / ${fmtF(f).replace(' ', '&nbsp;')} = <b>${fmtL(lam)}</b> — ${size}`,
+        'Exercise 2: 10 MHz in blood gives λ = 1560 / 10<sup>7</sup> = 1.56×10<sup>−4</sup> m = 0.156 mm. Example 6.6: a rhino at 10 Hz makes λ ≈ 340 / 10 = 34 m.'
+      ]);
+    };
   })();
   </script>
 </div>
