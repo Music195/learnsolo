@@ -1,0 +1,158 @@
+<!-- tags: Chemical Equilibrium, G12 Chemistry Myanmar -->
+<!-- Grade 12 Chemistry textbook, Chapter 4, section 4.1 (pages 62–65) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Chemical Equilibrium">Reversible Reactions and Dynamic Equilibrium</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Two Reactions Running at the Same Speed</span>
+  <p><strong>Equilibrium</strong> means a state of balance. A book resting on a table is in <em>static</em> equilibrium: nothing moves. Chemical equilibrium is <strong>dynamic</strong>: in a sealed bottle of soda, $\mathrm{CO_2}$ keeps dissolving and keeps escaping, at the same rate, so the amounts stay the same. Equilibria also matter in blood (haemoglobin and oxygen) and in the carbon cycle.</p>
+  <ul>
+    <li><strong>Irreversible reactions</strong> go to completion: burning fuel stops when the fuel is used up, and the products cannot turn back.</li>
+    <li><strong>Reversible reactions</strong> go both ways: the <em>forward</em> reaction (reactants → products) and the <em>reverse</em> reaction (products → reactants) happen at the same time. The symbol is $\rightleftharpoons$: $\mathrm{A + B \rightleftharpoons C}$.</li>
+    <li><strong>Closed system:</strong> energy can enter or leave but matter cannot. A reversible reaction in a closed system eventually reaches equilibrium.</li>
+    <li><strong>Reaching equilibrium:</strong> at the start there are only reactants, so the forward rate is high and the reverse rate is zero. As products build up, the forward rate falls and the reverse rate rises, until the <strong>two rates are equal</strong>. From then on the <strong>concentrations stay constant</strong>, but both reactions continue.</li>
+    <li><strong>Homogeneous equilibrium:</strong> everything in one phase, e.g. $\mathrm{N_2(g) + O_2(g) \rightleftharpoons 2NO(g)}$.</li>
+    <li><strong>Heterogeneous equilibrium:</strong> more than one phase, e.g. $\mathrm{H_2O(l) \rightleftharpoons H_2O(g)}$ and $\mathrm{Fe_2O_3(s) + 3CO(g) \rightleftharpoons 2Fe(s) + 3CO_2(g)}$.</li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Signs of Dynamic Equilibrium</span>
+  <div class="formula-main">
+    $$\text{reactants} \;\underset{\text{reverse}}{\overset{\text{forward}}{\rightleftharpoons}}\; \text{products} \qquad \text{at equilibrium:}\ \ \text{rate}_{\text{forward}} = \text{rate}_{\text{reverse}}$$
+  </div>
+  <ul class="symbols">
+    <li>Concentrations constant (not necessarily equal!)</li>
+    <li>Both reactions still going on (dynamic)</li>
+    <li>Only in a closed system; the same equilibrium can be reached from either side</li>
+  </ul>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>"At equilibrium the reaction stops":</strong> both reactions continue at equal rates.</li>
+    <li><strong>"At equilibrium the concentrations are equal":</strong> they are <em>constant</em>; they can be very different from each other.</li>
+    <li><strong>Phases:</strong> classify by the states written in the equation; one solid or liquid with gases makes it heterogeneous.</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; Watching A ⇌ B Settle</span>
+  <p class="demo-question">If both reactions keep going, why do the amounts stop changing?</p>
+  <p class="demo-instruction">Each red particle A can turn into a blue particle B (forward) and each B can turn back into A (reverse); a flash shows each change. The graphs record the numbers of A and B and the two rates. Press <b>Start with all A</b> or <b>Start with all B</b>: either way the system ends at the same balance, where the forward and reverse rates are equal. Change the rate constants to move the balance.</p>
+  <div id="pk-dyn"></div>
+  <script>
+  (function () {
+    const k = PhysKit.mount('pk-dyn', { x: [-6.2, 6.2], y: [-2.2, 2.2] });
+    const C = PhysKit.C, num = k.num;
+    const gc = k.addView({ x: [-4, 62], y: [-8, 108], equal: false, height: 190, title: 'number of particles A and B against time (s)' });
+    const gr = k.addView({ x: [-4, 62], y: [-2, 32], equal: false, height: 160, title: 'forward and reverse rates (changes per second)' });
+    k.row();
+    const KF = k.slider({ label: 'forward rate constant', unit: 's⁻¹', min: 0.05, max: 0.5, step: 0.01, value: 0.3, digits: 2 });
+    const KR = k.slider({ label: 'reverse rate constant', unit: 's⁻¹', min: 0.05, max: 0.5, step: 0.01, value: 0.1, digits: 2 });
+    k.row();
+    k.button('Start with all A', () => start('A'), { primary: true });
+    k.button('Start with all B', () => start('B'));
+
+    const N = 100;
+    let P = [], t = 0, hist = [], fw = 0, rv = 0, rates = [];
+    function start(kind) {
+      P = []; for (let i = 0; i < N; i++) P.push({ x: -5.8 + Math.random() * 7.6, y: -1.9 + Math.random() * 3.8, s: kind, f: 0, vx: Math.random() - 0.5, vy: Math.random() - 0.5 });
+      t = 0; hist = [[0, kind === 'A' ? N : 0, kind === 'B' ? N : 0]]; rates = []; fw = rv = 0;
+    }
+    start('A');
+    let acc = 0;
+    k.loop(dt => {
+      dt = Math.max(0, Math.min(dt, 0.05));
+      if (t >= 60) return;
+      t += dt;
+      P.forEach(p => {
+        p.x += p.vx * dt; p.y += p.vy * dt;
+        if (p.x < -5.9 || p.x > 1.9) p.vx = -p.vx; if (p.y < -2 || p.y > 2) p.vy = -p.vy;
+        p.f = Math.max(0, p.f - dt);
+        // each particle may change with probability (rate constant × dt)
+        if (p.s === 'A' && Math.random() < KF.value * dt) { p.s = 'B'; p.f = 0.4; fw++; }
+        else if (p.s === 'B' && Math.random() < KR.value * dt) { p.s = 'A'; p.f = 0.4; rv++; }
+      });
+      acc += dt;
+      if (acc >= 1) {   // once a second, record the counts and the number of changes each way
+        acc -= 1;
+        const nA = P.filter(p => p.s === 'A').length;
+        hist.push([t, nA, N - nA]); rates.push([t, fw, rv]); fw = rv = 0;
+      }
+      k.update();
+    }, { button: false });
+
+    k.draw = g => {
+      g.rect(-6.0, -2.1, 8.0, 4.2, { fill: '#f8fafc', color: C.ink, width: 1.5, radius: 6 });
+      P.forEach(p => {
+        g.circle([p.x, p.y], 0.13, { fill: p.s === 'A' ? '#fca5a5' : '#93c5fd', color: p.s === 'A' ? C.pos : C.neg, width: 1 });
+        if (p.f > 0) g.circle([p.x, p.y], 0.13 + (0.4 - p.f) * 0.8, { color: C.energy, width: 1.5 });
+      });
+      const nA = P.filter(p => p.s === 'A').length;
+      g.text([4.2, 1.5], `A: ${nA}   B: ${N - nA}`, { size: 16, bold: true });
+      g.text([4.2, 0.85], `t = ${num(t, 0)} s`, { size: 13, color: C.muted });
+      g.text([4.2, 0.0], 'A ⇌ B', { size: 18, bold: true });
+      g.text([4.2, -0.7], `expected balance: B/A = ${num(KF.value / KR.value, 2)}`, { size: 12, color: C.muted });
+      g.text([4.2, -1.2], `(${num(100 * KF.value / (KF.value + KR.value), 0)} B : ${num(100 * KR.value / (KF.value + KR.value), 0)} A)`, { size: 12, color: C.muted });
+    };
+    gc.draw = g => {
+      g.axes({ xstep: 10, ystep: 20 });
+      if (hist.length > 1) { g.path(hist.map(h => [h[0], h[1]]), { color: C.pos, width: 2.5 }); g.path(hist.map(h => [h[0], h[2]]), { color: C.neg, width: 2.5 }); }
+      g.text([55, 100], 'A', { size: 13, bold: true, color: C.pos }); g.text([58, 100], 'B', { size: 13, bold: true, color: C.neg });
+    };
+    gr.draw = g => {
+      g.axes({ xstep: 10, ystep: 10 });
+      if (rates.length > 1) { g.path(rates.map(r => [r[0], r[1]]), { color: C.energy, width: 2.5 }); g.path(rates.map(r => [r[0], r[2]]), { color: C.field, width: 2.5 }); }
+      g.text([45, 29], 'forward', { size: 12, bold: true, color: C.energy }); g.text([56, 29], 'reverse', { size: 12, bold: true, color: C.field });
+    };
+    k.update = () => {
+      const nA = P.filter(p => p.s === 'A').length, f = KF.value * nA, r = KR.value * (N - nA);
+      k.readout([`forward rate ≈ ${num(KF.value, 2)} × ${nA} = <b>${num(f, 1)}</b> per s; reverse rate ≈ ${num(KR.value, 2)} × ${N - nA} = <b>${num(r, 1)}</b> per s.`,
+        Math.abs(f - r) < 2.5 && t > 8 ? '<b>The two rates are (about) equal: dynamic equilibrium.</b> Particles still change, but the numbers stay steady.' : f > r ? 'The forward rate is bigger, so A is being used up.' : 'The reverse rate is bigger, so B is being used up.']);
+    };
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Review Questions (p. 64)</span>
+
+  <p><strong>Review Q1:</strong> Ammonium chloride breaks down on heating into ammonia and hydrogen chloride, which re-form it on cooling. Write (i) the breakdown, (ii) the formation, (iii) the overall reversible equation.</p>
+  <details>
+    <summary>Show answer</summary>
+    <p>(i) $\mathrm{NH_4Cl(s) \to NH_3(g) + HCl(g)}$ &nbsp; (ii) $\mathrm{NH_3(g) + HCl(g) \to NH_4Cl(s)}$ &nbsp; (iii) $\mathrm{NH_4Cl(s) \rightleftharpoons NH_3(g) + HCl(g)}$</p>
+  </details>
+
+  <p><strong>Review Q2:</strong> Which statement is NOT true about $\mathrm{N_2(g) + 3H_2(g) \rightleftharpoons 2NH_3(g)}$: (i) it is at equilibrium, (ii) it is a heterogeneous equilibrium, (iii) it is a homogeneous equilibrium?</p>
+  <details>
+    <summary>Show answer</summary>
+    <p class="answer">(ii) is not true: all three substances are gases (one phase), so it is a homogeneous equilibrium.</p>
+  </details>
+
+  <p><strong>Review Q3:</strong> Homogeneous or heterogeneous? (i) $\mathrm{2NaHCO_3(s) \rightleftharpoons Na_2CO_3(s) + H_2O(g) + CO_2(g)}$, (ii) $\mathrm{C(s) + 2H_2(g) \rightleftharpoons CH_4(g)}$, (iii) $\mathrm{C_2H_4(g) + H_2(g) \rightleftharpoons C_2H_6(g)}$, (iv) $\mathrm{2Hg(l) + O_2(g) \rightleftharpoons 2HgO(s)}$.</p>
+  <details>
+    <summary>Show answer</summary>
+    <p>(i) heterogeneous (solids + gases); (ii) heterogeneous (solid + gases); (iii) homogeneous (all gases); (iv) heterogeneous (liquid, gas and solid).</p>
+  </details>
+
+  <p><strong>Exercise 1 (True/False, p. 74):</strong> (a) Reversible reactions go forward only. (c) The reaction stops at equilibrium. (e) The equilibrium does not depend on the initial concentrations.</p>
+  <details>
+    <summary>Show answer</summary>
+    <p>(a) FALSE: they proceed in both directions. (c) FALSE: both reactions continue at equal rates. (e) TRUE in the sense that the same equilibrium (the same $K$) is reached from either side; the actual equilibrium concentrations do depend on how much was put in.</p>
+  </details>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>A reversible reaction runs forward and backward at the same time ($\rightleftharpoons$).</li>
+    <li>In a closed system it reaches dynamic equilibrium: equal forward and reverse rates, constant concentrations.</li>
+    <li>The same equilibrium is reached starting from reactants or from products.</li>
+    <li>Homogeneous: one phase. Heterogeneous: more than one phase.</li>
+  </ul>
+</div>
+
+</article>

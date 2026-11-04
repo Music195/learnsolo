@@ -1,0 +1,164 @@
+<!-- tags: Chemical Equilibrium, G12 Chemistry Myanmar -->
+<!-- Grade 12 Chemistry textbook, Chapter 4, section 4.3 (pages 70–75) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Chemical Equilibrium">The Equilibrium Constant</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; One Number for the Position of Equilibrium</span>
+  <p>In 1864 two Norwegian chemists proposed the <strong>law of mass action</strong>: for a reversible reaction in a closed system at equilibrium and constant temperature, a certain ratio of product to reactant concentrations is constant.</p>
+  <ul>
+    <li><strong>Where it comes from:</strong> for $a\mathrm{A} + b\mathrm{B} \rightleftharpoons c\mathrm{C} + d\mathrm{D}$, the forward rate is $k_f[\mathrm{A}]^a[\mathrm{B}]^b$ and the reverse rate is $k_r[\mathrm{C}]^c[\mathrm{D}]^d$. At equilibrium these are equal, so the ratio of the two rate constants is a constant, $K_{eq} = k_f / k_r$.</li>
+    <li><strong>$K_c$</strong> uses molar concentrations; <strong>$K_p$</strong> uses partial pressures of gases. Both can be used for gaseous reactions; $K_p$ is not used for reactions in solution.</li>
+    <li><strong>Pure solids and pure liquids are left out</strong> of the expression: their concentrations are constant. So for $\mathrm{C_2H_5OH(l) \rightleftharpoons C_2H_5OH(g)}$, $K_c = [\mathrm{C_2H_5OH(g)}]$, and for $\mathrm{I_2(s) \rightleftharpoons I_2(g)}$, $K_c = [\mathrm{I_2(g)}]$.</li>
+    <li>$K$ depends only on the <strong>temperature</strong>, not on the starting amounts. Its units depend on the expression.</li>
+    <li><strong>Size of K:</strong> $K \gg 1$ → equilibrium lies to the right (mostly products); $K \ll 1$ → lies to the left (mostly reactants); $K \approx 1$ → similar amounts.</li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formulas</span>
+  <div class="formula-main">
+    $$a\mathrm{A} + b\mathrm{B} \rightleftharpoons c\mathrm{C} + d\mathrm{D}$$
+    $$K_c = \frac{[\mathrm{C}]^c\,[\mathrm{D}]^d}{[\mathrm{A}]^a\,[\mathrm{B}]^b} \qquad\qquad K_p = \frac{p_{\mathrm{C}}^{\,c}\;p_{\mathrm{D}}^{\,d}}{p_{\mathrm{A}}^{\,a}\;p_{\mathrm{B}}^{\,b}}$$
+    $$K_{eq} = \frac{k_f}{k_r}$$
+  </div>
+  <ul class="symbols">
+    <li>Products on top, reactants underneath; each concentration raised to its coefficient</li>
+    <li>All concentrations are <strong>equilibrium</strong> values (mol dm<sup>−3</sup>)</li>
+    <li>Units: e.g. for $\mathrm{2NO + O_2 \rightleftharpoons 2NO_2}$, $\dfrac{(\text{mol dm}^{-3})^2}{(\text{mol dm}^{-3})^2(\text{mol dm}^{-3})} = \text{dm}^3\,\text{mol}^{-1}$; when the powers cancel (as in $\mathrm{H_2 + I_2 \rightleftharpoons 2HI}$), $K$ has no units</li>
+  </ul>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>Upside down:</strong> products go on top.</li>
+    <li><strong>Forgetting powers:</strong> $[\mathrm{HI}]^2$, not $[\mathrm{HI}]$, for $\mathrm{H_2 + I_2 \rightleftharpoons 2HI}$.</li>
+    <li><strong>Including solids or water (as the liquid solvent):</strong> they are left out.</li>
+    <li><strong>Using starting amounts:</strong> $K$ needs the concentrations <em>at equilibrium</em>.</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; Different Starts, the Same K</span>
+  <p class="demo-question">Why is $K_c$ the same however much H₂, I₂ or HI we start with?</p>
+  <p class="demo-instruction">Set the starting concentrations of H₂, I₂ and HI for $\mathrm{H_2(g) + I_2(g) \rightleftharpoons 2HI(g)}$ at 430 °C and press <b>React</b>. The concentrations change until equilibrium. The ratio $\dfrac{[\mathrm{HI}]^2}{[\mathrm{H_2}][\mathrm{I_2}]}$ (the dot on the scale) moves until it reaches $K_c = 54.3$, whatever the start. If you start with only HI, the reaction runs backwards.</p>
+  <div id="pk-kc"></div>
+  <script>
+  (function () {
+    const K = 54.3;
+    const k = PhysKit.mount('pk-kc', { x: [-6.2, 6.2], y: [-2.4, 2.4] });
+    const C = PhysKit.C, num = k.num;
+    const gv = k.addView({ x: [-1.2, 10.5], y: [-0.08, 1.1], equal: false, height: 200, title: 'concentrations (mol dm⁻³) against time' });
+    k.row();
+    const A = k.slider({ label: 'start [H₂]', min: 0, max: 1, step: 0.05, value: 0.5, digits: 2 });
+    const B = k.slider({ label: 'start [I₂]', min: 0, max: 1, step: 0.05, value: 0.5, digits: 2 });
+    const H = k.slider({ label: 'start [HI]', min: 0, max: 1, step: 0.05, value: 0, digits: 2 });
+    k.row();
+    k.button('React', () => { t = 0; run = true; }, { primary: true });
+    [A, B, H].forEach(s => s.on(() => { t = 0; run = false; }));
+    let t = 0, run = false;
+    // extent x of the forward reaction at equilibrium: (c + 2x)² = K (a − x)(b − x), found by bisection
+    function xEq() {
+      const a = A.value, b = B.value, c = H.value;
+      let lo = -c / 2, hi = Math.min(a, b);
+      const f = x => (c + 2 * x) ** 2 - K * (a - x) * (b - x);   // increases with x
+      for (let i = 0; i < 80; i++) { const m = (lo + hi) / 2; if (f(m) > 0) hi = m; else lo = m; }
+      return (lo + hi) / 2;
+    }
+    // the reaction approaches equilibrium smoothly, and has reached it exactly at the end
+    const x = s => s >= 10 ? xEq() : xEq() * (1 - Math.exp(-s * 0.9));
+    const conc = s => { const e = x(s); return [A.value - e, B.value - e, H.value + 2 * e]; };
+    const Q = c => c[0] * c[1] > 1e-12 ? c[2] * c[2] / (c[0] * c[1]) : (c[2] > 0 ? Infinity : NaN);
+    k.loop(dt => { if (!run) return; t = Math.min(10, t + Math.max(0, dt) * 1.5); if (t >= 10) run = false; k.update(); }, { button: false });
+
+    k.draw = g => {
+      const c = conc(t), names = ['H₂', 'I₂', 'HI'], cols = [C.acc, C.field, C.energy];
+      // bar chart of the three concentrations
+      c.forEach((v, i) => { const x0 = -5.6 + i * 1.3; g.rect(x0, -1.8, 0.9, Math.max(0.001, v * 3.2), { fill: cols[i], color: cols[i], fillAlpha: 0.8 }); g.text([x0 + 0.45, -2.1], names[i], { size: 13, bold: true }); g.text([x0 + 0.45, -1.6 + v * 3.2], num(v, 3), { size: 11 }); });
+      // the ratio on a log scale from 0.01 to 10 000
+      const L = v => -0.8 + (Math.log10(v) + 2) / 6 * 6.6, q = Q(c);
+      g.line([L(0.01), -0.6], [L(1e4), -0.6], { color: C.ink, width: 2 });
+      [0.01, 0.1, 1, 10, 100, 1000, 10000].forEach(v => { g.line([L(v), -0.75], [L(v), -0.45], { color: C.ink, width: 1 }); g.text([L(v), -0.95], String(v), { size: 10, color: C.muted }); });
+      g.line([L(K), -0.3], [L(K), 0.9], { color: C.good, width: 2, dash: true }); g.text([L(K), 1.1], 'K_c = 54.3', { size: 12, bold: true, color: C.good });
+      if (isFinite(q) && q > 0) g.dot([L(Math.max(0.01, Math.min(1e4, q))), -0.6], 8, C.bad);
+      else g.text([L(1e4), -0.2], q === Infinity ? 'no H₂/I₂: ratio is infinite' : '', { size: 10, color: C.bad, align: 'right' });
+      g.text([2.5, 1.9], `[HI]² / ([H₂][I₂]) = ${isFinite(q) ? num(q, 1) : '∞'}`, { size: 15, bold: true, color: C.bad });
+      g.text([2.5, -1.6], t >= 10 ? 'equilibrium reached' : run ? (xEq() >= 0 ? 'forward reaction: making HI' : 'reverse reaction: HI splitting') : 'press React', { size: 13, bold: true, color: t >= 10 ? C.good : C.muted });
+    };
+    gv.draw = g => {
+      g.axes({ xstep: 2, ystep: 0.2 });
+      const cols = [C.acc, C.field, C.energy];
+      for (let i = 0; i < 3; i++) { const pts = []; for (let s = 0; s <= t + 1e-9; s += 0.05) pts.push([s, conc(s)[i]]); if (pts.length > 1) g.path(pts, { color: cols[i], width: i === 1 ? 1.5 : 2.5, dash: i === 1 ? [5, 4] : false }); }
+    };
+    k.update = () => {
+      const c = conc(t);
+      k.readout([`now: [H₂] = ${num(c[0], 3)}, [I₂] = ${num(c[1], 3)}, [HI] = ${num(c[2], 3)} mol dm⁻³`,
+        t >= 10 ? `K<sub>c</sub> = ${num(c[2], 3)}² / (${num(c[0], 3)} × ${num(c[1], 3)}) = <b>${num(Q(c), 1)}</b>: the same for every starting mixture at this temperature.` : 'K has no units here: (mol dm⁻³)² / (mol dm⁻³)² cancels.']);
+    };
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Textbook Examples 6–11 (pp. 72–73)</span>
+
+  <p><strong>Examples 6–9:</strong> Write the equilibrium constant expressions for (6) $\mathrm{N_2(g) + 3H_2(g) \rightleftharpoons 2NH_3(g)}$; (7) $\mathrm{HF(aq) \rightleftharpoons H^+(aq) + F^-(aq)}$ ($K_c$ and $K_p$); (8) $\mathrm{2SO_2(g) + O_2(g) \rightleftharpoons 2SO_3(g)}$ ($K_p$); (9) $\mathrm{2NaHCO_3(s) \rightleftharpoons Na_2CO_3(s) + CO_2(g) + H_2O(g)}$.</p>
+  <details><summary>Show answer</summary>
+    <p>(6) $K_c = \dfrac{[\mathrm{NH_3}]^2}{[\mathrm{N_2}][\mathrm{H_2}]^3}$</p>
+    <p>(7) $K_c = \dfrac{[\mathrm{H^+}][\mathrm{F^-}]}{[\mathrm{HF}]}$; there is no gas, so $K_p$ does not apply.</p>
+    <p>(8) $K_p = \dfrac{p_{\mathrm{SO_3}}^2}{p_{\mathrm{SO_2}}^2\,p_{\mathrm{O_2}}}$</p>
+    <p>(9) The solids are left out: $K_c = [\mathrm{CO_2}][\mathrm{H_2O}]$ (and $K_p = p_{\mathrm{CO_2}}\,p_{\mathrm{H_2O}}$).</p></details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 10:</strong> For $\mathrm{2NO(g) + O_2(g) \rightleftharpoons 2NO_2(g)}$ at 230 °C, the equilibrium concentrations are [NO] = 0.542, [O<sub>2</sub>] = 0.127 and [NO<sub>2</sub>] = 0.059 mol dm<sup>−3</sup>. Find $K_c$ and the position of equilibrium.</p>
+  <details><summary>Show step-by-step solution</summary>
+    <p>$K_c = \dfrac{[\mathrm{NO_2}]^2}{[\mathrm{NO}]^2[\mathrm{O_2}]} = \dfrac{(0.059)^2}{(0.542)^2 (0.127)} = \dfrac{0.003481}{0.2938 \times 0.127} = \dfrac{0.003481}{0.03731}$</p>
+    <p class="answer">$K_c = 0.093$ dm<sup>3</sup> mol<sup>−1</sup>. Since $K_c \ll 1$, the equilibrium lies to the left (mostly NO and O<sub>2</sub>).</p></details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 11:</strong> $\mathrm{2H_2S(g) \rightleftharpoons 2H_2(g) + S_2(g)}$ at 1405 K has $K_c = 2.270 \times 10^{-3}$ mol dm<sup>−3</sup>. If [S<sub>2</sub>] = 0.054 and [H<sub>2</sub>S] = 0.184 mol dm<sup>−3</sup>, find [H<sub>2</sub>].</p>
+  <details><summary>Show step-by-step solution</summary>
+    <p>$K_c = \dfrac{[\mathrm{H_2}]^2[\mathrm{S_2}]}{[\mathrm{H_2S}]^2}$, so $[\mathrm{H_2}]^2 = \dfrac{K_c [\mathrm{H_2S}]^2}{[\mathrm{S_2}]} = \dfrac{2.270 \times 10^{-3} \times (0.184)^2}{0.054}$</p>
+    <p>$= \dfrac{2.270 \times 10^{-3} \times 0.03386}{0.054} = 1.423 \times 10^{-3}$</p>
+    <p class="answer">$[\mathrm{H_2}] = \sqrt{1.423 \times 10^{-3}} = 0.0377$ mol dm<sup>−3</sup></p></details>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Review Questions (pp. 73–74) and Exercise 11 (p. 75)</span>
+
+  <p><strong>Review Q1 and Q2:</strong> Difference between $K_p$ and $K_c$; expressions for (i) $\mathrm{CH_3COOC_2H_5(aq) + H_2O(l) \rightleftharpoons CH_3COOH(aq) + C_2H_5OH(aq)}$, (ii) $\mathrm{Cd^{2+}(aq) + 4Br^-(aq) \rightleftharpoons CdBr_4^{2-}(aq)}$, (iii) $\mathrm{CH_4(g) + 2H_2S(g) \rightleftharpoons CS_2(l) + 4H_2(g)}$.</p>
+  <details><summary>Show answer</summary>
+    <p>$K_c$ uses equilibrium molar concentrations; $K_p$ uses equilibrium partial pressures and only applies to gases.</p>
+    <p>(i) $K_c = \dfrac{[\mathrm{CH_3COOH}][\mathrm{C_2H_5OH}]}{[\mathrm{CH_3COOC_2H_5}]}$ (water, the liquid solvent, is left out); no $K_p$.</p>
+    <p>(ii) $K_c = \dfrac{[\mathrm{CdBr_4^{2-}}]}{[\mathrm{Cd^{2+}}][\mathrm{Br^-}]^4}$; no $K_p$.</p>
+    <p>(iii) $K_c = \dfrac{[\mathrm{H_2}]^4}{[\mathrm{CH_4}][\mathrm{H_2S}]^2}$ and $K_p = \dfrac{p_{\mathrm{H_2}}^4}{p_{\mathrm{CH_4}}\,p_{\mathrm{H_2S}}^2}$ (liquid CS<sub>2</sub> left out).</p></details>
+
+  <p><strong>Review Q3:</strong> $K_c = 10.5$ for $\mathrm{CO(g) + 2H_2(g) \rightleftharpoons CH_3OH(g)}$. (a) Find [CH<sub>3</sub>OH] when [H<sub>2</sub>] = 0.0661 and [CO] = 3.85 mol dm<sup>−3</sup>. (b) Find [H<sub>2</sub>] when [CO] = 1.09 and [CH<sub>3</sub>OH] = 0.325 mol dm<sup>−3</sup>.</p>
+  <details><summary>Show step-by-step solution</summary>
+    <p>$K_c = \dfrac{[\mathrm{CH_3OH}]}{[\mathrm{CO}][\mathrm{H_2}]^2}$</p>
+    <p>(a) $[\mathrm{CH_3OH}] = 10.5 \times 3.85 \times (0.0661)^2 = 40.43 \times 0.004369 = \mathbf{0.177}$ mol dm<sup>−3</sup></p>
+    <p>(b) $[\mathrm{H_2}]^2 = \dfrac{0.325}{10.5 \times 1.09} = \dfrac{0.325}{11.445} = 0.02840$, so $[\mathrm{H_2}] = \mathbf{0.169}$ mol dm<sup>−3</sup></p></details>
+
+  <p><strong>Exercise 11:</strong> At 430 °C, $K_p = 54.3$ for $\mathrm{H_2(g) + I_2(g) \rightleftharpoons 2HI(g)}$. H<sub>2</sub> and I<sub>2</sub> are each put in at 0.500 atm. Find the equilibrium partial pressure of HI.</p>
+  <details><summary>Show step-by-step solution</summary>
+    <p>Let $x$ atm of H<sub>2</sub> react. At equilibrium: $p_{\mathrm{H_2}} = p_{\mathrm{I_2}} = 0.500 - x$, $p_{\mathrm{HI}} = 2x$.</p>
+    <p>$54.3 = \dfrac{(2x)^2}{(0.500 - x)^2}$. Take square roots: $\dfrac{2x}{0.500 - x} = \sqrt{54.3} = 7.369$.</p>
+    <p>$2x = 3.684 - 7.369x \;\Rightarrow\; 9.369x = 3.684 \;\Rightarrow\; x = 0.393$ atm.</p>
+    <p class="answer">$p_{\mathrm{HI}} = 2x = 0.787$ atm (with $p_{\mathrm{H_2}} = p_{\mathrm{I_2}} = 0.107$ atm). Check: $0.787^2 / 0.107^2 = 54$. ✓ (Try it in the demo: start 0.5, 0.5, 0.)</p></details>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>$K_c$ = products over reactants, each raised to its coefficient, using equilibrium concentrations.</li>
+    <li>Leave out pure solids and liquids; $K_p$ uses partial pressures of gases.</li>
+    <li>$K$ changes only with temperature. Large $K$: products favoured; small $K$: reactants favoured.</li>
+    <li>Rearrange the $K$ expression to find an unknown equilibrium concentration.</li>
+  </ul>
+</div>
+
+</article>
