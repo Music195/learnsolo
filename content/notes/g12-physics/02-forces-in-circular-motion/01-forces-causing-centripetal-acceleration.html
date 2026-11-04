@@ -59,14 +59,152 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Demo &mdash; Banked Curve &amp; Forces Explorer</span>
-  <p>Adjust the curve radius $r$ and vehicle speed $v$. Observe how the required banking angle $\theta$ changes so that the horizontal component of the normal force $F_N \sin\theta$ exactly matches the required centripetal force $mv^2/r$.</p>
-  <div class="controls">
-    <label>Radius $r$ (m) <input type="range" id="p2-01-r" min="20" max="200" step="5" value="50"></label>
-    <label>Speed $v$ (km/h) <input type="range" id="p2-01-v" min="20" max="120" step="2" value="50"></label>
-  </div>
-  <canvas id="p2-01-canvas"></canvas>
-  <div class="output table-text" id="p2-01-out"></div>
+  <span class="block-label">Interactive Demo &mdash; Which Real Force Pulls Inward?</span>
+  <p class="demo-question">"Centripetal force" is not a new force. In each case below, which real force (or part of it) points to the centre?</p>
+  <p class="demo-instruction"><b>Banked road:</b> change the speed, radius and bank angle. The normal force $F_N$ tilts inward; friction makes up any difference. Press <b>Ideal speed</b> to need no friction at all. <b>Bucket:</b> the rope tension changes around the circle; below the speed $\sqrt{gr}$ the rope goes slack near the top.</p>
+  <div id="pk-inward"></div>
+  <script>
+  (function () {
+    const G = 9.8;
+    const k = PhysKit.mount('pk-inward', { x: [-6.4, 6.4], y: [-3.3, 3.3] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    const NCOL = C.field, FCOL = C.energy, WCOL = C.ink, NET = C.force;
+
+    k.row();
+    const scene = k.choice(['Car on a banked road', 'Bucket in a vertical circle'], 0, () => show());
+    // Controls for the road
+    const roadRow = k.row();
+    const vS = k.slider({ label: 'v', unit: 'km/h', min: 10, max: 120, step: 1, value: 60, digits: 0 });
+    const rS = k.slider({ label: 'r', unit: 'm', min: 20, max: 200, step: 5, value: 80, digits: 0 });
+    const bS = k.slider({ label: 'θ (bank)', unit: '°', min: 0, max: 40, step: 0.5, value: 15, digits: 1 });
+    k.button('Ideal speed (no friction)', () => {
+      vS.value = Math.round(Math.sqrt(rS.value * G * Math.tan(bS.value * Math.PI / 180)) * 3.6);
+    });
+    // Controls for the bucket
+    const bucketRow = k.row();
+    const ubS = k.slider({ label: 'v', unit: 'm/s', min: 1.5, max: 5, step: 0.01, value: 3 });
+    k.button('Example 2.2 (T at bottom = 50 N)', () => { ubS.value = 2.03; });
+    function show() {
+      roadRow.style.display = scene.value === 0 ? '' : 'none';
+      bucketRow.style.display = scene.value === 1 ? '' : 'none';
+    }
+    show();
+
+    let phiCar = 0, phiB = 0;
+    k.loop(dt => {
+      phiCar += (vS.value / 3.6) / rS.value * dt;
+      phiB += ubS.value / 0.6 * dt * 0.35;     // bucket shown at 35 % of real speed so you can follow it
+    });
+
+    // ---------- Road: forces per car of mass 1000 kg ----------
+    const M = 1000;
+    function road() {
+      const v = vS.value / 3.6, r = rS.value, th = bS.value * Math.PI / 180;
+      const need = v * v / r;                                  // required inward acceleration
+      const N = M * (G * Math.cos(th) + need * Math.sin(th));  // normal force
+      const f = M * (need * Math.cos(th) - G * Math.sin(th));  // friction, + = down the slope (inward)
+      return { v, r, th, need, N, f, ideal: Math.sqrt(r * G * Math.tan(th)) };
+    }
+    // ---------- Bucket: 3 kg on a 0.6 m rope, whirled at constant speed ----------
+    const MB = 3, RB = 0.6;
+    const tension = (v, phi) => MB * v * v / RB + MB * G * Math.cos(phi);   // phi = 0 at the bottom
+
+    function drawRoad(g) {
+      const s = road();
+      // --- Top view (left) ---
+      const O = [-3.6, 0.1], R = 2.35;
+      g.text([O[0], 3.0], 'top view', { size: 13, color: C.muted, bold: true });
+      g.circle(O, R + 0.32, { color: '#94a3b8', width: 1.5, fill: '#e2e8f0' });
+      g.circle(O, R - 0.32, { color: '#94a3b8', width: 1.5, fill: '#fff' });
+      g.dot(O, 4, C.ink); g.text(O, 'centre', { dy: -14, size: 12, color: C.muted });
+      const P = [O[0] + R * Math.cos(phiCar), O[1] + R * Math.sin(phiCar)];
+      const ang = phiCar + Math.PI / 2, ca = Math.cos(ang), sa = Math.sin(ang);
+      const box = [[-0.32, -0.17], [0.32, -0.17], [0.32, 0.17], [-0.32, 0.17]].map(([x, y]) => [P[0] + x * ca - y * sa, P[1] + x * sa + y * ca]);
+      g.path(box, { close: true, fill: C.acc, color: C.ink, width: 1.5 });
+      g.arrow(P, [-Math.cos(phiCar) * 1.3, -Math.sin(phiCar) * 1.3], { color: NET, label: 'F_c' });
+      g.arrow(P, [-Math.sin(phiCar) * 0.9, Math.cos(phiCar) * 0.9], { color: C.vel, label: 'v' });
+
+      // --- Cross-section (right): centre of the curve is to the LEFT ---
+      const A = [2.6, -1.0], th = s.th, ux = Math.cos(th), uy = Math.sin(th);   // along the road, going outward/up
+      g.text([2.6, 3.0], 'cross-section (centre is to the left ←)', { size: 13, color: C.muted, bold: true });
+      g.path([[A[0] - 2.7 * ux, A[1] - 2.7 * uy], [A[0] + 3.4 * ux, A[1] + 3.4 * uy], [A[0] + 3.4 * ux, -3.3], [A[0] - 2.7 * ux, -3.3]],
+        { close: true, fill: '#cbd5e1', color: C.ink, width: 2 });
+      // bank angle mark
+      g.line([A[0] - 2.7 * ux, A[1] - 2.7 * uy], [A[0] - 2.7 * ux + 1.6, A[1] - 3.4 * uy], { color: C.muted, width: 1, dash: true });
+      if (th > 0.02) g.text([A[0] - 2.7 * ux + 1.25, A[1] - 2.7 * uy + 0.2], `θ = ${num(bS.value, 1)}°`, { size: 12, color: C.muted, align: 'left' });
+      // car body sitting on the road
+      const nx = -uy, ny = ux;                         // unit normal, away from the road
+      const Gc = [A[0] + nx * 0.45, A[1] + ny * 0.45];  // centre of mass
+      const body = [[-0.75, -0.35], [0.75, -0.35], [0.75, 0.3], [-0.75, 0.3]].map(([x, y]) => [Gc[0] + x * ux + y * nx, Gc[1] + x * uy + y * ny]);
+      g.path(body, { close: true, fill: C.acc, color: C.ink, width: 1.5, fillAlpha: 0.85 });
+      for (const wx of [-0.45, 0.45]) g.dot([A[0] + wx * ux + nx * 0.05, A[1] + wx * uy + ny * 0.05], 6, C.ink);
+      // Forces (1 unit = 5000 N)
+      const K = 1 / 5000;
+      g.arrow(Gc, [0, -M * G * K], { color: WCOL, label: 'mg', side: [1, 0] });
+      g.arrow(Gc, [nx * s.N * K, ny * s.N * K], { color: NCOL, label: 'F_N' });
+      if (Math.abs(s.f) > 150) g.arrow([A[0], A[1]], [-ux * s.f * K, -uy * s.f * K], { color: FCOL, label: 'f', side: [0, -1] });
+      // The resultant of all real forces: horizontal, towards the centre
+      // (drawn from the car's left side so it does not cover the car; it acts through G)
+      const Lft = [Gc[0] - ux * 0.8, Gc[1] - uy * 0.8];
+      g.line(Lft, Gc, { color: NET, width: 1, dash: [2, 3] });
+      g.arrow(Lft, [-M * s.need * K - 0.2, 0], { color: NET, width: 3, label: 'net = mv^2/r', side: [0, 1] });
+    }
+
+    function drawBucket(g) {
+      const v = ubS.value, O = [0.6, 0.2], R = 2.3;     // 0.6 m rope drawn 2.3 units long
+      const minV = Math.sqrt(G * RB);
+      // Slack zone: where T would be negative (cos φ < −v²/(gr))
+      const c = -v * v / (G * RB);
+      g.circle(O, R, { color: '#cbd5e1', width: 2, dash: [4, 6] });
+      if (c > -1) {
+        const half = Math.acos(c);                     // T < 0 for φ in (half, 2π − half)
+        const arc = [];
+        for (let a = half; a <= 2 * Math.PI - half + 1e-6; a += 0.03) arc.push([O[0] + R * Math.sin(a), O[1] - R * Math.cos(a)]);
+        g.path(arc, { color: C.bad, width: 6, alpha: 0.35 });
+        g.text([O[0], O[1] + R + 0.45], 'rope slack here: T would be < 0', { color: C.bad, size: 13, bold: true });
+      }
+      g.dot(O, 6, C.ink); g.text(O, 'hand', { dy: -16, size: 12, color: C.muted });
+      const phi = phiB % (2 * Math.PI);
+      const P = [O[0] + R * Math.sin(phi), O[1] - R * Math.cos(phi)];
+      const T = tension(v, phi), slack = T < 0;
+      g.line(O, P, { color: slack ? C.bad : C.ink, width: 2, dash: slack ? [3, 4] : null });
+      g.rect(P[0] - 0.28, P[1] - 0.25, 0.56, 0.5, { fill: '#94a3b8', color: C.ink, width: 1.5, radius: 4 });
+      // Forces on the bucket (1 unit = 25 N)
+      const K = 1 / 25, inx = (O[0] - P[0]) / R, iny = (O[1] - P[1]) / R;
+      g.arrow(P, [0, -MB * G * K], { color: WCOL, label: 'mg', side: [1, 0] });
+      if (!slack) g.arrow(P, [inx * Math.min(T, 140) * K, iny * Math.min(T, 140) * K], { color: C.force, label: 'T', side: [-iny, inx] });
+      // Readings at the top and bottom, on the left
+      const Tb = tension(v, 0), Tt = tension(v, Math.PI);
+      g.text([-6.2, 2.7], `T now = ${slack ? 'slack' : num(T, 1) + ' N'}`, { align: 'left', size: 15, bold: true, color: C.force });
+      g.text([-6.2, 2.1], `bottom: T = mv^2/r + mg = ${num(Tb, 1)} N`, { align: 'left', size: 13 });
+      g.text([-6.2, 1.6], `top: T = mv^2/r − mg = ${num(Tt, 1)} N`, { align: 'left', size: 13, color: Tt < 0 ? C.bad : C.ink });
+      g.text([-6.2, 1.1], `smallest safe speed √(gr) = ${num(minV)} m/s`, { align: 'left', size: 13, color: C.muted });
+    }
+
+    k.draw = g => (scene.value === 0 ? drawRoad(g) : drawBucket(g));
+
+    k.update = () => {
+      if (scene.value === 0) {
+        const s = road();
+        const fTxt = Math.abs(s.f) < 150 ? '<span class="ok">≈ 0: no friction needed (ideal speed)</span>'
+          : `${num(Math.abs(s.f) / 1000, 2)} kN ${s.f > 0 ? '<b>down</b> the slope (car would slide outward)' : '<b>up</b> the slope (car would slide inward)'}`;
+        k.readout([
+          `v = ${num(vS.value, 0)} km/h = ${num(s.v, 2)} m/s; needed inward force for a 1000 kg car: mv<sup>2</sup>/r = 1000 × ${num(s.v, 2)}<sup>2</sup> / ${num(s.r, 0)} = <b>${num(M * s.need / 1000, 2)} kN</b>`,
+          `Ideal bank for this speed: tan θ = v<sup>2</sup>/rg = ${num(s.need / G, 3)} → θ = <b>${num(Math.atan(s.need / G) * 180 / Math.PI, 1)}°</b>. At ${num(bS.value, 1)}° the ideal speed is √(rg tan θ) = ${num(s.ideal * 3.6, 0)} km/h.`,
+          `${rich('F_N')} = ${num(s.N / 1000, 2)} kN; friction needed: ${fTxt}`
+        ]);
+      } else {
+        const v = ubS.value, Tt = tension(v, Math.PI);
+        k.readout([
+          `m = 3 kg, r = 0.6 m, v = ${num(v)} m/s → mv<sup>2</sup>/r = 3 × ${num(v)}<sup>2</sup> / 0.6 = <b>${num(MB * v * v / RB, 1)} N</b> must point to the hand at every point.`,
+          `Bottom: tension does the work of weight <b>and</b> the turning: T = ${num(tension(v, 0), 1)} N. Top: weight already pulls inward, so T is smaller: ${num(Tt, 1)} N.`,
+          Tt < 0 ? `<span class="warn">v &lt; √(gr) = ${num(Math.sqrt(G * RB))} m/s:</span> gravity alone is more than enough near the top, the rope goes slack and the water falls out.`
+                 : `<span class="ok">v ≥ √(gr):</span> the rope stays tight all the way round.`
+        ]);
+      }
+    };
+  })();
+  </script>
 </div>
 
 <div class="note-example">
@@ -132,85 +270,3 @@
 </div>
 
 </article>
-
-<script src="/static/js/demos/geom.js"></script>
-<script>
-(function() {
-  const canvas = document.getElementById('p2-01-canvas');
-  const out = document.getElementById('p2-01-out');
-  const rIn = document.getElementById('p2-01-r');
-  const vIn = document.getElementById('p2-01-v');
-  if (!canvas || !window.NoteGeom) return;
-
-  const C = [260, 220];
-  const G = 9.8;
-  const BLUE = '#2563eb', GREEN = '#16a34a', RED = '#dc2626', INK = '#334155', GREY = '#94a3b8';
-  let lastText = '';
-
-  function arrow(g, p, v, color, label, off = [0, -10]) {
-    const q = [p[0] + v[0], p[1] + v[1]], L = Math.hypot(v[0], v[1]);
-    if (L < 3) return;
-    const ux = v[0] / L, uy = v[1] / L;
-    g.seg(p, q, color, { width: 2.5 });
-    g.poly([q, [q[0] - 8 * ux - 4 * uy, q[1] - 8 * uy + 4 * ux], [q[0] - 8 * ux + 4 * uy, q[1] - 8 * uy - 4 * ux]], color);
-    if (label) g.text([q[0] + off[0], q[1] + off[1]], label, color);
-  }
-
-  const board = NoteGeom.board(canvas, {
-    points: {},
-    draw(g) {
-      const r = Number(rIn.value);
-      const vKmh = Number(vIn.value);
-      const vMs = vKmh * 1000 / 3600;
-      const tanTheta = (vMs * vMs) / (r * G);
-      const thetaRad = Math.atan(tanTheta);
-      const thetaDeg = thetaRad * 180 / Math.PI;
-
-      // Draw horizontal ground line
-      g.seg([50, C[1]], [470, C[1]], '#94a3b8', { width: 2 });
-      g.text([440, C[1] + 16], 'Horizontal', GREY);
-
-      // Draw inclined road slope
-      const L_ramp = 260;
-      const xLeft = C[0] - L_ramp * Math.cos(thetaRad) * 0.5;
-      const yLeft = C[1] + L_ramp * Math.sin(thetaRad) * 0.5;
-      const xRight = C[0] + L_ramp * Math.cos(thetaRad) * 0.5;
-      const yRight = C[1] - L_ramp * Math.sin(thetaRad) * 0.5;
-      g.seg([xLeft, yLeft], [xRight, yRight], INK, { width: 3 });
-
-      // Road inclination angle wedge
-      g.text([xLeft + 50, yLeft - 10], 'θ = ' + thetaDeg.toFixed(1) + '°', BLUE);
-
-      // Car block on the ramp at center
-      const carPos = [C[0], C[1] - 8];
-      g.circle(carPos, 10, '#3b82f6', { fill: '#bfdbfe' });
-      g.text([carPos[0], carPos[1] - 16], 'Car', INK);
-
-      // Normal force vector: perpendicular to ramp (pointing up-left)
-      const fnMag = 90;
-      const fnX = -fnMag * Math.sin(thetaRad);
-      const fnY = -fnMag * Math.cos(thetaRad);
-      arrow(g, carPos, [fnX, fnY], BLUE, 'F_N (Normal Force)', [-10, -12]);
-
-      // Horizontal component: F_N sin(theta) pointing toward center of curve (left)
-      arrow(g, carPos, [fnX, 0], RED, 'F_N sin θ = F_c', [fnX / 2 - 20, 16]);
-
-      // Vertical component: F_N cos(theta) pointing up
-      arrow(g, carPos, [0, fnY], GREEN, 'F_N cos θ', [14, fnY / 2]);
-
-      // Gravity downward mg
-      arrow(g, carPos, [0, -fnY], INK, 'Weight mg', [14, -fnY / 2]);
-
-      const n = (z, k = 2) => z.toFixed(k);
-      const text =
-        `Curve Radius r = ${r} m   |   Limiting Speed v = ${vKmh} km/h (${n(vMs)} m/s)\n` +
-        `Required tan θ = v² / (rg) = (${n(vMs)}² / (${r} · 9.8)) = ${n(tanTheta, 4)}\n` +
-        `Calculated Banking Angle θ = ${n(thetaDeg, 2)}°\n` +
-        `Horizontal force balance: F_N · sin(${n(thetaDeg, 1)}°) = mv²/r   |   Vertical balance: F_N · cos(${n(thetaDeg, 1)}°) = mg`;
-      if (text !== lastText) { out.textContent = text; lastText = text; }
-    }
-  });
-
-  [rIn, vIn].forEach(input => input.addEventListener('input', () => board.redraw()));
-})();
-</script>

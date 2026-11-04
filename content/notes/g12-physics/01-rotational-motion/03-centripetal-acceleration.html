@@ -48,21 +48,142 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Demo &mdash; Uniform vs Nonuniform Circular Acceleration</span>
-  <p>Observe the moving object in real time. The green arrow is velocity $\vec{v}$ (tangential). The blue arrow is centripetal acceleration $\vec{a}_c$ (inward). When $\alpha > 0$, an amber tangential acceleration $\vec{a}_T$ appears, bending the resultant acceleration $\vec{a}$ (red) away from the center by angle $\phi$.</p>
-  <div class="controls">
-    <label>Radius $r$ (m) <input type="range" id="p1-03-r" min="0.5" max="2.5" step="0.1" value="1.5"></label>
-    <label>Initial $\omega_0$ (rad/s) <input type="range" id="p1-03-w" min="0.5" max="2.5" step="0.1" value="1.2"></label>
-    <label>Angular acc $\alpha$ (rad/s²) <input type="range" id="p1-03-a" min="0.0" max="0.5" step="0.05" value="0.0"></label>
-  </div>
-  <div class="controls">
-    <button type="button" class="pill active" id="p1-03-btn-uniform">Uniform (α = 0)</button>
-    <button type="button" class="pill" id="p1-03-btn-nonuniform">Nonuniform (α = 0.3 rad/s²)</button>
-    <button type="button" class="pill" id="p1-03-play">Play</button>
-    <button type="button" class="pill" id="p1-03-reset">Reset</button>
-  </div>
-  <canvas id="p1-03-canvas"></canvas>
-  <div class="output table-text" id="p1-03-out"></div>
+  <span class="block-label">Interactive Demo &mdash; Velocity and Acceleration on a Circle</span>
+  <p class="demo-question">The ball moves at a steady speed. Why does it still have an acceleration, and which way does it point?</p>
+  <p class="demo-instruction">Drag the ball in or out to change the radius, or use the sliders. Choose <b>Speeding up</b> to add a tangential acceleration. Then press <b>Cut the string</b>: with no inward pull, the ball leaves in a straight line along $\vec{v}$.</p>
+  <div id="pk-centripetal"></div>
+  <script>
+  (function () {
+    // World units are metres; the circle's centre is at (0, 0)
+    const k = PhysKit.mount('pk-centripetal', { x: [-4.6, 4.6], y: [-3.1, 3.1] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+
+    k.row();
+    const rS = k.slider({ label: 'r', unit: 'm', min: 0.5, max: 2.5, step: 0.1, value: 1.5 });
+    const wS = k.slider({ label: 'ω_0', unit: 'rad/s', min: 0.5, max: 3, step: 0.1, value: 2 });
+    const aS = k.slider({ label: 'α', unit: 'rad/s^2', min: 0.2, max: 2, step: 0.1, value: 0.6 });
+    k.row();
+    const mode = k.choice(['Steady speed (α = 0)', 'Speeding up'], 0, () => { w = wS.value; });
+    let phi = 0.6;          // angle of the ball on the circle (rad)
+    let w = wS.value;       // angular velocity right now (rad/s)
+    let cut = null;         // after the string is cut: { p: position, v: velocity, time }
+    const trail = [];       // recent positions, drawn as a fading trail
+
+    k.button('✂ Cut the string', () => {
+      if (cut) return;
+      const r = rS.value, v = r * w;
+      cut = { p: [r * Math.cos(phi), r * Math.sin(phi)], v: [-v * Math.sin(phi), v * Math.cos(phi)], time: 0 };
+    }, { primary: true });
+    k.button('↺ Reset', () => { cut = null; w = wS.value; phi = 0.6; trail.length = 0; });
+    wS.on(v => { w = v; });
+    rS.on(() => { trail.length = 0; });
+
+    // Drag the ball: its distance from the centre sets r, its angle sets phi
+    k.view.drag({
+      get: () => cut ? [99, 99] : [rS.value * Math.cos(phi), rS.value * Math.sin(phi)],
+      set: p => {
+        const r = Math.max(0.5, Math.min(2.5, Math.hypot(p[0], p[1])));
+        rS.value = Math.round(r * 10) / 10;
+        phi = Math.atan2(p[1], p[0]);
+        trail.length = 0;
+      },
+      start: () => { k.wasPlaying = k.playing; k.playing = false; },
+      end: () => { k.playing = k.wasPlaying; }
+    });
+
+    k.loop(dt => {
+      if (cut) {                       // free flight: straight line, constant velocity
+        cut.p = [cut.p[0] + cut.v[0] * dt, cut.p[1] + cut.v[1] * dt];
+        cut.time += dt;
+        trail.push(cut.p.slice());
+        if (Math.abs(cut.p[0]) > 6 || Math.abs(cut.p[1]) > 4.5) { cut = null; w = wS.value; trail.length = 0; }
+        return;
+      }
+      const alpha = mode.value === 1 ? aS.value : 0;
+      w += alpha * dt;
+      if (w > 3.2) w = wS.value;         // start again before it spins too fast to see
+      phi += w * dt;
+      const r = rS.value;
+      trail.push([r * Math.cos(phi), r * Math.sin(phi)]);
+      if (trail.length > 40) trail.shift();
+    });
+
+    // Arrow scales: 1 m/s of velocity is drawn 0.4 m long, 1 m/s² of acceleration
+    // 0.18 m long. If the acceleration arrow would reach past 85 % of the radius,
+    // all acceleration arrows shrink together (so their sizes stay comparable).
+    const kVel = v => Math.min(0.4, 2.4 / v);   // velocity arrow at most 2.4 m long
+    const kAcc = (r, a) => Math.min(0.18, 0.85 * r / a);
+
+    k.draw = g => {
+      const r = rS.value, alpha = mode.value === 1 ? aS.value : 0;
+      g.grid(1);
+      // String and path
+      g.circle([0, 0], r, { color: '#cbd5e1', width: 2, dash: [4, 6] });
+      // Fading trail behind the ball
+      trail.forEach((p, i) => g.dot(p, 2.5, C.muted, { alpha: (i + 1) / trail.length * 0.5 }));
+      g.dot([0, 0], 5, C.ink);
+      g.text([0, 0], 'C', { dx: -12, dy: -12, color: C.ink, bold: true });
+
+      if (cut) {
+        g.dot(cut.p, 11, '#94a3b8', { stroke: C.ink, width: 2 });
+        g.arrow(cut.p, [cut.v[0] * kVel(Math.hypot(...cut.v)), cut.v[1] * kVel(Math.hypot(...cut.v))], { color: C.vel, label: 'v' });
+        g.text([0, -2.75], 'String cut: no inward force → no a_c → straight line (Newton’s 1st law)', { color: C.force, bold: true, size: 14 });
+        return;
+      }
+      const P = [r * Math.cos(phi), r * Math.sin(phi)];
+      const inn = [-Math.cos(phi), -Math.sin(phi)];   // unit vector towards the centre
+      const tan = [-Math.sin(phi), Math.cos(phi)];    // unit vector along the motion
+      const v = r * w, ac = r * w * w, at = r * alpha;
+
+      g.line([0, 0], P, { color: C.muted, width: 1.5 });  // the string
+      // Acceleration vectors (blue = centripetal, amber = tangential, red = total)
+      const KA = kAcc(r, Math.hypot(ac, at * 4));
+      const vc = [inn[0] * ac * KA, inn[1] * ac * KA];
+      if (at > 0) {
+        const vt = [tan[0] * at * KA * 4, tan[1] * at * KA * 4]; // a_T drawn 4× longer so it can be seen
+        const sum = [vc[0] + vt[0], vc[1] + vt[1]];
+        // Dashed lines complete the parallelogram a = a_c + a_T
+        g.line([P[0] + vc[0], P[1] + vc[1]], [P[0] + sum[0], P[1] + sum[1]], { color: C.muted, width: 1, dash: true });
+        g.line([P[0] + vt[0], P[1] + vt[1]], [P[0] + sum[0], P[1] + sum[1]], { color: C.muted, width: 1, dash: true });
+        g.arrow(P, vt, { color: C.energy, label: 'a_T', side: [inn[0] * -1, inn[1] * -1] });
+        g.arrow(P, sum, { color: C.force, label: 'a', side: tan });
+        g.arrow(P, vc, { color: C.acc, label: 'a_c', side: [-tan[0], -tan[1]] });
+      } else {
+        g.arrow(P, vc, { color: C.acc, label: 'a_c' });
+      }
+      g.arrow(P, [tan[0] * v * kVel(v), tan[1] * v * kVel(v)], { color: C.vel, label: 'v' });
+      g.handle(P, C.ink);
+
+      // Key, top-left
+      g.text([-4.45, 2.85], 'v velocity', { align: 'left', color: C.vel, size: 13 });
+      g.text([-4.45, 2.5], 'a_c centripetal acc.', { align: 'left', color: C.acc, size: 13 });
+      if (at > 0) {
+        g.text([-4.45, 2.15], 'a_T tangential acc. (drawn ×4)', { align: 'left', color: C.energy, size: 13 });
+        g.text([-4.45, 1.8], 'a total acceleration', { align: 'left', color: C.force, size: 13 });
+      }
+    };
+
+    k.update = () => {
+      if (cut) {
+        k.readout([`<span class="warn">String cut.</span> The ball keeps the speed it had, v = ${num(Math.hypot(cut.v[0], cut.v[1]))} m/s, and moves along the tangent.`]);
+        return;
+      }
+      const r = rS.value, alpha = mode.value === 1 ? aS.value : 0;
+      const v = r * w, ac = r * w * w, at = r * alpha, a = Math.hypot(ac, at);
+      const lines = [
+        `ω = ${num(w)} rad/s &nbsp;&nbsp; v = rω = ${num(r, 1)} × ${num(w)} = <b>${num(v)} m/s</b> (along the tangent)`,
+        `${rich('a_c')} = v<sup>2</sup>/r = ${num(v)}<sup>2</sup> / ${num(r, 1)} = <b>${num(ac)} m/s<sup>2</sup></b> (towards C)`
+      ];
+      if (alpha > 0) {
+        lines.push(`${rich('a_T')} = rα = ${num(r, 1)} × ${num(alpha, 1)} = <b>${num(at)} m/s<sup>2</sup></b> (along v, so the speed grows)`);
+        lines.push(`a = √(${rich('a_c')}<sup>2</sup> + ${rich('a_T')}<sup>2</sup>) = <b>${num(a)} m/s<sup>2</sup></b>, tilted φ = tan<sup>−1</sup>(${rich('a_T')}/${rich('a_c')}) = <b>${num(Math.atan2(at, ac) * 180 / Math.PI, 1)}°</b> from the radius`);
+      } else {
+        lines.push(`${rich('a_T')} = 0: the speed does not change, but the <b>direction</b> of v does, so a = ${rich('a_c')}.`);
+      }
+      k.readout(lines);
+    };
+  })();
+  </script>
 </div>
 
 <div class="note-example">
@@ -145,153 +266,3 @@
 
 </article>
 
-<script src="/static/js/demos/geom.js"></script>
-<script>
-(function() {
-  const canvas = document.getElementById('p1-03-canvas');
-  const out = document.getElementById('p1-03-out');
-  const rIn = document.getElementById('p1-03-r');
-  const wIn = document.getElementById('p1-03-w');
-  const aIn = document.getElementById('p1-03-a');
-  const btnUniform = document.getElementById('p1-03-btn-uniform');
-  const btnNonuniform = document.getElementById('p1-03-btn-nonuniform');
-  const playBtn = document.getElementById('p1-03-play');
-  const resetBtn = document.getElementById('p1-03-reset');
-  if (!canvas || !window.NoteGeom) return;
-
-  const C = [260, 170];
-  // Drawn radius in pixels: 60 px for r = 0.5 m up to 140 px for r = 2.5 m,
-  // so the circle grows with r but always fits on the 520 x 340 canvas.
-  const radiusPx = r => 40 + 40 * r;
-  const BLUE = '#2563eb', GREEN = '#16a34a', AMBER = '#d97706', RED = '#dc2626', INK = '#334155';
-  let phi = 0, playing = true, curW = 1.2, lastText = '';
-
-  // Draw an arrow from p along v. The label sits just past the tip, along the
-  // arrow's own direction, so it never lands on top of another arrow.
-  // Pass `side` (a unit vector) to put the label beside the tip instead.
-  function arrow(g, p, v, color, label, side) {
-    const q = [p[0] + v[0], p[1] + v[1]], L = Math.hypot(v[0], v[1]);
-    if (L < 3) return;
-    const ux = v[0] / L, uy = v[1] / L;
-    g.seg(p, q, color, { width: 2.5 });
-    g.poly([q, [q[0] - 8 * ux - 4 * uy, q[1] - 8 * uy + 4 * ux], [q[0] - 8 * ux + 4 * uy, q[1] - 8 * uy - 4 * ux]], color);
-    if (!label) return;
-    // Text is centred, so push it out by about half its width when the arrow is sideways
-    const dx = side ? side[0] : ux, dy = side ? side[1] : uy;
-    const d = 12 + Math.abs(dx) * label.length * 3.6;
-    g.text([q[0] + dx * d, q[1] + dy * d], label, color);
-  }
-
-  const board = NoteGeom.board(canvas, {
-    points: {},
-    draw(g) {
-      const r = Number(rIn.value);
-      const alpha = Number(aIn.value);
-      const R = radiusPx(r);
-      const v = r * curW;
-      const ac = r * curW * curW;
-      const at = r * alpha;
-      const aTotal = Math.sqrt(ac * ac + at * at);
-      const phiDeg = (Math.atan2(at, ac) * 180 / Math.PI);
-
-      // Circular orbit
-      g.circle(C, R, '#cbd5e1', { width: 2, fill: 'rgba(248, 250, 252, 0.4)' });
-
-      // Particle P
-      const P = [C[0] + R * Math.cos(phi), C[1] - R * Math.sin(phi)];
-      g.seg(C, P, '#94a3b8', { width: 1, dash: true });
-      g.circle(P, 8, INK, { fill: '#cbd5e1' });
-
-      // Directions:
-      // Inward radial unit vector (towards center C):
-      const rx = (C[0] - P[0]) / R, ry = (C[1] - P[1]) / R;
-      // Tangential unit vector (anticlockwise):
-      const tx = -Math.sin(phi), ty = -Math.cos(phi);
-
-      // Centre C: its label goes on the far side from P, where no arrow reaches
-      g.dot(C, INK);
-      g.text([C[0] + rx * 16, C[1] + ry * 16], 'C', INK);
-
-      // Scale the arrows so they always fit inside the circle:
-      // velocity at most 100 px long, acceleration at most 60 % of the radius.
-      // All acceleration arrows share one scale, so their sizes stay comparable.
-      const kv = Math.min(30, 100 / v);
-      const ka = Math.min(25, 0.6 * R / aTotal);
-
-      // Velocity (green, along the tangent)
-      arrow(g, P, [tx * v * kv, ty * v * kv], GREEN, 'v');
-
-      // Centripetal acceleration (blue, towards the centre)
-      // Its label goes beside the tip, on the side away from a_T and a
-      arrow(g, P, [rx * ac * ka, ry * ac * ka], BLUE, 'a_c', [-tx, -ty]);
-
-      // If nonuniform: draw tangential and total acceleration
-      if (Math.abs(at) > 0.01) {
-        // a_T lies on the same line as v, so put its label on the outer side
-        arrow(g, P, [tx * at * ka, ty * at * ka], AMBER, 'a_T', [-rx, -ry]);
-        // Total resultant vector: a_c + a_T
-        const ax = (rx * ac + tx * at) * ka;
-        const ay = (ry * ac + ty * at) * ka;
-        arrow(g, P, [ax, ay], RED, 'a', [tx, ty]);
-      }
-
-      const n = (z, k = 2) => z.toFixed(k);
-      const text =
-        `Radius r = ${n(r, 1)} m   |   Angular velocity ω = ${n(curW, 2)} rad/s   |   α = ${n(alpha, 2)} rad/s²\n` +
-        `Linear speed v = rω = ${n(v)} m/s (tangential)\n` +
-        `Centripetal acceleration a_c = v²/r = rω² = ${n(ac)} m/s² (inward)\n` +
-        (Math.abs(at) > 0.01
-          ? `Tangential acceleration a_T = rα = ${n(at)} m/s²\n` +
-            `Resultant acceleration a = √(a_c² + a_T²) = ${n(aTotal)} m/s²\nAngle of a from the radius (towards the center) φ = ${n(phiDeg, 1)}°`
-          : `Tangential acceleration a_T = 0 m/s² (Uniform Circular Motion: a = a_c)`);
-      if (text !== lastText) { out.textContent = text; lastText = text; }
-    }
-  });
-
-  function setPlaying(on) { playing = on; playBtn.textContent = on ? 'Pause' : 'Play'; }
-  let last = performance.now();
-  function tick(now) {
-    if (!canvas.isConnected) return;
-    const dt = Math.min((now - last) / 1000, 0.05);
-    last = now;
-    if (playing) {
-      const alpha = Number(aIn.value);
-      curW += alpha * dt;
-      if (curW > 4.0) { curW = 1.0; } // reset if spinning too fast
-      phi += curW * dt;
-      board.redraw();
-    }
-    requestAnimationFrame(tick);
-  }
-  requestAnimationFrame(tick);
-
-  playBtn.addEventListener('click', () => setPlaying(!playing));
-  resetBtn.addEventListener('click', () => {
-    curW = Number(wIn.value);
-    phi = 0;
-    board.redraw();
-  });
-
-  btnUniform.addEventListener('click', () => {
-    btnUniform.classList.add('active');
-    btnNonuniform.classList.remove('active');
-    aIn.value = '0.0';
-    curW = Number(wIn.value);
-    board.redraw();
-  });
-
-  btnNonuniform.addEventListener('click', () => {
-    btnNonuniform.classList.add('active');
-    btnUniform.classList.remove('active');
-    aIn.value = '0.3';
-    curW = Number(wIn.value);
-    board.redraw();
-  });
-
-  [rIn, aIn].forEach(el => el.addEventListener('input', () => board.redraw()));
-  wIn.addEventListener('input', () => {
-    curW = Number(wIn.value);
-    board.redraw();
-  });
-})();
-</script>
