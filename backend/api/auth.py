@@ -34,7 +34,10 @@ _DUMMY_HASH = generate_password_hash("not-a-real-password")
 
 def _user_json(user):
     """What the frontend gets to know about a user."""
-    return {"email": user.email}
+    return {
+        "email": user.email,
+        "created_at": user.created_at.strftime("%B %Y") if user.created_at else None,
+    }
 
 
 def _read_form():
@@ -95,3 +98,21 @@ def api_logout():
     """Log out: the login cookies are removed."""
     logout_user()
     return {"user": None}
+
+
+@api_bp.post("/auth/change-password")
+@login_required
+def api_change_password():
+    """Change password. Body: {"current_password", "new_password"}."""
+    data = request.get_json(silent=True) or {}
+    current_password = str(data.get("current_password", ""))
+    new_password = str(data.get("new_password", ""))
+
+    if not check_password_hash(current_user.password_hash, current_password):
+        return {"error": "Current password is incorrect."}, 401
+    if len(new_password) < MIN_PASSWORD:
+        return {"error": f"The new password needs at least {MIN_PASSWORD} characters."}, 400
+
+    current_user.password_hash = generate_password_hash(new_password)
+    db.session.commit()
+    return {"ok": True, "message": "Password updated successfully."}

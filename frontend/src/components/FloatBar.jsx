@@ -119,9 +119,9 @@ function PagerButton({ link, label, icon, onClick }) {
   )
 }
 
-// "Log in" (a link to /login), or "Log out" when logged in.
+// "Log in" (a link to /login), or "Account" (/account) when logged in.
 function AccountButton({ onClick }) {
-  const { user, logout } = useAuth()
+  const { user } = useAuth()
   const here = useLocation()
 
   if (!user) {
@@ -134,11 +134,11 @@ function AccountButton({ onClick }) {
     )
   }
   return (
-    <button className="bar-btn bar-account" title={`Logged in as ${user.email}`}
-            onClick={() => { onClick(); logout() }}>
-      <i className="fas fa-right-from-bracket"></i> Log out
+    <Link className="bar-btn bar-account" to="/account" onClick={onClick}
+          title={`Logged in as ${user.email}`}>
+      <i className="fas fa-circle-user"></i> Account
       {/* The email is only shown in the phone menu, where there is room */}
       <span className="bar-account-email">({user.email})</span>
-    </button>
+    </Link>
   )
 }
