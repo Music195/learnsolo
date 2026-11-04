@@ -76,144 +76,75 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Diffraction Grating Spectral Orders</span>
-  <p class="demo-instruction">Adjust grating line density $N$ and select wavelengths to observe the angular positions of the principal diffraction orders ($m = 0, \pm 1, \pm 2$).</p>
-
-  <div id="grating-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Ruling $N$: 
-      <input id="n-slider" type="range" min="1000" max="6000" step="500" value="3000" style="vertical-align: middle;">
-      <span id="n-val" style="color: #38bdf8; font-weight: 700;">3000 lines/cm</span>
-    </label>
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Wavelength $\lambda$: 
-      <input id="lambda-g-slider" type="range" min="400" max="700" step="20" value="589" style="vertical-align: middle;">
-      <span id="lambda-g-val" style="color: #facc15; font-weight: 700;">589 nm (Na)</span>
-    </label>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      1st Order Angle $\theta_1$: <span id="theta1-stat" style="color: #4ade80; font-weight: 700;">10.18&deg;</span> &bull; $d$: <span id="d-stat" style="color: #fb923c; font-weight: 700;">3.33 &mu;m</span>
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; From Two Slits to a Diffraction Grating</span>
+  <p class="demo-question">A grating has thousands of slits. Why does adding more slits make the bright lines so much sharper, and how does it split white light?</p>
+  <p class="demo-instruction">Increase the number of slits $N$: the bright maxima stay at the same angles ($d\sin\theta = m\lambda$) but become thinner and brighter, with weak ripples between. Switch to white light to see each order become a spectrum, with violet inside and red outside; at high orders the spectra overlap. The graph shows intensity against angle.</p>
+  <div id="pk-grating"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('grating-board', {
-      boundingbox: [-1, 4, 7, -4],
-      axis: false,
-      showNavigation: false,
-      showCopyright: false,
-      pan: { enabled: false },
-      zoom: { enabled: false }
-    });
-
-    // This board is a picture, not something to drag. JSXGraph makes the
-    // corners of shapes (and loose points) draggable by default, so a
-    // stray mouse drag could bend the drawing. Wrap board.create so every
-    // new element is fixed unless it says otherwise, and shape corners are
-    // hidden (they would look like drag handles).
-    const createFixed = board.create.bind(board);
-    board.create = (type, parents, attrs = {}) =>
-      createFixed(type, parents, { fixed: true, ...attrs, vertices: { fixed: true, visible: false, ...attrs.vertices } });
-
-    // Grating element at x = 0.5
-    board.create('segment', [[0.5, -3], [0.5, 3]], {
-      strokeColor: '#cbd5e1', strokeWidth: 5, strokeOpacity: 0.8
-    });
-    board.create('text', [0.1, 3.2, 'Grating'], {
-      strokeColor: '#94a3b8', fontSize: 12
-    });
-
-    // Observation arc screen
-    board.create('arc', [[0.5, 0], [0.5 + 5.5 * Math.cos(0.9), 5.5 * Math.sin(0.9)], [0.5 + 5.5 * Math.cos(-0.9), 5.5 * Math.sin(-0.9)]], {
-      strokeColor: '#475569', strokeWidth: 2, dash: 2
-    });
-
-    let beams = [];
-
-    function wavelengthToHex(wl) {
-      if (wl < 450) return '#818cf8';
-      if (wl < 500) return '#38bdf8';
-      if (wl < 570) return '#4ade80';
-      if (wl < 600) return '#facc15';
-      if (wl < 640) return '#fb923c';
-      return '#ef4444';
+  (function () {
+    const k = PhysKit.mount('pk-grating', { x: [-90, 90], y: [-0.25, 1.15], equal: false, height: 230 });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    k.row();
+    const NN = [2, 3, 5, 10, 50];
+    const nS = k.choice(NN.map(n => `N = ${n}`), 2);
+    const light = k.choice(['one colour', 'white light'], 0);
+    k.row();
+    const gS = k.slider({ label: 'lines per cm', min: 1000, max: 8000, step: 100, value: 5000, digits: 0 });
+    const lS = k.slider({ label: 'λ', unit: 'nm', min: 400, max: 700, step: 1, value: 457, digits: 0 });
+    k.row();
+    k.button('Example 8.4 (457 nm, 5000/cm)', () => { gS.value = 5000; lS.value = 457; light.set(0); });
+    k.button('Exercise 11a (4000/cm, 2nd order at 30°)', () => { gS.value = 4000; lS.value = 625; light.set(0); });
+    k.button('Exercise 11b (2000/cm, 520 nm)', () => { gS.value = 2000; lS.value = 520; light.set(0); });
+    function rgb(l) {
+      const stops = [[380, [120, 0, 160]], [440, [60, 0, 255]], [490, [0, 160, 255]], [510, [0, 200, 80]], [580, [230, 220, 0]], [645, [255, 40, 0]], [700, [200, 0, 0]]];
+      let A = stops[0], B = stops[stops.length - 1];
+      for (let j = 0; j < stops.length - 1; j++) if (l >= stops[j][0] && l <= stops[j + 1][0]) { A = stops[j]; B = stops[j + 1]; }
+      const f = B[0] === A[0] ? 0 : (l - A[0]) / (B[0] - A[0]);
+      return A[1].map((v, i) => v + f * (B[1][i] - v));
     }
+    const dNm = () => 1e7 / gS.value;                       // slit spacing in nm (1 cm = 10^7 nm)
+    // N-slit pattern: I = [sin(Nφ/2) / (N sin(φ/2))]², φ = 2π d sinθ / λ
+    function I(thDeg, l) {
+      const N = NN[nS.value], ph = 2 * Math.PI * dNm() * Math.sin(thDeg * Math.PI / 180) / l, s = Math.sin(ph / 2);
+      return Math.abs(s) < 1e-7 ? 1 : (Math.sin(N * ph / 2) / (N * s)) ** 2;
+    }
+    const WL = [410, 440, 470, 500, 530, 560, 590, 620, 650, 680];
 
-    function updateGrating() {
-      board.suspendUpdate();
-      board.removeObject(beams);
-      beams = [];
-
-      let N_per_cm = parseFloat(document.getElementById('n-slider').value);
-      let N_per_m = N_per_cm * 100;
-      let d = 1.0 / N_per_m; // meters
-      let lambda = parseFloat(document.getElementById('lambda-g-slider').value) * 1e-9;
-
-      let d_um = (d * 1e6).toFixed(2);
-      document.getElementById('d-stat').textContent = d_um + ' µm';
-
-      let sin1 = lambda / d;
-      let theta1_deg = (sin1 <= 1) ? (Math.asin(sin1) * 180 / Math.PI) : null;
-      document.getElementById('theta1-stat').textContent = theta1_deg ? (theta1_deg.toFixed(2) + '°') : 'No 1st order';
-
-      let col = wavelengthToHex(parseFloat(document.getElementById('lambda-g-slider').value));
-      let R = 5.5;
-
-      // Draw incident beam
-      let inc = board.create('arrow', [[-0.8, 0], [0.5, 0]], {
-        strokeColor: col, strokeWidth: 3
-      });
-      beams.push(inc);
-
-      // Central order m = 0
-      let b0 = board.create('arrow', [[0.5, 0], [0.5 + R, 0]], {
-        strokeColor: '#f8fafc', strokeWidth: 3
-      });
-      beams.push(b0);
-      let t0 = board.create('text', [0.5 + R + 0.1, 0, 'm=0'], {
-        strokeColor: '#f8fafc', fontSize: 11
-      });
-      beams.push(t0);
-
-      // Higher orders m = 1, 2, ...
-      for (let m = 1; m <= 3; m++) {
-        let sinTh = m * lambda / d;
-        if (sinTh <= 0.85) { // within visible arc
-          let th = Math.asin(sinTh);
-          // +m order
-          let bp = board.create('arrow', [[0.5, 0], [0.5 + R * Math.cos(th), R * Math.sin(th)]], {
-            strokeColor: col, strokeWidth: 2.2
-          });
-          let tp = board.create('text', [0.5 + R * Math.cos(th) + 0.1, R * Math.sin(th), 'm=+' + m], {
-            strokeColor: col, fontSize: 11
-          });
-          // -m order
-          let bm = board.create('arrow', [[0.5, 0], [0.5 + R * Math.cos(-th), R * Math.sin(-th)]], {
-            strokeColor: col, strokeWidth: 2.2
-          });
-          let tm = board.create('text', [0.5 + R * Math.cos(-th) + 0.1, R * Math.sin(-th), 'm=-' + m], {
-            strokeColor: col, fontSize: 11
-          });
-          beams.push(bp, tp, bm, tm);
+    k.draw = g => {
+      g.axes({ xstep: 15, ystep: 0.5, xlabel: 'θ (°)', ylabel: 'I' });
+      if (light.value === 0) {
+        const pts = [], l = lS.value, c = rgb(l);
+        for (let th = -90; th <= 90; th += 0.05) pts.push([th, I(th, l)]);
+        g.path(pts, { color: `rgb(${c.map(Math.round).join(',')})`, width: 2 });
+        // label the orders
+        for (let m = -6; m <= 6; m++) {
+          const s = m * l / dNm();
+          if (Math.abs(s) <= 1) g.text([Math.asin(s) * 180 / Math.PI, 1.07], `m=${m}`, { size: 11, bold: true, color: C.muted });
         }
+      } else for (const l of WL) {
+        const pts = [], c = rgb(l);
+        for (let th = -90; th <= 90; th += 0.1) pts.push([th, I(th, l)]);
+        g.path(pts, { color: `rgb(${c.map(Math.round).join(',')})`, width: 1.2, alpha: 0.8 });
       }
+      // what the screen looks like
+      for (let th = -90; th < 90; th += 0.25) {
+        let r = 0, gg = 0, b = 0;
+        const list = light.value === 0 ? [lS.value] : WL;
+        for (const l of list) { const v = I(th + 0.125, l) / (light.value === 0 ? 1 : 2.2), c = rgb(l); r += c[0] * v; gg += c[1] * v; b += c[2] * v; }
+        g.rect(th, -0.22, 0.26, 0.12, { fill: `rgb(${Math.min(255, r)}, ${Math.min(255, gg)}, ${Math.min(255, b)})`, color: 'none' });
+      }
+    };
 
-      board.unsuspendUpdate();
-    }
-
-    updateGrating();
-
-    document.getElementById('n-slider').addEventListener('input', function(e) {
-      document.getElementById('n-val').textContent = e.target.value + ' lines/cm';
-      updateGrating();
-    });
-
-    document.getElementById('lambda-g-slider').addEventListener('input', function(e) {
-      document.getElementById('lambda-g-val').textContent = e.target.value + ' nm';
-      updateGrating();
-    });
+    k.update = () => {
+      const d = dNm(), l = lS.value, mmax = Math.floor(d / l);
+      const angles = [];
+      for (let m = 1; m <= Math.min(mmax, 3); m++) angles.push(`m = ${m}: ${num(Math.asin(m * l / d) * 180 / Math.PI, 2)}°`);
+      k.readout([
+        `d = 1/N = 1/${gS.value} cm = <b>${num(d / 1000, 3)} μm</b>; d sin θ = mλ gives ${angles.join(', ')}`,
+        `Highest order: m ≤ d/λ = ${num(d / l, 2)}, so ${rich('m_{max}')} = <b>${mmax}</b>. More slits do not move the maxima, they make them sharper.`,
+        'Example 8.4: sin θ = 2 × 457 / 2000 = 0.457 → θ = 27.19°. Exercise 11: (a) λ = 2.5 μm × 0.5 / 2 = 625 nm; (b) sin θ = 520 / 5000 → θ = 5.97°.'
+      ]);
+    };
   })();
   </script>
 </div>
