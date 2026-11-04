@@ -216,7 +216,7 @@ The demo helpers live in `frontend/public/static/js/demos/` (and `frontend/publi
 | `/static/js/demos/venn.js` | Set notes | `NoteVenn`: parses and formats sets and draws Venn diagrams |
 | `/static/js/demos/physkit.js` | Grade 12 Physics (`g12-physics`) notes | `PhysKit`: canvas board, slider controls, arrows, vectors, springs, waves, rays, circuits, gauges and readout helpers for physics simulations |
 | `/static/js/demos/jsxgraphcore.js`, `/static/css/jsxgraph.css` | Physics and geometry notes using JSXGraph | `JXG.JSXGraph.initBoard()`: interactive coordinate boards, curves and sliders (automatically cleaned up on unmount in `NoteContent.jsx`) |
-| `frontend/src/styles/note-blocks.css` | Every note | All 8 block styles (`note-concept`, `note-formula`, `note-demo`, etc.) |
+| `frontend/src/styles/note-blocks.css`, `dark-mode.css` | Every note | All 8 block styles (`note-concept`, `note-formula`, `note-demo`, etc.) with light and dark mode adaptations |
 
 `geom.js`, `plot.js`, `physkit.js` and `jsxgraphcore.js` are already loaded on every page in `frontend/index.html`. Helpers only needed by a few notes (such as `venn.js`) can be loaded inside the note with `<script src="/static/js/demos/venn.js"></script>`.
 

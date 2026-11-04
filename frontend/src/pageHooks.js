@@ -60,3 +60,26 @@ export function useScrollToTop(path) {
     window.scrollTo(0, 0)
   }, [path])
 }
+
+// Theme hook: 'light' or 'dark', saved in localStorage under 'theme'.
+// Syncs document.documentElement's data-theme attribute.
+export function useTheme() {
+  const [theme, setTheme] = useState(() => {
+    const saved = localStorage.getItem('theme')
+    if (saved) return saved
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  })
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme)
+    try {
+      localStorage.setItem('theme', theme)
+    } catch {}
+  }, [theme])
+
+  function toggleTheme() {
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))
+  }
+
+  return [theme, toggleTheme]
+}
