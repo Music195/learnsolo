@@ -95,80 +95,126 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Exponential Radioactive Decay Curve</span>
-  <p class="demo-instruction">Adjust initial sample mass $N_0$ and half-life $T_{1/2}$ to observe the stepwise halving of undecayed parent nuclei over successive elapsed half-lives.</p>
-
-  <div id="decay-board" style="width: 100%; height: 350px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Initial Mass $N_0$: 
-      <input id="n0-slider" type="range" min="20" max="200" step="10" value="100" style="vertical-align: middle;">
-      <span id="n0-val" style="color: #38bdf8; font-weight: 700;">100 g</span>
-    </label>
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Elapsed $n$ ($t/T_{1/2}$): 
-      <input id="n-hl-slider" type="range" min="0" max="5" step="1" value="2" style="vertical-align: middle;">
-      <span id="n-hl-val" style="color: #4ade80; font-weight: 700;">2 Half-Lives</span>
-    </label>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      Remaining $N(t)$: <span id="n-rem-stat" style="color: #fb923c; font-weight: 700;">25.0 g</span> ($25.0\%$) &bull; Decayed: <span id="n-dec-stat" style="color: #f43f5e; font-weight: 700;">75.0 g</span>
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; Half-Life with Real Random Decays, and Penetrating Power</span>
+  <p class="demo-question">Each nucleus decays at a random moment, so how can a sample have an exact half-life? And what stops α, β and γ radiation?</p>
+  <p class="demo-instruction"><b>Half-life:</b> 400 nuclei, each decaying at its own random moment. Press <b>Play</b> or drag the time slider. You cannot predict which nucleus goes next, but after every half-life about half of those left have decayed. The graph compares the count (steps) with $N_0(1/2)^{t/T_{1/2}}$. <b>Penetrating power:</b> choose a radiation and switch the sheets in or out.</p>
+  <div id="pk-decay"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('decay-board', {
-      boundingbox: [-0.5, 220, 5.5, -20],
-      axis: true,
-      defaultAxes: {
-        x: { name: 'Half-Lives n (t / T1/2)', withLabel: true, label: { position: 'rt', offset: [-20, -15], color: '#94a3b8' } },
-        y: { name: 'Remaining Mass (g)', withLabel: true, label: { position: 'rt', offset: [15, -10], color: '#94a3b8' } }
-      },
-      showNavigation: false,
-      showCopyright: false,
-      pan: { enabled: false },
-      zoom: { enabled: false }
-    });
+  (function () {
+    const k = PhysKit.mount('pk-decay', { x: [-6.2, 6.2], y: [-2.6, 2.6] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    k.row();
+    const scene = k.choice(['Half-life', 'Penetrating power'], 0, () => show());
+    const rows = [];
+    rows.push(k.row());
+    let unit = 'min';
+    const TS = k.slider({ label: 'T_{1/2}', min: 1, max: 60, step: 0.25, value: 20, format: v => `${num(v, 2)} ${unit}` });
+    const mS = k.slider({ label: 'm_0', unit: 'g', min: 1, max: 200, step: 0.1, value: 102.4, digits: 1 });
+    const tS = k.slider({ label: 't', min: 0, max: 8, step: 0.01, value: 0, format: v => `${num(v * TS.value, 2)} ${unit} = ${num(v, 2)} half-lives` });
+    TS.on(() => { tS.value = tS.value; });
+    const r2 = k.row(); rows.push(r2);
+    let playing = false, target = 8;
+    const pb = k.button('▶ Play', () => { playing = !playing; target = 8; if (tS.value >= 8) tS.value = 0; lab(); }, { primary: true });
+    const lab = () => { pb.textContent = playing ? '❚❚ Pause' : '▶ Play'; };
+    k.button('Example 13.2 (20 min, 102.4 g, 2 h)', () => { unit = 'min'; TS.value = 20; mS.value = 102.4; tS.value = 0; target = 6; playing = true; lab(); });
+    k.button('Exercise 8 (Co-60, 5.25 yr, to 1/8)', () => { unit = 'years'; TS.value = 5.25; mS.value = 100; tS.value = 0; target = 3; playing = true; lab(); });
+    k.button('new random sample', () => { seed(); tS.value = 0; });
+    rows.push(k.row());
+    const rad = k.choice(['α alpha', 'β beta', 'γ gamma'], 0);
+    const sheets = [k.check('paper', true), k.check('aluminium 5 mm', true), k.check('lead 2 cm', true)];
+    function show() { rows.forEach((r, i) => { r.style.display = (i < 2 ? scene.value === 0 : scene.value === 1) ? '' : 'none'; }); gv.canvas.parentElement.style.display = scene.value === 0 ? '' : 'none'; }
 
-    let decayCurve = null;
-    let decayPoint = null;
+    // every nucleus gets its own random lifetime (in half-lives): P(survive n) = (1/2)^n
+    const NN = 400; let life = [];
+    function seed() { life = Array.from({ length: NN }, () => -Math.log2(1 - Math.random() * 0.999999)); }
+    seed();
+    let t = 0, flashes = [], prev = 0, parts = [], spawn = 0;
+    k.loop(dt => {
+      t += dt;
+      if (scene.value === 0 && playing) {
+        const n0 = tS.value, n1 = Math.min(target, n0 + dt * 0.5);
+        life.forEach((L, i) => { if (L > n0 && L <= n1) flashes.push({ i, age: 0 }); });
+        tS.value = n1; if (n1 >= target - 1e-9) { tS.value = target; playing = false; lab(); }
+        k.update();
+      }
+      flashes.forEach(f => f.age += dt); flashes = flashes.filter(f => f.age < 0.6);
+      if (scene.value === 1) {
+        spawn += dt; if (spawn > 0.25) { spawn = 0; parts.push({ x: -4.9, y: -0.2 + (Math.random() - 0.5) * 1.4, a: 1, dead: false }); }
+        const sp = [1.6, 4.0, 6.5][rad.value];
+        parts.forEach(p => {
+          if (p.dead) { p.a -= dt * 2; return; }
+          const x0 = p.x; p.x += sp * dt;
+          SH.forEach((s, j) => { if (!sheets[j].value) return; if (x0 < s.x && p.x >= s.x) { const stop = rad.value === 0 ? true : rad.value === 1 ? j >= 1 : (j === 2 && Math.random() < 0.6); if (stop) { p.x = s.x - 0.02; p.dead = true; } } });
+        });
+        parts = parts.filter(p => p.x < 6.1 && p.a > 0);
+      }
+    }, { button: false });
+    const SH = [{ x: -2.6, w: 0.08, fill: '#fef9c3', name: 'paper' }, { x: 0.3, w: 0.3, fill: '#cbd5e1', name: 'aluminium' }, { x: 3.0, w: 0.75, fill: '#64748b', name: 'lead' }];
 
-    function updateDecay() {
-      board.suspendUpdate();
-      if (decayCurve) board.removeObject(decayCurve);
-      if (decayPoint) board.removeObject(decayPoint);
-
-      let N0 = parseFloat(document.getElementById('n0-slider').value);
-      let n = parseFloat(document.getElementById('n-hl-slider').value);
-      let N_rem = N0 * Math.pow(0.5, n);
-      let N_dec = N0 - N_rem;
-
-      document.getElementById('n0-val').textContent = N0 + ' g';
-      document.getElementById('n-hl-val').textContent = n + ' Half-Lives';
-      document.getElementById('n-rem-stat').textContent = N_rem.toFixed(1) + ' g (' + ((N_rem / N0) * 100).toFixed(1) + '%)';
-      document.getElementById('n-dec-stat').textContent = N_dec.toFixed(1) + ' g';
-
-      // Plot N(x) = N0 * 0.5^x
-      decayCurve = board.create('functiongraph', [
-        function(x) {
-          return N0 * Math.pow(0.5, x);
-        }, 0, 5.2
-      ], {
-        strokeColor: '#38bdf8', strokeWidth: 3
-      });
-
-      decayPoint = board.create('point', [n, N_rem], {
-        size: 5, fillColor: '#4ade80', strokeColor: '#22c55e', name: N_rem.toFixed(1) + ' g', fixed: true
-      });
-
-      board.unsuspendUpdate();
+    function decayScene(g) {
+      const n = tS.value, left = life.filter(L => L > n).length;
+      // the sample: a 20 × 20 grid
+      const GX = -5.9, GY = 2.15, sp = 0.215;
+      for (let i = 0; i < NN; i++) {
+        const c = [GX + (i % 20) * sp, GY - Math.floor(i / 20) * sp], alive = life[i] > n;
+        g.circle(c, 0.085, { fill: alive ? C.energy : '#cbd5e1', color: 'none' });
+      }
+      flashes.forEach(f => { const c = [GX + (f.i % 20) * sp, GY - Math.floor(f.i / 20) * sp]; g.circle(c, 0.1 + f.age * 0.6, { color: C.bad, width: 2, alpha: 1 - f.age / 0.6 }); });
+      g.text([GX + 2.05, -2.35], `${left} of ${NN} undecayed`, { size: 13, bold: true, color: C.energy });
+      // big readout on the right
+      const m = mS.value * Math.pow(0.5, n);
+      g.text([3.0, 2.0], `t = ${num(n * TS.value, 2)} ${unit}`, { size: 15, bold: true });
+      g.text([3.0, 1.4], `n = t/T½ = ${num(n, 2)} half-lives`, { size: 13, color: C.muted });
+      g.text([3.0, 0.6], `mass left = ${num(mS.value, 1)} × (1/2)^{${num(n, 2)}}`, { size: 13, color: C.ink });
+      g.text([3.0, 0.0], `= ${num(m, m < 10 ? 3 : 2)} g`, { size: 18, bold: true, color: C.energy });
+      g.text([3.0, -0.7], `fraction left ${num(100 * Math.pow(0.5, n), 1)} %  (sample: ${num(100 * left / NN, 1)} %)`, { size: 12, color: C.muted });
+      // a bar of remaining mass
+      g.rect(0.9, -1.7, 4.4, 0.4, { fill: '#f1f5f9', color: C.ink, width: 1, radius: 4 });
+      g.rect(0.9, -1.7, 4.4 * Math.pow(0.5, n), 0.4, { fill: C.energy, color: 'none', radius: 4 });
+      for (let j = 1; j <= 3; j++) { g.line([0.9 + 4.4 / 2 ** j, -1.75], [0.9 + 4.4 / 2 ** j, -1.25], { color: C.ink, width: 1 }); g.text([0.9 + 4.4 / 2 ** j, -2.0], `1/${2 ** j}`, { size: 10, color: C.muted }); }
     }
 
-    updateDecay();
+    function penScene(g) {
+      // source
+      g.rect(-5.9, -0.9, 0.9, 1.4, { fill: '#fde68a', color: C.ink, width: 2, radius: 6 }); g.text([-5.45, -0.2], '☢', { size: 20 });
+      g.text([-5.45, -1.25], 'source', { size: 11, color: C.muted });
+      SH.forEach((s, j) => {
+        const on = sheets[j].value;
+        g.rect(s.x, -1.6, s.w, 2.8, { fill: on ? s.fill : '#fff', color: on ? C.ink : '#e2e8f0', width: on ? 1.5 : 1, dash: on ? undefined : [4, 4] });
+        g.text([s.x + s.w / 2, -1.95], s.name, { size: 11, bold: on, color: on ? C.ink : C.muted });
+      });
+      const col = [C.bad, C.acc, '#7c3aed'][rad.value];
+      parts.forEach(p => {
+        if (rad.value === 2) { const pts = []; for (let u = -0.3; u <= 0.0001; u += 0.02) pts.push([p.x + u, p.y + 0.08 * Math.sin(u * 40)]); g.path(pts, { color: col, width: 2, alpha: p.a }); }
+        else g.circle([p.x, p.y], rad.value === 0 ? 0.12 : 0.06, { fill: col, color: 'none', alpha: p.a });
+      });
+      const info = [['α: helium nucleus (2 protons + 2 neutrons), charge +2, slow and heavy', 'stopped by a sheet of paper (or a few cm of air)'], ['β: fast electron, charge −1', 'passes paper, stopped by a few mm of aluminium'], ['γ: electromagnetic wave (photon), no charge', 'only reduced by thick lead or concrete']][rad.value];
+      g.text([0, 2.25], info[0], { size: 12, bold: true, color: col });
+      g.text([0, 1.75], info[1], { size: 12, color: C.muted });
+      g.text([0, -2.4], `ionising power: ${['very strong', 'medium', 'weak'][rad.value]}; penetrating power: ${['very weak', 'medium', 'very strong'][rad.value]}`, { size: 12, bold: true });
+    }
 
-    document.getElementById('n0-slider').addEventListener('input', updateDecay);
-    document.getElementById('n-hl-slider').addEventListener('input', updateDecay);
+    k.draw = g => scene.value === 0 ? decayScene(g) : penScene(g);
+
+    const gv = k.addView({ x: [-0.2, 8.2], y: [-20, 430], equal: false, height: 160, title: 'Undecayed nuclei against time (in half-lives)' });
+    gv.draw = g => {
+      g.axes({ xstep: 1, ystep: 100, xlabel: 't / T½', ylabel: 'N' });
+      const th = []; for (let n = 0; n <= 8; n += 0.05) th.push([n, NN * Math.pow(0.5, n)]); g.path(th, { color: C.muted, width: 2, dash: [5, 4] });
+      for (let j = 1; j <= 3; j++) { g.line([j, 0], [j, NN / 2 ** j], { color: '#cbd5e1', width: 1, dash: [3, 3] }); g.line([0, NN / 2 ** j], [j, NN / 2 ** j], { color: '#cbd5e1', width: 1, dash: [3, 3] }); }
+      const sorted = life.slice().sort((a, b) => a - b), pts = [[0, NN]];
+      for (let i = 0; i < NN && sorted[i] <= tS.value; i++) { pts.push([sorted[i], NN - i]); pts.push([sorted[i], NN - i - 1]); }
+      pts.push([tS.value, life.filter(L => L > tS.value).length]); g.path(pts, { color: C.energy, width: 2.5 });
+    };
+
+    k.update = () => {
+      if (scene.value !== 0) { k.readout(['α is stopped first and γ last: the more strongly a radiation ionises the matter it passes, the faster it loses its energy.']); return; }
+      const n = tS.value, m = mS.value * Math.pow(0.5, n), lam = 0.693 / TS.value;
+      k.readout([
+        `n = t/${rich('T_{1/2}')} = ${num(n * TS.value, 2)}/${num(TS.value, 2)} = ${num(n, 2)}; m = ${rich('m_0')}(1/2)<sup>n</sup> = ${num(mS.value, 1)} × (1/2)<sup>${num(n, 2)}</sup> = <b>${num(m, 3)} g</b>`,
+        `Decay constant λ = 0.693/${rich('T_{1/2}')} = <b>${num(lam, 4)} per ${unit === 'min' ? 'minute' : 'year'}</b>. Example 13.2: 6 half-lives → 102.4/64 = 1.60 g. Exercise 8: 1/8 = (1/2)<sup>3</sup> → 3 × 5.25 = 15.75 years.`
+      ]);
+    };
+    show();
   })();
   </script>
 </div>
