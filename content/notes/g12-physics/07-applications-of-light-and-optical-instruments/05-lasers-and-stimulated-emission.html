@@ -70,6 +70,15 @@
       showCopyright: false
     });
 
+    // This board is a picture, not something to drag. JSXGraph makes the
+    // corners of shapes (and loose points) draggable by default, so a
+    // stray mouse drag could bend the drawing. Wrap board.create so every
+    // new element is fixed unless it says otherwise, and shape corners are
+    // hidden (they would look like drag handles).
+    const createFixed = board.create.bind(board);
+    board.create = (type, parents, attrs = {}) =>
+      createFixed(type, parents, { fixed: true, ...attrs, vertices: { fixed: true, visible: false, ...attrs.vertices } });
+
     // Three energy levels
     board.create('segment', [[1, 1], [7, 1]], { strokeColor: '#cbd5e1', strokeWidth: 3 });
     board.create('text', [0.8, 1, 'Ground State (E₁)'], { color: '#cbd5e1', fontSize: 12, anchorX: 'right' });

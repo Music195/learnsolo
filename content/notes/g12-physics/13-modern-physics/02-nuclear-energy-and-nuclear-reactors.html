@@ -82,6 +82,15 @@
       zoom: { enabled: false }
     });
 
+    // This board is a picture, not something to drag. JSXGraph makes the
+    // corners of shapes (and loose points) draggable by default, so a
+    // stray mouse drag could bend the drawing. Wrap board.create so every
+    // new element is fixed unless it says otherwise, and shape corners are
+    // hidden (they would look like drag handles).
+    const createFixed = board.create.bind(board);
+    board.create = (type, parents, attrs = {}) =>
+      createFixed(type, parents, { fixed: true, ...attrs, vertices: { fixed: true, visible: false, ...attrs.vertices } });
+
     // Concrete containment vessel
     board.create('polygon', [[-3, -2.2], [3, -2.2], [3, 2.2], [-3, 2.2]], {
       fillColor: '#1e293b', fillOpacity: 0.9, borders: { strokeColor: '#94a3b8', strokeWidth: 5 }
