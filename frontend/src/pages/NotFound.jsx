@@ -16,7 +16,7 @@ export default function NotFound() {
         </div>
       </header>
       <main className="past-content">
-        <p><Link to="/"><i className="fas fa-house"></i> Home</Link> · <Link to="/practice">Practice</Link> · <Link to="/past">Past questions</Link></p>
+        <p><Link to="/"><i className="fas fa-house"></i> Home</Link> · <Link to="/practice">Practice</Link> · <Link to="/past">Mock Questions</Link></p>
       </main>
     </>
   )

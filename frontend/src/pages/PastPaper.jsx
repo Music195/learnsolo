@@ -28,7 +28,7 @@ export default function PastPaper() {
 
   useScrollToTop(path)
   useEffect(() => setProgress(null), [path])
-  usePageTitle(data && `Past question: ${data.title} · ${data.location.course} · Learn Solo`)
+  usePageTitle(data && `Mock Question: ${data.title} · ${data.location.course} · Learn Solo`)
   useArrowKeys(data?.nav)
 
   // An old address of a renamed paper: the API says where it is now
@@ -55,7 +55,7 @@ export default function PastPaper() {
         <div className="note-header-inner">
           <p className="note-chips">
             <Link to={paper.category_url}>{paper.category}</Link>
-            <span className="chip-practice chip-past"><i className="fas fa-file-pen"></i> Past question</span>
+            <span className="chip-practice chip-past"><i className="fas fa-file-pen"></i> Mock Question</span>
           </p>
           <h1>{title}</h1>
           <ProgressLine progress={progress} count={count} onReset={() => problemsRef.current?.reset()} />
@@ -81,7 +81,7 @@ export default function PastPaper() {
         ) : (
           <Link className="pager-card pager-next" to="/past">
             <span className="pager-label">More practice <i className="fas fa-arrow-right"></i></span>
-            <strong>Past questions</strong>
+            <strong>Mock Questions</strong>
             <span className="pager-where">EJU and university exams</span>
           </Link>
         )}

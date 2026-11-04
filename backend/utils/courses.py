@@ -76,7 +76,7 @@ PAST_CATEGORIES = {
         "groups": {"n2": "N2"},
     },
     "university": {
-        "name": "University Past Questions",
+        "name": "University Mock Questions",
         "icon": "fa-building-columns",
         "about": "Entrance exams of Japanese universities: longer problems with written solutions.",
     },

@@ -44,16 +44,16 @@ function Header({ back, title, lead }) {
 // /past: one card per exam
 function AllExams() {
   const { data, error } = useApi('/api/past')
-  usePageTitle('Past questions · Learn Solo')
+  usePageTitle('Mock Questions · Learn Solo')
 
-  if (error) return <LoadError error={error} what="past questions page" />
+  if (error) return <LoadError error={error} what="mock questions page" />
   if (!data) return <p className="section">Loading…</p>
 
   return (
     <>
       <Header
         back={<Link to="/"><i className="fas fa-house"></i> Home</Link>}
-        title="Past questions"
+        title="Mock Questions"
         lead="Exam problems to test yourself. Each one has a hint, a step-by-step solution and an answer check."
       />
       <main className="past-content">
@@ -69,7 +69,7 @@ function AllExams() {
               </span>
             </Link>
           ))}
-          {data.categories.length === 0 && <p className="past-empty">No past questions yet.</p>}
+          {data.categories.length === 0 && <p className="past-empty">No mock questions yet.</p>}
         </div>
       </main>
     </>
@@ -87,7 +87,7 @@ function ExamPage({ folder }) {
   return (
     <>
       <Header
-        back={<Link to="/past"><i className="fas fa-arrow-left"></i> All past questions</Link>}
+        back={<Link to="/past"><i className="fas fa-arrow-left"></i> All mock questions</Link>}
         title={exam.name}
         lead={exam.about}
       />
