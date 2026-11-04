@@ -99,6 +99,9 @@ TOPIC_NAMES = {
     "11-electromagnetic-induction-generation-and-distribution": "Electromagnetic Induction, Generation and Distribution",
     "12-digital-electronics-and-communication-system": "Digital Electronics and Communication System",
     "13-modern-physics": "Modern Physics",
+    # Chemistry MM: a folder name can't hold the colon or the hyphenated word
+    "03-chemical-kinetics-rates-of-reaction": "Chemical Kinetics: Rates of Reaction",
+    "05-acid-base-reactions": "Acid-Base Reactions",
 }
 
 _SMALL_WORDS = {"and", "of", "the", "in", "on", "to", "a", "an", "for"}
