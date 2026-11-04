@@ -92,6 +92,7 @@ TOPIC_NAMES = {
     # "ac" must stay capitals
     "03-ac-circuits": "AC Circuits",
     "10-electrical-energy-power-and-heating-effect": "Electrical Energy, Power and Heating Effect",
+    "11-electromagnetic-induction-generation-and-distribution": "Electromagnetic Induction, Generation and Distribution",
 }
 
 _SMALL_WORDS = {"and", "of", "the", "in", "on", "to", "a", "an", "for"}

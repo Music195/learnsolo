@@ -1,0 +1,178 @@
+<!-- tags: Electromagnetic Induction, Generation and Distribution, G12 Physics Myanmar -->
+<!-- Grade 12 Physics textbook, Chapter 11, section 11.3 (pages 178–180) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Electromagnetic Induction, Generation and Distribution">Faraday's Law and Lenz's Law</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Quantitative Rate of Induction and Energy Conservation</span>
+  <p>The magnitude and directional polarity of induced voltages are governed by two foundational principles formulated by Michael Faraday and Heinrich Lenz:</p>
+  <ul>
+    <li><strong>Faraday's Law of Induction:</strong>
+      The magnitude of the electromotive force induced in any closed conducting circuit is <strong>directly proportional to the time rate of change of magnetic flux</strong> threading through the circuit:
+      $$E = -N \frac{\Delta\Phi}{\Delta t} = -N \frac{d\Phi}{dt}$$
+      where $N$ is the number of closely wound turns in the coil, $\Delta\Phi$ is the change in magnetic flux, and $\Delta t$ is the elapsed time interval.
+    </li>
+    <li><strong>Lenz's Law (1834):</strong>
+      The direction of the induced current is always such that <strong>its magnetic effect opposes the change in magnetic flux that produces it</strong>.
+      <ul>
+        <li><strong>Approaching North Pole:</strong> As a North pole approaches a coil, magnetic flux through the coil increases. By Lenz's law, the induced current circulates to establish an opposing <strong>induced North pole</strong> on the facing end, repelling the incoming magnet.</li>
+        <li><strong>Receding North Pole:</strong> As the North pole is withdrawn, flux decreases. The induced current reverses direction to establish an <strong>induced South pole</strong>, attracting the departing magnet to resist flux decrease.</li>
+        <li><strong>Right-Hand Grip Rule:</strong> Curl fingers around the coil in the direction of conventional current; the extended thumb points toward the induced North pole.</li>
+      </ul>
+    </li>
+    <li><strong>Lenz's Law as Energy Conservation:</strong>
+      Lenz's law is a mandatory consequence of the <strong>first law of thermodynamics</strong>:
+      <ul>
+        <li>An external agent must perform positive mechanical work against the magnetic repulsive or attractive forces. This mechanical energy expended is precisely transformed into the electrical energy of the induced current and subsequently dissipated as Joule heat in the circuit resistance.</li>
+        <li>If the induced current aided the flux change, a light touch would trigger perpetual acceleration and unlimited free energy creation from nothing, which is physically impossible.</li>
+      </ul>
+    </li>
+    <li><strong>EMF vs. Current Dependence on Resistance:</strong>
+      <ul>
+        <li>The induced EMF ($E$) depends <strong>strictly on $N$ and the rate of flux change $\frac{d\Phi}{dt}$</strong>; it is completely independent of the electrical resistance $R$ of the wire.</li>
+        <li>The induced current ($I = \frac{E}{R}$) <strong>depends inversely on total circuit resistance</strong>. In an open circuit ($R \to \infty$), induced EMF exists across the terminals even though no current flows ($I = 0$).</li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formulas &mdash; Faraday's and Lenz's Laws</span>
+  <div class="formula-main">
+    $$E = -N \frac{\Delta\Phi}{\Delta t} \qquad\qquad I_{\text{ind}} = \frac{E}{R} = -\frac{N}{R}\frac{\Delta\Phi}{\Delta t} \qquad\qquad q_{\text{transferred}} = N \frac{|\Delta\Phi|}{R}$$
+  </div>
+  <ul class="symbols">
+    <li>$E$ = induced electromotive force ($\mathrm{V}$)</li>
+    <li>$N$ = number of turns of the induction coil</li>
+    <li>$\Delta\Phi = \Phi_2 - \Phi_1$ = net change in magnetic flux per turn ($\mathrm{Wb}$)</li>
+    <li>$\Delta t$ = time interval over which flux change takes place ($\mathrm{s}$)</li>
+    <li>$R$ = total circuit resistance ($\Omega$)</li>
+    <li>$I_{\text{ind}}$ = magnitude of induced current ($\mathrm{A}$)</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Visualization &mdash; Bar Magnet Moving Through Coil (Lenz's Law)</span>
+  <p class="demo-instruction">Drag the magnet slider toward and away from the coil to observe induced magnetic polarity, opposing force direction, and galvanometer needle deflection.</p>
+
+  <div id="lenz-board" style="width: 100%; height: 350px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
+
+  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
+    <label style="color: #cbd5e1; font-weight: 500;">
+      Magnet Position $x$: 
+      <input id="x-mag-slider" type="range" min="-3.5" max="0.5" step="0.1" value="-2.5" style="vertical-align: middle;">
+      <span id="x-mag-val" style="color: #38bdf8; font-weight: 700;">-2.5</span>
+    </label>
+    <div style="color: #f8fafc; font-size: 0.9rem;">
+      Coil End Polarity: <span id="polarity-stat" style="color: #fb923c; font-weight: 700;">Repelling North (N)</span> &bull; Current: <span id="i-dir-stat" style="color: #4ade80; font-weight: 700;">Counter-Clockwise</span>
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    let board = JXG.JSXGraph.initBoard('lenz-board', {
+      boundingbox: [-4, 3, 4, -3],
+      axis: false,
+      showNavigation: false,
+      showCopyright: false,
+      pan: { enabled: false },
+      zoom: { enabled: false }
+    });
+
+    // Coil fixed at x = 1.0 to 2.5
+    board.create('polygon', [[1.0, -1.2], [2.5, -1.2], [2.5, 1.2], [1.0, 1.2]], {
+      fillColor: '#334155', fillOpacity: 0.8, borders: { strokeColor: '#fbbf24', strokeWidth: 3 }
+    });
+    board.create('text', [1.75, 1.6, 'Solenoid Coil'], {
+      anchorX: 'middle', strokeColor: '#f8fafc', fontSize: 12, fontWeight: 'bold'
+    });
+
+    let magnetPol = null, magTextN = null, magTextS = null;
+    let fieldArrows = [];
+    let prevX = -2.5;
+
+    function drawMagnet() {
+      board.suspendUpdate();
+      if (magnetPol) board.removeObject(magnetPol);
+      if (magTextN) board.removeObject(magTextN);
+      if (magTextS) board.removeObject(magTextS);
+      board.removeObject(fieldArrows);
+      fieldArrows = [];
+
+      let x = parseFloat(document.getElementById('x-mag-slider').value);
+      let dx = x - prevX;
+      prevX = x;
+
+      // Magnet body [x - 1.2, x]
+      magnetPol = board.create('polygon', [[x - 1.2, -0.6], [x, -0.6], [x, 0.6], [x - 1.2, 0.6]], {
+        fillColor: '#ef4444', fillOpacity: 0.9, borders: { strokeColor: '#cbd5e1', strokeWidth: 2 }
+      });
+      magTextS = board.create('text', [x - 0.9, 0, 'S'], { strokeColor: '#ffffff', fontSize: 14, fontWeight: 'bold' });
+      magTextN = board.create('text', [x - 0.3, 0, 'N'], { strokeColor: '#ffffff', fontSize: 14, fontWeight: 'bold' });
+
+      let isMovingIn = dx > 0;
+      let isMovingOut = dx < 0;
+
+      if (Math.abs(dx) > 0.01) {
+        if (isMovingIn) {
+          document.getElementById('polarity-stat').textContent = 'Repelling North (N)';
+          document.getElementById('i-dir-stat').textContent = 'Counter-Clockwise (CCW)';
+        } else {
+          document.getElementById('polarity-stat').textContent = 'Attracting South (S)';
+          document.getElementById('i-dir-stat').textContent = 'Clockwise (CW)';
+        }
+      }
+
+      document.getElementById('x-mag-val').textContent = x.toFixed(1);
+
+      board.resumeUpdate();
+    }
+
+    drawMagnet();
+
+    document.getElementById('x-mag-slider').addEventListener('input', drawMagnet);
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Worked Example 11.4 &mdash; Induced EMF in a Multiturn Coil</span>
+  <div class="example-problem">
+    <strong>Textbook Example 11.4:</strong><br>
+    A coil consists of $200\mathrm{\,turns}$ of wire. The magnetic flux threading through the coil decreases uniformly from $0.05\mathrm{\,Wb}$ to $0.01\mathrm{\,Wb}$ in an interval of $0.20\mathrm{\,s}$.<br>
+    <strong>(a)</strong> Calculate the induced electromotive force in the coil.<br>
+    <strong>(b)</strong> If the total circuit resistance of the coil is $8.0\,\Omega$, calculate the induced current.
+  </div>
+  <div class="example-solution">
+    <strong>Given Data:</strong>
+    <ul>
+      <li>$N = 200\mathrm{\,turns}$</li>
+      <li>Initial flux $\Phi_1 = 0.05\mathrm{\,Wb}$</li>
+      <li>Final flux $\Phi_2 = 0.01\mathrm{\,Wb}$</li>
+      <li>Elapsed time $\Delta t = 0.20\mathrm{\,s}$</li>
+      <li>Resistance $R = 8.0\,\Omega$</li>
+    </ul>
+
+    <strong>Part (a): Induced EMF $E$:</strong>
+    $$\Delta\Phi = \Phi_2 - \Phi_1 = 0.01\mathrm{\,Wb} - 0.05\mathrm{\,Wb} = -0.04\mathrm{\,Wb}$$
+    Applying Faraday's Law:
+    $$E = -N \frac{\Delta\Phi}{\Delta t} = -(200) \times \left(\frac{-0.04\mathrm{\,Wb}}{0.20\mathrm{\,s}}\right) = -(200) \times (-0.20\mathrm{\,V}) = +40\mathrm{\,V}$$
+    The positive sign signifies that the induced EMF creates a magnetic field that acts to sustain the collapsing flux.
+
+    <strong>Part (b): Induced Current $I$:</strong>
+    $$I = \frac{E}{R} = \frac{40\mathrm{\,V}}{8.0\,\Omega} = 5.0\mathrm{\,A}$$
+  </div>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li><strong>Faraday's Law:</strong> $E = -N \frac{\Delta\Phi}{\Delta t}$. Induced voltage is proportional to turns $N$ and rate of flux change.</li>
+    <li><strong>Lenz's Law:</strong> The induced current produces a magnetic field that opposes the flux change causing it.</li>
+    <li>Lenz's law enforces the <strong>conservation of energy</strong>: mechanical work done against magnetic opposition equals generated electrical energy.</li>
+    <li>Induced EMF is independent of wire resistance; induced current is inversely proportional to resistance ($I = E/R$).</li>
+  </ul>
+</div>
+
+</article>
