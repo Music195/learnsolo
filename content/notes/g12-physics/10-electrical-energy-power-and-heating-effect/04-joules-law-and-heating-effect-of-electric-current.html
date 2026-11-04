@@ -1,0 +1,214 @@
+<!-- tags: Electrical Energy, Power and Heating Effect, G12 Physics Myanmar -->
+<!-- Grade 12 Physics textbook, Chapter 10, section 10.4 (pages 164–166) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Electrical Energy, Power and Heating Effect">Joule's Law and Heating Effect of Electric Current</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Microscopic Collision Mechanism and Joule's Law</span>
+  <p>When an electric current flows through any material conductor possessing non-zero electrical resistance, electrical work is converted into thermal energy. This is termed the <strong>heating effect of electric current</strong> (or <em>Joule heating</em>):</p>
+  <ul>
+    <li><strong>Microscopic Mechanism of Resistance Heating:</strong>
+      Under the influence of the internal electrostatic field $\mathbf{E}$, conduction electrons drift through the metallic lattice. As they travel, they undergo repeated inelastic collisions with oscillating lattice metal cations. In each collision, electron kinetic energy gained from the electric field is transferred to the lattice ions, amplifying their vibrational kinetic energy. Macroscopically, this increased thermal agitation manifests as a temperature rise.
+    </li>
+    <li><strong>Joule's Law of Heating (1841):</strong>
+      The amount of thermal heat energy $H$ developed in a conductor carrying a steady current $I$ is:
+      <ol>
+        <li><strong>Directly proportional to the square of current:</strong> $H \propto I^2$ for a given $R$ and $t$.</li>
+        <li><strong>Directly proportional to the resistance:</strong> $H \propto R$ for a given $I$ and $t$.</li>
+        <li><strong>Directly proportional to the time duration:</strong> $H \propto t$ of current flow.</li>
+      </ol>
+      Combining these proportions gives the electrical work in Joules:
+      $$W = I^2 R t$$
+    </li>
+    <li><strong>Heat in Calories & Mechanical Equivalent of Heat ($J$):</strong>
+      By the principle of energy conservation, electrical work $W$ and heat energy $H$ are related by Joule's mechanical equivalent of heat ($J \approx 4.2\mathrm{\,J/cal} = 4186\mathrm{\,J/kcal}$):
+      $$W = J H \implies H = \frac{W}{J} = \frac{I^2 R t}{J} = \frac{I^2 R t}{4.2} \approx 0.24\, I^2 R t\mathrm{\quad (calories)}$$
+    </li>
+    <li><strong>Series vs. Parallel Heating Comparison:</strong>
+      <ul>
+        <li><strong>In Series:</strong> Current $I$ is identical through all resistors. Therefore, $H \propto R$. The <strong>largest resistance produces the most heat</strong>.</li>
+        <li><strong>In Parallel:</strong> Potential difference $V$ is identical across all branches ($H = \frac{V^2 t}{J R}$). Therefore, $H \propto \frac{1}{R}$. The <strong>smallest resistance draws the largest current and produces the most heat</strong>.</li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formulas &mdash; Joule's Heating Equations</span>
+  <div class="formula-main">
+    $$W = I^2 R t \quad (\text{Joules}) \qquad\qquad H = \frac{I^2 R t}{J} \quad (\text{Calories}) \qquad\qquad J = 4.2\mathrm{\,J/cal}$$
+  </div>
+  <ul class="symbols">
+    <li>$W$ = electrical energy converted to thermal energy ($\mathrm{J}$)</li>
+    <li>$H$ = quantity of heat developed ($\mathrm{cal}$ or $\mathrm{kcal}$)</li>
+    <li>$I$ = current through resistor ($\mathrm{A}$)</li>
+    <li>$R$ = electrical resistance ($\Omega$)</li>
+    <li>$t$ = duration of current passage ($\mathrm{s}$)</li>
+    <li>$J = 4.2\mathrm{\,J/cal} = 4186\mathrm{\,J/kcal}$ = Joule's mechanical equivalent of heat</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Visualization &mdash; Joule Heat Generation $H \propto I^2 R t$</span>
+  <p class="demo-instruction">Adjust current $I$, resistance $R$, and time $t$ to observe how heat energy in calories grows quadratically with current according to Joule's law.</p>
+
+  <div id="joule-board" style="width: 100%; height: 350px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
+
+  <div class="demo-controls" style="display: flex; gap: 1.2rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
+    <label style="color: #cbd5e1; font-weight: 500;">
+      Current $I$: 
+      <input id="j-i-slider" type="range" min="0.5" max="5.0" step="0.5" value="3.0" style="vertical-align: middle;">
+      <span id="j-i-val" style="color: #38bdf8; font-weight: 700;">3.0 A</span>
+    </label>
+    <label style="color: #cbd5e1; font-weight: 500;">
+      Resistance $R$: 
+      <input id="j-r-slider" type="range" min="5" max="50" step="5" value="20" style="vertical-align: middle;">
+      <span id="j-r-val" style="color: #4ade80; font-weight: 700;">20 &Omega;</span>
+    </label>
+    <label style="color: #cbd5e1; font-weight: 500;">
+      Time $t$: 
+      <input id="j-t-slider" type="range" min="30" max="300" step="30" value="120" style="vertical-align: middle;">
+      <span id="j-t-val" style="color: #facc15; font-weight: 700;">120 s</span>
+    </label>
+    <div style="color: #f8fafc; font-size: 0.9rem;">
+      Work $W$: <span id="j-w-stat" style="color: #fb923c; font-weight: 700;">21.60 kJ</span> &bull; Heat $H$: <span id="j-h-stat" style="color: #f43f5e; font-weight: 700;">5.14 kcal</span>
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    let board = JXG.JSXGraph.initBoard('joule-board', {
+      boundingbox: [-0.5, 30, 5.5, -2],
+      axis: true,
+      defaultAxes: {
+        x: { name: 'Current I (A)', withLabel: true, label: { position: 'rt', offset: [-20, -15], color: '#94a3b8' } },
+        y: { name: 'Heat H (kcal)', withLabel: true, label: { position: 'rt', offset: [15, -10], color: '#94a3b8' } }
+      },
+      showNavigation: false,
+      showCopyright: false,
+      pan: { enabled: false },
+      zoom: { enabled: false }
+    });
+
+    let hCurve = null;
+    let hPt = null;
+
+    function updateJoule() {
+      board.suspendUpdate();
+      if (hCurve) board.removeObject(hCurve);
+      if (hPt) board.removeObject(hPt);
+
+      let I = parseFloat(document.getElementById('j-i-slider').value);
+      let R = parseFloat(document.getElementById('j-r-slider').value);
+      let t = parseFloat(document.getElementById('j-t-slider').value);
+
+      let W_J = I * I * R * t;
+      let H_cal = W_J / 4.2;
+      let H_kcal = H_cal / 1000.0;
+
+      document.getElementById('j-w-stat').textContent = (W_J / 1000.0).toFixed(2) + ' kJ';
+      document.getElementById('j-h-stat').textContent = H_kcal.toFixed(2) + ' kcal';
+
+      // Plot H(i) = i^2 * R * t / 4200 (in kcal)
+      let coeff = (R * t) / 4200.0;
+      hCurve = board.create('functiongraph', [
+        function(ix) {
+          return coeff * ix * ix;
+        }, 0, 5.5
+      ], {
+        strokeColor: '#ef4444', strokeWidth: 3
+      });
+
+      hPt = board.create('point', [I, H_kcal], {
+        size: 5, fillColor: '#facc15', strokeColor: '#eab308', name: 'H = ' + H_kcal.toFixed(2) + ' kcal', fixed: true
+      });
+
+      board.resumeUpdate();
+    }
+
+    updateJoule();
+
+    document.getElementById('j-i-slider').addEventListener('input', function(e) {
+      document.getElementById('j-i-val').textContent = parseFloat(e.target.value).toFixed(1) + ' A';
+      updateJoule();
+    });
+    document.getElementById('j-r-slider').addEventListener('input', function(e) {
+      document.getElementById('j-r-val').textContent = e.target.value + ' Ω';
+      updateJoule();
+    });
+    document.getElementById('j-t-slider').addEventListener('input', function(e) {
+      document.getElementById('j-t-val').textContent = e.target.value + ' s';
+      updateJoule();
+    });
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Worked Example 10.8 &mdash; Heat Developed by Resistor in Calories</span>
+  <div class="example-problem">
+    <strong>Textbook Example 10.8 (Page 164):</strong><br>
+    A $20\,\Omega$ resistor carries a current of $3\mathrm{\,A}$ for $2\mathrm{\,min}$. Find the amount of heat energy produced in calories.
+  </div>
+  <div class="example-solution">
+    <strong>Given Data:</strong>
+    <ul>
+      <li>Resistance $R = 20\,\Omega$</li>
+      <li>Current $I = 3\mathrm{\,A}$</li>
+      <li>Time $t = 2\mathrm{\,min} = 2 \times 60\mathrm{\,s} = 120\mathrm{\,s}$</li>
+      <li>$J = 4.2\mathrm{\,J/cal}$</li>
+    </ul>
+
+    <strong>Step 1: Calculate total electrical energy $W$ in Joules:</strong>
+    $$W = I^2 R t = (3\mathrm{\,A})^2 \times (20\,\Omega) \times (120\mathrm{\,s}) = 9 \times 2400 = 21{,}600\mathrm{\,J}$$
+
+    <strong>Step 2: Convert to heat $H$ in calories:</strong>
+    $$H = \frac{W}{J} = \frac{21{,}600\mathrm{\,J}}{4.2\mathrm{\,J/cal}} \approx 5142.86\mathrm{\,cal} \approx 5.14\mathrm{\,kcal}$$
+
+    <strong>Conclusion:</strong><br>
+    The heat produced in the resistor is approximately $5143\mathrm{\,cal}$ ($5.14\mathrm{\,kcal}$).
+  </div>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Worked Example 10.9 &mdash; Parallel Heating Rates</span>
+  <div class="example-problem">
+    <strong>Textbook Example 10.9 (Page 165):</strong><br>
+    Resistors of $5\,\Omega$, $10\,\Omega$, and $15\,\Omega$ are connected in parallel across a $12\mathrm{\,V}$ source. Calculate the heat produced in each resistor during $5\mathrm{\,min}$.
+  </div>
+  <div class="example-solution">
+    <strong>Given Data:</strong>
+    <ul>
+      <li>$V = 12\mathrm{\,V}$, $t = 5\mathrm{\,min} = 300\mathrm{\,s}$, $J = 4.2\mathrm{\,J/cal}$</li>
+    </ul>
+
+    <strong>Calculations for Each Parallel Branch ($H = \frac{V^2 t}{J R}$):</strong>
+    <ul>
+      <li><strong>For $R_1 = 5\,\Omega$:</strong>
+        $$W_1 = \frac{V^2}{R_1}t = \frac{(12)^2 \times 300}{5} = \frac{144 \times 300}{5} = 8640\mathrm{\,J}$$
+        $$H_1 = \frac{8640}{4.2} \approx 2057.14\mathrm{\,cal}$$
+      </li>
+      <li><strong>For $R_2 = 10\,\Omega$:</strong>
+        $$W_2 = \frac{V^2}{R_2}t = \frac{144 \times 300}{10} = 4320\mathrm{\,J}$$
+        $$H_2 = \frac{4320}{4.2} \approx 1028.57\mathrm{\,cal}$$
+      </li>
+      <li><strong>For $R_3 = 15\,\Omega$:</strong>
+        $$W_3 = \frac{V^2}{R_3}t = \frac{144 \times 300}{15} = 2880\mathrm{\,J}$$
+        $$H_3 = \frac{2880}{4.2} \approx 685.71\mathrm{\,cal}$$
+      </li>
+    </ul>
+    <em>Observation: Under identical parallel voltage, the smallest resistor ($5\,\Omega$) dissipates the greatest heat ($2057\mathrm{\,cal}$) because current is highest.</em>
+  </div>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li><strong>Joule's law of heating:</strong> $W = I^2 R t$ ($\mathrm{J}$); in calories, $H = \frac{I^2 R t}{J} \approx 0.24\,I^2 R t$.</li>
+    <li>Heating arises from inelastic collisions between drifting electrons and vibrating lattice ions.</li>
+    <li>In series, $H \propto R$ (largest resistor is hottest); in parallel, $H \propto 1/R$ (smallest resistor is hottest).</li>
+  </ul>
+</div>
+
+</article>

@@ -1,0 +1,210 @@
+<!-- tags: Electrical Energy, Power and Heating Effect, G12 Physics Myanmar -->
+<!-- Grade 12 Physics textbook, Chapter 10, section 10.1 (pages 153–157) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Electrical Energy, Power and Heating Effect">Electromotive Force and Internal Resistance</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Energy Conversion in Voltage Sources</span>
+  <p>To sustain a continuous electric current through a resistive load, an active device must do work on charge carriers, transporting positive charges internally from lower to higher electric potential. Such devices are called <strong>sources of electromotive force</strong> (e.g., chemical batteries, photovoltaic cells, and electromagnetic generators):</p>
+  <ul>
+    <li><strong>Electromotive Force ($\mathcal{E}$ or $E$):</strong>
+      The electromotive force is defined as the <strong>amount of energy converted into electrical form per unit positive charge</strong> as it moves completely round a closed circuit:
+      $$E = \frac{W}{Q}$$
+      <ul>
+        <li><strong>Unit:</strong> Volt ($\mathrm{V}$), equivalent to one Joule per Coulomb ($1\mathrm{\,V} = 1\mathrm{\,J/C}$).</li>
+        <li><em>Misnomer Warning:</em> Despite its historical name, electromotive force is <strong>not a mechanical force</strong> measured in Newtons; it is an electrical potential difference (energy per unit charge).</li>
+      </ul>
+    </li>
+    <li><strong>Internal Resistance ($r$):</strong>
+      Every real voltage source possesses inherent internal electrical resistance $r$ arising from the finite electrical conductivity of its electrolytes, electrode materials, chemical polarization, and thermal state. A real source is modeled as an ideal emf $E$ in series with an internal resistor $r$.
+    </li>
+    <li><strong>Circuit Equation:</strong>
+      When a load resistor $R$ is connected across the source, a current $I$ circulates:
+      $$E = V_{\text{external}} + V_{\text{internal}} = I R + I r = I(R + r)$$
+      $$\implies I = \frac{E}{R + r}$$
+    </li>
+    <li><strong>Terminal Voltage ($V$) vs. EMF ($E$):</strong>
+      The potential difference measurable across the external terminals of the source:
+      $$V = E - I r$$
+      <ul>
+        <li><strong>Open-Circuit Condition ($I = 0$):</strong> When no current flows (switch open or measured with an ideal high-impedance voltmeter), $Ir = 0$, so <strong>terminal voltage equals the EMF ($V = E$)</strong>.</li>
+        <li><strong>Closed-Circuit / Discharging ($I > 0$):</strong> Terminal voltage is <strong>always less than EMF</strong> by the internal potential drop $Ir$ ("lost volts").</li>
+        <li><strong>Charging Condition:</strong> When an external charger forces reverse current into the battery, $V = E + I r$, and terminal voltage <em>exceeds</em> the emf.</li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formulas &mdash; EMF and Circuit Equations</span>
+  <div class="formula-main">
+    $$I = \frac{E}{R + r} \qquad\qquad V = E - I r \qquad\qquad E = I(R + r)$$
+  </div>
+  <ul class="symbols">
+    <li>$E$ = electromotive force of the source ($\mathrm{V}$)</li>
+    <li>$V$ = terminal potential difference (available voltage) ($\mathrm{V}$)</li>
+    <li>$I$ = circuit current ($\mathrm{A}$)</li>
+    <li>$R$ = external load resistance ($\Omega$)</li>
+    <li>$r$ = internal resistance of the battery ($\Omega$)</li>
+    <li>$Ir$ = internal potential drop / "lost volts" ($\mathrm{V}$)</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Visualization &mdash; Terminal Voltage vs. Load Resistance</span>
+  <p class="demo-instruction">Adjust load resistance $R$ and internal resistance $r$ to observe how internal voltage drop $Ir$ depresses terminal voltage $V$ below the open-circuit EMF $E$.</p>
+
+  <div id="emf-board" style="width: 100%; height: 350px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
+
+  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
+    <label style="color: #cbd5e1; font-weight: 500;">
+      Load $R$: 
+      <input id="r-load-slider" type="range" min="1" max="20" step="1" value="5" style="vertical-align: middle;">
+      <span id="r-load-val" style="color: #38bdf8; font-weight: 700;">5.0 &Omega;</span>
+    </label>
+    <label style="color: #cbd5e1; font-weight: 500;">
+      Internal $r$: 
+      <input id="r-int-slider" type="range" min="0.2" max="2.0" step="0.2" value="1.0" style="vertical-align: middle;">
+      <span id="r-int-val" style="color: #ef4444; font-weight: 700;">1.0 &Omega;</span>
+    </label>
+    <div style="color: #f8fafc; font-size: 0.9rem;">
+      $I$: <span id="i-stat" style="color: #4ade80; font-weight: 700;">2.00 A</span> &bull; Terminal $V$: <span id="v-term-stat" style="color: #fb923c; font-weight: 700;">10.00 V</span> ($E = 12\mathrm{\,V}$)
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    let board = JXG.JSXGraph.initBoard('emf-board', {
+      boundingbox: [-1, 14, 22, -1],
+      axis: true,
+      defaultAxes: {
+        x: { name: 'Load R (Ω)', withLabel: true, label: { position: 'rt', offset: [-20, -15], color: '#94a3b8' } },
+        y: { name: 'Voltage V (V)', withLabel: true, label: { position: 'rt', offset: [15, -10], color: '#94a3b8' } }
+      },
+      showNavigation: false,
+      showCopyright: false,
+      pan: { enabled: false },
+      zoom: { enabled: false }
+    });
+
+    let E = 12.0;
+    // EMF line
+    board.create('line', [[0, E], [22, E]], {
+      strokeColor: '#facc15', strokeWidth: 1.5, dash: 2
+    });
+    board.create('text', [15, E + 0.6, 'EMF E = 12 V (Open Circuit)'], {
+      strokeColor: '#facc15', fontSize: 11
+    });
+
+    let vCurve = null;
+    let opPoint = null;
+
+    function updateEMF() {
+      board.suspendUpdate();
+      if (vCurve) board.removeObject(vCurve);
+      if (opPoint) board.removeObject(opPoint);
+
+      let R = parseFloat(document.getElementById('r-load-slider').value);
+      let r = parseFloat(document.getElementById('r-int-slider').value);
+
+      let I = E / (R + r);
+      let V = E - (I * r); // = I * R
+
+      document.getElementById('i-stat').textContent = I.toFixed(2) + ' A';
+      document.getElementById('v-term-stat').textContent = V.toFixed(2) + ' V';
+
+      // Plot V(R) = E * R / (R + r)
+      vCurve = board.create('functiongraph', [
+        function(rx) {
+          return (E * rx) / (rx + r);
+        }, 0, 22
+      ], {
+        strokeColor: '#38bdf8', strokeWidth: 3
+      });
+
+      opPoint = board.create('point', [R, V], {
+        size: 5, fillColor: '#4ade80', strokeColor: '#22c55e', name: 'Operating (R, V)', fixed: true
+      });
+
+      board.resumeUpdate();
+    }
+
+    updateEMF();
+
+    document.getElementById('r-load-slider').addEventListener('input', function(e) {
+      document.getElementById('r-load-val').textContent = parseFloat(e.target.value).toFixed(1) + ' Ω';
+      updateEMF();
+    });
+    document.getElementById('r-int-slider').addEventListener('input', function(e) {
+      document.getElementById('r-int-val').textContent = parseFloat(e.target.value).toFixed(1) + ' Ω';
+      updateEMF();
+    });
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Worked Example 10.1 &mdash; Determining Unknown EMF and Internal Resistance</span>
+  <div class="example-problem">
+    <strong>Textbook Example 10.1 (Page 156):</strong><br>
+    When a battery is connected to a $2\,\Omega$ resistor, a current of $0.6\mathrm{\,A}$ flows through the circuit. When connected to a $7\,\Omega$ resistor, the current decreases to $0.2\mathrm{\,A}$. Find the electromotive force ($E$) and internal resistance ($r$) of the battery.
+  </div>
+  <div class="example-solution">
+    <strong>Given Data:</strong>
+    <ul>
+      <li>Case 1: $R_1 = 2\,\Omega$, $I_1 = 0.6\mathrm{\,A}$</li>
+      <li>Case 2: $R_2 = 7\,\Omega$, $I_2 = 0.2\mathrm{\,A}$</li>
+    </ul>
+
+    <strong>Step 1: Formulate the circuit equations:</strong>
+    $$E = I_1(R_1 + r) = 0.6(2 + r) = 1.2 + 0.6r \qquad \text{--- (Eq. 1)}$$
+    $$E = I_2(R_2 + r) = 0.2(7 + r) = 1.4 + 0.2r \qquad \text{--- (Eq. 2)}$$
+
+    <strong>Step 2: Equate Eq. 1 and Eq. 2 to solve for $r$:</strong>
+    $$1.2 + 0.6r = 1.4 + 0.2r$$
+    $$0.6r - 0.2r = 1.4 - 1.2$$
+    $$0.4r = 0.2 \implies r = \frac{0.2}{0.4} = 0.5\,\Omega$$
+
+    <strong>Step 3: Substitute $r = 0.5\,\Omega$ into Eq. 1 to find $E$:</strong>
+    $$E = 1.2 + 0.6(0.5) = 1.2 + 0.3 = 1.5\mathrm{\,V}$$
+
+    <strong>Conclusion:</strong><br>
+    The electromotive force is $E = 1.5\mathrm{\,V}$ and the internal resistance is $r = 0.5\,\Omega$.
+  </div>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Worked Example 10.2 &mdash; Terminal Voltage Calculation</span>
+  <div class="example-problem">
+    <strong>Textbook Example 10.2 (Page 156):</strong><br>
+    A battery of electromotive force $12\mathrm{\,V}$ and internal resistance $1\,\Omega$ is connected across a $5\,\Omega$ resistor. Calculate:<br>
+    <strong>(a)</strong> The current in the circuit.<br>
+    <strong>(b)</strong> The terminal potential difference across the battery.
+  </div>
+  <div class="example-solution">
+    <strong>Calculation:</strong>
+    <ul>
+      <li><strong>(a) Current $I$:</strong>
+        $$I = \frac{E}{R + r} = \frac{12\mathrm{\,V}}{5\,\Omega + 1\,\Omega} = \frac{12}{6} = 2.0\mathrm{\,A}$$
+      </li>
+      <li><strong>(b) Terminal Potential Difference $V$:</strong>
+        $$V = E - I r = 12\mathrm{\,V} - (2.0\mathrm{\,A})(1\,\Omega) = 12 - 2 = 10\mathrm{\,V}$$
+        <em>Alternatively, using Ohm's law on the external resistor:</em>
+        $$V = I R = (2.0\mathrm{\,A})(5\,\Omega) = 10\mathrm{\,V}$$
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li><strong>EMF ($E$)</strong> is energy converted into electrical form per coulomb ($E = W/Q$, in Volts). It is open-circuit voltage.</li>
+    <li>Real sources have internal resistance $r$; the circuit current is $I = \frac{E}{R + r}$.</li>
+    <li><strong>Terminal voltage ($V = E - Ir$)</strong> is less than EMF due to the internal voltage drop $Ir$.</li>
+    <li>During external charging, current flows into the positive terminal, making $V = E + Ir > E$.</li>
+  </ul>
+</div>
+
+</article>
