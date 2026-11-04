@@ -52,94 +52,93 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Terminal Voltage vs. Load Resistance</span>
-  <p class="demo-instruction">Adjust load resistance $R$ and internal resistance $r$ to observe how internal voltage drop $Ir$ depresses terminal voltage $V$ below the open-circuit EMF $E$.</p>
-
-  <div id="emf-board" style="width: 100%; height: 350px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Load $R$: 
-      <input id="r-load-slider" type="range" min="1" max="20" step="1" value="5" style="vertical-align: middle;">
-      <span id="r-load-val" style="color: #38bdf8; font-weight: 700;">5.0 &Omega;</span>
-    </label>
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Internal $r$: 
-      <input id="r-int-slider" type="range" min="0.2" max="2.0" step="0.2" value="1.0" style="vertical-align: middle;">
-      <span id="r-int-val" style="color: #ef4444; font-weight: 700;">1.0 &Omega;</span>
-    </label>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      $I$: <span id="i-stat" style="color: #4ade80; font-weight: 700;">2.00 A</span> &bull; Terminal $V$: <span id="v-term-stat" style="color: #fb923c; font-weight: 700;">10.00 V</span> ($E = 12\mathrm{\,V}$)
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; EMF, Internal Resistance and "Lost Volts"</span>
+  <p class="demo-question">A battery says 1.5 V on the label, yet a voltmeter across it reads less when it is working hard. Where do the missing volts go?</p>
+  <p class="demo-instruction">The battery (dashed box) is an ideal EMF $E$ plus a small internal resistance $r$. Lower the load $R$ to draw more current: the voltage lost inside the battery, $Ir$, grows and the terminal voltage $V = E - Ir$ falls. The staircase on the right shows the potential going round the circuit: up by $E$ in the cell, down by $Ir$ inside it, down by $IR$ in the load. The graph shows $V$ against $I$: a straight line with intercept $E$ and slope $-r$.</p>
+  <div id="pk-emf"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('emf-board', {
-      boundingbox: [-1, 14, 22, -1],
-      axis: true,
-      defaultAxes: {
-        x: { name: 'Load R (Ω)', withLabel: true, label: { position: 'rt', offset: [-20, -15], color: '#94a3b8' } },
-        y: { name: 'Voltage V (V)', withLabel: true, label: { position: 'rt', offset: [15, -10], color: '#94a3b8' } }
-      },
-      showNavigation: false,
-      showCopyright: false,
-      pan: { enabled: false },
-      zoom: { enabled: false }
-    });
+  (function () {
+    const k = PhysKit.mount('pk-emf', { x: [-6.2, 6.2], y: [-2.6, 2.6] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    k.row();
+    const ES = k.slider({ label: 'E', unit: 'V', min: 1, max: 12, step: 0.1, value: 1.5 });
+    const rS = k.slider({ label: 'r', unit: 'Ω', min: 0.1, max: 3, step: 0.1, value: 0.5 });
+    const RS = k.slider({ label: 'R (load)', unit: 'Ω', min: 0.2, max: 20, step: 0.1, value: 2 });
+    k.row();
+    k.button('Example 10.1: R = 2 Ω', () => { ES.value = 1.5; rS.value = 0.5; RS.value = 2; });
+    k.button('R = 7 Ω', () => { ES.value = 1.5; rS.value = 0.5; RS.value = 7; });
+    k.button('Example 10.2 (12 V, 1 Ω, 5 Ω)', () => { ES.value = 12; rS.value = 1; RS.value = 5; });
+    const I = () => ES.value / (RS.value + rS.value);
+    let flow = 0;
+    k.loop(dt => { flow += I() / (ES.value / 0.6) * dt * 2; }, { button: false });
 
-    let E = 12.0;
-    // EMF line
-    board.create('line', [[0, E], [22, E]], {
-      strokeColor: '#facc15', strokeWidth: 1.5, dash: 2
-    });
-    board.create('text', [15, E + 0.6, 'EMF E = 12 V (Open Circuit)'], {
-      strokeColor: '#facc15', fontSize: 11
-    });
+    k.draw = g => {
+      const E = ES.value, r = rS.value, i = I(), V = E - i * r;
+      // circuit loop: battery on the left, load on the right
+      const L = -5.0, Rx = -1.2, T = 1.8, B = -1.8;
+      g.rect(L - 0.75, -1.25, 1.5, 2.5, { color: C.muted, width: 1.5, dash: [5, 4], radius: 8 });
+      g.text([L - 0.75, 1.5], 'battery', { align: 'left', size: 11, color: C.muted });
+      g.path([[L, 0.75], [L, T], [Rx, T], [Rx, 0.8]], { color: C.ink, width: 3 });
+      g.path([[Rx, -0.8], [Rx, B], [L, B], [L, -0.9]], { color: C.ink, width: 3 });
+      // ideal cell
+      g.line([L - 0.4, 0.75], [L + 0.4, 0.75], { color: C.ink, width: 3 }); g.line([L - 0.22, 0.45], [L + 0.22, 0.45], { color: C.ink, width: 6 });
+      g.line([L, 0.45], [L, 0.1], { color: C.ink, width: 3 });
+      g.text([L + 0.5, 0.6], 'E', { align: 'left', size: 13, bold: true });
+      // internal resistor (small zigzag)
+      const zz = [[L, 0.1]]; for (let j = 1; j <= 6; j++) zz.push([L + (j % 2 ? 0.18 : -0.18), 0.1 - j * 0.15]); zz.push([L, -0.9]);
+      g.path(zz, { color: C.bad, width: 2.5 });
+      g.text([L + 0.35, -0.4], 'r', { align: 'left', size: 13, bold: true, color: C.bad });
+      // load
+      const zr = [[Rx, 0.8]]; for (let j = 1; j <= 8; j++) zr.push([Rx + (j % 2 ? 0.25 : -0.25), 0.8 - j * 0.2]); zr.push([Rx, -0.8]);
+      g.path(zr, { color: C.acc, width: 2.5 });
+      g.text([Rx + 0.4, 0], `R = ${num(RS.value, 1)} Ω`, { align: 'left', size: 12, bold: true, color: C.acc });
+      // voltmeter across the terminals
+      g.circle([-3.0, 0], 0.42, { fill: '#fff', color: C.ink, width: 2 });
+      g.text([-3.0, 0.05], `${num(V, 2)}`, { size: 12, bold: true });
+      g.text([-3.0, -0.62], 'voltmeter', { size: 10, bg: '#fff', color: C.muted });
+      g.line([-3.0, 0.42], [-3.0, T], { color: C.muted, width: 1.5, dash: [3, 3] }); g.line([-3.0, -0.42], [-3.0, B], { color: C.muted, width: 1.5, dash: [3, 3] });
+      // charges moving round (conventional current: out of + at the top)
+      const loop = [[L, T], [Rx, T], [Rx, B], [L, B], [L, T]];
+      for (let j = 0; j < 14; j++) {
+        let s = (((j / 14) + flow * 0.1) % 1) * 15.2;
+        for (let m = 0; m < 4; m++) { const d = Math.hypot(loop[m + 1][0] - loop[m][0], loop[m + 1][1] - loop[m][1]); if (s <= d) { const f = s / d; g.dot([loop[m][0] + f * (loop[m + 1][0] - loop[m][0]), loop[m][1] + f * (loop[m + 1][1] - loop[m][1])], 3.5, C.energy); break; } s -= d; }
+      }
+      g.text([-3.1, 2.3], `I = E/(R + r) = ${num(i, 3)} A`, { size: 13, bold: true, color: C.energy });
+      // potential staircase around the loop
+      const X0 = 0.9, X1 = 6.0, Y0 = -2.0, H = 3.8, sc = H / E;
+      const xs = [X0, X0 + 0.8, X0 + 1.3, X0 + 2.1, X0 + 3.1, X0 + 4.3, X1];
+      g.line([X0, Y0], [X1, Y0], { color: C.faint });
+      const path = [[xs[0], Y0], [xs[1], Y0], [xs[1], Y0 + E * sc], [xs[2], Y0 + E * sc], [xs[3], Y0 + V * sc], [xs[4], Y0 + V * sc], [xs[5], Y0], [xs[6], Y0]];
+      g.path(path, { color: C.ink, width: 3 });
+      g.arrow([xs[1] - 0.15, Y0], [0, E * sc], { color: C.vel, width: 2, head: 7 });
+      g.text([xs[1] - 0.25, Y0 + E * sc / 2], `+E`, { align: 'right', size: 12, bold: true, color: C.vel });
+      g.text([(xs[2] + xs[3]) / 2 + 0.15, Y0 + (E + V) / 2 * sc + 0.1], `−Ir = ${num(i * r, 2)} V`, { align: 'left', size: 12, bold: true, color: C.bad });
+      g.text([(xs[4] + xs[5]) / 2 + 0.2, Y0 + V / 2 * sc + 0.2], `−IR = ${num(i * RS.value, 2)} V`, { align: 'left', size: 12, bold: true, color: C.acc });
+      g.text([(xs[3] + xs[4]) / 2, Y0 + V * sc + 0.22], `V = ${num(V, 2)} V`, { size: 12, bold: true });
+      g.text([(X0 + X1) / 2, 2.35], 'potential going round the circuit', { size: 11, color: C.muted });
+      ['cell', 'r', 'wire', 'R'].forEach((n, j) => g.text([[xs[1], (xs[2] + xs[3]) / 2, (xs[3] + xs[4]) / 2, (xs[4] + xs[5]) / 2][j], Y0 - 0.3], n, { size: 10, color: C.muted }));
+    };
 
-    let vCurve = null;
-    let opPoint = null;
+    const gv = k.addView({ x: [0, 1], y: [0, 1], equal: false, height: 170, title: 'Terminal voltage V against current I' });
+    gv.draw = g => {
+      const E = ES.value, r = rS.value, Imax = E / r;
+      gv.setRange([-0.05 * Imax, Imax * 1.05], [-0.08 * E, E * 1.15]);
+      g.axes({ xstep: Imax > 20 ? 5 : Imax > 5 ? 1 : Imax > 2 ? 0.5 : 0.2, ystep: E > 6 ? 2 : E > 2 ? 0.5 : 0.25, xlabel: 'I (A)', ylabel: 'V (V)' });
+      g.line([0, E], [Imax, 0], { color: C.acc, width: 2.5 });
+      g.text([0, E], 'E', { size: 12, bold: true, dx: 10, dy: -8 });
+      g.text([Imax, 0], 'short circuit', { size: 11, color: C.muted, dx: -40, dy: -10 });
+      const i = I();
+      g.dot([i, E - i * r], 7, C.bad);
+    };
 
-    function updateEMF() {
-      board.suspendUpdate();
-      if (vCurve) board.removeObject(vCurve);
-      if (opPoint) board.removeObject(opPoint);
-
-      let R = parseFloat(document.getElementById('r-load-slider').value);
-      let r = parseFloat(document.getElementById('r-int-slider').value);
-
-      let I = E / (R + r);
-      let V = E - (I * r); // = I * R
-
-      document.getElementById('i-stat').textContent = I.toFixed(2) + ' A';
-      document.getElementById('v-term-stat').textContent = V.toFixed(2) + ' V';
-
-      // Plot V(R) = E * R / (R + r)
-      vCurve = board.create('functiongraph', [
-        function(rx) {
-          return (E * rx) / (rx + r);
-        }, 0, 22
-      ], {
-        strokeColor: '#38bdf8', strokeWidth: 3
-      });
-
-      opPoint = board.create('point', [R, V], {
-        size: 5, fillColor: '#4ade80', strokeColor: '#22c55e', name: 'Operating (R, V)', fixed: true
-      });
-
-      board.resumeUpdate();
-    }
-
-    updateEMF();
-
-    document.getElementById('r-load-slider').addEventListener('input', function(e) {
-      document.getElementById('r-load-val').textContent = parseFloat(e.target.value).toFixed(1) + ' Ω';
-      updateEMF();
-    });
-    document.getElementById('r-int-slider').addEventListener('input', function(e) {
-      document.getElementById('r-int-val').textContent = parseFloat(e.target.value).toFixed(1) + ' Ω';
-      updateEMF();
-    });
+    k.update = () => {
+      const E = ES.value, r = rS.value, R = RS.value, i = I();
+      k.readout([
+        `I = E/(R + r) = ${num(E, 1)}/(${num(R, 1)} + ${num(r, 1)}) = <b>${num(i, 3)} A</b>; lost volts Ir = <b>${num(i * r, 3)} V</b>; terminal V = E − Ir = <b>${num(E - i * r, 3)} V</b>`,
+        'A big load (large R) takes little current, so V is close to E. Shorting the battery (R → 0) gives the biggest current E/r and V → 0.',
+        'Example 10.1: 0.6 A with 2 Ω and 0.2 A with 7 Ω give 1.2 + 0.6r = 1.4 + 0.2r → r = 0.5 Ω, E = 1.5 V. Example 10.2: I = 12/6 = 2 A, V = 12 − 2 = 10 V.'
+      ]);
+    };
   })();
   </script>
 </div>

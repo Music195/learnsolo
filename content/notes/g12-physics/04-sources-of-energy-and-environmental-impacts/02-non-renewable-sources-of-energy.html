@@ -45,98 +45,74 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Nuclear Fission Chain Reaction</span>
-  <p class="demo-instruction">Click "Initiate Fission" to trigger an incident neutron hitting a Uranium-235 nucleus. Observe how the splitting nucleus releases large amounts of energy alongside 3 prompt neutrons that go on to induce a sustained chain reaction.</p>
-
-  <div id="fission-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <button id="btn-fission" class="btn" style="padding: 0.4rem 1.2rem; font-weight: 600; background: #0284c7; color: white; border-radius: 6px; border: none; cursor: pointer;">Initiate Fission</button>
-    <button id="btn-reset" class="btn" style="padding: 0.4rem 1rem; font-weight: 600; background: #64748b; color: white; border-radius: 6px; border: none; cursor: pointer;">Reset Reaction</button>
-    <span id="fission-stat" style="font-size: 0.9rem; font-weight: 600; color: #38bdf8;">Status: Ready for neutron strike</span>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; Inside a Thermal Power Station</span>
+  <p class="demo-question">Coal, oil, gas and uranium stations all boil water to spin a turbine. Where does most of the fuel's energy go, and why does a nuclear station need so little fuel?</p>
+  <p class="demo-instruction">Pick a fuel and change the turbine efficiency. Energy flows from left to right; the width of the band shows how much is left, and the red arrows show energy lost as heat at each stage. The readout shows how much fuel a 500 MW station burns each day.</p>
+  <div id="pk-plant"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('fission-board', {
-      boundingbox: [-2, 6, 10, -6],
-      axis: false,
-      showNavigation: false,
-      showCopyright: false
-    });
+  (function () {
+    const k = PhysKit.mount('pk-plant', { x: [-6.2, 6.2], y: [-2.8, 2.8] });
+    const C = PhysKit.C, num = k.num;
+    // energy per kg of fuel (J/kg) and CO2 per kWh of electricity (g)
+    const FUEL = [
+      { name: 'Coal', e: 24e6, co2: 820, col: '#44403c', unit: 't', div: 1000 },
+      { name: 'Oil', e: 42e6, co2: 650, col: '#78350f', unit: 't', div: 1000 },
+      { name: 'Natural gas', e: 50e6, co2: 490, col: '#0ea5e9', unit: 't', div: 1000 },
+      { name: 'Uranium-235', e: 8.2e13, co2: 12, col: '#16a34a', unit: 'kg', div: 1 }
+    ];
+    k.row();
+    const fuel = k.choice(FUEL.map(f => f.name), 0);
+    k.row();
+    const tS = k.slider({ label: 'turbine efficiency', unit: '%', min: 20, max: 50, step: 1, value: 42, digits: 0 });
+    const STAGES = [
+      { name: 'fuel', sub: '' }, { name: 'boiler', sub: 'heat' }, { name: 'turbine', sub: 'kinetic' }, { name: 'generator', sub: 'electrical' }
+    ];
+    const eff = () => [fuel.value === 3 ? 0.95 : 0.88, tS.value / 100, 0.98];   // boiler (reactor), turbine, generator
 
-    let elements = [];
+    let flowT = 0;
+    k.loop(dt => { flowT += dt; });
 
-    function drawInitial() {
-      board.suspendUpdate();
-      for (let el of elements) board.removeObject(el);
-      elements = [];
-
-      // Target U-235 nucleus at (3, 0)
-      let u235 = board.create('circle', [[3, 0], 1.2], {
-        fillColor: '#8b5cf6',
-        fillOpacity: 0.8,
-        strokeColor: '#c084fc',
-        strokeWidth: 2
+    k.draw = g => {
+      const f = FUEL[fuel.value], e = eff();
+      const xs = [-5.0, -1.8, 1.4, 4.6];
+      let level = 1;
+      const levels = [1];
+      e.forEach(x => { level *= x; levels.push(level); });
+      // bands between stages, height = energy left
+      for (let i = 0; i < 3; i++) {
+        const h0 = levels[i] * 2.2, h1 = levels[i + 1] * 2.2, xa = xs[i] + 0.6, xb = xs[i + 1] - 0.6;
+        g.path([[xa, 0.5 + h0 / 2], [xb, 0.5 + h1 / 2], [xb, 0.5 - h1 / 2], [xa, 0.5 - h0 / 2]], { close: true, fill: C.energy, fillAlpha: 0.35, color: 'none' });
+        // moving energy dots
+        for (let j = 0; j < 6; j++) {
+          const u = ((flowT * 0.5 + j / 6) % 1), x = xa + (xb - xa) * u, hh = h0 + (h1 - h0) * u;
+          for (const s of [-0.3, 0, 0.3]) g.dot([x, 0.5 + s * hh], 2.5, C.energy);
+        }
+        // heat lost at the stage on the right
+        const lost = levels[i] - levels[i + 1];
+        if (lost > 0.005) {
+          g.arrow([xs[i + 1], -0.8], [0, -Math.max(0.3, lost * 2.4)], { color: C.bad, width: 2 + lost * 10 });
+          g.text([xs[i + 1], -0.8 - Math.max(0.3, lost * 2.4) - 0.3], `−${num(lost * 100, 0)} % heat`, { size: 12, bold: true, color: C.bad });
+        }
+      }
+      STAGES.forEach((s, i) => {
+        g.rect(xs[i] - 0.6, -0.6, 1.2, 2.2, { fill: i === 0 ? f.col : '#e2e8f0', color: C.ink, width: 2, radius: 8 });
+        g.text([xs[i], 1.95], s.name, { size: 13, bold: true });
+        g.text([xs[i], 0.5], `${num(levels[i] * 100, 0)}%`, { size: 14, bold: true, color: i === 0 ? '#fff' : C.ink });
+        if (s.sub) g.text([xs[i] - 1.6, 2.4], '→ ' + s.sub, { size: 11, color: C.muted });
       });
-      let uText = board.create('text', [3, 0, 'U-235'], { color: '#ffffff', fontSize: 13, anchorX: 'middle', anchorY: 'middle', fontWeight: 'bold' });
-      elements.push(u235, uText);
+      g.text([5.35, 0.5], '→ grid', { align: 'left', size: 12, color: C.good, bold: true });
+      g.text([xs[0], -1.0], fuel.value === 3 ? 'nuclear energy' : 'chemical energy', { size: 12, color: C.muted });
+    };
 
-      // Incoming incident neutron at (0, 0)
-      let neutron = board.create('circle', [[0, 0], 0.25], {
-        fillColor: '#38bdf8',
-        fillOpacity: 1,
-        strokeColor: '#0284c7',
-        strokeWidth: 1.5
-      });
-      let nArrow = board.create('arrow', [[0, 0], [1.5, 0]], { strokeColor: '#38bdf8', strokeWidth: 2 });
-      let nText = board.create('text', [0, 0.5, 'Incident Neutron (n)'], { color: '#38bdf8', fontSize: 11 });
-      elements.push(neutron, nArrow, nText);
-
-      board.unsuspendUpdate();
-    }
-
-    drawInitial();
-
-    document.getElementById('btn-fission').addEventListener('click', function() {
-      board.suspendUpdate();
-      for (let el of elements) board.removeObject(el);
-      elements = [];
-
-      // Fission fragments
-      // Ba-141 (upward-right)
-      let ba = board.create('circle', [[5, 2.5], 0.8], { fillColor: '#10b981', fillOpacity: 0.85, strokeColor: '#34d399', strokeWidth: 2 });
-      let baText = board.create('text', [5, 2.5, 'Ba-141'], { color: '#ffffff', fontSize: 11, anchorX: 'middle', anchorY: 'middle', fontWeight: 'bold' });
-
-      // Kr-92 (downward-right)
-      let kr = board.create('circle', [[5, -2.5], 0.65], { fillColor: '#f59e0b', fillOpacity: 0.85, strokeColor: '#fbbf24', strokeWidth: 2 });
-      let krText = board.create('text', [5, -2.5, 'Kr-92'], { color: '#ffffff', fontSize: 11, anchorX: 'middle', anchorY: 'middle', fontWeight: 'bold' });
-
-      // Energy burst in center
-      let burst = board.create('text', [3, 0, '+200 MeV Energy!'], { color: '#f87171', fontSize: 14, fontWeight: 'bold', anchorX: 'middle', anchorY: 'middle' });
-
-      // 3 secondary neutrons
-      let n1 = board.create('circle', [[7, 4], 0.2], { fillColor: '#38bdf8', fillOpacity: 1, strokeWidth: 0 });
-      let a1 = board.create('arrow', [[3, 0], [7, 4]], { strokeColor: '#38bdf8', strokeWidth: 2, dash: 1 });
-      let n2 = board.create('circle', [[7.5, 0], 0.2], { fillColor: '#38bdf8', fillOpacity: 1, strokeWidth: 0 });
-      let a2 = board.create('arrow', [[3, 0], [7.5, 0]], { strokeColor: '#38bdf8', strokeWidth: 2, dash: 1 });
-      let n3 = board.create('circle', [[7, -4], 0.2], { fillColor: '#38bdf8', fillOpacity: 1, strokeWidth: 0 });
-      let a3 = board.create('arrow', [[3, 0], [7, -4]], { strokeColor: '#38bdf8', strokeWidth: 2, dash: 1 });
-
-      let secText = board.create('text', [7.8, 0, '3 fast neutrons trigger next fission'], { color: '#38bdf8', fontSize: 11 });
-
-      elements.push(ba, baText, kr, krText, burst, n1, a1, n2, a2, n3, a3, secText);
-      board.unsuspendUpdate();
-
-      document.getElementById('fission-stat').textContent = 'Status: Fission complete! 200 MeV released + 3 neutrons';
-      document.getElementById('fission-stat').style.color = '#4ade80';
-    });
-
-    document.getElementById('btn-reset').addEventListener('click', function() {
-      drawInitial();
-      document.getElementById('fission-stat').textContent = 'Status: Ready for neutron strike';
-      document.getElementById('fission-stat').style.color = '#38bdf8';
-    });
+    k.update = () => {
+      const f = FUEL[fuel.value], eta = eff().reduce((a, b) => a * b, 1);
+      const perDay = 500e6 * 86400 / (eta * f.e);   // kg of fuel per day
+      k.readout([
+        `Overall efficiency = ${eff().map(x => num(x * 100, 0) + ' %').join(' × ')} = <b>${num(eta * 100, 1)} %</b>; the other ${num(100 - eta * 100, 1)} % leaves as heat (cooling towers, flue gas).`,
+        `Fuel for a 500 MW station: (500×10<sup>6</sup> × 86 400 s) / (η × ${f.e.toExponential(1).replace('e+', '×10^')} J/kg) = <b>${num(perDay / f.div, perDay / f.div < 10 ? 2 : 0)} ${f.unit} per day</b>`.replace(/×10\^(\d+)/, '×10<sup>$1</sup>'),
+        `CO<sub>2</sub> per kWh: about <b>${f.co2} g</b>. ${fuel.value === 3 ? 'Fission of one U-235 atom gives 200 MeV, millions of times more than burning one carbon atom, so only a few kg are needed — but the waste stays radioactive for a very long time.' : 'Burning fossil fuel releases carbon that was stored for millions of years.'}`
+      ]);
+    };
   })();
   </script>
 </div>

@@ -42,57 +42,168 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Prism Dispersion into Rainbow Spectrum</span>
-  <p class="demo-instruction">Observe how a triangular glass prism disperses incident white light into its constituent spectrum. Violet light ($n \approx 1.53$) refracts more sharply than red light ($n \approx 1.51$) due to normal chromatic dispersion.</p>
-
-  <div id="spec-board" style="width: 100%; height: 360px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <span style="color: #cbd5e1; font-weight: 500;">
-      Collimator $\longrightarrow$ Glass Prism (Dispersion) $\longrightarrow$ Spectral Lines
-    </span>
-    <span style="color: #38bdf8; font-weight: 600;">$\delta_{\text{violet}} > \delta_{\text{red}}$</span>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; Using a Spectrometer: Grating and Prism</span>
+  <p class="demo-question">Every element gives out its own set of colours. How does a spectrometer pull them apart and measure their wavelengths?</p>
+  <p class="demo-instruction"><b>Grating:</b> light from the lamp is split into lines at angles where $d\sin\theta = m\lambda$. Drag the telescope (or use the slider) until a line sits on the cross-wire in the eyepiece view, then read off its wavelength. <b>Prism:</b> turn the prism (change the angle of incidence $i$); the deviation $\delta$ is smallest at one angle, and that minimum gives the refractive index. Violet bends most in a prism, red bends most in a grating.</p>
+  <div id="pk-spectro"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('spec-board', {
-      boundingbox: [-1, 5, 11, -5],
-      axis: false,
-      showNavigation: false,
-      showCopyright: false
+  (function () {
+    const k = PhysKit.mount('pk-spectro', { x: [-6.2, 6.2], y: [-2.6, 2.6] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    k.row();
+    const scene = k.choice(['Grating', 'Prism'], 0, () => show());
+    const LAMPS = {
+      hydrogen: [656.3, 486.1, 434.0, 410.2], sodium: [589.3], mercury: [404.7, 435.8, 546.1, 577.0, 579.1]
+    };
+    const lampNames = Object.keys(LAMPS);
+    const lamp = k.choice(lampNames.map(n => n + ' lamp'), 0);
+    const rows = [];
+    rows.push(k.row());
+    const NS = k.slider({ label: 'lines per mm', min: 100, max: 1200, step: 50, value: 600, digits: 0 });
+    const phS = k.slider({ label: 'telescope angle', unit: '°', min: -75, max: 75, step: 0.05, value: 15, digits: 2 });
+    rows.push(k.row());
+    const iS = k.slider({ label: 'i (incidence)', unit: '°', min: 32, max: 85, step: 0.1, value: 60, digits: 1 });
+    k.button('find minimum deviation', () => { iS.value = minI(589.3); });
+    k.row();
+
+    // colour of a wavelength (nm) for drawing
+    function col(l) {
+      const stops = [[380, [120, 0, 160]], [440, [60, 0, 255]], [490, [0, 160, 255]], [510, [0, 200, 80]], [580, [230, 220, 0]], [645, [255, 40, 0]], [700, [200, 0, 0]]];
+      let a = stops[0], b = stops[stops.length - 1];
+      for (let j = 0; j < stops.length - 1; j++) if (l >= stops[j][0] && l <= stops[j + 1][0]) { a = stops[j]; b = stops[j + 1]; }
+      const f = b[0] === a[0] ? 0 : (l - a[0]) / (b[0] - a[0]);
+      return `rgb(${a[1].map((v, i) => Math.round(v + f * (b[1][i] - v))).join(',')})`;
+    }
+    // ---------- grating ----------
+    const G = [-3.6, 0], RA = 4.0;
+    const lines = () => {
+      const d = 1e6 / NS.value, out = [];                   // d in nm
+      for (const l of LAMPS[lampNames[lamp.value]]) for (let m = -3; m <= 3; m++) {
+        const s = m * l / d;
+        if (m !== 0 && Math.abs(s) < 1) out.push({ l, m, th: Math.asin(s) * 180 / Math.PI });
+      }
+      return out;
+    };
+    k.view.drag({
+      get: () => { const a = phS.value * Math.PI / 180; return [G[0] + RA * Math.cos(a), G[1] + RA * Math.sin(a)]; },
+      set: p => { const a = Math.atan2(p[1] - G[1], p[0] - G[0]) * 180 / Math.PI; phS.value = Math.max(-75, Math.min(75, a)); },
+      r: 22, hit: () => scene.value === 0
     });
+    // ---------- prism (A = 60°, n from Cauchy's rule n = 1.5046 + 4200/λ²) ----------
+    const nOf = l => 1.5046 + 4200 / (l * l);
+    const dev = (iDeg, n) => {
+      const i = iDeg * Math.PI / 180, r1 = Math.asin(Math.sin(i) / n), r2 = Math.PI / 3 - r1, se = n * Math.sin(r2);
+      return se >= 1 ? null : (i + Math.asin(se)) * 180 / Math.PI - 60;
+    };
+    const minI = l => Math.asin(nOf(l) * Math.sin(Math.PI / 6)) * 180 / Math.PI;   // symmetric path: r1 = A/2
 
-    // Collimator tube representation at x = 0 to 2
-    board.create('segment', [[0, 0.5], [2, 0.5]], { strokeColor: '#64748b', strokeWidth: 2 });
-    board.create('segment', [[0, -0.5], [2, -0.5]], { strokeColor: '#64748b', strokeWidth: 2 });
-    board.create('text', [1, -1.0, 'Collimator'], { color: '#94a3b8', fontSize: 11, anchorX: 'middle' });
+    function show() {
+      rows.forEach((r, i) => { r.style.display = i === scene.value ? '' : 'none'; });
+      graph.canvas.parentElement.style.display = scene.value === 1 ? '' : 'none';
+      lamp.buttons.forEach(b => { b.style.display = ''; });
+    }
 
-    // Incident white ray
-    board.create('arrow', [[0.5, 0], [3.2, 0]], { strokeColor: '#ffffff', strokeWidth: 3 });
-    board.create('text', [1.5, 0.3, 'White Light'], { color: '#ffffff', fontSize: 11 });
+    // vector helpers for the prism ray trace
+    const norm = v => { const L = Math.hypot(v[0], v[1]); return [v[0] / L, v[1] / L]; };
+    const dot = (a, b) => a[0] * b[0] + a[1] * b[1];
+    function refract(d, nrm, eta) {                     // nrm points back towards the incoming side
+      const ci = -dot(nrm, d), kk = 1 - eta * eta * (1 - ci * ci);
+      if (kk < 0) return null;
+      return norm([eta * d[0] + (eta * ci - Math.sqrt(kk)) * nrm[0], eta * d[1] + (eta * ci - Math.sqrt(kk)) * nrm[1]]);
+    }
+    const PA = [0, 1.3], PB = [-1.56, -1.4], PC = [1.56, -1.4];      // apex and base corners (60° prism)
 
-    // Equilateral glass prism: vertices at (3.2, -2.5), (3.2, 2.5), (6.5, 0)
-    let prism = board.create('polygon', [[3.2, -2.5], [3.2, 2.5], [6.5, 0]], {
-      fillColor: '#38bdf8', fillOpacity: 0.25, strokeColor: '#38bdf8', strokeWidth: 2, vertices: { visible: false }
-    });
-    board.create('text', [4.2, 0.2, 'Prism'], { color: '#38bdf8', fontSize: 12, fontWeight: 'bold' });
+    k.draw = g => {
+      if (scene.value === 0) {
+        const L = lines(), ph = phS.value;
+        // collimator and lamp
+        g.rect(-6.1, -0.3, 0.6, 0.6, { fill: '#fde68a', color: C.ink, width: 1.5, radius: 4 });
+        g.rect(-5.5, -0.18, 1.6, 0.36, { fill: '#cbd5e1', color: C.ink, width: 1.5 });
+        g.text([-4.7, -0.45], 'collimator', { size: 11, color: C.muted });
+        g.line([G[0], -0.8], [G[0], 0.8], { color: C.ink, width: 4 });
+        g.text([G[0], -1.0], 'grating', { size: 11, color: C.muted });
+        g.line([G[0], 0], [G[0] + 5, 0], { color: '#e5e7eb', width: 3 });
+        g.text([G[0] + 4.6, 0.2], 'm = 0 (all colours)', { size: 11, color: C.muted, align: 'right' });
+        for (const s of L) {
+          const a = s.th * Math.PI / 180;
+          g.line(G, [G[0] + 5.2 * Math.cos(a), G[1] + 5.2 * Math.sin(a)], { color: col(s.l), width: 2.5, alpha: 0.85 });
+          if (Math.abs(s.th) < 75 && s.l === LAMPS[lampNames[lamp.value]][0]) g.text([G[0] + 5.45 * Math.cos(a), G[1] + 5.45 * Math.sin(a)], `m=${s.m}`, { size: 11, color: C.muted });
+        }
+        // telescope arm
+        const a = ph * Math.PI / 180, u = [Math.cos(a), Math.sin(a)], nn = [-u[1], u[0]], r0 = 1.5;
+        g.path([[G[0] + r0 * u[0] + 0.16 * nn[0], G[1] + r0 * u[1] + 0.16 * nn[1]], [G[0] + RA * u[0] + 0.16 * nn[0], G[1] + RA * u[1] + 0.16 * nn[1]],
+          [G[0] + RA * u[0] - 0.16 * nn[0], G[1] + RA * u[1] - 0.16 * nn[1]], [G[0] + r0 * u[0] - 0.16 * nn[0], G[1] + r0 * u[1] - 0.16 * nn[1]]], { close: true, fill: '#475569', color: C.ink, width: 1.5, fillAlpha: 0.8 });
+        g.handle([G[0] + RA * u[0], G[1] + RA * u[1]], C.acc);
+        // eyepiece view: ±3° around the telescope direction
+        const EX = 4.4, ER = 1.5, EY = 0.3;
+        g.circle([EX, EY], ER, { fill: '#0f172a', color: C.ink, width: 2 });
+        for (const s of L) {
+          const off = s.th - ph;
+          if (Math.abs(off) < 3) g.line([EX + off / 3 * ER * 0.95, EY - ER * Math.sqrt(1 - (off / 3) ** 2) * 0.9], [EX + off / 3 * ER * 0.95, EY + ER * Math.sqrt(1 - (off / 3) ** 2) * 0.9], { color: col(s.l), width: 3 });
+        }
+        g.line([EX, EY - ER], [EX, EY + ER], { color: '#fff', width: 1 }); g.line([EX - ER, EY], [EX + ER, EY], { color: '#fff', width: 1 });
+        g.text([EX, EY - ER - 0.25], 'view in the eyepiece', { size: 11, color: C.muted });
+      } else {
+        // prism
+        g.path([PA, PB, PC], { close: true, fill: '#e0f2fe', color: C.fluid, width: 2 });
+        g.text([0, -1.65], 'A = 60°', { size: 12, color: C.muted });
+        const N1 = norm([-(PA[1] - PB[1]), PA[0] - PB[0]]);            // outward normal of the left face
+        const N2 = norm([PA[1] - PC[1], -(PA[0] - PC[0])]);            // outward normal of the right face
+        const P1 = [(PA[0] + PB[0]) / 2, (PA[1] + PB[1]) / 2], i = iS.value * Math.PI / 180;
+        const base = [-N1[0], -N1[1]], d0 = [base[0] * Math.cos(i) - base[1] * Math.sin(i), base[0] * Math.sin(i) + base[1] * Math.cos(i)];
+        g.line([P1[0] - 6 * d0[0], P1[1] - 6 * d0[1]], P1, { color: '#475569', width: 4 });
+        g.text([P1[0] - 3.2 * d0[0], P1[1] - 3.2 * d0[1]], 'white light', { size: 12, bold: true, dy: -12 });
+        for (const l of [410, 450, 490, 530, 570, 610, 650, 690]) {
+          const n = nOf(l), din = refract(d0, N1, 1 / n);
+          // where the inside ray meets the right face
+          const e = [PC[0] - PA[0], PC[1] - PA[1]], den = din[0] * e[1] - din[1] * e[0];
+          const tt = ((PA[0] - P1[0]) * e[1] - (PA[1] - P1[1]) * e[0]) / den;
+          const P2 = [P1[0] + tt * din[0], P1[1] + tt * din[1]];
+          g.line(P1, P2, { color: col(l), width: 1.5, alpha: 0.8 });
+          const dout = refract(din, [-N2[0], -N2[1]], n);
+          if (dout) g.line(P2, [P2[0] + 6 * dout[0], P2[1] + 6 * dout[1]], { color: col(l), width: 2.5 });
+        }
+        const dY = dev(iS.value, nOf(589.3));
+        g.text([3.2, 2.2], dY === null ? 'total internal reflection at the second face' : `δ (yellow) = ${num(dY, 2)}°`, { size: 15, bold: true, color: dY === null ? C.bad : C.energy });
+      }
+    };
 
-    // Dispersed rays exiting from right face
-    // Red ray (least deviated)
-    board.create('segment', [[3.2, 0], [5.0, 0.4]], { strokeColor: '#ef4444', strokeWidth: 2 });
-    board.create('arrow', [[5.0, 0.4], [9.5, 2.2]], { strokeColor: '#ef4444', strokeWidth: 2.5 });
-    board.create('text', [9.7, 2.2, 'Red (700 nm)'], { color: '#ef4444', fontSize: 11 });
+    const graph = k.addView({ x: [30, 86], y: [35, 62], equal: false, height: 170, title: 'Deviation δ against angle of incidence i (yellow 589 nm, violet 410 nm)' });
+    graph.draw = g => {
+      g.axes({ xstep: 10, ystep: 5, xlabel: 'i (°)', ylabel: 'δ (°)' });
+      for (const [l, c] of [[589.3, '#ca8a04'], [410, '#7c3aed']]) {
+        const pts = [];
+        for (let x = 30; x <= 86; x += 0.5) { const d = dev(x, nOf(l)); if (d !== null && d < 62) pts.push([x, d]); }
+        g.path(pts, { color: c, width: 2.5 });
+      }
+      const im = minI(589.3), dm = dev(im, nOf(589.3));
+      g.line([im, 35], [im, dm], { color: C.muted, dash: [4, 4] });
+      g.text([im, dm], `minimum ${num(dm, 2)}°`, { size: 11, color: C.muted, dy: 14 });
+      const d = dev(iS.value, nOf(589.3));
+      if (d !== null) g.dot([iS.value, d], 6, C.energy);
+    };
 
-    // Yellow / Green ray
-    board.create('segment', [[3.2, 0], [5.0, 0.2]], { strokeColor: '#22c55e', strokeWidth: 2 });
-    board.create('arrow', [[5.0, 0.2], [9.5, 0.8]], { strokeColor: '#22c55e', strokeWidth: 2 });
-    board.create('text', [9.7, 0.8, 'Green (546 nm)'], { color: '#22c55e', fontSize: 11 });
-
-    // Blue / Violet ray (most deviated)
-    board.create('segment', [[3.2, 0], [5.0, 0.0]], { strokeColor: '#8b5cf6', strokeWidth: 2 });
-    board.create('arrow', [[5.0, 0.0], [9.5, -0.6]], { strokeColor: '#8b5cf6', strokeWidth: 2.5 });
-    board.create('text', [9.7, -0.6, 'Violet (400 nm)'], { color: '#8b5cf6', fontSize: 11 });
+    k.update = () => {
+      if (scene.value === 0) {
+        const d = 1e6 / NS.value, L = lines(), ph = phS.value;
+        let best = null;
+        for (const s of L) if (Math.abs(s.th - ph) < 0.15 && (!best || Math.abs(s.th - ph) < Math.abs(best.th - ph))) best = s;
+        k.readout([
+          `d = 1/N = 1/${NS.value} mm = <b>${num(d, 1)} nm</b>; lines appear where d sin θ = mλ (m = ±1, ±2, …)`,
+          best ? `On the cross-wire: order m = ${best.m}, λ = d sin θ / m = ${num(d, 1)} × sin ${num(ph, 2)}° / ${best.m} = <b>${num(d * Math.sin(ph * Math.PI / 180) / best.m, 1)} nm</b> ✓`
+            : 'Turn the telescope until a line is on the cross-wire.',
+          'Longer wavelengths (red) are bent through larger angles by a grating; higher orders are spread out more.'
+        ]);
+      } else {
+        const dY = dev(iS.value, nOf(589.3)), im = minI(589.3), dm = dev(im, nOf(589.3));
+        k.readout([
+          `i = ${num(iS.value, 1)}°: δ = <b>${dY === null ? '—' : num(dY, 2) + '°'}</b> for yellow light. Minimum deviation ${rich('δ_m')} = ${num(dm, 2)}° at i = ${num(im, 1)}°.`,
+          `n = sin((A + ${rich('δ_m')})/2) / sin(A/2) = sin(${num((60 + dm) / 2, 2)}°) / sin 30° = <b>${num(Math.sin((60 + dm) / 2 * Math.PI / 180) / 0.5, 4)}</b>`,
+          'Glass has a bigger n for violet than for red, so violet is bent most and white light spreads into a spectrum.'
+        ]);
+      }
+    };
+    show();
   })();
   </script>
 </div>

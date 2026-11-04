@@ -59,74 +59,86 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Standing Matter Wave Around Bohr Orbit</span>
-  <p class="demo-instruction">Select quantum number $n = 1, 2, 3, 4$ to visualize how an exact integer number of de Broglie matter wave cycles fit constructively around the electron orbit.</p>
-
-  <div id="bohr-board" style="width: 100%; height: 350px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Quantum Number $n$: 
-      <input id="n-bohr-slider" type="range" min="1" max="5" step="1" value="3" style="vertical-align: middle;">
-      <span id="n-bohr-val" style="color: #38bdf8; font-weight: 700;">n = 3 (3 Wavelengths)</span>
-    </label>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      Orbit: <span id="bohr-stat" style="color: #4ade80; font-weight: 700;">Stable Standing Wave (Constructive)</span>
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; Matter Waves: λ = h/p</span>
+  <p class="demo-question">If an electron is a wave, how long is its wavelength, and why does a proton's wave come out so much shorter?</p>
+  <p class="demo-instruction"><b>Electron gun:</b> an electron and a proton are each accelerated from rest through the same voltage $V$. Both gain the same kinetic energy $eV$, but the proton is 1840 times heavier, so it has more momentum and a shorter wave. The waves are drawn magnified by the same factor. <b>Bohr orbit:</b> wrap the electron wave round the orbit. It only joins up smoothly (a standing wave) when a whole number of wavelengths fit: $2\pi r = n\lambda$.</p>
+  <div id="pk-debroglie"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('bohr-board', {
-      boundingbox: [-3.5, 3, 3.5, -3],
-      axis: false,
-      showNavigation: false,
-      showCopyright: false,
-      pan: { enabled: false },
-      zoom: { enabled: false }
-    });
+  (function () {
+    const h = 6.63e-34, e = 1.6e-19, me = 9.1e-31, mp = 1840 * me;
+    const k = PhysKit.mount('pk-debroglie', { x: [-6.2, 6.2], y: [-2.6, 2.6] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    k.row();
+    const scene = k.choice(['Electron gun', 'Bohr orbit: standing waves'], 0, () => show());
+    const rows = [];
+    rows.push(k.row());
+    let V = 100;
+    const lgS = k.slider({ label: 'V', min: 1, max: 4, step: 0.01, value: 2, format: v => { const x = 10 ** v; return x >= 1000 ? `${num(x / 1000, 2)} kV` : `${num(x, 0)} V`; } });
+    lgS.on(v => { V = Math.round(10 ** v); });
+    k.button('Exercise 14 (100 V)', () => { V = 100; lgS.value = 2; });
+    k.button('Exercise 13 (1.0 kV)', () => { V = 1000; lgS.value = 3; });
+    rows.push(k.row());
+    const nS = k.slider({ label: 'wavelengths round the orbit', min: 1, max: 6, step: 0.05, value: 2.6 });
+    k.button('snap to whole number', () => { nS.value = Math.max(1, Math.round(nS.value)); });
+    function show() { rows.forEach((r, i) => { r.style.display = i === scene.value ? '' : 'none'; }); }
+    let t = 0;
+    k.loop(dt => { t += dt; }, { button: false });
 
-    // Nucleus at center
-    board.create('point', [0, 0], {
-      size: 6, fillColor: '#ef4444', strokeColor: '#fca5a5', name: '+ Ze (Nucleus)', fixed: true
-    });
+    const lam = m => h / Math.sqrt(2 * m * e * V);
+    const vel = m => Math.sqrt(2 * e * V / m);
+    const sci = (x, d = 2) => { const ex = Math.floor(Math.log10(x)); return `${num(x / 10 ** ex, d)}×10^{${ex}}`; };
 
-    let waveGraph = null, refCircle = null;
-
-    function drawStandingWave() {
-      board.suspendUpdate();
-      if (waveGraph) board.removeObject(waveGraph);
-      if (refCircle) board.removeObject(refCircle);
-
-      let n = parseInt(document.getElementById('n-bohr-slider').value);
-      document.getElementById('n-bohr-val').textContent = 'n = ' + n + ' (' + n + ' Wavelengths)';
-
-      let R0 = 1.8;
-      refCircle = board.create('circle', [[0, 0], R0], {
-        strokeColor: '#475569', strokeWidth: 1.5, dash: 2
-      });
-
-      // Modulated standing wave around circle: r(theta) = R0 + A * sin(n * theta)
-      let amp = 0.22;
-      waveGraph = board.create('curve', [
-        function(t) {
-          let r = R0 + amp * Math.sin(n * t);
-          return r * Math.cos(t);
-        },
-        function(t) {
-          let r = R0 + amp * Math.sin(n * t);
-          return r * Math.sin(t);
-        }, 0, 2 * Math.PI
-      ], {
-        strokeColor: '#38bdf8', strokeWidth: 3
-      });
-
-      board.resumeUpdate();
+    function gun(g) {
+      // accelerating plates
+      g.rect(-6.0, -2.2, 0.25, 4.3, { fill: '#fecaca', color: C.bad, width: 1.5 }); g.rect(-4.3, -2.2, 0.25, 4.3, { fill: '#bfdbfe', color: C.acc, width: 1.5 });
+      g.text([-5.0, 2.35], `V = ${V >= 1000 ? num(V / 1000, 2) + ' kV' : V + ' V'}`, { size: 13, bold: true });
+      g.arrow([-5.6, -2.45], [1.1, 0], { color: C.muted, width: 1.5, head: 7 }); g.text([-3.9, -2.45], 'accelerate', { size: 10, color: C.muted, align: 'left' });
+      // magnification: electron λ drawn between about 0.25 and 1.6 units
+      const le = lam(me), lp = lam(mp), mag = 0.9 / (1.227e-9 / Math.sqrt(100));      // world units per metre (fixed)
+      const draw = (y, l, m, col, name) => {
+        const lv = Math.max(0.006, l * mag), vv = vel(m), speed = 0.4 + 2.2 * Math.min(1, vv / 2e7), x0 = -3.8, x1 = 5.9;
+        const head = x0 + ((t * speed) % (x1 - x0 + 2)) - 1, pts = [];
+        for (let x = x0; x <= x1; x += Math.min(0.02, lv / 12)) { const env = Math.exp(-(((x - head) / 1.3) ** 2)); pts.push([x, y + 0.45 * env * Math.cos(2 * Math.PI * (x - head) / lv)]); }
+        g.path(pts, { color: col, width: lv < 0.05 ? 1 : 2 });
+        g.dot([Math.max(x0, Math.min(x1, head)), y], name === 'electron' ? 4 : 7, col);
+        g.text([-3.8, y + 0.75], `${name}: v = ${sci(vv)} m/s, λ = ${num(l * 1e9, 4)} nm`, { size: 12, bold: true, color: col, align: 'left' });
+      };
+      draw(0.95, le, me, C.acc, 'electron');
+      draw(-1.15, lp, mp, C.bad, 'proton');
+      // a row of atoms as a size reference (spacing about 0.25 nm)
+      const sp = 0.25e-9 * mag;
+      if (sp > 0.05) for (let x = -3.6; x < 5.9; x += sp) g.circle([x, -2.25], Math.min(0.09, sp * 0.3), { fill: '#e2e8f0', color: '#94a3b8', width: 1 });
+      g.text([5.9, -1.95], 'atoms in a crystal, 0.25 nm apart (same scale)', { size: 10, color: C.muted, align: 'right' });
     }
 
-    drawStandingWave();
+    function bohr(g) {
+      const n = nS.value, R = 1.6, O = [-2.2, 0], whole = Math.abs(n - Math.round(n)) < 0.02;
+      g.circle(O, R, { color: '#cbd5e1', width: 1.5, dash: [4, 4] });
+      g.circle(O, 0.18, { fill: C.bad, color: 'none' }); g.text([O[0], O[1] - 0.4], 'nucleus', { size: 10, color: C.muted });
+      // the wave starts at angle 0 and goes round once; if n is not whole the ends do not meet
+      const amp = 0.32, ph = whole ? Math.cos(t * 3) : 1, pts = [];
+      for (let a = 0; a <= 2 * Math.PI + 1e-9; a += 0.01) { const r = R + amp * ph * Math.sin(n * a); pts.push([O[0] + r * Math.cos(a), O[1] + r * Math.sin(a)]); }
+      g.path(pts, { color: whole ? C.good : C.energy, width: 3 });
+      if (!whole) { const a = 2 * Math.PI, r1 = R + amp * Math.sin(n * a); g.line([O[0] + R, O[1]], [O[0] + r1, O[1]], { color: C.bad, width: 4 }); g.text([O[0] + R + 0.45, O[1] - 0.05], 'ends do not meet!', { size: 12, bold: true, color: C.bad, align: 'left' }); }
+      g.text([3.4, 1.9], whole ? `n = ${Math.round(n)}: a standing wave` : `${num(n, 2)} wavelengths: not allowed`, { size: 15, bold: true, color: whole ? C.good : C.bad });
+      g.text([3.4, 1.2], '2πr = nλ  →  mvr = nh/2π', { size: 14, bold: true, color: C.vel });
+      g.text([3.4, 0.5], whole ? 'the wave reinforces itself every lap:' : 'after one lap the wave is out of step', { size: 12, color: C.muted });
+      g.text([3.4, 0.05], whole ? 'this orbit is stable' : 'with itself and cancels out', { size: 12, color: C.muted });
+      g.text([3.4, -0.9], 'Only whole-number orbits exist,', { size: 12 }); g.text([3.4, -1.3], 'so the energy of the atom is quantised.', { size: 12 });
+    }
 
-    document.getElementById('n-bohr-slider').addEventListener('input', drawStandingWave);
+    k.draw = g => scene.value === 0 ? gun(g) : bohr(g);
+
+    k.update = () => {
+      if (scene.value === 1) { k.readout(['de Broglie explained Bohr’s rule: the electron wave must fit round the orbit a whole number of times, 2πr = nλ. With λ = h/(mv) this gives mvr = nh/2π, Bohr’s quantised angular momentum.']); return; }
+      const Ek = e * V, ve = vel(me), le = lam(me), lp = lam(mp);
+      const s = x => { const ex = Math.floor(Math.log10(x)); return `${num(x / 10 ** ex, 2)}×10<sup>${ex}</sup>`; };
+      k.readout([
+        `${rich('E_k')} = eV = 1.6×10<sup>−19</sup> × ${V} = ${s(Ek)} J for both. Electron: v = √(2${rich('E_k')}/m) = <b>${s(ve)} m/s</b>, λ = h/(mv) = <b>${num(le * 1e9, 4)} nm</b> (quick check 1.227/√V = ${num(1.227 / Math.sqrt(V), 4)} nm)`,
+        `Proton: λ = h/√(2${rich('m_p')}${rich('E_k')}) = <b>${num(lp * 1e9, 6)} nm</b>; ratio ${rich('λ_e')}/${rich('λ_p')} = √(${rich('m_p')}/${rich('m_e')}) = √1840 = <b>${num(le / lp, 1)}</b>`
+      ]);
+    };
+    show();
   })();
   </script>
 </div>

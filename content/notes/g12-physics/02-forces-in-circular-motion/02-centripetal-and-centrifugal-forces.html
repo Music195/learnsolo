@@ -61,13 +61,114 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Demo &mdash; Centrifuge Sedimentation &amp; Separation</span>
-  <p>Rotate the centrifuge test tube. As angular velocity $\omega$ increases, observe how the denser red particles experience a dramatic outward inertial drift and pack tightly at the bottom of the tube, leaving clear fluid above.</p>
-  <div class="controls">
-    <label>Rotation Rate (rpm) <input type="range" id="p2-02-rpm" min="500" max="8000" step="250" value="3000"></label>
-  </div>
-  <canvas id="p2-02-canvas"></canvas>
-  <div class="output table-text" id="p2-02-out"></div>
+  <span class="block-label">Interactive Demo &mdash; Ground View vs Turntable View</span>
+  <p class="demo-question">A puck on a spinning turntable is held by a string. Cut the string: is it thrown outward, or does it just go straight?</p>
+  <p class="demo-instruction">Left: seen from the ground (an inertial frame). Right: seen by someone riding on the turntable (a rotating frame). Press <b>Cut the string</b>. From the ground the puck simply goes straight along the tangent: no outward force acts. From the turntable it seems to be flung outward, so the rider invents an outward "centrifugal force".</p>
+  <div id="pk-frames"></div>
+  <script>
+  (function () {
+    const k = PhysKit.mount('pk-frames', { x: [-6.6, 6.6], y: [-3.2, 3.2] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    const M = 0.2;                       // puck mass (kg)
+    const R_DISC = 2.6;                  // drawn turntable radius (1 unit = 1 m)
+
+    k.row();
+    const wS = k.slider({ label: 'ω', unit: 'rad/s', min: 0.4, max: 2, step: 0.05, value: 1 });
+    const rS = k.slider({ label: 'r', unit: 'm', min: 0.6, max: 2, step: 0.1, value: 1.2 });
+    k.row();
+    k.button('✂ Cut the string', () => {
+      if (cut) return;
+      const r = rS.value, w = wS.value, a = w * t + START;   // puck angle now (ground frame)
+      cut = { t0: t, p: [r * Math.cos(a), r * Math.sin(a)], v: [-r * w * Math.sin(a), r * w * Math.cos(a)] };
+      trailG.length = trailR.length = 0;
+    }, { primary: true });
+    k.button('↺ Reset', () => reset());
+
+    let t = 0, cut = null, after = 0;
+    const START = Math.PI / 2;   // the puck sits at the top of the turntable
+    const trailG = [], trailR = [];
+    function reset() { cut = null; after = 0; trailG.length = trailR.length = 0; }
+    rS.on(reset); wS.on(reset);
+
+    // Puck position seen from the ground
+    function ground() {
+      if (!cut) { const a = wS.value * t + START; return [rS.value * Math.cos(a), rS.value * Math.sin(a)]; }
+      const s = t - cut.t0;
+      return [cut.p[0] + cut.v[0] * s, cut.p[1] + cut.v[1] * s];
+    }
+    // The same point seen from the turntable: undo the turntable's rotation
+    const toRot = p => { const a = -wS.value * t, c = Math.cos(a), s = Math.sin(a); return [p[0] * c - p[1] * s, p[0] * s + p[1] * c]; };
+
+    k.loop(dt => {
+      t += dt;
+      if (cut) {
+        const p = ground();
+        trailG.push(p); trailR.push(toRot(p));
+        if (Math.hypot(p[0], p[1]) > R_DISC + 0.4) { after += dt; if (after > 1.5) reset(); }
+      }
+    });
+
+    function disc(g, O, rotating, title) {
+      const spin = rotating ? 0 : wS.value * t;   // the turntable seen turning (ground) or still (rider)
+      g.text([O[0], 3.0], title, { size: 14, bold: true, color: rotating ? C.field : C.ink });
+      g.circle(O, R_DISC, { color: '#94a3b8', width: 2.5, fill: rotating ? '#faf5ff' : '#f8fafc' });
+      for (let i = 0; i < 8; i++) {
+        const a = spin + i * Math.PI / 4;
+        g.line(O, [O[0] + R_DISC * Math.cos(a), O[1] + R_DISC * Math.sin(a)], { color: '#e2e8f0', width: 1.5 });
+      }
+      // a small "rider" mark fixed to the turntable
+      const ra = spin + Math.PI * 0.75;
+      g.dot([O[0] + 2.2 * Math.cos(ra), O[1] + 2.2 * Math.sin(ra)], 6, C.field);
+      g.dot(O, 4, C.ink);
+    }
+
+    k.draw = g => {
+      const OL = [-3.25, -0.15], OR = [3.25, -0.15];
+      disc(g, OL, false, 'Seen from the ground');
+      disc(g, OR, true, 'Seen from the turntable');
+      const add = (O, p) => [O[0] + p[0], O[1] + p[1]];
+      // trails after the cut
+      g.path(trailG.map(p => add(OL, p)), { color: C.vel, width: 2, dash: [4, 4] });
+      g.path(trailR.map(p => add(OR, p)), { color: C.field, width: 2, dash: [4, 4] });
+
+      const pg = ground(), pr = toRot(pg);
+      const PL = add(OL, pg), PR = add(OR, pr);
+      const r = Math.hypot(pg[0], pg[1]), u = [pg[0] / r, pg[1] / r];
+      const ur = [pr[0] / r, pr[1] / r];
+      const F = M * wS.value ** 2 * rS.value;   // newtons
+      // Arrow length grows with the force: 0.5 units at 0 N up to 1.5 units at 1.6 N (the largest case)
+      const L = 0.5 + F / 1.6;
+      if (!cut) {
+        // Ground: one real force, the string's tension, inward
+        g.line(OL, PL, { color: C.ink, width: 1.5 });
+        g.arrow(PL, [-u[0] * L, -u[1] * L], { color: C.force, label: 'T (real)', side: [u[1], -u[0]] });
+        g.arrow(PL, [-u[1] * 0.9, u[0] * 0.9], { color: C.vel, label: 'v' });
+        // Turntable: puck at rest; tension balanced by an invented outward force
+        g.line(OR, PR, { color: C.ink, width: 1.5 });
+        g.arrow(PR, [-ur[0] * L, -ur[1] * L], { color: C.force, label: 'T', side: [1, 0] });
+        g.arrow(PR, [ur[0] * L, ur[1] * L], { color: C.field, dash: [5, 4], label: 'centrifugal (fictitious)', side: [1, 0] });
+      } else {
+        const s = t - cut.t0;
+        if (s < 1.2) g.text([OL[0], -3.0], 'no force → straight line', { color: C.vel, size: 13, bold: true });
+        g.arrow(PL, [cut.v[0] / Math.hypot(...cut.v) * 0.9, cut.v[1] / Math.hypot(...cut.v) * 0.9], { color: C.vel, label: 'v' });
+        g.text([OR[0], -3.0], 'looks flung outward', { color: C.field, size: 13, bold: true });
+      }
+      g.dot(PL, 9, '#f59e0b', { stroke: C.ink, width: 2 });
+      g.dot(PR, 9, '#f59e0b', { stroke: C.ink, width: 2 });
+    };
+
+    k.update = () => {
+      const F = M * wS.value ** 2 * rS.value;
+      k.readout(cut ? [
+        '<b>Ground:</b> after the cut no force acts, so by Newton’s first law the puck moves in a straight line at constant speed (along the tangent).',
+        '<b>Turntable:</b> the floor turns under the puck, so the rider sees it slide outward along a curve. To explain this with ΣF = ma, the rider adds the fictitious centrifugal force. It has no partner (no third-law pair), because no object exerts it.'
+      ] : [
+        `Real inward force needed: ${rich('F_c')} = mω<sup>2</sup>r = 0.2 × ${num(wS.value)}<sup>2</sup> × ${num(rS.value, 1)} = <b>${num(F, 3)} N</b>, supplied by the string tension T.`,
+        `On the turntable the puck is at rest, so the rider says T is balanced by an outward centrifugal force of the same size, ${num(F, 3)} N. From the ground there is only T, and the puck is accelerating, not balanced.`
+      ]);
+    };
+  })();
+  </script>
 </div>
 
 <div class="note-example">
@@ -115,94 +216,3 @@
 </div>
 
 </article>
-
-<script src="/static/js/demos/geom.js"></script>
-<script>
-(function() {
-  const canvas = document.getElementById('p2-02-canvas');
-  const out = document.getElementById('p2-02-out');
-  const rpmIn = document.getElementById('p2-02-rpm');
-  if (!canvas || !window.NoteGeom) return;
-
-  const C = [260, 170];
-  const RED = '#dc2626', BLUE = '#2563eb', INK = '#334155', GREY = '#94a3b8';
-  let angle = 0, lastText = '';
-
-  // Generate 20 test tube particles with random initial radial offsets
-  const particles = [];
-  for (let i = 0; i < 24; i++) {
-    particles.push({
-      relR: 0.2 + 0.6 * Math.random(), // 0 = meniscus, 1 = tube bottom
-      jitter: (Math.random() - 0.5) * 8
-    });
-  }
-
-  const board = NoteGeom.board(canvas, {
-    points: {},
-    draw(g) {
-      const rpm = Number(rpmIn.value);
-      const omega = rpm * 2 * Math.PI / 60;
-      const r_tip = 0.15; // 15 cm rotor
-      const ac_tip = r_tip * omega * omega;
-      const g_force = ac_tip / 9.8;
-
-      // Draw rotor arm
-      const tubeLen = 110;
-      const rInner = 30;
-      const rOuter = rInner + tubeLen;
-
-      // Rotor axis
-      g.circle(C, 12, INK, { fill: '#cbd5e1' });
-      g.dot(C, INK, 'Rotor Axis');
-
-      // Two opposing centrifuge arms/tubes
-      [0, Math.PI].forEach(armOffset => {
-        const curAng = angle + armOffset;
-        const cosA = Math.cos(curAng), sinA = Math.sin(curAng);
-
-        const pStart = [C[0] + rInner * cosA, C[1] - rInner * sinA];
-        const pEnd = [C[0] + rOuter * cosA, C[1] - rOuter * sinA];
-
-        // Draw tube outline
-        g.seg(pStart, pEnd, '#475569', { width: 14 });
-        g.seg(pStart, pEnd, '#e2e8f0', { width: 10 });
-        g.circle(pEnd, 6, '#475569', { fill: '#cbd5e1' });
-
-        // Draw particles migrating outward with rpm
-        particles.forEach(pt => {
-          // high rpm pushes particles closer to tube bottom (relR -> 1)
-          const effR = Math.min(0.96, pt.relR + (rpm / 8000) * (1 - pt.relR) * 0.9);
-          const rPos = rInner + effR * tubeLen;
-          const px = C[0] + rPos * cosA + pt.jitter * (-sinA);
-          const py = C[1] - rPos * sinA + pt.jitter * (-cosA);
-          g.circle([px, py], 3, RED, { fill: '#f87171' });
-        });
-      });
-
-      const n = (z, k = 1) => z.toFixed(k);
-      const text =
-        `Rotor Speed: ${rpm} rpm  (ω = ${n(omega, 1)} rad/s)\n` +
-        `Centripetal Acceleration at Tube Tip (r = 15 cm): a_c = ${n(ac_tip, 0)} m/s²\n` +
-        `Equivalent Relative Centrifugal Force: ${n(g_force, 0)} × g (earth gravities)\n` +
-        `Sedimentation Effect: Denser precipitate is forced to the bottom of the test tube.`;
-      if (text !== lastText) { out.textContent = text; lastText = text; }
-    }
-  });
-
-  let last = performance.now();
-  function tick(now) {
-    if (!canvas.isConnected) return;
-    const dt = Math.min((now - last) / 1000, 0.05);
-    last = now;
-    const rpm = Number(rpmIn.value);
-    const omega = rpm * 2 * Math.PI / 60;
-    // Visually scale animation speed so it doesn't just strobe
-    angle += Math.min(omega * 0.05, 4.0) * dt;
-    board.redraw();
-    requestAnimationFrame(tick);
-  }
-  requestAnimationFrame(tick);
-
-  rpmIn.addEventListener('input', () => board.redraw());
-})();
-</script>

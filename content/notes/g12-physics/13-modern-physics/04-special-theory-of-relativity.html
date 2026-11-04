@@ -67,86 +67,102 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Lorentz Factor $\gamma$, Time Dilation, and Length Contraction</span>
-  <p class="demo-instruction">Adjust relative velocity $v/c$ to observe the asymptotic surge in Lorentz factor $\gamma$, time dilation ratio $\Delta t / \Delta t_0$, and length contraction $L / L_0$.</p>
-
-  <div id="rel-board" style="width: 100%; height: 350px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Speed $v/c$: 
-      <input id="beta-slider" type="range" min="0.0" max="0.98" step="0.02" value="0.80" style="vertical-align: middle;">
-      <span id="beta-val" style="color: #38bdf8; font-weight: 700;">0.80 c</span>
-    </label>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      &gamma;: <span id="gamma-stat" style="color: #fb923c; font-weight: 700;">1.67</span> &bull; $L$ ($50\mathrm{\,m}$ ship): <span id="l-stat" style="color: #4ade80; font-weight: 700;">30.0 m</span> &bull; $\Delta t$ ($1\mathrm{\,s}$): <span id="t-stat" style="color: #f43f5e; font-weight: 700;">1.67 s</span>
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; Moving Clocks Run Slow, Moving Rulers Shrink</span>
+  <p class="demo-question">What does an Earth observer see when a spaceship flies past at 95 % of the speed of light?</p>
+  <p class="demo-instruction"><b>Time and length:</b> the ship carries a light clock: a pulse of light bouncing between two mirrors. Seen from Earth the pulse must travel a longer, slanted path at the same speed $c$, so each tick takes longer: $\Delta t = \gamma \Delta t_0$. The ship also looks shorter along its motion: $L = L_0/\gamma$. Change the speed and compare the two clocks. <b>Mass and energy:</b> an electron and a positron meet and turn completely into two gamma rays, $E = mc^2$.</p>
+  <div id="pk-rel"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('rel-board', {
-      boundingbox: [-0.05, 5.5, 1.05, -0.5],
-      axis: true,
-      defaultAxes: {
-        x: { name: 'Relative Velocity v / c', withLabel: true, label: { position: 'rt', offset: [-20, -15], color: '#94a3b8' } },
-        y: { name: 'Factor / Ratio', withLabel: true, label: { position: 'rt', offset: [15, -10], color: '#94a3b8' } }
-      },
-      showNavigation: false,
-      showCopyright: false,
-      pan: { enabled: false },
-      zoom: { enabled: false }
-    });
+  (function () {
+    const k = PhysKit.mount('pk-rel', { x: [-6.2, 6.2], y: [-2.6, 2.6] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    k.row();
+    const scene = k.choice(['Time dilation and length contraction', 'Pair annihilation'], 0, () => { show(); ann = 0; });
+    const rows = [];
+    rows.push(k.row());
+    const vS = k.slider({ label: 'v / c', min: 0, max: 0.99, step: 0.01, value: 0.95 });
+    const LS = k.slider({ label: 'L_0', unit: 'm', min: 10, max: 100, step: 1, value: 50, digits: 0 });
+    k.button('Example 13.7 (50 m at 0.95c)', () => { vS.value = 0.95; LS.value = 50; });
+    rows.push(k.row());
+    k.button('▶ Annihilate', () => { ann = 0.001; }, { primary: true });
+    function show() { rows.forEach((r, i) => { r.style.display = i === scene.value ? '' : 'none'; }); gv.canvas.parentElement.style.display = scene.value === 0 ? '' : 'none'; }
+    let t = 0, shipT = 0, earthT = 0, ann = 0;
+    const gam = () => 1 / Math.sqrt(1 - vS.value ** 2);
+    vS.on(() => { shipT = 0; earthT = 0; });
+    k.loop(dt => { t += dt; earthT += dt; shipT += dt / gam(); if (ann > 0) ann += dt; }, { button: false });
 
-    // Plot Gamma curve: gamma(b) = 1 / sqrt(1 - b^2)
-    board.create('functiongraph', [
-      function(b) {
-        if (b >= 0.99) return 10;
-        return 1.0 / Math.sqrt(1.0 - b * b);
-      }, 0, 0.98
-    ], {
-      strokeColor: '#fb923c', strokeWidth: 3, name: 'γ (Time Dilation)'
-    });
-
-    // Plot Length Contraction curve: L/L0 = sqrt(1 - b^2)
-    board.create('functiongraph', [
-      function(b) {
-        return Math.sqrt(1.0 - b * b);
-      }, 0, 0.99
-    ], {
-      strokeColor: '#4ade80', strokeWidth: 2.5, dash: 2, name: 'L / L0 (Contraction)'
-    });
-
-    let gPoint = null, lPoint = null;
-
-    function updateRel() {
-      board.suspendUpdate();
-      if (gPoint) board.removeObject(gPoint);
-      if (lPoint) board.removeObject(lPoint);
-
-      let beta = parseFloat(document.getElementById('beta-slider').value);
-      let gamma = 1.0 / Math.sqrt(1.0 - beta * beta);
-      let lRatio = Math.sqrt(1.0 - beta * beta);
-      let shipLen = 50.0 * lRatio;
-
-      document.getElementById('beta-val').textContent = beta.toFixed(2) + ' c';
-      document.getElementById('gamma-stat').textContent = gamma.toFixed(2);
-      document.getElementById('l-stat').textContent = shipLen.toFixed(1) + ' m (' + (lRatio * 100).toFixed(0) + '%)';
-      document.getElementById('t-stat').textContent = gamma.toFixed(2) + ' s';
-
-      gPoint = board.create('point', [beta, gamma], {
-        size: 5, fillColor: '#fb923c', strokeColor: '#ea580c', name: 'γ = ' + gamma.toFixed(2), fixed: true
-      });
-      lPoint = board.create('point', [beta, lRatio], {
-        size: 4, fillColor: '#4ade80', strokeColor: '#16a34a', name: 'L/L0', fixed: true
-      });
-
-      board.resumeUpdate();
+    function clocks(g) {
+      const b = vS.value, G = gam(), L = LS.value / G, H = 0.9;
+      // ship moving across (drawn length ∝ L)
+      const sc = 0.07, len = LS.value * sc / G, span = 12.4 + len;
+      const x = -6.2 - len + ((t * (0.6 + 3 * b)) % span), y = 1.55;
+      g.path([[x, y - 0.3], [x + len - 0.3, y - 0.3], [x + len, y], [x + len - 0.3, y + 0.3], [x, y + 0.3]], { close: true, fill: '#e0e7ff', color: C.vel, width: 2 });
+      g.text([0, 2.35], `ship: proper length ${LS.value} m → measured from Earth ${num(L, 2)} m`, { size: 13, bold: true, color: C.vel });
+      // ghost of the proper length for comparison
+      g.rect(-6.0, 0.75, LS.value * sc, 0.16, { fill: '#c7d2fe', color: 'none', radius: 3 }); g.text([-6.0 + LS.value * sc + 0.1, 0.83], `at rest: ${LS.value} m`, { size: 10, color: C.muted, align: 'left' });
+      // light clocks: left = clock at rest (as the ship crew sees it), right = the same clock seen moving
+      const tick = 1.0;   // one tick (up and down) of the clock at rest takes 1 s of animation
+      const cx1 = -3.7, cx2 = 2.2, y0 = -2.1, y1 = y0 + H * 2;
+      [[cx1, 'clock at rest (ship frame)'], [cx2, 'same clock seen from Earth']].forEach(([cx, lab]) => { g.text([cx, y1 + 0.35], lab, { size: 12, bold: true }); });
+      // rest clock
+      g.line([cx1 - 0.5, y0], [cx1 + 0.5, y0], { color: C.ink, width: 3 }); g.line([cx1 - 0.5, y1], [cx1 + 0.5, y1], { color: C.ink, width: 3 });
+      const ph1 = (shipT * G % tick) / tick;          // ship clock seen by its crew ticks at the proper rate
+      const yy = ph1 < 0.5 ? y0 + (y1 - y0) * ph1 * 2 : y1 - (y1 - y0) * (ph1 - 0.5) * 2;
+      g.line([cx1, y0], [cx1, y1], { color: '#fde68a', width: 1.5, dash: [3, 3] }); g.dot([cx1, yy], 6, '#f59e0b');
+      // moving clock: the pulse takes γ times longer and follows a zig-zag
+      const per = tick * G, ph2 = (earthT % per) / per, w = Math.min(2.6, 1.0 * b * G);
+      const mx = cx2 - w / 2 + w * ph2;
+      g.line([mx - 0.5, y0], [mx + 0.5, y0], { color: C.ink, width: 3 }); g.line([mx - 0.5, y1], [mx + 0.5, y1], { color: C.ink, width: 3 });
+      g.path([[cx2 - w / 2, y0], [cx2, y1], [cx2 + w / 2, y0]], { color: '#fde68a', width: 1.5, dash: [3, 3] });
+      const py = ph2 < 0.5 ? y0 + (y1 - y0) * ph2 * 2 : y1 - (y1 - y0) * (ph2 - 0.5) * 2;
+      g.dot([mx, py], 6, '#f59e0b');
+      // tick counters
+      g.text([cx1 + 1.3, y0 + H], `ticks: ${Math.floor(shipT * G / tick)}`, { size: 13, bold: true, color: C.good, align: 'left' });
+      g.text([cx2 + w / 2 + 0.9, y0 + H], `ticks: ${Math.floor(earthT / per)}`, { size: 13, bold: true, color: C.bad, align: 'left' });
+      g.text([5.9, y0 - 0.25], `γ = ${num(G, 3)}: the moving clock ticks ${num(G, 2)}× slower`, { size: 12, bold: true, align: 'right', color: C.bad });
     }
 
-    updateRel();
+    function annihilate(g) {
+      const s = ann, me = 0.511;
+      g.line([-6, 0], [6, 0], { color: '#f1f5f9', width: 1 });
+      if (s === 0 || s < 1.2) {
+        const d = s === 0 ? 3.5 : 3.5 * (1 - s / 1.2);
+        g.circle([-d, 0], 0.3, { fill: '#bfdbfe', color: C.acc, width: 2 }); g.text([-d, 0], 'e⁻', { size: 14, bold: true, color: C.acc });
+        g.circle([d, 0], 0.3, { fill: '#fecaca', color: C.bad, width: 2 }); g.text([d, 0], 'e⁺', { size: 14, bold: true, color: C.bad });
+        g.text([-d, -0.65], 'electron 0.511 MeV', { size: 11, color: C.acc }); g.text([d, -0.65], 'positron 0.511 MeV', { size: 11, color: C.bad });
+        if (s === 0) g.text([0, 1.8], 'press Annihilate', { size: 13, color: C.muted });
+      } else {
+        const u = s - 1.2;
+        if (u < 0.35) g.circle([0, 0], 0.2 + u * 4, { fill: '#fef3c7', color: '#f59e0b', width: 3, alpha: 1 - u / 0.35 });
+        const r = Math.min(5.0, u * 3.2);
+        [1, -1].forEach(sg => {
+          const pts = []; for (let x = 0; x <= r; x += 0.02) pts.push([sg * x, 0.25 * Math.sin(x * 10 - u * 25) * Math.min(1, x / 0.3)]);
+          g.path(pts, { color: '#7c3aed', width: 2.5 }); if (r > 0.6) g.text([sg * Math.min(r, 4.3), 0.7], 'γ 0.511 MeV', { size: 12, bold: true, color: '#7c3aed' });
+        });
+        g.text([0, 1.8], 'all the mass has turned into energy: 2 × 0.511 = 1.022 MeV', { size: 13, bold: true, color: C.energy });
+        g.text([0, -1.4], 'the two gamma rays fly apart back to back (momentum is conserved)', { size: 12, color: C.muted });
+      }
+      g.text([0, -2.2], `E₀ = mc² = 9.11×10⁻³¹ × (3.0×10⁸)² = 8.20×10⁻¹⁴ J = ${me} MeV per particle`, { size: 12, bold: true });
+    }
 
-    document.getElementById('beta-slider').addEventListener('input', updateRel);
+    k.draw = g => scene.value === 0 ? clocks(g) : annihilate(g);
+
+    const gv = k.addView({ x: [-0.02, 1.0], y: [0, 8], equal: false, height: 150, title: 'Lorentz factor γ against speed' });
+    gv.draw = g => {
+      g.axes({ xstep: 0.2, ystep: 2, xlabel: 'v / c', ylabel: 'γ' });
+      const pts = []; for (let b = 0; b <= 0.992; b += 0.004) pts.push([b, 1 / Math.sqrt(1 - b * b)]); g.path(pts, { color: C.vel, width: 2.5 });
+      g.dot([vS.value, gam()], 6, C.bad);
+    };
+
+    k.update = () => {
+      if (scene.value === 1) { k.readout(['Example 13.6: E₀ = m<sub>e</sub>c<sup>2</sup> = 8.20×10<sup>−14</sup> J ÷ 1.602×10<sup>−13</sup> J/MeV = <b>0.511 MeV</b>; two particles give <b>1.022 MeV</b>, shared by two 511 keV gamma photons (used in PET scanners).']); return; }
+      const b = vS.value, f = Math.sqrt(1 - b * b), G = 1 / f;
+      k.readout([
+        `√(1 − v<sup>2</sup>/c<sup>2</sup>) = √(1 − ${num(b, 2)}<sup>2</sup>) = ${num(f, 5)}, so γ = <b>${num(G, 3)}</b>`,
+        `L = ${rich('L_0')}√(1 − v<sup>2</sup>/c<sup>2</sup>) = ${LS.value} × ${num(f, 5)} = <b>${num(LS.value * f, 2)} m</b>; one second on the ship lasts <b>${num(G, 3)} s</b> for the Earth observer`,
+        'Example 13.7: 50 m at 0.95c → 50 × 0.31225 = 15.61 m.'
+      ]);
+    };
+    show();
   })();
   </script>
 </div>

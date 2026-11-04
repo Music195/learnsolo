@@ -41,133 +41,118 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Huygens' Secondary Wavelet Envelope</span>
-  <p class="demo-instruction">Adjust the time delay slider $\Delta t$ to observe how secondary wavelets expand from points on the primary wavefront and form the forward tangent envelope (new wavefront).</p>
-
-  <div id="huygens-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Wavelet Radius $r = v\Delta t$: 
-      <input id="radius-slider" type="range" min="0.5" max="3.5" step="0.1" value="1.8" style="vertical-align: middle;">
-      <span id="radius-val" style="color: #38bdf8; font-weight: 700;">1.8 m</span>
-    </label>
-    <button id="wave-mode-btn" style="padding: 0.35rem 0.85rem; border-radius: 6px; background: #0284c7; color: white; border: none; cursor: pointer; font-weight: 600;">
-      Mode: Plane Wavefront
-    </button>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; Huygens' Wavelets, and Path Difference to Phase Difference</span>
+  <p class="demo-question">How does a wavefront "know" where to go next? And when two waves meet, how do we tell whether they add up or cancel?</p>
+  <p class="demo-instruction"><b>Huygens:</b> every point on a wavefront (dots) sends out a small wavelet; after a time $\Delta t$ each wavelet has radius $v\Delta t$, and the line touching all of them is the new wavefront. Try a gap (the wave spreads out) and a glass block (wavelets are smaller in glass, so the front bends). <b>Phase:</b> set the two path lengths; a path difference of a whole number of wavelengths gives crest on crest, a half-number gives crest on trough.</p>
+  <div id="pk-huygens"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('huygens-board', {
-      boundingbox: [-1, 5, 8, -5],
-      axis: false,
-      showNavigation: false,
-      showCopyright: false,
-      pan: { enabled: false },
-      zoom: { enabled: false }
-    });
+  (function () {
+    const k = PhysKit.mount('pk-huygens', { x: [-6.2, 6.2], y: [-2.6, 2.6] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    k.row();
+    const scene = k.choice(['Huygens\' wavelets', 'Path difference → phase'], 0, () => show());
+    const rows = [];
+    rows.push(k.row());
+    const type = k.choice(['plane wave', 'circular wave', 'through a gap', 'into glass (n = 1.5)'], 0, () => { t = 0; });
+    rows.push(k.row());
+    const L1S = k.slider({ label: 'path 1', unit: 'λ', min: 1, max: 8, step: 0.25, value: 6 });
+    const L2S = k.slider({ label: 'path 2', unit: 'λ', min: 1, max: 8, step: 0.25, value: 4.5 });
+    k.button('Example 8.1 (6λ and 4.5λ)', () => { L1S.value = 6; L2S.value = 4.5; });
+    k.button('2λ difference', () => { L1S.value = 6; L2S.value = 4; });
+    k.row();
+    function show() { rows.forEach((r, i) => { r.style.display = i === scene.value ? '' : 'none'; }); }
 
-    let mode = 'plane'; // 'plane' or 'spherical'
-    let wavelets = [];
-    let initialWavefront = null;
-    let newEnvelope = null;
-    let sourcePt = null;
+    const V = 1.0, DT = 1.4;                    // wave speed (units/s) and the time between "generations" of wavelets
+    let t = 0, ph = 0;
+    k.loop(dt => { t += dt; ph += dt * 2.4; if (t > 9) t = 0; });
 
-    function renderScene() {
-      board.suspendUpdate();
-      board.removeObject(wavelets);
-      if (initialWavefront) board.removeObject(initialWavefront);
-      if (newEnvelope) board.removeObject(newEnvelope);
-      if (sourcePt) board.removeObject(sourcePt);
-      wavelets = [];
-
-      let r = parseFloat(document.getElementById('radius-slider').value);
-
-      if (mode === 'plane') {
-        let x0 = 1.5;
-        // Primary plane wavefront (vertical line)
-        initialWavefront = board.create('segment', [[x0, -4], [x0, 4]], {
-          strokeColor: '#38bdf8', strokeWidth: 3, name: 'Original Wavefront'
-        });
-
-        // 7 source points on the wavefront
-        let yCoords = [-3, -2, -1, 0, 1, 2, 3];
-        yCoords.forEach(function(y) {
-          let pt = board.create('point', [x0, y], {
-            size: 3, fillColor: '#f59e0b', strokeColor: '#fbbf24', fixed: true, name: ''
-          });
-          wavelets.push(pt);
-          let circ = board.create('circle', [pt, r], {
-            strokeColor: '#fbbf24', strokeWidth: 1.5, strokeOpacity: 0.6, dash: 2
-          });
-          wavelets.push(circ);
-        });
-
-        // Tangent envelope: new wavefront at x0 + r
-        newEnvelope = board.create('segment', [[x0 + r, -4], [x0 + r, 4]], {
-          strokeColor: '#4ade80', strokeWidth: 3.5, name: 'New Wavefront Envelope'
-        });
-
-        // Rays (direction of propagation)
-        [-2, 0, 2].forEach(function(y) {
-          let ray = board.create('arrow', [[x0 - 1.2, y], [x0 + r + 0.8, y]], {
-            strokeColor: '#94a3b8', strokeWidth: 1.2, dash: 1
-          });
-          wavelets.push(ray);
-        });
-      } else {
-        // Spherical wave
-        sourcePt = board.create('point', [0.5, 0], {
-          size: 4, fillColor: '#ef4444', strokeColor: '#fca5a5', name: 'Source S', fixed: true
-        });
-        let R0 = 2.2;
-        initialWavefront = board.create('arc', [[0.5, 0], [0.5 + R0 * Math.cos(0.9), R0 * Math.sin(0.9)], [0.5 + R0 * Math.cos(-0.9), R0 * Math.sin(-0.9)]], {
-          strokeColor: '#38bdf8', strokeWidth: 3
-        });
-
-        let angles = [-0.7, -0.4, -0.15, 0.15, 0.4, 0.7];
-        angles.forEach(function(a) {
-          let wx = 0.5 + R0 * Math.cos(a);
-          let wy = R0 * Math.sin(a);
-          let pt = board.create('point', [wx, wy], {
-            size: 3, fillColor: '#f59e0b', strokeColor: '#fbbf24', fixed: true, name: ''
-          });
-          wavelets.push(pt);
-          let circ = board.create('circle', [pt, r], {
-            strokeColor: '#fbbf24', strokeWidth: 1.5, strokeOpacity: 0.6, dash: 2
-          });
-          wavelets.push(circ);
-        });
-
-        // Tangent envelope for spherical wave
-        newEnvelope = board.create('arc', [[0.5, 0], [0.5 + (R0 + r) * Math.cos(0.9), (R0 + r) * Math.sin(0.9)], [0.5 + (R0 + r) * Math.cos(-0.9), (R0 + r) * Math.sin(-0.9)]], {
-          strokeColor: '#4ade80', strokeWidth: 3.5
-        });
+    // front for each type at time tt: list of points (in order), and the direction each point moves
+    const GAP = 0.7, NG = 1.5;
+    function front(tt) {
+      const ty = type.value, pts = [];
+      if (ty === 0) for (let y = -2.3; y <= 2.31; y += 0.23) pts.push([-5.5 + V * tt, y]);
+      if (ty === 1) { const R = 0.6 + V * tt; for (let a = -70; a <= 70; a += 7) pts.push([-6 + R * Math.cos(a * Math.PI / 180), R * Math.sin(a * Math.PI / 180)]); }
+      if (ty === 2) {
+        const x = -4.5 + V * tt;
+        if (x <= 0) for (let y = -2.3; y <= 2.31; y += 0.23) pts.push([x, y]);
+        else {                                   // envelope of wavelets from the gap: straight middle and rounded ends
+          const r = x;
+          for (let a = -90; a <= 0; a += 6) pts.push([r * Math.cos(a * Math.PI / 180), -GAP + r * Math.sin(a * Math.PI / 180)]);
+          for (let a = 0; a <= 90; a += 6) pts.push([r * Math.cos(a * Math.PI / 180), GAP + r * Math.sin(a * Math.PI / 180)]);
+        }
       }
-
-      board.resumeUpdate();
+      if (ty === 3) {
+        // boundary x = 0.6 y (a slanted glass face). Each ray moves right at speed V, then refracts and slows to V/n
+        const m = 0.6, nrm = [1 / Math.hypot(1, m), -m / Math.hypot(1, m)];   // normal into the glass
+        const i = Math.acos(nrm[0]), r = Math.asin(Math.sin(i) / NG);
+        // refracted ray = the normal turned by r towards the side the light came from
+        const dirIn = [Math.cos(r) * nrm[0] - Math.sin(r) * nrm[1], Math.sin(r) * nrm[0] + Math.cos(r) * nrm[1]];
+        for (let y = -2.3; y <= 2.31; y += 0.23) {
+          const xb = m * y, tb = (xb + 5.5) / V;
+          if (tt <= tb) pts.push([-5.5 + V * tt, y]);
+          else pts.push([xb + dirIn[0] * V / NG * (tt - tb), y + dirIn[1] * V / NG * (tt - tb)]);
+        }
+      }
+      return pts;
     }
 
-    renderScene();
-
-    document.getElementById('radius-slider').addEventListener('input', function(e) {
-      document.getElementById('radius-val').textContent = parseFloat(e.target.value).toFixed(1) + ' m';
-      renderScene();
-    });
-
-    document.getElementById('wave-mode-btn').addEventListener('click', function() {
-      if (mode === 'plane') {
-        mode = 'spherical';
-        this.textContent = 'Mode: Spherical Wavefront';
-        this.style.background = '#8b5cf6';
+    k.draw = g => {
+      if (scene.value === 0) {
+        const ty = type.value;
+        if (ty === 2) { g.rect(-0.08, GAP, 0.16, 2.0, { fill: C.ink, color: 'none' }); g.rect(-0.08, -2.7, 0.16, 2.0, { fill: C.ink, color: 'none' }); }
+        if (ty === 3) { g.path([[0.6 * -2.6, -2.6], [0.6 * 2.6, 2.6], [6.2, 2.6], [6.2, -2.6]], { close: true, fill: '#e0f2fe', color: C.fluid, width: 2 }); g.text([4.8, -2.2], 'glass: waves slower', { size: 12, color: C.fluid, bold: true }); }
+        // old fronts (faded) every DT seconds, then wavelets from the last one, then the new front
+        const gen = Math.floor(t / DT), tg = gen * DT, dtau = t - tg;
+        for (let j = 0; j <= gen; j++) g.path(front(j * DT), { color: C.acc, width: 1.5, alpha: 0.25 });
+        const src = front(tg);
+        for (const p of src) {
+          let rr = V * dtau;
+          if (ty === 3 && p[0] > 0.6 * p[1] + 1e-6) rr /= NG;                  // wavelets inside glass are smaller
+          if (ty === 2 && tg * V - 4.5 < 0 && Math.abs(p[1]) > GAP && t * V - 4.5 > 0) continue;   // blocked by the barrier
+          g.circle(p, rr, { color: C.field, width: 1, alpha: 0.55 });
+          g.dot(p, 3, C.field);
+        }
+        g.path(front(t), { color: C.acc, width: 3.5 });
+        g.text([-6.0, 2.35], `wavelets from the front at t = ${num(tg, 1)} s; new front after Δt = ${num(dtau, 1)} s`, { align: 'left', size: 12, bold: true, bg: '#fff' });
       } else {
-        mode = 'plane';
-        this.textContent = 'Mode: Plane Wavefront';
-        this.style.background = '#0284c7';
+        const L1 = L1S.value, L2 = L2S.value, S = 1.1, PX = 3.4, w = 2 * Math.PI;
+        const lanes = [[1.3, L1, C.bad, 'wave 1'], [-0.4, L2, C.acc, 'wave 2']];
+        for (const [y, L, col, name] of lanes) {
+          const xs = PX - L * S, pts = [];
+          for (let x = xs; x <= PX + 1e-6; x += 0.03) pts.push([x, y + 0.45 * Math.sin(w * (x - xs) / S - ph)]);
+          g.path(pts, { color: col, width: 2.5 });
+          g.dot([xs, y], 6, col);
+          g.text([xs, y - 0.7], `${name}: ${num(L, 2)}λ`, { size: 12, bold: true, color: col });
+        }
+        g.line([PX, -1.3], [PX, 2.2], { color: C.muted, dash: [4, 4] });
+        g.text([PX, 2.35], 'P', { size: 14, bold: true });
+        // displacements arriving at P, and their sum
+        const y1 = 0.45 * Math.sin(w * L1 - ph), y2 = 0.45 * Math.sin(w * L2 - ph);
+        const cols = [[4.3, y1, C.bad, '1'], [4.95, y2, C.acc, '2'], [5.7, y1 + y2, C.vel, 'sum']];
+        g.line([4.0, -1.9], [6.1, -1.9], { color: C.faint });
+        for (const [x, v, col, n] of cols) { g.line([x, -1.9], [x, -1.9 + v], { color: col, width: 6 }); g.text([x, -2.35], n, { size: 12, bold: true, color: col }); }
+        g.text([5.0, 0.9], 'at P', { size: 12, color: C.muted });
       }
-      renderScene();
-    });
+    };
+
+    k.update = () => {
+      if (scene.value === 0) {
+        const msg = ['A plane front stays plane: the wavelets all have the same radius.', 'A circular front grows: the wavelets touch a bigger circle each time.',
+          'Only the points inside the gap make wavelets, so beyond the gap the wave bends round the edges: diffraction.',
+          'In glass the wave is slower, so the wavelets there are smaller (r = vΔt/n) and the front turns towards the normal: refraction.'][type.value];
+        k.readout([`Wavelet radius r = vΔt; the new wavefront is the curve touching all the wavelets (the envelope).`, msg]);
+      } else {
+        const dx = Math.abs(L1S.value - L2S.value), dphi = 2 * dx;            // in units of π
+        const whole = Math.abs(dx - Math.round(dx)) < 1e-9, half = Math.abs(dx * 2 - Math.round(dx * 2)) < 1e-9 && !whole;
+        k.readout([
+          `Δx = |${num(L1S.value, 2)}λ − ${num(L2S.value, 2)}λ| = <b>${num(dx, 2)}λ</b>; Δφ = (2π/λ)Δx = <b>${num(dphi, 2)}π rad</b>`,
+          whole ? 'Whole number of wavelengths: in phase, crest meets crest → constructive interference (the sum is twice as big).'
+            : half ? 'Odd number of half wavelengths: out of phase, crest meets trough → destructive interference (the sum is zero).'
+              : 'In between: partly in phase, so the sum is between zero and double.'
+        ]);
+      }
+    };
+    show();
   })();
   </script>
 </div>

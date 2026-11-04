@@ -56,118 +56,84 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Parallel Plate Geometry and Dielectric Inserter</span>
-  <p class="demo-instruction">Adjust plate area $A$, separation $d$, and select different dielectric materials to observe real-time changes in capacitance and stored charge.</p>
-
-  <div id="plate-board" style="width: 100%; height: 350px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1.2rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Area $A$: 
-      <input id="area-slider" type="range" min="10" max="100" step="10" value="50" style="vertical-align: middle;">
-      <span id="area-val" style="color: #38bdf8; font-weight: 700;">50 cm&sup2;</span>
-    </label>
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Gap $d$: 
-      <input id="gap-slider" type="range" min="0.5" max="3.0" step="0.5" value="1.0" style="vertical-align: middle;">
-      <span id="gap-val" style="color: #4ade80; font-weight: 700;">1.0 mm</span>
-    </label>
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Dielectric:
-      <select id="kappa-select" style="padding: 0.25rem 0.5rem; border-radius: 4px; background: #1e293b; color: white; border: 1px solid #475569;">
-        <option value="1.0">Vacuum / Air (&kappa; = 1.0)</option>
-        <option value="2.3">Polyethylene (&kappa; = 2.3)</option>
-        <option value="3.7">Paper (&kappa; = 3.7)</option>
-        <option value="6.25">Pyrex Glass (&kappa; = 6.25)</option>
-        <option value="80.0">Water (&kappa; = 80)</option>
-      </select>
-    </label>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      $C$: <span id="c-calc" style="color: #fb923c; font-weight: 700;">44.25 pF</span> &bull; $Q$ ($24\mathrm{\,V}$): <span id="q-calc" style="color: #f43f5e; font-weight: 700;">1.06 nC</span>
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; Parallel Plates and a Dielectric</span>
+  <p class="demo-question">What makes a capacitor store more charge: bigger plates, plates closer together, or something placed between them?</p>
+  <p class="demo-instruction">Change the plate area $A$ and the gap $d$, and slide a dielectric slab in. The slab's molecules turn into small dipoles (pale charges) that partly cancel the field from the plates, so the plates can hold more charge for the same voltage. With the battery <b>connected</b>, $V$ stays at 24 V and $Q$ grows; <b>disconnected</b>, $Q$ is trapped and $V$ falls.</p>
+  <div id="pk-plates"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('plate-board', {
-      boundingbox: [-4, 3, 4, -3],
-      axis: false,
-      showNavigation: false,
-      showCopyright: false,
-      pan: { enabled: false },
-      zoom: { enabled: false }
-    });
+  (function () {
+    const E0 = 8.85e-12;
+    const k = PhysKit.mount('pk-plates', { x: [-6.2, 6.2], y: [-2.6, 2.6] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    k.row();
+    const AS = k.slider({ label: 'A', unit: 'cm^2', min: 10, max: 100, step: 1, value: 50, digits: 0 });
+    const dS = k.slider({ label: 'd', unit: 'mm', min: 0.5, max: 4, step: 0.1, value: 1, digits: 1 });
+    k.row();
+    const DIEL = [{ n: 'paper', k: 3.7 }, { n: 'mica', k: 6 }, { n: 'glass', k: 6.25 }];
+    const diel = k.choice(DIEL.map(d => `${d.n} (κ = ${d.k})`), 2);
+    const xS = k.slider({ label: 'slab in', unit: '%', min: 0, max: 100, step: 1, value: 0, digits: 0 });
+    k.row();
+    let Qtrap = null;
+    const bat = k.choice(['battery connected (V = 24 V)', 'battery disconnected (Q fixed)'], 0, i => { Qtrap = i === 1 ? Cnow() * 24 : null; });
+    k.button('Example 9.2 (50 cm², 1 mm, air)', () => { AS.value = 50; dS.value = 1; xS.value = 0; bat.set(0); Qtrap = null; });
+    [AS, dS, xS].forEach(s => s.on(() => {}));
 
-    let p1 = null, p2 = null, slab = null, eLines = [];
+    const kap = () => DIEL[diel.value].k;
+    const Cnow = () => E0 * AS.value * 1e-4 * (1 + (kap() - 1) * xS.value / 100) / (dS.value * 1e-3);   // slab fills part of the area
+    const state = () => { const c = Cnow(); if (Qtrap === null) return { c, V: 24, Q: c * 24 }; return { c, Q: Qtrap, V: Qtrap / c }; };
+    let t = 0;
+    k.loop(dt => { t += dt; }, { button: false });
 
-    function drawPlates() {
-      board.suspendUpdate();
-      if (p1) board.removeObject(p1);
-      if (p2) board.removeObject(p2);
-      if (slab) board.removeObject(slab);
-      board.removeObject(eLines);
-      eLines = [];
-
-      let A_cm2 = parseFloat(document.getElementById('area-slider').value);
-      let d_mm = parseFloat(document.getElementById('gap-slider').value);
-      let kappa = parseFloat(document.getElementById('kappa-select').value);
-
-      // Physics calculation
-      let eps0 = 8.854e-12;
-      let A_m2 = A_cm2 * 1e-4;
-      let d_m = d_mm * 1e-3;
-      let C_F = (kappa * eps0 * A_m2) / d_m;
-      let C_pF = C_F * 1e12;
-      let Q_nC = (C_F * 24.0) * 1e9;
-
-      document.getElementById('c-calc').textContent = C_pF.toFixed(2) + ' pF';
-      document.getElementById('q-calc').textContent = Q_nC.toFixed(2) + ' nC';
-
-      // Visual dimensions
-      let halfGap = 0.5 + (d_mm - 0.5) * 0.5; // visual gap x in [-halfGap, +halfGap]
-      let halfH = 0.8 + (A_cm2 - 10) * (1.2 / 90.0); // visual plate height
-
-      // Dielectric slab between plates
-      let slabCol = kappa === 1.0 ? '#0f172a' : '#0369a1';
-      let slabOpacity = kappa === 1.0 ? 0.0 : 0.45;
-      slab = board.create('polygon', [
-        [-halfGap, -halfH], [halfGap, -halfH], [halfGap, halfH], [-halfGap, halfH]
-      ], {
-        fillColor: slabCol, fillOpacity: slabOpacity, borders: { visible: false }
-      });
-
-      // Plates
-      p1 = board.create('segment', [[-halfGap, -halfH], [-halfGap, halfH]], {
-        strokeColor: '#ef4444', strokeWidth: 8, name: '+ Plate'
-      });
-      p2 = board.create('segment', [[halfGap, -halfH], [halfGap, halfH]], {
-        strokeColor: '#38bdf8', strokeWidth: 8, name: '- Plate'
-      });
-
-      // E-field arrows
-      let numArrows = Math.max(3, Math.round(halfH * 2.5));
-      for (let i = 0; i < numArrows; i++) {
-        let y = -halfH + (i + 0.5) * (2 * halfH / numArrows);
-        let arrow = board.create('arrow', [[-halfGap + 0.1, y], [halfGap - 0.1, y]], {
-          strokeColor: '#facc15', strokeWidth: 1.5, strokeOpacity: 0.7
-        });
-        eLines.push(arrow);
+    k.draw = g => {
+      const st = state(), Lp = 1.6 + 4.4 * AS.value / 100, gap = 0.45 + 2.4 * (dS.value - 0.5) / 3.5;
+      const x0 = -2.2 - Lp / 2 + 1.6, x1 = x0 + Lp, yT = gap / 2, yB = -gap / 2, xs = x1 - Lp * xS.value / 100;
+      // dielectric slab (enters from the right)
+      g.rect(xs, yB, x1 + 1.6 - xs - Math.max(0, (1 - xS.value / 100)) * 0, gap, { fill: '#fde68a', color: '#b45309', width: 1.5, fillAlpha: 0.75 });
+      if (xS.value > 0) {
+        // bound charges on the slab faces and little dipoles inside
+        for (let x = xs + 0.15; x < x1; x += 0.3) {
+          g.text([x, yT - 0.12], '−', { size: 11, color: '#93c5fd', bold: true });
+          g.text([x, yB + 0.12], '+', { size: 11, color: '#fca5a5', bold: true });
+        }
       }
+      g.text([Math.max(xs, x1 - 0.1) + 0.9, yB - 0.3], xS.value > 0 ? DIEL[diel.value].n : 'slab', { size: 11, color: '#b45309' });
+      // plates
+      g.rect(x0, yT, Lp, 0.14, { fill: '#475569', color: C.ink, width: 1 });
+      g.rect(x0, yB - 0.14, Lp, 0.14, { fill: '#475569', color: C.ink, width: 1 });
+      // free charges: density ∝ σ; in the slab region σ is κ times bigger
+      const sAir = st.V / (dS.value * 1e-3) * E0, sDie = kap() * sAir;         // C/m²
+      const per = 2.2e-8;                                                       // C/m² per symbol per 0.3 units
+      for (let x = x0 + 0.15; x < x1; x += 0.3) {
+        const inSlab = x > xs, n = Math.min(4, Math.max(1, Math.round((inSlab ? sDie : sAir) / per)));
+        for (let j = 0; j < n; j++) { g.text([x, yT + 0.3 + j * 0.2], '+', { size: 12, bold: true, color: C.pos }); g.text([x, yB - 0.32 - j * 0.2], '−', { size: 12, bold: true, color: C.neg }); }
+      }
+      // field lines: same E everywhere between the plates, E = V/d
+      const nl = Math.min(18, Math.max(2, Math.round(st.V / 24 * 9 * (1 / dS.value) ** 0.5)));
+      for (let j = 0; j < nl; j++) { const x = x0 + Lp * (j + 0.5) / nl; g.arrow([x, yT - 0.02], [0, -(gap - 0.06)], { color: C.field, width: 1, head: 4, alpha: 0.8 }); }
+      // battery
+      if (Qtrap === null) {
+        g.path([[x0 + Lp / 2, yT + 0.14], [x0 + Lp / 2, 2.2], [-5.4, 2.2], [-5.4, 0.3]], { color: C.ink, width: 2.5 });
+        g.path([[x0 + Lp / 2, yB - 0.14], [x0 + Lp / 2, -2.2], [-5.4, -2.2], [-5.4, -0.3]], { color: C.ink, width: 2.5 });
+        g.line([-5.8, 0.3], [-5.0, 0.3], { color: C.ink, width: 3 }); g.line([-5.6, -0.3], [-5.2, -0.3], { color: C.ink, width: 6 });
+        g.text([-5.4, 0.65], '24 V', { size: 12, bold: true });
+      } else { g.text([-4.6, 1.2], 'battery disconnected:', { size: 12, bold: true, color: C.muted }); g.text([-4.6, 0.8], 'Q is trapped on the plates', { size: 12, bold: true, color: C.muted }); }
+      // dimensions
+      g.line([x0, 1.75], [x1, 1.75], { color: C.muted }); g.text([(x0 + x1) / 2, 1.75], `A = ${AS.value} cm²`, { size: 11, bg: '#fff', color: C.muted });
+      g.text([x0 - 0.15, 0], `d = ${num(dS.value, 1)} mm`, { align: 'right', size: 11, color: C.muted });
+      g.text([3.9, 1.6], `C = ${num(st.c * 1e12, 2)} pF`, { align: 'left', size: 15, bold: true, color: C.acc });
+      g.text([3.9, 1.05], `Q = ${num(st.Q * 1e9, 3)} nC`, { align: 'left', size: 14, bold: true, color: C.pos });
+      g.text([3.9, 0.5], `V = ${num(st.V, 2)} V`, { align: 'left', size: 14, bold: true });
+    };
 
-      board.resumeUpdate();
-    }
-
-    drawPlates();
-
-    document.getElementById('area-slider').addEventListener('input', function(e) {
-      document.getElementById('area-val').textContent = e.target.value + ' cm²';
-      drawPlates();
-    });
-    document.getElementById('gap-slider').addEventListener('input', function(e) {
-      document.getElementById('gap-val').textContent = parseFloat(e.target.value).toFixed(1) + ' mm';
-      drawPlates();
-    });
-    document.getElementById('kappa-select').addEventListener('change', drawPlates);
+    k.update = () => {
+      const st = state(), f = xS.value / 100;
+      k.readout([
+        `C = ε₀A[1 + (κ − 1)x]/d = 8.85×10<sup>−12</sup> × ${AS.value}×10<sup>−4</sup> × ${num(1 + (kap() - 1) * f, 3)} / ${num(dS.value, 1)}×10<sup>−3</sup> = <b>${num(st.c * 1e12, 2)} pF</b> (x = part of the gap filled by the slab)`,
+        Qtrap === null ? `Battery connected: V = 24 V, so Q = CV = <b>${num(st.Q * 1e9, 3)} nC</b> — more capacitance pulls more charge from the battery.`
+          : `Disconnected: Q = ${num(st.Q * 1e9, 3)} nC stays, so V = Q/C = <b>${num(st.V, 2)} V</b> — the slab lowers the voltage.`,
+        'Example 9.2: 50 cm², 1 mm in air gives 44.25 pF and 1.062 nC at 24 V. Exercise 7: 8 μF → 50 μF with glass means κ = 50/8 = 6.25.'
+      ]);
+    };
   })();
   </script>
 </div>

@@ -53,99 +53,85 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Single-Slit Intensity Profile $[(\sin\beta)/\beta]^2$</span>
-  <p class="demo-instruction">Adjust the slit width $a$ and wavelength $\lambda$ to see how narrower slits spread out the central maximum and push the diffraction minima farther apart.</p>
-
-  <div id="diffract-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Slit Width $a$: 
-      <input id="a-slider" type="range" min="0.1" max="0.8" step="0.05" value="0.35" style="vertical-align: middle;">
-      <span id="a-val" style="color: #38bdf8; font-weight: 700;">0.35 mm</span>
-    </label>
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Wavelength $\lambda$: 
-      <input id="lambda-d-slider" type="range" min="400" max="700" step="25" value="532" style="vertical-align: middle;">
-      <span id="lambda-d-val" style="color: #4ade80; font-weight: 700;">532 nm</span>
-    </label>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      Central Width $W$: <span id="w-stat" style="color: #fb923c; font-weight: 700;">6.08 mm</span> ($D = 2.0\mathrm{\,m}$)
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; Single-Slit Diffraction with Phasors</span>
+  <p class="demo-question">Light through one narrow slit spreads into a wide central band with dark gaps. Where do the dark gaps come from, when there is only one slit?</p>
+  <p class="demo-instruction">Think of the slit as many small sources. Drag point <b>P</b> on the screen (or use the slider). Each little arrow on the right is the wave from one part of the slit; they are turned by their path differences. Straight ahead they all line up (bright). At the first minimum, $a\sin\theta = \lambda$, the arrows curl into a closed circle and add to zero (dark).</p>
+  <div id="pk-slit"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('diffract-board', {
-      boundingbox: [-4.5, 4.5, 4.5, -4],
-      axis: false,
-      showNavigation: false,
-      showCopyright: false,
-      pan: { enabled: false },
-      zoom: { enabled: false }
-    });
-
-    board.create('line', [[-4.2, 0], [4.2, 0]], {
-      strokeColor: '#334155', strokeWidth: 1, dash: 2
-    });
-    board.create('segment', [[3.8, -3.5], [3.8, 3.5]], {
-      strokeColor: '#94a3b8', strokeWidth: 4, name: 'Screen'
-    });
-
-    let diffCurve = null;
-
-    function wavelengthToHex(wl) {
-      if (wl < 450) return '#818cf8';
-      if (wl < 500) return '#38bdf8';
-      if (wl < 570) return '#4ade80';
-      if (wl < 600) return '#facc15';
-      if (wl < 640) return '#fb923c';
-      return '#ef4444';
+  (function () {
+    const k = PhysKit.mount('pk-slit', { x: [-6.2, 6.2], y: [-2.6, 2.6] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    k.row();
+    const lS = k.slider({ label: 'λ', unit: 'nm', min: 400, max: 700, step: 1, value: 547, digits: 0 });
+    const aS = k.slider({ label: 'a (slit width)', unit: 'mm', min: 0.1, max: 1, step: 0.01, value: 0.55 });
+    const DS = k.slider({ label: 'D', unit: 'm', min: 0.5, max: 3, step: 0.01, value: 2.06 });
+    k.row();
+    const yS = k.slider({ label: 'P at y', unit: 'mm', min: -12, max: 12, step: 0.01, value: 0 });
+    k.button('to the first minimum', () => { yS.value = +y1().toFixed(2); });
+    k.button('Example 8.3', () => { lS.value = 547; aS.value = 0.55; DS.value = 2.06; });
+    k.button('Exercise 10 (580 nm, 0.30 mm, 2.0 m)', () => { lS.value = 580; aS.value = 0.30; DS.value = 2.0; });
+    const y1 = () => lS.value * 1e-9 * DS.value / (aS.value * 1e-3) * 1000;     // first minimum (mm)
+    function col(l, a) {
+      const stops = [[380, [120, 0, 160]], [440, [60, 0, 255]], [490, [0, 160, 255]], [510, [0, 200, 80]], [580, [230, 220, 0]], [645, [255, 40, 0]], [700, [200, 0, 0]]];
+      let A = stops[0], B = stops[stops.length - 1];
+      for (let j = 0; j < stops.length - 1; j++) if (l >= stops[j][0] && l <= stops[j + 1][0]) { A = stops[j]; B = stops[j + 1]; }
+      const f = B[0] === A[0] ? 0 : (l - A[0]) / (B[0] - A[0]);
+      return `rgba(${A[1].map((v, i) => Math.round(v + f * (B[1][i] - v))).join(',')},${a == null ? 1 : a})`;
     }
+    const YM = 12, SCX = -0.4, s2b = y => y / YM * 2.4;        // screen x position and mm → board
+    // phase spread across the whole slit for point P: β = 2π a sinθ / λ (small angles: sinθ ≈ y/D)
+    const beta = () => 2 * Math.PI * (aS.value * 1e-3) * (yS.value * 1e-3 / DS.value) / (lS.value * 1e-9);
+    const Irel = b => Math.abs(b) < 1e-9 ? 1 : (Math.sin(b / 2) / (b / 2)) ** 2;
+    k.view.drag({ get: () => [SCX, s2b(yS.value)], set: p => { yS.value = Math.max(-YM, Math.min(YM, Math.round(p[1] / 2.4 * YM * 100) / 100)); }, r: 18 });
 
-    function updateDiffraction() {
-      board.suspendUpdate();
-      if (diffCurve) board.removeObject(diffCurve);
+    k.draw = g => {
+      const N = 12, av = 0.5 + 1.3 * (aS.value - 0.1) / 0.9;                 // drawn slit width (schematic)
+      const SLX = -5.0, P = [SCX, s2b(yS.value)];
+      // slit and sources
+      g.rect(SLX - 0.1, av / 2, 0.2, 2.6 - av / 2, { fill: C.ink, color: 'none' });
+      g.rect(SLX - 0.1, -2.6, 0.2, 2.6 - av / 2, { fill: C.ink, color: 'none' });
+      for (let x = -6.1; x < SLX - 0.2; x += 0.3) g.line([x, -0.9], [x, 0.9], { color: col(lS.value, 0.5), width: 2 });
+      for (let j = 0; j < N; j++) {
+        const ys = -av / 2 + av * (j + 0.5) / N, hue = j / (N - 1);
+        g.line([SLX, ys], P, { color: `hsl(${200 + 120 * hue}, 70%, 55%)`, width: 1, alpha: 0.6 });
+        g.dot([SLX, ys], 3, `hsl(${200 + 120 * hue}, 70%, 45%)`);
+      }
+      g.text([SLX, -av / 2 - 0.25], 'a', { size: 13, bold: true, dx: 12 });
+      // screen with the real pattern
+      for (let y = -2.4; y < 2.4; y += 0.02) {
+        const b = 2 * Math.PI * (aS.value * 1e-3) * (y / 2.4 * YM * 1e-3 / DS.value) / (lS.value * 1e-9);
+        g.rect(SCX - 0.5, y, 0.45, 0.021, { fill: col(lS.value, Irel(b) ** 0.6), color: 'none' });
+      }
+      g.rect(SCX - 0.5, -2.4, 0.45, 4.8, { color: C.ink, width: 1.5 });
+      const pts = [];
+      for (let y = -2.4; y <= 2.4; y += 0.01) { const b = 2 * Math.PI * (aS.value * 1e-3) * (y / 2.4 * YM * 1e-3 / DS.value) / (lS.value * 1e-9); pts.push([SCX + 0.05 + 1.0 * Irel(b), y]); }
+      g.path(pts, { color: C.ink, width: 1.5 });
+      const ym = s2b(y1());
+      if (ym < 2.4) for (const sg of [1, -1]) { g.line([SCX - 0.6, sg * ym], [SCX + 1.1, sg * ym], { color: C.bad, width: 1, dash: [3, 3] }); }
+      if (ym < 2.4) g.text([SCX + 1.15, ym], 'first minimum', { align: 'left', size: 11, color: C.bad });
+      g.handle(P, C.acc);
+      g.text([SCX - 0.25, 2.5], 'screen', { size: 11, color: C.muted });
+      // phasor sum: N small arrows, each turned by β/N from the last
+      const b = beta(), len = 2.6 / N, O = [3.8, -1.6];
+      let p = O.slice(), ang = Math.PI / 2 - b / 2 + b / (2 * N);
+      for (let j = 0; j < N; j++) {
+        const q = [p[0] + len * Math.cos(ang), p[1] + len * Math.sin(ang)], hue = j / (N - 1);
+        g.arrow(p, [q[0] - p[0], q[1] - p[1]], { color: `hsl(${200 + 120 * hue}, 70%, 45%)`, width: 2, head: 6 });
+        p = q; ang += b / N;
+      }
+      const R = Math.hypot(p[0] - O[0], p[1] - O[1]);
+      if (R > 0.05) g.arrow(O, [p[0] - O[0], p[1] - O[1]], { color: C.ink, width: 3 });
+      g.text([3.8, 2.35], `resultant = ${num(R / 2.6 * 100, 0)} % → I = ${num(Irel(b) * 100, 1)} %`, { size: 13, bold: true });
+    };
 
-      let a = parseFloat(document.getElementById('a-slider').value) * 1e-3;
-      let lambda = parseFloat(document.getElementById('lambda-d-slider').value) * 1e-9;
-      let D = 2.0; // m
-      let y1 = (lambda * D / a); // meters
-      let W_mm = (2 * y1) * 1000;
-
-      document.getElementById('w-stat').textContent = W_mm.toFixed(2) + ' mm';
-
-      let hexCol = wavelengthToHex(parseFloat(document.getElementById('lambda-d-slider').value));
-
-      // Plot intensity I(y) = I0 * (sin(beta)/beta)^2 where beta = pi * a * y / (lambda * D)
-      // Visual coordinate scaling: beta = pi * (y / y1_visual)
-      let y1_vis = 1.2 * (6.08 / W_mm); // higher width -> wider curve
-
-      diffCurve = board.create('functiongraph', [
-        function(y) {
-          let beta = (Math.PI * y) / (W_mm / 3.0);
-          if (Math.abs(beta) < 1e-4) return -3.2 + 3.5;
-          let val = Math.sin(beta) / beta;
-          return -3.2 + 3.5 * (val * val);
-        }, -3.8, 3.8
-      ], {
-        strokeColor: hexCol, strokeWidth: 2.5
-      });
-
-      board.resumeUpdate();
-    }
-
-    updateDiffraction();
-
-    document.getElementById('a-slider').addEventListener('input', function(e) {
-      document.getElementById('a-val').textContent = parseFloat(e.target.value).toFixed(2) + ' mm';
-      updateDiffraction();
-    });
-
-    document.getElementById('lambda-d-slider').addEventListener('input', function(e) {
-      document.getElementById('lambda-d-val').textContent = e.target.value + ' nm';
-      updateDiffraction();
-    });
+    k.update = () => {
+      const l = lS.value * 1e-9, a = aS.value * 1e-3, D = DS.value, yy = y1(), b = beta();
+      k.readout([
+        `First minima at a sin θ = λ: ${rich('y_1')} = λD/a = (${lS.value}×10<sup>−9</sup> × ${num(D, 2)}) / (${num(aS.value, 2)}×10<sup>−3</sup>) = <b>${num(yy, 2)} mm</b>; central band width 2${rich('y_1')} = <b>${num(2 * yy, 2)} mm</b>`,
+        `At P (y = ${num(yS.value, 2)} mm): the two edges of the slit differ in path by a sin θ = ${num(b / (2 * Math.PI), 2)}λ, so the arrows turn through ${num(b / Math.PI, 2)}π in total.`,
+        'A narrower slit (smaller a) spreads the light more. Example 8.3: 2y₁ = 4.1 mm with a = 0.55 mm and D = 2.06 m gives λ = 547 nm. Exercise 10: y₁ = 3.87 mm, central width 7.73 mm.'
+      ]);
+    };
   })();
   </script>
 </div>

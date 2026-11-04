@@ -47,86 +47,88 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Doppler Wavefront Compression</span>
-  <p class="demo-instruction">Use the slider to adjust the source velocity $v_s$. Observe how moving to the right crowds the circular wavefronts ahead (high frequency / blue shift) while stretching them out behind (low frequency / red shift).</p>
-
-  <div id="doppler-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Source Speed $v_s$: 
-      <input id="vs-slider" type="range" min="0" max="200" step="20" value="100" style="vertical-align: middle;">
-      <span id="vs-val" style="color: #38bdf8; font-weight: 700;">100 m/s</span>
-    </label>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      Ahead: <span id="ahead-stat" style="color: #38bdf8; font-weight: 700;">708 Hz (+42%)</span> &bull; Behind: <span id="behind-stat" style="color: #f87171; font-weight: 700;">386 Hz (-23%)</span>
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; Wavefronts from a Moving Siren</span>
+  <p class="demo-question">Why does a siren sound higher as it comes towards you and lower once it has passed?</p>
+  <p class="demo-instruction">The ambulance sends out one wavefront per period (slow motion). Ahead of it the fronts bunch up; behind it they spread out. Set the speeds (positive = to the right) and watch the car: its ear flashes each time a front reaches it. The formula uses the real signs: approaching raises the pitch, moving apart lowers it. Press <b>Example 6.7</b>, then wait for the ambulance to overtake.</p>
+  <div id="pk-doppler"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('doppler-board', {
-      boundingbox: [-7, 5, 7, -5],
-      axis: false,
-      showNavigation: false,
-      showCopyright: false
-    });
+  (function () {
+    const V = 330, SC = 1.6 / V;                       // board units per metre (sound moves 1.6 units/s on screen)
+    const k = PhysKit.mount('pk-doppler', { x: [-6.2, 6.2], y: [-2.6, 2.6] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    k.row();
+    const fS = k.slider({ label: 'f_s', unit: 'Hz', min: 300, max: 1000, step: 10, value: 550, digits: 0 });
+    const vsS = k.slider({ label: 'v_s (ambulance)', unit: 'm/s', min: -100, max: 100, step: 1, value: 44, digits: 0 });
+    const voS = k.slider({ label: 'v_o (car)', unit: 'm/s', min: -100, max: 100, step: 1, value: 0, digits: 0 });
+    k.row();
+    k.button('Example 6.7 (44 and 28 m/s, same way)', () => { fS.value = 550; vsS.value = 44; voS.value = 28; reset(-3.6, -2.7); });
+    k.button('car standing still', () => { vsS.value = 44; voS.value = 0; reset(-4.5, 1.5); });
+    k.button('Restart', () => reset());
+    let t, xs, xo, fronts, flash, inside, emitT;
+    function reset(a, b) {
+      t = 0; xs = a != null ? a : (vsS.value >= 0 ? -4.5 : 4.5); xo = b != null ? b : (vsS.value >= 0 ? 1.5 : -1.5);
+      fronts = []; flash = 0; emitT = 0; inside = new Set();
+    }
+    reset();
+    [fS, vsS, voS].forEach(s => s.on(() => { fronts = []; inside = new Set(); }));
 
-    let vs = 100;
-    const vSound = 340;
-    const f0 = 500;
-    let circles = [];
-
-    function renderWavefronts() {
-      board.suspendUpdate();
-      for (let c of circles) board.removeObject(c);
-      circles = [];
-
-      let mach = vs / vSound;
-      // Draw 5 successive emitted wavefronts
-      for (let k = 1; k <= 5; k++) {
-        let centerShift = (5 - k) * mach * 0.9;
-        let radius = (6 - k) * 0.9;
-        let c = board.create('circle', [[centerShift, 0], radius], {
-          strokeColor: '#38bdf8',
-          strokeWidth: 1.8,
-          dash: 0
-        });
-        circles.push(c);
+    k.loop(dt => {
+      t += dt;
+      xs += vsS.value * SC * dt; xo += voS.value * SC * dt;
+      const Te = 0.32 * 550 / fS.value;                 // emission period on screen
+      emitT += dt;
+      while (emitT >= Te) { emitT -= Te; fronts.push({ x: xs, t0: t, id: t + Math.random() }); }
+      fronts = fronts.filter(f => (t - f.t0) * 1.6 < 14);
+      for (const f of fronts) {
+        const r = (t - f.t0) * 1.6, inn = Math.hypot(xo - f.x, 0.87) < r;   // car ear is 0.87 units below the siren line
+        if (inn && !inside.has(f.id)) { inside.add(f.id); flash = 0.12; }
       }
-
-      // Moving source position
-      let sPt = board.create('point', [5 * mach * 0.9, 0], {
-        fillColor: '#fbbf24',
-        strokeColor: '#fff',
-        size: 5,
-        name: 'Source'
-      });
-      circles.push(sPt);
-
-      board.unsuspendUpdate();
-    }
-
-    renderWavefronts();
-
-    function update() {
-      document.getElementById('vs-val').textContent = vs + ' m/s';
-      let fAhead = Math.round(f0 * (vSound / (vSound - vs)));
-      let fBehind = Math.round(f0 * (vSound / (vSound + vs)));
-      let diffAhead = Math.round(((fAhead - f0) / f0) * 100);
-      let diffBehind = Math.round(((fBehind - f0) / f0) * 100);
-
-      document.getElementById('ahead-stat').textContent = fAhead + ' Hz (+' + diffAhead + '%)';
-      document.getElementById('behind-stat').textContent = fBehind + ' Hz (' + diffBehind + '%)';
-      renderWavefronts();
-    }
-
-    document.getElementById('vs-slider').addEventListener('input', function() {
-      vs = parseFloat(this.value);
-      update();
+      flash = Math.max(0, flash - dt);
+      if (xs < -6.6 || xs > 6.6 || xo < -6.6 || xo > 6.6 || t > 22) reset();
     });
 
-    update();
+    const fo = () => {
+      const u = Math.sign(xo - xs) || 1;                // +1 if the car is to the right of the ambulance
+      return { u, f: fS.value * (V - voS.value * u) / (V - vsS.value * u) };
+    };
+
+    k.draw = g => {
+      // two lanes so the ambulance can overtake: ambulance on the upper lane (Y), car on the lower lane (YC)
+      const Y = -0.5, YC = -1.22;
+      g.rect(-6.2, -1.55, 12.4, 1.45, { fill: '#e5e7eb', color: 'none' });
+      g.line([-6.2, -0.86], [6.2, -0.86], { color: '#fff', width: 2, dash: [14, 10] });
+      for (const f of fronts) {
+        const r = (t - f.t0) * 1.6;
+        g.circle([f.x, Y + 0.15], r, { color: C.fluid, width: 2, alpha: Math.max(0.15, 1 - r / 12) });
+      }
+      // ambulance
+      g.rect(xs - 0.55, Y - 0.25, 1.1, 0.6, { fill: '#fff', color: C.ink, width: 2, radius: 4 });
+      g.rect(xs - 0.1, Y + 0.0, 0.2, 0.2, { fill: C.bad, color: 'none' });
+      g.rect(xs - 0.12, Y + 0.35, 0.24, 0.14, { fill: Math.floor(t * 4) % 2 ? C.bad : C.acc, color: 'none' });
+      g.dot([xs - 0.3, Y - 0.25], 4, C.ink); g.dot([xs + 0.3, Y - 0.25], 4, C.ink);
+      if (vsS.value) g.arrow([xs, Y + 0.75], [Math.sign(vsS.value) * (0.3 + Math.abs(vsS.value) / 100), 0], { color: C.vel, width: 2.5 });
+      // car with a flashing ear
+      g.rect(xo - 0.5, YC - 0.25, 1.0, 0.45, { fill: '#fde68a', color: C.ink, width: 2, radius: 6 });
+      g.dot([xo - 0.28, YC - 0.25], 4, C.ink); g.dot([xo + 0.28, YC - 0.25], 4, C.ink);
+      g.dot([xo, YC + 0.05], flash > 0 ? 9 : 5, flash > 0 ? C.energy : C.muted);
+      if (voS.value) g.arrow([xo, YC - 0.4], [Math.sign(voS.value) * (0.3 + Math.abs(voS.value) / 100), 0], { color: C.vel, width: 2.5 });
+      // readings
+      const { f } = fo();
+      g.text([-6.0, 2.3], `ambulance sends ${fS.value} Hz`, { align: 'left', size: 14, bold: true, bg: '#fff' });
+      g.text([-6.0, 1.85], `car hears ${num(f, 1)} Hz ${f > fS.value + 0.05 ? '(higher)' : f < fS.value - 0.05 ? '(lower)' : '(same)'}`, { align: 'left', size: 14, bold: true, color: f >= fS.value ? C.bad : C.acc, bg: '#fff' });
+      g.text([0, -2.2], 'fronts crowd together ahead of a moving source and spread out behind it', { size: 12, color: C.muted });
+    };
+
+    k.update = () => {
+      const { u, f } = fo(), vs = vsS.value, vo = voS.value;
+      const sTow = vs * u, oTow = -vo * u;              // speed of each one towards the other
+      const words = (s, who) => s > 0 ? `${who} moves towards the other` : s < 0 ? `${who} moves away` : `${who} is still`;
+      k.readout([
+        `${words(sTow, 'ambulance')} (${num(Math.abs(vs), 0)} m/s); ${words(oTow, 'car')} (${num(Math.abs(vo), 0)} m/s)`,
+        `${rich('f_o')} = ${rich('f_s')} (v ${oTow >= 0 ? '+' : '−'} ${rich('v_o')}) / (v ${sTow >= 0 ? '−' : '+'} ${rich('v_s')}) = ${fS.value} × (330 ${oTow >= 0 ? '+' : '−'} ${Math.abs(vo)}) / (330 ${sTow >= 0 ? '−' : '+'} ${Math.abs(vs)}) = <b>${num(f, 1)} Hz</b>`,
+        `Wavelength ahead of the ambulance: (v − ${rich('v_s')})/${rich('f_s')} = ${num((V - Math.abs(vs)) / fS.value, 3)} m; behind it: (v + ${rich('v_s')})/${rich('f_s')} = ${num((V + Math.abs(vs)) / fS.value, 3)} m. Example 6.7 gives 581 Hz before overtaking and 526 Hz after.`
+      ]);
+    };
   })();
   </script>
 </div>

@@ -104,108 +104,114 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Logic Gate Truth Table Simulator</span>
-  <p class="demo-instruction">Select a logic gate type and toggle input binary switches $A$ and $B$ to observe the real-time logic output $Y$ and active circuit state.</p>
-
-  <div id="logic-board" style="width: 100%; height: 350px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Gate:
-      <select id="gate-select" style="padding: 0.3rem 0.6rem; border-radius: 4px; background: #1e293b; color: white; border: 1px solid #475569;">
-        <option value="AND">AND Gate</option>
-        <option value="OR">OR Gate</option>
-        <option value="NAND">NAND Gate</option>
-        <option value="NOR">NOR Gate</option>
-        <option value="XOR">XOR Gate</option>
-      </select>
-    </label>
-    <button id="toggle-a-btn" style="padding: 0.35rem 0.75rem; border-radius: 6px; background: #334155; color: white; border: none; cursor: pointer; font-weight: 600;">
-      Input A: 0 (LOW)
-    </button>
-    <button id="toggle-b-btn" style="padding: 0.35rem 0.75rem; border-radius: 6px; background: #334155; color: white; border: none; cursor: pointer; font-weight: 600;">
-      Input B: 0 (LOW)
-    </button>
-    <div style="color: #f8fafc; font-size: 0.95rem;">
-      Output $Y$: <span id="logic-out-stat" style="color: #fb923c; font-weight: 800; font-size: 1.1rem;">0 (LOW)</span>
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; Logic Gates You Can Switch</span>
+  <p class="demo-question">What does each gate do with its inputs, and how can two NOT gates and a NAND gate act as an OR gate?</p>
+  <p class="demo-instruction">Click the switches <b>A</b> and <b>B</b> on the drawing (or use the buttons) to set each input to 1 (+5 V, green) or 0 (0 V, grey). The wires light up with their logic level, the LED shows the output $Y$, and the current row of the truth table is highlighted. Choose a gate, or the <b>Exercise 2</b> circuit to see the in-between values $\bar{A}$ and $\bar{B}$.</p>
+  <div id="pk-gates"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('logic-board', {
-      boundingbox: [-4, 3, 4, -3],
-      axis: false,
-      showNavigation: false,
-      showCopyright: false,
-      pan: { enabled: false },
-      zoom: { enabled: false }
-    });
+  (function () {
+    const k = PhysKit.mount('pk-gates', { x: [-6.2, 6.2], y: [-2.6, 2.6] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    const GATES = ['NOT', 'AND', 'OR', 'NAND', 'NOR', 'XOR', 'Exercise 2: NOTs → NAND'];
+    const F = { NOT: (a) => 1 - a, AND: (a, b) => a & b, OR: (a, b) => a | b, NAND: (a, b) => 1 - (a & b), NOR: (a, b) => 1 - (a | b), XOR: (a, b) => a ^ b };
+    const EXPR = { NOT: 'Y = A̅', AND: 'Y = A · B', OR: 'Y = A + B', NAND: 'Y = NOT (A · B)', NOR: 'Y = NOT (A + B)', XOR: 'Y = A ⊕ B' };
+    k.row();
+    const gate = k.choice(GATES, 1);
+    k.row();
+    let A = 0, B = 0;
+    const bA = k.button('A = 0', () => { A = 1 - A; lab(); }), bB = k.button('B = 0', () => { B = 1 - B; lab(); });
+    function lab() { bA.textContent = `A = ${A}`; bB.textContent = `B = ${B}`; bA.classList.toggle('pk-primary', !!A); bB.classList.toggle('pk-primary', !!B); }
+    let t = 0;
+    k.loop(dt => { t += dt; }, { button: false });
 
-    let inA = 0, inB = 0;
-    let gateElem = [];
+    const ON = C.good, OFFC = '#94a3b8';
+    const wc = v => v ? ON : OFFC;
+    const SWA = [-5.4, 0.9], SWB = [-5.4, -0.9];
+    const kind = () => GATES[gate.value];
+    const one = () => kind() === 'NOT';
+    // click a switch on the canvas to flip it
+    [[SWA, () => { A = 1 - A; lab(); }], [SWB, () => { if (!one()) { B = 1 - B; lab(); } }]].forEach(([p, flip]) => k.view.drag({ get: () => p, r: 26, set: () => {}, start: () => { flip(); k.update(); k.redraw(); } }));
 
-    function updateLogic() {
-      board.suspendUpdate();
-      board.removeObject(gateElem);
-      gateElem = [];
-
-      let gate = document.getElementById('gate-select').value;
-      let outY = 0;
-
-      if (gate === 'AND') outY = (inA && inB) ? 1 : 0;
-      else if (gate === 'OR') outY = (inA || inB) ? 1 : 0;
-      else if (gate === 'NAND') outY = !(inA && inB) ? 1 : 0;
-      else if (gate === 'NOR') outY = !(inA || inB) ? 1 : 0;
-      else if (gate === 'XOR') outY = (inA !== inB) ? 1 : 0;
-
-      document.getElementById('logic-out-stat').textContent = outY + (outY ? ' (HIGH / 5V)' : ' (LOW / 0V)');
-      document.getElementById('logic-out-stat').style.color = outY ? '#4ade80' : '#ef4444';
-
-      // Draw Gate Box
-      let gBox = board.create('polygon', [[-1.2, -1.2], [1.2, -1.2], [1.2, 1.2], [-1.2, 1.2]], {
-        fillColor: '#1e293b', fillOpacity: 0.9, borders: { strokeColor: '#38bdf8', strokeWidth: 3 }
-      });
-      let gLabel = board.create('text', [0, 0, gate + ' GATE'], {
-        anchorX: 'middle', anchorY: 'middle', strokeColor: '#f8fafc', fontSize: 14, fontWeight: 'bold'
-      });
-
-      // Input wire A (top left)
-      let colA = inA ? '#4ade80' : '#64748b';
-      let wA = board.create('segment', [[-3.5, 0.6], [-1.2, 0.6]], { strokeColor: colA, strokeWidth: 4 });
-      let tA = board.create('text', [-3.2, 1.0, 'Input A = ' + inA], { strokeColor: colA, fontSize: 12, fontWeight: 'bold' });
-
-      // Input wire B (bottom left)
-      let colB = inB ? '#4ade80' : '#64748b';
-      let wB = board.create('segment', [[-3.5, -0.6], [-1.2, -0.6]], { strokeColor: colB, strokeWidth: 4 });
-      let tB = board.create('text', [-3.2, -1.0, 'Input B = ' + inB], { strokeColor: colB, fontSize: 12, fontWeight: 'bold' });
-
-      // Output wire Y (right)
-      let colY = outY ? '#4ade80' : '#ef4444';
-      let wY = board.create('segment', [[1.2, 0], [3.5, 0]], { strokeColor: colY, strokeWidth: 5 });
-      let tY = board.create('text', [2.2, 0.5, 'Output Y = ' + outY], { strokeColor: colY, fontSize: 13, fontWeight: 'bold' });
-
-      gateElem.push(gBox, gLabel, wA, tA, wB, tB, wY, tY);
-      board.resumeUpdate();
+    // draw a gate body facing right, with its input/output points
+    function body(g, kd, x, y, s) {
+      const h = 0.7 * s, w = 1.4 * s, pts = [];
+      let out = [x + w, y], back = x;
+      if (kd === 'NOT') { g.path([[x, y + h * 0.8], [x, y - h * 0.8], [x + w * 0.8, y]], { close: true, fill: '#fff', color: C.ink, width: 2.5 }); out = [x + w * 0.8, y]; }
+      else if (kd === 'AND' || kd === 'NAND') {
+        pts.push([x, y + h], [x + w * 0.5, y + h]);
+        for (let a = Math.PI / 2; a >= -Math.PI / 2 - 1e-9; a -= 0.1) pts.push([x + w * 0.5 + w * 0.5 * Math.cos(a), y + h * Math.sin(a)]);
+        pts.push([x, y - h]); g.path(pts, { close: true, fill: '#fff', color: C.ink, width: 2.5 });
+      } else {
+        // OR family: curved back, pointed nose
+        const bk = u => 0.25 * w * (1 - u * u);              // back bulge, u from −1 to 1
+        for (let u = -1; u <= 1.0001; u += 0.1) pts.push([x + bk(u), y + h * u]);
+        for (let s2 = 0; s2 <= 1.0001; s2 += 0.1) pts.push([x + w * s2, y + h * (1 - s2 * s2)]);
+        for (let s2 = 1; s2 >= -0.0001; s2 -= 0.1) pts.push([x + w * s2, y - h * (1 - s2 * s2)]);
+        g.path(pts, { close: true, fill: '#fff', color: C.ink, width: 2.5 });
+        back = x + 0.25 * w * 0.64;
+        if (kd === 'XOR') { const p2 = []; for (let u = -1; u <= 1.0001; u += 0.1) p2.push([x - 0.2 * s + bk(u), y + h * u]); g.path(p2, { color: C.ink, width: 2.5 }); }
+      }
+      if (kd === 'NOT' || kd === 'NAND' || kd === 'NOR') { g.circle([out[0] + 0.13 * s, y], 0.13 * s, { fill: '#fff', color: C.ink, width: 2.5 }); out = [out[0] + 0.26 * s, y]; }
+      return { inA: [back, y + h * 0.5], inB: [back, y - h * 0.5], in1: [x, y], out };
     }
+    const sw = (g, p, v, name) => {
+      g.rect(p[0] - 0.55, p[1] - 0.35, 1.1, 0.7, { fill: v ? '#dcfce7' : '#f1f5f9', color: v ? ON : C.muted, width: 2, radius: 12 });
+      g.circle([p[0] + (v ? 0.22 : -0.22), p[1]], 0.25, { fill: '#fff', color: v ? ON : C.muted, width: 2 });
+      g.text([p[0] - 0.8, p[1]], name, { size: 16, bold: true, align: 'right' });
+      g.text([p[0], p[1] - 0.55], v ? '1 (+5 V)' : '0 (0 V)', { size: 10, color: v ? ON : C.muted });
+    };
+    const wire = (g, pts, v) => { g.path(pts, { color: wc(v), width: 3 }); if (v) { const a = pts[pts.length - 2], b = pts[pts.length - 1]; } };
+    const led = (g, p, v) => {
+      g.circle(p, 0.38, { fill: v ? '#4ade80' : '#e5e7eb', color: C.ink, width: 2 });
+      if (v) for (let j = 0; j < 6; j++) { const a = j * Math.PI / 3 + t; g.line([p[0] + 0.48 * Math.cos(a), p[1] + 0.48 * Math.sin(a)], [p[0] + 0.62 * Math.cos(a), p[1] + 0.62 * Math.sin(a)], { color: '#22c55e', width: 2 }); }
+      g.text([p[0], p[1] - 0.8], `Y = ${v}`, { size: 14, bold: true, color: v ? ON : C.muted });
+    };
 
-    updateLogic();
+    k.draw = g => {
+      const kd = kind(), ex = kd.startsWith('Exercise');
+      sw(g, SWA, A, 'A'); if (!one()) sw(g, SWB, B, 'B');
+      let Y;
+      if (!ex) {
+        const G = body(g, kd, -2.4, 0, 1.25);
+        if (one()) { wire(g, [[SWA[0] + 0.55, SWA[1]], [-3.4, SWA[1]], [-3.4, 0], G.in1], A); Y = F.NOT(A); }
+        else { wire(g, [[SWA[0] + 0.55, SWA[1]], [-3.4, SWA[1]], [-3.4, G.inA[1]], G.inA], A); wire(g, [[SWB[0] + 0.55, SWB[1]], [-3.4, SWB[1]], [-3.4, G.inB[1]], G.inB], B); Y = F[kd](A, B); }
+        g.text([-2.4 + 0.75 * 1.25 * (kd === 'NOT' ? 0.8 : 1), 0], kd, { size: 13, bold: true });
+        wire(g, [G.out, [0.2, 0]], Y); led(g, [0.6, 0], Y);
+        g.text([-1.5, 2.2], EXPR[kd], { size: 15, bold: true, color: C.vel });
+      } else {
+        const nA = body(g, 'NOT', -3.9, 0.9, 0.6), nB = body(g, 'NOT', -3.9, -0.9, 0.6), G = body(g, 'NAND', -1.8, 0, 1.0);
+        const a1 = 1 - A, b1 = 1 - B; Y = F.NAND(a1, b1);
+        wire(g, [[SWA[0] + 0.55, SWA[1]], nA.in1], A); wire(g, [[SWB[0] + 0.55, SWB[1]], nB.in1], B);
+        wire(g, [nA.out, [-2.3, 0.9], [-2.3, G.inA[1]], G.inA], a1); wire(g, [nB.out, [-2.3, -0.9], [-2.3, G.inB[1]], G.inB], b1);
+        g.text([-2.75, 1.2], `A̅ = ${a1}`, { size: 12, bold: true, color: wc(a1) }); g.text([-2.75, -1.2], `B̅ = ${b1}`, { size: 12, bold: true, color: wc(b1) });
+        wire(g, [G.out, [0.2, 0]], Y); led(g, [0.6, 0], Y);
+        g.text([-1.6, 2.2], 'Y = NOT (A̅ · B̅) = A + B', { size: 15, bold: true, color: C.vel });
+      }
+      // truth table on the right
+      const cols = one() ? ['A', 'Y'] : ex ? ['A', 'B', 'A̅', 'B̅', 'Y'] : ['A', 'B', 'Y'];
+      const rowsT = one() ? [[0], [1]] : [[0, 0], [0, 1], [1, 0], [1, 1]];
+      const TX = 1.9, TY = 1.6, cw = ex ? 0.78 : 1.0, rh = 0.62;
+      cols.forEach((c, j) => g.text([TX + cw * (j + 0.5), TY], c, { size: 14, bold: true }));
+      g.line([TX, TY - 0.3], [TX + cw * cols.length, TY - 0.3], { color: C.ink, width: 1.5 });
+      rowsT.forEach((r, i) => {
+        const a = r[0], b = r[1] || 0, y = one() ? F.NOT(a) : ex ? F.NAND(1 - a, 1 - b) : F[kd](a, b);
+        const vals = one() ? [a, y] : ex ? [a, b, 1 - a, 1 - b, y] : [a, b, y];
+        const cur = a === A && (one() || b === B), yy = TY - 0.62 - i * rh;
+        if (cur) g.rect(TX - 0.05, yy - rh / 2 + 0.02, cw * cols.length + 0.1, rh - 0.04, { fill: '#fef3c7', color: C.energy, width: 1.5, radius: 6 });
+        vals.forEach((v, j) => g.text([TX + cw * (j + 0.5), yy], String(v), { size: 14, bold: j === vals.length - 1, color: j === vals.length - 1 ? (v ? ON : C.ink) : C.ink }));
+      });
+    };
 
-    document.getElementById('gate-select').addEventListener('change', updateLogic);
-
-    document.getElementById('toggle-a-btn').addEventListener('click', function() {
-      inA = inA ? 0 : 1;
-      this.textContent = 'Input A: ' + inA + (inA ? ' (HIGH)' : ' (LOW)');
-      this.style.background = inA ? '#16a34a' : '#334155';
-      updateLogic();
-    });
-
-    document.getElementById('toggle-b-btn').addEventListener('click', function() {
-      inB = inB ? 0 : 1;
-      this.textContent = 'Input B: ' + inB + (inB ? ' (HIGH)' : ' (LOW)');
-      this.style.background = inB ? '#16a34a' : '#334155';
-      updateLogic();
-    });
+    k.update = () => {
+      const kd = kind();
+      k.readout(kd.startsWith('Exercise') ? [
+        `Inputs A = ${A}, B = ${B} → A̅ = ${1 - A}, B̅ = ${1 - B} → Y = NAND(A̅, B̅) = <b>${F.NAND(1 - A, 1 - B)}</b>`,
+        'De Morgan: <span style="text-decoration: overline">A̅ · B̅</span> = A̿ + B̿ = A + B. The table is the same as OR: Y = 0 only when both inputs are 0.'
+      ] : [
+        `${kd}: ${({ NOT: 'output is the opposite of the input', AND: 'output 1 only when both inputs are 1', OR: 'output 1 when at least one input is 1', NAND: 'NOT-AND: output 0 only when both inputs are 1', NOR: 'NOT-OR: output 1 only when both inputs are 0', XOR: 'output 1 when the inputs are different' })[kd]}.`,
+        one() ? `A = ${A} → Y = <b>${F.NOT(A)}</b>` : `A = ${A}, B = ${B} → Y = <b>${F[kd](A, B)}</b>`
+      ]);
+    };
   })();
   </script>
 </div>

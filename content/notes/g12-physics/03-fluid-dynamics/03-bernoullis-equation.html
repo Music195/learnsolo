@@ -65,110 +65,107 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Venturi Tube and Manometer Columns</span>
-  <p class="demo-instruction">Use the slider to increase the incoming flow speed $v_1$. Observe how the faster flow in the constricted neck causes a dramatic drop in static pressure, revealed by the lowered liquid level in the central vertical manometer tube.</p>
-
-  <div id="venturi-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Inlet Speed $v_1$: 
-      <input id="v1-slider" type="range" min="1.0" max="4.0" step="0.2" value="2.0" style="vertical-align: middle;">
-      <span id="v1-val" style="color: #38bdf8; font-weight: 700;">2.0 m/s</span>
-    </label>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      Neck Speed $v_2 = $ <span id="v2-stat" style="color: #fb923c; font-weight: 700;">4.0 m/s</span> &bull; $\Delta p = $ <span id="dp-stat" style="color: #f87171; font-weight: 700;">6.0 kPa</span>
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; Venturi Tube: Faster Flow, Lower Pressure</span>
+  <p class="demo-question">Water speeds up as it squeezes through the narrow neck. What happens to its pressure there, and why?</p>
+  <p class="demo-instruction">Change the inlet speed $v_1$ and how narrow the neck is. Watch the particles speed up in the neck and the water level in the middle tube drop. The bar chart below shows that the pressure energy and the kinetic energy (per m³) always add up to the same total.</p>
+  <div id="pk-venturi"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('venturi-board', {
-      boundingbox: [-1, 7, 9, -1],
-      axis: false,
-      showNavigation: false,
-      showCopyright: false
+  (function () {
+    const RHO = 1000, G = 9.8, P1 = 20000;   // water; gauge pressure at the inlet = 20 kPa
+    const k = PhysKit.mount('pk-venturi', { x: [-5.2, 5.2], y: [-3.55, 3.0] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+
+    k.row();
+    const vS = k.slider({ label: 'v_1', unit: 'm/s', min: 0.5, max: 2, step: 0.1, value: 1.2 });
+    const nS = k.slider({ label: 'A_1 / A_2', min: 1, max: 3, step: 0.1, value: 2, format: v => num(v, 1) + ' ×' });
+
+    // ---- Pipe shape (drawing units). Centre line at y = YC. ----
+    const YC = -2.0, HW = 0.9;                // half-height of the wide part
+    const half = x => {                        // half-height of the pipe at x
+      const ax = Math.abs(x), hn = HW / nS.value;
+      if (ax <= 0.8) return hn;
+      if (ax >= 3.0) return HW;
+      const s = (ax - 0.8) / 2.2;              // smooth cosine taper from neck to wide part
+      return hn + (HW - hn) * (1 - Math.cos(Math.PI * s)) / 2;
+    };
+    // Continuity: A·v is the same everywhere, so v = v1 · A1 / A
+    const speed = x => vS.value * HW / half(x);
+    // Bernoulli (same height): p = p1 − ½ρ(v² − v1²)
+    const pressure = x => P1 - 0.5 * RHO * (speed(x) ** 2 - vS.value ** 2);
+    const PSCALE = 1 / 6000;                   // 6 kPa of pressure = 1 drawing unit of column
+
+    // ---- Particles: each keeps its fraction s of the way across the pipe ----
+    const parts = [];
+    for (let i = 0; i < 90; i++) parts.push({ x: -5.2 + 10.4 * Math.random(), s: (i % 9) / 4 - 1 });
+    k.loop(dt => {
+      for (const p of parts) {
+        p.x += speed(p.x) * 0.9 * dt;        // drawn 0.9 units per second per m/s
+        if (p.x > 5.2) p.x -= 10.4;
+      }
     });
 
-    let v1 = 2.0;
-    const ratio = 2.0; // A1 / A2 = 2
+    const TUBES = [{ x: -4, name: '1' }, { x: 0, name: '2' }, { x: 4, name: '3' }];
 
-    // Main Venturi pipe geometry
-    board.create('curve', [
-      function(t) { return t; },
-      function(t) {
-        if (t <= 2) return 2.2;
-        if (t >= 3 && t <= 5) return 1.3;
-        if (t >= 6) return 2.2;
-        if (t < 3) {
-          let s = t - 2;
-          return 2.2 - 0.9 * (3*s*s - 2*s*s*s);
-        } else {
-          let s = t - 5;
-          return 1.3 + 0.9 * (3*s*s - 2*s*s*s);
-        }
-      },
-      0, 8
-    ], { strokeColor: '#94a3b8', strokeWidth: 3 });
+    k.draw = g => {
+      // Pipe walls and water
+      const top = [], bot = [];
+      for (let x = -5.2; x <= 5.21; x += 0.1) { top.push([x, YC + half(x)]); bot.push([x, YC - half(x)]); }
+      g.path(top.concat(bot.slice().reverse()), { close: true, fill: C.fluidFill, color: 'none' });
+      g.path(top, { color: C.ink, width: 2.5 });
+      g.path(bot, { color: C.ink, width: 2.5 });
 
-    board.create('curve', [
-      function(t) { return t; },
-      function(t) {
-        if (t <= 2) return 0.2;
-        if (t >= 3 && t <= 5) return 0.7;
-        if (t >= 6) return 0.2;
-        if (t < 3) {
-          let s = t - 2;
-          return 0.2 + 0.5 * (3*s*s - 2*s*s*s);
-        } else {
-          let s = t - 5;
-          return 0.7 - 0.5 * (3*s*s - 2*s*s*s);
-        }
-      },
-      0, 8
-    ], { strokeColor: '#94a3b8', strokeWidth: 3 });
+      // Manometer tubes: the water rises to a height that shows the pressure
+      for (const t of TUBES) {
+        const pTop = YC + half(t.x), level = YC + pressure(t.x) * PSCALE;
+        g.rect(t.x - 0.18, pTop, 0.36, 2.45 - pTop, { color: C.muted, width: 1.5, fill: '#fff' });
+        g.rect(t.x - 0.18, pTop, 0.36, Math.max(0, level - pTop), { color: 'none', fill: C.fluid, fillAlpha: 0.75 });
+        g.line([t.x - 0.32, level], [t.x + 0.32, level], { color: C.acc, width: 2 });
+        // the column height is written above each tube, so labels never meet
+        const h = pressure(t.x) / (RHO * G);
+        g.text([t.x, 2.72], `h_${t.name} = ${num(h)} m`, { size: 13, color: C.acc, bold: true });
+      }
+      // Dashed line at the inlet level, to compare the other columns with
+      const l1 = YC + P1 * PSCALE;
+      g.line([-4.4, l1], [4.4, l1], { color: C.muted, width: 1, dash: [3, 5] });
 
-    // Manometer tubes at x = 1 (wide) and x = 4 (narrow neck)
-    // Left manometer
-    board.create('segment', [[0.8, 2.2], [0.8, 6.5]], { strokeColor: '#64748b', strokeWidth: 2 });
-    board.create('segment', [[1.2, 2.2], [1.2, 6.5]], { strokeColor: '#64748b', strokeWidth: 2 });
-    let leftLiquid = board.create('polygon', [
-      [0.82, 2.2], [1.18, 2.2], [1.18, 5.5], [0.82, 5.5]
-    ], { fillColor: '#38bdf8', fillOpacity: 0.6, strokeWidth: 0, vertices: { visible: false } });
+      // Moving particles, darker where they are faster
+      for (const p of parts) {
+        const f = Math.min(1, (speed(p.x) / vS.value - 1) / 2);
+        g.dot([p.x, YC + p.s * half(p.x) * 0.85], 3, f > 0.05 ? '#0369a1' : C.fluid, { alpha: 0.55 + 0.45 * f });
+      }
+      // Speed arrows at the three sections
+      for (const t of TUBES) {
+        g.arrow([t.x - 0.1, YC], [speed(t.x) * 0.3, 0], { color: C.vel, width: 2.5 });
+        g.text([t.x, YC - half(t.x) - 0.28], `v_${t.name} = ${num(speed(t.x), 1)} m/s`, { size: 13, color: C.vel, bold: true });
+      }
+    };
 
-    // Right manometer
-    board.create('segment', [[3.8, 1.3], [3.8, 6.5]], { strokeColor: '#64748b', strokeWidth: 2 });
-    board.create('segment', [[4.2, 1.3], [4.2, 6.5]], { strokeColor: '#64748b', strokeWidth: 2 });
-    
-    // Dynamic column height for neck
-    let rightLiquid = board.create('polygon', [
-      [3.82, 1.3], [4.18, 1.3],
-      [4.18, function() {
-        let v2 = v1 * ratio;
-        // delta h = (v2^2 - v1^2)/(2g) scaled visually
-        let drop = (v2 * v2 - v1 * v1) * 0.18;
-        return Math.max(1.5, 5.5 - drop);
-      }],
-      [3.82, function() {
-        let v2 = v1 * ratio;
-        let drop = (v2 * v2 - v1 * v1) * 0.18;
-        return Math.max(1.5, 5.5 - drop);
-      }]
-    ], { fillColor: '#38bdf8', fillOpacity: 0.6, strokeWidth: 0, vertices: { visible: false } });
+    // ---- Second board: energy per unit volume at each section ----
+    const bars = k.addView({ x: [-5.2, 5.2], y: [-5, 30], equal: false, height: 170,
+      title: 'Energy per m^3 at sections 1, 2, 3 (kPa = kJ/m^3)' });
+    bars.draw = g => {
+      g.line([-5.2, 0], [5.2, 0], { color: C.muted, width: 1.5 });
+      const total = (P1 + 0.5 * RHO * vS.value ** 2) / 1000;
+      for (const t of TUBES) {
+        const p = pressure(t.x) / 1000, ke = 0.5 * RHO * speed(t.x) ** 2 / 1000;
+        g.rect(t.x - 0.7, 0, 1.4, p, { color: 'none', fill: C.acc, fillAlpha: 0.8 });
+        g.rect(t.x - 0.7, p, 1.4, ke, { color: 'none', fill: C.energy, fillAlpha: 0.85 });
+        g.text([t.x, p / 2], `p ${num(p, 1)}`, { color: '#fff', size: 12, bold: true });
+        if (ke > 3.5) g.text([t.x, p + ke / 2], `½ρv^2 ${num(ke, 1)}`, { color: '#fff', size: 12, bold: true });
+        g.text([t.x, -2.6], 'section ' + t.name, { size: 12, color: C.muted });
+      }
+      g.line([-5.0, total], [5.0, total], { color: C.force, width: 1.5, dash: true });
+      g.text([-5.0, total], `p + ½ρv^2 = ${num(total, 1)} kPa (same everywhere)`, { align: 'left', dy: 10, size: 12, color: C.force, bold: true });
+    };
 
-    board.create('text', [1, 6.0, 'P₁ (High)'], { color: '#38bdf8', fontSize: 12, anchorX: 'middle' });
-    board.create('text', [4, 6.0, 'P₂ (Low)'], { color: '#fb923c', fontSize: 12, anchorX: 'middle' });
-
-    let slider = document.getElementById('v1-slider');
-    slider.addEventListener('input', function() {
-      v1 = parseFloat(this.value);
-      document.getElementById('v1-val').textContent = v1.toFixed(1) + ' m/s';
-      let v2 = v1 * ratio;
-      document.getElementById('v2-stat').textContent = v2.toFixed(1) + ' m/s';
-      let dp = 0.5 * 1000 * (v2 * v2 - v1 * v1) / 1000;
-      document.getElementById('dp-stat').textContent = dp.toFixed(1) + ' kPa';
-      board.update();
-    });
+    k.update = () => {
+      const v1 = vS.value, v2 = speed(0), dp = P1 - pressure(0);
+      k.readout([
+        `Continuity: ${rich('A_1v_1')} = ${rich('A_2v_2')} → ${rich('v_2')} = ${num(v1, 1)} × ${num(nS.value, 1)} = <b>${num(v2, 2)} m/s</b>`,
+        `Bernoulli: ${rich('p_1')} − ${rich('p_2')} = ½ρ(${rich('v_2')}<sup>2</sup> − ${rich('v_1')}<sup>2</sup>) = ½ × 1000 × (${num(v2, 2)}<sup>2</sup> − ${num(v1, 1)}<sup>2</sup>) = <b>${num(dp / 1000, 2)} kPa</b>`,
+        `So the neck column is lower by Δh = Δp / ρg = <b>${num(dp / (RHO * G), 3)} m</b>. Section 3 is as wide as section 1, so its speed and pressure come back to the inlet values.`
+      ]);
+    };
   })();
   </script>
 </div>

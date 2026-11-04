@@ -52,91 +52,75 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Lambert's Cosine Law and Distance Attenuation</span>
-  <p class="demo-instruction">Move the test surface point along the floor or adjust mounting height $h$. Observe how distance $r$ and inclination angle $\theta$ diminish the surface illuminance in lux.</p>
-
-  <div id="photometry-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Mounting Height $h$: 
-      <input id="h-slider" type="range" min="2" max="6" step="0.5" value="4" style="vertical-align: middle;">
-      <span id="h-val" style="color: #38bdf8; font-weight: 700;">4.0 m</span>
-    </label>
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Horizontal Distance $x$: 
-      <input id="x-slider" type="range" min="0" max="6" step="0.5" value="3" style="vertical-align: middle;">
-      <span id="x-val" style="color: #fb923c; font-weight: 700;">3.0 m</span>
-    </label>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      Illuminance ($I = 200\text{ cd}$): <span id="e-stat" style="color: #4ade80; font-weight: 700;">6.40 lx</span>
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; How Brightly Does a Lamp Light the Ground?</span>
+  <p class="demo-question">A street lamp shines on the road. Why is the ground only a little dimmer a few metres away, but very dim far away?</p>
+  <p class="demo-instruction">Drag point <b>B</b> along the ground, or the lamp up and down. The illuminance $E = I\cos\theta / r^2$ falls for two reasons: the light has spread over a bigger sphere ($1/r^2$) and it strikes the ground at a slant ($\cos\theta$). The ground is shaded by its illuminance and the graph shows $E$ along the road.</p>
+  <div id="pk-lux"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('photometry-board', {
-      boundingbox: [-1, 7, 8, -1],
-      axis: true,
-      defaultAxes: {
-        x: { name: 'Floor Distance x (m)', withLabel: true, label: { position: 'rt', offset: [-15, -15], color: '#cbd5e1' } },
-        y: { name: 'Height y (m)', withLabel: true, label: { position: 'rt', offset: [-10, -10], color: '#cbd5e1' } }
-      },
-      showNavigation: false,
-      showCopyright: false
-    });
+  (function () {
+    const k = PhysKit.mount('pk-lux', { x: [-6.2, 6.2], y: [-2.6, 2.6] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    const SC = 0.62, GY = -2.0;                        // board units per metre; ground level
+    k.row();
+    const IS = k.slider({ label: 'I', unit: 'cd', min: 20, max: 500, step: 5, value: 200, digits: 0 });
+    const hS = k.slider({ label: 'h (lamp height)', unit: 'm', min: 1, max: 7, step: 0.1, value: 4, digits: 1 });
+    const xS = k.slider({ label: 'x (B from A)', unit: 'm', min: -9, max: 9, step: 0.1, value: 3, digits: 1 });
+    k.row();
+    const PS = k.slider({ label: 'lamp power', unit: 'W', min: 5, max: 200, step: 1, value: 40, digits: 0 });
+    k.button('Example 7.8 (200 cd, 4 m, 3 m)', () => { IS.value = 200; hS.value = 4; xS.value = 3; });
+    k.button('Example 7.7 (35 cd, 10 W)', () => { IS.value = 35; PS.value = 10; });
+    const E = x => IS.value * hS.value / Math.pow(hS.value ** 2 + x * x, 1.5);    // I cosθ / r², cosθ = h/r
 
-    let h_val = 4.0;
-    let x_val = 3.0;
-    const I_source = 200;
+    k.view.drag({ get: () => [xS.value * SC, GY], set: p => { xS.value = Math.max(-9, Math.min(9, Math.round(p[0] / SC * 10) / 10)); }, r: 16 });
+    k.view.drag({ get: () => [0, GY + hS.value * SC], set: p => { hS.value = Math.max(1, Math.min(7, Math.round((p[1] - GY) / SC * 10) / 10)); }, r: 16 });
 
-    // Floor line
-    board.create('segment', [[0, 0], [7.5, 0]], { strokeColor: '#cbd5e1', strokeWidth: 3 });
+    k.draw = g => {
+      const h = hS.value, x = xS.value, L = [0, GY + h * SC], B = [x * SC, GY], E0 = E(0);
+      // ground shaded by illuminance
+      for (let i = -60; i < 60; i++) {
+        const xa = i / 6, f = E(xa + 1 / 12) / E0;
+        g.rect(xa * SC, GY - 0.35, SC / 6 + 0.01, 0.35, { fill: `rgb(${Math.round(40 + 215 * f)}, ${Math.round(40 + 200 * f)}, ${Math.round(40 + 60 * f)})`, color: 'none' });
+      }
+      // light cone and the ray to B
+      for (let i = -8; i <= 8; i++) g.line(L, [i * 0.8, GY], { color: '#fde047', width: 1, alpha: 0.5 });
+      g.line([0, GY], L, { color: C.ink, width: 4 });
+      g.line(L, B, { color: C.energy, width: 3 });
+      g.line([B[0], GY], [B[0], GY + 1.3], { color: C.muted, width: 1.5, dash: [4, 4] });
+      g.text([B[0], GY + 1.45], 'normal', { size: 10, color: C.muted });
+      // θ at B between the ray and the normal
+      const th = Math.atan2(Math.abs(x), h), sg = x >= 0 ? 1 : -1, arc = [];
+      for (let j = 0; j <= 20; j++) { const a = th * j / 20; arc.push([B[0] - sg * 0.6 * Math.sin(a), GY + 0.6 * Math.cos(a)]); }
+      if (Math.abs(x) > 0.2) { g.path(arc, { color: C.field, width: 2 }); g.text([B[0] - sg * 0.85 * Math.sin(th / 2), GY + 0.85 * Math.cos(th / 2)], 'θ', { size: 13, bold: true, color: C.field }); }
+      g.circle(L, 0.22, { fill: '#fde047', color: C.ink, width: 2 });
+      g.text([0.3, L[1] + 0.1], `lamp, ${IS.value} cd`, { align: 'left', size: 12, bold: true });
+      g.text([-0.15, GY + h * SC / 2], `h = ${num(h, 1)} m`, { align: 'right', size: 12, bold: true });
+      g.text([(L[0] + B[0]) / 2 + sg * 0.25, (L[1] + B[1]) / 2], `r = ${num(Math.hypot(h, x), 2)} m`, { align: sg > 0 ? 'left' : 'right', size: 12, bold: true, color: C.energy });
+      g.dot([0, GY], 5, C.ink); g.text([0, GY - 0.55], 'A', { size: 13, bold: true });
+      g.handle(B, C.acc); g.text([B[0], GY - 0.55], 'B', { size: 13, bold: true, color: C.acc });
+      g.handle(L, C.energy);
+      g.text([-6.0, 2.3], `E at B = ${num(E(x), 2)} lx`, { align: 'left', size: 15, bold: true, color: C.acc });
+      g.text([-6.0, 1.85], `E at A = ${num(E0, 2)} lx`, { align: 'left', size: 13, bold: true });
+    };
 
-    // Lamp point at (0, h)
-    let lamp = board.create('point', [0, function() { return h_val; }], {
-      name: 'Lamp (200 cd)', fillColor: '#facc15', strokeColor: '#fff', size: 6, fixed: true
-    });
+    const gv = k.addView({ x: [-9, 9], y: [0, 1], equal: false, height: 150, title: 'Illuminance E along the road (lx)' });
+    gv.draw = g => {
+      const top = E(0) * 1.15;
+      gv.setRange([-9.5, 9.5], [-top * 0.1, top]);
+      g.axes({ xstep: 3, ystep: top > 50 ? 20 : top > 20 ? 5 : top > 5 ? 2 : 0.5, xlabel: 'x (m)', ylabel: 'E' });
+      const pts = [];
+      for (let x = -9; x <= 9.001; x += 0.1) pts.push([x, E(x)]);
+      g.path(pts, { color: C.energy, width: 2.5 });
+      g.dot([xS.value, E(xS.value)], 6, C.acc);
+    };
 
-    // Floor target point at (x, 0)
-    let target = board.create('point', [function() { return x_val; }, 0], {
-      name: 'Point P', fillColor: '#4ade80', strokeColor: '#fff', size: 5, fixed: true
-    });
-
-    // Light ray from lamp to target
-    board.create('segment', [
-      [0, function() { return h_val; }],
-      [function() { return x_val; }, 0]
-    ], { strokeColor: '#facc15', strokeWidth: 2.5 });
-
-    // Normal line at target
-    board.create('segment', [
-      [function() { return x_val; }, 0],
-      [function() { return x_val; }, 2.0]
-    ], { strokeColor: '#38bdf8', strokeWidth: 1.5, dash: 2 });
-    board.create('text', [function() { return x_val + 0.2; }, 1.5, 'Normal'], { color: '#38bdf8', fontSize: 11 });
-
-    function update() {
-      document.getElementById('h-val').textContent = h_val.toFixed(1) + ' m';
-      document.getElementById('x-val').textContent = x_val.toFixed(1) + ' m';
-      let r = Math.sqrt(h_val * h_val + x_val * x_val);
-      let cosTheta = h_val / r;
-      let E = (I_source * cosTheta) / (r * r);
-      document.getElementById('e-stat').textContent = E.toFixed(2) + ' lx';
-      board.update();
-    }
-
-    document.getElementById('h-slider').addEventListener('input', function() {
-      h_val = parseFloat(this.value);
-      update();
-    });
-
-    document.getElementById('x-slider').addEventListener('input', function() {
-      x_val = parseFloat(this.value);
-      update();
-    });
-
-    update();
+    k.update = () => {
+      const h = hS.value, x = xS.value, r = Math.hypot(h, x), c = h / r, Phi = 4 * Math.PI * IS.value;
+      k.readout([
+        `At A: E = I/${rich('h^2')} = ${IS.value}/${num(h, 1)}<sup>2</sup> = <b>${num(E(0), 2)} lx</b>. At B: r = √(${num(h, 1)}<sup>2</sup> + ${num(Math.abs(x), 1)}<sup>2</sup>) = ${num(r, 2)} m, cos θ = h/r = ${num(c, 3)}, E = I cos θ / ${rich('r^2')} = <b>${num(E(x), 2)} lx</b>`,
+        `Total flux Φ = 4πI = 4π × ${IS.value} = <b>${num(Phi, 1)} lm</b>; efficacy = Φ/P = ${num(Phi, 1)}/${PS.value} = <b>${num(Phi / PS.value, 1)} lm/W</b>`,
+        'Example 7.8: 200 cd at 4 m gives 12.5 lx under the lamp and 6.4 lx at 3 m (r = 5 m, cos θ = 0.8). Example 7.7: 35 cd gives 440 lm and 44 lm/W for a 10 W lamp.'
+      ]);
+    };
   })();
   </script>
 </div>

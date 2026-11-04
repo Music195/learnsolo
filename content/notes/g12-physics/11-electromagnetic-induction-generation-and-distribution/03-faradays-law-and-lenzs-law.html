@@ -53,85 +53,179 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Bar Magnet Moving Through Coil (Lenz's Law)</span>
-  <p class="demo-instruction">Drag the magnet slider toward and away from the coil to observe induced magnetic polarity, opposing force direction, and galvanometer needle deflection.</p>
-
-  <div id="lenz-board" style="width: 100%; height: 350px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Magnet Position $x$: 
-      <input id="x-mag-slider" type="range" min="-3.5" max="0.5" step="0.1" value="-2.5" style="vertical-align: middle;">
-      <span id="x-mag-val" style="color: #38bdf8; font-weight: 700;">-2.5</span>
-    </label>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      Coil End Polarity: <span id="polarity-stat" style="color: #fb923c; font-weight: 700;">Repelling North (N)</span> &bull; Current: <span id="i-dir-stat" style="color: #4ade80; font-weight: 700;">Counter-Clockwise</span>
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; Magnet and Coil (Faraday's and Lenz's Laws)</span>
+  <p class="demo-question">A magnet sitting still inside a coil gives no current. Why does moving it give one, and which way does that current flow?</p>
+  <p class="demo-instruction"><b>Drag the magnet</b> towards the coil and away from it, fast and slow, or choose <b>Auto</b>. Watch the meter, the graph of $\Phi$ and $\mathcal{E}$, and the poles the coil makes. Then stop the magnet: the flux stays big but stops changing, so the needle goes back to zero.</p>
+  <div id="pk-lenz"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('lenz-board', {
-      boundingbox: [-4, 3, 4, -3],
-      axis: false,
-      showNavigation: false,
-      showCopyright: false,
-      pan: { enabled: false },
-      zoom: { enabled: false }
-    });
+  (function () {
+    // Drawing units: 1 unit = 2 cm. The coil's axis is the line y = AY.
+    const k = PhysKit.mount('pk-lenz', { x: [-5, 5.4], y: [-3.1, 2.5] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    const AY = 0.6, XC = 2.6, COIL_L = 1.7, COIL_R = 3.5, HALF = 0.9;
+    const PHI_MAX = 5.0e-4;     // flux when the N tip reaches the middle of the coil (Wb)
+    const UNIT = 0.02;          // metres per drawing unit
+    const XMIN = -4, XMAX = XC - 1;   // the N tip can go in as far as the coil's middle
 
-    // Coil fixed at x = 1.0 to 2.5
-    board.create('polygon', [[1.0, -1.2], [2.5, -1.2], [2.5, 1.2], [1.0, 1.2]], {
-      fillColor: '#334155', fillOpacity: 0.8, borders: { strokeColor: '#fbbf24', strokeWidth: 3 }
-    });
-    board.create('text', [1.75, 1.6, 'Solenoid Coil'], {
-      anchorX: 'middle', strokeColor: '#f8fafc', fontSize: 12, fontWeight: 'bold'
-    });
+    k.row();
+    const nS = k.slider({ label: 'N', unit: 'turns', min: 50, max: 500, step: 50, value: 200 });
+    const mode = k.choice(['Drag it yourself', 'Auto: in and out'], 0);
+    const fS = k.slider({ label: 'speed (Auto)', min: 0.1, max: 0.6, step: 0.05, value: 0.3, format: v => num(v, 2) + ' Hz' });
+    k.row();
+    let flipped = false;        // false: N pole faces the coil
+    k.button('⇄ Flip magnet', () => { flipped = !flipped; });
 
-    let magnetPol = null, magTextN = null, magTextS = null;
-    let fieldArrows = [];
-    let prevX = -2.5;
+    let xm = -3, prevX = -3, vm = 0, emf = 0, autoT = 0, grip = 0;
+    const hist = [];            // { t, phi, emf } for the graph
 
-    function drawMagnet() {
-      board.suspendUpdate();
-      if (magnetPol) board.removeObject(magnetPol);
-      if (magTextN) board.removeObject(magTextN);
-      if (magTextS) board.removeObject(magTextS);
-      board.removeObject(fieldArrows);
-      fieldArrows = [];
-
-      let x = parseFloat(document.getElementById('x-mag-slider').value);
-      let dx = x - prevX;
-      prevX = x;
-
-      // Magnet body [x - 1.2, x]
-      magnetPol = board.create('polygon', [[x - 1.2, -0.6], [x, -0.6], [x, 0.6], [x - 1.2, 0.6]], {
-        fillColor: '#ef4444', fillOpacity: 0.9, borders: { strokeColor: '#cbd5e1', strokeWidth: 2 }
-      });
-      magTextS = board.create('text', [x - 0.9, 0, 'S'], { strokeColor: '#ffffff', fontSize: 14, fontWeight: 'bold' });
-      magTextN = board.create('text', [x - 0.3, 0, 'N'], { strokeColor: '#ffffff', fontSize: 14, fontWeight: 'bold' });
-
-      let isMovingIn = dx > 0;
-      let isMovingOut = dx < 0;
-
-      if (Math.abs(dx) > 0.01) {
-        if (isMovingIn) {
-          document.getElementById('polarity-stat').textContent = 'Repelling North (N)';
-          document.getElementById('i-dir-stat').textContent = 'Counter-Clockwise (CCW)';
-        } else {
-          document.getElementById('polarity-stat').textContent = 'Attracting South (S)';
-          document.getElementById('i-dir-stat').textContent = 'Clockwise (CW)';
-        }
-      }
-
-      document.getElementById('x-mag-val').textContent = x.toFixed(1);
-
-      board.resumeUpdate();
+    // Flux through the coil when the magnet's centre is at x.
+    // D = distance from the magnet's tip to the middle of the coil (drawing units);
+    // the flux falls off quickly as the tip moves away.
+    function flux(x) {
+      const D = Math.max(0, XC - (x + 1));
+      return (flipped ? -1 : 1) * PHI_MAX / Math.pow(1 + D * D, 1.5);
+    }
+    function dFluxdx(x) {          // how fast Φ changes per unit of magnet movement
+      const D = Math.max(0, XC - (x + 1));
+      return (flipped ? -1 : 1) * PHI_MAX * 3 * D * Math.pow(1 + D * D, -2.5);
     }
 
-    drawMagnet();
+    k.view.drag({
+      get: () => [xm, AY],
+      // grab anywhere on the magnet; keep the same grip point while dragging
+      hit: p => Math.abs(p[0] - xm) < 1.1 && Math.abs(p[1] - AY) < 0.45 && ((grip = p[0] - xm), true),
+      set: p => { xm = Math.max(XMIN, Math.min(XMAX, p[0] - grip)); mode.set(0); }
+    });
 
-    document.getElementById('x-mag-slider').addEventListener('input', drawMagnet);
+    k.loop((dt, t) => {
+      if (mode.value === 1) {
+        autoT += dt;
+        xm = -1.2 + 2.8 * Math.sin(2 * Math.PI * fS.value * autoT);
+      }
+      // Magnet speed, smoothed over about 0.15 s so a jerky mouse still
+      // gives a steady needle
+      const raw = dt > 0 ? (xm - prevX) / dt : 0;
+      vm += (raw - vm) * (1 - Math.exp(-dt / 0.15));
+      prevX = xm;
+      // Faraday: ε = −N dΦ/dt, with dΦ/dt = (dΦ/dx)(dx/dt), dx/dt in m/s
+      const dPhidt = dFluxdx(xm) * vm;            // per drawing unit → Wb/s per unit/s
+      emf = -nS.value * dPhidt;
+      hist.push({ t, phi: flux(xm), emf });
+      while (hist.length && hist[0].t < t - 8) hist.shift();
+    });
+
+    const EMF_FULL = 0.6;      // meter full scale (V)
+    // +1: current goes UP the front of each turn, so the induced field points −x
+    // (out of the near end, making it N). That happens when Φ grows, i.e. ε < 0.
+    const currentDir = () => Math.abs(emf) < 0.004 ? 0 : (emf < 0 ? 1 : -1);
+
+    k.draw = g => {
+      const facing = flipped ? 'S' : 'N';
+      // ---- Field lines of the magnet: r = c sin²θ around its centre ----
+      // (only the parts outside the magnet are drawn, so lines start at the poles)
+      for (const c of [2.2, 3.4, 5.0]) for (const sgn of [1, -1]) {
+        const pts = [];
+        for (let i = 2; i <= 178; i += 2) {
+          const th = i * Math.PI / 180, r = c * Math.sin(th) ** 2;
+          const p = [xm + 1.25 * r * Math.cos(th), AY + sgn * 0.7 * r * Math.sin(th)];
+          if (Math.abs(p[0] - xm) > 0.98 || Math.abs(p[1] - AY) > 0.3) pts.push(p);
+        }
+        g.path(pts, { color: C.field, width: 1.2, alpha: 0.35 });
+        const mid = pts[Math.floor(pts.length / 2)];   // arrow at the top: field goes N → S
+        g.arrow([mid[0] + (flipped ? -0.12 : 0.12), mid[1]], [flipped ? 0.24 : -0.24, 0], { color: C.field, width: 1.2, head: 7, alpha: 0.55 });
+      }
+
+      // ---- Coil: back halves (dashed), then the magnet, then front halves ----
+      const turns = 8, xs = [];
+      for (let i = 0; i < turns; i++) xs.push(COIL_L + (COIL_R - COIL_L) * i / (turns - 1));
+      const ellipse = (x, from, to) => {
+        const pts = [];
+        for (let a = from; a <= to + 1e-6; a += Math.PI / 24) pts.push([x + 0.18 * Math.cos(a), AY + HALF * Math.sin(a)]);
+        return pts;
+      };
+      xs.forEach(x => g.path(ellipse(x, Math.PI / 2, 3 * Math.PI / 2), { color: '#d6a36b', width: 2, dash: [3, 3] }));
+
+      // Magnet (N red, S blue), drawn as a bar with a grab handle
+      const left = flipped ? 'N' : 'S', right = facing;
+      const colOf = p => (p === 'N' ? C.pos : C.neg);
+      g.rect(xm - 1, AY - 0.3, 1, 0.6, { fill: colOf(left), color: C.ink, width: 1.5 });
+      g.rect(xm, AY - 0.3, 1, 0.6, { fill: colOf(right), color: C.ink, width: 1.5 });
+      g.text([xm - 0.5, AY], left, { color: '#fff', bold: true, size: 16 });
+      g.text([xm + 0.5, AY], right, { color: '#fff', bold: true, size: 16 });
+      if (mode.value === 0) g.text([xm, AY - 0.55], '⟵ drag ⟶', { color: C.muted, size: 12 });
+
+      const dir = currentDir();
+      xs.forEach(x => {
+        g.path(ellipse(x, -Math.PI / 2, Math.PI / 2), { color: '#b45309', width: 3 });
+        // current arrows on the front of each turn
+        if (dir) g.arrow([x + 0.18, AY - dir * 0.2], [0, dir * 0.4], { color: C.energy, width: 2, head: 7 });
+      });
+      g.text([XC, AY + HALF + 0.72], `coil, N = ${nS.value} turns`, { color: '#92400e', size: 13 });
+
+      // Induced poles of the coil (Lenz)
+      if (dir) {
+        // dir = +1 means the front current goes up: induced field points −x, so the left end is N
+        const nearPole = dir > 0 ? 'N' : 'S', farPole = dir > 0 ? 'S' : 'N';
+        // pole letters sit just above each end of the coil
+        g.text([COIL_L - 0.1, AY + HALF + 0.3], nearPole, { color: colOf(nearPole), bold: true, size: 20, bg: true });
+        g.text([COIL_R + 0.1, AY + HALF + 0.3], farPole, { color: colOf(farPole), bold: true, size: 20, bg: true });
+        // induced field along the coil's axis; its name goes under the coil
+        g.arrow([XC + dir * 0.6, AY], [-dir * 1.2, 0], { color: C.field, width: 3.5 });
+        g.text([XC, AY - HALF - 0.3], (dir > 0 ? '⟵ ' : '') + 'B_{induced}' + (dir > 0 ? '' : ' ⟶'), { color: C.field, bold: true, size: 14, bg: true });
+        // Force on the magnet: always against its motion
+        const push = -Math.sign(vm), size = Math.min(1.4, 0.3 + Math.abs(emf) / EMF_FULL * 2);
+        g.arrow([xm - push * size / 2, AY + 0.75], [push * size, 0], { color: C.force, width: 3,
+          label: push < 0 ? 'repelled' : 'attracted', side: [0, 1] });
+      }
+
+      // ---- Galvanometer ----
+      const M = [XC, -2.35], R = 0.75;
+      g.line([COIL_L, AY - HALF], [COIL_L, -1.5], { color: '#b45309', width: 2 });
+      g.line([COIL_L, -1.5], [M[0] - 0.5, -1.5], { color: '#b45309', width: 2 });
+      g.line([COIL_R, AY - HALF], [COIL_R, -1.5], { color: '#b45309', width: 2 });
+      g.line([COIL_R, -1.5], [M[0] + 0.5, -1.5], { color: '#b45309', width: 2 });
+      const arc = [];
+      for (let a = 0; a <= Math.PI + 1e-6; a += Math.PI / 30) arc.push([M[0] + R * Math.cos(a), M[1] + R * Math.sin(a)]);
+      g.path(arc.concat([[M[0] - R, M[1]]]), { close: true, fill: '#f8fafc', color: C.ink, width: 2 });
+      for (let i = -3; i <= 3; i++) {
+        const a = Math.PI / 2 - i * Math.PI / 9;
+        g.line([M[0] + 0.62 * Math.cos(a), M[1] + 0.62 * Math.sin(a)], [M[0] + 0.72 * Math.cos(a), M[1] + 0.72 * Math.sin(a)], { color: C.muted, width: 1.5 });
+      }
+      const ang = Math.PI / 2 - Math.max(-1, Math.min(1, emf / EMF_FULL)) * Math.PI / 3;
+      g.line(M, [M[0] + 0.66 * Math.cos(ang), M[1] + 0.66 * Math.sin(ang)], { color: C.force, width: 2.5 });
+      g.dot(M, 4, C.ink);
+      g.text([M[0], M[1] - 0.3], 'galvanometer', { size: 12, color: C.muted });
+      g.text([M[0] - R - 0.15, M[1] + 0.3], `ε = ${num(emf * 1000, 0)} mV`, { align: 'right', size: 14, bold: true, color: C.force });
+    };
+
+    // ---- Graph: flux and emf over the last 8 seconds ----
+    const graph = k.addView({ x: [-8, 0.3], y: [-1.25, 1.25], equal: false, height: 150,
+      title: 'Last 8 s: flux Φ (purple, full scale 0.50 mWb) and emf ε (red, full scale 600 mV)' });
+    graph.draw = g => {
+      g.axes({ xstep: 2, xfmt: x => (x === 0 ? 'now' : x + ' s') });
+      if (!hist.length) return;
+      const now = hist[hist.length - 1].t;
+      g.path(hist.map(h => [h.t - now, h.phi / PHI_MAX]), { color: C.field, width: 2.5 });
+      g.path(hist.map(h => [h.t - now, Math.max(-1.2, Math.min(1.2, h.emf / EMF_FULL))]), { color: C.force, width: 2.5 });
+    };
+
+    k.update = () => {
+      const phi = flux(xm), facing = flipped ? 'S' : 'N';
+      const lines = [
+        `Flux through each turn Φ = <b>${num(phi * 1000, 3)} mWb</b> &nbsp;&nbsp; magnet speed ${num(Math.abs(vm) * UNIT * 100, 1)} cm/s`,
+        `Faraday: ε = −N dΦ/dt = −${nS.value} × ${num(-emf / nS.value * 1000, 3)} mWb/s = <b>${num(emf * 1000, 0)} mV</b>`
+      ];
+      if (Math.abs(vm) > 0.1 && !currentDir()) {
+        lines.push('The magnet is moving, but it is <b>far away</b>: Φ through the coil hardly changes, so ε is tiny. Move it near the coil.');
+      } else if (!currentDir()) {
+        lines.push('<span class="ok">Magnet still → Φ is not changing → ε = 0.</span> A strong field alone does not make a current; it must <b>change</b>.');
+      } else if (vm > 0) {
+        lines.push(`<span class="warn">Approaching:</span> Φ is growing, so the coil makes its near end a <b>${facing}</b> pole that <b>repels</b> the magnet's ${facing} pole (Lenz). You must do work to push it in; that work becomes electrical energy.`);
+      } else {
+        lines.push(`<span class="warn">Leaving:</span> Φ is shrinking, so the near end becomes <b>${facing === 'N' ? 'S' : 'N'}</b> and <b>attracts</b> the ${facing} pole, trying to keep the flux (Lenz).`);
+      }
+      k.readout(lines);
+    };
   })();
   </script>
 </div>

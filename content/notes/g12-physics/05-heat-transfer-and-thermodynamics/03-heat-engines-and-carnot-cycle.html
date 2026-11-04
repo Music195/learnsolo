@@ -72,98 +72,117 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Carnot Cycle $p$-$V$ Indicator Diagram</span>
-  <p class="demo-instruction">Adjust the hot reservoir temperature $T_H$ and cold reservoir temperature $T_C$ below. Watch how expanding the temperature differential increases the enclosed $p$-$V$ work area and elevates Carnot efficiency.</p>
-
-  <div id="carnot-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Hot Temp $T_H$: 
-      <input id="th-slider" type="range" min="500" max="1000" step="25" value="800" style="vertical-align: middle;">
-      <span id="th-val" style="color: #f87171; font-weight: 700;">800 K (527°C)</span>
-    </label>
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Cold Temp $T_C$: 
-      <input id="tc-slider" type="range" min="250" max="450" step="25" value="300" style="vertical-align: middle;">
-      <span id="tc-val" style="color: #38bdf8; font-weight: 700;">300 K (27°C)</span>
-    </label>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      Carnot Efficiency $\eta_C$: <span id="carnot-stat" style="color: #4ade80; font-weight: 700;">62.5%</span>
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; The Carnot Engine, Step by Step</span>
+  <p class="demo-question">An engine takes heat from a hot reservoir, but must also dump some into a cold one. Why can't it turn all the heat into work?</p>
+  <p class="demo-instruction">Watch the gas go round the cycle: it touches the <b>hot</b> reservoir and expands (A→B), is insulated and expands further, cooling (B→C), touches the <b>cold</b> reservoir and is compressed (C→D), and is insulated and compressed back to A. The shaded loop is the net work. Change $T_H$ and $T_C$: the efficiency is $1 - T_C/T_H$.</p>
+  <div id="pk-carnot"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('carnot-board', {
-      boundingbox: [-0.5, 7, 5.5, -0.5],
-      axis: true,
-      defaultAxes: {
-        x: { name: 'Volume V (a.u.)', withLabel: true, label: { position: 'rt', offset: [-15, -15], color: '#cbd5e1' } },
-        y: { name: 'Pressure p (a.u.)', withLabel: true, label: { position: 'rt', offset: [-10, -10], color: '#cbd5e1' } }
-      },
-      showNavigation: false,
-      showCopyright: false
-    });
+  (function () {
+    const R = 8.314, N = 0.1, VA = 1, VB = 3, GAM = 5 / 3;   // 0.1 mol monatomic gas, V in litres
+    const k = PhysKit.mount('pk-carnot', { x: [-6.2, 6.2], y: [-2.6, 2.6] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    k.row();
+    const thS = k.slider({ label: 'T_H', unit: 'K', min: 500, max: 1000, step: 1, value: 825, digits: 0 });
+    const tcS = k.slider({ label: 'T_C', unit: 'K', min: 250, max: 700, step: 1, value: 400, digits: 0 });
+    k.button('Example 5.7 temperatures (689 °C, 397 °C)', () => { thS.value = 962; tcS.value = 670; });
+    // keep at least 50 K between the reservoirs
+    thS.on(v => { if (tcS.value > v - 50) tcS.value = v - 50; });
+    tcS.on(v => { if (thS.value < v + 50) thS.value = Math.min(1000, v + 50); if (tcS.value > thS.value - 50) tcS.value = thS.value - 50; });
+    k.row();
 
-    let Th = 800;
-    let Tc = 300;
-
-    let cAB, cBC, cCD, cDA;
-    let pA, pB, pC, pD;
-
-    function renderCarnot() {
-      board.suspendUpdate();
-      if (cAB) board.removeObject([cAB, cBC, cCD, cDA, pA, pB, pC, pD]);
-
-      let kH = Th / 150; // scaling for visual
-      let kC = Tc / 150;
-
-      let vA = 1.0, pValA = kH / vA;
-      let vB = 2.0, pValB = kH / vB;
-      // Adiabatic B->C: p * V^1.4 = const
-      let constBC = pValB * Math.pow(vB, 1.4);
-      let vC = Math.pow(constBC / kC, 1 / 0.4);
-      let pValC = kC / vC;
-      let vD = vC * (vA / vB);
-      let pValD = kC / vD;
-
-      // Curves
-      cAB = board.create('curve', [function(t) { return t; }, function(t) { return kH / t; }, vA, vB], { strokeColor: '#ef4444', strokeWidth: 3 });
-      cBC = board.create('curve', [function(t) { return t; }, function(t) { return constBC / Math.pow(t, 1.4); }, vB, vC], { strokeColor: '#f97316', strokeWidth: 2.5, dash: 2 });
-      cCD = board.create('curve', [function(t) { return t; }, function(t) { return kC / t; }, vD, vC], { strokeColor: '#38bdf8', strokeWidth: 3 });
-      let constDA = pValA * Math.pow(vA, 1.4);
-      cDA = board.create('curve', [function(t) { return t; }, function(t) { return constDA / Math.pow(t, 1.4); }, vA, vD], { strokeColor: '#a855f7', strokeWidth: 2.5, dash: 2 });
-
-      pA = board.create('point', [vA, pValA], { name: 'A', fillColor: '#ef4444', size: 3 });
-      pB = board.create('point', [vB, pValB], { name: 'B', fillColor: '#ef4444', size: 3 });
-      pC = board.create('point', [vC, pValC], { name: 'C', fillColor: '#38bdf8', size: 3 });
-      pD = board.create('point', [vD, pValD], { name: 'D', fillColor: '#38bdf8', size: 3 });
-
-      board.unsuspendUpdate();
+    const ratio = () => Math.pow(thS.value / tcS.value, 1 / (GAM - 1));
+    const VC = () => VB * ratio(), VD = () => VA * ratio();
+    // state on leg i (0..3) at fraction f
+    function state(s) {
+      const i = Math.floor(s) % 4, f = s - Math.floor(s), TH = thS.value, TC = tcS.value;
+      let V, T;
+      if (i === 0) { V = VA * Math.pow(VB / VA, f); T = TH; }
+      else if (i === 1) { V = VB * Math.pow(VC() / VB, f); T = TH * Math.pow(VB / V, GAM - 1); }
+      else if (i === 2) { V = VC() * Math.pow(VD() / VC(), f); T = TC; }
+      else { V = VD() * Math.pow(VA / VD(), f); T = TC * Math.pow(VD() / V, GAM - 1); }
+      return { i, V, T, p: N * R * T / (V / 1000) / 1000 };
     }
-
-    renderCarnot();
-
-    function update() {
-      document.getElementById('th-val').textContent = Th + ' K (' + (Th - 273) + '°C)';
-      document.getElementById('tc-val').textContent = Tc + ' K (' + (Tc - 273) + '°C)';
-      let eta = (1 - Tc / Th) * 100;
-      document.getElementById('carnot-stat').textContent = eta.toFixed(1) + '%';
-      renderCarnot();
-    }
-
-    document.getElementById('th-slider').addEventListener('input', function() {
-      Th = parseFloat(this.value);
-      if (Th <= Tc) Th = Tc + 25;
-      update();
+    let s = 0;
+    const parts = [];
+    for (let i = 0; i < 36; i++) parts.push({ x: Math.random(), y: Math.random(), a: Math.random() * 6.28 });
+    k.loop(dt => {
+      s = (s + dt * 0.3) % 4;
+      const st = state(s), sp = Math.sqrt(st.T / 600) * 0.9;
+      for (const p of parts) {
+        p.x += Math.cos(p.a) * sp * dt; p.y += Math.sin(p.a) * sp * dt;
+        if (p.x < 0 || p.x > 1) { p.a = Math.PI - p.a; p.x = Math.max(0, Math.min(1, p.x)); }
+        if (p.y < 0 || p.y > 1) { p.a = -p.a; p.y = Math.max(0, Math.min(1, p.y)); }
+      }
     });
 
-    document.getElementById('tc-slider').addEventListener('input', function() {
-      Tc = parseFloat(this.value);
-      if (Tc >= Th) Tc = Th - 25;
-      update();
-    });
+    const LEG = [
+      { name: 'A → B: isothermal expansion at T_H', col: C.bad, heat: 'Q_H in from the hot reservoir' },
+      { name: 'B → C: adiabatic expansion (insulated)', col: C.energy, heat: 'no heat; the gas cools from T_H to T_C' },
+      { name: 'C → D: isothermal compression at T_C', col: C.acc, heat: 'Q_C out to the cold reservoir' },
+      { name: 'D → A: adiabatic compression (insulated)', col: C.field, heat: 'no heat; the gas warms from T_C to T_H' }
+    ];
+
+    k.draw = g => {
+      const st = state(s), L = LEG[st.i];
+      const X0 = -5.6, W = 2.4, BOT = -1.4, vmax = VC();
+      const h = 0.4 + 3.2 * (st.V - VA) / (vmax - VA);
+      // what the cylinder stands on
+      const base = st.i === 0 ? ['#fecaca', 'HOT  T_H'] : st.i === 2 ? ['#bfdbfe', 'COLD  T_C'] : ['#e7e5e4', 'insulator'];
+      g.rect(X0 - 0.3, BOT - 0.75, W + 0.6, 0.7, { fill: base[0], color: C.ink, width: 1.5, radius: 6 });
+      g.text([X0 + W / 2, BOT - 0.4], base[1], { size: 13, bold: true });
+      g.rect(X0, BOT, W, h, { fill: `rgba(239, 68, 68, ${0.05 + 0.25 * (st.T - tcS.value) / (thS.value - tcS.value)})`, color: 'none' });
+      g.path([[X0, BOT + 3.9], [X0, BOT], [X0 + W, BOT], [X0 + W, BOT + 3.9]], { color: C.ink, width: 3 });
+      g.rect(X0 + 0.05, BOT + h, W - 0.1, 0.22, { fill: '#64748b', color: C.ink, width: 1.5 });
+      g.line([X0 + W / 2, BOT + h + 0.22], [X0 + W / 2, 2.6], { color: C.ink, width: 4 });
+      for (const p of parts) g.dot([X0 + 0.1 + p.x * (W - 0.2), BOT + 0.08 + p.y * (h - 0.16)], 3, C.bad);
+      if (st.i === 0) g.arrow([X0 + W / 2, BOT - 0.05], [0, 0.6], { color: C.bad, width: 3 });
+      if (st.i === 2) g.arrow([X0 + W / 2, BOT + 0.55], [0, -0.6], { color: C.acc, width: 3 });
+      // step text
+      g.text([-2.4, 2.25], L.name, { align: 'left', size: 15, bold: true, color: L.col });
+      g.text([-2.4, 1.7], L.heat, { align: 'left', size: 13 });
+      g.text([-2.4, 1.15], `T = ${num(st.T, 0)} K, V = ${num(st.V, 2)} L, p = ${num(st.p, 0)} kPa`, { align: 'left', size: 13, color: C.muted });
+      // energy summary: Q_H → W + Q_C
+      const QH = N * R * thS.value * Math.log(VB / VA), QC = N * R * tcS.value * Math.log(VB / VA);
+      const bx = -2.4, K = 2.1 / QH;
+      g.rect(bx, -2.1, 0.9, QH * K, { fill: C.bad, color: 'none' });
+      g.rect(bx + 1.6, -2.1, 0.9, (QH - QC) * K, { fill: C.vel, color: 'none' });
+      g.rect(bx + 3.2, -2.1, 0.9, QC * K, { fill: C.acc, color: 'none' });
+      [['Q_H', QH, bx], ['W', QH - QC, bx + 1.6], ['Q_C', QC, bx + 3.2]].forEach(([n, v, x]) => {
+        g.text([x + 0.45, -2.35], n, { size: 13, bold: true });
+        g.text([x + 0.45, -2.1 + v * K + 0.22], `${num(v, 0)} J`, { size: 12, bold: true });
+      });
+      // read the bottom row as an equation: Q_H = W + Q_C
+      g.text([bx + 1.25, -2.35], '=', { size: 16, bold: true });
+      g.text([bx + 2.85, -2.35], '+', { size: 16, bold: true });
+      g.text([bx + 5.2, -0.2], `η = ${num((1 - tcS.value / thS.value) * 100, 1)} %`, { align: 'left', size: 17, bold: true, color: C.vel });
+    };
+
+    const pv = k.addView({ x: [0, 1], y: [0, 1], equal: false, height: 210, title: 'p–V diagram: the loop area is the net work W' });
+    pv.draw = g => {
+      const vmax = VC() * 1.15, pmax = N * R * thS.value / (VA / 1000) / 1000 * 1.12;
+      pv.setRange([-vmax * 0.07, vmax], [-pmax * 0.1, pmax]);
+      g.axes({ xstep: vmax > 20 ? 5 : vmax > 8 ? 2 : 1, ystep: pmax > 600 ? 200 : 100, xlabel: 'V (L)', ylabel: 'p (kPa)' });
+      const loop = [];
+      for (let i = 0; i < 4; i++) {
+        const pts = [];
+        for (let j = 0; j <= 40; j++) { const st = state(i + j / 40.0001); pts.push([st.V, st.p]); }
+        loop.push(...pts);
+        g.path(pts, { color: LEG[i].col, width: 3 });
+      }
+      g.path(loop, { close: true, fill: C.vel, fillAlpha: 0.15, color: 'none' });
+      ['A', 'B', 'C', 'D'].forEach((n, i) => { const st = state(i + 1e-6); g.dot([st.V, st.p], 4, C.ink); g.text([st.V, st.p], n, { dx: 10, dy: 10, size: 13, bold: true }); });
+      const st = state(s);
+      g.dot([st.V, st.p], 8, LEG[st.i].col, { stroke: '#fff', width: 2 });
+    };
+
+    k.update = () => {
+      const TH = thS.value, TC = tcS.value, QH = N * R * TH * Math.log(VB / VA), QC = N * R * TC * Math.log(VB / VA);
+      k.readout([
+        `${rich('Q_H')} = nR${rich('T_H')} ln(${rich('V_B')}/${rich('V_A')}) = 0.1 × 8.314 × ${TH} × ln 3 = <b>${num(QH, 0)} J</b>; ${rich('Q_C')} = nR${rich('T_C')} ln 3 = <b>${num(QC, 0)} J</b>`,
+        `W = ${rich('Q_H')} − ${rich('Q_C')} = <b>${num(QH - QC, 0)} J</b>; η = W/${rich('Q_H')} = 1 − ${rich('T_C')}/${rich('T_H')} = 1 − ${TC}/${TH} = <b>${num((1 - TC / TH) * 100, 1)} %</b>`,
+        `To get back to A the gas must be compressed, and compressing it while hot would cost all the work back. So it is first cooled to ${rich('T_C')} and squeezed there, which means some heat ${rich('Q_C')} must always go to the cold reservoir.`
+      ]);
+    };
   })();
   </script>
 </div>

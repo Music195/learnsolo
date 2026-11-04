@@ -41,78 +41,102 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Laminar Streamlines vs. Turbulent Eddies</span>
-  <p class="demo-instruction">Toggle the flow regime below to observe how fluid elements travel. In laminar flow, particles glide along smooth, parallel streamlines without crossing. In turbulent flow, streamlines break into chaotic swirling vortices.</p>
-
-  <div id="flow-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <button id="btn-laminar" class="btn" style="padding: 0.4rem 1rem; font-weight: 600; background: #0284c7; color: white; border-radius: 6px; border: none; cursor: pointer;">Laminar Flow</button>
-    <button id="btn-turbulent" class="btn" style="padding: 0.4rem 1rem; font-weight: 600; background: #64748b; color: white; border-radius: 6px; border: none; cursor: pointer;">Turbulent Flow</button>
-    <span id="flow-status" style="font-size: 0.9rem; font-weight: 600; color: #38bdf8;">Current: Steady Laminar Streamlines</span>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; Dye in a Pipe: Laminar or Turbulent?</span>
+  <p class="demo-question">A thin line of dye is fed into water flowing through a pipe. When does the dye stay a neat line, and when does it break up and mix?</p>
+  <p class="demo-instruction">Slowly raise the flow speed $v$. Below a Reynolds number of about 2000 the water moves in smooth parallel layers (laminar): the dye stays a line and the middle layers move fastest. Above about 4000 eddies appear (turbulent) and the dye spreads across the whole pipe.</p>
+  <div id="pk-laminar"></div>
   <script>
-  (function() {
-    let mode = 'laminar';
-    let board = JXG.JSXGraph.initBoard('flow-board', {
-      boundingbox: [-1, 6, 11, -1],
-      axis: false,
-      showNavigation: false,
-      showCopyright: false
-    });
+  (function () {
+    // Water in a pipe of diameter 2 cm. Reynolds number Re = ρvd/η.
+    const RHO = 1000, ETA = 1.0e-3, D = 0.02;
+    const k = PhysKit.mount('pk-laminar', { x: [-6.2, 6.2], y: [-2.3, 2.3] });
+    const C = PhysKit.C, num = k.num;
+    const R = 1.45, X0 = -5.9, X1 = 5.9;          // pipe radius and ends (drawing units)
 
-    let curves = [];
-    let particles = [];
-    const numLayers = 5;
+    k.row();
+    const vS = k.slider({ label: 'v (average)', unit: 'm/s', min: 0.02, max: 0.3, step: 0.005, value: 0.05, digits: 3 });
+    k.button('Slow (laminar)', () => { vS.value = 0.05; });
+    k.button('Fast (turbulent)', () => { vS.value = 0.27; });
+    const Re = () => RHO * vS.value * D / ETA;
+    // How strong the eddies are: 0 below Re 2000, growing to 1 at Re 4500
+    const mix = () => Math.max(0, Math.min(1, (Re() - 2000) / 2500));
 
-    function renderStreamlines() {
-      board.suspendUpdate();
-      for (let c of curves) board.removeObject(c);
-      curves = [];
-
-      for (let i = 1; i <= numLayers; i++) {
-        let y0 = i;
-        let c = board.create('curve', [
-          function(t) { return t; },
-          function(t) {
-            if (mode === 'laminar') {
-              return y0;
-            } else {
-              return y0 + 0.45 * Math.sin(t * 1.5 + y0 * 2) * Math.sin(t * 0.8);
-            }
-          },
-          0, 10
-        ], {
-          strokeColor: mode === 'laminar' ? '#38bdf8' : '#f87171',
-          strokeWidth: mode === 'laminar' ? 2 : 2.5,
-          dash: mode === 'laminar' ? 0 : 2
-        });
-        curves.push(c);
+    // Flow speed in drawing units per second (1 m/s is drawn as 22 units/s)
+    const SCALE = 22;
+    // Laminar profile: u = 2 v̄ (1 − y²/R²); turbulent: much flatter
+    function along(y) {
+      const s = y / R, m = mix();
+      const lam = 2 * (1 - s * s), turb = 1.2 * (1 - Math.pow(Math.abs(s), 7));
+      return vS.value * SCALE * ((1 - m) * lam + m * turb);
+    }
+    // Eddies: a swirling flow made from a stream function that is zero at the walls,
+    // so the water never crosses the pipe wall.
+    const modes = [
+      { kx: 1.3, n: 1, w: 1.9, p: 0.3, a: 1.0 }, { kx: 2.1, n: 2, w: 2.7, p: 1.7, a: 0.7 },
+      { kx: 0.8, n: 3, w: 1.3, p: 4.1, a: 0.5 }, { kx: 3.0, n: 2, w: 3.4, p: 2.6, a: 0.45 }
+    ];
+    function eddy(x, y, t) {
+      let u = 0, w = 0;
+      for (const m of modes) {
+        const ky = m.n * Math.PI / (2 * R), Y = y + R;
+        const ph = m.kx * x - m.w * t + m.p;
+        u += m.a * Math.cos(ph) * ky * Math.cos(ky * Y);      // ∂ψ/∂y
+        w += m.a * m.kx * Math.sin(ph) * Math.sin(ky * Y);    // −∂ψ/∂x
       }
-
-      board.unsuspendUpdate();
+      const s = mix() * vS.value * SCALE * 0.9;
+      return [u * s, w * s];
     }
 
-    renderStreamlines();
-
-    document.getElementById('btn-laminar').addEventListener('click', function() {
-      mode = 'laminar';
-      this.style.background = '#0284c7';
-      document.getElementById('btn-turbulent').style.background = '#64748b';
-      document.getElementById('flow-status').textContent = 'Current: Steady Laminar Streamlines';
-      document.getElementById('flow-status').style.color = '#38bdf8';
-      renderStreamlines();
+    // Particles: dye (red) fed in at the middle, plus pale water markers
+    const dye = [], water = [];
+    for (let i = 0; i < 70; i++) water.push({ x: X0 + Math.random() * (X1 - X0), y: (Math.random() * 2 - 1) * R * 0.95 });
+    let feed = 0;
+    k.loop((dt, t) => {
+      feed += dt * 1200 * vS.value;   // more dye per second when the water is faster
+      while (feed > 1) { dye.push({ x: X0 + 0.15, y: (Math.random() - 0.5) * 0.04 }); feed -= 1; }
+      for (const list of [dye, water]) for (const p of list) {
+        const e = eddy(p.x, p.y, t);
+        // small random eddies too: each bit of water is kicked about, which mixes the dye
+        const kick = mix() * vS.value * SCALE * 0.55 * Math.sqrt(dt);
+        p.x += (along(p.y) + e[0]) * dt + (Math.random() - 0.5) * kick;
+        p.y += e[1] * dt + (Math.random() - 0.5) * 2.2 * kick;
+        if (Math.abs(p.y) > R * 0.97) p.y = Math.sign(p.y) * R * 0.97;
+      }
+      for (let i = dye.length - 1; i >= 0; i--) if (dye[i].x > X1) dye.splice(i, 1);
+      for (const p of water) if (p.x > X1) { p.x = X0; p.y = (Math.random() * 2 - 1) * R * 0.95; }
+      if (dye.length > 900) dye.splice(0, dye.length - 900);
     });
 
-    document.getElementById('btn-turbulent').addEventListener('click', function() {
-      mode = 'turbulent';
-      this.style.background = '#ef4444';
-      document.getElementById('btn-laminar').style.background = '#64748b';
-      document.getElementById('flow-status').textContent = 'Current: Turbulent Swirls & Eddies';
-      document.getElementById('flow-status').style.color = '#f87171';
-      renderStreamlines();
-    });
+    k.draw = g => {
+      // Pipe
+      g.rect(X0, -R, X1 - X0, 2 * R, { fill: C.fluidFill, color: 'none' });
+      g.line([X0, R], [X1, R], { color: C.ink, width: 3 });
+      g.line([X0, -R], [X1, -R], { color: C.ink, width: 3 });
+      // Dye injector needle
+      g.line([X0 - 0.3, 0], [X0 + 0.15, 0], { color: C.ink, width: 3 });
+      for (const p of water) g.dot([p.x, p.y], 2.5, '#7dd3fc', { alpha: 0.9 });
+      for (const p of dye) g.dot([p.x, p.y], 2.2, C.force, { alpha: 0.75 });
+      // Velocity profile arrows at the left end
+      for (let i = -4; i <= 4; i++) {
+        const y = i * R / 4.6, u = along(y) / (vS.value * SCALE * 2) * 1.6;
+        g.arrow([X0 + 0.6, y], [u, 0], { color: C.vel, width: 1.8, head: 7 });
+      }
+      g.text([X0 + 0.6, R + 0.35], 'speed profile', { align: 'left', size: 12, color: C.vel, bold: true });
+      // Regime label
+      const re = Re(), lab = re < 2000 ? ['Laminar', C.good] : re < 4000 ? ['Transitional', C.energy] : ['Turbulent', C.bad];
+      g.text([X1, R + 0.45], `Re = ${num(re, 0)} → ${lab[0]}`, { align: 'right', size: 15, bold: true, color: lab[1] });
+      g.text([X1, -R - 0.4], 'pipe diameter 2 cm, water', { align: 'right', size: 12, color: C.muted });
+    };
+
+    k.update = () => {
+      const re = Re();
+      k.readout([
+        `Re = ρvd / η = 1000 × ${num(vS.value, 3)} × 0.02 / 0.001 = <b>${num(re, 0)}</b>`,
+        re < 2000 ? '<span class="ok">Laminar:</span> layers slide past each other without mixing. The layer touching the wall is at rest and the middle moves fastest (2× the average).'
+          : re < 4000 ? '<span class="warn">Transitional:</span> the flow is starting to wobble; small eddies come and go.'
+          : '<span class="warn">Turbulent:</span> eddies and swirls mix the water across the pipe, so the dye spreads out and the speed profile becomes flat in the middle.'
+      ]);
+    };
   })();
   </script>
 </div>

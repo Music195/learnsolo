@@ -44,19 +44,106 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Demo &mdash; Carousel: Linear Speed vs Radius</span>
-  <p>Two riders sit on a spinning carousel: child $A$ (blue) is closer to the center, while child $B$ (amber) is near the outer rim. Both complete turns with the <strong>same angular velocity $\omega$</strong>, but child $B$ travels faster along the tangent ($v_B > v_A$).</p>
-  <div class="controls">
-    <label>$\omega$ (rad/s) <input type="range" id="p1-02-w" min="0.5" max="3.0" step="0.1" value="1.5"></label>
-    <label>$r_A$ (inner, m) <input type="range" id="p1-02-ra" min="0.5" max="2.0" step="0.1" value="1.0"></label>
-    <label>$r_B$ (outer, m) <input type="range" id="p1-02-rb" min="2.0" max="4.0" step="0.1" value="3.0"></label>
-  </div>
-  <div class="controls">
-    <button type="button" class="pill" id="p1-02-play">Play</button>
-    <button type="button" class="pill" id="p1-02-reset">Reset</button>
-  </div>
-  <canvas id="p1-02-canvas"></canvas>
-  <div class="output table-text" id="p1-02-out"></div>
+  <span class="block-label">Interactive Demo &mdash; Carousel: Same ω, Different v</span>
+  <p class="demo-question">Two children ride the same carousel. Who turns through the bigger angle, and who travels farther?</p>
+  <p class="demo-instruction">Drag rider A (blue) or rider B (amber) in or out. Both sweep the same angle $\theta$ (the shaded wedge), but the coloured arcs show that B, farther out, covers a longer distance $s = r\theta$ and moves faster, $v = r\omega$. Choose <b>Speeding up</b> to see $a_T = r\alpha$.</p>
+  <div id="pk-carousel"></div>
+  <script>
+  (function () {
+    // World units are metres; the carousel's axis is at (0, 0)
+    const k = PhysKit.mount('pk-carousel', { x: [-9.6, 9.6], y: [-6, 6] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    const RMAX = 5.2;
+    const BLUE = C.acc, AMBER = C.energy;
+
+    k.row();
+    const wS = k.slider({ label: 'ω_0', unit: 'rad/s', min: 0.2, max: 1.5, step: 0.05, value: 0.5 });
+    const rA = k.slider({ label: 'r_A', unit: 'm', min: 0.5, max: 5, step: 0.1, value: 2 });
+    const rB = k.slider({ label: 'r_B', unit: 'm', min: 0.5, max: 5, step: 0.1, value: 4.5 });
+    k.row();
+    const mode = k.choice(['Steady ω', 'Speeding up (α = 0.1 rad/s^2)'], 0, () => reset());
+    k.button('↺ Reset', () => reset());
+
+    let th = 0, w = wS.value, t = 0;    // angle turned since the start, ω now, time
+    const alpha = () => (mode.value === 1 ? 0.1 : 0);
+    function reset() { th = 0; t = 0; w = wS.value; }
+    wS.on(reset);
+
+    k.loop(dt => {
+      w += alpha() * dt;
+      if (w > 2) reset();
+      th += w * dt; t += dt;
+      if (th > 2 * Math.PI) { th -= 2 * Math.PI; }  // start a new lap so the wedge stays readable
+    });
+
+    // Drag a rider along its radius (the angle is set by the carousel)
+    const riderPos = r => [r * Math.cos(th), r * Math.sin(th)];
+    for (const s of [rA, rB]) {
+      k.view.drag({
+        get: () => riderPos(s.value),
+        set: p => { s.value = Math.round(Math.max(0.5, Math.min(5, Math.hypot(p[0], p[1]))) * 10) / 10; },
+        r: 22
+      });
+    }
+
+    k.draw = g => {
+      // Platform
+      g.circle([0, 0], RMAX, { color: '#94a3b8', width: 3, fill: '#f1f5f9' });
+      for (let i = 0; i < 12; i++) {
+        const a = th + i * Math.PI / 6;
+        g.line([0, 0], [RMAX * Math.cos(a), RMAX * Math.sin(a)], { color: '#e2e8f0', width: 1.5 });
+      }
+      // Shaded wedge: the angle θ swept this lap (the same for both riders)
+      const wedge = [[0, 0]];
+      for (let i = 0; i <= 60; i++) { const a = th * i / 60; wedge.push([RMAX * Math.cos(a), RMAX * Math.sin(a)]); }
+      g.path(wedge, { close: true, fill: C.field, fillAlpha: 0.08, color: 'none' });
+      g.line([0, 0], [RMAX + 0.3, 0], { color: C.muted, width: 1.5, dash: true });
+      g.text([RMAX + 0.4, 0], 'start', { align: 'left', size: 12, color: C.muted });
+      const mid = th / 2;
+      g.text([1.0 * Math.cos(mid), 1.0 * Math.sin(mid)], 'θ', { color: C.field, bold: true, size: 16 });
+
+      // Arcs s = rθ, velocity and tangential acceleration for each rider
+      for (const [s, col, name] of [[rA, BLUE, 'A'], [rB, AMBER, 'B']]) {
+        const r = s.value, arc = [];
+        for (let i = 0; i <= 60; i++) { const a = th * i / 60; arc.push([r * Math.cos(a), r * Math.sin(a)]); }
+        g.path(arc, { color: col, width: 5, alpha: 0.6 });
+        const P = riderPos(r), tan = [-Math.sin(th), Math.cos(th)];
+        g.arrow(P, [tan[0] * r * w * 0.9, tan[1] * r * w * 0.9], { color: C.vel, label: 'v_' + name });
+        if (alpha() > 0) g.arrow(P, [tan[0] * r * alpha() * 6, tan[1] * r * alpha() * 6], { color: C.force, width: 2, label: 'a_{T' + name + '}', side: [Math.cos(th), Math.sin(th)] });
+        g.dot(P, 11, col, { stroke: '#fff', width: 2.5 });
+        g.text(P, name, { color: '#fff', bold: true, size: 13 });
+      }
+      g.dot([0, 0], 5, C.ink);
+
+      // Side panel: bars comparing distances travelled this lap
+      const sA = rA.value * th, sB = rB.value * th, sMax = 5 * 2 * Math.PI;
+      const bx = -9.2, by = -5.2, bh = 10;
+      g.text([bx, 5.5], 's = rθ this lap', { align: 'left', size: 13, bold: true });
+      g.rect(bx, by, 0.9, bh * sA / sMax, { color: 'none', fill: BLUE });
+      g.rect(bx + 1.3, by, 0.9, bh * sB / sMax, { color: 'none', fill: AMBER });
+      g.text([bx + 0.45, by + bh * sA / sMax + 0.35], num(sA, 1) + ' m', { size: 12, color: BLUE, bold: true });
+      g.text([bx + 1.75, by + bh * sB / sMax + 0.35], num(sB, 1) + ' m', { size: 12, color: AMBER, bold: true });
+      g.text([bx + 0.45, by - 0.4], 'A', { size: 12, color: BLUE, bold: true });
+      g.text([bx + 1.75, by - 0.4], 'B', { size: 12, color: AMBER, bold: true });
+      // Same ω for both, top right
+      g.text([9.3, 5.4], `ω = ${num(w)} rad/s for both`, { align: 'right', size: 14, bold: true, color: C.field });
+      g.text([9.3, 4.7], `θ = ${num(th)} rad for both`, { align: 'right', size: 14, color: C.field });
+    };
+
+    k.update = () => {
+      const a = alpha();
+      const row = (name, r) =>
+        `<b>${name}</b> (r = ${num(r, 1)} m): s = rθ = ${num(r, 1)} × ${num(th)} = <b>${num(r * th)} m</b>, ` +
+        `v = rω = ${num(r, 1)} × ${num(w)} = <b>${num(r * w)} m/s</b>` +
+        (a > 0 ? `, ${rich('a_T')} = rα = ${num(r * a)} m/s<sup>2</sup>` : '');
+      k.readout([
+        row('Rider A', rA.value),
+        row('Rider B', rB.value),
+        `Same θ, ω${a > 0 ? ', α' : ''} for both; B is ${num(rB.value / rA.value, 2)}× farther out, so its s, v${a > 0 ? ' and ' + rich('a_T') : ''} are ${num(rB.value / rA.value, 2)}× bigger.`
+      ]);
+    };
+  })();
+  </script>
 </div>
 
 <div class="note-example">
@@ -116,97 +203,3 @@
 </div>
 
 </article>
-
-<script src="/static/js/demos/geom.js"></script>
-<script>
-(function() {
-  const canvas = document.getElementById('p1-02-canvas');
-  const out = document.getElementById('p1-02-out');
-  const wIn = document.getElementById('p1-02-w');
-  const raIn = document.getElementById('p1-02-ra');
-  const rbIn = document.getElementById('p1-02-rb');
-  const playBtn = document.getElementById('p1-02-play');
-  const resetBtn = document.getElementById('p1-02-reset');
-  if (!canvas || !window.NoteGeom) return;
-
-  const C = [260, 170];
-  const SCALE = 36; // pixels per meter
-  const BLUE = '#2563eb', AMBER = '#d97706', GREY = '#94a3b8', INK = '#334155';
-  let phi = 0, playing = true, lastText = '';
-
-  function arrow(g, p, v, color, label, off = [0, -10]) {
-    const q = [p[0] + v[0], p[1] + v[1]], L = Math.hypot(v[0], v[1]);
-    if (L < 3) return;
-    const ux = v[0] / L, uy = v[1] / L;
-    g.seg(p, q, color, { width: 2.5 });
-    g.poly([q, [q[0] - 8 * ux - 4 * uy, q[1] - 8 * uy + 4 * ux], [q[0] - 8 * ux + 4 * uy, q[1] - 8 * uy - 4 * ux]], color);
-    if (label) g.text([q[0] + off[0], q[1] + off[1]], label, color);
-  }
-
-  const board = NoteGeom.board(canvas, {
-    points: {},
-    draw(g) {
-      const w = Number(wIn.value);
-      const rA = Number(raIn.value);
-      const rB = Number(rbIn.value);
-      const RA = rA * SCALE;
-      const RB = rB * SCALE;
-      const vA = rA * w;
-      const vB = rB * w;
-
-      // Draw carousel discs
-      g.circle(C, RB + 10, '#cbd5e1', { width: 1.5, fill: 'rgba(241, 245, 249, 0.6)' });
-      g.circle(C, RA, '#94a3b8', { width: 1, dash: true });
-      g.circle(C, RB, '#94a3b8', { width: 1, dash: true });
-
-      // Radial spoke line
-      const spokeEnd = [C[0] + (RB + 8) * Math.cos(phi), C[1] - (RB + 8) * Math.sin(phi)];
-      g.seg(C, spokeEnd, GREY, { width: 1.5 });
-      g.dot(C, INK, 'Axis O');
-
-      // Rider A (inner)
-      const pA = [C[0] + RA * Math.cos(phi), C[1] - RA * Math.sin(phi)];
-      g.circle(pA, 7, BLUE, { fill: '#93c5fd' });
-      g.text([pA[0] - 12 * Math.cos(phi), pA[1] + 12 * Math.sin(phi)], 'A', BLUE);
-
-      // Rider B (outer)
-      const pB = [C[0] + RB * Math.cos(phi), C[1] - RB * Math.sin(phi)];
-      g.circle(pB, 7, AMBER, { fill: '#fde68a' });
-      g.text([pB[0] + 14 * Math.cos(phi), pB[1] - 14 * Math.sin(phi)], 'B', AMBER);
-
-      // Tangential velocity vectors: v_tangent perpendicular to radius
-      // anticlockwise: tx = -sin(phi), ty = -cos(phi)
-      const tx = -Math.sin(phi), ty = -Math.cos(phi);
-      const kv = 14; // pixels per m/s
-      arrow(g, pA, [tx * vA * kv, ty * vA * kv], BLUE, 'v_A', [tx * 10, ty * 10 - 2]);
-      arrow(g, pB, [tx * vB * kv, ty * vB * kv], AMBER, 'v_B', [tx * 12, ty * 12 - 2]);
-
-      const n = (z, k = 2) => z.toFixed(k);
-      const text =
-        `Angular velocity (shared): ω = ${n(w, 1)} rad/s\n` +
-        `Rider A (Inner): r_A = ${n(rA, 1)} m  →  Linear speed v_A = r_A · ω = ${n(vA)} m/s\n` +
-        `Rider B (Outer): r_B = ${n(rB, 1)} m  →  Linear speed v_B = r_B · ω = ${n(vB)} m/s\n` +
-        `Speed ratio v_B / v_A = ${(vB / vA).toFixed(2)}  (exactly equals r_B / r_A = ${(rB / rA).toFixed(2)})`;
-      if (text !== lastText) { out.textContent = text; lastText = text; }
-    }
-  });
-
-  function setPlaying(on) { playing = on; playBtn.textContent = on ? 'Pause' : 'Play'; }
-  let last = performance.now();
-  function tick(now) {
-    if (!canvas.isConnected) return;
-    const dt = Math.min((now - last) / 1000, 0.05);
-    last = now;
-    if (playing) {
-      phi += Number(wIn.value) * dt;
-      board.redraw();
-    }
-    requestAnimationFrame(tick);
-  }
-  requestAnimationFrame(tick);
-
-  playBtn.addEventListener('click', () => setPlaying(!playing));
-  resetBtn.addEventListener('click', () => { phi = 0; board.redraw(); });
-  [wIn, raIn, rbIn].forEach(input => input.addEventListener('input', () => board.redraw()));
-})();
-</script>

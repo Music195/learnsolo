@@ -48,86 +48,93 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Waveform and Timbre Synthesizer</span>
-  <p class="demo-instruction">Select different instruments to observe how adding harmonic overtones transforms a simple sine wave into the distinctive acoustic timbre of a flute, guitar, or violin.</p>
-
-  <div id="timbre-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 0.8rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <button id="btn-pure" class="btn" style="padding: 0.35rem 0.8rem; font-weight: 600; background: #0284c7; color: white; border-radius: 6px; border: none; cursor: pointer;">Tuning Fork (Pure Sine)</button>
-    <button id="btn-flute" class="btn" style="padding: 0.35rem 0.8rem; font-weight: 600; background: #64748b; color: white; border-radius: 6px; border: none; cursor: pointer;">Flute</button>
-    <button id="btn-violin" class="btn" style="padding: 0.35rem 0.8rem; font-weight: 600; background: #64748b; color: white; border-radius: 6px; border: none; cursor: pointer;">Violin (Rich Overtones)</button>
-  </div>
-  <div style="text-align: center; margin-top: 0.5rem; color: #38bdf8; font-weight: 600; font-size: 0.95rem;" id="timbre-desc">
-    Tuning Fork: Pure fundamental frequency $f_1$ with zero harmonic overtones.
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; Pitch, Loudness and Quality</span>
+  <p class="demo-question">A flute and a violin play the same note equally loudly, yet you can tell them apart. What is different about their sound waves?</p>
+  <p class="demo-instruction">The graph shows 10 ms of the air pressure. <b>Pitch:</b> raise $f$ and more cycles fit in the window. <b>Loudness:</b> raise the level in dB and the wave gets taller (drawn not to scale; the readout gives the real amplitude). <b>Quality:</b> pick an instrument: the bars show which harmonics ($2f$, $3f$, …) it adds, and they change the shape of the wave. Press <b>Listen</b> to hear it.</p>
+  <div id="pk-timbre"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('timbre-board', {
-      boundingbox: [-0.5, 3.5, 7.0, -3.5],
-      axis: true,
-      defaultAxes: {
-        x: { name: 'Time t (ms)', withLabel: true, label: { position: 'rt', offset: [-15, -15], color: '#cbd5e1' } },
-        y: { name: 'Wave Amplitude', withLabel: true, label: { position: 'rt', offset: [-10, -10], color: '#cbd5e1' } }
-      },
-      showNavigation: false,
-      showCopyright: false
-    });
+  (function () {
+    const RHO = 1.29, VS = 343, I0 = 1e-12;
+    const k = PhysKit.mount('pk-timbre', { x: [0, 10], y: [-2.4, 2.4], equal: false, height: 230 });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    // relative amplitudes of harmonics 1, 2, 3, ...
+    const INST = {
+      'tuning fork': [1],
+      'flute': [1, 0.45, 0.15, 0.08],
+      'clarinet': [1, 0, 0.7, 0, 0.45, 0, 0.3, 0, 0.15],
+      'violin': [1, 0.5, 0.33, 0.25, 0.2, 0.17, 0.14, 0.12, 0.11, 0.1],
+      'trumpet': [1, 0.9, 0.75, 0.6, 0.45, 0.32, 0.22, 0.14, 0.08, 0.05]
+    };
+    const names = Object.keys(INST);
+    k.row();
+    const inst = k.choice(names, 1, () => sound());
+    k.row();
+    const fS = k.slider({ label: 'f (pitch)', unit: 'Hz', min: 100, max: 1000, step: 10, value: 400, digits: 0 });
+    const bS = k.slider({ label: 'β (loudness)', unit: 'dB', min: 0, max: 120, step: 1, value: 60, digits: 0 });
+    k.button('Example 6.8 (1000 Hz, 0 dB)', () => { fS.value = 1000; bS.value = 0; sound(); });
+    const listen = k.button('🔊 Listen', () => { playing ? stop() : start(); });
+    fS.on(sound); bS.on(sound);
 
-    let currentInst = 'pure';
-    let waveCurve = null;
-
-    function renderWave() {
-      board.suspendUpdate();
-      if (waveCurve) board.removeObject(waveCurve);
-
-      waveCurve = board.create('curve', [
-        function(t) { return t; },
-        function(t) {
-          if (currentInst === 'pure') {
-            return 2.0 * Math.sin(t * 2);
-          } else if (currentInst === 'flute') {
-            return 1.8 * Math.sin(t * 2) + 0.6 * Math.sin(t * 4);
-          } else {
-            // Violin: rich harmonics
-            return 1.5 * Math.sin(t * 2) + 0.8 * Math.sin(t * 4) + 0.5 * Math.sin(t * 6) + 0.3 * Math.sin(t * 8);
-          }
-        },
-        0, 6.5
-      ], {
-        strokeColor: currentInst === 'pure' ? '#38bdf8' : (currentInst === 'flute' ? '#4ade80' : '#fb923c'),
-        strokeWidth: 3
-      });
-
-      board.unsuspendUpdate();
+    // ---- sound with the Web Audio API: one oscillator whose wave shape is the harmonic mix ----
+    let ac = null, osc = null, gain = null, playing = false;
+    function start() {
+      try {
+        ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+        osc = ac.createOscillator(); gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        playing = true; sound(); osc.start();
+        listen.innerHTML = '■ Stop';
+      } catch (e) { listen.innerHTML = 'no audio here'; }
     }
-
-    renderWave();
-
-    function setBtn(activeId) {
-      ['btn-pure', 'btn-flute', 'btn-violin'].forEach(id => {
-        document.getElementById(id).style.background = (id === activeId ? '#0284c7' : '#64748b');
-      });
+    function stop() { if (osc) { osc.stop(); osc.disconnect(); osc = null; } playing = false; listen.innerHTML = '🔊 Listen'; }
+    function sound() {
+      if (!playing || !osc) return;
+      const h = INST[names[inst.value]], real = new Float32Array(h.length + 1), imag = new Float32Array(h.length + 1);
+      h.forEach((a, i) => { imag[i + 1] = a; });
+      osc.setPeriodicWave(ac.createPeriodicWave(real, imag));
+      osc.frequency.setValueAtTime(fS.value, ac.currentTime);
+      // gentle volume: 0 dB is nearly silent, 120 dB is a comfortable maximum (your speakers are not really at 120 dB!)
+      gain.gain.setTargetAtTime(0.25 * Math.pow(10, (bS.value - 120) / 50), ac.currentTime, 0.03);
     }
+    setInterval(() => { if (!k.root.isConnected) stop(); }, 1000);
 
-    document.getElementById('btn-pure').addEventListener('click', function() {
-      currentInst = 'pure'; setBtn('btn-pure');
-      document.getElementById('timbre-desc').textContent = 'Tuning Fork: Pure fundamental frequency with zero harmonic overtones.';
-      renderWave();
-    });
+    const wave = (h, ph) => { let s = 0, n = 0; h.forEach((a, i) => { s += a * Math.sin((i + 1) * ph); n += a; }); return s / n; };
+    let peak = {};
+    names.forEach(nm => { let m = 0; for (let i = 0; i < 400; i++) m = Math.max(m, Math.abs(wave(INST[nm], i / 400 * 2 * Math.PI))); peak[nm] = m; });
 
-    document.getElementById('btn-flute').addEventListener('click', function() {
-      currentInst = 'flute'; setBtn('btn-flute');
-      document.getElementById('timbre-desc').textContent = 'Flute: Smooth tone dominated by fundamental with a gentle 2nd harmonic.';
-      renderWave();
-    });
+    k.draw = g => {
+      const h = INST[names[inst.value]], amp = (0.25 + 1.7 * bS.value / 120) / peak[names[inst.value]];
+      g.axes({ xstep: 1, ystep: 10, xlabel: 't (ms)', ylabel: '' });
+      const pts = [];
+      for (let i = 0; i <= 600; i++) { const tm = 10 * i / 600; pts.push([tm, amp * wave(h, 2 * Math.PI * fS.value * tm / 1000)]); }
+      g.path(pts, { color: C.field, width: 2.5 });
+      const T = 1000 / fS.value;
+      if (T < 9.5) {
+        g.line([0.2, -2.1], [0.2 + T, -2.1], { color: C.acc, width: 2 });
+        g.text([0.2 + T / 2, -2.1], `T = ${num(T, 2)} ms`, { size: 11, bold: true, color: C.acc, bg: '#fff' });
+      }
+      g.text([9.9, 2.15], `${names[inst.value]}: ${fS.value} Hz, ${bS.value} dB`, { align: 'right', size: 13, bold: true });
+    };
 
-    document.getElementById('btn-violin').addEventListener('click', function() {
-      currentInst = 'violin'; setBtn('btn-violin');
-      document.getElementById('timbre-desc').textContent = 'Violin: Rich, warm acoustic quality resulting from multiple prominent higher harmonics.';
-      renderWave();
-    });
+    const spec = k.addView({ x: [0, 11], y: [0, 1.15], equal: false, height: 120, title: 'Harmonics present (the mix gives the quality, or timbre)' });
+    spec.draw = g => {
+      const h = INST[names[inst.value]];
+      for (let n = 1; n <= 10; n++) {
+        const a = h[n - 1] || 0;
+        g.rect(n - 0.3, 0.12, 0.6, a * 0.85, { fill: n === 1 ? C.field : '#a78bfa', color: 'none' });
+        g.text([n, 0.05], n === 1 ? 'f' : `${n}f`, { size: 11, color: C.muted });
+      }
+    };
+
+    k.update = () => {
+      const f = fS.value, I = I0 * 10 ** (bS.value / 10), w = 2 * Math.PI * f, A = Math.sqrt(2 * I / (RHO * VS * w * w));
+      const sci = x => { const e = Math.floor(Math.log10(x)); return `${num(x / 10 ** e, 2)}×10<sup>${e < 0 ? '−' + (-e) : e}</sup>`; };
+      k.readout([
+        `Pitch ← frequency: f = ${f} Hz, period T = 1/f = ${num(1000 / f, 2)} ms`,
+        `Loudness ← intensity: I = ${rich('I_0')} × 10<sup>β/10</sup> = <b>${sci(I)} W/m<sup>2</sup></b>; amplitude A = √(2I / ρvω<sup>2</sup>) = <b>${sci(A)} m</b> (ρ = 1.29, v = 343)`,
+        `I ∝ ${rich('A^2')}: double the amplitude → 4× the intensity → +6 dB. Example 6.8: at 1000 Hz and 0 dB, A ≈ 1.07×10<sup>−11</sup> m, smaller than an atom.`
+      ]);
+    };
   })();
   </script>
 </div>

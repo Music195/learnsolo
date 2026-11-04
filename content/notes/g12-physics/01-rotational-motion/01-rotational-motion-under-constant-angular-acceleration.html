@@ -48,19 +48,113 @@
 
 <div class="note-demo">
   <span class="block-label">Interactive Demo &mdash; A Wheel with Constant Angular Acceleration</span>
-  <p>Press <strong>Play</strong> or drag the time slider. The red spoke counts the turns. On the right, the $\omega$–$t$ graph is a straight line (slope $= \alpha$), and the shaded area under it is the angular displacement $\theta$.</p>
-  <div class="controls">
-    <label>$\omega_0$ (rad/s) <input type="range" id="p1-01-w0" min="0" max="3" step="0.1" value="0"></label>
-    <label>$\alpha$ (rad/s²) <input type="range" id="p1-01-a" min="-0.5" max="0.5" step="0.01" value="0.15"></label>
-    <label>$t$ (s) <input type="range" id="p1-01-t" min="0" max="12" step="0.01" value="0"></label>
-  </div>
-  <div class="controls">
-    <button type="button" class="pill" id="p1-01-play">Play</button>
-    <button type="button" class="pill" id="p1-01-reset">Reset</button>
-    <button type="button" class="pill active" id="p1-01-ex">Example 1.1: Ferris wheel</button>
-  </div>
-  <canvas id="p1-01-canvas"></canvas>
-  <div class="output table-text" id="p1-01-out"></div>
+  <p class="demo-question">If ω grows by the same amount every second, does the wheel turn through the same angle every second?</p>
+  <p class="demo-instruction">Press Play, or drag the time slider. The grey marks show where the red spoke was at each whole second: when $\alpha > 0$ the gaps grow. On the graph, $\omega$ rises in a straight line (slope $= \alpha$) and the shaded area under it is the angle $\theta$. Make $\alpha$ negative to see the wheel slow down and stop.</p>
+  <div id="pk-wheel"></div>
+  <script>
+  (function () {
+    const k = PhysKit.mount('pk-wheel', { x: [-4.2, 4.2], y: [-2.3, 2.3], play: false });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    const TMAX = 10;
+
+    k.row();
+    const w0S = k.slider({ label: 'ω_0', unit: 'rad/s', min: 0, max: 3, step: 0.1, value: 0.5 });
+    const aS = k.slider({ label: 'α', unit: 'rad/s^2', min: -0.6, max: 0.6, step: 0.05, value: 0.3 });
+    k.row();
+    const tS = k.slider({ label: 't', unit: 's', min: 0, max: TMAX, step: 0.05, value: 0, digits: 1 });
+    k.button('Example 1.1: Ferris wheel', () => { w0S.value = 0; aS.value = 0.15; time = 0; tS.value = 0; k.setPlaying(true); });
+
+    // Motion with constant α. If α < 0 the wheel stops when ω reaches 0 and stays at rest.
+    function state(t) {
+      const w0 = w0S.value, a = aS.value;
+      const tStop = a < 0 ? -w0 / a : Infinity;
+      const tt = Math.min(t, tStop);
+      return { w: w0 + a * tt, th: w0 * tt + 0.5 * a * tt * tt, tStop };
+    }
+
+    // The clock lives in `time`; the slider only shows it (a slider rounds to its
+    // step, which would swallow the tiny steps of each animation frame).
+    let time = 0;
+    tS.on(v => { time = v; });
+    k.loop(dt => {
+      time = Math.min(TMAX, time + dt);
+      if (time >= TMAX) k.setPlaying(false);
+      tS.value = time;
+    });
+    // Pressing Play at the end starts again from t = 0
+    k.playBtn.addEventListener('click', () => { if (k.playing && time >= TMAX) { time = 0; tS.value = 0; } });
+    [w0S, aS].forEach(s => s.on(() => k.redraw()));
+
+    k.draw = g => {
+      const t = time, st = state(t);
+      const O = [-2.0, 0], R = 1.85;
+      // Wheel: rim, spokes, hub
+      g.circle(O, R, { color: C.ink, width: 4, fill: '#f8fafc' });
+      g.circle(O, R * 0.12, { color: C.ink, width: 2, fill: '#cbd5e1' });
+      for (let i = 0; i < 8; i++) {
+        const a = st.th + i * Math.PI / 4;
+        g.line(O, [O[0] + R * Math.cos(a), O[1] + R * Math.sin(a)], { color: '#94a3b8', width: 1.5 });
+      }
+      // Marks where the red spoke was at t = 0, 1, 2, ... s
+      for (let s = 0; s <= Math.floor(t + 1e-9); s++) {
+        const a = state(s).th;
+        const p1 = [O[0] + R * 1.04 * Math.cos(a), O[1] + R * 1.04 * Math.sin(a)];
+        const p2 = [O[0] + R * 1.16 * Math.cos(a), O[1] + R * 1.16 * Math.sin(a)];
+        g.line(p1, p2, { color: C.muted, width: 2.5 });
+        if (s <= 3 || s === Math.floor(t)) g.text([O[0] + R * 1.28 * Math.cos(a), O[1] + R * 1.28 * Math.sin(a)], s + ' s', { size: 11, color: C.muted });
+      }
+      // The red spoke and the angle it has turned in this lap
+      const a = st.th;
+      g.line(O, [O[0] + R * Math.cos(a), O[1] + R * Math.sin(a)], { color: C.force, width: 4 });
+      g.dot([O[0] + R * Math.cos(a), O[1] + R * Math.sin(a)], 7, C.force);
+      // Angular velocity arrow along the rim (length ∝ ω)
+      if (st.w > 0.02) {
+        const len = Math.min(1.6, st.w * 0.5), pts = [];
+        for (let i = 0; i <= 20; i++) { const b = a + 0.25 + len * i / 20; pts.push([O[0] + (R + 0.0) * 0.7 * Math.cos(b), O[1] + R * 0.7 * Math.sin(b)]); }
+        g.path(pts, { color: C.vel, width: 3 });
+        const e = pts[pts.length - 1], e2 = pts[pts.length - 2];
+        g.arrow(e2, [e[0] - e2[0], e[1] - e2[1]], { color: C.vel, head: 10 });
+      }
+      // Live values on the right
+      const X = 1.45;
+      g.text([X, 1.75], `t = ${num(t, 1)} s`, { align: 'left', size: 17, bold: true });
+      g.text([X, 1.15], `ω = ${num(st.w)} rad/s`, { align: 'left', size: 16, color: C.vel, bold: true });
+      g.text([X, 0.55], `θ = ${num(st.th)} rad`, { align: 'left', size: 16, color: C.force, bold: true });
+      g.text([X, -0.05], `= ${num(st.th / (2 * Math.PI))} revolutions`, { align: 'left', size: 15, color: C.force });
+      if (t > st.tStop) g.text([X, -0.75], `Stopped at t = ${num(st.tStop, 1)} s`, { align: 'left', size: 15, color: C.ink, bold: true });
+      g.text([X, -1.6], 'grey marks: the spoke at 0 s, 1 s, 2 s, …', { align: 'left', size: 12, color: C.muted });
+    };
+
+    // ---- ω–t graph: straight line, area under it = θ ----
+    const graph = k.addView({ x: [-0.6, TMAX + 0.6], y: [-0.5, 4], equal: false, height: 190, title: 'ω–t graph (slope = α, shaded area = θ)' });
+    graph.draw = g => {
+      const top = Math.max(1, ...[0, TMAX].map(t => state(t).w), w0S.value) * 1.18;
+      graph.setRange(null, [-top * 0.14, top]);
+      g.axes({ xstep: 2, ystep: top > 6 ? 2 : (top > 3 ? 1 : 0.5), xlabel: 't (s)', ylabel: 'ω (rad/s)' });
+      const t = time, pts = [], area = [[0, 0]];
+      for (let i = 0; i <= 100; i++) { const tt = TMAX * i / 100; pts.push([tt, state(tt).w]); }
+      for (let i = 0; i <= 60; i++) { const tt = t * i / 60; area.push([tt, state(tt).w]); }
+      area.push([t, 0]);
+      g.path(area, { close: true, fill: C.force, fillAlpha: 0.18, color: 'none' });
+      g.path(pts, { color: C.vel, width: 3 });
+      const st = state(t);
+      g.line([t, 0], [t, st.w], { color: C.ink, width: 1, dash: true });
+      g.dot([t, st.w], 6, C.vel);
+      if (t > 0.6) g.text([t / 2, st.w / 3], 'θ', { color: C.force, size: 18, bold: true });
+    };
+
+    k.update = () => {
+      const t = time, st = state(t), w0 = w0S.value, a = aS.value;
+      const tt = Math.min(t, st.tStop);
+      k.readout([
+        `ω = ${rich('ω_0')} + αt = ${num(w0, 1)} + (${num(a)})(${num(tt, 1)}) = <b>${num(st.w)} rad/s</b>`,
+        `θ = ${rich('ω_0')}t + ½αt<sup>2</sup> = ${num(w0, 1)}(${num(tt, 1)}) + ½(${num(a)})(${num(tt, 1)})<sup>2</sup> = <b>${num(st.th)} rad</b> = ${num(st.th / (2 * Math.PI))} rev`,
+        `Check: ω<sup>2</sup> = ${rich('ω_0')}<sup>2</sup> + 2αθ → ${num(st.w ** 2, 3)} = ${num(w0 ** 2 + 2 * a * st.th, 3)} ✔` +
+          (t > st.tStop ? ` &nbsp; <span class="warn">At rest since t = ${num(st.tStop, 1)} s (ω = 0).</span>` : '')
+      ]);
+    };
+  })();
+  </script>
 </div>
 
 <div class="note-example">
@@ -119,99 +213,3 @@
 </div>
 
 </article>
-
-<script src="/static/js/demos/geom.js"></script>
-<script>
-  // Wheel demo. Left: a wheel (radius 110 px) turned through θ(t) = ω0 t + ½αt²,
-  // anticlockwise for θ > 0. Right: ω–t graph on 0 ≤ t ≤ 12 s, area under it shaded.
-  (function () {
-    const canvas = document.getElementById('p1-01-canvas');
-    const out = document.getElementById('p1-01-out');
-    const w0In = document.getElementById('p1-01-w0');
-    const aIn = document.getElementById('p1-01-a');
-    const tIn = document.getElementById('p1-01-t');
-    const playBtn = document.getElementById('p1-01-play');
-    const exBtn = document.getElementById('p1-01-ex');
-    if (!canvas || !window.NoteGeom) return;
-
-    const C = [130, 175], R = 110, TMAX = 12;
-    const GX0 = 290, GX1 = 505, GY0 = 40, GY1 = 300;   // graph box (pixels)
-    const RED = '#dc2626', BLUE = '#2563eb', GREY = '#94a3b8', INK = '#334155';
-    let playing = false, lastText = '';
-
-    const val = () => ({ w0: Number(w0In.value), a: Number(aIn.value), t: Number(tIn.value) });
-
-    const board = NoteGeom.board(canvas, {
-      points: {},
-      draw(g) {
-        const { w0, a, t } = val();
-        const w = w0 + a * t, th = w0 * t + 0.5 * a * t * t;
-
-        // wheel: rim, 8 spokes (one red), hub
-        g.circle(C, R, INK, { width: 3, fill: 'rgba(148, 163, 184, 0.10)' });
-        for (let k = 0; k < 8; k++) {
-          const ang = th + k * Math.PI / 4;
-          const P = [C[0] + R * Math.cos(ang), C[1] - R * Math.sin(ang)];
-          g.seg(C, P, k === 0 ? RED : GREY, { width: k === 0 ? 3 : 1.5 });
-          if (k === 0) g.circle(P, 7, RED, { fill: '#fca5a5' });
-        }
-        g.circle(C, 6, INK, { fill: INK });
-        g.text([C[0], 30], 'θ = ' + th.toFixed(2) + ' rad = ' + (th / (2 * Math.PI)).toFixed(2) + ' rev', INK);
-
-        // ω–t graph: scale so the whole 0…12 s line fits
-        const wEnd = w0 + a * TMAX;
-        const lo = Math.min(0, w0, wEnd), hi = Math.max(0.5, w0, wEnd);
-        const X = (s) => GX0 + (GX1 - GX0) * s / TMAX;
-        const Y = (v) => GY1 - (GY1 - GY0) * (v - lo) / (hi - lo);
-        g.poly([[X(0), Y(0)], [X(0), Y(w0)], [X(t), Y(w)], [X(t), Y(0)]], 'rgba(37, 99, 235, 0.18)');
-        g.seg([GX0, GY1], [GX0, GY0], INK, { width: 1.5 });
-        g.seg([X(0), Y(0)], [GX1, Y(0)], INK, { width: 1.5 });
-        g.seg([X(0), Y(w0)], [X(TMAX), Y(wEnd)], BLUE, { width: 2.5 });
-        g.dot([X(t), Y(w)], RED);
-        g.text([GX0 + 14, GY0 - 14], 'ω (rad/s)', INK);
-        g.text([GX1 - 6, Y(0) + 16], 't (s)', INK);
-        [0, 4, 8, 12].forEach((s) => g.text([X(s), Y(0) + (s ? 16 : 30)], String(s), GREY));
-        g.text([GX0 - 18, Y(hi)], hi.toFixed(1), GREY);
-        if (lo < 0) g.text([GX0 - 18, Y(lo)], lo.toFixed(1), GREY);
-        g.text([(GX0 + GX1) / 2, GY0 - 14], 'area = θ, slope = α', BLUE);
-
-        const n = (z, k = 2) => z.toFixed(k);
-        const text =
-          `t = ${n(t)} s   ω₀ = ${n(w0, 1)} rad/s   α = ${n(a)} rad/s²\n` +
-          `ω = ω₀ + αt = ${n(w)} rad/s\n` +
-          `θ = ω₀t + ½αt² = ${n(th)} rad  =  ${n(th / (2 * Math.PI))} rev\n` +
-          `check: ω² = ${n(w * w, 3)}   ω₀² + 2αθ = ${n(w0 * w0 + 2 * a * th, 3)}`;
-        if (text !== lastText) { out.textContent = text; lastText = text; }
-      },
-    });
-
-    function setPlaying(on) { playing = on; playBtn.textContent = on ? 'Pause' : 'Play'; }
-    let last = performance.now();
-    function tick(now) {
-      if (!canvas.isConnected) return;
-      const dt = Math.min((now - last) / 1000, 0.05);
-      last = now;
-      if (playing) {
-        const t = Number(tIn.value) + dt;
-        if (t >= TMAX) { tIn.value = TMAX; setPlaying(false); } else tIn.value = t;
-        board.redraw();
-      }
-      requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
-
-    playBtn.addEventListener('click', () => {
-      if (Number(tIn.value) >= TMAX) tIn.value = 0;
-      setPlaying(!playing);
-    });
-    document.getElementById('p1-01-reset').addEventListener('click', () => {
-      setPlaying(false); tIn.value = 0; board.redraw();
-    });
-    exBtn.addEventListener('click', () => {
-      setPlaying(false); w0In.value = 0; aIn.value = 0.15; tIn.value = 10;
-      exBtn.classList.add('active'); board.redraw();
-    });
-    [w0In, aIn].forEach((el) => el.addEventListener('input', () => { exBtn.classList.remove('active'); board.redraw(); }));
-    tIn.addEventListener('input', () => board.redraw());
-  })();
-</script>

@@ -63,98 +63,95 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Eye Defects and Corrective Lenses</span>
-  <p class="demo-instruction">Toggle between normal vision, uncorrected myopia, corrected myopia, and corrected hyperopia. Observe where incoming rays converge relative to the retina surface.</p>
-
-  <div id="eye-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 0.8rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <button id="btn-normal" class="btn" style="padding: 0.35rem 0.8rem; font-weight: 600; background: #0284c7; color: white; border-radius: 6px; border: none; cursor: pointer;">Normal Eye</button>
-    <button id="btn-myopia" class="btn" style="padding: 0.35rem 0.8rem; font-weight: 600; background: #64748b; color: white; border-radius: 6px; border: none; cursor: pointer;">Myopia (Uncorrected)</button>
-    <button id="btn-corr-myopia" class="btn" style="padding: 0.35rem 0.8rem; font-weight: 600; background: #64748b; color: white; border-radius: 6px; border: none; cursor: pointer;">Myopia (Concave Corrected)</button>
-    <button id="btn-hyperopia" class="btn" style="padding: 0.35rem 0.8rem; font-weight: 600; background: #64748b; color: white; border-radius: 6px; border: none; cursor: pointer;">Hyperopia (Convex Corrected)</button>
-  </div>
-  <div style="text-align: center; margin-top: 0.5rem; color: #4ade80; font-weight: 600; font-size: 0.95rem;" id="eye-status">
-    Normal Eye: Parallel rays from distant objects converge sharply on the retina.
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; Accommodation, Short Sight and Long Sight</span>
+  <p class="demo-question">How does the eye focus on both near and far objects, and why do some people need glasses?</p>
+  <p class="demo-instruction">Move the object with the slider. The eye lens changes its power automatically between 50 D (relaxed) and 54 D (fully tensed, Example 7.2) to put the focus on the retina. Choose a short-sighted (eyeball too long) or long-sighted (too short) eye: some distances can no longer be focused and the spot on the retina blurs. Press <b>best lens</b> to add the correcting lens.</p>
+  <div id="pk-eye"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('eye-board', {
-      boundingbox: [-7, 4.5, 7, -4.5],
-      axis: false,
-      showNavigation: false,
-      showCopyright: false
+  (function () {
+    const k = PhysKit.mount('pk-eye', { x: [-6.2, 6.2], y: [-2.6, 2.6] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    const PMIN = 50, PMAX = 54;
+    const EYES = [{ n: 'normal eye', vr: 0.020 }, { n: 'short-sighted (myopia)', vr: 0.021 }, { n: 'long-sighted (hyperopia)', vr: 0.019 }];
+    k.row();
+    const eye = k.choice(EYES.map(e => e.n), 0, () => { gS.value = 0; });
+    k.row();
+    const sS = k.slider({ label: 'object at', min: 0, max: 1, step: 0.005, value: 1, format: s => s >= 1 ? '∞ (far away)' : num(uOf(s) * 100, 0) + ' cm' });
+    const gS = k.slider({ label: 'lens P_g', unit: 'D', min: -5, max: 5, step: 0.01, value: 0, digits: 2 });
+    // best lens: short sight → relaxed eye + lens focuses ∞ (P_g = 1/v − 50); long sight → tensed eye + lens focuses 25 cm (P_g = 4 + 1/v − 54)
+    k.button('best lens', () => {
+      const vr = EYES[eye.value].vr;
+      gS.value = eye.value === 1 ? +(1 / vr - PMIN).toFixed(2) : eye.value === 2 ? +(4 + 1 / vr - PMAX).toFixed(2) : 0;
     });
+    k.button('near point 25 cm', () => { sS.value = Math.log(25 / 10) / Math.log(60); });
+    function uOf(s) { return s >= 1 ? Infinity : 0.10 * Math.pow(60, s); }     // 10 cm to 6 m, then ∞
 
-    let mode = 'normal';
-    let elements = [];
+    function state() {
+      const vr = EYES[eye.value].vr, u = uOf(sS.value), Pg = gS.value, iu = isFinite(u) ? 1 / u : 0;
+      const need = iu + 1 / vr - Pg;                      // eye power that would focus on the retina
+      const Pe = Math.max(PMIN, Math.min(PMAX, need));
+      const v = 1 / (Pe + Pg - iu);                       // where the image really forms (m)
+      return { vr, u, Pg, Pe, need, v, ok: Math.abs(need - Pe) < 0.02 };   // within 0.02 D counts as sharp
+    }
 
-    // Eyeball silhouette
-    board.create('circle', [[2.5, 0], 2.5], { strokeColor: '#cbd5e1', strokeWidth: 2, fillColor: 'none' });
-    board.create('point', [5.0, 0], { name: 'Retina', fillColor: '#ef4444', size: 3, fixed: true });
-
-    // Crystalline lens at x = 0.5
-    board.create('segment', [[0.5, -1.8], [0.5, 1.8]], { strokeColor: '#38bdf8', strokeWidth: 3 });
-    board.create('text', [0.5, 2.2, 'Eye Lens'], { color: '#38bdf8', fontSize: 11, anchorX: 'middle' });
-
-    function renderRays() {
-      board.suspendUpdate();
-      for (let el of elements) board.removeObject(el);
-      elements = [];
-
-      let focusX = 5.0; // on retina
-      let lensX = 0.5;
-
-      if (mode === 'normal') {
-        focusX = 5.0;
-        document.getElementById('eye-status').textContent = 'Normal Eye: Rays converge precisely on the retina surface.';
-        document.getElementById('eye-status').style.color = '#4ade80';
-      } else if (mode === 'myopia') {
-        focusX = 3.8; // in front of retina
-        document.getElementById('eye-status').textContent = 'Myopia (Uncorrected): Eyeball is too long; rays focus in front of retina.';
-        document.getElementById('eye-status').style.color = '#f87171';
-      } else if (mode === 'corr-myopia') {
-        focusX = 5.0;
-        // Draw concave spectacle lens at x = -2.0
-        let cLens = board.create('segment', [[-2.0, -1.8], [-2.0, 1.8]], { strokeColor: '#4ade80', strokeWidth: 3 });
-        let cText = board.create('text', [-2.0, 2.2, 'Concave Lens (Diverging)'], { color: '#4ade80', fontSize: 11, anchorX: 'middle' });
-        elements.push(cLens, cText);
-        document.getElementById('eye-status').textContent = 'Myopia (Corrected): Diverging lens expands rays before entering eye, shifting focus onto retina.';
-        document.getElementById('eye-status').style.color = '#4ade80';
-      } else if (mode === 'hyperopia') {
-        focusX = 5.0;
-        // Draw convex spectacle lens at x = -2.0
-        let cxLens = board.create('segment', [[-2.0, -1.8], [-2.0, 1.8]], { strokeColor: '#fb923c', strokeWidth: 3 });
-        let cxText = board.create('text', [-2.0, 2.2, 'Convex Lens (Converging)'], { color: '#fb923c', fontSize: 11, anchorX: 'middle' });
-        elements.push(cxLens, cxText);
-        document.getElementById('eye-status').textContent = 'Hyperopia (Corrected): Converging lens adds optical power, bringing focus forward onto retina.';
-        document.getElementById('eye-status').style.color = '#38bdf8';
+    const S = 175;           // board units per metre inside the eye (2 cm → 3.5 units)
+    k.draw = g => {
+      const st = state(), xr = st.vr * S, cx = xr / 2 - 0.15;
+      // eyeball
+      const ball = [];
+      for (let i = 0; i <= 60; i++) { const a = i / 60 * 2 * Math.PI; ball.push([cx + (xr / 2 + 0.15) * Math.cos(a), 1.7 * Math.sin(a)]); }
+      g.path(ball, { close: true, fill: '#fff7ed', color: C.ink, width: 2 });
+      const ret = [];
+      for (let i = -14; i <= 14; i++) { const a = i / 60 * 2 * Math.PI; ret.push([cx + (xr / 2 + 0.15) * Math.cos(a), 1.7 * Math.sin(a)]); }
+      g.path(ret, { color: C.bad, width: 5 });
+      g.text([xr + 0.35, -1.45], 'retina', { size: 12, bold: true, color: C.bad });
+      // object
+      const XO = isFinite(st.u) ? -0.6 - 4.6 * Math.log(st.u / 0.10) / Math.log(60) : null;
+      const hs = [-0.75, -0.38, 0, 0.38, 0.75];
+      const xi = st.v * S, blur = Math.abs(xr - xi) / xi * 1.5;
+      for (const h of hs) {
+        if (XO === null) g.line([-6.2, h], [0, h], { color: C.energy, width: 1.6 });
+        else g.line([XO, 0], [0, h], { color: C.energy, width: 1.6 });
+        const s = -h / xi, yr = h + s * xr;              // straight line to the image point, stopped at the retina
+        g.line([0, h], [xr, yr], { color: C.energy, width: 1.6 });
+        if (xi > xr) g.line([xr, yr], [xi, 0], { color: C.energy, width: 1, dash: [3, 3], alpha: 0.6 });
       }
+      if (XO !== null) { g.dot([XO, 0], 6, C.vel); g.text([XO, -0.4], `object ${num(st.u * 100, 0)} cm`, { size: 12, bold: true }); }
+      else g.text([-4.6, 1.0], 'parallel rays from far away', { size: 12, color: C.muted });
+      // eye lens (fatter when it is more powerful) and correcting lens
+      const fat = g.world(5 + 10 * (st.Pe - PMIN) / (PMAX - PMIN)), lp = [];
+      for (let i = 0; i <= 20; i++) { const t = -1 + i / 10; lp.push([-fat * (1 - t * t), t * 0.85]); }
+      for (let i = 20; i >= 0; i--) { const t = -1 + i / 10; lp.push([fat * (1 - t * t), t * 0.85]); }
+      g.path(lp, { close: true, fill: C.fluidFill, color: C.fluid, width: 2 });
+      if (Math.abs(st.Pg) > 0.005) {
+        const xg = -0.42, gp = [];
+        // converging lens is fat in the middle, diverging lens is thin in the middle
+        for (let i = 0; i <= 20; i++) { const t = -1 + i / 10; gp.push([xg - g.world(3) - (st.Pg > 0 ? g.world(6) * (1 - t * t) : g.world(6) * t * t), t * 1.0]); }
+        for (let i = 20; i >= 0; i--) { const t = -1 + i / 10; gp.push([xg + g.world(3) + (st.Pg > 0 ? g.world(6) * (1 - t * t) : g.world(6) * t * t), t * 1.0]); }
+        g.path(gp, { close: true, fill: '#ede9fe', color: C.field, width: 2 });
+        g.text([xg - 0.25, 1.25], `${st.Pg > 0 ? 'converging' : 'diverging'} lens ${num(st.Pg, 2)} D`, { align: 'right', size: 12, bold: true, color: C.field });
+      }
+      // result
+      g.dot([xr, 0], st.ok ? 6 : 4, st.ok ? C.good : C.bad);
+      g.text([-6.0, 2.3], st.ok ? 'sharp: focused on the retina ✓' : st.need > PMAX ? 'blurred: too close, the eye lens cannot get any stronger' : 'blurred: the eye lens cannot relax any further', { align: 'left', size: 14, bold: true, color: st.ok ? C.good : C.bad });
+      // accommodation meter
+      const mx = 3.9, mw = 2.1, f = (st.Pe - PMIN) / (PMAX - PMIN);
+      g.text([mx + mw / 2, 2.35], 'ciliary muscle', { size: 11, color: C.muted });
+      g.rect(mx, 1.85, mw, 0.25, { fill: '#e5e7eb', color: 'none', radius: 4 });
+      g.rect(mx, 1.85, mw * f, 0.25, { fill: C.energy, color: 'none', radius: 4 });
+      g.text([mx, 1.6], 'relaxed', { align: 'left', size: 10, color: C.muted }); g.text([mx + mw, 1.6], 'tensed', { align: 'right', size: 10, color: C.muted });
+    };
 
-      // Upper ray
-      let r1a = board.create('segment', [[-6.0, 1.5], [lensX, 1.5]], { strokeColor: '#facc15', strokeWidth: 2 });
-      let r1b = board.create('segment', [[lensX, 1.5], [focusX, 0]], { strokeColor: '#facc15', strokeWidth: 2 });
-      // Lower ray
-      let r2a = board.create('segment', [[-6.0, -1.5], [lensX, -1.5]], { strokeColor: '#facc15', strokeWidth: 2 });
-      let r2b = board.create('segment', [[lensX, -1.5], [focusX, 0]], { strokeColor: '#facc15', strokeWidth: 2 });
-
-      elements.push(r1a, r1b, r2a, r2b);
-      board.unsuspendUpdate();
-    }
-
-    renderRays();
-
-    function setBtn(activeId) {
-      ['btn-normal', 'btn-myopia', 'btn-corr-myopia', 'btn-hyperopia'].forEach(id => {
-        document.getElementById(id).style.background = (id === activeId ? '#0284c7' : '#64748b');
-      });
-    }
-
-    document.getElementById('btn-normal').addEventListener('click', function() { mode = 'normal'; setBtn('btn-normal'); renderRays(); });
-    document.getElementById('btn-myopia').addEventListener('click', function() { mode = 'myopia'; setBtn('btn-myopia'); renderRays(); });
-    document.getElementById('btn-corr-myopia').addEventListener('click', function() { mode = 'corr-myopia'; setBtn('btn-corr-myopia'); renderRays(); });
-    document.getElementById('btn-hyperopia').addEventListener('click', function() { mode = 'hyperopia'; setBtn('btn-hyperopia'); renderRays(); });
+    k.update = () => {
+      const st = state(), vr = st.vr;
+      const farPt = 1 / (PMIN + st.Pg - 1 / vr), nearPt = 1 / (PMAX + st.Pg - 1 / vr);
+      const fmt = d => d <= 0 || !isFinite(d) || d > 100 ? '∞' : num(d * 100, 0) + ' cm';
+      k.readout([
+        `Eye lens power P = 1/u + 1/v: needs ${num(st.need, 2)} D, uses <b>${num(st.Pe, 2)} D</b> (range ${PMIN}–${PMAX} D)${Math.abs(st.Pg) > 0.005 ? ` + glasses ${num(st.Pg, 2)} D` : ''}`,
+        `This eye (retina ${num(vr * 100, 1)} cm behind the lens) can see clearly from <b>${fmt(nearPt)}</b> to <b>${fmt(farPt)}</b>.`,
+        'Example 7.2 (normal eye, v = 2.0 cm): far P = 1/0.02 = 50 D, near P = 1/0.25 + 50 = 54 D, power of accommodation 4 D. Short sight needs a diverging (negative) lens; long sight a converging (positive) one.'
+      ]);
+    };
   })();
   </script>
 </div>

@@ -92,118 +92,100 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Series vs. Parallel Battery Performance</span>
-  <p class="demo-instruction">Switch between Series Aiding, Parallel, and Series Opposing configurations to observe the resulting circuit current and terminal power delivered to load $R$.</p>
-
-  <div id="bat-board" style="width: 100%; height: 350px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <button id="btn-aiding" style="padding: 0.35rem 0.75rem; border-radius: 6px; background: #0284c7; color: white; border: none; cursor: pointer; font-weight: 600;">Series Aiding</button>
-    <button id="btn-parallel" style="padding: 0.35rem 0.75rem; border-radius: 6px; background: #334155; color: white; border: none; cursor: pointer; font-weight: 600;">Parallel</button>
-    <button id="btn-opposing" style="padding: 0.35rem 0.75rem; border-radius: 6px; background: #334155; color: white; border: none; cursor: pointer; font-weight: 600;">Series Opposing</button>
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Load $R$: 
-      <input id="r-bat-slider" type="range" min="1" max="15" step="1" value="5" style="vertical-align: middle;">
-      <span id="r-bat-val" style="color: #38bdf8; font-weight: 700;">5 &Omega;</span>
-    </label>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      Current $I$: <span id="bat-i-stat" style="color: #4ade80; font-weight: 700;">2.00 A</span> &bull; Load Power $P$: <span id="bat-p-stat" style="color: #fb923c; font-weight: 700;">20.0 W</span>
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; Cells in Series and in Parallel</span>
+  <p class="demo-question">Two identical batteries: is it better to join them in series or in parallel? The answer depends on the load.</p>
+  <p class="demo-instruction">Choose a connection. In series the EMFs add (and so do the internal resistances); in parallel the EMF stays the same but the internal resistance is shared, $r/n$. Series opposing cells cancel. The graph shows the current for series and parallel against the load $R$: the two curves cross at $R = r$. Use series for a large load, parallel when $R$ is small.</p>
+  <div id="pk-cells"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('bat-board', {
-      boundingbox: [-4, 3, 4, -3],
-      axis: false,
-      showNavigation: false,
-      showCopyright: false,
-      pan: { enabled: false },
-      zoom: { enabled: false }
-    });
+  (function () {
+    const k = PhysKit.mount('pk-cells', { x: [-6.2, 6.2], y: [-2.6, 2.6] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    k.row();
+    const mode = k.choice(['series aiding', 'parallel', 'series opposing'], 0);
+    k.row();
+    const nS = k.slider({ label: 'n (cells)', min: 2, max: 4, step: 1, value: 2, digits: 0 });
+    const ES = k.slider({ label: 'E (each)', unit: 'V', min: 1, max: 12, step: 0.5, value: 6, digits: 1 });
+    const rS = k.slider({ label: 'r (each)', unit: 'Ω', min: 0.1, max: 5, step: 0.05, value: 0.5 });
+    const RS = k.slider({ label: 'R', unit: 'Ω', min: 0.1, max: 20, step: 0.05, value: 5 });
+    k.row();
+    k.button('Example 10.4 (6 V, 0.5 Ω, 5 Ω)', () => { nS.value = 2; ES.value = 6; rS.value = 0.5; RS.value = 5; });
+    k.button('Exercise 6 (parallel, R′ = 3.75 Ω)', () => { nS.value = 2; ES.value = 6; rS.value = 0.5; RS.value = 3.75; mode.set(1); });
+    const Ifor = (m, R) => {
+      const n = nS.value, E = ES.value, r = rS.value;
+      if (m === 0) return n * E / (R + n * r);
+      if (m === 1) return E / (R + r / n);
+      return (n % 2) * E / (R + n * r);             // alternate cells reversed: pairs cancel
+    };
+    let flow = 0;
+    k.loop(dt => { flow += Ifor(mode.value, RS.value) * dt * 0.6; }, { button: false });
 
-    let mode = 'aiding';
-    let elements = [];
-
-    function updateSim() {
-      board.suspendUpdate();
-      board.removeObject(elements);
-      elements = [];
-
-      let R = parseFloat(document.getElementById('r-bat-slider').value);
-      let E1 = 6.0, r1 = 0.5;
-      let E2 = 6.0, r2 = 0.5;
-      let I = 0, P = 0, descText = '';
-
-      if (mode === 'aiding') {
-        let E_net = E1 + E2;
-        let r_net = r1 + r2;
-        I = E_net / (R + r_net);
-        P = I * I * R;
-        descText = 'Series Aiding: E_net = 12 V, r_net = 1.0 Ω';
-
-        // Draw circuit diagram
-        let wire = board.create('segment', [[-3, -1.5], [-3, 1.5]], { strokeColor: '#94a3b8', strokeWidth: 3 });
-        let top = board.create('segment', [[-3, 1.5], [3, 1.5]], { strokeColor: '#94a3b8', strokeWidth: 3 });
-        let right = board.create('segment', [[3, 1.5], [3, -1.5]], { strokeColor: '#94a3b8', strokeWidth: 3 });
-        let botL = board.create('segment', [[-3, -1.5], [-1.8, -1.5]], { strokeColor: '#94a3b8', strokeWidth: 3 });
-        let botR = board.create('segment', [[1.8, -1.5], [3, -1.5]], { strokeColor: '#94a3b8', strokeWidth: 3 });
-
-        // Two cells in series at bottom
-        let b1 = board.create('text', [-1.2, -1.1, '+| i- (6V, 0.5Ω)'], { strokeColor: '#38bdf8', fontSize: 12 });
-        let b2 = board.create('text', [0.8, -1.1, '+| i- (6V, 0.5Ω)'], { strokeColor: '#38bdf8', fontSize: 12 });
-        let rBox = board.create('text', [0, 1.9, 'Load R = ' + R + ' Ω'], { anchorX: 'middle', strokeColor: '#fb923c', fontSize: 12 });
-        elements.push(wire, top, right, botL, botR, b1, b2, rBox);
-      } else if (mode === 'parallel') {
-        let E_net = E1;
-        let r_net = r1 / 2.0;
-        I = E_net / (R + r_net);
-        P = I * I * R;
-        descText = 'Parallel: E_net = 6 V, r_net = 0.25 Ω, I_branch = ' + (I / 2).toFixed(2) + ' A';
-
-        let rBox = board.create('text', [0, 1.9, 'Load R = ' + R + ' Ω'], { anchorX: 'middle', strokeColor: '#fb923c', fontSize: 12 });
-        let pLabel = board.create('text', [0, -1.2, 'Two 6V Cells in Parallel'], { anchorX: 'middle', strokeColor: '#4ade80', fontSize: 13, fontWeight: 'bold' });
-        elements.push(rBox, pLabel);
+    const cell = (g, x, y, flip, label) => {
+      // long plate = +, short thick plate = −; horizontal cell
+      const s = flip ? -1 : 1;
+      g.line([x - 0.1 * s, y - 0.35], [x - 0.1 * s, y + 0.35], { color: C.ink, width: 3 });
+      g.line([x + 0.1 * s, y - 0.2], [x + 0.1 * s, y + 0.2], { color: C.ink, width: 6 });
+      if (label !== null) g.text([x - 0.1 * s, y + 0.55], '+', { size: 12, bold: true, color: C.pos });
+      if (label) g.text([x, y - 0.6], label, { size: 10, color: C.muted });
+    };
+    k.draw = g => {
+      const m = mode.value, n = nS.value, I = Ifor(m, RS.value);
+      const T = 1.6, B = -1.6, L = -5.6, Rt = -0.4;
+      if (m === 1) {
+        // n cells side by side, each on its own branch between two bus wires
+        const XA = L, XB = -2.4, yTop = T - 0.6, gap = n > 1 ? 2.2 / (n - 1) : 0, yBot = yTop - (n - 1) * gap;
+        for (let j = 0; j < n; j++) { const y = yTop - j * gap; g.line([XA, y], [-3.8, y], { color: C.ink, width: 2.5 }); g.line([-3.2, y], [XB, y], { color: C.ink, width: 2.5 }); cell(g, -3.5, y, false, null); }
+        g.text([-3.9, T + 0.3], `each cell ${num(ES.value, 1)} V, ${num(rS.value, 2)} Ω`, { size: 11, color: C.muted });
+        // + bus (left) goes to the top of the load, − bus (right) to the bottom
+        g.path([[XA, yBot], [XA, T], [Rt + 2.2, T], [Rt + 2.2, 0.4]], { color: C.ink, width: 2.5 });
+        g.path([[XB, yTop], [XB, B], [Rt + 2.2, B], [Rt + 2.2, -0.4]], { color: C.ink, width: 2.5 });
       } else {
-        let E_net = Math.abs(E1 - E2);
-        let r_net = r1 + r2;
-        I = E_net / (R + r_net);
-        P = I * I * R;
-        descText = 'Series Opposing: E_net = 0 V (Identical Opposed Cells)';
-        let oLabel = board.create('text', [0, 0, 'Series Opposing: Cells Cancel (I = 0)'], { anchorX: 'middle', strokeColor: '#ef4444', fontSize: 13, fontWeight: 'bold' });
-        elements.push(oLabel);
+        // cells in a row on the left side wire
+        g.path([[L, T], [Rt + 2.2, T], [Rt + 2.2, 0.4]], { color: C.ink, width: 2.5 });
+        g.path([[Rt + 2.2, -0.4], [Rt + 2.2, B], [L, B]], { color: C.ink, width: 2.5 });
+        g.line([L, B], [L, T], { color: C.ink, width: 2.5 });
+        for (let j = 0; j < n; j++) {
+          const y = T - 0.5 - j * (3.2 - 0.6) / Math.max(1, n - 1) * 0.95, flip = m === 2 && j % 2 === 1;
+          g.rect(L - 0.45, y - 0.32, 0.9, 0.64, { fill: '#fff', color: 'none' });
+          // vertical cell: + plate on top unless reversed
+          g.line([L - 0.35, y + (flip ? -0.1 : 0.1)], [L + 0.35, y + (flip ? -0.1 : 0.1)], { color: C.ink, width: 3 });
+          g.line([L - 0.2, y + (flip ? 0.1 : -0.1)], [L + 0.2, y + (flip ? 0.1 : -0.1)], { color: C.ink, width: 6 });
+          g.text([L + 0.55, y], flip ? 'reversed' : `${num(ES.value, 1)} V`, { align: 'left', size: 11, bold: true, color: flip ? C.bad : C.ink });
+        }
       }
-
-      document.getElementById('bat-i-stat').textContent = I.toFixed(2) + ' A';
-      document.getElementById('bat-p-stat').textContent = P.toFixed(1) + ' W';
-
-      let info = board.create('text', [0, -2.4, descText], { anchorX: 'middle', strokeColor: '#cbd5e1', fontSize: 12 });
-      elements.push(info);
-
-      board.resumeUpdate();
-    }
-
-    updateSim();
-
-    function setBtn(active) {
-      ['btn-aiding', 'btn-parallel', 'btn-opposing'].forEach(function(b) {
-        document.getElementById(b).style.background = (b === active) ? '#0284c7' : '#334155';
+      // load resistor
+      const zx = Rt + 2.2, zr = [[zx, 0.4]]; for (let j = 1; j <= 6; j++) zr.push([zx + (j % 2 ? 0.25 : -0.25), 0.4 - j * 0.13]); zr.push([zx, -0.4]);
+      { g.path(zr, { color: C.acc, width: 2.5 }); g.text([zx + 0.4, 0], `R = ${num(RS.value, 2)} Ω`, { align: 'left', size: 12, bold: true, color: C.acc }); }
+      // ammeter reading and comparison bars
+      g.text([-1.8, 2.35], `I = ${num(I, 3)} A`, { size: 15, bold: true, color: C.energy });
+      const bx = 3.6, H = 3.4, vals = [0, 1, 2].map(j => Ifor(j, RS.value)), mx = Math.max(...vals, 0.001);
+      ['series', 'parallel', 'opposing'].forEach((nm, j) => {
+        g.rect(bx + j * 0.85, -1.9, 0.55, H * vals[j] / mx, { fill: j === m ? C.energy : '#cbd5e1', color: 'none' });
+        g.text([bx + j * 0.85 + 0.27, -2.2], nm, { size: 10, color: C.muted });
+        g.text([bx + j * 0.85 + 0.27, -1.9 + H * vals[j] / mx + 0.2], num(vals[j], 2), { size: 11, bold: true });
       });
-    }
+      g.text([bx + 1.1, 2.35], 'current (A)', { size: 11, color: C.muted });
+    };
 
-    document.getElementById('btn-aiding').addEventListener('click', function() {
-      mode = 'aiding'; setBtn('btn-aiding'); updateSim();
-    });
-    document.getElementById('btn-parallel').addEventListener('click', function() {
-      mode = 'parallel'; setBtn('btn-parallel'); updateSim();
-    });
-    document.getElementById('btn-opposing').addEventListener('click', function() {
-      mode = 'opposing'; setBtn('btn-opposing'); updateSim();
-    });
-    document.getElementById('r-bat-slider').addEventListener('input', function(e) {
-      document.getElementById('r-bat-val').textContent = e.target.value + ' Ω';
-      updateSim();
-    });
+    const gv = k.addView({ x: [0, 20], y: [0, 1], equal: false, height: 160, title: 'Current against load R: series (orange) and parallel (blue)' });
+    gv.draw = g => {
+      const top = Math.max(Ifor(0, 0.1), Ifor(1, 0.1)) * 1.08;
+      gv.setRange([-0.6, 20.5], [-top * 0.08, top]);
+      g.axes({ xstep: 2, ystep: top > 40 ? 10 : top > 10 ? 5 : top > 4 ? 1 : 0.5, xlabel: 'R (Ω)', ylabel: 'I (A)' });
+      for (const [mm, col] of [[0, C.energy], [1, C.acc]]) { const pts = []; for (let R = 0.1; R <= 20; R += 0.05) pts.push([R, Ifor(mm, R)]); g.path(pts, { color: col, width: 2.5 }); }
+      g.line([rS.value, 0], [rS.value, top], { color: C.muted, dash: [4, 4] });
+      g.text([rS.value, top * 0.55], 'R = r', { align: 'left', size: 11, color: C.muted, dx: 6 });
+      g.dot([RS.value, Ifor(mode.value, RS.value)], 6, C.bad);
+    };
+
+    k.update = () => {
+      const n = nS.value, E = ES.value, r = rS.value, R = RS.value, m = mode.value;
+      k.readout([
+        m === 0 ? `Series aiding: E = ${n} × ${num(E, 1)} = ${num(n * E, 1)} V, r = ${n} × ${num(r, 2)} = ${num(n * r, 2)} Ω → I = ${num(n * E, 1)} / (${num(R, 2)} + ${num(n * r, 2)}) = <b>${num(Ifor(0, R), 3)} A</b>`
+          : m === 1 ? `Parallel: E = ${num(E, 1)} V, r/n = ${num(r / n, 3)} Ω → I = ${num(E, 1)} / (${num(R, 2)} + ${num(r / n, 3)}) = <b>${num(Ifor(1, R), 3)} A</b>`
+            : `Series opposing: each reversed cell cancels one forward cell, so the net EMF is ${num((n % 2) * E, 1)} V and I = <b>${num(Ifor(2, R), 3)} A</b>, while r still adds up to ${num(n * r, 2)} Ω.`,
+        `Example 10.4: series 12/6 = 2.0 A, parallel 6/5.25 = 1.14 A, opposing 0 A. Exercise 6: r = 0.5 Ω from 12/(5 + 2r) = 2, then 6/(R′ + 0.25) = 1.5 gives R′ = 3.75 Ω.`
+      ]);
+    };
   })();
   </script>
 </div>

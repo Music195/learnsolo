@@ -43,83 +43,92 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Total Internal Reflection in an Optical Fiber</span>
-  <p class="demo-instruction">Adjust the core refractive index $n_1$ and cladding index $n_2$ to observe the calculated critical angle $\theta_c$ and watch the zigzagging light path trapped inside the optical core.</p>
-
-  <div id="fiber-board" style="width: 100%; height: 360px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Core Index $n_1$: 
-      <input id="n1-slider" type="range" min="1.50" max="1.75" step="0.01" value="1.63" style="vertical-align: middle;">
-      <span id="n1-val" style="color: #38bdf8; font-weight: 700;">1.63</span>
-    </label>
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Cladding $n_2$: 
-      <input id="n2-slider" type="range" min="1.40" max="1.55" step="0.01" value="1.48" style="vertical-align: middle;">
-      <span id="n2-val" style="color: #fb923c; font-weight: 700;">1.48</span>
-    </label>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      Critical Angle $\theta_c$: <span id="tc-stat" style="color: #4ade80; font-weight: 700;">65.2°</span>
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; Light Trapped in an Optical Fibre</span>
+  <p class="demo-question">How can light follow a glass fibre for kilometres without leaking out of the sides?</p>
+  <p class="demo-instruction">Drag the laser (or use the slider) to change the angle $\alpha$ at which light enters the fibre. Inside, the ray hits the core–cladding boundary at angle $i$. If $i$ is bigger than the critical angle $\theta_c$ the light is totally reflected and stays in the core; if not, part of it leaks into the cladding at every bounce. The dashed cone is the acceptance cone, $\sin\alpha_{\max} = \sqrt{n_1^2 - n_2^2}$.</p>
+  <div id="pk-fibre"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('fiber-board', {
-      boundingbox: [-0.5, 4.5, 10.5, -4.5],
-      axis: false,
-      showNavigation: false,
-      showCopyright: false
+  (function () {
+    const k = PhysKit.mount('pk-fibre', { x: [-6.2, 6.2], y: [-2.6, 2.6] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    k.row();
+    const aS = k.slider({ label: 'α (in air)', unit: '°', min: -70, max: 70, step: 0.5, value: 30, digits: 1 });
+    const n1S = k.slider({ label: 'n_1 (core)', min: 1.40, max: 1.70, step: 0.01, value: 1.63 });
+    const n2S = k.slider({ label: 'n_2 (cladding)', min: 1.30, max: 1.65, step: 0.01, value: 1.48 });
+    k.button('Example 7.6', () => { n1S.value = 1.63; n2S.value = 1.48; });
+    n1S.on(v => { if (n2S.value > v - 0.01) n2S.value = +(v - 0.01).toFixed(2); });
+    n2S.on(v => { if (v > n1S.value - 0.01) n2S.value = +(n1S.value - 0.01).toFixed(2); });
+
+    const XE = -3.4, XEND = 6.2, RC = 0.55, RCL = 0.95, RS = 2.3;   // entry face x, core and cladding half-widths
+    let t = 0;
+    k.loop(dt => { t += dt; });
+    k.view.drag({
+      get: () => { const a = aS.value * Math.PI / 180; return [XE - RS * Math.cos(a), RS * Math.sin(a)]; },
+      set: p => { const a = Math.atan2(p[1], XE - p[0]) * 180 / Math.PI; aS.value = Math.max(-70, Math.min(70, Math.round(a * 2) / 2)); },
+      r: 18
     });
 
-    let n1 = 1.63;
-    let n2 = 1.48;
-
-    // Cladding upper
-    board.create('polygon', [[0, 2], [10, 2], [10, 4], [0, 4]], {
-      fillColor: '#64748b', fillOpacity: 0.4, strokeColor: '#94a3b8', strokeWidth: 1, vertices: { visible: false }
-    });
-    board.create('text', [5, 3, 'Cladding (n₂)'], { color: '#cbd5e1', fontSize: 11, anchorX: 'middle' });
-
-    // Cladding lower
-    board.create('polygon', [[0, -2], [10, -2], [10, -4], [0, -4]], {
-      fillColor: '#64748b', fillOpacity: 0.4, strokeColor: '#94a3b8', strokeWidth: 1, vertices: { visible: false }
-    });
-    board.create('text', [5, -3, 'Cladding (n₂)'], { color: '#cbd5e1', fontSize: 11, anchorX: 'middle' });
-
-    // Core central region
-    board.create('polygon', [[0, -2], [10, -2], [10, 2], [0, 2]], {
-      fillColor: '#38bdf8', fillOpacity: 0.15, strokeColor: '#cbd5e1', strokeWidth: 2, vertices: { visible: false }
-    });
-    board.create('text', [5, 0, 'High-Index Glass Core (n₁)'], { color: '#38bdf8', fontSize: 12, anchorX: 'middle', fontWeight: 'bold' });
-
-    // Trapped zigzag ray
-    let ray = board.create('polyline', [
-      [0, -1], [2, 2], [4, -2], [6, 2], [8, -2], [10, 2]
-    ], { strokeColor: '#facc15', strokeWidth: 3 });
-
-    function update() {
-      if (n1 <= n2) n1 = n2 + 0.02;
-      document.getElementById('n1-val').textContent = n1.toFixed(2);
-      document.getElementById('n2-val').textContent = n2.toFixed(2);
-      let sinTc = n2 / n1;
-      let tcDeg = (Math.asin(sinTc) * 180 / Math.PI);
-      document.getElementById('tc-stat').textContent = tcDeg.toFixed(1) + '°';
-      board.update();
+    function path() {
+      const n1 = n1S.value, n2 = n2S.value, a = aS.value * Math.PI / 180;
+      const r = Math.asin(Math.sin(a) / n1);            // refraction at the end face
+      const thc = Math.asin(n2 / n1), i = Math.PI / 2 - Math.abs(r);
+      const pts = [[XE, 0]], leaks = [];
+      let x = XE, y = 0, s = -Math.tan(r), I = 1;      // ray goes down for positive α (source above the axis)
+      for (let b = 0; b < 60 && x < XEND && I > 0.03; b++) {
+        if (Math.abs(s) < 1e-6) { pts.push([XEND, y]); break; }
+        const yb = s > 0 ? RC : -RC, xb = x + (yb - y) / s;
+        if (xb > XEND) { pts.push([XEND, y + s * (XEND - x)]); break; }
+        pts.push([xb, yb]);
+        if (i <= thc) {
+          // partial reflection: part of the light refracts into the cladding and is lost
+          const tr = Math.asin(Math.min(1, n1 * Math.sin(i) / n2));
+          const st = Math.sign(s) / Math.tan(tr);
+          leaks.push({ p: [xb, yb], q: [xb + (Math.sign(s) * (RCL - RC) + Math.sign(s) * 0.9) / st, Math.sign(s) * (RCL + 0.9)], I: I * 0.75 });
+          I *= 0.25;
+        }
+        x = xb; y = yb; s = -s;
+      }
+      return { pts, leaks, I, r, i, thc, n1, n2 };
     }
 
-    document.getElementById('n1-slider').addEventListener('input', function() {
-      n1 = parseFloat(this.value);
-      update();
-    });
+    k.draw = g => {
+      const P = path(), na = Math.sqrt(Math.max(0, P.n1 ** 2 - P.n2 ** 2)), amax = Math.asin(Math.min(1, na));
+      // fibre
+      g.rect(XE, -RCL, XEND - XE + 0.2, 2 * RCL, { fill: '#e0f2fe', color: C.ink, width: 1.5 });
+      g.rect(XE, -RC, XEND - XE + 0.2, 2 * RC, { fill: '#bae6fd', color: C.fluid, width: 1.5 });
+      g.text([1.2, RCL + 0.22], `cladding n₂ = ${num(P.n2, 2)}`, { size: 12, color: C.muted });
+      g.text([4.6, -0.32], `core n₁ = ${num(P.n1, 2)}`, { size: 12, bold: true, color: C.acc });
+      // acceptance cone
+      for (const sg of [1, -1]) g.line([XE, 0], [XE - 2.6 * Math.cos(amax), sg * 2.6 * Math.sin(amax)], { color: C.vel, width: 1.5, dash: [5, 4] });
+      g.text([XE - 2.3, 0], `accepted: |α| < ${num(amax * 180 / Math.PI, 1)}°`, { size: 11, bold: true, color: C.vel });
+      // laser and incoming ray
+      const a = aS.value * Math.PI / 180, src = [XE - RS * Math.cos(a), RS * Math.sin(a)];
+      g.line(src, [XE, 0], { color: C.bad, width: 3 });
+      g.rect(src[0] - 0.25, src[1] - 0.12, 0.5, 0.24, { fill: '#334155', color: C.ink, width: 1, radius: 3 });
+      g.handle(src, C.bad);
+      // ray inside, fading after each leak
+      g.path(P.pts, { color: C.bad, width: 3, alpha: 0.95 });
+      for (const L of P.leaks) g.line(L.p, L.q, { color: C.energy, width: 2, alpha: Math.max(0.25, L.I) });
+      // a pulse travelling along the ray
+      const segs = []; let tot = 0;
+      for (let j = 1; j < P.pts.length; j++) { const d = Math.hypot(P.pts[j][0] - P.pts[j - 1][0], P.pts[j][1] - P.pts[j - 1][1]); segs.push(d); tot += d; }
+      let along = (t * 3) % Math.max(1, tot);
+      for (let j = 0; j < segs.length; j++) {
+        if (along <= segs[j]) { const f = along / segs[j], A = P.pts[j], B = P.pts[j + 1]; g.dot([A[0] + f * (B[0] - A[0]), A[1] + f * (B[1] - A[1])], 6, '#fff', { stroke: C.bad, width: 3 }); break; }
+        along -= segs[j];
+      }
+      const tir = P.i > P.thc;
+      g.text([-6.0, -2.3], tir ? 'total internal reflection: all the light stays in the core ✓' : 'i < θc: light leaks out at every bounce', { align: 'left', size: 14, bold: true, color: tir ? C.good : C.bad });
+    };
 
-    document.getElementById('n2-slider').addEventListener('input', function() {
-      n2 = parseFloat(this.value);
-      update();
-    });
-
-    update();
+    k.update = () => {
+      const P = path(), na = Math.sqrt(Math.max(0, P.n1 ** 2 - P.n2 ** 2));
+      k.readout([
+        `sin ${rich('θ_c')} = ${rich('n_2')}/${rich('n_1')} = ${num(P.n2, 2)}/${num(P.n1, 2)} = ${num(P.n2 / P.n1, 4)} → <b>${rich('θ_c')} = ${num(P.thc * 180 / Math.PI, 2)}°</b> (Example 7.6: 65.23°)`,
+        `Entering at α = ${num(aS.value, 1)}°: sin r = sin α / ${rich('n_1')} → r = ${num(Math.abs(P.r) * 180 / Math.PI, 1)}°, so the ray meets the wall at i = 90° − r = <b>${num(P.i * 180 / Math.PI, 1)}°</b> ${P.i > P.thc ? '&gt;' : '&lt;'} ${rich('θ_c')}`,
+        `NA = √(${rich('n_1^2')} − ${rich('n_2^2')}) = <b>${num(na, 3)}</b>${na < 1 ? `, so light within ${num(Math.asin(na) * 180 / Math.PI, 1)}° of the axis is trapped` : ' (≥ 1: every angle is trapped)'}`
+      ]);
+    };
   })();
   </script>
 </div>

@@ -44,109 +44,207 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Airfoil Flow and Dynamic Lift</span>
-  <p class="demo-instruction">Adjust the oncoming wind speed to see how the speed difference between the curved top and flat bottom surfaces creates a pressure imbalance, dynamically scaling the upward lift vector (green arrow).</p>
-
-  <div id="airfoil-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Airspeed $v_{\text{lower}}$: 
-      <input id="speed-slider" type="range" min="40" max="100" step="5" value="60" style="vertical-align: middle;">
-      <span id="speed-val" style="color: #38bdf8; font-weight: 700;">60 m/s</span>
-    </label>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      $v_{\text{upper}} \approx$ <span id="vup-stat" style="color: #38bdf8; font-weight: 700;">72 m/s</span> &bull; Lift: <span id="lift-stat" style="color: #4ade80; font-weight: 700;">12.6 kN</span>
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; Fast Air, Low Pressure: Four Everyday Cases</span>
+  <p class="demo-question">Wings, perfume sprayers, curving balls and roofs torn off in storms: how does one rule, "faster air has lower pressure", explain all four?</p>
+  <p class="demo-instruction">Choose a case and change the air speed. Dots show the air: they move faster where they are bunched along a curve. Blue <b>−</b> marks low pressure and red <b>+</b> marks higher pressure; the black arrow is the force the pressure difference makes.</p>
+  <div id="pk-bernoulli4"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('airfoil-board', {
-      boundingbox: [-1, 5, 9, -2],
-      axis: false,
-      showNavigation: false,
-      showCopyright: false
-    });
+  (function () {
+    const RHO = 1.2, G = 9.8;
+    const k = PhysKit.mount('pk-bernoulli4', { x: [-6.2, 6.2], y: [-3, 3] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
 
-    let vLow = 60;
+    k.row();
+    const scene = k.choice(['Wing', 'Sprayer', 'Spinning ball', 'Roof in a storm'], 0, () => show());
+    // One row of controls per case; only the chosen case's row is shown
+    const rows = [];
+    rows.push(k.row());   // wing
+    const vbS = k.slider({ label: 'v_{below}', unit: 'm/s', min: 30, max: 120, step: 1, value: 60, digits: 0 });
+    const vtS = k.slider({ label: 'v_{above}', unit: 'm/s', min: 30, max: 140, step: 1, value: 70, digits: 0 });
+    const aS = k.slider({ label: 'A', unit: 'm^2', min: 5, max: 30, step: 0.1, value: 16.2, digits: 1 });
+    k.button('Example 3.8', () => { vbS.value = 60; vtS.value = 70; aS.value = 16.2; });
+    rows.push(k.row());   // sprayer
+    const vjS = k.slider({ label: 'v_{jet}', unit: 'm/s', min: 0, max: 50, step: 1, value: 20, digits: 0 });
+    rows.push(k.row());   // spinning ball
+    const vbS2 = k.slider({ label: 'v_{air}', unit: 'm/s', min: 5, max: 40, step: 1, value: 25, digits: 0 });
+    const spS = k.slider({ label: 'spin', min: -1, max: 1, step: 0.05, value: 0.6, format: v => v > 0.02 ? 'clockwise ' + num(v, 2) : v < -0.02 ? 'anticlockwise ' + num(-v, 2) : 'none' });
+    rows.push(k.row());   // roof
+    const vwS = k.slider({ label: 'v_{wind}', unit: 'km/h', min: 0, max: 200, step: 1, value: 80, digits: 0 });
+    k.row();              // a row that is always shown (Play / Pause goes here)
+    function show() { rows.forEach((r, i) => { r.style.display = i === scene.value ? '' : 'none'; }); makeLanes(); }
 
-    // Airfoil shape: teardrop / cambered profile
-    let topAirfoil = board.create('curve', [
-      function(t) { return t; },
-      function(t) {
-        // chord from 2 to 6
-        if (t < 2 || t > 6) return 1.0;
-        let x = (t - 2) / 4;
-        return 1.0 + 1.2 * Math.sqrt(x) * (1 - x);
-      },
-      2, 6
-    ], { strokeColor: '#cbd5e1', strokeWidth: 3 });
+    // ---------- Air particles: each runs along a "lane" y0 ----------
+    // Lanes are evenly spaced; each lane carries evenly spaced dots, so you can
+    // see the air curve round the object and speed up (dots spread apart).
+    let parts = [], lanes = [], X_IN = -6.3;
+    function makeLanes() {
+      const sc = scene.value;
+      lanes = [];
+      if (sc === 1) { for (let y = 1.56; y <= 2.05; y += 0.08) lanes.push(y); X_IN = -2.4; }
+      else if (sc === 3) { for (let y = -0.95; y <= 2.8; y += 0.33) lanes.push(y); X_IN = -6.3; }
+      else { for (let y = -2.75; y <= 2.8; y += 0.37) lanes.push(y); X_IN = -6.3; }
+      parts = [];
+      // each lane starts a little shifted, so the dots do not line up in columns
+      lanes.forEach((y0, j) => { for (let i = 0; i < 14; i++) parts.push({ x: X_IN + (6.3 - X_IN) * (i + (j * 0.618) % 1) / 14, y0 }); });
+    }
+    const bump = (x, w) => Math.exp(-((x / w) ** 2));
 
-    let botAirfoil = board.create('curve', [
-      function(t) { return t; },
-      function(t) {
-        if (t < 2 || t > 6) return 1.0;
-        let x = (t - 2) / 4;
-        return 1.0 - 0.2 * x * (1 - x);
-      },
-      2, 6
-    ], { strokeColor: '#cbd5e1', strokeWidth: 3 });
-
-    // Streamlines above (crowded = fast)
-    for (let k = 1; k <= 3; k++) {
-      let yOffset = 1.0 + k * 0.7;
-      board.create('curve', [
-        function(t) { return t; },
-        function(t) {
-          let bump = Math.exp(-Math.pow((t - 3.5)/1.5, 2)) * (0.8 / k);
-          return yOffset + bump;
-        },
-        0, 8
-      ], { strokeColor: '#38bdf8', strokeWidth: 1.8 });
+    // Wing outline (chord from −2.4 to 2.4)
+    const wingTop = x => (Math.abs(x) > 2.4 ? 0 : 0.62 * Math.sqrt(1 - (x / 2.4) ** 2) * (1 - 0.25 * x / 2.4));
+    const wingBot = x => (Math.abs(x) > 2.4 ? 0 : -0.1 * Math.sqrt(1 - (x / 2.4) ** 2));
+    // For each scene: where a lane is (y at x) and how fast air moves there (drawn units/s)
+    function flow(x, y0) {
+      const s = scene.value;
+      if (s === 0) {
+        const up = y0 >= 0;
+        const y = y0 + (up ? wingTop(x) * Math.exp(-y0 / 1.6) : wingBot(x) * Math.exp(y0 / 1.6));
+        const f = up ? 1 + (vtS.value / vbS.value - 1) * Math.exp(-y0 / 1.2) * bump(x, 2.4) : 1;
+        return [y, vbS.value * 0.05 * f];
+      }
+      if (s === 1) {
+        // a jet from the nozzle (left, at height 1.8) spreading out to the right
+        const inJet = Math.abs(y0 - 1.8) < 0.35;
+        if (!inJet) return [y0, 0];
+        const d = Math.max(0, x + 2.4);   // distance from the nozzle: the jet spreads and slows
+        return [1.8 + (y0 - 1.8) * (1 + d * 0.15), vjS.value * 0.14 / (1 + d * 0.12)];
+      }
+      if (s === 2) {
+        const R = 0.95, d = Math.max(Math.abs(y0), 0.05);
+        const push = Math.sign(y0 || 1) * R * R * 0.85 / (d + 0.6) * bump(x, 1.5);
+        const f = 1 + 0.55 * spS.value * Math.sign(y0 || 1) * Math.exp(-(d - R) / 1.2) * bump(x, 1.8);
+        return [y0 + push, vbS2.value * 0.12 * Math.max(0.2, f)];
+      }
+      // roof: wind follows the roof line and speeds up over it
+      const roof = x => (Math.abs(x) > 2.6 ? -1.2 : 0.2 - Math.abs(x) * 0.35);
+      if (y0 < -1.2) return [y0, 0];                          // still air at ground level / inside the house
+      const y = y0 + (roof(x) + 1.2) * Math.exp(-(y0 + 1.2) / 1.6) * bump(x, 3);
+      return [y, vwS.value / 3.6 * 0.09 * (1 + 0.5 * Math.exp(-(y0 + 1.2) / 1.2) * bump(x, 2.6))];
     }
 
-    // Streamlines below
-    for (let k = 1; k <= 2; k++) {
-      let yOffset = 1.0 - k * 0.6;
-      board.create('curve', [
-        function(t) { return t; },
-        function(t) {
-          let dip = Math.exp(-Math.pow((t - 3.5)/1.5, 2)) * (0.2 / k);
-          return yOffset - dip;
-        },
-        0, 8
-      ], { strokeColor: '#60a5fa', strokeWidth: 1.5 });
-    }
-
-    // Labels
-    board.create('text', [3.5, 3.2, 'Low Pressure (High Speed)'], { color: '#38bdf8', fontSize: 12, anchorX: 'middle' });
-    board.create('text', [3.5, -0.2, 'High Pressure (Low Speed)'], { color: '#f87171', fontSize: 12, anchorX: 'middle' });
-
-    // Lift vector arrow
-    let liftArrow = board.create('arrow', [
-      [3.5, 1.3],
-      [3.5, function() {
-        let vUp = vLow * 1.2;
-        let dp = 0.5 * 1.2 * (vUp * vUp - vLow * vLow);
-        let len = (dp / 1000) * 0.25;
-        return 1.3 + Math.min(len, 3.2);
-      }]
-    ], { strokeColor: '#4ade80', strokeWidth: 4 });
-
-    board.create('text', [3.7, 2.5, 'Lift Force (FL)'], { color: '#4ade80', fontSize: 13, fontWeight: 'bold' });
-
-    let slider = document.getElementById('speed-slider');
-    slider.addEventListener('input', function() {
-      vLow = parseFloat(this.value);
-      document.getElementById('speed-val').textContent = vLow.toFixed(0) + ' m/s';
-      let vUp = vLow * 1.2;
-      document.getElementById('vup-stat').textContent = vUp.toFixed(0) + ' m/s';
-      let dp = 0.5 * 1.2 * (vUp * vUp - vLow * vLow);
-      let liftTotal = (dp * 16.2) / 1000;
-      document.getElementById('lift-stat').textContent = liftTotal.toFixed(1) + ' kN';
-      board.update();
+    let sprayLevel = 0, roofLift = 0;
+    const drops = [];
+    k.loop(dt => {
+      for (const p of parts) {
+        const [, v] = flow(p.x, p.y0);
+        p.x += v * dt;
+        if (p.x > 6.3) p.x = X_IN + (p.x - 6.3);
+      }
+      // Sprayer: suction ½ρv² lifts the liquid; it reaches the top when ½ρv² > ρ_liquid g h
+      const rise = 0.5 * RHO * vjS.value ** 2 / (1000 * G);  // metres of liquid it can hold up
+      sprayLevel += (Math.min(rise, 0.06) - sprayLevel) * Math.min(1, dt * 3);
+      if (scene.value === 1 && rise > 0.05 && Math.random() < dt * 40) drops.push({ x: 1.0, y: 1.75, vx: vjS.value * 0.12, vy: 0.3, life: 0 });
+      for (const d of drops) { d.x += d.vx * dt; d.y += d.vy * dt; d.vy -= 1.2 * dt; d.life += dt; }
+      while (drops.length && drops[0].life > 2) drops.shift();
+      // Roof: lifts when the pressure force beats its weight
+      const lift = roofForce() > ROOF_W;
+      roofLift += ((lift ? 1.1 : 0) - roofLift) * Math.min(1, dt * (lift ? 1.5 : 4));
     });
+
+    const ROOF_A = 100, ROOF_W = 5000 * G;                   // 100 m² roof of mass 5000 kg
+    const roofForce = () => 0.5 * RHO * (vwS.value / 3.6) ** 2 * ROOF_A;
+
+    function signs(g, pts, sym, col) { for (const p of pts) g.text(p, sym, { color: col, bold: true, size: 18 }); }
+
+    k.draw = g => {
+      const s = scene.value;
+      // streamlines and air dots (drawn first, behind the objects)
+      for (const y0 of lanes) {
+        const pts = [];
+        for (let x = X_IN; x <= 6.3; x += 0.15) pts.push([x, flow(x, y0)[0]]);
+        g.path(pts, { color: '#bae6fd', width: 1.2 });
+      }
+      for (const p of parts) g.dot([p.x, flow(p.x, p.y0)[0]], 2.8, C.fluid);
+      if (s === 0) {
+        const pts = [];
+        for (let x = -2.4; x <= 2.401; x += 0.05) pts.push([x, wingTop(x)]);
+        for (let x = 2.4; x >= -2.401; x -= 0.05) pts.push([x, wingBot(x)]);
+        g.path(pts, { close: true, fill: '#cbd5e1', color: C.ink, width: 2 });
+        signs(g, [[-1.2, 1.25], [0, 1.4], [1.2, 1.2]], '−', C.acc);
+        signs(g, [[-1.2, -0.7], [0, -0.75], [1.2, -0.7]], '+', C.bad);
+        const F = 0.5 * RHO * (vtS.value ** 2 - vbS.value ** 2) * aS.value;
+        g.arrow([0, 0.25], [0, Math.max(-2, Math.min(2.5, F / 8000))], { color: C.ink, width: 4, label: `lift ${num(F / 1000, 1)} kN`, side: [1, 0] });
+        g.text([-6, 2.7], `above: ${vtS.value} m/s (faster, lower p)`, { align: 'left', size: 13, color: C.acc, bold: true });
+        g.text([-6, -2.7], `below: ${vbS.value} m/s (slower, higher p)`, { align: 'left', size: 13, color: C.bad, bold: true });
+      } else if (s === 1) {
+        // squeeze bulb + nozzle, bottle, dip tube
+        g.rect(-6.0, 1.45, 2.0, 0.7, { fill: '#fca5a5', color: C.ink, width: 2, radius: 10 });
+        g.rect(-4.0, 1.62, 1.6, 0.36, { fill: '#e2e8f0', color: C.ink, width: 2 });
+        g.text([-5.0, 2.45], 'air pump', { size: 12, color: C.muted });
+        g.rect(-1.2, -2.8, 4.4, 2.2, { fill: '#fff', color: C.ink, width: 2, radius: 8 });
+        g.rect(-1.15, -2.75, 4.3, 1.4, { fill: '#c4b5fd', color: 'none' });
+        const TUBE_BOT = -2.5, LIQ = -1.35, TOP = 1.55;
+        g.rect(0.85, TUBE_BOT, 0.3, TOP - TUBE_BOT, { fill: '#fff', color: C.ink, width: 1.5 });
+        const level = LIQ + (TOP - LIQ) * Math.min(1, sprayLevel / 0.05);
+        g.rect(0.88, TUBE_BOT, 0.24, level - TUBE_BOT, { fill: '#a78bfa', color: 'none' });
+        for (const d of drops) g.dot([d.x, d.y], 3, '#8b5cf6', { alpha: Math.max(0, 1 - d.life / 2) });
+        if (vjS.value > 2) signs(g, [[1.0, 2.35]], '−', C.acc);
+        signs(g, [[2.6, -0.3]], '+', C.bad);
+        g.text([3.4, -0.3], 'air pressure on the liquid', { align: 'left', size: 12, color: C.bad });
+        g.text([1.3, 0.2], 'tube 5 cm tall', { align: 'left', size: 12, color: C.muted });
+      } else if (s === 2) {
+        const R = 0.95, sp = spS.value;
+        g.circle([0, 0], R, { fill: '#fde68a', color: C.ink, width: 2 });
+        if (Math.abs(sp) > 0.02) {
+          const arc = [];
+          for (let a = 0; a <= 4.4; a += 0.1) { const b = sp > 0 ? 2.2 - a : 0.9 + a; arc.push([1.25 * Math.cos(b), 1.25 * Math.sin(b)]); }
+          g.path(arc, { color: C.energy, width: 2.5 });
+          const e = arc[arc.length - 1], e2 = arc[arc.length - 2];
+          g.arrow(e2, [e[0] - e2[0], e[1] - e2[1]], { color: C.energy, head: 10 });
+          const top = sp > 0 ? '−' : '+', bot = sp > 0 ? '+' : '−';
+          signs(g, [[0, 1.7]], top, top === '−' ? C.acc : C.bad);
+          signs(g, [[0, -1.7]], bot, bot === '−' ? C.acc : C.bad);
+          const v = vbS2.value, vt = v * (1 + 0.3 * sp), vb = v * (1 - 0.3 * sp);
+          const F = 0.5 * RHO * (vt * vt - vb * vb);           // per m² of the ball's side
+          g.arrow([0, 0], [0, Math.max(-2.2, Math.min(2.2, F / 200))], { color: C.ink, width: 4, label: 'Magnus force', side: [1, 0] });
+        }
+        g.text([-6, 2.7], 'air moves → past the ball', { align: 'left', size: 13, color: C.fluid, bold: true });
+      } else {
+        // house
+        const up = roofLift;
+        g.rect(-2.4, -2.9, 4.8, 1.7, { fill: '#fef3c7', color: C.ink, width: 2 });
+        g.path([[-2.9, -1.2 + up], [0, 0.2 + up], [2.9, -1.2 + up]], { close: true, fill: '#b45309', color: C.ink, width: 2 });
+        g.line([-6.2, -2.9], [6.2, -2.9], { color: C.ink, width: 2 });
+        signs(g, [[-1, 0.9 + up], [1, 0.9 + up]], '−', C.acc);
+        signs(g, [[-0.8, -2.1], [0.8, -2.1]], '+', C.bad);
+        g.text([0, -2.55], 'still air inside', { size: 12, color: C.muted });
+        const F = roofForce();
+        g.arrow([0, -0.6 + up], [0, Math.min(2.2, F / ROOF_W * 1.2)], { color: C.ink, width: 4, label: `${num(F / 1000, 1)} kN up`, side: [1, 0] });
+        g.text([4.6, -0.6], `roof weight ${num(ROOF_W / 1000, 1)} kN`, { size: 13, color: C.ink });
+        if (F > ROOF_W) g.text([-6, 2.7], 'The roof lifts off!', { align: 'left', color: C.bad, bold: true, size: 16, bg: true });
+      }
+    };
+
+    k.update = () => {
+      const s = scene.value;
+      if (s === 0) {
+        const dp = 0.5 * RHO * (vtS.value ** 2 - vbS.value ** 2), F = dp * aS.value;
+        k.readout([
+          `Δp = ½ρ(${rich('v_{above}')}<sup>2</sup> − ${rich('v_{below}')}<sup>2</sup>) = ½ × 1.2 × (${vtS.value}<sup>2</sup> − ${vbS.value}<sup>2</sup>) = <b>${num(dp, 0)} Pa</b>`,
+          `Lift F = Δp × A = ${num(dp, 0)} × ${num(aS.value, 1)} = <b>${num(F, 0)} N</b> ` + (F < 0 ? '<span class="warn">(air below is faster: the wing is pushed down)</span>' : `— enough to hold up ${num(F / G, 0)} kg.`)
+        ]);
+      } else if (s === 1) {
+        const suck = 0.5 * RHO * vjS.value ** 2, need = 1000 * G * 0.05;
+        k.readout([
+          `The fast jet lowers the pressure above the tube by ½ρ${rich('v_{jet}')}<sup>2</sup> = ½ × 1.2 × ${vjS.value}<sup>2</sup> = <b>${num(suck, 0)} Pa</b>.`,
+          `To push the liquid up 5 cm the pressure difference must reach ρgh = 1000 × 9.8 × 0.05 = ${num(need, 0)} Pa (needs ${rich('v_{jet}')} ≥ ${num(Math.sqrt(2 * need / RHO), 1)} m/s).`,
+          suck > need ? '<span class="ok">The liquid reaches the top and the jet breaks it into a fine spray.</span>' : `<span class="warn">Not yet:</span> the liquid rises only ${num(suck / (1000 * G) * 100, 1)} cm.`
+        ]);
+      } else if (s === 2) {
+        const sp = spS.value, v = vbS2.value, vt = v * (1 + 0.3 * sp), vb = v * (1 - 0.3 * sp);
+        k.readout([
+          `The spinning surface drags air with it: air speed ≈ ${num(vt, 1)} m/s above and ${num(vb, 1)} m/s below the ball.`,
+          `Δp = ½ρ(${rich('v_{above}')}<sup>2</sup> − ${rich('v_{below}')}<sup>2</sup>) = <b>${num(0.5 * RHO * (vt * vt - vb * vb), 0)} Pa</b>, so the ball is pushed towards the faster (low-pressure) side: ${sp > 0.02 ? 'up' : sp < -0.02 ? 'down' : 'no push without spin'}. This is why spinning balls curve.`
+        ]);
+      } else {
+        const v = vwS.value / 3.6, dp = 0.5 * RHO * v * v, F = dp * ROOF_A;
+        k.readout([
+          `Wind ${vwS.value} km/h = ${num(v, 1)} m/s over the roof; the air inside is still, so Δp = ½ρv<sup>2</sup> = ½ × 1.2 × ${num(v, 1)}<sup>2</sup> = <b>${num(dp, 0)} Pa</b>.`,
+          `Upward force on a 100 m<sup>2</sup> roof: F = Δp × A = <b>${num(F / 1000, 1)} kN</b> vs its weight ${num(ROOF_W / 1000, 1)} kN → ` +
+          (F > ROOF_W ? '<span class="warn">the roof is lifted off.</span>' : `stays on (it lifts above ${num(Math.sqrt(2 * ROOF_W / ROOF_A / RHO) * 3.6, 0)} km/h).`)
+        ]);
+      }
+    };
+    show();
   })();
   </script>
 </div>

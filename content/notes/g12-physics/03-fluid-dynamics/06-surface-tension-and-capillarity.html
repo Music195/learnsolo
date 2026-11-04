@@ -72,111 +72,89 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Capillary Rise vs. Bore Radius</span>
-  <p class="demo-instruction">Adjust the capillary tube bore radius $r$ to observe Jurin's law in action ($h \propto 1/r$). Toggle between water (wetting, capillary rise) and mercury (non-wetting, capillary depression).</p>
-
-  <div id="capillary-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Tube Radius $r$: 
-      <input id="cap-r-slider" type="range" min="0.5" max="2.5" step="0.2" value="1.0" style="vertical-align: middle;">
-      <span id="cap-r-val" style="color: #38bdf8; font-weight: 700;">1.0 mm</span>
-    </label>
-    <button id="toggle-liquid" class="btn" style="padding: 0.4rem 1rem; font-weight: 600; background: #0284c7; color: white; border-radius: 6px; border: none; cursor: pointer;">Liquid: Water (Wetting)</button>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      Column Height $h$: <span id="cap-h-stat" style="color: #4ade80; font-weight: 700;">+1.47 cm</span>
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; Capillary Rise: $h = \dfrac{2\gamma\cos\theta}{\rho g r}$</span>
+  <p class="demo-question">Why does water climb higher in a thinner tube, while mercury is pushed down below the outside level?</p>
+  <p class="demo-instruction">Choose the liquid and change the contact angle $\theta$ and the radius of the highlighted tube. Surface tension pulls on the liquid all round the rim of the tube (the close-up on the right). The column stops when the upward pull $2\pi r\gamma\cos\theta$ equals the weight of the raised liquid.</p>
+  <div id="pk-capillary"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('capillary-board', {
-      boundingbox: [-1, 7, 7, -2],
-      axis: false,
-      showNavigation: false,
-      showCopyright: false
-    });
+  (function () {
+    const G = 9.8;
+    const k = PhysKit.mount('pk-capillary', { x: [-6.2, 6.2], y: [-3, 3] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    const LIQ = [
+      { name: 'Water (wets glass)', gamma: 0.072, rho: 1000, theta: 0, fill: '#7dd3fc' },
+      { name: 'Mercury (does not wet glass)', gamma: 0.47, rho: 13600, theta: 140, fill: '#a8a29e' }
+    ];
+    k.row();
+    const liq = k.choice(LIQ.map(l => l.name), 0, i => { thS.value = LIQ[i].theta; });
+    k.row();
+    const thS = k.slider({ label: 'θ', unit: '°', min: 0, max: 160, step: 1, value: 0, digits: 0 });
+    const rS = k.slider({ label: 'r (yellow tube)', unit: 'mm', min: 0.2, max: 3, step: 0.05, value: 1 });
+    k.button('Example 3.14 (water, θ = 30°, r = 2 mm)', () => { liq.set(0); thS.value = 30; rS.value = 2; });
 
-    let radius_mm = 1.0;
-    let isWater = true;
+    const FIXED = [0.25, 0.5, 1, 2];          // radii of the four grey tubes (mm)
+    const SURF = -1.2, CM = 0.55;             // outside liquid level; 1 cm of height drawn 0.55 units
+    const height = r_mm => {                  // capillary height in cm (negative = pushed down)
+      const L = LIQ[liq.value], th = thS.value * Math.PI / 180;
+      return 2 * L.gamma * Math.cos(th) / (L.rho * G * r_mm / 1000) * 100;
+    };
 
-    // Reservoir liquid surface at y = 1
-    board.create('polygon', [[0, -1.5], [6, -1.5], [6, 1], [0, 1]], {
-      fillColor: function() { return isWater ? '#38bdf8' : '#94a3b8'; },
-      fillOpacity: 0.35,
-      strokeColor: '#64748b',
-      strokeWidth: 2,
-      vertices: { visible: false }
-    });
-    board.create('segment', [[0, 1], [6, 1]], { strokeColor: '#cbd5e1', strokeWidth: 1.5 });
-
-    function getH() {
-      if (isWater) {
-        // gamma = 0.072, theta = 0, rho = 1000, g = 9.8
-        // h = 2*0.072 / (1000*9.8*r_m) = 14.69 mm / r_mm
-        return (14.69 / radius_mm) * 0.1; // in cm
-      } else {
-        // mercury: gamma = 0.485, theta = 140, rho = 13600, g = 9.8
-        // h = 2 * 0.485 * cos(140) / (13600 * 9.8 * r_m) = -5.57 mm / r_mm
-        return (-5.57 / radius_mm) * 0.1; // in cm
-      }
+    // A tube with its liquid column and curved meniscus (contact angle θ)
+    function tube(g, x, r_mm, hi) {
+      const L = LIQ[liq.value], th = thS.value * Math.PI / 180;
+      const hw = 0.07 + 0.09 * Math.sqrt(r_mm) * 2;          // drawn half-width (not to scale)
+      const h = Math.max(-2.6, Math.min(5.5, height(r_mm)));
+      const top = SURF + h * CM, bot = -2.6;
+      // meniscus: part of a circle that meets the wall at angle θ
+      const c = Math.cos(th), sag = Math.abs(c) < 0.02 ? 0 : (hw / Math.abs(c)) * (1 - Math.sqrt(Math.max(0, 1 - c * c)));
+      const pts = [[x - hw, bot], [x - hw, top]];
+      for (let i = 1; i < 20; i++) { const u = -1 + 2 * i / 20; pts.push([x + u * hw, top - Math.sign(c) * sag * (1 - u * u)]); }
+      pts.push([x + hw, top], [x + hw, bot]);
+      g.path(pts, { close: true, fill: L.fill, color: 'none' });
+      g.rect(x - hw - 0.05, bot, 0.05, 5.4, { fill: hi ? '#facc15' : '#cbd5e1', color: 'none' });
+      g.rect(x + hw, bot, 0.05, 5.4, { fill: hi ? '#facc15' : '#cbd5e1', color: 'none' });
+      g.text([x, 2.95], r_mm + ' mm', { size: 11, color: hi ? '#a16207' : C.muted, bold: hi });
+      g.text([x, Math.min(2.55, Math.max(top + (h >= 0 ? 0.3 : -0.3), -2.75))], `${num(height(r_mm), 2)}`, { size: 11, color: C.ink, bold: true, bg: true });
     }
 
-    // Capillary tube walls
-    let tubeLeft = board.create('segment', [
-      [function() { return 3 - radius_mm * 0.4; }, 0],
-      [function() { return 3 - radius_mm * 0.4; }, 6]
-    ], { strokeColor: '#e2e8f0', strokeWidth: 3 });
+    k.draw = g => {
+      const L = LIQ[liq.value];
+      // beaker
+      g.rect(-6.0, -2.8, 7.4, 1.6, { fill: L.fill, color: 'none', fillAlpha: 0.9 });
+      g.path([[-6.0, 0.2], [-6.0, -2.8], [1.4, -2.8], [1.4, 0.2]], { color: C.ink, width: 2.5 });
+      g.line([-6.0, SURF], [1.4, SURF], { color: C.acc, width: 1, dash: true });
+      FIXED.forEach((r, i) => tube(g, -5.1 + i * 1.3, r, false));
+      tube(g, 0.4, rS.value, true);
 
-    let tubeRight = board.create('segment', [
-      [function() { return 3 + radius_mm * 0.4; }, 0],
-      [function() { return 3 + radius_mm * 0.4; }, 6]
-    ], { strokeColor: '#e2e8f0', strokeWidth: 3 });
+      // ---- close-up of the rim of the yellow tube ----
+      const th = thS.value * Math.PI / 180, O = [3.0, 0.2];
+      g.rect(2.0, -2.6, 4.1, 5.3, { fill: '#f8fafc', color: '#cbd5e1', width: 1 });
+      g.text([4.05, 2.45], 'close-up at the wall', { size: 13, bold: true, color: C.muted });
+      g.rect(2.6, -2.4, 0.4, 4.6, { fill: '#facc15', color: C.ink, width: 1.5 });   // glass wall
+      // Liquid surface: meets the wall at height yP and curves to the flat level.
+      // Its slope at the wall is −cot θ, so it makes the angle θ with the wall.
+      const c = Math.cos(th), yFlat = -0.6, yP = yFlat + 1.3 * c;
+      const lam = Math.max(0.05, Math.abs((yP - yFlat) * Math.tan(th)));
+      const surf = [];
+      for (let x = 3.0; x <= 5.95; x += 0.05) surf.push([x, yFlat + (yP - yFlat) * Math.exp(-(x - 3.0) / lam)]);
+      g.path([[3.0, -2.4]].concat(surf, [[5.95, -2.4]]), { close: true, fill: L.fill, color: 'none' });
+      g.path(surf, { color: C.acc, width: 2.5 });
+      // the wall pulls the liquid edge along the wall: up for θ < 90°, down for θ > 90°
+      if (Math.abs(c) > 0.03) g.arrow([3.0, yP], [0, c * 1.1], { color: C.force, width: 3.5, label: 'γ cos θ (per metre)', side: [1, 0] });
+      // angle mark
+      g.text([4.2, yFlat + 0.45], `θ = ${thS.value}°`, { size: 13, bold: true, color: C.ink, align: 'left' });
+      g.text([4.4, -2.2], thS.value < 90 ? 'adhesion > cohesion: pulled UP' : thS.value > 90 ? 'cohesion > adhesion: pushed DOWN' : 'θ = 90°: no rise', { size: 12, bold: true, color: thS.value < 90 ? C.good : C.bad });
+    };
 
-    // Capillary liquid column
-    let col = board.create('polygon', [
-      [function() { return 3 - radius_mm * 0.4 + 0.05; }, 1],
-      [function() { return 3 + radius_mm * 0.4 - 0.05; }, 1],
-      [function() { return 3 + radius_mm * 0.4 - 0.05; }, function() { return 1 + getH() * 1.5; }],
-      [function() { return 3 - radius_mm * 0.4 + 0.05; }, function() { return 1 + getH() * 1.5; }]
-    ], {
-      fillColor: function() { return isWater ? '#38bdf8' : '#94a3b8'; },
-      fillOpacity: 0.7,
-      strokeWidth: 0,
-      vertices: { visible: false }
-    });
-
-    let hText = board.create('text', [3.8, function() { return 1 + (getH() * 1.5) / 2; }, function() {
-      return 'h = ' + (getH() > 0 ? '+' : '') + getH().toFixed(2) + ' cm';
-    }], {
-      color: function() { return isWater ? '#4ade80' : '#f87171'; },
-      fontSize: 12,
-      fontWeight: 'bold'
-    });
-
-    function update() {
-      let h = getH();
-      document.getElementById('cap-r-val').textContent = radius_mm.toFixed(1) + ' mm';
-      let hStat = document.getElementById('cap-h-stat');
-      hStat.textContent = (h > 0 ? '+' : '') + h.toFixed(2) + ' cm';
-      hStat.style.color = isWater ? '#4ade80' : '#f87171';
-      board.update();
-    }
-
-    document.getElementById('cap-r-slider').addEventListener('input', function() {
-      radius_mm = parseFloat(this.value);
-      update();
-    });
-
-    document.getElementById('toggle-liquid').addEventListener('click', function() {
-      isWater = !isWater;
-      this.textContent = isWater ? 'Liquid: Water (Wetting)' : 'Liquid: Mercury (Non-wetting)';
-      this.style.background = isWater ? '#0284c7' : '#475569';
-      update();
-    });
-
-    update();
+    k.update = () => {
+      const L = LIQ[liq.value], r = rS.value / 1000, th = thS.value * Math.PI / 180, h = height(rS.value) / 100;
+      k.readout([
+        `h = 2γ cos θ / ρgr = 2 × ${L.gamma} × cos ${thS.value}° / (${L.rho} × 9.8 × ${num(r * 1000, 2)}×10<sup>−3</sup>) = <b>${num(h * 100, 2)} cm</b> ${h < 0 ? '(below the outside level)' : ''}`,
+        `Numbers on the tubes: h in cm, above (+) or below (−) the outside level.`,
+        `Why: the vertical pull 2πrγ cos θ = ${num(2 * Math.PI * r * L.gamma * Math.cos(th) * 1000, 3)} mN ${h < 0 ? '(− means downward) ' : ''}balances the weight of the ${h < 0 ? 'missing' : 'raised'} column πr<sup>2</sup>|h|ρg = ${num(Math.PI * r * r * Math.abs(h) * L.rho * G * 1000, 3)} mN.`,
+        'The pull grows with r (the rim is longer) but the weight grows with r<sup>2</sup>, so a thinner tube holds a taller column: h ∝ 1/r.'
+      ]);
+    };
   })();
   </script>
 </div>

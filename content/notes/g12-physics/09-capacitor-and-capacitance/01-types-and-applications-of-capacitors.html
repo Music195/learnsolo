@@ -78,98 +78,137 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Capacitor Circuit Symbols and Working Modes</span>
-  <p class="demo-instruction">Click the buttons to toggle between Fixed, Polarized, and Variable capacitor schematic symbols and observe plate polarization under DC voltage.</p>
-
-  <div id="sym-board" style="width: 100%; height: 350px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <button id="btn-fixed" style="padding: 0.4rem 0.8rem; border-radius: 6px; background: #0284c7; color: white; border: none; cursor: pointer; font-weight: 600;">Fixed Capacitor</button>
-    <button id="btn-polarized" style="padding: 0.4rem 0.8rem; border-radius: 6px; background: #334155; color: white; border: none; cursor: pointer; font-weight: 600;">Polarized Capacitor</button>
-    <button id="btn-variable" style="padding: 0.4rem 0.8rem; border-radius: 6px; background: #334155; color: white; border: none; cursor: pointer; font-weight: 600;">Variable Capacitor</button>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; Two Jobs of a Capacitor: Tuning a Radio, Blocking DC</span>
+  <p class="demo-question">A radio picks one station out of many, and a capacitor in a circuit stops steady current but lets alternating current through. How does one simple part do both?</p>
+  <p class="demo-instruction"><b>Tuning:</b> drag the knob to turn the moving plates of a variable capacitor. More overlap → more capacitance → lower resonant frequency $f_0 = 1/(2\pi\sqrt{LC})$; land on a station to hear it. <b>DC and AC:</b> with a battery the lamp flashes once while the plates charge, then goes dark; with an AC supply the plates charge one way, then the other, so current keeps flowing and the lamp stays lit (brighter at higher frequency, since $X_C = 1/2\pi fC$ is smaller).</p>
+  <div id="pk-captypes"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('sym-board', {
-      boundingbox: [-4, 3, 4, -3],
-      axis: false,
-      showNavigation: false,
-      showCopyright: false,
-      pan: { enabled: false },
-      zoom: { enabled: false }
+  (function () {
+    const k = PhysKit.mount('pk-captypes', { x: [-6.2, 6.2], y: [-2.6, 2.6] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    k.row();
+    const scene = k.choice(['Variable capacitor (tuning)', 'Blocks DC, passes AC'], 0, () => { show(); tSw = 0; });
+    const rows = [];
+    rows.push(k.row());
+    const angS = k.slider({ label: 'knob', unit: '°', min: 0, max: 180, step: 0.5, value: 60, digits: 1 });
+    rows.push(k.row());
+    const src = k.choice(['battery (DC)', 'AC supply'], 0, () => { tSw = 0; });
+    const fS = k.slider({ label: 'f', unit: 'Hz', min: 5, max: 200, step: 1, value: 50, digits: 0 });
+    k.button('Close the switch again', () => { tSw = 0; });
+    k.row();
+    function show() { rows.forEach((r, i) => { r.style.display = i === scene.value ? '' : 'none'; }); }
+
+    // tuning: C from 30 pF (no overlap) to 365 pF (full), coil L = 250 μH
+    const L = 250e-6, CMIN = 30e-12, CMAX = 365e-12;
+    const Cvar = () => CMIN + (CMAX - CMIN) * angS.value / 180;
+    const f0 = () => 1 / (2 * Math.PI * Math.sqrt(L * Cvar()));
+    const STATIONS = [[560, 'City FM'], [720, 'News'], [900, 'Music'], [1100, 'Sport'], [1400, 'Talk']];
+    const KX = 3.8, KY = -0.4;
+    k.view.drag({
+      get: () => { const a = (angS.value) * Math.PI / 180; return [KX + 1.3 * Math.cos(Math.PI - a), KY + 1.3 * Math.sin(Math.PI - a)]; },
+      set: p => { let a = Math.PI - Math.atan2(p[1] - KY, p[0] - KX); if (a > Math.PI * 1.5) a -= 2 * Math.PI; angS.value = Math.max(0, Math.min(180, a * 180 / Math.PI)); },
+      r: 20, hit: () => scene.value === 0
     });
 
-    let currentType = 'fixed';
-    let elements = [];
+    // DC / AC circuit: V = 6 V, R = 100 Ω, C = 100 μF (τ = 10 ms, shown 50× slower)
+    const V0 = 6, R = 100, CC = 100e-6, SLOW = 50;
+    let tSw = 0, flow = 0;
+    // flow = how far the electrons in the wire have moved; it grows at a rate ∝ current
+    k.loop(dt => { tSw += dt / SLOW; flow += current() / (V0 / R) * dt * 0.8; });
+    const current = () => {
+      if (src.value === 0) return V0 / R * Math.exp(-tSw / (R * CC));          // DC: dies away
+      const w = 2 * Math.PI * fS.value, Xc = 1 / (w * CC), Z = Math.hypot(R, Xc);
+      return (V0 / Z) * Math.sin(w * tSw + Math.atan2(Xc, R));                 // AC: keeps going
+    };
 
-    function drawSymbol() {
-      board.suspendUpdate();
-      board.removeObject(elements);
-      elements = [];
-
-      // Wire leads
-      let w1 = board.create('segment', [[-3, 0], [-0.5, 0]], { strokeColor: '#94a3b8', strokeWidth: 3 });
-      let w2 = board.create('segment', [[0.5, 0], [3, 0]], { strokeColor: '#94a3b8', strokeWidth: 3 });
-      elements.push(w1, w2);
-
-      if (currentType === 'fixed') {
-        // Two parallel straight plates
-        let p1 = board.create('segment', [[-0.5, -1.8], [-0.5, 1.8]], { strokeColor: '#38bdf8', strokeWidth: 5 });
-        let p2 = board.create('segment', [[0.5, -1.8], [0.5, 1.8]], { strokeColor: '#38bdf8', strokeWidth: 5 });
-        let desc = board.create('text', [0, 2.3, 'Fixed Capacitor (Non-Polarized)'], {
-          anchorX: 'middle', strokeColor: '#f8fafc', fontSize: 13, fontWeight: 'bold'
-        });
-        elements.push(p1, p2, desc);
-      } else if (currentType === 'polarized') {
-        // One straight plate (+), one curved plate (-)
-        let p1 = board.create('segment', [[-0.5, -1.8], [-0.5, 1.8]], { strokeColor: '#ef4444', strokeWidth: 5 });
-        let p2 = board.create('arc', [[-0.3, 0], [0.5, 1.8], [0.5, -1.8]], { strokeColor: '#38bdf8', strokeWidth: 4 });
-        let plus = board.create('text', [-1.2, 0.8, '+'], { strokeColor: '#ef4444', fontSize: 20, fontWeight: 'bold' });
-        let desc = board.create('text', [0, 2.3, 'Polarized Electrolytic Capacitor'], {
-          anchorX: 'middle', strokeColor: '#f8fafc', fontSize: 13, fontWeight: 'bold'
-        });
-        let warn = board.create('text', [0, -2.4, 'Observe Polarity! Reversal causes dielectric failure.'], {
-          anchorX: 'middle', strokeColor: '#fbbf24', fontSize: 11
-        });
-        elements.push(p1, p2, plus, desc, warn);
+    k.draw = g => {
+      if (scene.value === 0) {
+        // stator plates (fixed half-discs) and rotor plates turned by the knob
+        const a = angS.value * Math.PI / 180, cx = KX, cy = KY;
+        for (let j = 0; j < 5; j++) {
+          const off = j * 0.1, stator = [], rotor = [];
+          for (let s = 0; s <= 30; s++) { const t = Math.PI + Math.PI * s / 30; stator.push([cx + 1.1 * Math.cos(t) + off, cy + 1.1 * Math.sin(t) + off]); }
+          stator.push([cx + off, cy + off]);
+          for (let s = 0; s <= 30; s++) { const t = Math.PI - a + Math.PI * s / 30; rotor.push([cx + 1.05 * Math.cos(t) + off + 0.05, cy + 1.05 * Math.sin(t) + off + 0.05]); }
+          rotor.push([cx + off + 0.05, cy + off + 0.05]);
+          g.path(stator, { close: true, fill: '#94a3b8', color: C.ink, width: 1, fillAlpha: 0.7 });
+          g.path(rotor, { close: true, fill: C.fluid, color: C.ink, width: 1, fillAlpha: 0.55 });
+        }
+        g.line([cx, cy], [cx + 1.3 * Math.cos(Math.PI - a), cy + 1.3 * Math.sin(Math.PI - a)], { color: C.ink, width: 3 });
+        g.handle([cx + 1.3 * Math.cos(Math.PI - a), cy + 1.3 * Math.sin(Math.PI - a)], C.acc);
+        g.text([cx, cy - 1.55], `overlap ${num(angS.value / 1.8, 0)} %  →  C = ${num(Cvar() * 1e12, 0)} pF`, { size: 13, bold: true });
+        // radio dial 500 – 1600 kHz
+        const D0 = -5.8, D1 = 0.8, fx = f => D0 + (D1 - D0) * (f - 500) / 1100, fk = f0() / 1000;
+        g.rect(D0 - 0.2, 0.9, D1 - D0 + 0.4, 1.3, { fill: '#fef3c7', color: C.ink, width: 2, radius: 8 });
+        for (let f = 500; f <= 1600; f += 100) { g.line([fx(f), 1.0], [fx(f), 1.15], { color: C.ink }); g.text([fx(f), 1.3], `${f}`, { size: 10, color: C.muted }); }
+        let tuned = null;
+        for (const [f, n] of STATIONS) {
+          g.rect(fx(f) - 0.06, 1.6, 0.12, 0.35, { fill: C.vel, color: 'none' });
+          g.text([fx(f), 2.38], n, { size: 11, color: C.muted, bold: true });
+          if (Math.abs(fk - f) < 12) tuned = n;
+        }
+        g.line([fx(Math.max(500, Math.min(1600, fk))), 0.95], [fx(Math.max(500, Math.min(1600, fk))), 2.15], { color: C.bad, width: 3 });
+        g.text([-2.5, 0.55], `f₀ = ${num(fk, 0)} kHz`, { size: 15, bold: true, color: C.bad });
+        g.text([-2.5, -0.1], tuned ? `♪ tuned to ${tuned}` : 'between stations: only hiss', { size: 14, bold: true, color: tuned ? C.good : C.muted });
+        g.text([-2.5, -0.8], 'kHz scale (AM band)', { size: 11, color: C.muted });
+        // the coil and capacitor schematic
+        g.text([-2.5, -1.6], 'tuned circuit: coil L = 250 μH + variable capacitor C', { size: 12, color: C.muted });
       } else {
-        // Fixed plates with diagonal arrow across
-        let p1 = board.create('segment', [[-0.5, -1.8], [-0.5, 1.8]], { strokeColor: '#4ade80', strokeWidth: 5 });
-        let p2 = board.create('segment', [[0.5, -1.8], [0.5, 1.8]], { strokeColor: '#4ade80', strokeWidth: 5 });
-        let arrow = board.create('arrow', [[-1.2, -1.5], [1.2, 1.5]], { strokeColor: '#fbbf24', strokeWidth: 3 });
-        let desc = board.create('text', [0, 2.3, 'Variable Capacitor (Tuning)'], {
-          anchorX: 'middle', strokeColor: '#f8fafc', fontSize: 13, fontWeight: 'bold'
-        });
-        elements.push(p1, p2, arrow, desc);
+        // circuit: source at left, switch, capacitor at top, lamp at right
+        const I = current(), Imax = V0 / R, glow = Math.min(1, Math.abs(I) / Imax);
+        const BL = [-4.6, -1.6], TL = [-4.6, 1.6], TR = [3.2, 1.6], BR = [3.2, -1.6];
+        g.path([[-4.6, -0.4], BL, BR, [3.2, -0.45]], { color: C.ink, width: 3 });
+        g.path([[3.2, 0.45], TR, [-0.25, 1.6]], { color: C.ink, width: 3 });
+        g.path([[-0.65, 1.6], TL, [-4.6, 0.4]], { color: C.ink, width: 3 });
+        // capacitor plates with charges
+        const vC = src.value === 0 ? V0 * (1 - Math.exp(-tSw / (R * CC))) : (() => { const w = 2 * Math.PI * fS.value, Xc = 1 / (w * CC), Z = Math.hypot(R, Xc); return (V0 / Z) * Xc * Math.sin(w * tSw + Math.atan2(Xc, R) - Math.PI / 2); })();
+        g.line([-0.65, 1.0], [-0.65, 2.2], { color: C.ink, width: 5 }); g.line([-0.25, 1.0], [-0.25, 2.2], { color: C.ink, width: 5 });
+        const nq = Math.round(Math.abs(vC) / V0 * 5);
+        for (let j = 0; j < nq; j++) {
+          const y = 1.1 + j * 0.24;
+          g.text([-0.88, y], vC > 0 ? '+' : '−', { size: 13, bold: true, color: vC > 0 ? C.pos : C.neg });
+          g.text([-0.02, y], vC > 0 ? '−' : '+', { size: 13, bold: true, color: vC > 0 ? C.neg : C.pos });
+        }
+        g.text([-0.45, 2.45], 'capacitor', { size: 11, color: C.muted });
+        // source symbol
+        if (src.value === 0) { g.line([-5.0, 0.4], [-4.2, 0.4], { color: C.ink, width: 3 }); g.line([-4.8, -0.4], [-4.4, -0.4], { color: C.ink, width: 5 }); g.text([-5.4, 0], '6 V', { size: 12, bold: true }); }
+        else {
+          g.circle([-4.6, 0], 0.42, { fill: '#fff', color: C.ink, width: 2.5 });
+          const sp = []; for (let s = 0; s <= 20; s++) sp.push([-4.9 + 0.6 * s / 20, 0.18 * Math.sin(2 * Math.PI * s / 20)]);
+          g.path(sp, { color: C.ink, width: 2 });
+          g.text([-5.3, -0.75], `6 V, ${fS.value} Hz`, { size: 12, bold: true });
+        }
+        // lamp
+        g.circle([3.2, 0], 0.45, { fill: `rgba(250, 204, 21, ${0.15 + 0.85 * glow})`, color: C.ink, width: 2.5 });
+        g.line([2.9, -0.3], [3.5, 0.3], { color: C.ink, width: 1.5 }); g.line([2.9, 0.3], [3.5, -0.3], { color: C.ink, width: 1.5 });
+        if (glow > 0.1) for (let j = 0; j < 8; j++) { const a = j * Math.PI / 4; g.line([3.2 + 0.6 * Math.cos(a), 0.6 * Math.sin(a)], [3.2 + (0.6 + 0.4 * glow) * Math.cos(a), (0.6 + 0.4 * glow) * Math.sin(a)], { color: '#eab308', width: 2 }); }
+        // moving charges in the wire, speed ∝ current
+        // electrons in the bottom wire (they move opposite to the conventional current)
+        for (let j = 0; j < 12; j++) {
+          const u = (((j / 12 - flow * 0.5) % 1) + 1) % 1;
+          g.dot([-4.6 + u * 7.8, -1.6], 4, C.neg);
+        }
+        g.text([-0.45, -2.2], src.value === 0 ? (glow < 0.05 ? 'plates full: no more current — DC is blocked' : 'charging: current flows for a moment') : 'plates charge one way, then the other: AC keeps flowing', { size: 13, bold: true, color: src.value === 0 && glow < 0.05 ? C.bad : C.good });
       }
+    };
 
-      board.resumeUpdate();
-    }
-
-    drawSymbol();
-
-    function setBtn(activeBtn) {
-      ['btn-fixed', 'btn-polarized', 'btn-variable'].forEach(function(id) {
-        document.getElementById(id).style.background = (id === activeBtn) ? '#0284c7' : '#334155';
-      });
-    }
-
-    document.getElementById('btn-fixed').addEventListener('click', function() {
-      currentType = 'fixed';
-      setBtn('btn-fixed');
-      drawSymbol();
-    });
-    document.getElementById('btn-polarized').addEventListener('click', function() {
-      currentType = 'polarized';
-      setBtn('btn-polarized');
-      drawSymbol();
-    });
-    document.getElementById('btn-variable').addEventListener('click', function() {
-      currentType = 'variable';
-      setBtn('btn-variable');
-      drawSymbol();
-    });
+    k.update = () => {
+      if (scene.value === 0) {
+        k.readout([
+          `C = <b>${num(Cvar() * 1e12, 0)} pF</b>; ${rich('f_0')} = 1 / (2π√(LC)) = 1 / (2π √(250×10<sup>−6</sup> × ${num(Cvar() * 1e12, 0)}×10<sup>−12</sup>)) = <b>${num(f0() / 1000, 0)} kHz</b>`,
+          'Turning the knob changes the overlapping plate area. More area → bigger C → lower frequency. The circuit responds strongly only to the station at its own frequency.'
+        ]);
+      } else {
+        const w = 2 * Math.PI * fS.value, Xc = 1 / (w * CC);
+        k.readout([
+          src.value === 0
+            ? `DC: I = (V/R) e<sup>−t/RC</sup>, RC = 100 Ω × 100 μF = 10 ms. After a few RC the capacitor is full (V = 6 V) and the current is zero. X<sub>C</sub> → ∞ when f = 0.`
+            : `AC: ${rich('X_C')} = 1/(2πfC) = 1/(2π × ${fS.value} × 100×10<sup>−6</sup>) = <b>${num(Xc, 1)} Ω</b>; peak current = V/√(R<sup>2</sup> + ${rich('X_C')}<sup>2</sup>) = <b>${num(V0 / Math.hypot(R, Xc) * 1000, 1)} mA</b>`,
+          'No charge ever crosses the gap between the plates; the current in the wires comes from charge piling up on one plate and leaving the other.'
+        ]);
+      }
+    };
+    show();
   })();
   </script>
 </div>

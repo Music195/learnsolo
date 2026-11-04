@@ -85,116 +85,121 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Appliance Chassis Fault Simulation (With vs. Without Earth Wire)</span>
-  <p class="demo-instruction">Toggle the Earth Wire connection on and off, then simulate a Live wire internal fault to observe why ungrounded metal appliances cause lethal shocks.</p>
-
-  <div id="earth-board" style="width: 100%; height: 350px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <button id="btn-toggle-earth" style="padding: 0.35rem 0.75rem; border-radius: 6px; background: #16a34a; color: white; border: none; cursor: pointer; font-weight: 600;">
-      Earth Wire: CONNECTED (Safe)
-    </button>
-    <button id="btn-fault" style="padding: 0.35rem 0.75rem; border-radius: 6px; background: #dc2626; color: white; border: none; cursor: pointer; font-weight: 600;">
-      Simulate Live Fault to Case
-    </button>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      Chassis Potential: <span id="chassis-v-stat" style="color: #4ade80; font-weight: 700;">0 V (Grounded)</span> &bull; Fuse: <span id="fuse-stat" style="color: #38bdf8; font-weight: 700;">Intact</span>
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; Switch in the Live Wire, and Earthing</span>
+  <p class="demo-question">If the lamp is switched off, is it safe to touch? And why does a metal kettle need a third, earth wire?</p>
+  <p class="demo-instruction">Wires are coloured by their potential: <b style="color:#dc2626">red = 220 V</b>, <b style="color:#2563eb">blue = 0 V</b> (the same as the ground you stand on). A person gets a shock when their hand is at a different potential from their feet. <b>Switch position:</b> put the switch in the live or the neutral wire, turn the lamp off, and touch the lamp holder. <b>Earth fault:</b> make the live wire touch the metal case, with and without the earth wire.</p>
+  <div id="pk-earth"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('earth-board', {
-      boundingbox: [-4, 3, 4, -3],
-      axis: false,
-      showNavigation: false,
-      showCopyright: false,
-      pan: { enabled: false },
-      zoom: { enabled: false }
-    });
+  (function () {
+    const VM = 220, RB = 2000, RE = 1.0, FUSE = 13;          // mains, body resistance, earth loop resistance, fuse rating
+    const k = PhysKit.mount('pk-earth', { x: [-6.2, 6.2], y: [-2.6, 2.6] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    k.row();
+    const scene = k.choice(['Switch position', 'Earth fault in a metal kettle'], 0, () => { show(); reset(); });
+    const rows = [];
+    rows.push(k.row());
+    const where = k.choice(['switch in live (correct)', 'switch in neutral (wrong)'], 0);
+    const swB = k.button('switch: ON', () => { swOn = !swOn; swB.textContent = swOn ? 'switch: ON' : 'switch: OFF'; });
+    const touch1 = k.check('touch the lamp holder', false);
+    rows.push(k.row());
+    const earthC = k.check('earth wire connected', true, () => reset());
+    k.button('⚡ fault: live wire touches the case', () => { fault = true; ft = 0; }, { primary: true });
+    const touch2 = k.check('person touches the case', true);
+    k.button('repair', () => reset());
+    function show() { rows.forEach((r, i) => { r.style.display = i === scene.value ? '' : 'none'; }); }
+    let swOn = true, fault = false, ft = 0, blown = false, t = 0;
+    function reset() { fault = false; blown = false; ft = 0; }
+    k.loop(dt => { t += dt; if (fault && !blown) { ft += dt; if (earthC.value && ft > 0.35) blown = true; } }, { button: false });
 
-    let earthConnected = true;
-    let faultActive = false;
-    let diagElements = [];
+    const RED = C.bad, BLUE = C.acc, OFF = '#cbd5e1';
+    const person = (g, x, hand, shock) => {
+      const col = shock ? C.bad : C.ink, wob = shock ? 0.04 * Math.sin(t * 40) : 0;
+      g.circle([x + wob, -0.55], 0.22, { fill: '#fff', color: col, width: 2 });
+      g.line([x + wob, -0.77], [x, -1.7], { color: col, width: 2.5 });
+      g.line([x, -1.7], [x - 0.3, -2.35], { color: col, width: 2.5 }); g.line([x, -1.7], [x + 0.3, -2.35], { color: col, width: 2.5 });
+      g.line([x, -1.05], hand, { color: col, width: 2.5 }); g.line([x, -1.05], [x + 0.35, -1.45], { color: col, width: 2.5 });
+      g.line([-6.0, -2.4], [6.0, -2.4], { color: '#78716c', width: 2 });
+      for (let xx = -5.9; xx < 6; xx += 0.4) g.line([xx, -2.4], [xx - 0.2, -2.58], { color: '#a8a29e', width: 1 });
+    };
+    const zap = (g, a, b) => { const pts = []; for (let j = 0; j <= 8; j++) { const s = j / 8; pts.push([a[0] + (b[0] - a[0]) * s + (j % 2 ? 0.08 : -0.08) * Math.sin(t * 30 + j), a[1] + (b[1] - a[1]) * s]); } g.path(pts, { color: '#f59e0b', width: 2.5 }); };
 
-    function drawSystem() {
-      board.suspendUpdate();
-      board.removeObject(diagElements);
-      diagElements = [];
-
-      // Metal Appliance casing at center
-      let caseCol = faultActive ? (earthConnected ? '#eab308' : '#ef4444') : '#475569';
-      let casing = board.create('polygon', [[-1.5, -1.5], [1.5, -1.5], [1.5, 1.5], [-1.5, 1.5]], {
-        fillColor: '#1e293b', fillOpacity: 0.9, borders: { strokeColor: caseCol, strokeWidth: 4 }
-      });
-      let caseLabel = board.create('text', [0, 0, 'Metal Chassis\n(Washing Machine)'], {
-        anchorX: 'middle', anchorY: 'middle', strokeColor: '#f8fafc', fontSize: 11, fontWeight: 'bold'
-      });
-
-      // Live wire (Brown)
-      let liveCol = (faultActive && earthConnected) ? '#64748b' : '#d97706';
-      let liveWire = board.create('segment', [[-3.5, 0.8], [-0.5, 0.8]], { strokeColor: liveCol, strokeWidth: 4 });
-      let liveText = board.create('text', [-3.2, 1.1, 'Live (220V)'], { strokeColor: '#d97706', fontSize: 11 });
-
-      // Neutral wire (Blue)
-      let neutWire = board.create('segment', [[-3.5, -0.8], [-0.5, -0.8]], { strokeColor: '#38bdf8', strokeWidth: 4 });
-      let neutText = board.create('text', [-3.2, -0.5, 'Neutral (0V)'], { strokeColor: '#38bdf8', fontSize: 11 });
-
-      // Earth wire (Green/Yellow)
-      let earthCol = earthConnected ? '#4ade80' : '#334155';
-      let earthWire = board.create('segment', [[0, -1.5], [0, -2.5]], { strokeColor: earthCol, strokeWidth: 5 });
-      let earthSym = board.create('text', [0, -2.7, '⏚ Earth Ground'], { anchorX: 'middle', strokeColor: earthCol, fontSize: 12, fontWeight: 'bold' });
-
-      // Fault indicator
-      let statusMsg = '';
-      if (!faultActive) {
-        statusMsg = 'NORMAL: Appliance operating safely.';
-        document.getElementById('chassis-v-stat').textContent = '0 V (Safe)';
-        document.getElementById('chassis-v-stat').style.color = '#4ade80';
-        document.getElementById('fuse-stat').textContent = 'Intact';
-      } else {
-        if (earthConnected) {
-          statusMsg = 'SURGE CLEARED! Fault current to earth blew the fuse. Chassis remains at 0V.';
-          document.getElementById('chassis-v-stat').textContent = '0 V (Safe)';
-          document.getElementById('chassis-v-stat').style.color = '#4ade80';
-          document.getElementById('fuse-stat').textContent = 'BLOWN (Circuit Broken)';
-          document.getElementById('fuse-stat').style.color = '#ef4444';
-        } else {
-          statusMsg = 'DANGER! Live touching ungrounded chassis! Case energized at 220V. Fatal shock risk!';
-          document.getElementById('chassis-v-stat').textContent = '220 V (LETHAL HAZARD!)';
-          document.getElementById('chassis-v-stat').style.color = '#ef4444';
-          document.getElementById('fuse-stat').textContent = 'Intact (No path to trip fuse)';
-          document.getElementById('fuse-stat').style.color = '#fbbf24';
-        }
-      }
-
-      let statBanner = board.create('text', [0, 2.3, statusMsg], {
-        anchorX: 'middle', strokeColor: faultActive && !earthConnected ? '#ef4444' : '#4ade80', fontSize: 11, fontWeight: 'bold'
-      });
-
-      diagElements.push(casing, caseLabel, liveWire, liveText, neutWire, neutText, earthWire, earthSym, statBanner);
-      board.resumeUpdate();
+    function switchScene(g) {
+      const live = where.value === 0, YL = 1.7, YN = -0.1, XS = -2.2, XLA = 1.6;
+      // potentials of the two lamp terminals
+      let top, bot;
+      if (swOn) { top = RED; bot = BLUE; }
+      else if (live) { top = BLUE; bot = BLUE; }            // lamp hangs off neutral only
+      else { top = RED; bot = RED; }                        // lamp still joined to live
+      g.text([-5.9, YL + 0.3], 'L 220 V', { align: 'left', size: 12, bold: true, color: RED });
+      g.text([-5.9, YN - 0.3], 'N 0 V', { align: 'left', size: 12, bold: true, color: BLUE });
+      // wires with the switch in one of them
+      const sw = (y, colIn, colOut) => {
+        g.line([-5.9, y], [XS - 0.35, y], { color: colIn, width: 3.5 });
+        g.dot([XS - 0.35, y], 4, C.ink); g.dot([XS + 0.35, y], 4, C.ink);
+        if (swOn) g.line([XS - 0.35, y], [XS + 0.35, y], { color: colIn, width: 3.5 });
+        else g.line([XS - 0.35, y], [XS + 0.25, y + 0.4], { color: colIn, width: 3.5 });
+        g.line([XS + 0.35, y], [XLA, y], { color: colOut, width: 3.5 });
+        g.text([XS, y + 0.6], 'switch', { size: 11, color: C.muted });
+      };
+      if (live) { sw(YL, RED, top); g.line([-5.9, YN], [XLA, YN], { color: BLUE, width: 3.5 }); }
+      else { g.line([-5.9, YL], [XLA, YL], { color: RED, width: 3.5 }); sw(YN, BLUE, bot); }
+      // lamp between the two wires
+      g.line([XLA, YL], [XLA, 1.2], { color: top, width: 3.5 }); g.line([XLA, 0.4], [XLA, YN], { color: bot, width: 3.5 });
+      g.circle([XLA, 0.8], 0.4, { fill: swOn ? '#fde047' : '#f8fafc', color: C.ink, width: 2 });
+      if (swOn) for (let j = 0; j < 8; j++) { const a = j * Math.PI / 4; g.line([XLA + 0.5 * Math.cos(a), 0.8 + 0.5 * Math.sin(a)], [XLA + 0.7 * Math.cos(a), 0.8 + 0.7 * Math.sin(a)], { color: '#f59e0b', width: 2 }); }
+      g.text([XLA - 0.55, 0.8], 'lamp holder', { align: 'right', size: 11, color: C.muted });
+      // person
+      const touching = touch1.value, hand = touching ? [XLA + 0.3, 0.85] : [2.7, -0.9];
+      const hot = touching && top === RED;
+      person(g, 3.0, hand, hot);
+      if (hot) { zap(g, hand, [3.0, -2.35]); g.text([3.0, 2.35], `SHOCK! ${VM} V across the body: I = ${VM}/${RB} = ${num(VM / RB * 1000, 0)} mA`, { size: 13, bold: true, color: C.bad }); }
+      else g.text([3.0, 2.35], touching ? 'safe: the holder is at 0 V, like the ground' : swOn ? 'lamp ON: one side is live' : live ? 'OFF, and the lamp is cut off from the live wire' : 'OFF, but the lamp is STILL joined to 220 V!', { size: 13, bold: true, color: touching ? C.good : (!swOn && !live ? C.bad : C.ink) });
     }
 
-    drawSystem();
+    function kettleScene(g) {
+      const earth = earthC.value, live = !blown;
+      const caseV = fault && !blown && !earth ? RED : BLUE;
+      const XK = 0.2;
+      // supply wires
+      g.text([-5.9, 1.95], 'L', { size: 13, bold: true, color: RED, align: 'left' }); g.text([-5.9, 1.05], 'N', { size: 13, bold: true, color: BLUE, align: 'left' }); g.text([-5.9, 0.15], 'E', { size: 13, bold: true, color: C.good, align: 'left' });
+      g.line([-5.5, 1.95], [-3.7, 1.95], { color: RED, width: 3.5 });
+      g.rect(-3.7, 1.75, 1.1, 0.4, { fill: '#fff', color: C.ink, width: 2, radius: 8 });
+      if (live) g.line([-3.6, 1.95], [-2.7, 1.95], { color: '#94a3b8', width: 2 }); else { g.line([-3.6, 1.95], [-3.25, 1.93], { color: '#94a3b8', width: 2 }); g.line([-3.05, 1.97], [-2.7, 1.95], { color: '#94a3b8', width: 2 }); }
+      g.text([-3.15, 2.4], `fuse ${FUSE} A`, { size: 11, bold: true, color: blown ? C.bad : C.ink });
+      g.path([[-2.6, 1.95], [XK - 0.6, 1.95], [XK - 0.6, 0.9]], { color: live ? RED : OFF, width: 3.5 });
+      g.path([[-5.5, 1.05], [-3.0, 1.05], [-3.0, 1.4], [XK + 0.6, 1.4], [XK + 0.6, 0.9]], { color: BLUE, width: 3.5 });
+      // kettle: metal case with a heating element inside
+      g.rect(XK - 1.3, -1.4, 2.6, 2.3, { fill: caseV === RED ? '#fecaca' : '#e2e8f0', color: '#475569', width: 3, radius: 10 });
+      g.text([XK, -1.15], 'metal case', { size: 11, color: C.muted });
+      const el = []; for (let s = 0; s <= 1.0001; s += 0.02) el.push([XK - 0.6 + 1.2 * s, 0.1 + 0.2 * Math.sin(s * 2 * Math.PI * 4)]);
+      g.line([XK - 0.6, 0.9], [XK - 0.6, 0.1], { color: live ? RED : OFF, width: 2.5 }); g.line([XK + 0.6, 0.9], [XK + 0.6, 0.1], { color: BLUE, width: 2.5 });
+      g.path(el, { color: live && !fault ? '#f97316' : '#94a3b8', width: 2.5 });
+      if (fault) { g.line([XK - 0.6, 0.5], [XK - 1.3, 0.5], { color: live ? RED : OFF, width: 2.5, dash: [4, 3] }); if (live) zap(g, [XK - 1.0, 0.5], [XK - 1.3, 0.5]); g.text([XK - 1.4, 0.75], 'loose live wire', { size: 11, align: 'right', color: C.bad }); }
+      // earth wire from the case to an earth spike
+      if (earth) { g.path([[-5.5, 0.15], [-4.0, 0.15], [-4.0, -1.0], [XK - 1.3, -1.0]], { color: C.good, width: 3, dash: [8, 4] }); g.line([-4.0, -1.0], [-4.0, -2.4], { color: C.good, width: 3, dash: [8, 4] }); [0, 1, 2].forEach(j => g.line([-4.3 + j * 0.1, -2.4 - j * 0.1], [-3.7 - j * 0.1, -2.4 - j * 0.1], { color: C.good, width: 2 })); }
+      // fault current along live → case → earth (only while the fuse is intact)
+      if (fault && earth && live) { const path = [[-2.6, 1.95], [XK - 0.6, 1.95], [XK - 0.6, 0.5], [XK - 1.3, 0.5], [XK - 1.3, -1.0], [-4.0, -1.0], [-4.0, -2.4]]; g.path(path, { color: '#f59e0b', width: 6, alpha: 0.5 + 0.4 * Math.sin(t * 20) }); }
+      // person touching the case
+      const hand = touch2.value ? [XK + 1.3, -0.3] : [3.6, -0.9], shock = touch2.value && caseV === RED;
+      person(g, 3.4, hand, shock);
+      if (shock) zap(g, hand, [3.4, -2.35]);
+      const If = VM / RE;
+      g.text([3.6, 2.35], !fault ? 'normal: no current in the earth wire' : earth ? (blown ? 'fuse blown in a split second: case safe at 0 V' : `fault current ${num(If, 0)} A ≫ ${FUSE} A → fuse melts`) : `case at 220 V! ${num(VM / RB * 1000, 0)} mA through the person, fuse does not blow`, { size: 13, bold: true, color: !fault ? C.ink : earth ? C.good : C.bad });
+    }
 
-    document.getElementById('btn-toggle-earth').addEventListener('click', function() {
-      earthConnected = !earthConnected;
-      if (earthConnected) {
-        this.textContent = 'Earth Wire: CONNECTED (Safe)';
-        this.style.background = '#16a34a';
-      } else {
-        this.textContent = 'Earth Wire: DISCONNECTED (Unsafe)';
-        this.style.background = '#eab308';
-      }
-      drawSystem();
-    });
+    k.draw = g => scene.value === 0 ? switchScene(g) : kettleScene(g);
 
-    document.getElementById('btn-fault').addEventListener('click', function() {
-      faultActive = !faultActive;
-      this.textContent = faultActive ? 'Clear Fault' : 'Simulate Live Fault to Case';
-      drawSystem();
-    });
+    k.update = () => {
+      if (scene.value === 0) k.readout([
+        'Switch in the <b>live</b> wire: when OFF, the lamp is joined only to neutral (0 V), so the holder is safe to touch.',
+        'Switch in the <b>neutral</b> wire: the lamp goes out, but it is still at 220 V. Touching it puts 220 V across the body: about 220/2000 Ω = 110 mA, which can kill.'
+      ]);
+      else k.readout([
+        `With earth: ${rich('I_{fault}')} = ${rich('V_{mains}')}/(${rich('R_{earth}')} + ${rich('R_{wire}')}) ≈ 220/${num(RE, 1)} Ω = <b>${num(VM / RE, 0)} A</b>, far above the ${FUSE} A fuse, so it melts at once and the case stays at 0 V.`,
+        `Without earth: the only path to the ground is the person, about ${RB} Ω: I = 220/${RB} = <b>${num(VM / RB * 1000, 0)} mA</b>. That is too small to blow a ${FUSE} A fuse but large enough to stop a heart.`
+      ]);
+    };
+    show();
   })();
   </script>
 </div>

@@ -46,88 +46,82 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Transmission Voltage vs. Line Power Loss</span>
-  <p class="demo-instruction">Compare the current and Joule heating loss when transmitting $120\mathrm{\,kW}$ over $10\mathrm{\,km}$ at low voltage ($240\mathrm{\,V}$) versus high grid voltage ($24\mathrm{\,kV}$).</p>
-
-  <div id="grid-board" style="width: 100%; height: 350px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Transmission Voltage:
-      <select id="grid-v-select" style="padding: 0.3rem 0.6rem; border-radius: 4px; background: #1e293b; color: white; border: 1px solid #475569;">
-        <option value="240">240 V (Direct Low Voltage)</option>
-        <option value="2400">2,400 V (Intermediate Step-Up)</option>
-        <option value="24000" selected>24,000 V (High Voltage Grid)</option>
-        <option value="132000">132,000 V (Super-Grid Line)</option>
-      </select>
-    </label>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      Line Current: <span id="grid-i-stat" style="color: #38bdf8; font-weight: 700;">5.00 A</span> &bull; Heat Loss: <span id="grid-loss-stat" style="color: #4ade80; font-weight: 700;">0.20 kW</span> ($0.17\%$)
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; Why Power Lines Use High Voltage</span>
+  <p class="demo-question">The same power reaches a town either at 240 V or at 24 000 V. Why does one waste almost nothing and the other is impossible?</p>
+  <p class="demo-instruction">The power station sends power $P$ along a two-wire line of resistance $R_{\text{line}}$. Move the <b>transmission voltage</b> slider: the current $I = P/V$ in the line changes, and the wires get hot with the lost power $I^2 R_{\text{line}}$. The moving dots show the size of the current; the line turns red as more power is lost.</p>
+  <div id="pk-grid"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('grid-board', {
-      boundingbox: [-4, 3, 4, -3],
-      axis: false,
-      showNavigation: false,
-      showCopyright: false,
-      pan: { enabled: false },
-      zoom: { enabled: false }
-    });
+  (function () {
+    const k = PhysKit.mount('pk-grid', { x: [-6.2, 6.2], y: [-2.6, 2.6] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    k.row();
+    const vfmt = v => { const V = 10 ** v; return V >= 1000 ? `${num(V / 1000, V >= 1e5 ? 0 : 1)} kV` : `${num(V, 0)} V`; };
+    const lgS = k.slider({ label: 'transmission V', min: Math.log10(240), max: Math.log10(500000), step: 0.01, value: Math.log10(24000), format: vfmt });
+    let V = 24000;                                       // exact voltage (the log slider rounds)
+    lgS.on(v => { V = Math.round(10 ** v / 10) * 10; });
+    k.row();
+    const PS = k.slider({ label: 'P sent', unit: 'kW', min: 10, max: 500, step: 10, value: 120, digits: 0 });
+    const dS = k.slider({ label: 'distance', unit: 'km', min: 1, max: 100, step: 1, value: 10, digits: 0 });
+    const rS = k.slider({ label: 'resistance', unit: 'Ω/km', min: 0.05, max: 1, step: 0.05, value: 0.4 });
+    k.row();
+    const setV = v => { V = v; lgS.value = Math.log10(v); };
+    k.button('Exercise 16 (i): 240 V', () => { PS.value = 120; dS.value = 10; rS.value = 0.4; setV(240); });
+    k.button('Exercise 16 (ii): 24 000 V', () => { PS.value = 120; dS.value = 10; rS.value = 0.4; setV(24000); });
+    k.button('grid: 132 kV', () => setV(132000));
+    let flow = 0, t = 0;
+    const calc = () => { const P = PS.value * 1000, R = 2 * dS.value * rS.value, I = P / V, loss = I * I * R; return { P, R, I, loss, frac: loss / P }; };
+    k.loop(dt => { t += dt; flow += dt * Math.min(3, 0.25 + Math.log10(1 + calc().I) * 0.6); }, { button: false });
 
-    let P_total = 120000; // 120 kW
-    let R_line = 8.0; // 8 ohms total loop
-
-    let diagElements = [];
-
-    function updateGrid() {
-      board.suspendUpdate();
-      board.removeObject(diagElements);
-      diagElements = [];
-
-      let V = parseFloat(document.getElementById('grid-v-select').value);
-      let I = P_total / V;
-      let Ploss_W = I * I * R_line;
-      let Ploss_kW = Ploss_W / 1000.0;
-      let lossPct = (Ploss_W / P_total) * 100.0;
-
-      document.getElementById('grid-i-stat').textContent = I < 10 ? I.toFixed(2) + ' A' : I.toFixed(0) + ' A';
-      document.getElementById('grid-loss-stat').textContent = Ploss_kW.toFixed(2) + ' kW (' + lossPct.toFixed(1) + '%)';
-
-      // Power Station box (left)
-      let genBox = board.create('polygon', [[-3.5, -1.2], [-2.0, -1.2], [-2.0, 1.2], [-3.5, 1.2]], {
-        fillColor: '#0284c7', fillOpacity: 0.8, borders: { strokeColor: '#38bdf8', strokeWidth: 2 }
+    k.draw = g => {
+      const { P, R, I, loss, frac } = calc(), hot = Math.min(1, frac);
+      // station and town
+      g.rect(-6.1, -0.4, 1.0, 1.3, { fill: '#e2e8f0', color: C.ink, width: 2, radius: 3 });
+      g.rect(-5.9, 0.9, 0.22, 0.6, { fill: '#94a3b8', color: C.ink, width: 1.5 });
+      g.text([-5.6, -0.7], 'power station', { size: 11, color: C.muted });
+      for (let j = 0; j < 3; j++) { const x = 4.9 + j * 0.42, hgt = 0.6 + 0.25 * (j % 2); g.rect(x, -0.4, 0.34, hgt, { fill: frac >= 1 ? '#e5e7eb' : '#fef3c7', color: C.ink, width: 1.5 }); }
+      g.text([5.5, -0.7], 'town', { size: 11, color: C.muted });
+      // transformers at each end
+      const tx = (x, lab) => { g.circle([x - 0.12, 0.55], 0.25, { color: C.ink, width: 2 }); g.circle([x + 0.12, 0.55], 0.25, { color: C.ink, width: 2 }); g.text([x, 1.05], lab, { size: 10, color: C.muted }); };
+      tx(-4.55, V > 240 ? 'step up' : '—'); tx(4.35, V > 240 ? 'step down' : '—');
+      // pylons and the two line wires
+      const XL = -4.2, XR = 4.0;
+      for (let x = -3.2; x <= 3.2; x += 2.13) { g.path([[x - 0.35, -1.6], [x, 1.3], [x + 0.35, -1.6]], { color: '#94a3b8', width: 1.5 }); g.line([x - 0.45, 0.85], [x + 0.45, 0.85], { color: '#94a3b8', width: 1.5 }); }
+      const wcol = `rgb(${Math.round(30 + 220 * hot)}, ${Math.round(41 + 60 * (1 - hot))}, ${Math.round(59 * (1 - hot))})`;
+      [0.85, 0.25].forEach(y => {
+        const pts = []; for (let x = XL; x <= XR + 1e-9; x += 0.1) { const sag = 0.18 * (1 - ((((x + 3.2) % 2.13) / 2.13) * 2 - 1) ** 2); pts.push([x, y - sag]); }
+        g.path(pts, { color: wcol, width: 2.5 + 3 * hot });
+        if (hot > 0.02) for (let j = 0; j < 10; j++) { const x = XL + 0.4 + j * 0.8, a = 0.5 * hot; g.path([[x, y + 0.15], [x + 0.06, y + 0.3], [x, y + 0.45]], { color: C.bad, width: 1.5, alpha: a * (0.6 + 0.4 * Math.sin(t * 4 + j)) }); }
       });
-      let genT = board.create('text', [-2.75, 0, 'Power Plant\n120 kW'], {
-        anchorX: 'middle', anchorY: 'middle', strokeColor: '#ffffff', fontSize: 11, fontWeight: 'bold'
-      });
+      // current dots: spacing fixed, speed grows with I (log scale)
+      for (let j = 0; j < 14; j++) { const x = XL + ((j * 0.6 + flow) % 8.2); g.dot([x, 0.72], 3.5, C.vel); g.dot([XR - (x - XL), 0.12], 3.5, C.vel); }
+      // power bars
+      const BX = -5.6, BW = 11.2, BY = -2.05, delivered = Math.max(0, P - loss), sc = BW / Math.max(P, loss);
+      g.rect(BX, BY, delivered * sc, 0.42, { fill: C.good, color: 'none', radius: 4 });
+      g.rect(BX + delivered * sc, BY, Math.min(loss, P) * sc, 0.42, { fill: C.bad, color: 'none', radius: 4 });
+      if (loss > P) g.rect(BX, BY + 0.5, loss * sc, 0.16, { fill: C.bad, color: 'none', fillAlpha: 0.5, radius: 3 });
+      g.text([BX, BY - 0.25], `delivered ${num(delivered / 1000, 2)} kW`, { size: 11, bold: true, color: C.good, align: 'left' });
+      g.text([BX + BW, BY - 0.25], `lost as heat ${num(loss / 1000, loss < 1000 ? 3 : 1)} kW (${num(frac * 100, frac < 0.01 ? 3 : 1)} %)`, { size: 11, bold: true, color: C.bad, align: 'right' });
+      g.text([0, 2.3], `V = ${vfmt(Math.log10(V))}: line current I = P/V = ${num(I, I < 10 ? 2 : 0)} A`, { size: 14, bold: true, color: C.vel });
+      if (loss > P) g.text([0, 1.75], 'impossible: the line would need to waste more than the power sent!', { size: 12, bold: true, color: C.bad, bg: '#fff' });
+    };
 
-      // Town box (right)
-      let townBox = board.create('polygon', [[2.0, -1.2], [3.5, -1.2], [3.5, 1.2], [2.0, 1.2]], {
-        fillColor: '#16a34a', fillOpacity: 0.8, borders: { strokeColor: '#4ade80', strokeWidth: 2 }
-      });
-      let townT = board.create('text', [2.75, 0, 'Town Load\n(10 km away)'], {
-        anchorX: 'middle', anchorY: 'middle', strokeColor: '#ffffff', fontSize: 11, fontWeight: 'bold'
-      });
+    const gv = k.addView({ x: [2.3, 5.8], y: [-4.5, 3.6], equal: false, height: 170, title: 'Percentage loss against transmission voltage (both scales logarithmic)' });
+    gv.draw = g => {
+      const P = PS.value * 1000, R = 2 * dS.value * rS.value, pc = v => Math.log10(100 * P * R / (10 ** v) ** 2);
+      g.axes({ xstep: 1, ystep: 1, xlabel: 'V', ylabel: 'loss %', xfmt: v => vfmt(v), yfmt: v => (10 ** v >= 1 ? num(10 ** v, 0) : String(+(10 ** v).toPrecision(1))) });
+      g.line([2.3, 2], [5.8, 2], { color: C.bad, width: 1.5, dash: [5, 4] }); g.text([5.75, 1.7], '100 % — nothing arrives', { align: 'right', size: 11, color: C.bad });
+      const pts = []; for (let v = 2.3; v <= 5.8; v += 0.02) pts.push([v, Math.max(-4.5, Math.min(3.6, pc(v)))]); g.path(pts, { color: C.energy, width: 2.5 });
+      const y = pc(Math.log10(V)); if (y >= -4.5 && y <= 3.6) g.dot([Math.log10(V), y], 6, C.vel);
+    };
 
-      // Transmission lines
-      let lineCol = lossPct > 50 ? '#ef4444' : (lossPct > 5 ? '#facc15' : '#4ade80');
-      let tLine1 = board.create('segment', [[-2.0, 0.6], [2.0, 0.6]], { strokeColor: lineCol, strokeWidth: 4 });
-      let tLine2 = board.create('segment', [[-2.0, -0.6], [2.0, -0.6]], { strokeColor: lineCol, strokeWidth: 4 });
-
-      let statT = board.create('text', [0, 1.8, 'V = ' + (V / 1000 >= 1 ? (V / 1000) + ' kV' : V + ' V') + ' | I = ' + I.toFixed(1) + ' A | Cable Loss = ' + Ploss_kW.toFixed(1) + ' kW'], {
-        anchorX: 'middle', strokeColor: lineCol, fontSize: 12, fontWeight: 'bold'
-      });
-
-      diagElements.push(genBox, genT, townBox, townT, tLine1, tLine2, statT);
-      board.resumeUpdate();
-    }
-
-    updateGrid();
-
-    document.getElementById('grid-v-select').addEventListener('change', updateGrid);
+    k.update = () => {
+      const { P, R, I, loss, frac } = calc();
+      k.readout([
+        `${rich('R_{line}')} = 2 × ${dS.value} km × ${num(rS.value, 2)} Ω/km = <b>${num(R, 2)} Ω</b> (out and back)`,
+        `I = P/V = ${num(P, 0)}/${num(V, 0)} = <b>${num(I, 3)} A</b>; ${rich('P_{loss}')} = I<sup>2</sup>R = ${num(I, 3)}<sup>2</sup> × ${num(R, 2)} = <b>${num(loss, loss < 100 ? 2 : 0)} W</b> = ${num(frac * 100, frac < 0.01 ? 3 : 1)} % of P`,
+        'Exercise 16: 240 V → 500 A, 2000 kW lost (impossible). 24 000 V → 5 A, 200 W lost (0.17 %). 100 times the voltage gives 1/10 000 of the loss.'
+      ]);
+    };
   })();
   </script>
 </div>

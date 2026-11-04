@@ -39,93 +39,90 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Camera Lens Ray Optics and Focusing</span>
-  <p class="demo-instruction">Drag the object distance slider $u$ to observe how the camera lens must be shifted relative to the fixed sensor plane to maintain sharp focus as the object approaches.</p>
-
-  <div id="camera-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Object Distance $u$: 
-      <input id="u-slider" type="range" min="3" max="15" step="1" value="8" style="vertical-align: middle;">
-      <span id="u-val" style="color: #38bdf8; font-weight: 700;">8.0 m</span>
-    </label>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      Image Distance $v$: <span id="v-stat" style="color: #4ade80; font-weight: 700;">2.67 m</span> &bull; Height: <span id="hi-stat" style="color: #fb923c; font-weight: 700;">-0.67 m</span>
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; Focusing a Camera</span>
+  <p class="demo-question">Why does a camera lens move forward to focus on something close, and why does a small aperture keep more of the picture sharp?</p>
+  <p class="demo-instruction">Rays from the top (red) and bottom (blue) of the object pass through the lens and meet at the image. Turn <b>auto-focus</b> off and drag the <b>lens–sensor</b> slider: if the image does not fall exactly on the sensor, each point becomes a blur spot and the photo (top right) goes soft. A smaller aperture (bigger f-number) makes the blur spot smaller. The object side is shortened to fit; the camera side is drawn to scale.</p>
+  <div id="pk-camera"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('camera-board', {
-      boundingbox: [-16, 5, 6, -5],
-      axis: true,
-      defaultAxes: {
-        x: { name: 'Optical Axis (m)', withLabel: true, label: { position: 'rt', offset: [-15, -15], color: '#cbd5e1' } },
-        y: { name: 'Height (m)', withLabel: true, label: { position: 'rt', offset: [-10, -10], color: '#cbd5e1' } }
-      },
-      showNavigation: false,
-      showCopyright: false
-    });
+  (function () {
+    const k = PhysKit.mount('pk-camera', { x: [-6.2, 6.2], y: [-2.6, 2.6] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    k.row();
+    const OBJ = [{ n: 'person (1.7 m)', h: 1.7 }, { n: 'tree (28 m)', h: 28 }];
+    const obj = k.choice(OBJ.map(o => o.n), 0);
+    const NS = [2, 4, 8, 16];
+    const ap = k.choice(NS.map(n => `f/${n}`), 0);
+    k.row();
+    const uS = k.slider({ label: 'u (object distance)', min: 0, max: 2, step: 0.005, value: Math.log10(3), format: s => num(10 ** s, 1) + ' m' });
+    const fS = k.slider({ label: 'f', unit: 'mm', min: 20, max: 135, step: 1, value: 50, digits: 0 });
+    k.row();
+    const auto = k.check('auto-focus', true);
+    const vS = k.slider({ label: 'lens–sensor', unit: 'mm', min: 20, max: 160, step: 0.5, value: 51, digits: 1 });
+    k.button('Example 7.1 (28 m tree, 58 m away)', () => { obj.set(1); uS.value = Math.log10(58); fS.value = 50; });
+    vS.on(() => { auto.input.checked = false; });
 
-    let u = 8.0;
-    const f = 2.0;
-    const ho = 2.0;
+    const u = () => 10 ** uS.value * 1000;                    // mm
+    const vImg = () => 1 / (1 / fS.value - 1 / u());          // where the sharp image forms (mm)
+    const XS = 2.9, SX = 3.6 / 170, SY = 0.8 / 12;            // sensor x; board units per mm (along, across)
 
-    // Lens at x = 0
-    let lensLine = board.create('segment', [[0, -4], [0, 4]], { strokeColor: '#38bdf8', strokeWidth: 3 });
-    board.create('text', [0.2, 4.2, 'Convex Lens'], { color: '#38bdf8', fontSize: 11 });
+    k.draw = g => {
+      // with auto-focus the lens sits exactly at the sharp image (the slider only shows it to 0.5 mm)
+      if (auto.value) vS.value = vImg();
+      const f = fS.value, vset = auto.value ? vImg() : vS.value, v = vImg(), N = NS[ap.value], D = f / N, ho = OBJ[obj.value].h * 1000;
+      const LX = XS - vset * SX, XO = LX - 1.3 - 2.0 * uS.value, HO = 0.9;
+      // camera body and moving lens barrel
+      g.rect(Math.min(LX - 0.25, XS - 0.6), -1.15, XS + 0.25 - Math.min(LX - 0.25, XS - 0.6), 2.3, { fill: '#f1f5f9', color: C.ink, width: 2, radius: 6 });
+      g.rect(XS, -0.8, 0.12, 1.6, { fill: '#1e293b', color: 'none' });
+      g.text([XS + 0.06, -1.35], 'sensor (24 mm)', { size: 11, color: C.muted });
+      // object (not to scale) with its two end points
+      g.line([XO, -HO], [XO, HO], { color: C.vel, width: 5 });
+      g.dot([XO, HO], 5, C.bad); g.dot([XO, -HO], 5, C.acc);
+      g.text([XO, -HO - 0.3], `${OBJ[obj.value].n.split(' ')[0]}, u = ${num(10 ** uS.value, 1)} m`, { size: 12, bold: true });
+      // rays: from each end, through the top, middle and bottom of the aperture, to the image point
+      [[HO, C.bad, -1], [-HO, C.acc, 1]].forEach(([yo, col, sgn]) => {
+        const yi = sgn * (ho / 2) * (v / u()) * SY, xi = LX + v * SX;   // image of this end (inverted)
+        for (const a of [-D / 2, 0, D / 2]) {
+          const ya = a * SY;
+          g.line([XO, yo], [LX, ya], { color: col, width: 1.5, alpha: 0.8 });
+          // after the lens the ray heads for the image point; stop it at the sensor
+          const s = (yi - ya) / (xi - LX), ys = ya + s * (XS - LX);
+          g.line([LX, ya], [XS, ys], { color: col, width: 1.5, alpha: 0.8 });
+          if (xi > XS) g.line([XS, ys], [xi, yi], { color: col, width: 1, dash: [3, 3], alpha: 0.6 });
+        }
+        if (Math.abs(xi - XS) > 0.01) g.dot([xi, yi], 3, col);
+      });
+      // lens and aperture
+      const lw = g.world(7), lh = 1.0, pts = [];
+      for (let i = 0; i <= 20; i++) { const t = -1 + i / 10; pts.push([LX - lw * (1 - t * t), t * lh]); }
+      for (let i = 20; i >= 0; i--) { const t = -1 + i / 10; pts.push([LX + lw * (1 - t * t), t * lh]); }
+      g.path(pts, { close: true, fill: C.fluidFill, color: C.fluid, width: 2 });
+      g.line([LX, D / 2 * SY], [LX, lh + 0.05], { color: C.ink, width: 4 }); g.line([LX, -D / 2 * SY], [LX, -lh - 0.05], { color: C.ink, width: 4 });
+      g.text([LX, 1.35], `lens f = ${f} mm, ${'f/' + N}`, { size: 12, bold: true });
+      // blur spot on the sensor
+      const blur = D * Math.abs(vset - v) / v;               // mm
+      // photo preview (upright, as the camera shows it)
+      const PX = 3.7, PY = 0.55, PW = 2.3, PH = 1.53;
+      g.rect(PX, PY, PW, PH, { fill: '#e0f2fe', color: C.ink, width: 2 });
+      const frac = Math.min(1.4, (ho / 2) * (v / u()) / 12), cx = PX + PW / 2, bpx = blur / 24 * PH;
+      const layers = Math.min(8, 1 + Math.round(bpx / 0.02));
+      for (let i = 0; i < layers; i++) {
+        const off = layers > 1 ? (i / (layers - 1) - 0.5) * bpx : 0;
+        const top = PY + PH / 2 + frac * PH / 2, bot = PY + PH / 2 - frac * PH / 2;
+        g.line([cx + off, Math.max(PY, bot)], [cx + off, Math.min(PY + PH, top)], { color: C.vel, width: 5, alpha: 1 / layers + 0.05 });
+        g.dot([cx + off, Math.min(PY + PH, top)], 4, C.bad, { alpha: 1 / layers + 0.05 });
+      }
+      g.text([PX + PW / 2, PY + PH + 0.2], blur < 0.03 ? 'photo: sharp' : `photo: blurred (spot ${num(blur, 2)} mm)`, { size: 12, bold: true, color: blur < 0.03 ? C.good : C.bad });
+      if (frac > 1) g.text([PX + PW / 2, PY - 0.25], 'too big for the frame', { size: 11, color: C.energy });
+    };
 
-    // Focus markers
-    board.create('point', [f, 0], { name: 'F', fillColor: '#facc15', size: 3, fixed: true });
-    board.create('point', [-f, 0], { name: "F'", fillColor: '#facc15', size: 3, fixed: true });
-
-    function getV() { return (u * f) / (u - f); }
-    function getHi() { return - (getV() / u) * ho; }
-
-    // Object arrow
-    let objArrow = board.create('arrow', [
-      [function() { return -u; }, 0],
-      [function() { return -u; }, ho]
-    ], { strokeColor: '#4ade80', strokeWidth: 3 });
-
-    // Image arrow
-    let imgArrow = board.create('arrow', [
-      [function() { return getV(); }, 0],
-      [function() { return getV(); }, function() { return getHi(); }]
-    ], { strokeColor: '#f87171', strokeWidth: 3 });
-
-    // Ray 1: Parallel to axis, refracts through F
-    let ray1a = board.create('segment', [
-      [function() { return -u; }, ho],
-      [0, ho]
-    ], { strokeColor: '#facc15', strokeWidth: 1.5 });
-    let ray1b = board.create('segment', [
-      [0, ho],
-      [function() { return getV(); }, function() { return getHi(); }]
-    ], { strokeColor: '#facc15', strokeWidth: 1.5 });
-
-    // Ray 2: Through optical center (straight)
-    let ray2 = board.create('segment', [
-      [function() { return -u; }, ho],
-      [function() { return getV(); }, function() { return getHi(); }]
-    ], { strokeColor: '#38bdf8', strokeWidth: 1.5, dash: 2 });
-
-    function update() {
-      document.getElementById('u-val').textContent = u.toFixed(1) + ' m';
-      let v = getV();
-      let hi = getHi();
-      document.getElementById('v-stat').textContent = v.toFixed(2) + ' m';
-      document.getElementById('hi-stat').textContent = hi.toFixed(2) + ' m';
-      board.update();
-    }
-
-    document.getElementById('u-slider').addEventListener('input', function() {
-      u = parseFloat(this.value);
-      update();
-    });
-
-    update();
+    k.update = () => {
+      const f = fS.value, U = u(), v = vImg(), ho = OBJ[obj.value].h * 1000, hi = ho * v / U, N = NS[ap.value];
+      k.readout([
+        `1/v = 1/f − 1/u = 1/${f} − 1/${num(U, 0)} → sharp image at <b>v = ${num(v, 2)} mm</b> behind the lens (closer object → bigger v, so the lens moves forward)`,
+        `m = −v/u = <b>−${(v / U).toPrecision(3)}</b>; image height = ${num(hi, 1)} mm ${hi > 24 ? '(more than the 24 mm sensor)' : 'on a 24 mm sensor'}. Aperture D = f/N = ${f}/${N} = ${num(f / N, 1)} mm.`,
+        'Example 7.1: a 28 m tree at 58 m filling 24 mm needs v = 0.024 × 58 / 28 = 0.0497 m, and then f ≈ 50 mm.'
+      ]);
+    };
   })();
   </script>
 </div>

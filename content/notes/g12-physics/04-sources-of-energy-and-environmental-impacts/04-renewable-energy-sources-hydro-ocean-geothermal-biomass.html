@@ -55,102 +55,73 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Hydroelectric Dam Power Simulator</span>
-  <p class="demo-instruction">Adjust the hydrostatic water head $h$ and discharge flow rate $Q$ to see how the available power output scales linearly with both elevation fall and water volume ($P = \eta \rho Q g h$).</p>
-
-  <div id="hydro-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Water Head $h$: 
-      <input id="head-slider" type="range" min="50" max="300" step="25" value="150" style="vertical-align: middle;">
-      <span id="head-val" style="color: #38bdf8; font-weight: 700;">150 m</span>
-    </label>
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Flow Rate $Q$: 
-      <input id="flow-slider" type="range" min="20" max="200" step="10" value="80" style="vertical-align: middle;">
-      <span id="flow-val" style="color: #fb923c; font-weight: 700;">80 m³/s</span>
-    </label>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      Power ($\eta=75\%$): <span id="hp-stat" style="color: #4ade80; font-weight: 700;">88.2 MW</span>
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; Hydroelectric Dam: $P = \eta\rho Q g h$</span>
+  <p class="demo-question">Where does a hydroelectric station's energy come from, and what makes one dam more powerful than another?</p>
+  <p class="demo-instruction">Change the head $h$ (how far the water falls), the flow $Q$ (cubic metres per second) and the turbine–generator efficiency $\eta$. Each kilogram of water gives up $gh$ joules of potential energy; the station turns a fraction $\eta$ of it into electricity.</p>
+  <div id="pk-dam"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('hydro-board', {
-      boundingbox: [-1, 7, 9, -1],
-      axis: false,
-      showNavigation: false,
-      showCopyright: false
+  (function () {
+    const RHO = 1000, G = 9.8;
+    const k = PhysKit.mount('pk-dam', { x: [-6.2, 6.2], y: [-2.9, 2.9] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    k.row();
+    const hS = k.slider({ label: 'h', unit: 'm', min: 20, max: 300, step: 5, value: 100, digits: 0 });
+    const qS = k.slider({ label: 'Q', unit: 'm^3/s', min: 10, max: 500, step: 10, value: 100, digits: 0 });
+    const eS = k.slider({ label: 'η', unit: '%', min: 40, max: 95, step: 1, value: 60, digits: 0 });
+    k.row();
+    k.button('Example 4.4', () => { hS.value = 300; qS.value = 100; eS.value = 60; });
+    const P = () => eS.value / 100 * RHO * qS.value * G * hS.value;
+
+    let rot = 0;
+    const drops = [];
+    for (let i = 0; i < 40; i++) drops.push(Math.random());
+    k.loop(dt => {
+      rot += Math.sqrt(2 * G * hS.value) * 0.05 * dt;
+      for (let i = 0; i < drops.length; i++) drops[i] = (drops[i] + dt * (0.25 + qS.value / 900)) % 1;
     });
 
-    let h_val = 150;
-    let q_val = 80;
-    const eta = 0.75;
+    k.draw = g => {
+      const top = -2.2 + 4.4 * hS.value / 300 * 0.9 + 0.3;     // reservoir level (drawn)
+      const TB = [3.2, -2.25];                                  // turbine position
+      // reservoir
+      g.path([[-6.2, -2.7], [-6.2, top], [-1.6, top], [-1.6, -2.7]], { close: true, fill: C.fluidFill, color: 'none' });
+      g.line([-6.2, top], [-1.6, top], { color: C.fluid, width: 2 });
+      // dam wall
+      g.path([[-1.6, 2.7 > top + 0.3 ? top + 0.3 : 2.6], [-0.9, top + 0.3], [0.6, -2.7], [-1.6, -2.7]], { close: true, fill: '#a8a29e', color: C.ink, width: 2 });
+      // penstock from the bottom of the reservoir to the turbine
+      const pipe = [[-1.6, -1.9], [0.6, -2.1], [TB[0] - 0.4, TB[1]]];
+      g.path(pipe, { color: '#64748b', width: 12 });
+      g.path(pipe, { color: C.fluid, width: 7 });
+      // moving water in the penstock
+      for (const d of drops) {
+        const x = -1.6 + (TB[0] - 0.4 + 1.6) * d;
+        const y = x < 0.6 ? -1.9 - 0.2 * (x + 1.6) / 2.2 : -2.1 - 0.15 * (x - 0.6) / (TB[0] - 1.0);
+        g.dot([x, y], 2.5, '#0369a1');
+      }
+      // turbine and generator
+      g.circle(TB, 0.4, { fill: '#e2e8f0', color: C.ink, width: 2 });
+      for (let b = 0; b < 4; b++) { const a = rot + b * Math.PI / 2; g.line(TB, [TB[0] + 0.38 * Math.cos(a), TB[1] + 0.38 * Math.sin(a)], { color: C.ink, width: 2.5 }); }
+      g.rect(TB[0] + 0.6, TB[1] - 0.35, 1.2, 0.7, { fill: '#fde68a', color: C.ink, width: 2, radius: 6 });
+      g.text([TB[0] + 1.2, TB[1]], 'G', { bold: true, size: 15 });
+      g.path([[TB[0] + 1.8, TB[1]], [5.9, TB[1] + 1.2], [5.9, 2.4]], { color: C.energy, width: 2.5 });
+      g.text([5.9, 2.65], `${num(P() / 1e6, 1)} MW`, { align: 'right', size: 16, bold: true, color: C.energy });
+      // head h
+      g.arrow([-4.8, top], [0, TB[1] - top], { color: C.ink, width: 1.5, head: 8 });
+      g.line([-6.2, TB[1]], [TB[0], TB[1]], { color: C.muted, width: 1, dash: true });
+      g.text([-4.7, (top + TB[1]) / 2], `h = ${hS.value} m`, { align: 'left', size: 15, bold: true, bg: true });
+      g.line([-6.2, -2.7], [6.2, -2.7], { color: C.ink, width: 2 });
+      // energy per kg
+      g.text([1.6, 2.3], `each kg of water: gh = ${num(G * hS.value, 0)} J`, { align: 'left', size: 13 });
+      g.text([1.6, 1.8], `→ electricity: ηgh = ${num(G * hS.value * eS.value / 100, 0)} J`, { align: 'left', size: 13, color: C.energy, bold: true });
+    };
 
-    function calcMW(head, flow) {
-      return (eta * 1000 * flow * 9.8 * head) / 1e6;
-    }
-
-    // Visual schematic of Dam
-    // Upper reservoir
-    board.create('polygon', [[0, 3.5], [2.5, 3.5], [2.5, 6], [0, 6]], {
-      fillColor: '#38bdf8',
-      fillOpacity: 0.5,
-      strokeColor: '#0284c7',
-      strokeWidth: 2,
-      vertices: { visible: false }
-    });
-    board.create('text', [0.3, 5.2, 'Upper Reservoir'], { color: '#ffffff', fontSize: 11, fontWeight: 'bold' });
-
-    // Concrete dam wall
-    board.create('polygon', [[2.5, 0.5], [3.8, 0.5], [3.2, 6], [2.5, 6]], {
-      fillColor: '#64748b',
-      fillOpacity: 0.9,
-      strokeColor: '#94a3b8',
-      strokeWidth: 2,
-      vertices: { visible: false }
-    });
-    board.create('text', [2.9, 3.0, 'DAM'], { color: '#ffffff', fontSize: 12, fontWeight: 'bold' });
-
-    // Penstock pipe
-    board.create('segment', [[2.5, 4.0], [5.5, 1.2]], { strokeColor: '#cbd5e1', strokeWidth: 8 });
-    board.create('text', [4.2, 3.0, 'Penstock'], { color: '#cbd5e1', fontSize: 11 });
-
-    // Powerhouse & Turbine
-    board.create('polygon', [[5.2, 0.5], [7.0, 0.5], [7.0, 2.0], [5.2, 2.0]], {
-      fillColor: '#1e293b',
-      fillOpacity: 0.9,
-      strokeColor: '#38bdf8',
-      strokeWidth: 2,
-      vertices: { visible: false }
-    });
-    board.create('text', [6.1, 1.3, 'Turbine'], { color: '#38bdf8', fontSize: 11, anchorX: 'middle' });
-
-    // Power label
-    let pTxt = board.create('text', [6.1, 4.8, function() {
-      return 'Generated Power:\n' + calcMW(h_val, q_val).toFixed(1) + ' MW';
-    }], { color: '#4ade80', fontSize: 14, fontWeight: 'bold', anchorX: 'middle' });
-
-    function update() {
-      document.getElementById('head-val').textContent = h_val + ' m';
-      document.getElementById('flow-val').textContent = q_val + ' m³/s';
-      document.getElementById('hp-stat').textContent = calcMW(h_val, q_val).toFixed(1) + ' MW';
-      board.update();
-    }
-
-    document.getElementById('head-slider').addEventListener('input', function() {
-      h_val = parseFloat(this.value);
-      update();
-    });
-
-    document.getElementById('flow-slider').addEventListener('input', function() {
-      q_val = parseFloat(this.value);
-      update();
-    });
-
-    update();
+    k.update = () => {
+      k.readout([
+        `Mass flow = ρQ = 1000 × ${qS.value} = ${num(RHO * qS.value / 1000, 0)} tonnes of water per second.`,
+        `P = ηρQgh = ${num(eS.value / 100, 2)} × 1000 × ${qS.value} × 9.8 × ${hS.value} = <b>${num(P() / 1e6, 1)} MW</b>`,
+        'Potential energy of the water → kinetic energy in the pipe → rotation of the turbine → electrical energy. Higher dams and bigger rivers give more power.'
+      ]);
+    };
   })();
   </script>
 </div>

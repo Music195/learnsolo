@@ -53,74 +53,94 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Real-Time Sinusoidal AC Generator Waveform</span>
-  <p class="demo-instruction">Adjust peak voltage $E_0$ and frequency $f$ to inspect how the alternating waveform and instantaneous voltage $E(t)$ respond over time.</p>
-
-  <div id="ac-board" style="width: 100%; height: 350px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Peak $E_0$: 
-      <input id="e0-slider" type="range" min="50" max="250" step="10" value="150" style="vertical-align: middle;">
-      <span id="e0-val" style="color: #38bdf8; font-weight: 700;">150 V</span>
-    </label>
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Frequency $f$: 
-      <input id="f-slider" type="range" min="20" max="100" step="10" value="50" style="vertical-align: middle;">
-      <span id="f-val" style="color: #4ade80; font-weight: 700;">50 Hz</span>
-    </label>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      Period $T$: <span id="t-period-stat" style="color: #fb923c; font-weight: 700;">20.0 ms</span> &bull; &omega;: <span id="omega-stat" style="color: #facc15; font-weight: 700;">314 rad/s</span>
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; Where the Sine Wave Comes From</span>
+  <p class="demo-question">Why does the mains voltage follow a sine curve, and what do the electrons in the wire actually do?</p>
+  <p class="demo-instruction">The arrow on the left turns at angular frequency $\omega = 2\pi f$; its height is the instantaneous value $E_0 \sin \omega t$, traced out on the graph (time is slowed down so you can watch). Drag the <b>orange marker</b> on the graph to read the value at any time. Below, the electrons in the wire only shake back and forth for AC; switch to <b>DC</b> to see them drift steadily one way.</p>
+  <div id="pk-acwave"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('ac-board', {
-      boundingbox: [-2, 280, 42, -280],
-      axis: true,
-      defaultAxes: {
-        x: { name: 'Time t (ms)', withLabel: true, label: { position: 'rt', offset: [-20, -15], color: '#94a3b8' } },
-        y: { name: 'EMF E (V)', withLabel: true, label: { position: 'rt', offset: [15, -10], color: '#94a3b8' } }
-      },
-      showNavigation: false,
-      showCopyright: false,
-      pan: { enabled: false },
-      zoom: { enabled: false }
-    });
+  (function () {
+    const k = PhysKit.mount('pk-acwave', { x: [-6.2, 6.2], y: [-2.6, 2.6] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    k.row();
+    const kind = k.choice(['AC', 'DC (battery)'], 0);
+    const qty = k.choice(['emf E (V)', 'current I (A)'], 0);
+    k.row();
+    const pS = k.slider({ label: 'peak', min: 1, max: 300, step: 1, value: 150, digits: 0 });
+    const fS = k.slider({ label: 'f', unit: 'Hz', min: 10, max: 100, step: 1, value: 60, digits: 0 });
+    const RS = k.slider({ label: 'R (load)', unit: 'Ω', min: 5, max: 200, step: 5, value: 50, digits: 0 });
+    k.row();
+    let tm = 0, playing = true;                         // tm = real time in seconds (exact)
+    const pb = k.button('❚❚ Pause', () => { playing = !playing; pb.textContent = playing ? '❚❚ Pause' : '▶ Play'; }, { primary: true });
+    const pause = () => { playing = false; pb.textContent = '▶ Play'; };
+    k.button('Example 11.1 (150 sin 377t, t = 1/120 s)', () => { kind.set(0); qty.set(0); pS.value = 150; fS.value = 60; RS.value = 50; w = 377; tm = 1 / 120; pause(); });
+    k.button('Example 11.2 (20 sin 100πt, t = 1/600 s)', () => { kind.set(0); qty.set(1); pS.value = 20; fS.value = 50; w = 100 * Math.PI; tm = 1 / 600; pause(); });
+    // ω is kept exactly (377 in Example 11.1 is not exactly 2π × 60)
+    let w = 2 * Math.PI * 60;
+    fS.on(v => { w = 2 * Math.PI * v; });
+    const T = () => 2 * Math.PI / w;
+    k.loop(dt => { if (playing) tm = (tm + dt * T() / 2) % (2 * T()); }, { button: false });   // one cycle every 2 s
 
-    let waveGraph = null;
+    const PC = [-4.5, 0.35], PR = 1.35, GX0 = -2.4, GX1 = 5.8, GY = 0.35;
+    const tx = t => GX0 + (GX1 - GX0) * t / (2 * T());
+    const unit = () => qty.value === 0 ? 'V' : 'A';
+    const val = t => kind.value === 1 ? pS.value : pS.value * Math.sin(w * t);
+    k.view.drag({ get: () => [tx(tm), GY + PR * val(tm) / pS.value], hit: p => p[0] > GX0 - 0.1 && p[0] < GX1 + 0.1 && p[1] > -1.4,
+      set: p => { pause(); tm = Math.max(0, Math.min(2 * T(), (p[0] - GX0) / (GX1 - GX0) * 2 * T())); k.update(); } });
 
-    function updateAC() {
-      board.suspendUpdate();
-      if (waveGraph) board.removeObject(waveGraph);
+    k.draw = g => {
+      const ac = kind.value === 0, E0 = pS.value, y = val(tm) / E0, ph = w * tm;
+      const col = qty.value === 0 ? C.energy : C.vel;
+      // left: the rotating arrow (phasor) or a battery
+      if (ac) {
+        g.circle(PC, PR, { color: '#cbd5e1', width: 1.5 });
+        g.line([PC[0] - PR - 0.2, PC[1]], [PC[0] + PR + 0.2, PC[1]], { color: '#e2e8f0', width: 1 });
+        const tip = [PC[0] + PR * Math.cos(ph), PC[1] + PR * Math.sin(ph)];
+        const arc = []; for (let a = 0; a <= (ph % (2 * Math.PI)) + 1e-9; a += 0.05) arc.push([PC[0] + 0.45 * Math.cos(a), PC[1] + 0.45 * Math.sin(a)]);
+        if (arc.length > 1) g.path(arc, { color: C.muted, width: 1.5 });
+        g.text([PC[0] + 0.62, PC[1] + 0.22], 'ωt', { size: 12, color: C.muted, align: 'left' });
+        g.arrow(PC, [tip[0] - PC[0], tip[1] - PC[1]], { color: col, width: 3 });
+        g.line([tip[0], PC[1]], tip, { color: col, width: 1.5, dash: [3, 3] });
+        g.line(tip, [tx(tm), tip[1]], { color: '#94a3b8', width: 1, dash: [4, 4] });
+        g.dot(tip, 5, col);
+        g.text([PC[0], PC[1] - PR - 0.3], `ωt = ${num((ph * 180 / Math.PI) % 360, 0)}°`, { size: 12, bold: true });
+      } else {
+        g.line([PC[0] - 0.6, 0.65], [PC[0] + 0.6, 0.65], { color: C.ink, width: 3 });
+        g.line([PC[0] - 0.3, 0.25], [PC[0] + 0.3, 0.25], { color: C.ink, width: 7 });
+        g.text([PC[0], -0.3], 'steady: never changes', { size: 12, color: C.muted });
+      }
+      // right: the graph against time, two periods wide
+      g.line([GX0, GY], [GX1 + 0.15, GY], { color: C.ink, width: 1.5 });
+      g.line([GX0, GY - PR - 0.2], [GX0, GY + PR + 0.25], { color: C.ink, width: 1.5 });
+      g.text([GX1 + 0.15, GY - 0.25], 't', { size: 12, align: 'right', color: C.muted });
+      [1, -1].forEach(s => { g.line([GX0 - 0.08, GY + s * PR], [GX1, GY + s * PR], { color: '#e2e8f0', width: 1, dash: [4, 4] }); g.text([GX0 - 0.12, GY + s * PR], (s > 0 ? '+' : '−') + `${E0}`, { size: 11, align: 'right', color: C.muted }); });
+      if (ac) { g.line([tx(T()), GY - 0.12], [tx(T()), GY + 0.12], { color: C.ink, width: 1.5 }); g.text([tx(T()), GY - 0.3], `T = ${num(T() * 1000, 2)} ms`, { size: 11, color: C.muted }); }
+      const pts = []; for (let s = 0; s <= 1.0001; s += 0.004) { const t = s * 2 * T(); pts.push([tx(t), GY + PR * val(t) / E0]); }
+      g.path(pts, { color: col, width: 1.5, alpha: 0.35 });
+      const done = pts.filter(p => p[0] <= tx(tm) + 1e-9); if (done.length > 1) g.path(done, { color: col, width: 3 });
+      g.line([tx(tm), GY], [tx(tm), GY + PR * y], { color: C.energy, width: 1.5 });
+      g.handle([tx(tm), GY + PR * y], C.energy);
+      g.text([tx(tm), GY + PR * y + (y >= 0 ? 0.38 : -0.38)], `${num(val(tm), 2)} ${unit()}`, { size: 12, bold: true, color: col, bg: '#fff' });
+      g.text([1.7, 2.35], `t = ${num(tm * 1000, 3)} ms`, { size: 13, bold: true });
+      // bottom: a strip of wire with its free electrons
+      const WY = -2.05;
+      g.rect(-6.0, WY - 0.28, 11.9, 0.56, { fill: '#fef3c7', color: '#d97706', width: 1.5, radius: 10 });
+      // electron displacement: for AC it is the integral of the current, so it lags (−cos)
+      const shift = ac ? -0.32 * Math.cos(ph) : (tm / T()) * 0.9 % 0.9;
+      for (let j = 0; j < 14; j++) { let x = -5.8 + j * 0.9 + shift; if (!ac) x = -5.8 + ((j * 0.9 + shift) % 12.6); if (x < -5.9 || x > 5.8) continue; g.circle([x, WY], 0.11, { fill: '#2563eb', color: '#1e3a8a', width: 1 }); }
+      g.text([0, WY - 0.48], ac ? 'electrons shake back and forth about fixed places' : 'electrons drift steadily one way', { size: 11, color: C.muted });
+    };
 
-      let E0 = parseFloat(document.getElementById('e0-slider').value);
-      let f = parseFloat(document.getElementById('f-slider').value);
-      let T_ms = (1000.0 / f);
-      let omega = 2 * Math.PI * f;
-
-      document.getElementById('e0-val').textContent = E0 + ' V';
-      document.getElementById('f-val').textContent = f + ' Hz';
-      document.getElementById('t-period-stat').textContent = T_ms.toFixed(1) + ' ms';
-      document.getElementById('omega-stat').textContent = omega.toFixed(0) + ' rad/s';
-
-      // Function in ms: E(t_ms) = E0 * sin(2*pi*f * (t_ms/1000))
-      waveGraph = board.create('functiongraph', [
-        function(t_ms) {
-          return E0 * Math.sin((2 * Math.PI * f * t_ms) / 1000.0);
-        }, 0, 40
-      ], {
-        strokeColor: '#38bdf8', strokeWidth: 3
-      });
-
-      board.resumeUpdate();
-    }
-
-    updateAC();
-
-    document.getElementById('e0-slider').addEventListener('input', updateAC);
-    document.getElementById('f-slider').addEventListener('input', updateAC);
+    k.update = () => {
+      const E0 = pS.value, f = w / (2 * Math.PI), q = qty.value === 0;
+      const ln = [];
+      if (kind.value === 1) ln.push(`DC: the value stays at ${E0} ${unit()} all the time and the current never reverses.`);
+      else {
+        ln.push(`${q ? 'E' : 'I'} = ${E0} sin(${num(w, w % 1 ? 1 : 0)} t): peak <b>${E0} ${unit()}</b>, ω = ${num(w, 1)} rad/s, f = ω/2π = <b>${num(f, 1)} Hz</b>, T = 1/f = <b>${num(1000 / f, 2)} ms</b>`);
+        ln.push(`At t = ${num(tm * 1000, 3)} ms: ωt = ${num(w * tm, 3)} rad = ${num(w * tm * 180 / Math.PI, 1)}°, value = ${E0} × sin(${num(w * tm * 180 / Math.PI, 1)}°) = <b>${num(val(tm), 2)} ${unit()}</b>`);
+        if (q) ln.push(`With R = ${RS.value} Ω the peak current is ${rich('I_0')} = ${rich('E_0')}/R = ${E0}/${RS.value} = <b>${num(E0 / RS.value, 2)} A</b>.`);
+      }
+      k.readout(ln);
+    };
   })();
   </script>
 </div>
