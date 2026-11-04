@@ -1,0 +1,130 @@
+<!-- tags: Chemistry and Green Environment, G12 Chemistry Myanmar -->
+<!-- Grade 12 Chemistry textbook, Chapter 7, section 7.2 (pages 115–118) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Chemistry and Green Environment">Harmful Substances in the Environment</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Pollutants That Stay and Build Up</span>
+  <p><strong>Environmental pollution</strong> is the harmful release of substances that damage biodiversity, ecosystems and health. Four groups matter most here.</p>
+  <ul>
+    <li><strong>Heavy metals</strong>: dense metals that are toxic even at very low concentrations. People spread them through air, water, soil and food, and change their chemical form.
+      <ul>
+        <li><em>Arsenic</em> (+3, +5; not found as the element): dissolves out of arsenic-rich rocks into groundwater and soil; pure As oxidises in humid air to toxic arsenic anhydride. Soluble arsenic compounds are used in green and yellow paint, glass, ceramics and semiconductors; sodium arsenate kills parasites on fruit and potato crops. Harmful at micrograms to milligrams per litre.</li>
+        <li><em>Cadmium</em> (+2): released as Cd and CdO, also CdS (coal burning) and CdCl₂ (waste incineration); tobacco smoke is a major source. Used in cells, accumulators, porcelain, dental amalgam, plastics, metal coatings, photovoltaics.</li>
+        <li><em>Lead</em> (+2, +4): mainly from engine exhaust, so highest in urban industrial air. Used in batteries, paint and alloys. Causes slower growth and reproduction, and nerve damage in vertebrates.</li>
+        <li><em>Mercury</em> (0, +1, +2): microorganisms turn inorganic mercury into <strong>methylmercury</strong>, which <strong>bioaccumulates</strong> in fish and shellfish. People take it in mostly as vapour (gold panning, tooth fillings). It harms the nervous, digestive and immune systems, lungs, kidneys, skin, eyes and the unborn child.</li>
+      </ul></li>
+    <li><strong>Pesticides</strong> kill pests or reduce the damage they cause (insects, mice, weeds, fungi, bacteria, viruses). Families: organophosphates, organochlorines, carbamates and thiocarbamates, pyrethroids. In the environment they are <em>adsorbed</em> on soil (positive pesticide molecules bind to negative clay), <em>transferred</em> (volatilisation, spray drift, runoff, leaching, absorption, crop removal) and <em>degraded</em> after application by microbes, chemical reactions and <strong>photodegradation</strong> (sunlight), over hours to years. They also poison birds, fish, useful insects and other plants, with acute and chronic effects.</li>
+    <li><strong>Persistent organic pollutants (POPs)</strong>: carbon compounds that last a long time and resist breakdown, e.g. PCBs and DDT. They are <strong>lipophilic</strong> (fat-loving), so they collect in fatty tissue and build up along food chains.</li>
+    <li><strong>Volatile organic compounds (VOCs)</strong>: organic chemicals that vaporise, from paint thinners, dry-cleaning fluid, nail polish remover, grease solvents, fuels and plastics. In sunlight VOCs react with nitrogen oxides to form <strong>ozone</strong> and fine particles: <strong>smog</strong>. Burning plastics releases dioxins, furans, mercury and PCBs.</li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Key Ideas</span>
+  <div class="formula-main">
+    $$\text{bioaccumulation: intake faster than removal} \qquad \text{biomagnification: } c_{\text{next level}} \approx F \times c_{\text{level}}$$
+    $$\mathrm{VOCs} + \mathrm{NO}_x \xrightarrow{\text{sunlight}} \mathrm{O_3} + \text{fine particles} \to \text{smog}$$
+  </div>
+  <ul class="symbols">
+    <li>$F$ (the factor per step up the food chain) is large for fat-soluble, persistent pollutants (DDT, PCBs, methylmercury) and about 1 for water-soluble ones that are excreted</li>
+  </ul>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>POPs vs VOCs:</strong> POPs (DDT, PCBs) persist and build up in fat; VOCs evaporate and make smog.</li>
+    <li><strong>"Organic" means harmless:</strong> DDT, PCBs and methylmercury are organic and highly toxic.</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; Up the Food Chain</span>
+  <p class="demo-question">Why do the top predators carry the most DDT or methylmercury, while a water-soluble pollutant does not build up?</p>
+  <p class="demo-instruction">Choose a pollutant and drag the time slider. Each step up the chain eats many of the level below; a fat-soluble pollutant is kept, a water-soluble one is excreted. The bars use a log scale; the factors are typical sizes, chosen to show the idea.</p>
+  <div id="pk-bio"></div>
+  <script>
+  (function () {
+    const LV = ['Water', 'Plankton', 'Small fish', 'Big fish', 'Bird'];
+    const POL = [
+      { n: 'DDT (POP)', F: 10, note: 'lipophilic and persistent: stored in fat, barely broken down' },
+      { n: 'Methylmercury', F: 8, note: 'formed from inorganic Hg by microorganisms; binds in muscle and builds up' },
+      { n: 'Sodium arsenate', F: 1.2, note: 'water-soluble: mostly excreted, so it hardly builds up' }
+    ];
+    const k = PhysKit.mount('pk-bio', { x: [-6.2, 6.2], y: [-2.5, 2.5] });
+    const C = PhysKit.C, num = k.num;
+    let t = 0;
+    k.row();
+    const pc = k.choice(POL.map(p => p.n), 0);
+    k.row();
+    const yr = k.slider({ label: 'time', unit: 'years', min: 0, max: 10, step: 0.1, value: 6, digits: 1 });
+    k.loop(dt => { t += Math.max(0, Math.min(dt, 0.04)); }, { button: false });
+    // concentration of level i (water = 1); higher levels take longer to fill up
+    const conc = (i, y) => i === 0 ? 1 : Math.pow(POL[pc.value].F, i) * (1 - Math.exp(-y / (0.6 * i)));
+    const X = i => -4.8 + i * 2.4;
+    k.draw = g => {
+      const y = yr.value, P = POL[pc.value];
+      const top = Math.log10(Math.pow(10, 4)) + 0.3;
+      g.line([-6.0, -1.6], [6.0, -1.6], { color: C.faint, width: 1 });
+      for (let i = 0; i < 5; i++) {
+        const c = conc(i, y), L = Math.max(0, Math.log10(Math.max(c, 1e-3)) + 0.3), hgt = 2.9 * L / top;
+        const shade = Math.min(1, L / top);
+        g.rect(X(i) - 0.55, -1.6, 1.1, Math.max(0.03, hgt), { fill: `rgba(220,38,38,${0.25 + 0.7 * shade})`, color: '#991b1b' });
+        g.text([X(i), -1.6 + hgt + 0.25], '×' + (c >= 100 ? Math.round(c).toLocaleString('en') : num(c, c < 10 ? 1 : 0)), { size: 12, bold: true });
+        g.text([X(i), -2.05], LV[i], { size: 11, bold: true });
+        if (i < 4) {
+          g.arrow([X(i) + 0.65, -2.05], [1.05, 0], { color: C.muted, width: 1.5, head: 7 });
+          // pollutant dots carried up the chain
+          const u = ((t * 0.5) + i * 0.13) % 1;
+          g.dot([X(i) + 0.6 + 1.2 * u, -1.0 + 0.4 * Math.sin(u * Math.PI)], 4, P.F > 2 ? C.bad : C.fluid);
+        }
+      }
+      g.text([0, 2.25], `${P.n}: about ×${P.F} per step`, { size: 14, bold: true });
+      g.text([0, 1.85], P.note, { size: 11, color: C.muted });
+    };
+    k.update = () => {
+      const top = conc(4, yr.value);
+      k.readout([`After ${num(yr.value, 1)} years the bird carries <b>${top >= 100 ? Math.round(top).toLocaleString('en') : num(top, 1)} ×</b> the concentration in the water (log scale bars).`,
+        POL[pc.value].F > 2 ? 'Tiny amounts in water become harmful doses at the top: eggshell thinning in birds (DDT), nerve damage in people who eat the fish (methylmercury).' : 'Water-soluble pollutants still harm drinking-water users directly, but they do not magnify up the chain.']);
+    };
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Review Questions (p. 118)</span>
+
+  <p><strong>Review Q1:</strong> Classify as inorganic or organic: sodium arsenate, DDT, methylmercury, lead, cadmium sulphide, PCBs.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">Inorganic: sodium arsenate, lead, cadmium sulphide. Organic: DDT, methylmercury (CH₃Hg⁺ has a C–Hg bond), PCBs.</p></details>
+
+  <p><strong>Review Q2:</strong> Which mercury compound accumulates in living things? Describe the toxic effects of mercury on humans.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer"><strong>Methylmercury</strong> (in fish and shellfish). Mercury harms the nervous, digestive and immune systems, the lungs, kidneys, skin and eyes, and the development of the child in the womb and in early life.</p></details>
+
+  <p><strong>Review Q3:</strong> (a) How are pesticides broken down? (b) One example each of a POP and a VOC.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">(a) By microbes, by chemical reactions and by photodegradation (sunlight). (b) POP: DDT (or PCBs). VOC: paint thinner (or dry-cleaning fluid, nail polish remover).</p></details>
+
+  <p><strong>Exercises 1(b), 1(c), 2(d), 2(e), 3(a), 3(b), 6(b)–(d), 7–10 (pp. 124–125):</strong></p>
+  <details><summary>Show answer</summary>
+    <p>(1b) FALSE: <em>volatile</em> organic compounds lead to smog. (1c) FALSE: pesticides degrade <em>after</em> application. (2d) lead. (2e) cadmium. (3a) POPs. (3b) +3.</p>
+    <p>(6b) Desorption and dissolution of arsenic from arsenic-rich rocks and minerals. (6c) Methylmercury. (6d) Organophosphates, organochlorines, carbamates and thiocarbamates, pyrethroids.</p>
+    <p>(7) They contaminate soil, water, turf and vegetation, and poison non-target living things (birds, fish, useful insects, other plants). In humans they cause short-term (acute) effects and long-term (chronic) effects that can appear months or years later.</p>
+    <p>(8) Arsenic dissolves from arsenic-rich rocks into groundwater and soil; arsenic compounds are used in paint, glass, ceramics, semiconductors and as sodium arsenate on crops; arsenic oxidises in humid air to toxic arsenic anhydride.</p>
+    <p>(9) Cd: coal burning (CdS), waste incineration (CdCl₂), industry, tobacco smoke. Pb: vehicle exhaust, batteries, paint, alloys. Hg: natural sources and industry, gold panning, dental amalgam, then methylmercury in fish. In the atmosphere mercury is the most harmful: it is breathed in as vapour and goes on to damage the nervous system, lungs, kidneys and the unborn child.</p>
+    <p class="answer">(10) In sunlight VOCs react with nitrogen oxides from vehicles, power plants and industry to form ozone and fine particles, which build up into smog that reduces visibility and harms health.</p></details>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>As, Cd, Pb, Hg are toxic at very low levels; methylmercury builds up in fish.</li>
+    <li>Pesticides are adsorbed, transferred and degraded; they also harm non-target life.</li>
+    <li>POPs (DDT, PCBs) persist and magnify in food chains; VOCs + NOₓ + sunlight → smog.</li>
+  </ul>
+</div>
+
+</article>
