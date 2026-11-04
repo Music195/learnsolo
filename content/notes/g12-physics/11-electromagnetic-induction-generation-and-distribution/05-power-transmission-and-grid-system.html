@@ -1,0 +1,175 @@
+<!-- tags: Electromagnetic Induction, Generation and Distribution, G12 Physics Myanmar -->
+<!-- Grade 12 Physics textbook, Chapter 11, section 11.5 (pages 186–188) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Electromagnetic Induction, Generation and Distribution">Power Transmission and the Grid System</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Long-Distance Power Distribution and Joule Loss Mitigation</span>
+  <p>Electrical power generated at distant stations (hydroelectric dams, thermal stations, and gas turbines) must be transmitted over hundreds of kilometers to metropolitan and rural consumer centers through a <strong>national grid system</strong>:</p>
+  <ul>
+    <li><strong>Structure of the National Grid:</strong>
+      A national grid is an interconnected network of power stations, substations, and high-voltage transmission lines:
+      <ol>
+        <li><strong>Generation Stage:</strong> Three-phase alternators typically generate electricity at intermediate voltages ($11\mathrm{\,kV}$ to $25\mathrm{\,kV}$).</li>
+        <li><strong>Step-Up Substation:</strong> Giant step-up transformers elevate voltage to ultra-high grid transmission levels ($132\mathrm{\,kV}, 220\mathrm{\,kV}, 400\mathrm{\,kV}$, or $500\mathrm{\,kV}$).</li>
+        <li><strong>Grid Transmission Lines:</strong> Strung along steel lattice pylons using aluminum-conductor steel-reinforced ($\mathrm{ACSR}$) cables with low electrical resistance and high tensile strength.</li>
+        <li><strong>Intermediate Step-Down Substations:</strong> Near cities, voltage is stepped down to $33\mathrm{\,kV}$ for heavy industrial plants, then to $11\mathrm{\,kV}$ for light manufacturing.</li>
+        <li><strong>Distribution Substations:</strong> Local pole-mounted or ground transformers step the voltage down to standard consumer levels: $220\text{--}240\mathrm{\,V}$ single-phase for homes, and $400\mathrm{\,V}$ three-phase for commercial facilities.</li>
+      </ol>
+    </li>
+    <li><strong>The High-Voltage Transmission Imperative ($P_{\text{loss}} \propto 1/V^2$):</strong>
+      Let $P$ be the power to be delivered over transmission lines of total loop resistance $R_{\text{line}}$. The transmission current is:
+      $$I = \frac{P}{V}$$
+      The electrical power wasted as thermal Joule heating in the cables is:
+      $$P_{\text{loss}} = I^2 R_{\text{line}} = \left(\frac{P}{V}\right)^2 R_{\text{line}} = \frac{P^2 R_{\text{line}}}{V^2}$$
+      <ul>
+        <li><strong>Square-Law Reduction:</strong> If transmission voltage $V$ is increased by a factor of $100$, the current drops by a factor of $100$, and the resistive transmission power loss $P_{\text{loss}}$ decreases by a factor of $100^2 = 10{,}000$!</li>
+        <li>Without high-voltage stepping, attempting to transmit bulk power at domestic $240\mathrm{\,V}$ would dissipate the entire generated energy as cable heat before reaching consumers.</li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formulas &mdash; Transmission Power Loss</span>
+  <div class="formula-main">
+    $$I = \frac{P}{V} \qquad\qquad P_{\text{loss}} = I^2 R_{\text{line}} = \frac{P^2 R_{\text{line}}}{V^2} \qquad\qquad \%\,\text{Loss} = \frac{P_{\text{loss}}}{P} \times 100\%$$
+  </div>
+  <ul class="symbols">
+    <li>$P$ = total electrical power being transmitted ($\mathrm{W}$ or $\mathrm{kW}$)</li>
+    <li>$V$ = transmission line operating voltage ($\mathrm{V}$ or $\mathrm{kV}$)</li>
+    <li>$I$ = line transmission current ($\mathrm{A}$)</li>
+    <li>$R_{\text{line}}$ = total resistance of both supply and return conductors ($\Omega$)</li>
+    <li>$P_{\text{loss}}$ = power dissipated as Joule heat in transmission cables ($\mathrm{W}$)</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Visualization &mdash; Transmission Voltage vs. Line Power Loss</span>
+  <p class="demo-instruction">Compare the current and Joule heating loss when transmitting $120\mathrm{\,kW}$ over $10\mathrm{\,km}$ at low voltage ($240\mathrm{\,V}$) versus high grid voltage ($24\mathrm{\,kV}$).</p>
+
+  <div id="grid-board" style="width: 100%; height: 350px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
+
+  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
+    <label style="color: #cbd5e1; font-weight: 500;">
+      Transmission Voltage:
+      <select id="grid-v-select" style="padding: 0.3rem 0.6rem; border-radius: 4px; background: #1e293b; color: white; border: 1px solid #475569;">
+        <option value="240">240 V (Direct Low Voltage)</option>
+        <option value="2400">2,400 V (Intermediate Step-Up)</option>
+        <option value="24000" selected>24,000 V (High Voltage Grid)</option>
+        <option value="132000">132,000 V (Super-Grid Line)</option>
+      </select>
+    </label>
+    <div style="color: #f8fafc; font-size: 0.9rem;">
+      Line Current: <span id="grid-i-stat" style="color: #38bdf8; font-weight: 700;">5.00 A</span> &bull; Heat Loss: <span id="grid-loss-stat" style="color: #4ade80; font-weight: 700;">0.20 kW</span> ($0.17\%$)
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    let board = JXG.JSXGraph.initBoard('grid-board', {
+      boundingbox: [-4, 3, 4, -3],
+      axis: false,
+      showNavigation: false,
+      showCopyright: false,
+      pan: { enabled: false },
+      zoom: { enabled: false }
+    });
+
+    let P_total = 120000; // 120 kW
+    let R_line = 8.0; // 8 ohms total loop
+
+    let diagElements = [];
+
+    function updateGrid() {
+      board.suspendUpdate();
+      board.removeObject(diagElements);
+      diagElements = [];
+
+      let V = parseFloat(document.getElementById('grid-v-select').value);
+      let I = P_total / V;
+      let Ploss_W = I * I * R_line;
+      let Ploss_kW = Ploss_W / 1000.0;
+      let lossPct = (Ploss_W / P_total) * 100.0;
+
+      document.getElementById('grid-i-stat').textContent = I < 10 ? I.toFixed(2) + ' A' : I.toFixed(0) + ' A';
+      document.getElementById('grid-loss-stat').textContent = Ploss_kW.toFixed(2) + ' kW (' + lossPct.toFixed(1) + '%)';
+
+      // Power Station box (left)
+      let genBox = board.create('polygon', [[-3.5, -1.2], [-2.0, -1.2], [-2.0, 1.2], [-3.5, 1.2]], {
+        fillColor: '#0284c7', fillOpacity: 0.8, borders: { strokeColor: '#38bdf8', strokeWidth: 2 }
+      });
+      let genT = board.create('text', [-2.75, 0, 'Power Plant\n120 kW'], {
+        anchorX: 'middle', anchorY: 'middle', strokeColor: '#ffffff', fontSize: 11, fontWeight: 'bold'
+      });
+
+      // Town box (right)
+      let townBox = board.create('polygon', [[2.0, -1.2], [3.5, -1.2], [3.5, 1.2], [2.0, 1.2]], {
+        fillColor: '#16a34a', fillOpacity: 0.8, borders: { strokeColor: '#4ade80', strokeWidth: 2 }
+      });
+      let townT = board.create('text', [2.75, 0, 'Town Load\n(10 km away)'], {
+        anchorX: 'middle', anchorY: 'middle', strokeColor: '#ffffff', fontSize: 11, fontWeight: 'bold'
+      });
+
+      // Transmission lines
+      let lineCol = lossPct > 50 ? '#ef4444' : (lossPct > 5 ? '#facc15' : '#4ade80');
+      let tLine1 = board.create('segment', [[-2.0, 0.6], [2.0, 0.6]], { strokeColor: lineCol, strokeWidth: 4 });
+      let tLine2 = board.create('segment', [[-2.0, -0.6], [2.0, -0.6]], { strokeColor: lineCol, strokeWidth: 4 });
+
+      let statT = board.create('text', [0, 1.8, 'V = ' + (V / 1000 >= 1 ? (V / 1000) + ' kV' : V + ' V') + ' | I = ' + I.toFixed(1) + ' A | Cable Loss = ' + Ploss_kW.toFixed(1) + ' kW'], {
+        anchorX: 'middle', strokeColor: lineCol, fontSize: 12, fontWeight: 'bold'
+      });
+
+      diagElements.push(genBox, genT, townBox, townT, tLine1, tLine2, statT);
+      board.resumeUpdate();
+    }
+
+    updateGrid();
+
+    document.getElementById('grid-v-select').addEventListener('change', updateGrid);
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Worked Problem &mdash; Power Loss Comparison in High-Voltage Lines</span>
+  <div class="example-problem">
+    <strong>Chapter 11 Exercise 16 (Textbook Page 194):</strong><br>
+    $120\mathrm{\,kW}$ of electrical power is sent to a small town from a power plant $10\mathrm{\,km}$ away. The transmission lines have a resistance of $0.40\,\Omega\mathrm{\,km^{-1}}$. Calculate the power loss if the electricity is transmitted at:<br>
+    <strong>(i)</strong> $240\mathrm{\,V}$<br>
+    <strong>(ii)</strong> $24{,}000\mathrm{\,V}$
+  </div>
+  <div class="example-solution">
+    <strong>Given Data:</strong>
+    <ul>
+      <li>Transmitted power $P = 120\mathrm{\,kW} = 1.20 \times 10^5\mathrm{\,W}$</li>
+      <li>Distance $L = 10\mathrm{\,km}$</li>
+      <li>Total loop resistance for a two-wire line (outward and return conductors):
+        $$R_{\text{line}} = 2 \times (10\mathrm{\,km} \times 0.40\,\Omega\mathrm{\,km^{-1}}) = 8.0\,\Omega$$
+      </li>
+    </ul>
+
+    <strong>Case (i): Transmitted at $V_1 = 240\mathrm{\,V}$:</strong>
+    $$I_1 = \frac{P}{V_1} = \frac{1.20 \times 10^5\mathrm{\,W}}{240\mathrm{\,V}} = 500\mathrm{\,A}$$
+    $$P_{\text{loss}, 1} = I_1^2 R_{\text{line}} = (500\mathrm{\,A})^2 \times 8.0\,\Omega = 250{,}000 \times 8.0 = 2{,}000{,}000\mathrm{\,W} = 2000\mathrm{\,kW}$$
+    <em>Conclusion: The calculated loss ($2000\mathrm{\,kW}$) vastly exceeds the generated $120\mathrm{\,kW}$, meaning transmission at $240\mathrm{\,V}$ over $10\mathrm{\,km}$ is physically impossible without total power collapse.</em>
+
+    <strong>Case (ii): Transmitted at $V_2 = 24{,}000\mathrm{\,V}$ ($24\mathrm{\,kV}$):</strong>
+    $$I_2 = \frac{P}{V_2} = \frac{1.20 \times 10^5\mathrm{\,W}}{24{,}000\mathrm{\,V}} = 5.0\mathrm{\,A}$$
+    $$P_{\text{loss}, 2} = I_2^2 R_{\text{line}} = (5.0\mathrm{\,A})^2 \times 8.0\,\Omega = 25 \times 8.0 = 200\mathrm{\,W} = 0.20\mathrm{\,kW}$$
+    $$\text{Percentage Loss} = \frac{0.20\mathrm{\,kW}}{120\mathrm{\,kW}} \times 100\% \approx 0.17\%$$
+    <em>Conclusion: At $24\mathrm{\,kV}$, less than $0.2\%$ of total power is lost as cable heat!</em>
+  </div>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>The national grid uses transformers to transmit power at hundreds of kilovolts ($132\text{--}500\mathrm{\,kV}$).</li>
+    <li>Line Joule heating loss is $P_{\text{loss}} = I^2 R = \frac{P^2 R}{V^2}$.</li>
+    <li>Increasing transmission voltage by $100\times$ reduces power loss by a factor of $10{,}000$ ($100^2$).</li>
+  </ul>
+</div>
+
+</article>

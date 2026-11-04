@@ -1,0 +1,163 @@
+<!-- tags: Capacitor and Capacitance, G12 Physics Myanmar -->
+<!-- Grade 12 Physics textbook, Chapter 9, section 9.2 (pages 140–141) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Capacitor and Capacitance">Capacitance and Charge Storage</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Definition and Physical Nature of Capacitance</span>
+  <p>The ability of an electrical capacitor to store electric charge per unit potential difference is quantified by its <strong>capacitance</strong> ($C$):</p>
+  <ul>
+    <li><strong>Definition:</strong> The capacitance $C$ of a capacitor is defined as the ratio of the magnitude of electric charge $Q$ on either conductor plate to the potential difference $V$ across the two conductors:
+      $$C = \frac{Q}{V}$$
+      <em>Note:</em> When a capacitor is charged, one conductor carries $+Q$ and the opposite conductor carries $-Q$. The total net charge of the capacitor as a whole is zero ($+Q - Q = 0$). By convention, the "charge on a capacitor" refers exclusively to the magnitude $Q$.
+    </li>
+    <li><strong>SI Unit & Submultiples:</strong>
+      <ul>
+        <li>The SI unit of capacitance is the <strong>Farad</strong> ($\mathrm{F}$), named in honour of Michael Faraday:
+          $$1\mathrm{\,Farad} = 1\mathrm{\,Coulomb\ per\ Volt} \quad (1\mathrm{\,F} = 1\mathrm{\,C/V})$$
+        </li>
+        <li><strong>Definition of One Farad:</strong> A capacitor has a capacitance of one farad if a potential difference of one volt between its conductors establishes a charge of one coulomb on each conductor.</li>
+        <li>One farad is an extraordinarily large capacitance for conventional geometric devices. Common practical submultiples include:
+          $$\text{Microfarad } (\mu\mathrm{F}) = 10^{-6}\mathrm{\,F} \qquad \text{Nanofarad } (\mathrm{nF}) = 10^{-9}\mathrm{\,F} \qquad \text{Picofarad } (\mathrm{pF}) = 10^{-12}\mathrm{\,F}$$
+        </li>
+      </ul>
+    </li>
+    <li><strong>Independence from Voltage and Charge:</strong>
+      A fundamental principle of electrostatics is that $C$ is a geometric constant of the physical device. It depends <strong>only on the physical geometry</strong> (plate area $A$, separation distance $d$, and shape) and the dielectric material between the plates. It is strictly <strong>independent of the applied voltage $V$ or accumulated charge $Q$</strong>:
+      <ul>
+        <li>Increasing the applied voltage $V$ causes a proportional influx of charge $Q$ ($Q \propto V$), keeping the ratio $Q/V = C$ constant.</li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formulas &mdash; Capacitance Definition</span>
+  <div class="formula-main">
+    $$C = \frac{Q}{V} \qquad\qquad Q = C V \qquad\qquad V = \frac{Q}{C}$$
+  </div>
+  <ul class="symbols">
+    <li>$C$ = capacitance ($\mathrm{F}$, $\mu\mathrm{F}$, $\mathrm{nF}$, $\mathrm{pF}$)</li>
+    <li>$Q$ = magnitude of charge stored on either plate ($\mathrm{C}$, $\mu\mathrm{C}$)</li>
+    <li>$V$ = electrostatic potential difference across the plates ($\mathrm{V}$)</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Visualization &mdash; Charge Accumulation Under Applied Voltage</span>
+  <p class="demo-instruction">Adjust the battery voltage slider $V$ to see that charge $Q$ grows linearly while capacitance $C = Q/V$ remains strictly constant.</p>
+
+  <div id="q-v-board" style="width: 100%; height: 350px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
+
+  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
+    <label style="color: #cbd5e1; font-weight: 500;">
+      Applied Voltage $V$: 
+      <input id="v-slider" type="range" min="0" max="100" step="5" value="50" style="vertical-align: middle;">
+      <span id="v-val" style="color: #38bdf8; font-weight: 700;">50 V</span>
+    </label>
+    <div style="color: #f8fafc; font-size: 0.9rem;">
+      Charge $Q$: <span id="q-stat" style="color: #4ade80; font-weight: 700;">2.00 mC</span> &bull; Capacitance $C$: <span id="c-stat" style="color: #fb923c; font-weight: 700;">40.0 &mu;F</span>
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    let board = JXG.JSXGraph.initBoard('q-v-board', {
+      boundingbox: [-10, 5, 110, -0.5],
+      axis: true,
+      defaultAxes: {
+        x: { name: 'V (Volts)', withLabel: true, label: { position: 'rt', offset: [-20, -15], color: '#94a3b8' } },
+        y: { name: 'Q (mC)', withLabel: true, label: { position: 'rt', offset: [15, -10], color: '#94a3b8' } }
+      },
+      showNavigation: false,
+      showCopyright: false,
+      pan: { enabled: false },
+      zoom: { enabled: false }
+    });
+
+    let C_uF = 40.0; // 40 uF = 0.04 mC/V
+    let slope = C_uF / 1000.0; // in mC per V = 0.04
+
+    // Plot Q = C * V line
+    board.create('line', [[0, 0], [100, 100 * slope]], {
+      strokeColor: '#38bdf8', strokeWidth: 2.5
+    });
+
+    let pt = board.create('point', [50, 50 * slope], {
+      size: 5, fillColor: '#4ade80', strokeColor: '#22c55e', name: 'Operating Point', fixed: true
+    });
+
+    function updatePoint() {
+      let v = parseFloat(document.getElementById('v-slider').value);
+      let q_mC = v * slope;
+      pt.moveTo([v, q_mC]);
+
+      document.getElementById('v-val').textContent = v + ' V';
+      document.getElementById('q-stat').textContent = q_mC.toFixed(2) + ' mC';
+      document.getElementById('c-stat').textContent = C_uF.toFixed(1) + ' µF';
+    }
+
+    document.getElementById('v-slider').addEventListener('input', updatePoint);
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Worked Example 9.1 &mdash; Evaluating Capacitance and Voltage Doubling</span>
+  <div class="example-problem">
+    <strong>Textbook Example 9.1 (Page 141):</strong><br>
+    When a parallel-plate capacitor is connected to a $50\mathrm{\,V}$ battery, each plate receives a charge of magnitude $0.002\mathrm{\,C}$.<br>
+    <strong>(a)</strong> Find its capacitance.<br>
+    <strong>(b)</strong> If the capacitor is connected to a $100\mathrm{\,V}$ battery, does the capacitance change?<br>
+    <strong>(c)</strong> Does the charge still remain the same?
+  </div>
+  <div class="example-solution">
+    <strong>Given Data:</strong>
+    <ul>
+      <li>$V_1 = 50\mathrm{\,V}$</li>
+      <li>$Q_1 = 0.002\mathrm{\,C} = 2 \times 10^{-3}\mathrm{\,C}$</li>
+    </ul>
+
+    <strong>Part (a): Calculate Capacitance $C$:</strong>
+    $$C = \frac{Q_1}{V_1} = \frac{0.002\mathrm{\,C}}{50\mathrm{\,V}} = 4.0 \times 10^{-5}\mathrm{\,F} = 40\,\mu\mathrm{F}$$
+
+    <strong>Part (b): Voltage increased to $100\mathrm{\,V}$ &mdash; Does $C$ change?</strong><br>
+    <strong>No.</strong> Capacitance depends purely on physical factors (plate area, spacing, dielectric material). It does not depend on applied voltage. Hence, $C = 40\,\mu\mathrm{F}$ remains identical.
+
+    <strong>Part (c): Does the charge remain the same?</strong><br>
+    <strong>No.</strong> The accumulated charge is directly proportional to voltage:
+    $$Q_2 = C V_2 = (4.0 \times 10^{-5}\mathrm{\,F}) \times (100\mathrm{\,V}) = 4.0 \times 10^{-3}\mathrm{\,C} = 0.004\mathrm{\,C}$$
+    Doubling the potential difference from $50\mathrm{\,V}$ to $100\mathrm{\,V}$ doubles the stored charge to $0.004\mathrm{\,C}$.
+  </div>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Reviewed Exercise &mdash; True or False Analysis</span>
+  <div class="example-problem">
+    <strong>Textbook Exercises 1 & 2 (Page 151):</strong><br>
+    State whether the following statements are True (T) or False (F):<br>
+    (i) If one conductor of a capacitor has a charge $+Q$, the other has a charge $-Q$.<br>
+    (ii) The charge of the capacitor is the magnitude of the charge on each conductor.<br>
+    (iii) The potential difference of the capacitor is twice the potential difference between two conductors.
+  </div>
+  <div class="example-solution">
+    <strong>Answers:</strong>
+    <ul>
+      <li><strong>(i) True:</strong> Electric induction and charge conservation ensure equal and opposite surface charges on facing plates.</li>
+      <li><strong>(ii) True:</strong> By standard definition, the stored charge $Q$ is defined as the absolute magnitude on either plate ($Q = |+Q| = |-Q|$).</li>
+      <li><strong>(iii) False:</strong> The potential difference of the capacitor <em>is</em> simply the electric potential difference $V = V_+ - V_-$ between the two conductors, not twice that value.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>Capacitance $C = \frac{Q}{V}$ measures the charge stored per volt of electric potential difference.</li>
+    <li>$1\mathrm{\,Farad} = 1\mathrm{\,Coulomb / Volt}$. Common practical units: $\mu\mathrm{F}, \mathrm{nF}, \mathrm{pF}$.</li>
+    <li>Capacitance is an intrinsic geometric and dielectric property; varying $V$ alters $Q$ proportionally, leaving $C$ unchanged.</li>
+  </ul>
+</div>
+
+</article>

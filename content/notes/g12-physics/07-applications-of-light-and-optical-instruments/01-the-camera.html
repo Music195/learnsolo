@@ -1,0 +1,173 @@
+<!-- tags: Applications of Light and Optical Instruments, G12 Physics Myanmar -->
+<!-- Grade 12 Physics textbook, Chapter 7, section 7.1 (pages 99–100) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Applications of Light and Optical Instruments">The Camera</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Optical Principles of Photographic Recording</span>
+  <p>A <strong>camera</strong> is an optical instrument that captures and records optical images of objects onto photosensitive film or a solid-state digital sensor:</p>
+  <ul>
+    <li><strong>Image Formation:</strong> A converging (convex) lens gathers light rays from an external illuminated object and refracts them to form a <strong>real, inverted, and diminished</strong> image on the focal plane.</li>
+    <li><strong>Essential Subsystems:</strong>
+      <ul>
+        <li><strong>Convex Lens System:</strong> Focuses incident light rays onto the film or digital sensor array.</li>
+        <li><strong>Aperture and Diaphragm:</strong> An adjustable iris diaphragm controls the diameter $D$ of the circular aperture. The relative aperture is quantified by the <em>f-number</em>:
+          $$\text{f-number } (N) = \frac{f}{D}$$
+          A smaller f-number (e.g., $f/2.8$) corresponds to a wider aperture, admitting more light for dim conditions. A larger f-number (e.g., $f/16$) restricts light for bright scenes and yields greater depth of field.</li>
+        <li><strong>Shutter:</strong> A mechanical or electronic curtain that opens for a calibrated exposure time (e.g., $1/1000\mathrm{s}$ to $1\mathrm{s}$). Shorter exposure times freeze fast motion.</li>
+        <li><strong>Focusing Ring:</strong> Adjusts the image distance $v$ between lens and image plane to satisfy the thin lens equation for objects at varying distances $u$.</li>
+        <li><strong>Recording Medium:</strong> Photographic silver halide emulsion film, or modern digital image sensors (CMOS/CCD arrays comprising millions of light-sensitive photodiode pixels).</li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formulas &mdash; Camera Optics</span>
+  <div class="formula-main">
+    $$\frac{1}{f} = \frac{1}{u} + \frac{1}{v} \qquad\qquad m = \frac{h_i}{h_o} = -\frac{v}{u} \qquad\qquad N = \frac{f}{D}$$
+  </div>
+  <ul class="symbols">
+    <li>$f$ = focal length of camera lens ($\mathrm{m}$ or $\mathrm{mm}$)</li>
+    <li>$u$ = object distance from lens optical center ($\mathrm{m}$)</li>
+    <li>$v$ = image distance from lens to sensor plane ($\mathrm{m}$ or $\mathrm{mm}$)</li>
+    <li>$h_o, h_i$ = object height and image height ($\mathrm{m}$ or $\mathrm{mm}$)</li>
+    <li>$m$ = linear magnification ($|m| < 1$ for ordinary cameras)</li>
+    <li>$N$ = f-number; $D$ = entrance pupil aperture diameter ($\mathrm{mm}$)</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Visualization &mdash; Camera Lens Ray Optics and Focusing</span>
+  <p class="demo-instruction">Drag the object distance slider $u$ to observe how the camera lens must be shifted relative to the fixed sensor plane to maintain sharp focus as the object approaches.</p>
+
+  <div id="camera-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
+
+  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
+    <label style="color: #cbd5e1; font-weight: 500;">
+      Object Distance $u$: 
+      <input id="u-slider" type="range" min="3" max="15" step="1" value="8" style="vertical-align: middle;">
+      <span id="u-val" style="color: #38bdf8; font-weight: 700;">8.0 m</span>
+    </label>
+    <div style="color: #f8fafc; font-size: 0.9rem;">
+      Image Distance $v$: <span id="v-stat" style="color: #4ade80; font-weight: 700;">2.67 m</span> &bull; Height: <span id="hi-stat" style="color: #fb923c; font-weight: 700;">-0.67 m</span>
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    let board = JXG.JSXGraph.initBoard('camera-board', {
+      boundingbox: [-16, 5, 6, -5],
+      axis: true,
+      defaultAxes: {
+        x: { name: 'Optical Axis (m)', withLabel: true, label: { position: 'rt', offset: [-15, -15], color: '#cbd5e1' } },
+        y: { name: 'Height (m)', withLabel: true, label: { position: 'rt', offset: [-10, -10], color: '#cbd5e1' } }
+      },
+      showNavigation: false,
+      showCopyright: false
+    });
+
+    let u = 8.0;
+    const f = 2.0;
+    const ho = 2.0;
+
+    // Lens at x = 0
+    let lensLine = board.create('segment', [[0, -4], [0, 4]], { strokeColor: '#38bdf8', strokeWidth: 3 });
+    board.create('text', [0.2, 4.2, 'Convex Lens'], { color: '#38bdf8', fontSize: 11 });
+
+    // Focus markers
+    board.create('point', [f, 0], { name: 'F', fillColor: '#facc15', size: 3, fixed: true });
+    board.create('point', [-f, 0], { name: "F'", fillColor: '#facc15', size: 3, fixed: true });
+
+    function getV() { return (u * f) / (u - f); }
+    function getHi() { return - (getV() / u) * ho; }
+
+    // Object arrow
+    let objArrow = board.create('arrow', [
+      [function() { return -u; }, 0],
+      [function() { return -u; }, ho]
+    ], { strokeColor: '#4ade80', strokeWidth: 3 });
+
+    // Image arrow
+    let imgArrow = board.create('arrow', [
+      [function() { return getV(); }, 0],
+      [function() { return getV(); }, function() { return getHi(); }]
+    ], { strokeColor: '#f87171', strokeWidth: 3 });
+
+    // Ray 1: Parallel to axis, refracts through F
+    let ray1a = board.create('segment', [
+      [function() { return -u; }, ho],
+      [0, ho]
+    ], { strokeColor: '#facc15', strokeWidth: 1.5 });
+    let ray1b = board.create('segment', [
+      [0, ho],
+      [function() { return getV(); }, function() { return getHi(); }]
+    ], { strokeColor: '#facc15', strokeWidth: 1.5 });
+
+    // Ray 2: Through optical center (straight)
+    let ray2 = board.create('segment', [
+      [function() { return -u; }, ho],
+      [function() { return getV(); }, function() { return getHi(); }]
+    ], { strokeColor: '#38bdf8', strokeWidth: 1.5, dash: 2 });
+
+    function update() {
+      document.getElementById('u-val').textContent = u.toFixed(1) + ' m';
+      let v = getV();
+      let hi = getHi();
+      document.getElementById('v-stat').textContent = v.toFixed(2) + ' m';
+      document.getElementById('hi-stat').textContent = hi.toFixed(2) + ' m';
+      board.update();
+    }
+
+    document.getElementById('u-slider').addEventListener('input', function() {
+      u = parseFloat(this.value);
+      update();
+    });
+
+    update();
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Textbook Worked Examples &mdash; Focal Length and Exposure</span>
+
+  <div class="example-item">
+    <p class="example-title"><strong>Example 7.1:</strong> A nature photographer wishes to photograph a $28\text{ m}$ tall tree from a distance of $58\text{ m}$. What focal length lens should be used if the image is to completely fill the $24\text{ mm}$ height of the camera film?</p>
+    <p class="solution"><strong>Solution:</strong><br>
+      Given:<br>
+      Object height $h_o = 28\text{ m}$, object distance $u = 58\text{ m}$.<br>
+      Because the image formed by a camera is real and inverted: $h_i = -24\text{ mm} = -0.024\text{ m}$.<br><br>
+      1. Finding image distance $v$ using magnification:
+      $$m = \frac{h_i}{h_o} = -\frac{v}{u}$$
+      $$\frac{-0.024\text{ m}}{28\text{ m}} = -\frac{v}{58\text{ m}} \implies v = \frac{0.024 \times 58}{28} \approx 0.0497\text{ m} \approx 50\text{ mm}$$
+      2. Applying the thin lens equation:
+      $$\frac{1}{f} = \frac{1}{u} + \frac{1}{v} = \frac{1}{58\text{ m}} + \frac{1}{0.0497\text{ m}} \approx 0.0172 + 20.12 = 20.137\text{ m}^{-1}$$
+      $$f = \frac{1}{20.137} \approx 0.0497\text{ m} \approx 50\text{ mm}$$
+      <em>Observation:</em> For distant objects ($u \gg f$), the image forms essentially at the principal focus ($v \approx f$). Thus, a standard $50\text{ mm}$ focal length lens is chosen.
+    </p>
+  </div>
+
+  <div class="example-item">
+    <p class="example-title"><strong>Reviewed Exercise:</strong></p>
+    <p class="solution">
+      <strong>Why must a camera lens be moved further from the film to focus on a closer object?</strong><br>
+      From the thin lens equation rearranged for image distance:
+      $$\frac{1}{v} = \frac{1}{f} - \frac{1}{u}$$
+      As an object approaches the camera, $u$ decreases, which causes the term $\frac{1}{u}$ to become larger, thereby making $\frac{1}{v} = \frac{1}{f} - \frac{1}{u}$ smaller. A smaller $\frac{1}{v}$ implies a larger image distance $v$. Therefore, the lens must be racked forward away from the film or sensor to capture the sharp image plane.
+    </p>
+  </div>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>A camera lens forms a real, inverted, diminished image on the sensor or film plane.</li>
+    <li>The aperture's f-number is $N = f/D$; smaller f-numbers admit more light.</li>
+    <li>Focusing on closer objects requires increasing the lens-to-sensor distance $v$.</li>
+    <li>For distant subjects ($u \gg f$), image distance approximately equals focal length ($v \approx f$).</li>
+  </ul>
+</div>
+
+</article>

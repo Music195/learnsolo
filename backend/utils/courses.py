@@ -49,7 +49,12 @@ COURSES = {
     # vector algebra, permutations and combinations, conic sections,
     # trigonometric functions, logarithmic and exponential functions,
     # application of differentiation, methods of integration, application of integration
-    "g12-math": {"name": "Mathematics", "subject": "Grade 12 Myanmar"},
+    "g12-math": {"name": "Mathematics MM", "subject": "Grade 12 Myanmar"},
+    # Grade 12 Myanmar Physics: rotational motion, forces in circular motion,
+    # fluid dynamics, energy sources, heat and thermodynamics, sound, optical
+    # instruments, interference and diffraction, capacitors, electrical energy
+    # and power, electromagnetic induction, digital electronics, modern physics
+    "g12-physics": {"name": "Physics MM", "subject": "Grade 12 Myanmar"},
 }
 
 # Past question folders (content/past/<folder>/) -> name, icon and description.
@@ -86,6 +91,10 @@ TOPIC_NAMES = {
     "02-dc-circuits": "DC Circuits",
     # "ac" must stay capitals
     "03-ac-circuits": "AC Circuits",
+    "10-electrical-energy-power-and-heating-effect": "Electrical Energy, Power and Heating Effect",
+    "11-electromagnetic-induction-generation-and-distribution": "Electromagnetic Induction, Generation and Distribution",
+    "12-digital-electronics-and-communication-system": "Digital Electronics and Communication System",
+    "13-modern-physics": "Modern Physics",
 }
 
 _SMALL_WORDS = {"and", "of", "the", "in", "on", "to", "a", "an", "for"}

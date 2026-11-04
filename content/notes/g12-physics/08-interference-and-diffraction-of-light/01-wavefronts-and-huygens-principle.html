@@ -1,0 +1,225 @@
+<!-- tags: Interference and Diffraction of Light, G12 Physics Myanmar -->
+<!-- Grade 12 Physics textbook, Chapter 8, section 8.1 (pages 123–125) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Interference and Diffraction of Light">Wavefronts and Huygens' Principle</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Wave Propagation and Huygens' Model</span>
+  <p>In physical optics (wave optics), the ray approximation of geometrical optics is replaced by a wave description. Wave propagation is characterized by <strong>wavefronts</strong>, <strong>phases</strong>, and <strong>secondary wavelets</strong>:</p>
+  <ul>
+    <li><strong>Wavefront:</strong> A surface associated with a propagating wave which is the locus of all adjacent points vibrating with the <strong>same phase</strong>:
+      <ul>
+        <li>Rays (the direction of wave energy propagation) are always <strong>perpendicular</strong> to the wavefront.</li>
+        <li><strong>Spherical Wavefront:</strong> Produced by an isotropic point source in a uniform medium. As distance from the source increases, the radius of curvature becomes very large.</li>
+        <li><strong>Plane Wavefront:</strong> At large distances from a source, a small section of a spherical wavefront can be treated as planar.</li>
+      </ul>
+    </li>
+    <li><strong>Phase and Phase Angle:</strong> The phase angle $\phi$ specifies the instantaneous fractional state of a periodic oscillation on a reference phasor circle ($0 \le \phi < 2\pi\mathrm{\,rad}$).</li>
+    <li><strong>Phase Difference ($\Delta\phi$) vs. Path Difference ($\Delta x$):</strong>
+      <ul>
+        <li><strong>In Phase (Same Phase):</strong> When $\Delta\phi = 0, 2\pi, 4\pi, \dots = 2m\pi$ (where $m$ is an integer), corresponding to a path difference $\Delta x = 0, \lambda, 2\lambda, \dots = m\lambda$. Crest meets crest.</li>
+        <li><strong>Completely Out of Phase:</strong> When $\Delta\phi = \pi, 3\pi, 5\pi, \dots = (2m+1)\pi$, corresponding to a path difference $\Delta x = \frac{\lambda}{2}, \frac{3\lambda}{2}, \dots = (m + \frac{1}{2})\lambda$. Crest meets trough.</li>
+      </ul>
+    </li>
+    <li><strong>Huygens' Principle (1678):</strong> Every point on a primary wavefront acts as a source of secondary spherical wavelets that spread outward in all directions with the wave speed $v$ in that medium. The new position of the wavefront at time $t + \Delta t$ is the surface envelope tangent to all these secondary wavelets.</li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formulas &mdash; Phase Difference and Huygens' Wavelets</span>
+  <div class="formula-main">
+    $$\Delta\phi = \frac{2\pi}{\lambda}\Delta x \qquad\qquad r_{\text{wavelet}} = v\,\Delta t \qquad\qquad \text{In Phase: } \Delta x = m\lambda \quad (m \in \mathbb{Z})$$
+  </div>
+  <ul class="symbols">
+    <li>$\Delta\phi$ = phase difference between two points or waves ($\mathrm{rad}$)</li>
+    <li>$\Delta x$ = path difference along the direction of propagation ($\mathrm{m}$)</li>
+    <li>$\lambda$ = wavelength of the propagating wave ($\mathrm{m}$)</li>
+    <li>$v$ = propagation speed of wave in the medium ($\mathrm{m/s}$)</li>
+    <li>$r_{\text{wavelet}}$ = radius of secondary Huygens wavelets after elapsed time $\Delta t$ ($\mathrm{m}$)</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Visualization &mdash; Huygens' Secondary Wavelet Envelope</span>
+  <p class="demo-instruction">Adjust the time delay slider $\Delta t$ to observe how secondary wavelets expand from points on the primary wavefront and form the forward tangent envelope (new wavefront).</p>
+
+  <div id="huygens-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
+
+  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
+    <label style="color: #cbd5e1; font-weight: 500;">
+      Wavelet Radius $r = v\Delta t$: 
+      <input id="radius-slider" type="range" min="0.5" max="3.5" step="0.1" value="1.8" style="vertical-align: middle;">
+      <span id="radius-val" style="color: #38bdf8; font-weight: 700;">1.8 m</span>
+    </label>
+    <button id="wave-mode-btn" style="padding: 0.35rem 0.85rem; border-radius: 6px; background: #0284c7; color: white; border: none; cursor: pointer; font-weight: 600;">
+      Mode: Plane Wavefront
+    </button>
+  </div>
+
+  <script>
+  (function() {
+    let board = JXG.JSXGraph.initBoard('huygens-board', {
+      boundingbox: [-1, 5, 8, -5],
+      axis: false,
+      showNavigation: false,
+      showCopyright: false,
+      pan: { enabled: false },
+      zoom: { enabled: false }
+    });
+
+    let mode = 'plane'; // 'plane' or 'spherical'
+    let wavelets = [];
+    let initialWavefront = null;
+    let newEnvelope = null;
+    let sourcePt = null;
+
+    function renderScene() {
+      board.suspendUpdate();
+      board.removeObject(wavelets);
+      if (initialWavefront) board.removeObject(initialWavefront);
+      if (newEnvelope) board.removeObject(newEnvelope);
+      if (sourcePt) board.removeObject(sourcePt);
+      wavelets = [];
+
+      let r = parseFloat(document.getElementById('radius-slider').value);
+
+      if (mode === 'plane') {
+        let x0 = 1.5;
+        // Primary plane wavefront (vertical line)
+        initialWavefront = board.create('segment', [[x0, -4], [x0, 4]], {
+          strokeColor: '#38bdf8', strokeWidth: 3, name: 'Original Wavefront'
+        });
+
+        // 7 source points on the wavefront
+        let yCoords = [-3, -2, -1, 0, 1, 2, 3];
+        yCoords.forEach(function(y) {
+          let pt = board.create('point', [x0, y], {
+            size: 3, fillColor: '#f59e0b', strokeColor: '#fbbf24', fixed: true, name: ''
+          });
+          wavelets.push(pt);
+          let circ = board.create('circle', [pt, r], {
+            strokeColor: '#fbbf24', strokeWidth: 1.5, strokeOpacity: 0.6, dash: 2
+          });
+          wavelets.push(circ);
+        });
+
+        // Tangent envelope: new wavefront at x0 + r
+        newEnvelope = board.create('segment', [[x0 + r, -4], [x0 + r, 4]], {
+          strokeColor: '#4ade80', strokeWidth: 3.5, name: 'New Wavefront Envelope'
+        });
+
+        // Rays (direction of propagation)
+        [-2, 0, 2].forEach(function(y) {
+          let ray = board.create('arrow', [[x0 - 1.2, y], [x0 + r + 0.8, y]], {
+            strokeColor: '#94a3b8', strokeWidth: 1.2, dash: 1
+          });
+          wavelets.push(ray);
+        });
+      } else {
+        // Spherical wave
+        sourcePt = board.create('point', [0.5, 0], {
+          size: 4, fillColor: '#ef4444', strokeColor: '#fca5a5', name: 'Source S', fixed: true
+        });
+        let R0 = 2.2;
+        initialWavefront = board.create('arc', [[0.5, 0], [0.5 + R0 * Math.cos(0.9), R0 * Math.sin(0.9)], [0.5 + R0 * Math.cos(-0.9), R0 * Math.sin(-0.9)]], {
+          strokeColor: '#38bdf8', strokeWidth: 3
+        });
+
+        let angles = [-0.7, -0.4, -0.15, 0.15, 0.4, 0.7];
+        angles.forEach(function(a) {
+          let wx = 0.5 + R0 * Math.cos(a);
+          let wy = R0 * Math.sin(a);
+          let pt = board.create('point', [wx, wy], {
+            size: 3, fillColor: '#f59e0b', strokeColor: '#fbbf24', fixed: true, name: ''
+          });
+          wavelets.push(pt);
+          let circ = board.create('circle', [pt, r], {
+            strokeColor: '#fbbf24', strokeWidth: 1.5, strokeOpacity: 0.6, dash: 2
+          });
+          wavelets.push(circ);
+        });
+
+        // Tangent envelope for spherical wave
+        newEnvelope = board.create('arc', [[0.5, 0], [0.5 + (R0 + r) * Math.cos(0.9), (R0 + r) * Math.sin(0.9)], [0.5 + (R0 + r) * Math.cos(-0.9), (R0 + r) * Math.sin(-0.9)]], {
+          strokeColor: '#4ade80', strokeWidth: 3.5
+        });
+      }
+
+      board.resumeUpdate();
+    }
+
+    renderScene();
+
+    document.getElementById('radius-slider').addEventListener('input', function(e) {
+      document.getElementById('radius-val').textContent = parseFloat(e.target.value).toFixed(1) + ' m';
+      renderScene();
+    });
+
+    document.getElementById('wave-mode-btn').addEventListener('click', function() {
+      if (mode === 'plane') {
+        mode = 'spherical';
+        this.textContent = 'Mode: Spherical Wavefront';
+        this.style.background = '#8b5cf6';
+      } else {
+        mode = 'plane';
+        this.textContent = 'Mode: Plane Wavefront';
+        this.style.background = '#0284c7';
+      }
+      renderScene();
+    });
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Worked Example 8.1 &mdash; Path Difference to Phase Difference</span>
+  <div class="example-problem">
+    <strong>Textbook Example 8.1 (Page 125):</strong><br>
+    What is the phase difference for two waves of the same frequency arriving at a point with respective path lengths of $6\lambda$ and $4.5\lambda$? Determine whether they are in phase or out of phase.
+  </div>
+  <div class="example-solution">
+    <strong>Step 1: Calculate the path difference $\Delta x$:</strong>
+    $$\Delta x = 6\lambda - 4.5\lambda = 1.5\lambda$$
+
+    <strong>Step 2: Relate phase difference $\Delta\phi$ to path difference:</strong>
+    $$\Delta\phi = \frac{2\pi}{\lambda}\Delta x = \frac{2\pi}{\lambda}(1.5\lambda) = 3\pi\mathrm{\,rad}$$
+
+    <strong>Step 3: State the phase relationship:</strong>
+    $$\Delta\phi = 3\pi = (2 \times 1 + 1)\pi$$
+    Since the phase difference is an odd integral multiple of $\pi$ (and the path difference is an odd half-multiple of wavelength $1.5\lambda$), <strong>the two waves are completely out of phase</strong>. When superimposing with equal amplitudes, destructive interference occurs.
+  </div>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Reviewed Exercise &mdash; Phase and Wavefront Concepts</span>
+  <div class="example-problem">
+    <strong>Reviewed Exercise (Textbook Page 125):</strong><br>
+    How is the phase difference of two waves related to their path difference? What are the phase relationships when path difference is $2\lambda$ versus $2.5\lambda$?
+  </div>
+  <div class="example-solution">
+    <strong>Answer:</strong>
+    <ul>
+      <li><strong>General Formula:</strong>
+        $$\Delta\phi = \frac{2\pi}{\lambda}\Delta x$$
+        One full wavelength $\lambda$ in space corresponds to a full cycle phase angle of $2\pi\mathrm{\,rad}$ ($360^\circ$).</li>
+      <li>For $\Delta x = 2\lambda$:
+        $$\Delta\phi = \frac{2\pi}{\lambda}(2\lambda) = 4\pi\mathrm{\,rad}$$
+        The waves are <strong>in phase</strong> (crest meets crest).</li>
+      <li>For $\Delta x = 2.5\lambda$:
+        $$\Delta\phi = \frac{2\pi}{\lambda}(2.5\lambda) = 5\pi\mathrm{\,rad}$$
+        The waves are <strong>completely out of phase</strong> (crest meets trough).</li>
+    </ul>
+  </div>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>A <strong>wavefront</strong> is the locus of all points vibrating in the same phase. Propagation rays are perpendicular to wavefronts.</li>
+    <li><strong>Huygens' Principle:</strong> Every point on a wavefront acts as a source of secondary wavelets; the forward envelope tangent to all wavelets forms the new wavefront.</li>
+    <li><strong>Phase difference:</strong> $\Delta\phi = \frac{2\pi}{\lambda}\Delta x$. Integral multiples of $\lambda$ yield constructive reinforcement ($\Delta\phi = 2m\pi$); odd half-multiples yield cancellation ($\Delta\phi = (2m+1)\pi$).</li>
+  </ul>
+</div>
+
+</article>

@@ -1,0 +1,160 @@
+<!-- tags: Fluid Dynamics, G12 Physics Myanmar -->
+<!-- Grade 12 Physics textbook, Chapter 3, section 3.1 (pages 23–24) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Fluid Dynamics">Laminar and Turbulent Flow</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Nature of Fluids and Flow Regimes</span>
+  <p>A <strong>fluid</strong> is a substance that yields to deforming forces and lacks a fixed shape &mdash; it encompasses both liquids and gases:</p>
+  <ul>
+    <li><strong>Fluid Statics (Hydrostatics):</strong> The study of fluids at rest (e.g., atmospheric pressure, liquid pressure at depth, Pascal's principle, and Archimedes' upthrust).</li>
+    <li><strong>Fluid Dynamics (Hydrodynamics):</strong> The study of fluids in motion (e.g., river discharge, blood circulation, aerodynamics of wings, water and natural gas pipelines).</li>
+    <li><strong>Compressibility:</strong>
+      <ul>
+        <li><strong>Liquids:</strong> Incompressible under ordinary conditions &mdash; their volume does not noticeably change with pressure at constant temperature (constant density $\rho$).</li>
+        <li><strong>Gases:</strong> Compressible &mdash; their volume and density vary strongly with applied pressure and temperature according to Boyle's and Charles's laws.</li>
+      </ul>
+    </li>
+  </ul>
+
+  <p><strong>Streamlines and Flow Types:</strong></p>
+  <ul>
+    <li><strong>Streamline:</strong> The smooth curve whose tangent at any point indicates the direction of the velocity vector of fluid particles passing that point. In steady flow, streamlines never intersect or cross each other.</li>
+    <li><strong>Laminar Flow (Streamline Flow):</strong> Fluid moves smoothly in parallel layers (laminae) that glide past one another without mixing or crossing. Every particle arriving at a given location follows the identical path with the same velocity (e.g., slow syrup dripping, calm sea breeze, steady laminar water stream).</li>
+    <li><strong>Turbulent Flow:</strong> Flow characterized by chaotic, irregular paths, continuous velocity fluctuations in magnitude and direction, and swirling whirlpools (eddies / vortices). Energy is rapidly dissipated into heat (e.g., raging river rapids, smoke billowing in wind gusts, storm cyclones).</li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Principles &mdash; The Ideal Fluid Model</span>
+  <p>To analyze fluid flow mathematically at this introductory level, physicists define an <strong>ideal fluid</strong> characterized by four fundamental assumptions:</p>
+  <div class="formula-main">
+    $$\text{Ideal Fluid} = \text{Incompressible} + \text{Non-viscous} + \text{Steady (Laminar)} + \text{Irrotational}$$
+  </div>
+  <ul class="symbols">
+    <li><strong>Incompressible:</strong> Density $\rho$ remains constant everywhere throughout the fluid ($\rho = \text{const}$).</li>
+    <li><strong>Non-viscous (Zero Internal Friction):</strong> No shearing resistance between adjacent fluid layers ($\eta = 0$). No mechanical energy is lost to internal friction.</li>
+    <li><strong>Steady Flow (Laminar):</strong> Velocity, pressure, and density at each fixed coordinate in space remain invariant over time ($\frac{\partial \vec{v}}{\partial t} = 0$).</li>
+    <li><strong>Irrotational:</strong> Fluid elements have no net angular momentum about their own centers (no localized spinning vortices).</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Visualization &mdash; Laminar Streamlines vs. Turbulent Eddies</span>
+  <p class="demo-instruction">Toggle the flow regime below to observe how fluid elements travel. In laminar flow, particles glide along smooth, parallel streamlines without crossing. In turbulent flow, streamlines break into chaotic swirling vortices.</p>
+
+  <div id="flow-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
+
+  <div class="demo-controls" style="display: flex; gap: 1rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
+    <button id="btn-laminar" class="btn" style="padding: 0.4rem 1rem; font-weight: 600; background: #0284c7; color: white; border-radius: 6px; border: none; cursor: pointer;">Laminar Flow</button>
+    <button id="btn-turbulent" class="btn" style="padding: 0.4rem 1rem; font-weight: 600; background: #64748b; color: white; border-radius: 6px; border: none; cursor: pointer;">Turbulent Flow</button>
+    <span id="flow-status" style="font-size: 0.9rem; font-weight: 600; color: #38bdf8;">Current: Steady Laminar Streamlines</span>
+  </div>
+
+  <script>
+  (function() {
+    let mode = 'laminar';
+    let board = JXG.JSXGraph.initBoard('flow-board', {
+      boundingbox: [-1, 6, 11, -1],
+      axis: false,
+      showNavigation: false,
+      showCopyright: false
+    });
+
+    let curves = [];
+    let particles = [];
+    const numLayers = 5;
+
+    function renderStreamlines() {
+      board.suspendUpdate();
+      for (let c of curves) board.removeObject(c);
+      curves = [];
+
+      for (let i = 1; i <= numLayers; i++) {
+        let y0 = i;
+        let c = board.create('curve', [
+          function(t) { return t; },
+          function(t) {
+            if (mode === 'laminar') {
+              return y0;
+            } else {
+              return y0 + 0.45 * Math.sin(t * 1.5 + y0 * 2) * Math.sin(t * 0.8);
+            }
+          },
+          0, 10
+        ], {
+          strokeColor: mode === 'laminar' ? '#38bdf8' : '#f87171',
+          strokeWidth: mode === 'laminar' ? 2 : 2.5,
+          dash: mode === 'laminar' ? 0 : 2
+        });
+        curves.push(c);
+      }
+
+      board.unsuspendUpdate();
+    }
+
+    renderStreamlines();
+
+    document.getElementById('btn-laminar').addEventListener('click', function() {
+      mode = 'laminar';
+      this.style.background = '#0284c7';
+      document.getElementById('btn-turbulent').style.background = '#64748b';
+      document.getElementById('flow-status').textContent = 'Current: Steady Laminar Streamlines';
+      document.getElementById('flow-status').style.color = '#38bdf8';
+      renderStreamlines();
+    });
+
+    document.getElementById('btn-turbulent').addEventListener('click', function() {
+      mode = 'turbulent';
+      this.style.background = '#ef4444';
+      document.getElementById('btn-laminar').style.background = '#64748b';
+      document.getElementById('flow-status').textContent = 'Current: Turbulent Swirls & Eddies';
+      document.getElementById('flow-status').style.color = '#f87171';
+      renderStreamlines();
+    });
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Reviewed Exercises &mdash; Flow Regimes and Compressibility</span>
+
+  <div class="example-item">
+    <p class="example-title"><strong>Exercise 1:</strong> Is motor car brake oil compressible or non-compressible?</p>
+    <p class="solution"><strong>Answer:</strong> Motor car brake oil (hydraulic brake fluid) is virtually <strong>incompressible</strong> (non-compressible). This ensures that force applied by the driver's foot on the brake pedal is transmitted instantaneously and completely through the fluid to the brake calipers according to Pascal's principle, without loss of motion due to fluid compression.</p>
+  </div>
+
+  <div class="example-item">
+    <p class="example-title"><strong>Exercise 2:</strong> Are gases compressible or non-compressible?</p>
+    <p class="solution"><strong>Answer:</strong> Gases are highly <strong>compressible</strong>. The intermolecular spaces in gases are large, so an increase in applied external pressure readily forces gas molecules closer together, decreasing volume in accordance with Boyle's law ($P V = \text{constant}$ at constant temperature).</p>
+  </div>
+
+  <div class="example-item">
+    <p class="example-title"><strong>Exercise 3:</strong> What is the main difference between laminar flow and turbulent flow?</p>
+    <p class="solution"><strong>Answer:</strong>
+      <ul>
+        <li><strong>Laminar Flow:</strong> Fluid layers glide steadily and smoothly past adjacent layers without mixing. Streamlines are parallel, orderly, and do not cross. Every fluid particle reaching a given point has a constant velocity over time.</li>
+        <li><strong>Turbulent Flow:</strong> Fluid particles follow irregular, chaotic paths with continuous eddies and whirlpools. Velocity at any given point fluctuates wildly in both magnitude and direction over time.</li>
+      </ul>
+    </p>
+  </div>
+
+  <div class="example-item">
+    <p class="example-title"><strong>Exercise 4:</strong> At a river junction, water streams are whirling; is it laminar or turbulent?</p>
+    <p class="solution"><strong>Answer:</strong> It is <strong>turbulent flow</strong>. The presence of swirling eddies, whirlpools, and chaotic mixing of water streams indicates rapid fluctuations in velocity and breakdown of parallel streamlines.</p>
+  </div>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>A fluid is any liquid or gas that continuously deforms under shear stress.</li>
+    <li>Liquids are treated as incompressible ($\rho = \text{const}$), while gases are compressible.</li>
+    <li>Laminar flow features smooth, non-intersecting streamlines where adjacent fluid layers glide without mixing.</li>
+    <li>Turbulent flow is characterized by chaotic velocity fluctuations, mixing, and vortex formation.</li>
+    <li>An ideal fluid is assumed to be incompressible, non-viscous (zero internal friction), and moving in steady laminar flow.</li>
+  </ul>
+</div>
+
+</article>

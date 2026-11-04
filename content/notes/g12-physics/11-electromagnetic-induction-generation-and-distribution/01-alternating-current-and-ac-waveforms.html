@@ -1,0 +1,188 @@
+<!-- tags: Electromagnetic Induction, Generation and Distribution, G12 Physics Myanmar -->
+<!-- Grade 12 Physics textbook, Chapter 11, section 11.1 (pages 172–175) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Electromagnetic Induction, Generation and Distribution">Alternating Current and AC Waveforms</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Sinusoidal Time-Varying Voltages and Currents</span>
+  <p>Electrical power in modern utility grids is transmitted almost exclusively via <strong>alternating current (AC)</strong> rather than <strong>direct current (DC)</strong>:</p>
+  <ul>
+    <li><strong>Direct Current (DC):</strong> Electric charge carriers flow steadily in a single unidirectional sense throughout the conductor (e.g., electrochemical batteries, fuel cells, DC dynamos).</li>
+    <li><strong>Alternating Current (AC):</strong> The magnitude and polarity of electric potential difference oscillate periodically with time, causing mobile electrons to vibrate back and forth about fixed mean positions at a characteristic frequency $f$:
+      <ul>
+        <li><strong>Standard Mains Voltages:</strong> In Myanmar, Europe, and most Commonwealth nations, domestic supply is standardized at $220\text{--}240\mathrm{\,V}$ at $f = 50\mathrm{\,Hz}$ (period $T = 0.02\mathrm{\,s}$). In North America and parts of Japan, mains voltage is $100\text{--}120\mathrm{\,V}$ at $60\mathrm{\,Hz}$ (or $50\mathrm{\,Hz}$).</li>
+      </ul>
+    </li>
+    <li><strong>Sinusoidal Generation in a Rotating Armature:</strong>
+      When a plane coil rotates uniformly with angular velocity $\omega$ in a uniform magnetic field, the instantaneous electromotive force and resultant current through a linear resistor follow pure sine functions:
+      $$E(t) = E_0 \sin(\omega t) = E_0 \sin(2\pi f t)$$
+      $$I(t) = I_0 \sin(\omega t) = I_0 \sin(2\pi f t)$$
+    </li>
+    <li><strong>Waveform Parameters:</strong>
+      <ul>
+        <li><strong>Peak Value ($E_0, I_0$):</strong> The maximum instantaneous amplitude reached in either the positive or negative half-cycle.</li>
+        <li><strong>Angular Frequency ($\omega$):</strong> The rotational phase rate in radians per second ($\omega = 2\pi f = \frac{2\pi}{T}$).</li>
+        <li><strong>Frequency ($f$):</strong> The number of complete alternating cycles executed per second ($\mathrm{Hz} = \mathrm{s^{-1}}$).</li>
+        <li><strong>Period ($T$):</strong> The elapsed time for one complete oscillation cycle ($T = \frac{1}{f}$).</li>
+      </ul>
+    </li>
+    <li><strong>Strategic Advantages of AC over DC:</strong>
+      <ol>
+        <li><strong>Transformer Capability:</strong> AC voltages can be stepped up to hundreds of kilovolts for ultra-low-loss transmission and stepped down safely for consumer use.</li>
+        <li><strong>Minimal Long-Distance Joule Loss:</strong> Transmitting power at high voltage $V$ drastically reduces required transmission current $I = P/V$, cutting line resistive heating $I^2 R$ by orders of magnitude.</li>
+        <li><strong>Simplicity of AC Machinery:</strong> Induction motors and alternator generators have no fragile commutators or mechanical brushes.</li>
+      </ol>
+    </li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formulas &mdash; Sinusoidal AC Waveforms</span>
+  <div class="formula-main">
+    $$E(t) = E_0 \sin(\omega t) \qquad\qquad I(t) = I_0 \sin(\omega t) \qquad\qquad \omega = 2\pi f = \frac{2\pi}{T} \qquad\qquad I_0 = \frac{E_0}{R}$$
+  </div>
+  <ul class="symbols">
+    <li>$E(t), I(t)$ = instantaneous emf ($\mathrm{V}$) and current ($\mathrm{A}$) at time $t$ ($\mathrm{s}$)</li>
+    <li>$E_0, I_0$ = peak (maximum) amplitude of voltage ($\mathrm{V}$) and current ($\mathrm{A}$)</li>
+    <li>$\omega$ = angular frequency ($\mathrm{rad/s}$)</li>
+    <li>$f$ = cyclical frequency ($\mathrm{Hz}$)</li>
+    <li>$T$ = period of one complete cycle ($\mathrm{s}$)</li>
+    <li>$R$ = connected pure resistive load ($\Omega$)</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Visualization &mdash; Real-Time Sinusoidal AC Generator Waveform</span>
+  <p class="demo-instruction">Adjust peak voltage $E_0$ and frequency $f$ to inspect how the alternating waveform and instantaneous voltage $E(t)$ respond over time.</p>
+
+  <div id="ac-board" style="width: 100%; height: 350px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
+
+  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
+    <label style="color: #cbd5e1; font-weight: 500;">
+      Peak $E_0$: 
+      <input id="e0-slider" type="range" min="50" max="250" step="10" value="150" style="vertical-align: middle;">
+      <span id="e0-val" style="color: #38bdf8; font-weight: 700;">150 V</span>
+    </label>
+    <label style="color: #cbd5e1; font-weight: 500;">
+      Frequency $f$: 
+      <input id="f-slider" type="range" min="20" max="100" step="10" value="50" style="vertical-align: middle;">
+      <span id="f-val" style="color: #4ade80; font-weight: 700;">50 Hz</span>
+    </label>
+    <div style="color: #f8fafc; font-size: 0.9rem;">
+      Period $T$: <span id="t-period-stat" style="color: #fb923c; font-weight: 700;">20.0 ms</span> &bull; &omega;: <span id="omega-stat" style="color: #facc15; font-weight: 700;">314 rad/s</span>
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    let board = JXG.JSXGraph.initBoard('ac-board', {
+      boundingbox: [-2, 280, 42, -280],
+      axis: true,
+      defaultAxes: {
+        x: { name: 'Time t (ms)', withLabel: true, label: { position: 'rt', offset: [-20, -15], color: '#94a3b8' } },
+        y: { name: 'EMF E (V)', withLabel: true, label: { position: 'rt', offset: [15, -10], color: '#94a3b8' } }
+      },
+      showNavigation: false,
+      showCopyright: false,
+      pan: { enabled: false },
+      zoom: { enabled: false }
+    });
+
+    let waveGraph = null;
+
+    function updateAC() {
+      board.suspendUpdate();
+      if (waveGraph) board.removeObject(waveGraph);
+
+      let E0 = parseFloat(document.getElementById('e0-slider').value);
+      let f = parseFloat(document.getElementById('f-slider').value);
+      let T_ms = (1000.0 / f);
+      let omega = 2 * Math.PI * f;
+
+      document.getElementById('e0-val').textContent = E0 + ' V';
+      document.getElementById('f-val').textContent = f + ' Hz';
+      document.getElementById('t-period-stat').textContent = T_ms.toFixed(1) + ' ms';
+      document.getElementById('omega-stat').textContent = omega.toFixed(0) + ' rad/s';
+
+      // Function in ms: E(t_ms) = E0 * sin(2*pi*f * (t_ms/1000))
+      waveGraph = board.create('functiongraph', [
+        function(t_ms) {
+          return E0 * Math.sin((2 * Math.PI * f * t_ms) / 1000.0);
+        }, 0, 40
+      ], {
+        strokeColor: '#38bdf8', strokeWidth: 3
+      });
+
+      board.resumeUpdate();
+    }
+
+    updateAC();
+
+    document.getElementById('e0-slider').addEventListener('input', updateAC);
+    document.getElementById('f-slider').addEventListener('input', updateAC);
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Worked Example 11.1 &mdash; AC Generator Parameter Analysis</span>
+  <div class="example-problem">
+    <strong>Textbook Example 11.1 (Page 174):</strong><br>
+    An AC generator produces an instantaneous electromotive force given by the equation:
+    $$E(t) = 150 \sin(377 t)\mathrm{\quad(Volts)}$$
+    <strong>(i)</strong> Find the maximum EMF output, the cyclical frequency $f$, and the instantaneous EMF at $t = \frac{1}{120}\mathrm{\,s}$.<br>
+    <strong>(ii)</strong> If the generator is connected across a $50\,\Omega$ pure resistor, find the maximum circuit current.
+  </div>
+  <div class="example-solution">
+    <strong>Part (i): Comparison with General Equation $E = E_0 \sin(\omega t)$:</strong>
+    <ul>
+      <li><strong>Maximum EMF Output:</strong> $E_0 = 150\mathrm{\,V}$.</li>
+      <li><strong>Angular Frequency:</strong> $\omega = 377\mathrm{\,rad/s}$. Since $\omega = 2\pi f$:
+        $$f = \frac{\omega}{2\pi} = \frac{377\mathrm{\,rad/s}}{2 \times 3.1416} \approx 60.0\mathrm{\,Hz}$$
+      </li>
+      <li><strong>Instantaneous EMF at $t = \frac{1}{120}\mathrm{\,s}$:</strong>
+        $$\omega t = 377 \times \frac{1}{120} = \frac{377}{120} \approx 3.1416\mathrm{\,rad} = \pi\mathrm{\,rad}$$
+        $$E\left(\frac{1}{120}\right) = 150 \sin(\pi) = 150 \times 0 = 0\mathrm{\,V}$$
+      </li>
+    </ul>
+
+    <strong>Part (ii): Maximum Circuit Current $I_0$:</strong>
+    $$I_0 = \frac{E_0}{R} = \frac{150\mathrm{\,V}}{50\,\Omega} = 3.0\mathrm{\,A}$$
+    The current waveform is $I(t) = 3.0 \sin(377 t)\mathrm{\,A}$.
+  </div>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Worked Example 11.2 &mdash; Instantaneous Current from Sinusoidal Expression</span>
+  <div class="example-problem">
+    <strong>Textbook Example 11.2 (Page 175):</strong><br>
+    The current in an AC circuit at any time $t$ seconds is given by $I = 20 \sin(100\pi t)\mathrm{\,A}$. Find:<br>
+    <strong>(i)</strong> The peak current, the frequency, and the period of the alternating current.<br>
+    <strong>(ii)</strong> The instantaneous current at $t = \frac{1}{600}\mathrm{\,s}$.
+  </div>
+  <div class="example-solution">
+    <strong>Part (i): Parameters:</strong>
+    <ul>
+      <li>Peak Current: $I_0 = 20\mathrm{\,A}$</li>
+      <li>Angular Frequency: $\omega = 100\pi\mathrm{\,rad/s}$</li>
+      <li>Frequency: $f = \frac{\omega}{2\pi} = \frac{100\pi}{2\pi} = 50\mathrm{\,Hz}$</li>
+      <li>Period: $T = \frac{1}{f} = \frac{1}{50\mathrm{\,Hz}} = 0.02\mathrm{\,s} = 20\mathrm{\,ms}$</li>
+    </ul>
+
+    <strong>Part (ii): Instantaneous Current at $t = \frac{1}{600}\mathrm{\,s}$:</strong>
+    $$I = 20 \sin\left(100\pi \times \frac{1}{600}\right) = 20 \sin\left(\frac{\pi}{6}\right) = 20 \sin(30^\circ)$$
+    $$I = 20 \times 0.5 = 10.0\mathrm{\,A}$$
+  </div>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>AC voltages and currents vary sinusoidally: $E = E_0 \sin(\omega t)$ and $I = I_0 \sin(\omega t)$, with $\omega = 2\pi f$.</li>
+    <li>Myanmar mains standard: $220\text{--}240\mathrm{\,V}$ at $50\mathrm{\,Hz}$ ($T = 0.02\mathrm{\,s}$).</li>
+    <li>AC is globally chosen for power distribution because it enables low-loss high-voltage transmission via transformers.</li>
+  </ul>
+</div>
+
+</article>
