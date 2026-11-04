@@ -96,16 +96,22 @@ export default function PracticeSet() {
 
 // "Solved 2 of 5 · 1 to review", a bar, and "Start again" once anything is marked.
 // Before the set is set up it just says "5 problems".
+// For tests (isTest=true), shows "Score: X/Y (Z%)".
 // (Exported so the past paper page can use it too.)
-export function ProgressLine({ progress, count, onReset }) {
+export function ProgressLine({ progress, count, onReset, isTest = false }) {
   const solved = progress?.solved ?? 0
   const total = progress?.total ?? count
+  const pct = total > 0 ? Math.round((100 * solved) / total) : 0
   return (
     <p className="note-progress">
       <span>
-        {progress
-          ? `Solved ${solved} of ${total}` + (progress.review ? ` · ${progress.review} to review` : '')
-          : `${count} problems`}
+        {isTest
+          ? (progress
+              ? `Score: ${solved}/${total} (${pct}%)` + (progress.review ? ` · ${progress.review} to review` : '')
+              : `${count} questions`)
+          : (progress
+              ? `Solved ${solved} of ${total}` + (progress.review ? ` · ${progress.review} to review` : '')
+              : `${count} problems`)}
       </span>
       <span className="progress-bar" aria-hidden="true"><span style={{ width: `${(100 * solved) / total}%` }}></span></span>
       <button className="progress-reset" hidden={!progress?.started} onClick={onReset}>Start again</button>
