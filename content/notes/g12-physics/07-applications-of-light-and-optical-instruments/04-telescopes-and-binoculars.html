@@ -51,121 +51,81 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Astronomical Refracting Telescope Ray Optics</span>
-  <p class="demo-instruction">Light from a distant star arrives as parallel rays at a small angle $\alpha$. The objective brings them to a point on its focal plane (the image $I_1$); in normal adjustment the eyepiece's focus is at the same place, so the rays leave parallel again, at a bigger angle $\beta$. Change $f_o$, $f_e$ and $\alpha$ and check that $M = \beta/\alpha = f_o/f_e$ and $L = f_o + f_e$. (Heights are stretched so the small angles can be seen.)</p>
-
-  <div id="telescope-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 0.6rem 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Objective $f_o$:
-      <input id="fo-slider" type="range" min="200" max="1000" step="50" value="500" style="vertical-align: middle;">
-      <span id="fo-val" style="color: #38bdf8; font-weight: 700;">500 mm</span>
-    </label>
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Eyepiece $f_e$:
-      <input id="fe-slider" type="range" min="10" max="100" step="5" value="20" style="vertical-align: middle;">
-      <span id="fe-val" style="color: #a855f7; font-weight: 700;">20 mm</span>
-    </label>
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Star angle $\alpha$:
-      <input id="alpha-slider" type="range" min="0.1" max="1.0" step="0.05" value="0.5" style="vertical-align: middle;">
-      <span id="alpha-val" style="color: #facc15; font-weight: 700;">0.50°</span>
-    </label>
-    <div id="tele-stat" style="width: 100%; text-align: center; color: #f8fafc; font-size: 0.9rem; line-height: 1.6;"></div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; Ray Diagram of an Astronomical Telescope</span>
+  <p class="demo-question">A star is far too far away to bring closer. What does a telescope actually make bigger?</p>
+  <p class="demo-instruction">Parallel rays arrive from a distant object at a small angle $\alpha$. The long-focus <b>objective</b> forms a real image at its focal plane; the short-focus <b>eyepiece</b> sends the light into the eye at a much larger angle $\beta$. The telescope magnifies <b>angles</b>: $M = \beta/\alpha$. Change the focal lengths, or switch to a final image at the near point. (Heights are stretched; the angles shown are the real ones.)</p>
+  <div id="pk-scope"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('telescope-board', {
-      boundingbox: [-100, 40, 700, -40],
-      axis: false,
-      keepaspectratio: false,
-      showNavigation: false,
-      showCopyright: false,
-      pan: { enabled: false },
-      zoom: { enabled: false }
-    });
+  (function () {
+    const DN = 250;                                  // near point (mm)
+    const k = PhysKit.mount('pk-scope', { x: [-150, 650], y: [-80, 80], equal: false, height: 300 });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    k.row();
+    const mode = k.choice(['normal adjustment (image at ∞)', 'final image at 250 mm'], 0);
+    k.row();
+    const foS = k.slider({ label: 'f_o', unit: 'mm', min: 200, max: 1000, step: 10, value: 500, digits: 0 });
+    const feS = k.slider({ label: 'f_e', unit: 'mm', min: 10, max: 60, step: 1, value: 20, digits: 0 });
+    const aS = k.slider({ label: 'α', unit: '°', min: 0.3, max: 3, step: 0.05, value: 1.5, digits: 2 });
+    k.button('Example 7.4', () => { foS.value = 500; feS.value = 20; });
 
-    // This board is a picture, not something to drag: every element is
-    // created fixed (the same wrapper as the other Physics MM demos).
-    const createFixed = board.create.bind(board);
-    board.create = (type, parents, attrs = {}) =>
-      createFixed(type, parents, { fixed: true, highlight: false, ...attrs, vertices: { fixed: true, visible: false, ...attrs.vertices } });
-
-    let fo = 500, fe = 20, alphaDeg = 0.5;   // focal lengths in mm, star angle in degrees
-    const rad = (deg) => deg * Math.PI / 180;
-
-    let elements = [];
-    const add = (el) => { elements.push(el); return el; };
-    const seg = (p, q, style) => add(board.create('segment', [p, q], style));
-    const label = (x, y, t, style) => add(board.create('text', [x, y, t], { fontSize: 11, ...style }));
-
-    function draw() {
-      board.suspendUpdate();
-      board.removeObject(elements);
-      elements = [];
-
-      // Objective at x = 0, eyepiece at x = L = f_o + f_e (all in mm)
-      const L = fo + fe, ta = Math.tan(rad(alphaDeg));
-      const y1 = -fo * ta;                    // image I1: on the focal plane, below the axis (inverted)
-      const tb = fo * ta / fe;                // emerging rays: tan β = f_o tan α / f_e
-      const ap = 0.04 * fo;                   // objective half-aperture
-      // Board: from a little before the objective to past the eye.
-      // Heights use their own scale (the board is stretched upward).
-      const left = -0.22 * L, right = L + Math.max(0.25 * L, 4 * fe);
-      const Y = Math.max(ap * 1.6, Math.abs(y1) * 2.2);
-      board.setBoundingBox([left, Y, right, -Y], false);
-
-      seg([left, 0], [right, 0], { strokeColor: '#334155', strokeWidth: 1, dash: 2 });
-      seg([0, -ap], [0, ap], { strokeColor: '#38bdf8', strokeWidth: 3, firstArrow: true, lastArrow: true });
-      label(0, ap + Y * 0.07, 'Objective', { color: '#38bdf8', anchorX: 'middle' });
-      const apE = Math.max(Math.abs(y1) * 1.6, ap * 0.45);
-      seg([L, -apE], [L, apE], { strokeColor: '#a855f7', strokeWidth: 3, firstArrow: true, lastArrow: true });
-      label(L, apE + Y * 0.07, 'Eyepiece', { color: '#a855f7', anchorX: 'middle' });
-      // The shared focal plane (F_o = F_e in normal adjustment)
-      seg([fo, -Y * 0.85], [fo, Y * 0.85], { strokeColor: '#475569', strokeWidth: 1, dash: 3 });
-      label(fo, -Y * 0.92, 'F<sub>o</sub> = F<sub>e</sub>', { color: '#94a3b8', anchorX: 'middle' });
-
-      // Three parallel rays from the star, hitting the objective at different heights.
-      // Each goes straight to the top of I1 (they all meet there), then on to the
-      // eyepiece, and leaves parallel to the ray through the eyepiece's centre.
-      [-0.7, 0, 0.7].forEach(function(k) {
-        const y0 = k * ap;
-        seg([left, y0 - ta * left], [0, y0], { strokeColor: '#facc15', strokeWidth: 1.5 });
-        const s1 = (y1 - y0) / fo;                               // objective → I1
-        const ye = y1 + s1 * fe;                                 // height at the eyepiece
-        seg([0, y0], [L, ye], { strokeColor: '#facc15', strokeWidth: 1.5 });
-        seg([L, ye], [right, ye + tb * (right - L)], { strokeColor: '#4ade80', strokeWidth: 1.5 });
-      });
-
-      // The image I1 (a tiny inverted star image) and the two angles
-      add(board.create('point', [fo, y1], { name: 'I<sub>1</sub>', size: 3, fillColor: '#fb923c', strokeColor: '#fb923c', label: { color: '#fb923c', offset: [6, -12], fontSize: 12 } }));
-      label(left * 0.55, ta * (-left * 0.55) + Y * 0.12, 'α = ' + alphaDeg.toFixed(2) + '°', { color: '#facc15', anchorX: 'middle' });
-      const beta = Math.atan(tb) * 180 / Math.PI;
-      label(L + (right - L) * 0.5, -Y * 0.25, 'β = ' + beta.toFixed(1) + '°', { color: '#4ade80', anchorX: 'middle' });
-      add(board.create('ellipse', [[right - (right - L) * 0.25, 0], [right - (right - L) * 0.1, 0], [right - (right - L) * 0.175, Y * 0.12]], { strokeColor: '#cbd5e1', strokeWidth: 1.5, fillOpacity: 0 }));
-      label(right - (right - L) * 0.175, -Y * 0.2, 'eye', { color: '#cbd5e1', anchorX: 'middle' });
-      // Tube length L
-      seg([0, -Y * 0.72], [L, -Y * 0.72], { strokeColor: '#cbd5e1', strokeWidth: 1, firstArrow: true, lastArrow: true });
-      label(L * 0.42, -Y * 0.65, 'L = f<sub>o</sub> + f<sub>e</sub> = ' + L + ' mm', { color: '#cbd5e1', anchorX: 'middle' });
-
-      board.unsuspendUpdate();
-
-      document.getElementById('fo-val').textContent = fo + ' mm';
-      document.getElementById('fe-val').textContent = fe + ' mm';
-      document.getElementById('alpha-val').textContent = alphaDeg.toFixed(2) + '°';
-      document.getElementById('tele-stat').innerHTML =
-        'M = f<sub>o</sub> / f<sub>e</sub> = ' + fo + ' / ' + fe + ' = <b style="color:#4ade80">' + (fo / fe).toFixed(1) + '×</b> · ' +
-        'tube length L = <b>' + L + ' mm</b><br>' +
-        'The star looks ' + (beta / alphaDeg).toFixed(1) + ' times bigger in angle: α = ' + alphaDeg.toFixed(2) + '° → β = ' + beta.toFixed(1) + '°' +
-        (beta > 15 ? ' (for angles this big, β/α is a little less than f<sub>o</sub>/f<sub>e</sub>)' : '');
+    function solve() {
+      const fo = foS.value, fe = feS.value, ue = mode.value === 0 ? fe : DN * fe / (DN + fe), L = fo + ue;
+      const M = mode.value === 0 ? fo / fe : fo / fe * (1 + fe / DN);
+      return { fo, fe, ue, L, M };
     }
+    function trace(x0, y0, s, lenses, xEnd) {
+      const pts = [[x0, y0]];
+      let x = x0, y = y0;
+      for (const ln of lenses) { y += s * (ln.x - x); x = ln.x; pts.push([x, y]); s -= y / ln.f; }
+      pts.push([xEnd, y + s * (xEnd - x)]);
+      return { pts, s, x, y };
+    }
+    const lensShape = (g, x, h, label) => {
+      const w = g.world(7), pts = [];
+      for (let i = 0; i <= 20; i++) { const t = -1 + i / 10; pts.push([x - w * (1 - t * t), t * h]); }
+      for (let i = 20; i >= 0; i--) { const t = -1 + i / 10; pts.push([x + w * (1 - t * t), t * h]); }
+      g.path(pts, { close: true, fill: C.fluidFill, color: C.fluid, width: 2 });
+      g.text([x, h], label, { size: 12, bold: true, dy: -12 });
+    };
 
-    [['fo-slider', (v) => fo = v], ['fe-slider', (v) => fe = v], ['alpha-slider', (v) => alphaDeg = v]].forEach(function([id, set]) {
-      document.getElementById(id).addEventListener('input', function() { set(parseFloat(this.value)); draw(); });
-    });
-    draw();
+    k.draw = g => {
+      const st = solve(), a = aS.value * Math.PI / 180, s0 = -Math.tan(a), A = 30;   // objective half-aperture 30 mm
+      const hI = -st.fo * Math.tan(a);
+      const xL = -0.25 * st.L, xR = st.L + Math.max(120, st.fe * 4);
+      // height scale: fit the aperture and the image
+      const H = Math.max(A * 1.6, Math.abs(hI) * 2.6);
+      k.view.setRange([xL, xR], [-H, H * 0.75]);
+      g.line([xL, 0], [xR, 0], { color: C.muted, width: 1, dash: [6, 4] });
+      const lenses = [{ x: 0, f: st.fo }, { x: st.L, f: st.fe }];
+      let out = null;
+      for (const [y0, col] of [[A * 0.8, C.bad], [0, C.vel], [-A * 0.8, C.acc]]) {
+        const x0 = xL, yStart = y0 - s0 * (0 - x0);         // ray that reaches the objective at height y0
+        const tr = trace(x0, yStart, s0, lenses, xR);
+        g.path(tr.pts, { color: col, width: 2 });
+        out = tr.s;
+      }
+      g.arrow([st.fo, 0], [0, hI], { color: C.field, width: 3 });
+      g.text([st.fo, hI], 'real image', { align: 'right', size: 12, bold: true, color: C.field, dx: -8, dy: 10 });
+      lensShape(g, 0, A * 1.15, `objective f_o = ${st.fo} mm`);
+      lensShape(g, st.L, Math.max(Math.abs(hI) * 1.5, A * 0.5), 'eyepiece');
+      g.dot([st.fo, 0], 3, C.ink);
+      g.text([st.fo, 0], 'F', { size: 11, dy: -10, color: C.muted });
+      const beta = Math.atan(Math.abs(out));
+      g.text([xL + 10, -H * 0.8], `α = ${num(aS.value, 2)}°`, { align: 'left', size: 14, bold: true, color: C.energy });
+      g.text([xR - 10, -H * 0.8], `β = ${num(beta * 180 / Math.PI, 1)}°`, { align: 'right', size: 14, bold: true, color: C.energy });
+      g.text([st.L / 2, -H * 0.88], `tube length L = ${num(st.L, 1)} mm`, { size: 12, color: C.muted });
+    };
+
+    k.update = () => {
+      const st = solve(), a = aS.value * Math.PI / 180, b = Math.atan(st.M * Math.tan(a));
+      k.readout([
+        mode.value === 0
+          ? `Normal adjustment: L = ${rich('f_o')} + ${rich('f_e')} = ${st.fo} + ${st.fe} = <b>${st.L} mm</b>, M = ${rich('f_o')}/${rich('f_e')} = <b>${num(st.M, 2)}×</b>`
+          : `Image at 250 mm: ${rich('u_e')} = ${num(st.ue, 2)} mm, L = ${rich('f_o')} + ${rich('u_e')} = <b>${num(st.L, 2)} mm</b>, M = (${rich('f_o')}/${rich('f_e')})(1 + ${rich('f_e')}/D) = <b>${num(st.M, 2)}×</b>`,
+        `tan β = M tan α → an object seen at ${num(aS.value, 2)}° looks as wide as one at <b>${num(b * 180 / Math.PI, 1)}°</b>. Long ${rich('f_o')} and short ${rich('f_e')} give large M; a wide objective collects more light.`,
+        'Example 7.4: 500 mm and 20 mm give L = 520 mm, M = 25 in normal adjustment, and L = 518.5 mm, M = 27 for the image at 250 mm.'
+      ]);
+    };
   })();
   </script>
 </div>
