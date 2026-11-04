@@ -1,0 +1,216 @@
+<!-- tags: Chemical Kinetics, G12 Chemistry Myanmar -->
+<!-- Grade 12 Chemistry textbook, Chapter 3, section 3.2 (pages 51–53) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Chemical Kinetics: Rates of Reaction">Collision Theory and Activation Energy</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Only Some Collisions Work</span>
+  <p><strong>Collision theory</strong> is based on the kinetic theory: reactant particles (atoms, molecules or ions) move in random directions and keep colliding. But most collisions just bounce. A reaction only happens when particles collide</p>
+  <ol>
+    <li>with the <strong>correct orientation</strong>: the parts that must bond have to meet, and</li>
+    <li>with at least a minimum energy, the <strong>activation energy</strong> $E_a$, which is enough to start breaking the old bonds.</li>
+  </ol>
+  <p>Such a collision is a <strong>successful (effective) collision</strong>. The rate of reaction depends on how many successful collisions happen per second, so a reaction speeds up if (i) collisions become more frequent, or (ii) a larger fraction of particles has energy above $E_a$.</p>
+  <ul>
+    <li><strong>Activated complex:</strong> a short-lived, unstable, high-energy arrangement of atoms formed during a successful collision (the <strong>transition state</strong>). It can go on to products or break apart back into reactants. Example: $\mathrm{H_2(g) + I_2(g) \to [H_2I_2] \to 2HI(g)}$.</li>
+    <li><strong>Energy profile:</strong> energy plotted against the reaction coordinate. $E_a$ is the height of the barrier from the reactants up to the activated complex; $\Delta H$ is the difference between the products and the reactants. For $\mathrm{H_2 + I_2}$ the products are lower, so the reaction is exothermic.</li>
+    <li><strong>High $E_a$</strong> → few collisions have enough energy → slow reaction. <strong>Low $E_a$</strong> → many collisions succeed → fast reaction.</li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Ideas</span>
+  <div class="formula-main">
+    $$\text{rate} \;\propto\; (\text{collisions per second}) \times (\text{fraction with } E \ge E_a) \times (\text{fraction correctly oriented})$$
+    $$\Delta H = E(\text{products}) - E(\text{reactants}) \qquad E_a = E(\text{activated complex}) - E(\text{reactants})$$
+  </div>
+  <ul class="symbols">
+    <li>$E_a$ is always positive; $\Delta H$ can be negative (exothermic) or positive (endothermic)</li>
+    <li>For an exothermic reaction, the activation energy of the reverse reaction is $E_a - \Delta H$, larger than $E_a$</li>
+  </ul>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>"Every collision gives products":</strong> only a tiny fraction of collisions are successful.</li>
+    <li><strong>Mixing up $E_a$ and $\Delta H$:</strong> $E_a$ is measured from the reactants up to the peak; $\Delta H$ from reactants to products. An exothermic reaction can still have a large $E_a$ (a match needs striking).</li>
+    <li><strong>The activated complex is not a product:</strong> it cannot be collected; it exists only for an instant at the top of the barrier.</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; Successful Collisions and the Energy Barrier</span>
+  <p class="demo-question">Why do only a few collisions lead to a reaction?</p>
+  <p class="demo-instruction"><b>Collisions:</b> red molecules A carry a dark "reactive end". They react with blue B only if the reactive end faces B <em>and</em> the collision energy is at least $E_a$. Each successful collision makes a green product. Change the temperature and the activation energy and compare the counts. <b>Energy profile:</b> set $E_a$ and $\Delta H$, choose the collision energy and press <b>Collide</b>. With too little energy the particles roll back; with enough they pass the activated complex and form products.</p>
+  <div id="pk-coll"></div>
+  <script>
+  (function () {
+    const k = PhysKit.mount('pk-coll', { x: [-6.2, 6.2], y: [-2.6, 2.6] });
+    const C = PhysKit.C, num = k.num;
+    k.row();
+    const scene = k.choice(['Collisions', 'Energy profile'], 0, () => show());
+    const rowA = k.row();
+    const TS = k.slider({ label: 'temperature', unit: 'K', min: 250, max: 450, step: 10, value: 300, digits: 0 });
+    const EA = k.slider({ label: 'E_a', unit: 'units', min: 50, max: 250, step: 10, value: 150, digits: 0 });
+    k.button('Refill', () => fill());
+    const rowB = k.row();
+    const EA2 = k.slider({ label: 'E_a', unit: 'kJ mol⁻¹', min: 40, max: 200, step: 5, value: 170, digits: 0 });
+    const DH = k.slider({ label: 'ΔH', unit: 'kJ mol⁻¹', min: -100, max: 100, step: 5, value: -10, digits: 0 });
+    const rowC = k.row();
+    const EK = k.slider({ label: 'collision energy', unit: 'kJ mol⁻¹', min: 20, max: 250, step: 5, value: 120, digits: 0 });
+    k.button('Collide', () => { bx = -4.2; bdir = 1; rolling = true; outcome = ''; }, { primary: true });
+    function show() { rowA.style.display = scene.value === 0 ? '' : 'none'; rowB.style.display = rowC.style.display = scene.value === 1 ? '' : 'none'; }
+
+    // ---------- scene 1: a box of colliding molecules ----------
+    const BX = [-6.0, 1.6], BY = [-2.4, 2.4], R = 0.2;
+    let P = [], made = 0, nColl = 0, nEnergy = 0, nOk = 0, flashes = [];
+    // a random speed from the 2D Maxwell distribution at temperature T
+    const speed = () => 1.25 * Math.sqrt(TS.value / 300) * Math.sqrt(-2 * Math.log(1 - Math.random()));
+    function fill() {
+      P = []; made = 0; nColl = nEnergy = nOk = 0; flashes = [];
+      for (let i = 0; i < 26; i++) {
+        const a = Math.random() * 6.28, v = speed();
+        P.push({ x: BX[0] + 0.4 + (i % 7) * 1.05, y: BY[0] + 0.4 + Math.floor(i / 7) * 1.1, vx: v * Math.cos(a), vy: v * Math.sin(a), type: i % 2 ? 'B' : 'A', th: Math.random() * 6.28, w: (Math.random() - 0.5) * 4 });
+      }
+    }
+    fill();
+    function stepBox(dt) {
+      P.forEach(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.th += p.w * dt;
+        // the walls are at temperature T: a particle leaves a wall with a fresh speed
+        const hit = (p.x < BX[0] + R && p.vx < 0) || (p.x > BX[1] - R && p.vx > 0) || (p.y < BY[0] + R && p.vy < 0) || (p.y > BY[1] - R && p.vy > 0);
+        if (p.x < BX[0] + R && p.vx < 0) p.vx = -p.vx; if (p.x > BX[1] - R && p.vx > 0) p.vx = -p.vx;
+        if (p.y < BY[0] + R && p.vy < 0) p.vy = -p.vy; if (p.y > BY[1] - R && p.vy > 0) p.vy = -p.vy;
+        if (hit) { const s = speed(), v = Math.hypot(p.vx, p.vy) || 1; p.vx *= s / v; p.vy *= s / v; }
+      });
+      for (let i = 0; i < P.length; i++) for (let j = i + 1; j < P.length; j++) {
+        const a = P[i], b = P[j], dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy);
+        if (d >= 2 * R || d === 0) continue;
+        const nx = dx / d, ny = dy / d, vn = (a.vx - b.vx) * nx + (a.vy - b.vy) * ny;
+        if (vn <= 0) continue;   // already moving apart
+        // energy of the collision along the line of centres (reduced mass ½), shown ×100 as "units"
+        const E = 0.25 * vn * vn * 100;
+        if ((a.type === 'A' && b.type === 'B') || (a.type === 'B' && b.type === 'A')) {
+          nColl++;
+          const A = a.type === 'A' ? a : b, sgn = A === a ? 1 : -1;
+          const facing = Math.cos(A.th) * nx * sgn + Math.sin(A.th) * ny * sgn > 0.5;   // reactive end points at B
+          if (E >= EA.value) nEnergy++;
+          if (E >= EA.value && facing) {
+            nOk++; made++;
+            // A and B join into one product C
+            a.type = 'C'; a.vx = (a.vx + b.vx) / 2; a.vy = (a.vy + b.vy) / 2; b.dead = true;
+            flashes.push({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2, t: 0.6 });
+            continue;
+          }
+        }
+        // otherwise an elastic bounce
+        a.vx -= vn * nx; a.vy -= vn * ny; b.vx += vn * nx; b.vy += vn * ny;
+      }
+      P = P.filter(p => !p.dead);
+      flashes.forEach(f => f.t -= dt); flashes = flashes.filter(f => f.t > 0);
+    }
+
+    // ---------- scene 2: the energy profile ----------
+    // H(x): reactants at 0 on the left, products at ΔH on the right, a smooth hump whose top is E_a
+    const prof = x => { const s = 0.5 * (1 + Math.tanh(1.6 * x)); return DH.value * s + (EA2.value - 0.5 * DH.value) * Math.exp(-x * x / 0.9); };
+    let bx = -4.2, bdir = 1, rolling = false, outcome = '';
+    k.loop(dt => {
+      dt = Math.max(0, Math.min(dt, 0.04));
+      if (scene.value === 0) { for (let i = 0; i < 2; i++) stepBox(dt / 2); return; }
+      if (!rolling) return;
+      const room = EK.value - prof(bx);
+      if (room <= 0 && bdir > 0) { bdir = -1; outcome = 'not enough energy: it rolls back, no reaction'; }
+      bx += bdir * (0.6 + 0.05 * Math.sqrt(Math.max(0, room))) * dt * 2;
+      if (bx > 3.6) { rolling = false; bx = 3.6; outcome = 'over the barrier: products formed!'; }
+      if (bx < -4.2) { rolling = false; bx = -4.2; }
+    }, { button: false });
+
+    function box(g) {
+      g.rect(BX[0], BY[0], BX[1] - BX[0], BY[1] - BY[0], { fill: '#f8fafc', color: C.ink, width: 1.5, radius: 4 });
+      P.forEach(p => {
+        if (p.type === 'C') { g.circle([p.x, p.y], R * 1.25, { fill: '#bbf7d0', color: C.good, width: 1.5 }); return; }
+        g.circle([p.x, p.y], R, { fill: p.type === 'A' ? '#fecaca' : '#bfdbfe', color: p.type === 'A' ? C.pos : C.neg, width: 1.5 });
+        if (p.type === 'A') g.circle([p.x + Math.cos(p.th) * R * 0.85, p.y + Math.sin(p.th) * R * 0.85], R * 0.45, { fill: '#7f1d1d', color: '#7f1d1d' });
+      });
+      flashes.forEach(f => g.circle([f.x, f.y], 0.45 * (1.2 - f.t), { color: C.energy, width: 3 }));
+      const TX = 2.0;
+      g.text([TX, 2.1], `T = ${TS.value} K,  E_a = ${EA.value}`, { size: 14, bold: true, align: 'left' });
+      g.text([TX, 1.4], `A–B collisions: ${nColl}`, { size: 13, align: 'left' });
+      g.text([TX, 0.9], `with E ≥ E_a: ${nEnergy}`, { size: 13, align: 'left', color: C.energy });
+      g.text([TX, 0.4], `and correctly oriented: ${nOk}`, { size: 13, align: 'left', color: C.good });
+      g.text([TX, -0.3], `${nColl ? num(100 * nOk / nColl, 1) : 0}% of collisions succeed`, { size: 14, bold: true, align: 'left', color: C.good });
+      g.text([TX, -1.1], `products made: ${made}`, { size: 13, align: 'left' });
+      g.text([TX, -1.8], 'dark spot = the reactive end of A', { size: 11, color: C.muted, align: 'left' });
+    }
+    function profile(g) {
+      const lo = Math.min(0, DH.value) - 30, hi = Math.max(EA2.value, EK.value, DH.value) + 30;
+      const Y = h => -2.1 + (h - lo) / (hi - lo) * 4.4;
+      const pts = []; for (let x = -5; x <= 5.001; x += 0.05) pts.push([x, Y(prof(x))]);
+      g.path(pts, { color: C.ink, width: 3 });
+      // E_a and ΔH markers
+      g.line([-5, Y(0)], [0.6, Y(0)], { color: C.muted, width: 1, dash: true });
+      g.line([-0.6, Y(EA2.value)], [0.6, Y(EA2.value)], { color: C.muted, width: 1, dash: true });
+      g.arrow([-1.6, Y(0)], [0, Y(EA2.value) - Y(0)], { color: C.bad, width: 2, head: 8 }); g.text([-1.75, (Y(0) + Y(EA2.value)) / 2], `E_a = ${EA2.value}`, { size: 12, bold: true, color: C.bad, align: 'right' });
+      g.line([2.5, Y(DH.value)], [5, Y(DH.value)], { color: C.muted, width: 1, dash: true });
+      if (DH.value !== 0) { g.arrow([2.2, Y(0)], [0, Y(DH.value) - Y(0)], { color: C.energy, width: 2, head: 8 }); g.text([2.35, (Y(0) + Y(DH.value)) / 2], `ΔH = ${DH.value > 0 ? '+' : '−'}${Math.abs(DH.value)}`, { size: 12, bold: true, color: C.energy, align: 'left' }); }
+      g.line([0.6, Y(0)], [5, Y(0)], { color: C.faint, width: 1, dash: true });
+      g.text([-4.2, Y(0) - 0.3], 'H₂ + I₂', { size: 13, bold: true }); g.text([4.3, Y(DH.value) - 0.3], '2HI', { size: 13, bold: true });
+      g.text([0, Y(EA2.value) + 0.3], '[H₂I₂] activated complex', { size: 12, bold: true, color: C.field });
+      // the collision energy line and the rolling "reaction" ball
+      g.line([-5, Y(EK.value)], [5, Y(EK.value)], { color: C.acc, width: 1.5, dash: [4, 4] }); g.text([-5, Y(EK.value) + 0.2], `collision energy ${EK.value}`, { size: 11, color: C.acc, align: 'left' });
+      g.circle([bx, Y(prof(bx)) + 0.2], 0.18, { fill: C.acc, color: C.ink, width: 1.5 });
+      g.text([1.5, -2.4], outcome || (EK.value >= EA2.value ? 'enough energy to pass the barrier' : 'below E_a: it will roll back'), { size: 13, bold: true, color: outcome.startsWith('over') || (!outcome && EK.value >= EA2.value) ? C.good : C.bad });
+    }
+    k.draw = g => (scene.value === 0 ? box : profile)(g);
+    k.update = () => {
+      if (scene.value === 0) k.readout(['Raise T: molecules move faster, so they collide more often <i>and</i> a bigger share of collisions reaches E<sub>a</sub>. Raise E<sub>a</sub>: fewer collisions are energetic enough, so the reaction slows down.']);
+      else k.readout([`E<sub>a</sub> = ${EA2.value} kJ mol⁻¹, ΔH = ${String(DH.value).replace('-', '−')} kJ mol⁻¹: the reaction is <b>${DH.value < 0 ? 'exothermic' : DH.value > 0 ? 'endothermic' : 'thermoneutral'}</b>. The reverse reaction would need E<sub>a</sub> − ΔH = ${EA2.value - DH.value} kJ mol⁻¹.`]);
+    };
+    show();
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Review Questions (p. 53) and Exercise 9 (p. 60)</span>
+
+  <p><strong>Review Q1:</strong> (a) Which theory explains the rate of a reaction? (b) What are the main factors for a reaction to speed up?</p>
+  <details>
+    <summary>Show answer</summary>
+    <p>(a) Collision theory. (b) More frequent collisions, and a larger proportion of particles with energy greater than $E_a$ (both raised by higher concentration, pressure, temperature, smaller particles; a catalyst lowers $E_a$).</p>
+  </details>
+
+  <p><strong>Review Q2:</strong> (a) What orientation is needed to make a product, and why? (b) Name the state the reactants must pass through.</p>
+  <details>
+    <summary>Show answer</summary>
+    <p>(a) The correct orientation: the atoms that must form the new bonds have to meet. With the wrong orientation, the molecules bounce off each other even with enough energy. (b) The transition state, where the activated complex forms.</p>
+  </details>
+
+  <p><strong>Review Q3:</strong> (a) What is the activation energy? (b) Reactions A, B and C have $E_a$ = 8, 10 and 15 kcal mol<sup>−1</sup>. Which is fastest at 25 °C?</p>
+  <details>
+    <summary>Show answer</summary>
+    <p>(a) The minimum energy colliding particles must have for a successful collision (to form the activated complex).</p>
+    <p class="answer">(b) Reaction A: with the lowest barrier (8 kcal mol<sup>−1</sup>), the largest fraction of collisions at 25 °C has enough energy.</p>
+  </details>
+
+  <p><strong>Exercise 9:</strong> For $\mathrm{CO(g) + NO_2(g) \to CO_2(g) + NO(g)}$, the energy diagram shows the products below the reactants. (ii) Exothermic or endothermic? (iii) What is $E_a$? (iv) What is ΔH?</p>
+  <details>
+    <summary>Show answer</summary>
+    <p>(ii) Exothermic: the products ($\mathrm{CO_2 + NO}$) have less energy than the reactants ($\mathrm{CO + NO_2}$), so energy is released.</p>
+    <p>(iii) $E_a$: the activation energy, the height of the peak above the reactants.</p>
+    <p>(iv) ΔH: the enthalpy change of the reaction, the energy difference between products and reactants (negative here).</p>
+  </details>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>A reaction needs collisions with the correct orientation and energy ≥ $E_a$.</li>
+    <li>The activated complex is the unstable, high-energy state at the top of the barrier.</li>
+    <li>$E_a$ = barrier height from reactants; ΔH = products − reactants.</li>
+    <li>Low $E_a$ → many successful collisions → fast reaction.</li>
+  </ul>
+</div>
+
+</article>

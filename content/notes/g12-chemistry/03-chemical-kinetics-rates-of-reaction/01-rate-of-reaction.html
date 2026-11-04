@@ -1,0 +1,211 @@
+<!-- tags: Chemical Kinetics, G12 Chemistry Myanmar -->
+<!-- Grade 12 Chemistry textbook, Chapter 3, section 3.1 (pages 47–50) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Chemical Kinetics: Rates of Reaction">Rate of Reaction</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; How Fast Reactants Turn into Products</span>
+  <p>Every reaction has a speed. An explosion of dynamite, striking a match or burning magnesium ribbon takes less than a second; spoiling of preserved food takes weeks; rusting of an iron pipe months to years; weathering of rocks many years. The study of reaction rates is <strong>chemical kinetics</strong>. It matters in drug design, pollution control, food processing and in making ammonia for fertiliser economically.</p>
+  <ul>
+    <li><strong>Rate of reaction</strong> = the change in the amount (mass, volume or concentration) of a reactant used up or a product formed, per unit time.</li>
+    <li><strong>Following a reaction:</strong> for $\mathrm{Mg(s) + 2HCl(aq) \to MgCl_2(aq) + H_2(g)}$ we can weigh the magnesium left, or collect the hydrogen in a <strong>gas syringe</strong> and read its volume at time intervals.</li>
+    <li><strong>The shape of the graph:</strong> the reactant concentration falls and the product concentration rises, quickly at first and then more slowly, until the reaction stops when a reactant is used up. The steeper the graph, the faster the reaction.</li>
+    <li><strong>Units:</strong> g s<sup>−1</sup> (mass), cm<sup>3</sup> min<sup>−1</sup> or dm<sup>3</sup> min<sup>−1</sup> (gas volume), mol dm<sup>−3</sup> s<sup>−1</sup> (concentration in solution). Use whatever time unit suits the reaction.</li>
+    <li><strong>Sign:</strong> reactants decrease, so we put a minus sign in front of $\Delta[\text{reactant}]$ to make the rate positive. A rate is always a positive quantity.</li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formulas</span>
+  <div class="formula-main">
+    $$\text{rate} = \frac{\text{change in amount}}{\text{time taken}} = -\frac{\Delta[\text{reactant}]}{\Delta t} = +\frac{\Delta[\text{product}]}{\Delta t}$$
+    $$a\mathrm{A} + b\mathrm{B} \to c\mathrm{C} + d\mathrm{D}:\qquad \text{rate} = -\frac{1}{a}\frac{\Delta[\mathrm{A}]}{\Delta t} = -\frac{1}{b}\frac{\Delta[\mathrm{B}]}{\Delta t} = \frac{1}{c}\frac{\Delta[\mathrm{C}]}{\Delta t} = \frac{1}{d}\frac{\Delta[\mathrm{D}]}{\Delta t}$$
+  </div>
+  <ul class="symbols">
+    <li>$[\ ]$ = molar concentration in mol dm<sup>−3</sup>; $\Delta$ = final − initial</li>
+    <li>Dividing by the coefficient makes the rate the same whichever substance we follow</li>
+    <li>Solids and pure liquids have no concentration term; follow their mass or moles instead</li>
+  </ul>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>A negative rate:</strong> $\Delta[\text{reactant}]$ is negative; the minus sign in the formula makes the rate positive.</li>
+    <li><strong>Forgetting the coefficient:</strong> in $\mathrm{2A \to 4B + C}$, the rate is $-\tfrac12 \Delta[\mathrm{A}]/\Delta t$, not $-\Delta[\mathrm{A}]/\Delta t$.</li>
+    <li><strong>Mixed units:</strong> convert minutes to seconds (2 min = 120 s) when the answer is asked per second.</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; Magnesium and Acid with a Gas Syringe</span>
+  <p class="demo-question">How do we get a number for "how fast" from a volume–time graph?</p>
+  <p class="demo-instruction">Press <b>Start</b>: the magnesium ribbon dissolves and hydrogen pushes the syringe out. The graph records the volume. Drag the two markers <b>t₁</b> and <b>t₂</b> along the curve: the average rate between them is the slope of the line joining them, $\Delta V/\Delta t$. Compare an early interval with a late one, and try a stronger acid.</p>
+  <div id="pk-rate"></div>
+  <script>
+  (function () {
+    const k = PhysKit.mount('pk-rate', { x: [0, 10], y: [0, 4] });
+    const C = PhysKit.C, num = k.num;
+    const gv = k.addView({ x: [-14, 126], y: [-8, 62], equal: false, height: 250, title: 'volume of hydrogen against time' });
+    k.row();
+    const MG = k.slider({ label: 'mass of Mg', unit: 'g', min: 0.024, max: 0.06, step: 0.006, value: 0.048, digits: 3 });
+    const HC = k.slider({ label: '[HCl]', unit: 'mol dm⁻³', min: 0.5, max: 2.0, step: 0.5, value: 1.0, digits: 1 });
+    k.row();
+    let t = 0, run = false, t1 = 10, t2 = 30;
+    k.button('Start', () => { if (t >= 120) t = 0; run = true; }, { primary: true });
+    k.button('Reset', () => { t = 0; run = false; });
+    [MG, HC].forEach(s => s.on(() => { t = 0; run = false; }));
+    // hydrogen made: 1 mol Mg → 1 mol H₂, and 1 mol of gas takes 24 000 cm³ at room temperature
+    const Vmax = () => MG.value / 24 * 24000;
+    const kk = () => 0.05 * HC.value;   // a stronger acid reacts faster
+    // 3.55e-5 → "3.55 × 10⁻⁵"
+    const sci = x => { const [m, e] = x.toExponential(2).split('e'); return m + ' × 10' + String(+e).replace('-', '⁻').replace(/\d/g, d => '⁰¹²³⁴⁵⁶⁷⁸⁹'[d]); };
+    const V = s => Vmax() * (1 - Math.exp(-kk() * s));
+    k.loop(dt => { if (!run) return; t = Math.min(120, t + Math.max(0, dt) * 12); if (t >= 120) run = false; k.update(); }, { button: false });
+
+    // drag t₁ or t₂ (whichever is nearer) along the curve, but never past the time reached so far
+    gv.drag({ hit: p => true, get: () => [t1, V(t1)], set: p => {
+      const x = Math.max(0, Math.min(t, p[0]));
+      if (Math.abs(x - t1) <= Math.abs(x - t2)) t1 = Math.min(x, t2 - 2); else t2 = Math.max(x, t1 + 2);
+    } });
+
+    k.draw = g => {
+      const f = Vmax() ? V(t) / Vmax() : 0;
+      // flask with acid and a magnesium ribbon that gets shorter
+      g.path([[0.8, 3.0], [0.8, 2.3], [0.2, 0.4], [2.6, 0.4], [2.0, 2.3], [2.0, 3.0]], { color: C.ink, width: 2 });
+      g.path([[0.52, 1.3], [0.2, 0.42], [2.6, 0.42], [2.28, 1.3]], { fill: C.fluidFill, color: C.fluid, width: 1, close: true });
+      const L = 1.4 * (1 - f);
+      if (L > 0.02) g.rect(1.4 - L / 2, 0.5, L, 0.1, { fill: '#9ca3af', color: '#4b5563', width: 1 });
+      if (run) for (let i = 0; i < 8; i++) { const y = 0.6 + ((t * 0.9 + i * 0.37) % 0.7); g.circle([1.4 - L / 2 + ((i * 0.53) % 1) * Math.max(L, 0.1), y], 0.04, { color: C.fluid, width: 1 }); }
+      g.text([1.4, 0.15], 'Mg + HCl(aq)', { size: 11, color: C.muted });
+      // tube and syringe; the plunger moves out as gas is collected
+      g.path([[1.4, 3.0], [1.4, 3.4], [4.0, 3.4], [4.0, 2.6]], { color: C.ink, width: 2 });
+      g.rect(3.8, 2.4, 5.0, 0.6, { fill: '#fff', color: C.ink, width: 2, radius: 3 });
+      for (let i = 0; i <= 6; i++) { const x = 4.2 + i * 0.7; g.line([x, 2.4], [x, 2.55], { color: C.muted, width: 1 }); g.text([x, 2.22], String(i * 10), { size: 9, color: C.muted }); }
+      const px = 4.2 + 0.07 * V(t);
+      g.rect(3.85, 2.45, px - 3.85, 0.5, { fill: '#e0f2fe', color: '#e0f2fe' });
+      g.rect(px, 2.42, 0.1, 0.56, { fill: C.ink, color: C.ink }); g.line([px + 0.1, 2.7], [px + 1.4, 2.7], { color: C.ink, width: 3 });
+      g.text([6.3, 3.35], `${num(V(t), 1)} cm³ of H₂ after ${num(t, 0)} s`, { size: 14, bold: true });
+      g.text([6.3, 1.5], f > 0.98 ? 'almost all the Mg is used up: the reaction stops' : run ? 'fast at first, then slower' : t > 0 ? 'paused' : 'press Start', { size: 12, color: C.muted });
+    };
+    gv.draw = g => {
+      g.axes({ xstep: 20, ystep: 10, xlabel: 't (s)', ylabel: 'V (cm³)' });
+      const pts = []; for (let s = 0; s <= t + 1e-9; s += 1) pts.push([s, V(s)]);
+      if (pts.length > 1) g.path(pts, { color: C.acc, width: 2.5 });
+      if (t > 4) {
+        const a = Math.min(t1, t), b = Math.min(t2, t);
+        g.line([a, V(a)], [b, V(b)], { color: C.bad, width: 2 });
+        g.line([a, V(a)], [b, V(a)], { color: C.muted, width: 1, dash: true }); g.line([b, V(a)], [b, V(b)], { color: C.muted, width: 1, dash: true });
+        g.handle([a, V(a)], C.bad); g.handle([b, V(b)], C.bad);
+        g.text([a, V(a) + 5], 't₁', { size: 12, bold: true, color: C.bad }); g.text([b, V(b) + 5], 't₂', { size: 12, bold: true, color: C.bad });
+      }
+    };
+    k.update = () => {
+      const a = Math.min(t1, t), b = Math.min(t2, t);
+      if (t <= 4) { k.readout([`Mg: ${MG.value.toFixed(3)} g = ${(MG.value / 24).toFixed(4)} mol, so at most ${num(Vmax(), 0)} cm³ of H₂ (24 000 cm³ per mol). Press <b>Start</b>.`]); return; }
+      const dV = V(b) - V(a), dt = b - a;
+      k.readout([`average rate from t₁ = ${num(a, 0)} s to t₂ = ${num(b, 0)} s: ΔV/Δt = (${num(V(b), 1)} − ${num(V(a), 1)}) / (${num(b, 0)} − ${num(a, 0)}) = <b>${num(dV / dt, 2)} cm³ s⁻¹</b>`,
+        `rate of formation of H₂ = ${sci(dV / 24000 / dt)} mol s⁻¹ = rate of disappearance of Mg (1 : 1)`]);
+    };
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Textbook Examples 1–4 (pp. 49–50)</span>
+
+  <p><strong>Example 1:</strong> In $\mathrm{Zn(s) + 2HCl(aq) \to ZnCl_2(aq) + H_2(g)}$, 30 g of zinc is used up in 2 min. Find the rate in mol s<sup>−1</sup>. (Zn = 65.38)</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p>moles of Zn $= 30 / 65.38 = 0.459 \approx 0.46$ mol; time $= 2 \times 60 = 120$ s.</p>
+    <p class="answer">rate $= 0.46 / 120 = 3.8 \times 10^{-3} \approx 0.004$ mol s<sup>−1</sup></p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 2:</strong> Write rate expressions for (a) $\mathrm{C_6H_{12}O_6(s) \to 2C_2H_5OH(aq) + 2CO_2(g)}$, (b) $\mathrm{3O_2(g) \to 2O_3(g)}$.</p>
+  <details>
+    <summary>Show answer</summary>
+    <p>(a) $\text{rate} = -\dfrac{\Delta[\mathrm{C_6H_{12}O_6}]}{\Delta t} = \dfrac{1}{2}\dfrac{\Delta[\mathrm{C_2H_5OH}]}{\Delta t} = \dfrac{1}{2}\dfrac{\Delta[\mathrm{CO_2}]}{\Delta t}$</p>
+    <p>(b) $\text{rate} = -\dfrac{1}{3}\dfrac{\Delta[\mathrm{O_2}]}{\Delta t} = \dfrac{1}{2}\dfrac{\Delta[\mathrm{O_3}]}{\Delta t}$</p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 3:</strong> For $\mathrm{H_2(g) + 2ICl(g) \to I_2(g) + 2HCl(g)}$, $[\mathrm{H_2}] = 0.674$ mol dm<sup>−3</sup> at 1 s and 0.526 mol dm<sup>−3</sup> at 2 s. Find the rate.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p class="answer">rate $= -\dfrac{\Delta[\mathrm{H_2}]}{\Delta t} = -\dfrac{0.526 - 0.674}{2 - 1} = -\dfrac{-0.148}{1} = 0.148$ mol dm<sup>−3</sup> s<sup>−1</sup></p>
+  </details>
+
+  <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;">
+
+  <p><strong>Example 4:</strong> In $\mathrm{2A(aq) \to 4B(aq) + C(aq)}$, $[\mathrm{A}]$ falls from 2.00 to 1.76 mol dm<sup>−3</sup> in 120 s. Find the rate of reaction.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p>$\Delta[\mathrm{A}] = 1.76 - 2.00 = -0.24$ mol dm<sup>−3</sup></p>
+    <p class="answer">rate $= -\dfrac{1}{2}\dfrac{\Delta[\mathrm{A}]}{\Delta t} = -\dfrac{1}{2} \times \dfrac{-0.24}{120} = 1.0 \times 10^{-3}$ mol dm<sup>−3</sup> s<sup>−1</sup></p>
+  </details>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Review Questions (p. 50) and Exercises (p. 59)</span>
+
+  <p><strong>Review Q2:</strong> (a) How long do these take: rusting of an iron door, sodium with water, making grape wine, decay of buildings by acid rain, burning magnesium? (b) Choose units (dm<sup>3</sup> min<sup>−1</sup>, g s<sup>−1</sup>, mol dm<sup>−3</sup> s<sup>−1</sup>) for the rate at which (i) Mg is used up, (ii) $\mathrm{CO_2}$ is given off, (iii) sulphur is formed, (iv) [HCl] changes.</p>
+  <details>
+    <summary>Show answer</summary>
+    <p>(a) Rusting: months to years. Sodium + water: seconds. Wine: days to weeks. Acid-rain decay: years. Burning Mg: seconds.</p>
+    <p>(b) (i) g s<sup>−1</sup>, (ii) dm<sup>3</sup> min<sup>−1</sup>, (iii) g s<sup>−1</sup>, (iv) mol dm<sup>−3</sup> s<sup>−1</sup>.</p>
+  </details>
+
+  <p><strong>Review Q3:</strong> Rate expressions for (a) $\mathrm{Zn + 2HCl \to ZnCl_2 + H_2}$, (b) $\mathrm{2N_2O_5(g) \to 4NO_2(g) + O_2(g)}$.</p>
+  <details>
+    <summary>Show answer</summary>
+    <p>(a) $\text{rate} = -\dfrac{1}{2}\dfrac{\Delta[\mathrm{HCl}]}{\Delta t} = \dfrac{\Delta[\mathrm{ZnCl_2}]}{\Delta t} = \dfrac{\Delta[\mathrm{H_2}]}{\Delta t}$ (zinc is a solid: follow its mass, $-\Delta m_{\mathrm{Zn}}/\Delta t$).</p>
+    <p>(b) $\text{rate} = -\dfrac{1}{2}\dfrac{\Delta[\mathrm{N_2O_5}]}{\Delta t} = \dfrac{1}{4}\dfrac{\Delta[\mathrm{NO_2}]}{\Delta t} = \dfrac{\Delta[\mathrm{O_2}]}{\Delta t}$</p>
+  </details>
+
+  <p><strong>Exercise 5:</strong> Moles used up and times: (1) 2 mol in 30 s, (2) 5 mol in 2 min, (3) 1 mol in 1.5 min, (4) 3.2 mol in 1.5 min, (5) 5.9 mol in 30 s. Find each rate, the fastest and the slowest.</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p>(1) $2/30 = 0.067$ mol s<sup>−1</sup>; (2) $5/120 = 0.042$; (3) $1/90 = 0.011$; (4) $3.2/90 = 0.036$; (5) $5.9/30 = 0.197$ mol s<sup>−1</sup>.</p>
+    <p class="answer">Fastest: reaction 5. Slowest: reaction 3.</p>
+  </details>
+
+  <p><strong>Exercise 6:</strong> Rate expressions for (a) $\mathrm{CaCO_3(s) + 2HCl(aq) \to CaCl_2(aq) + H_2O(l) + CO_2(g)}$, (b) $\mathrm{4NH_3(g) + 5O_2(g) \to 4NO(g) + 6H_2O(g)}$, (c) $\mathrm{CH_4(g) + Br_2(g) \to CH_3Br(g) + HBr(g)}$.</p>
+  <details>
+    <summary>Show answer</summary>
+    <p>(a) $-\dfrac{1}{2}\dfrac{\Delta[\mathrm{HCl}]}{\Delta t} = \dfrac{\Delta[\mathrm{CaCl_2}]}{\Delta t} = \dfrac{\Delta[\mathrm{CO_2}]}{\Delta t}$ (CaCO<sub>3</sub> solid and water liquid: no concentration terms).</p>
+    <p>(b) $-\dfrac{1}{4}\dfrac{\Delta[\mathrm{NH_3}]}{\Delta t} = -\dfrac{1}{5}\dfrac{\Delta[\mathrm{O_2}]}{\Delta t} = \dfrac{1}{4}\dfrac{\Delta[\mathrm{NO}]}{\Delta t} = \dfrac{1}{6}\dfrac{\Delta[\mathrm{H_2O}]}{\Delta t}$</p>
+    <p>(c) $-\dfrac{\Delta[\mathrm{CH_4}]}{\Delta t} = -\dfrac{\Delta[\mathrm{Br_2}]}{\Delta t} = \dfrac{\Delta[\mathrm{CH_3Br}]}{\Delta t} = \dfrac{\Delta[\mathrm{HBr}]}{\Delta t}$</p>
+  </details>
+
+  <p><strong>Exercise 7:</strong> $\mathrm{Mg + Cl_2 \to MgCl_2}$ makes 2 g of $\mathrm{MgCl_2}$ in 1 min. (i) Moles of MgCl<sub>2</sub>? (ii) The rate? (iii) If $\mathrm{2Na + Cl_2 \to 2NaCl}$ goes at the same rate, how many moles of NaCl form in 1 min, and what mass of sodium is needed? (Mg 24, Na 23, Cl 35.5)</p>
+  <details>
+    <summary>Show step-by-step solution</summary>
+    <p>(i) $M(\mathrm{MgCl_2}) = 24 + 2(35.5) = 95$ g mol<sup>−1</sup>; $n = 2/95 = 0.0211$ mol.</p>
+    <p>(ii) rate $= 0.0211$ mol min<sup>−1</sup> $= 3.5 \times 10^{-4}$ mol s<sup>−1</sup>.</p>
+    <p>(iii) The same rate of reaction means 0.0211 mol of $\mathrm{Cl_2}$ reacts per minute. The equation gives 2 NaCl per $\mathrm{Cl_2}$: $n(\mathrm{NaCl}) = 2 \times 0.0211 = 0.0421$ mol, and $n(\mathrm{Na}) = 0.0421$ mol.</p>
+    <p class="answer">mass of Na $= 0.0421 \times 23 = 0.97$ g. (If "same rate" is read as the same moles of product per minute, it would be 0.0211 mol NaCl and 0.48 g Na.)</p>
+  </details>
+
+  <p><strong>Exercise 12:</strong> 5 g of $\mathrm{CaCO_3}$ powder with 20 cm<sup>3</sup> of 0.1 mol dm<sup>−3</sup> HCl; the gas is collected for the first minute. (a) Rate expressions. (b) What happens with (i) a lump of the same mass, (ii) 40 cm<sup>3</sup> of the same acid?</p>
+  <details>
+    <summary>Show answer</summary>
+    <p>(a) rate $= -\dfrac{\Delta m(\mathrm{CaCO_3})}{\Delta t} = \dfrac{\Delta V(\mathrm{CO_2})}{\Delta t}$.</p>
+    <p>(b)(i) Slower: a lump has a smaller surface area, so fewer collisions per second. (ii) The concentration is the same, so the rate in the first minute is about the same. CaCO<sub>3</sub> is in excess (0.05 mol, while the HCl is only 0.002 mol), so twice the acid gives about twice the final volume of gas.</p>
+  </details>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>Rate = change in amount of reactant or product ÷ time; it is always positive.</li>
+    <li>$\text{rate} = -\tfrac1a \Delta[\mathrm{A}]/\Delta t = \tfrac1c \Delta[\mathrm{C}]/\Delta t$ for $a\mathrm{A} \to c\mathrm{C}$.</li>
+    <li>On a volume–time or concentration–time graph, the slope is the rate; reactions are fastest at the start.</li>
+    <li>Units depend on what is measured: g s<sup>−1</sup>, cm<sup>3</sup> min<sup>−1</sup>, mol dm<sup>−3</sup> s<sup>−1</sup>.</li>
+  </ul>
+</div>
+
+</article>
