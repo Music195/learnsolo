@@ -39,62 +39,133 @@
 
 <div class="note-demo">
   <span class="block-label">Interactive Visualization &mdash; Two-Lens Ray Diagram of Compound Microscope</span>
-  <p class="demo-instruction">Examine how the objective lens forms an enlarged real intermediate image $I_1$, which then serves as the object for the eyepiece to produce the colossal virtual image $I_2$.</p>
+  <p class="demo-instruction">The objective ($f_o = 0.8\text{ cm}$) makes a real, inverted, magnified image $I_1$. The eyepiece is placed so that $I_1$ sits just inside its focal point, and it makes the final virtual image $I_2$ at the near point $D = 25\text{ cm}$. Move the object distance $u_o$ and the eyepiece focal length $f_e$, and watch the rays and the magnifications change. (Dashed lines trace the rays back to $I_2$, which is far to the left of the drawing.)</p>
 
   <div id="micro-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
 
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <span style="color: #cbd5e1; font-weight: 500;">
-      Objective $f_o = 1.0\text{ cm}$ &bull; Eyepiece $f_e = 3.0\text{ cm}$ &bull; Tube $L \approx 10\text{ cm}$
-    </span>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      Total Magnification $M \approx$ <span style="color: #4ade80; font-weight: 700;">-65×</span>
-    </div>
+  <div class="demo-controls" style="display: flex; gap: 0.6rem 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
+    <label style="color: #cbd5e1; font-weight: 500;">
+      Object distance $u_o$:
+      <input id="uo-slider" type="range" min="0.85" max="1.40" step="0.01" value="0.90" style="vertical-align: middle;">
+      <span id="uo-val" style="color: #4ade80; font-weight: 700;">0.90 cm</span>
+    </label>
+    <label style="color: #cbd5e1; font-weight: 500;">
+      Eyepiece $f_e$:
+      <input id="fe-slider" type="range" min="2.0" max="5.0" step="0.1" value="2.5" style="vertical-align: middle;">
+      <span id="fe-val" style="color: #a855f7; font-weight: 700;">2.5 cm</span>
+    </label>
+    <div id="micro-stat" style="width: 100%; text-align: center; color: #f8fafc; font-size: 0.9rem; line-height: 1.6;"></div>
   </div>
 
   <script>
   (function() {
     let board = JXG.JSXGraph.initBoard('micro-board', {
-      boundingbox: [-3, 5, 13, -5],
-      axis: true,
-      defaultAxes: {
-        x: { name: 'Distance (cm)', withLabel: true, label: { position: 'rt', offset: [-15, -15], color: '#cbd5e1' } },
-        y: { name: 'Height (a.u.)', withLabel: true, label: { position: 'rt', offset: [-10, -10], color: '#cbd5e1' } }
-      },
+      boundingbox: [-2, 5, 13, -5],
+      axis: false,
+      keepaspectratio: false,
       showNavigation: false,
-      showCopyright: false
+      showCopyright: false,
+      pan: { enabled: false },
+      zoom: { enabled: false }
     });
 
-    // Objective lens at x = 0
-    board.create('segment', [[0, -3], [0, 3]], { strokeColor: '#38bdf8', strokeWidth: 3 });
-    board.create('text', [0, 3.4, 'Objective (Lo)'], { color: '#38bdf8', fontSize: 11, anchorX: 'middle' });
+    // This board is a picture, not something to drag: every element is
+    // created fixed (the same wrapper as the other Physics MM demos).
+    const createFixed = board.create.bind(board);
+    board.create = (type, parents, attrs = {}) =>
+      createFixed(type, parents, { fixed: true, highlight: false, ...attrs, vertices: { fixed: true, visible: false, ...attrs.vertices } });
 
-    // Eyepiece lens at x = 9.5
-    board.create('segment', [[9.5, -4], [9.5, 4]], { strokeColor: '#a855f7', strokeWidth: 3 });
-    board.create('text', [9.5, 4.4, 'Eyepiece (Le)'], { color: '#a855f7', fontSize: 11, anchorX: 'middle' });
+    // ---------- The optics (real-is-positive: 1/f = 1/u + 1/v) ----------
+    const fo = 0.8, D = 25, h = 0.35;     // objective focal length, near point, object height (cm)
+    let uo = 0.9, fe = 2.5;
 
-    // Object at x = -1.2, height = 0.5
-    board.create('arrow', [[-1.2, 0], [-1.2, 0.6]], { strokeColor: '#4ade80', strokeWidth: 3 });
-    board.create('text', [-1.2, 0.9, 'Object'], { color: '#4ade80', fontSize: 11, anchorX: 'middle' });
+    function solve() {
+      const vo = uo * fo / (uo - fo);          // objective image distance
+      const mo = -vo / uo;                      // objective magnification (negative: inverted)
+      const ue = fe * D / (fe + D);             // I1 must be this far in front of the eyepiece for I2 at 25 cm
+      const xe = vo + ue;                       // eyepiece position (objective at x = 0)
+      const me = 1 + D / fe;                    // eyepiece magnification, image at the near point
+      return { vo, mo, ue, xe, me, M: mo * me, h1: mo * h };
+    }
 
-    // Intermediate Image I1 at x = 6.0, height = -3.0
-    board.create('arrow', [[6.0, 0], [6.0, -2.5]], { strokeColor: '#fb923c', strokeWidth: 3 });
-    board.create('text', [6.0, -3.0, 'Intermediate Image I₁ (Real)'], { color: '#fb923c', fontSize: 11, anchorX: 'middle' });
+    let elements = [];
+    const add = (el) => { elements.push(el); return el; };
+    const seg = (p, q, style) => add(board.create('segment', [p, q], style));
+    const label = (x, y, t, style) => add(board.create('text', [x, y, t], { fontSize: 11, ...style }));
 
-    // Light rays through objective
-    board.create('segment', [[-1.2, 0.6], [0, 0.6]], { strokeColor: '#facc15', strokeWidth: 1.5 });
-    board.create('segment', [[0, 0.6], [6.0, -2.5]], { strokeColor: '#facc15', strokeWidth: 1.5 });
-    board.create('segment', [[-1.2, 0.6], [6.0, -2.5]], { strokeColor: '#facc15', strokeWidth: 1.5, dash: 2 });
+    function draw() {
+      board.suspendUpdate();
+      board.removeObject(elements);
+      elements = [];
+      const o = solve();
 
-    // Rays through eyepiece to eye (eye at x = 11)
-    board.create('segment', [[6.0, -2.5], [9.5, -2.5]], { strokeColor: '#cbd5e1', strokeWidth: 1.5 });
-    board.create('segment', [[9.5, -2.5], [12.0, -4.0]], { strokeColor: '#cbd5e1', strokeWidth: 1.5 });
-    board.create('segment', [[6.0, -2.5], [9.5, 0]], { strokeColor: '#cbd5e1', strokeWidth: 1.5 });
-    board.create('segment', [[9.5, 0], [12.0, 1.2]], { strokeColor: '#cbd5e1', strokeWidth: 1.5 });
+      // Fit the drawing: from just left of the object to past the eye
+      const right = o.xe + 2.4, left = -uo - 1.2;
+      const top = Math.max(Math.abs(o.h1) * 1.45, 1.6);
+      board.setBoundingBox([left, top, right, -top], false);
 
-    // Virtual back-projections
-    board.create('segment', [[9.5, -2.5], [-2.0, -4.5]], { strokeColor: '#f43f5e', strokeWidth: 1.5, dash: 3 });
-    board.create('text', [-2.0, -3.5, 'Final Image I₂\n(Virtual, Magnified)'], { color: '#f43f5e', fontSize: 11 });
+      // Axis, lenses (double-headed lines are convex lenses) and focal points
+      seg([left, 0], [right, 0], { strokeColor: '#334155', strokeWidth: 1, dash: 2 });
+      const lensH = top * 0.8;
+      seg([0, -lensH * 0.55], [0, lensH * 0.55], { strokeColor: '#38bdf8', strokeWidth: 3, firstArrow: true, lastArrow: true });
+      label(0, lensH * 0.55 + top * 0.08, 'Objective', { color: '#38bdf8', anchorX: 'middle' });
+      seg([o.xe, -lensH], [o.xe, lensH], { strokeColor: '#a855f7', strokeWidth: 3, firstArrow: true, lastArrow: true });
+      label(o.xe, lensH + top * 0.08, 'Eyepiece', { color: '#a855f7', anchorX: 'middle' });
+      [[fo, 'F<sub>o</sub>', '#38bdf8'], [-fo, '', '#38bdf8'], [o.xe - fe, 'F<sub>e</sub>', '#a855f7'], [o.xe + fe, '', '#a855f7']].forEach(function([x, name, c]) {
+        if (x > left && x < right) {
+          add(board.create('point', [x, 0], { name: name, size: 2, fillColor: c, strokeColor: c, label: { color: c, offset: [-4, -14], fontSize: 11 } }));
+        }
+      });
+
+      // Object (green) and the real image I1 (orange, inverted)
+      add(board.create('arrow', [[-uo, 0], [-uo, h]], { strokeColor: '#4ade80', strokeWidth: 3 }));
+      label(-uo, -top * 0.12, 'object', { color: '#4ade80', anchorX: 'middle' });
+      add(board.create('arrow', [[o.vo, 0], [o.vo, o.h1]], { strokeColor: '#fb923c', strokeWidth: 3 }));
+      label(o.vo - 0.1, o.h1, 'I<sub>1</sub> (real)', { color: '#fb923c', anchorX: 'right', anchorY: 'middle' });
+
+      // Stage 1: two rays from the top of the object meet again at the top of I1
+      //   yellow: parallel to the axis, then through F_o
+      //   pink:   straight through the centre of the objective
+      seg([-uo, h], [0, h], { strokeColor: '#facc15', strokeWidth: 1.6 });
+      seg([0, h], [o.vo, o.h1], { strokeColor: '#facc15', strokeWidth: 1.6 });
+      seg([-uo, h], [o.vo, o.h1], { strokeColor: '#f472b6', strokeWidth: 1.6 });
+
+      // Stage 2: I1 is the object for the eyepiece. Two rays from the top of I1:
+      //   green: parallel to the axis, then bent through F_e on the far side
+      //   cyan:  straight through the centre of the eyepiece
+      // After the eyepiece they spread apart, so the eye sees them coming
+      // from a point further back: the virtual image I2 (dashed lines).
+      const rays2 = [
+        { y: o.h1, slope: -o.h1 / fe, color: '#4ade80', from: [o.vo, o.h1] },
+        { y: 0, slope: -o.h1 / o.ue, color: '#22d3ee', from: [o.vo, o.h1] }
+      ];
+      rays2.forEach(function(ray) {
+        seg(ray.from, [o.xe, ray.y], { strokeColor: ray.color, strokeWidth: 1.6 });
+        seg([o.xe, ray.y], [right, ray.y + ray.slope * (right - o.xe)], { strokeColor: ray.color, strokeWidth: 1.6 });
+        seg([o.xe, ray.y], [left, ray.y + ray.slope * (left - o.xe)], { strokeColor: ray.color, strokeWidth: 1.2, dash: 2, strokeOpacity: 0.6 });
+      });
+      label(left + 0.15, -top * 0.9, '↙ dashed lines meet at I<sub>2</sub>: virtual, inverted, 25 cm from the eyepiece, ' + Math.abs(o.M).toFixed(0) + '× the object',
+        { color: '#f87171', anchorX: 'left' });
+
+      // The eye just behind the eyepiece
+      add(board.create('ellipse', [[o.xe + 1.1, 0.0], [o.xe + 1.5, 0.0], [o.xe + 1.3, top * 0.12]], { strokeColor: '#cbd5e1', strokeWidth: 1.5, fillOpacity: 0 }));
+      label(o.xe + 1.3, -top * 0.22, 'eye', { color: '#cbd5e1', anchorX: 'middle' });
+
+      board.unsuspendUpdate();
+
+      document.getElementById('uo-val').textContent = uo.toFixed(2) + ' cm';
+      document.getElementById('fe-val').textContent = fe.toFixed(1) + ' cm';
+      document.getElementById('micro-stat').innerHTML =
+        'v<sub>o</sub> = u<sub>o</sub>f<sub>o</sub>/(u<sub>o</sub> − f<sub>o</sub>) = <b>' + o.vo.toFixed(2) + ' cm</b> · ' +
+        'm<sub>o</sub> = −v<sub>o</sub>/u<sub>o</sub> = <b style="color:#fb923c">' + o.mo.toFixed(1) + '</b> · ' +
+        'm<sub>e</sub> = 1 + D/f<sub>e</sub> = <b style="color:#a855f7">' + o.me.toFixed(1) + '</b><br>' +
+        'Total magnification M = m<sub>o</sub> × m<sub>e</sub> = <b style="color:#4ade80">' + o.M.toFixed(0) + '</b> · ' +
+        'lens separation = ' + o.xe.toFixed(1) + ' cm';
+    }
+
+    document.getElementById('uo-slider').addEventListener('input', function() { uo = parseFloat(this.value); draw(); });
+    document.getElementById('fe-slider').addEventListener('input', function() { fe = parseFloat(this.value); draw(); });
+    draw();
   })();
   </script>
 </div>

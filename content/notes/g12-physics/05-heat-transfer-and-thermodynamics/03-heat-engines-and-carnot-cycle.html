@@ -73,34 +73,64 @@
 
 <div class="note-demo">
   <span class="block-label">Interactive Visualization &mdash; Carnot Cycle $p$-$V$ Indicator Diagram</span>
-  <p class="demo-instruction">Adjust the hot reservoir temperature $T_H$ and cold reservoir temperature $T_C$ below. Watch how expanding the temperature differential increases the enclosed $p$-$V$ work area and elevates Carnot efficiency.</p>
+  <p class="demo-instruction">A gas (0.1 mol, monatomic) runs the Carnot cycle $A \to B \to C \to D$. Move the reservoir temperatures $T_H$ and $T_C$. The shaded area inside the loop is the work $W$ done per cycle; watch it grow as the gap between $T_H$ and $T_C$ widens, and compare $W$ with the heat $Q_H$ taken in.</p>
 
   <div id="carnot-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
 
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
+  <div class="demo-controls" style="display: flex; gap: 0.6rem 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
     <label style="color: #cbd5e1; font-weight: 500;">
-      Hot Temp $T_H$: 
-      <input id="th-slider" type="range" min="500" max="1000" step="25" value="800" style="vertical-align: middle;">
-      <span id="th-val" style="color: #f87171; font-weight: 700;">800 K (527°C)</span>
+      Hot Temp $T_H$:
+      <input id="th-slider" type="range" min="500" max="900" step="25" value="800" style="vertical-align: middle;">
+      <span id="th-val" style="color: #f87171; font-weight: 700;">800 K</span>
     </label>
     <label style="color: #cbd5e1; font-weight: 500;">
-      Cold Temp $T_C$: 
+      Cold Temp $T_C$:
       <input id="tc-slider" type="range" min="250" max="450" step="25" value="300" style="vertical-align: middle;">
-      <span id="tc-val" style="color: #38bdf8; font-weight: 700;">300 K (27°C)</span>
+      <span id="tc-val" style="color: #38bdf8; font-weight: 700;">300 K</span>
     </label>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      Carnot Efficiency $\eta_C$: <span id="carnot-stat" style="color: #4ade80; font-weight: 700;">62.5%</span>
-    </div>
+    <div id="carnot-stat" style="width: 100%; text-align: center; color: #f8fafc; font-size: 0.9rem; line-height: 1.6;"></div>
   </div>
+  <div id="carnot-step" style="text-align: center; margin-top: 0.5rem; color: #facc15; font-weight: 600; font-size: 0.95rem;"></div>
 
   <script>
   (function() {
+    // ---------- The gas and the cycle ----------
+    // 0.1 mol of a monatomic ideal gas: pV = nRT with V in litres and
+    // p in kPa (1 kPa x 1 L = 1 J), and adiabats T V^(gamma - 1) = constant.
+    const nR = 0.1 * 8.31;        // J/K
+    const gamma = 5 / 3;          // monatomic gas
+    const VA = 1, VB = 3;         // the hot isothermal expansion runs from 1 L to 3 L
+    let Th = 800, Tc = 300;
+
+    // The four corners. B -> C and D -> A are adiabats, so
+    // V_C = V_B (T_H/T_C)^(1/(gamma-1)) and V_D = V_A (T_H/T_C)^(1/(gamma-1)).
+    function corners() {
+      const k = Math.pow(Th / Tc, 1 / (gamma - 1));
+      return { VA: VA, VB: VB, VC: VB * k, VD: VA * k };
+    }
+
+    // Pressure on each kind of curve
+    const pIso = (T, V) => nR * T / V;                       // isotherm
+    const pAdi = (V0, T0, V) => nR * T0 / V0 * Math.pow(V0 / V, gamma);  // adiabat through (V0, T0)
+
+    // The whole loop as a list of points, leg by leg (used for the
+    // shaded area and for the moving dot). Each leg gets N points.
+    const N = 60;
+    function legPoint(leg, u) {            // u from 0 to 1 along leg 0..3
+      const c = corners();
+      if (leg === 0) { const V = c.VA + (c.VB - c.VA) * u; return [V, pIso(Th, V)]; }   // A -> B
+      if (leg === 1) { const V = c.VB + (c.VC - c.VB) * u; return [V, pAdi(c.VB, Th, V)]; } // B -> C
+      if (leg === 2) { const V = c.VC + (c.VD - c.VC) * u; return [V, pIso(Tc, V)]; }   // C -> D
+      const V = c.VD + (c.VA - c.VD) * u; return [V, pAdi(c.VA, Th, V)];                 // D -> A
+    }
+
     let board = JXG.JSXGraph.initBoard('carnot-board', {
-      boundingbox: [-0.5, 7, 5.5, -0.5],
+      boundingbox: [-1, 760, 15, -60],
       axis: true,
+      keepaspectratio: false,
       defaultAxes: {
-        x: { name: 'Volume V (a.u.)', withLabel: true, label: { position: 'rt', offset: [-15, -15], color: '#cbd5e1' } },
-        y: { name: 'Pressure p (a.u.)', withLabel: true, label: { position: 'rt', offset: [-10, -10], color: '#cbd5e1' } }
+        x: { name: 'V (L)', withLabel: true, label: { position: 'rt', offset: [-30, 15], color: '#cbd5e1' }, ticks: { label: { color: '#94a3b8' } } },
+        y: { name: 'p (kPa)', withLabel: true, label: { position: 'rt', offset: [10, -5], color: '#cbd5e1' }, ticks: { label: { color: '#94a3b8' } } }
       },
       showNavigation: false,
       showCopyright: false
@@ -115,64 +145,107 @@
     board.create = (type, parents, attrs = {}) =>
       createFixed(type, parents, { fixed: true, ...attrs, vertices: { fixed: true, visible: false, ...attrs.vertices } });
 
-    let Th = 800;
-    let Tc = 300;
+    // ---------- Drawing ----------
+    // The shaded loop: its points are worked out again on every update.
+    const area = board.create('curve', [[0], [0]], { strokeWidth: 0, fillColor: '#facc15', fillOpacity: 0.18, highlight: false });
+    area.updateDataArray = function() {
+      this.dataX = []; this.dataY = [];
+      for (let leg = 0; leg < 4; leg++) for (let i = 0; i <= N; i++) {
+        const [V, p] = legPoint(leg, i / N);
+        this.dataX.push(V); this.dataY.push(p);
+      }
+    };
 
-    let cAB, cBC, cCD, cDA;
-    let pA, pB, pC, pD;
+    // The four legs, each in its own colour
+    const legStyle = [
+      { strokeColor: '#ef4444', strokeWidth: 3 },             // hot isotherm
+      { strokeColor: '#f97316', strokeWidth: 2.5, dash: 2 },  // adiabat
+      { strokeColor: '#38bdf8', strokeWidth: 3 },             // cold isotherm
+      { strokeColor: '#a855f7', strokeWidth: 2.5, dash: 2 }   // adiabat
+    ];
+    legStyle.forEach(function(style, leg) {
+      const c = board.create('curve', [[0], [0]], { ...style, highlight: false });
+      c.updateDataArray = function() {
+        this.dataX = []; this.dataY = [];
+        for (let i = 0; i <= N; i++) { const [V, p] = legPoint(leg, i / N); this.dataX.push(V); this.dataY.push(p); }
+      };
+    });
 
-    function renderCarnot() {
-      board.suspendUpdate();
-      if (cAB) board.removeObject([cAB, cBC, cCD, cDA, pA, pB, pC, pD]);
+    // Corner labels A, B, C, D (their positions follow the sliders)
+    ['A', 'B', 'C', 'D'].forEach(function(name, leg) {
+      board.create('point', [() => legPoint(leg, 0)[0], () => legPoint(leg, 0)[1]], {
+        name: name, size: 3, fillColor: '#f8fafc', strokeColor: '#0f172a',
+        label: { color: '#f8fafc', offset: [8, 8], fontSize: 14 }
+      });
+    });
 
-      let kH = Th / 150; // scaling for visual
-      let kC = Tc / 150;
+    // Heat arrows' labels: Q_H goes in along the hot leg, Q_C leaves along the cold one
+    board.create('text', [() => legPoint(0, 0.5)[0] + 0.3, () => legPoint(0, 0.5)[1] + 40, 'Q<sub>H</sub> in (at T<sub>H</sub>)'],
+      { color: '#f87171', fontSize: 12, anchorX: 'left' });
+    board.create('text', [() => legPoint(2, 0.3)[0], () => legPoint(2, 0.3)[1] + pIso(Th, VA) * 0.07, 'Q<sub>C</sub> out (at T<sub>C</sub>)'],
+      { color: '#38bdf8', fontSize: 12, anchorX: 'middle', anchorY: 'bottom' });
+    // "W" in the middle of the loop: halfway between the middle of the
+    // hot isotherm and the middle of the D -> A adiabat
+    board.create('text', [() => (legPoint(0, 0.5)[0] + legPoint(3, 0.5)[0]) / 2, () => (legPoint(0, 0.5)[1] + legPoint(3, 0.5)[1]) / 2, 'W'],
+      { color: '#facc15', fontSize: 16, anchorX: 'middle', anchorY: 'middle', cssStyle: 'font-weight: 700' });
 
-      let vA = 1.0, pValA = kH / vA;
-      let vB = 2.0, pValB = kH / vB;
-      // Adiabatic B->C: p * V^1.4 = const
-      let constBC = pValB * Math.pow(vB, 1.4);
-      let vC = Math.pow(constBC / kC, 1 / 0.4);
-      let pValC = kC / vC;
-      let vD = vC * (vA / vB);
-      let pValD = kC / vD;
+    // The gas: a dot that travels round the loop
+    let s = 0;   // position round the loop: 0..4 (whole number = a corner)
+    const gas = board.create('point', [() => legPoint(Math.floor(s) % 4, s % 1)[0], () => legPoint(Math.floor(s) % 4, s % 1)[1]],
+      { name: '', size: 6, fillColor: '#facc15', strokeColor: '#ffffff', strokeWidth: 2 });
 
-      // Curves
-      cAB = board.create('curve', [function(t) { return t; }, function(t) { return kH / t; }, vA, vB], { strokeColor: '#ef4444', strokeWidth: 3 });
-      cBC = board.create('curve', [function(t) { return t; }, function(t) { return constBC / Math.pow(t, 1.4); }, vB, vC], { strokeColor: '#f97316', strokeWidth: 2.5, dash: 2 });
-      cCD = board.create('curve', [function(t) { return t; }, function(t) { return kC / t; }, vD, vC], { strokeColor: '#38bdf8', strokeWidth: 3 });
-      let constDA = pValA * Math.pow(vA, 1.4);
-      cDA = board.create('curve', [function(t) { return t; }, function(t) { return constDA / Math.pow(t, 1.4); }, vA, vD], { strokeColor: '#a855f7', strokeWidth: 2.5, dash: 2 });
-
-      pA = board.create('point', [vA, pValA], { name: 'A', fillColor: '#ef4444', size: 3 });
-      pB = board.create('point', [vB, pValB], { name: 'B', fillColor: '#ef4444', size: 3 });
-      pC = board.create('point', [vC, pValC], { name: 'C', fillColor: '#38bdf8', size: 3 });
-      pD = board.create('point', [vD, pValD], { name: 'D', fillColor: '#38bdf8', size: 3 });
-
-      board.unsuspendUpdate();
-    }
-
-    renderCarnot();
+    // ---------- Readouts ----------
+    const steps = [
+      'A → B · Isothermal expansion at T<sub>H</sub>: the gas takes in heat Q<sub>H</sub> and does work.',
+      'B → C · Adiabatic expansion (Q = 0): the gas keeps doing work and cools from T<sub>H</sub> to T<sub>C</sub>.',
+      'C → D · Isothermal compression at T<sub>C</sub>: work is done on the gas and it gives out heat Q<sub>C</sub>.',
+      'D → A · Adiabatic compression (Q = 0): the gas is squeezed and warms back to T<sub>H</sub>.'
+    ];
+    let lastStep = '';
 
     function update() {
-      document.getElementById('th-val').textContent = Th + ' K (' + (Th - 273) + '°C)';
-      document.getElementById('tc-val').textContent = Tc + ' K (' + (Tc - 273) + '°C)';
-      let eta = (1 - Tc / Th) * 100;
-      document.getElementById('carnot-stat').textContent = eta.toFixed(1) + '%';
-      renderCarnot();
+      document.getElementById('th-val').textContent = Th + ' K';
+      document.getElementById('tc-val').textContent = Tc + ' K';
+      // Heat in and out on the isotherms: Q = nRT ln(V ratio), with V_B/V_A = V_C/V_D = 3
+      const QH = nR * Th * Math.log(VB / VA), QC = nR * Tc * Math.log(VB / VA);
+      const W = QH - QC;
+      document.getElementById('carnot-stat').innerHTML =
+        'Q<sub>H</sub> = ' + QH.toFixed(0) + ' J · Q<sub>C</sub> = ' + QC.toFixed(0) +
+        ' J · W = Q<sub>H</sub> − Q<sub>C</sub> = <b style="color:#facc15">' + W.toFixed(0) + ' J</b>' +
+        '<br>η = W / Q<sub>H</sub> = 1 − T<sub>C</sub>/T<sub>H</sub> = <b style="color:#4ade80">' + (100 * W / QH).toFixed(1) + '%</b>';
+      // Fit the whole loop on the board: widest volume V_C, highest pressure at A
+      const c = corners(), pMax = pIso(Th, VA);
+      board.setBoundingBox([-0.08 * c.VC, pMax * 1.15, c.VC * 1.12, -0.09 * pMax], false);
+      board.update();
     }
 
     document.getElementById('th-slider').addEventListener('input', function() {
       Th = parseFloat(this.value);
-      if (Th <= Tc) Th = Tc + 25;
+      if (Th < Tc + 50) { Th = Tc + 50; this.value = Th; }
+      update();
+    });
+    document.getElementById('tc-slider').addEventListener('input', function() {
+      Tc = parseFloat(this.value);
+      if (Tc > Th - 50) { Tc = Th - 50; this.value = Tc; }
       update();
     });
 
-    document.getElementById('tc-slider').addEventListener('input', function() {
-      Tc = parseFloat(this.value);
-      if (Tc >= Th) Tc = Th - 25;
-      update();
-    });
+    // ---------- Animation: one leg every 2.5 s ----------
+    let last = null;
+    function frame(now) {
+      const box = document.getElementById('carnot-board');
+      if (!box || !box.isConnected) return;     // the page changed: stop
+      const dt = last === null ? 0 : Math.max(0, Math.min((now - last) / 1000, 0.05));
+      last = now;
+      s = (s + dt / 2.5) % 4;
+      board.update();
+      const text = steps[Math.floor(s)];
+      if (text !== lastStep) { document.getElementById('carnot-step').innerHTML = text; lastStep = text; }
+      requestAnimationFrame(frame);
+    }
+
+    update();
+    requestAnimationFrame(frame);
   })();
   </script>
 </div>

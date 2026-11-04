@@ -43,56 +43,165 @@
 
 <div class="note-demo">
   <span class="block-label">Interactive Visualization &mdash; Prism Dispersion into Rainbow Spectrum</span>
-  <p class="demo-instruction">Observe how a triangular glass prism disperses incident white light into its constituent spectrum. Violet light ($n \approx 1.53$) refracts more sharply than red light ($n \approx 1.51$) due to normal chromatic dispersion.</p>
+  <p class="demo-instruction">White light from the collimator enters a glass prism. Each colour has its own refractive index (violet $n \approx 1.53$, red $n \approx 1.51$), so each is bent by a different angle $\delta$ and the light spreads into a spectrum. Change the prism angle $A$ and the angle of incidence $i$; press <strong>Minimum deviation</strong> to set the symmetric path that a spectrometer uses to measure $n$.</p>
 
   <div id="spec-board" style="width: 100%; height: 360px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
 
-  <div class="demo-controls" style="display: flex; gap: 1rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <span style="color: #cbd5e1; font-weight: 500;">
-      Collimator $\longrightarrow$ Glass Prism (Dispersion) $\longrightarrow$ Spectral Lines
-    </span>
-    <span style="color: #38bdf8; font-weight: 600;">$\delta_{\text{violet}} > \delta_{\text{red}}$</span>
+  <div class="demo-controls" style="display: flex; gap: 0.6rem 1.2rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
+    <label style="color: #cbd5e1; font-weight: 500;">
+      Prism angle $A$:
+      <input id="A-slider" type="range" min="40" max="70" step="1" value="60" style="vertical-align: middle;">
+      <span id="A-val" style="color: #38bdf8; font-weight: 700;">60°</span>
+    </label>
+    <label style="color: #cbd5e1; font-weight: 500;">
+      Incidence $i$:
+      <input id="i-slider" type="range" min="25" max="80" step="0.5" value="55" style="vertical-align: middle;">
+      <span id="i-val" style="color: #facc15; font-weight: 700;">55.0°</span>
+    </label>
+    <button id="min-btn" style="padding: 0.35rem 0.8rem; border-radius: 6px; background: #0284c7; color: white; border: none; cursor: pointer; font-weight: 600;">Minimum deviation</button>
+    <label style="color: #cbd5e1; font-weight: 500;">
+      <input id="zoom-check" type="checkbox" checked style="vertical-align: middle;"> Exaggerate the spread (×8)
+    </label>
+    <div id="spec-stat" style="width: 100%; text-align: center; color: #f8fafc; font-size: 0.9rem; line-height: 1.6;"></div>
   </div>
 
   <script>
   (function() {
     let board = JXG.JSXGraph.initBoard('spec-board', {
-      boundingbox: [-1, 5, 11, -5],
+      boundingbox: [-5.5, 3.6, 7.5, -3.2],
       axis: false,
       showNavigation: false,
-      showCopyright: false
+      showCopyright: false,
+      pan: { enabled: false },
+      zoom: { enabled: false }
     });
 
-    // Collimator tube representation at x = 0 to 2
-    board.create('segment', [[0, 0.5], [2, 0.5]], { strokeColor: '#64748b', strokeWidth: 2 });
-    board.create('segment', [[0, -0.5], [2, -0.5]], { strokeColor: '#64748b', strokeWidth: 2 });
-    board.create('text', [1, -1.0, 'Collimator'], { color: '#94a3b8', fontSize: 11, anchorX: 'middle' });
+    // This board is a picture, not something to drag: every element is
+    // created fixed (the same wrapper as the other Physics MM demos).
+    const createFixed = board.create.bind(board);
+    board.create = (type, parents, attrs = {}) =>
+      createFixed(type, parents, { fixed: true, highlight: false, ...attrs, vertices: { fixed: true, visible: false, ...attrs.vertices } });
 
-    // Incident white ray
-    board.create('arrow', [[0.5, 0], [3.2, 0]], { strokeColor: '#ffffff', strokeWidth: 3 });
-    board.create('text', [1.5, 0.3, 'White Light'], { color: '#ffffff', fontSize: 11 });
+    // ---------- The glass ----------
+    // Refractive index for each colour: n = 1.500 + 0.00492 / λ² (λ in μm).
+    // This gives n = 1.510 for red (700 nm) and n = 1.531 for violet (400 nm).
+    const nOf = (nm) => 1.5 + 0.00492 / Math.pow(nm / 1000, 2);
+    const colours = [
+      [700, '#ef4444', 'red'], [620, '#f97316', 'orange'], [580, '#facc15', 'yellow'],
+      [530, '#4ade80', 'green'], [480, '#22d3ee', 'blue'], [440, '#6366f1', 'indigo'], [400, '#a855f7', 'violet']
+    ];
+    const YELLOW = 589;                                   // sodium light, for the minimum-deviation readout
+    const deg = Math.PI / 180;
 
-    // Equilateral glass prism: vertices at (3.2, -2.5), (3.2, 2.5), (6.5, 0)
-    let prism = board.create('polygon', [[3.2, -2.5], [3.2, 2.5], [6.5, 0]], {
-      fillColor: '#38bdf8', fillOpacity: 0.25, strokeColor: '#38bdf8', strokeWidth: 2, vertices: { visible: false }
+    let A = 60, iDeg = 55, zoom = true;
+
+    // Small vector helpers
+    const unit = (v) => { const L = Math.hypot(v[0], v[1]); return [v[0] / L, v[1] / L]; };
+    const rot = (v, a) => [v[0] * Math.cos(a) - v[1] * Math.sin(a), v[0] * Math.sin(a) + v[1] * Math.cos(a)];
+    // Snell's law with vectors: ray direction d meets a surface whose normal n
+    // points back toward the incoming ray; eta = n1 / n2. Returns null for
+    // total internal reflection.
+    function refract(d, n, eta) {
+      const cosi = -(n[0] * d[0] + n[1] * d[1]);
+      const k = 1 - eta * eta * (1 - cosi * cosi);
+      if (k < 0) return null;
+      const c = eta * cosi - Math.sqrt(k);
+      return [eta * d[0] + c * n[0], eta * d[1] + c * n[1]];
+    }
+    // Where the ray p + t d meets the line through q and r
+    function hit(p, d, q, r) {
+      const e = [r[0] - q[0], r[1] - q[1]];
+      const den = d[0] * e[1] - d[1] * e[0];
+      const t = ((q[0] - p[0]) * e[1] - (q[1] - p[1]) * e[0]) / den;
+      return [p[0] + t * d[0], p[1] + t * d[1]];
+    }
+
+    // Trace one colour through the prism: returns the points and the deviation
+    function trace(n) {
+      const H = 4.0, top = [0, 2.4];
+      const half = H * Math.tan(A * deg / 2);
+      const BL = [-half, top[1] - H], BR = [half, top[1] - H];
+      // Outward normals of the two faces
+      const outL = unit([BL[1] - top[1], top[0] - BL[0]]);          // points left
+      const outR = unit([top[1] - BR[1], BR[0] - top[0]]);          // points right
+      // The white ray arrives at the middle of the left face at angle i to the normal
+      const P = [(top[0] + BL[0]) / 2, (top[1] + BL[1]) / 2];
+      const dIn = rot([-outL[0], -outL[1]], iDeg * deg);           // turned from the inward normal
+      const inside = refract(dIn, outL, 1 / n);
+      const Q = hit(P, inside, top, BR);
+      const out = refract(unit(inside), [-outR[0], -outR[1]], n);
+      if (!out) return { P, Q, dIn, tir: true, prism: [top, BL, BR] };
+      const dev = Math.acos(Math.max(-1, Math.min(1, dIn[0] * unit(out)[0] + dIn[1] * unit(out)[1]))) / deg;
+      return { P, Q, dIn, out: unit(out), dev, prism: [top, BL, BR] };
+    }
+
+    // Minimum deviation for index n: the ray crosses the prism symmetrically,
+    // r = A/2 inside, so sin i = n sin(A/2) and δm = 2i − A.
+    const iMin = (n) => Math.asin(Math.min(1, n * Math.sin(A * deg / 2))) / deg;
+
+    let elements = [];
+    const add = (el) => { elements.push(el); return el; };
+
+    function draw() {
+      board.suspendUpdate();
+      board.removeObject(elements);
+      elements = [];
+
+      const base = trace(nOf(YELLOW));
+      add(board.create('polygon', base.prism, { fillColor: '#93c5fd', fillOpacity: 0.12, borders: { strokeColor: '#93c5fd', strokeWidth: 2 } }));
+      add(board.create('text', [0, base.prism[0][1] + 0.25, 'A = ' + A + '°'], { anchorX: 'middle', color: '#38bdf8', fontSize: 12 }));
+
+      // White light in: from the collimator to the left face
+      const start = [base.P[0] - 4 * base.dIn[0], base.P[1] - 4 * base.dIn[1]];
+      add(board.create('segment', [start, base.P], { strokeColor: '#f8fafc', strokeWidth: 3 }));
+      add(board.create('text', [start[0] + 0.2, start[1] - 0.25, 'white light'], { color: '#f8fafc', fontSize: 11, anchorY: 'top' }));
+      // The undeviated direction, to measure δ against
+      add(board.create('segment', [base.P, [base.P[0] + 9 * base.dIn[0], base.P[1] + 9 * base.dIn[1]]], { strokeColor: '#64748b', strokeWidth: 1, dash: 2 }));
+
+      // Each colour: through the glass, then out towards the screen.
+      // With "exaggerate" on, each colour's turn away from yellow is drawn 8 times bigger.
+      const yellowOut = base.out;
+      colours.forEach(function([nm, c]) {
+        const t = trace(nOf(nm));
+        add(board.create('segment', [t.P, t.Q], { strokeColor: c, strokeWidth: 1.5, strokeOpacity: 0.85 }));
+        if (t.tir || !yellowOut) return;
+        let dir = t.out;
+        if (zoom) {
+          const turn = Math.atan2(t.out[1], t.out[0]) - Math.atan2(yellowOut[1], yellowOut[0]);
+          dir = rot(yellowOut, 8 * turn);
+        }
+        add(board.create('segment', [t.Q, [t.Q[0] + 7 * dir[0], t.Q[1] + 7 * dir[1]]], { strokeColor: c, strokeWidth: 2.5 }));
+      });
+
+      // Readouts
+      const tr = trace(nOf(700)), tv = trace(nOf(400)), ty = base;
+      const nY = nOf(YELLOW), dm = 2 * iMin(nY) - A;
+      let html;
+      if (tv.tir || tr.tir) {
+        html = '<b style="color:#f87171">Some colours are totally internally reflected at the second face.</b> Increase i or reduce A.';
+      } else {
+        html = 'δ<sub>red</sub> = <b style="color:#ef4444">' + tr.dev.toFixed(2) + '°</b> · δ<sub>violet</sub> = <b style="color:#a855f7">' + tv.dev.toFixed(2) + '°</b> · ' +
+               'spread δ<sub>violet</sub> − δ<sub>red</sub> = <b>' + (tv.dev - tr.dev).toFixed(2) + '°</b><br>' +
+               'Yellow (589 nm): δ = ' + ty.dev.toFixed(2) + '°, smallest possible δ<sub>m</sub> = ' + dm.toFixed(2) + '° at i = ' + iMin(nY).toFixed(1) + '°' +
+               (Math.abs(ty.dev - dm) < 0.02 ? ' <b style="color:#4ade80">← at minimum deviation</b>' : '') + '<br>' +
+               'n = sin((A + δ<sub>m</sub>)/2) / sin(A/2) = <b style="color:#facc15">' +
+               (Math.sin((A + dm) / 2 * deg) / Math.sin(A / 2 * deg)).toFixed(3) + '</b>';
+      }
+      document.getElementById('spec-stat').innerHTML = html;
+      document.getElementById('A-val').textContent = A + '°';
+      document.getElementById('i-val').textContent = iDeg.toFixed(1) + '°';
+      board.unsuspendUpdate();
+    }
+
+    document.getElementById('A-slider').addEventListener('input', function() { A = parseFloat(this.value); draw(); });
+    document.getElementById('i-slider').addEventListener('input', function() { iDeg = parseFloat(this.value); draw(); });
+    document.getElementById('zoom-check').addEventListener('change', function() { zoom = this.checked; draw(); });
+    document.getElementById('min-btn').addEventListener('click', function() {
+      iDeg = iMin(nOf(YELLOW));
+      document.getElementById('i-slider').value = iDeg;
+      draw();
     });
-    board.create('text', [4.2, 0.2, 'Prism'], { color: '#38bdf8', fontSize: 12, fontWeight: 'bold' });
-
-    // Dispersed rays exiting from right face
-    // Red ray (least deviated)
-    board.create('segment', [[3.2, 0], [5.0, 0.4]], { strokeColor: '#ef4444', strokeWidth: 2 });
-    board.create('arrow', [[5.0, 0.4], [9.5, 2.2]], { strokeColor: '#ef4444', strokeWidth: 2.5 });
-    board.create('text', [9.7, 2.2, 'Red (700 nm)'], { color: '#ef4444', fontSize: 11 });
-
-    // Yellow / Green ray
-    board.create('segment', [[3.2, 0], [5.0, 0.2]], { strokeColor: '#22c55e', strokeWidth: 2 });
-    board.create('arrow', [[5.0, 0.2], [9.5, 0.8]], { strokeColor: '#22c55e', strokeWidth: 2 });
-    board.create('text', [9.7, 0.8, 'Green (546 nm)'], { color: '#22c55e', fontSize: 11 });
-
-    // Blue / Violet ray (most deviated)
-    board.create('segment', [[3.2, 0], [5.0, 0.0]], { strokeColor: '#8b5cf6', strokeWidth: 2 });
-    board.create('arrow', [[5.0, 0.0], [9.5, -0.6]], { strokeColor: '#8b5cf6', strokeWidth: 2.5 });
-    board.create('text', [9.7, -0.6, 'Violet (400 nm)'], { color: '#8b5cf6', fontSize: 11 });
+    draw();
   })();
   </script>
 </div>

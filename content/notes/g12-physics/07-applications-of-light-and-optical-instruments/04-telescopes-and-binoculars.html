@@ -52,59 +52,120 @@
 
 <div class="note-demo">
   <span class="block-label">Interactive Visualization &mdash; Astronomical Refracting Telescope Ray Optics</span>
-  <p class="demo-instruction">Examine the normal adjustment ray path where parallel incident rays from a distant star converge at the common focal plane ($F_o = F_e$) and emerge as parallel collimated bundles for relaxed human eye viewing.</p>
+  <p class="demo-instruction">Light from a distant star arrives as parallel rays at a small angle $\alpha$. The objective brings them to a point on its focal plane (the image $I_1$); in normal adjustment the eyepiece's focus is at the same place, so the rays leave parallel again, at a bigger angle $\beta$. Change $f_o$, $f_e$ and $\alpha$ and check that $M = \beta/\alpha = f_o/f_e$ and $L = f_o + f_e$. (Heights are stretched so the small angles can be seen.)</p>
 
   <div id="telescope-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
 
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <span style="color: #cbd5e1; font-weight: 500;">
-      Objective $f_o = 500\text{ mm}$ &bull; Eyepiece $f_e = 50\text{ mm}$ &bull; Tube $L = 550\text{ mm}$
-    </span>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      Magnifying Power: <span style="color: #4ade80; font-weight: 700;">10×</span>
-    </div>
+  <div class="demo-controls" style="display: flex; gap: 0.6rem 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
+    <label style="color: #cbd5e1; font-weight: 500;">
+      Objective $f_o$:
+      <input id="fo-slider" type="range" min="200" max="1000" step="50" value="500" style="vertical-align: middle;">
+      <span id="fo-val" style="color: #38bdf8; font-weight: 700;">500 mm</span>
+    </label>
+    <label style="color: #cbd5e1; font-weight: 500;">
+      Eyepiece $f_e$:
+      <input id="fe-slider" type="range" min="10" max="100" step="5" value="20" style="vertical-align: middle;">
+      <span id="fe-val" style="color: #a855f7; font-weight: 700;">20 mm</span>
+    </label>
+    <label style="color: #cbd5e1; font-weight: 500;">
+      Star angle $\alpha$:
+      <input id="alpha-slider" type="range" min="0.1" max="1.0" step="0.05" value="0.5" style="vertical-align: middle;">
+      <span id="alpha-val" style="color: #facc15; font-weight: 700;">0.50°</span>
+    </label>
+    <div id="tele-stat" style="width: 100%; text-align: center; color: #f8fafc; font-size: 0.9rem; line-height: 1.6;"></div>
   </div>
 
   <script>
   (function() {
     let board = JXG.JSXGraph.initBoard('telescope-board', {
-      boundingbox: [-2, 5, 14, -5],
-      axis: true,
-      defaultAxes: {
-        x: { name: 'Optical Axis (cm)', withLabel: true, label: { position: 'rt', offset: [-15, -15], color: '#cbd5e1' } },
-        y: { name: 'Height (cm)', withLabel: true, label: { position: 'rt', offset: [-10, -10], color: '#cbd5e1' } }
-      },
+      boundingbox: [-100, 40, 700, -40],
+      axis: false,
+      keepaspectratio: false,
       showNavigation: false,
-      showCopyright: false
+      showCopyright: false,
+      pan: { enabled: false },
+      zoom: { enabled: false }
     });
 
-    // Objective lens at x = 0 (fo = 8 cm)
-    board.create('segment', [[0, -3.5], [0, 3.5]], { strokeColor: '#38bdf8', strokeWidth: 3.5 });
-    board.create('text', [0, 4.0, 'Objective (Lo)'], { color: '#38bdf8', fontSize: 11, anchorX: 'middle' });
+    // This board is a picture, not something to drag: every element is
+    // created fixed (the same wrapper as the other Physics MM demos).
+    const createFixed = board.create.bind(board);
+    board.create = (type, parents, attrs = {}) =>
+      createFixed(type, parents, { fixed: true, highlight: false, ...attrs, vertices: { fixed: true, visible: false, ...attrs.vertices } });
 
-    // Eyepiece lens at x = 10 (fe = 2 cm)
-    board.create('segment', [[10, -2.5], [10, 2.5]], { strokeColor: '#a855f7', strokeWidth: 3 });
-    board.create('text', [10, 3.2, 'Eyepiece (Le)'], { color: '#a855f7', fontSize: 11, anchorX: 'middle' });
+    let fo = 500, fe = 20, alphaDeg = 0.5;   // focal lengths in mm, star angle in degrees
+    const rad = (deg) => deg * Math.PI / 180;
 
-    // Intermediate focal point Fo = Fe at x = 8
-    board.create('point', [8, 0], { name: 'Fo = Fe', fillColor: '#facc15', strokeColor: '#fff', size: 3, fixed: true });
+    let elements = [];
+    const add = (el) => { elements.push(el); return el; };
+    const seg = (p, q, style) => add(board.create('segment', [p, q], style));
+    const label = (x, y, t, style) => add(board.create('text', [x, y, t], { fontSize: 11, ...style }));
 
-    // Real inverted intermediate image arrow at x = 8
-    board.create('arrow', [[8, 0], [8, -1.2]], { strokeColor: '#fb923c', strokeWidth: 3 });
-    board.create('text', [8, -1.6, 'I₁ (Real, Inverted)'], { color: '#fb923c', fontSize: 11, anchorX: 'middle' });
+    function draw() {
+      board.suspendUpdate();
+      board.removeObject(elements);
+      elements = [];
 
-    // Parallel incoming celestial rays (tilted at small angle theta)
-    // Ray 1: top edge
-    board.create('segment', [[-2, 3.0], [0, 2.5]], { strokeColor: '#facc15', strokeWidth: 1.5 });
-    board.create('segment', [[0, 2.5], [8, -1.2]], { strokeColor: '#facc15', strokeWidth: 1.5 });
-    board.create('segment', [[8, -1.2], [10, 0.5]], { strokeColor: '#facc15', strokeWidth: 1.5 });
-    board.create('segment', [[10, 0.5], [13, 2.2]], { strokeColor: '#facc15', strokeWidth: 1.5 });
+      // Objective at x = 0, eyepiece at x = L = f_o + f_e (all in mm)
+      const L = fo + fe, ta = Math.tan(rad(alphaDeg));
+      const y1 = -fo * ta;                    // image I1: on the focal plane, below the axis (inverted)
+      const tb = fo * ta / fe;                // emerging rays: tan β = f_o tan α / f_e
+      const ap = 0.04 * fo;                   // objective half-aperture
+      // Board: from a little before the objective to past the eye.
+      // Heights use their own scale (the board is stretched upward).
+      const left = -0.22 * L, right = L + Math.max(0.25 * L, 4 * fe);
+      const Y = Math.max(ap * 1.6, Math.abs(y1) * 2.2);
+      board.setBoundingBox([left, Y, right, -Y], false);
 
-    // Ray 2: optical center
-    board.create('segment', [[-2, 0.5], [0, 0]], { strokeColor: '#38bdf8', strokeWidth: 1.5, dash: 2 });
-    board.create('segment', [[0, 0], [8, -1.2]], { strokeColor: '#38bdf8', strokeWidth: 1.5, dash: 2 });
-    board.create('segment', [[8, -1.2], [10, -1.8]], { strokeColor: '#38bdf8', strokeWidth: 1.5, dash: 2 });
-    board.create('segment', [[10, -1.8], [13, -0.1]], { strokeColor: '#38bdf8', strokeWidth: 1.5, dash: 2 });
+      seg([left, 0], [right, 0], { strokeColor: '#334155', strokeWidth: 1, dash: 2 });
+      seg([0, -ap], [0, ap], { strokeColor: '#38bdf8', strokeWidth: 3, firstArrow: true, lastArrow: true });
+      label(0, ap + Y * 0.07, 'Objective', { color: '#38bdf8', anchorX: 'middle' });
+      const apE = Math.max(Math.abs(y1) * 1.6, ap * 0.45);
+      seg([L, -apE], [L, apE], { strokeColor: '#a855f7', strokeWidth: 3, firstArrow: true, lastArrow: true });
+      label(L, apE + Y * 0.07, 'Eyepiece', { color: '#a855f7', anchorX: 'middle' });
+      // The shared focal plane (F_o = F_e in normal adjustment)
+      seg([fo, -Y * 0.85], [fo, Y * 0.85], { strokeColor: '#475569', strokeWidth: 1, dash: 3 });
+      label(fo, -Y * 0.92, 'F<sub>o</sub> = F<sub>e</sub>', { color: '#94a3b8', anchorX: 'middle' });
+
+      // Three parallel rays from the star, hitting the objective at different heights.
+      // Each goes straight to the top of I1 (they all meet there), then on to the
+      // eyepiece, and leaves parallel to the ray through the eyepiece's centre.
+      [-0.7, 0, 0.7].forEach(function(k) {
+        const y0 = k * ap;
+        seg([left, y0 - ta * left], [0, y0], { strokeColor: '#facc15', strokeWidth: 1.5 });
+        const s1 = (y1 - y0) / fo;                               // objective → I1
+        const ye = y1 + s1 * fe;                                 // height at the eyepiece
+        seg([0, y0], [L, ye], { strokeColor: '#facc15', strokeWidth: 1.5 });
+        seg([L, ye], [right, ye + tb * (right - L)], { strokeColor: '#4ade80', strokeWidth: 1.5 });
+      });
+
+      // The image I1 (a tiny inverted star image) and the two angles
+      add(board.create('point', [fo, y1], { name: 'I<sub>1</sub>', size: 3, fillColor: '#fb923c', strokeColor: '#fb923c', label: { color: '#fb923c', offset: [6, -12], fontSize: 12 } }));
+      label(left * 0.55, ta * (-left * 0.55) + Y * 0.12, 'α = ' + alphaDeg.toFixed(2) + '°', { color: '#facc15', anchorX: 'middle' });
+      const beta = Math.atan(tb) * 180 / Math.PI;
+      label(L + (right - L) * 0.5, -Y * 0.25, 'β = ' + beta.toFixed(1) + '°', { color: '#4ade80', anchorX: 'middle' });
+      add(board.create('ellipse', [[right - (right - L) * 0.25, 0], [right - (right - L) * 0.1, 0], [right - (right - L) * 0.175, Y * 0.12]], { strokeColor: '#cbd5e1', strokeWidth: 1.5, fillOpacity: 0 }));
+      label(right - (right - L) * 0.175, -Y * 0.2, 'eye', { color: '#cbd5e1', anchorX: 'middle' });
+      // Tube length L
+      seg([0, -Y * 0.72], [L, -Y * 0.72], { strokeColor: '#cbd5e1', strokeWidth: 1, firstArrow: true, lastArrow: true });
+      label(L * 0.42, -Y * 0.65, 'L = f<sub>o</sub> + f<sub>e</sub> = ' + L + ' mm', { color: '#cbd5e1', anchorX: 'middle' });
+
+      board.unsuspendUpdate();
+
+      document.getElementById('fo-val').textContent = fo + ' mm';
+      document.getElementById('fe-val').textContent = fe + ' mm';
+      document.getElementById('alpha-val').textContent = alphaDeg.toFixed(2) + '°';
+      document.getElementById('tele-stat').innerHTML =
+        'M = f<sub>o</sub> / f<sub>e</sub> = ' + fo + ' / ' + fe + ' = <b style="color:#4ade80">' + (fo / fe).toFixed(1) + '×</b> · ' +
+        'tube length L = <b>' + L + ' mm</b><br>' +
+        'The star looks ' + (beta / alphaDeg).toFixed(1) + ' times bigger in angle: α = ' + alphaDeg.toFixed(2) + '° → β = ' + beta.toFixed(1) + '°' +
+        (beta > 15 ? ' (for angles this big, β/α is a little less than f<sub>o</sub>/f<sub>e</sub>)' : '');
+    }
+
+    [['fo-slider', (v) => fo = v], ['fe-slider', (v) => fe = v], ['alpha-slider', (v) => alphaDeg = v]].forEach(function([id, set]) {
+      document.getElementById(id).addEventListener('input', function() { set(parseFloat(this.value)); draw(); });
+    });
+    draw();
   })();
   </script>
 </div>

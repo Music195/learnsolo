@@ -160,17 +160,26 @@
   if (!canvas || !window.NoteGeom) return;
 
   const C = [260, 170];
-  const PXM = 65; // pixels per meter
+  // Drawn radius in pixels: 60 px for r = 0.5 m up to 140 px for r = 2.5 m,
+  // so the circle grows with r but always fits on the 520 x 340 canvas.
+  const radiusPx = r => 40 + 40 * r;
   const BLUE = '#2563eb', GREEN = '#16a34a', AMBER = '#d97706', RED = '#dc2626', INK = '#334155';
   let phi = 0, playing = true, curW = 1.2, lastText = '';
 
-  function arrow(g, p, v, color, label, off = [0, -10]) {
+  // Draw an arrow from p along v. The label sits just past the tip, along the
+  // arrow's own direction, so it never lands on top of another arrow.
+  // Pass `side` (a unit vector) to put the label beside the tip instead.
+  function arrow(g, p, v, color, label, side) {
     const q = [p[0] + v[0], p[1] + v[1]], L = Math.hypot(v[0], v[1]);
     if (L < 3) return;
     const ux = v[0] / L, uy = v[1] / L;
     g.seg(p, q, color, { width: 2.5 });
     g.poly([q, [q[0] - 8 * ux - 4 * uy, q[1] - 8 * uy + 4 * ux], [q[0] - 8 * ux + 4 * uy, q[1] - 8 * uy - 4 * ux]], color);
-    if (label) g.text([q[0] + off[0], q[1] + off[1]], label, color);
+    if (!label) return;
+    // Text is centred, so push it out by about half its width when the arrow is sideways
+    const dx = side ? side[0] : ux, dy = side ? side[1] : uy;
+    const d = 12 + Math.abs(dx) * label.length * 3.6;
+    g.text([q[0] + dx * d, q[1] + dy * d], label, color);
   }
 
   const board = NoteGeom.board(canvas, {
@@ -178,7 +187,7 @@
     draw(g) {
       const r = Number(rIn.value);
       const alpha = Number(aIn.value);
-      const R = r * PXM;
+      const R = radiusPx(r);
       const v = r * curW;
       const ac = r * curW * curW;
       const at = r * alpha;
@@ -187,7 +196,6 @@
 
       // Circular orbit
       g.circle(C, R, '#cbd5e1', { width: 2, fill: 'rgba(248, 250, 252, 0.4)' });
-      g.dot(C, INK, 'Center C');
 
       // Particle P
       const P = [C[0] + R * Math.cos(phi), C[1] - R * Math.sin(phi)];
@@ -200,23 +208,31 @@
       // Tangential unit vector (anticlockwise):
       const tx = -Math.sin(phi), ty = -Math.cos(phi);
 
-      // Scaled vectors for display
-      const kv = 18;  // px per m/s
-      const ka = 10;  // px per m/s^2
+      // Centre C: its label goes on the far side from P, where no arrow reaches
+      g.dot(C, INK);
+      g.text([C[0] + rx * 16, C[1] + ry * 16], 'C', INK);
 
-      // Velocity (green)
-      arrow(g, P, [tx * v * kv, ty * v * kv], GREEN, 'v (tangential)', [tx * 14, ty * 14 - 4]);
+      // Scale the arrows so they always fit inside the circle:
+      // velocity at most 100 px long, acceleration at most 60 % of the radius.
+      // All acceleration arrows share one scale, so their sizes stay comparable.
+      const kv = Math.min(30, 100 / v);
+      const ka = Math.min(25, 0.6 * R / aTotal);
 
-      // Centripetal acceleration (blue, towards center)
-      arrow(g, P, [rx * ac * ka, ry * ac * ka], BLUE, 'a_c (radial)', [rx * 12, ry * 12 - 4]);
+      // Velocity (green, along the tangent)
+      arrow(g, P, [tx * v * kv, ty * v * kv], GREEN, 'v');
+
+      // Centripetal acceleration (blue, towards the centre)
+      // Its label goes beside the tip, on the side away from a_T and a
+      arrow(g, P, [rx * ac * ka, ry * ac * ka], BLUE, 'a_c', [-tx, -ty]);
 
       // If nonuniform: draw tangential and total acceleration
       if (Math.abs(at) > 0.01) {
-        arrow(g, P, [tx * at * ka, ty * at * ka], AMBER, 'a_T', [tx * 12, ty * 12 - 4]);
+        // a_T lies on the same line as v, so put its label on the outer side
+        arrow(g, P, [tx * at * ka, ty * at * ka], AMBER, 'a_T', [-rx, -ry]);
         // Total resultant vector: a_c + a_T
         const ax = (rx * ac + tx * at) * ka;
         const ay = (ry * ac + ty * at) * ka;
-        arrow(g, P, [ax, ay], RED, 'a (total)', [ax > 0 ? 14 : -14, ay > 0 ? 12 : -12]);
+        arrow(g, P, [ax, ay], RED, 'a', [tx, ty]);
       }
 
       const n = (z, k = 2) => z.toFixed(k);
@@ -226,7 +242,7 @@
         `Centripetal acceleration a_c = v²/r = rω² = ${n(ac)} m/s² (inward)\n` +
         (Math.abs(at) > 0.01
           ? `Tangential acceleration a_T = rα = ${n(at)} m/s²\n` +
-            `Resultant acceleration a = √(a_c² + a_T²) = ${n(aTotal)} m/s²   |   Angle from center φ = ${n(phiDeg, 1)}°`
+            `Resultant acceleration a = √(a_c² + a_T²) = ${n(aTotal)} m/s²\nAngle of a from the radius (towards the center) φ = ${n(phiDeg, 1)}°`
           : `Tangential acceleration a_T = 0 m/s² (Uniform Circular Motion: a = a_c)`);
       if (text !== lastText) { out.textContent = text; lastText = text; }
     }

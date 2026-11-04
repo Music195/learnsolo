@@ -108,25 +108,23 @@
 
 <div class="note-demo">
   <span class="block-label">Interactive Visualization &mdash; LDR Potential Divider Street Light Controller</span>
-  <p class="demo-instruction">Adjust ambient illumination from Dark to Bright to observe how the LDR resistance changes, altering the divider output voltage $V_{\text{out}}$ to switch the street lamp ON/OFF.</p>
+  <p class="demo-instruction">An LDR and a fixed resistor share a $5\text{ V}$ supply (a potential divider). $V_{\text{out}}$ is the voltage across the LDR, and a switch turns the street lamp on when $V_{\text{out}} &gt; 2.5\text{ V}$. Slide the light level from night to day and watch the LDR's resistance, $V_{\text{out}}$ and the lamp.</p>
 
   <div id="ldr-board" style="width: 100%; height: 350px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
 
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
+  <div class="demo-controls" style="display: flex; gap: 0.6rem 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
     <label style="color: #cbd5e1; font-weight: 500;">
-      Ambient Light: 
-      <input id="light-slider" type="range" min="1" max="100" step="1" value="20" style="vertical-align: middle;">
+      Light level:
+      <input id="light-slider" type="range" min="0" max="100" step="1" value="20" style="vertical-align: middle;">
       <span id="light-val" style="color: #38bdf8; font-weight: 700;">Dusk (20%)</span>
     </label>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      LDR $R$: <span id="r-ldr-stat" style="color: #fb923c; font-weight: 700;">80.0 k&Omega;</span> &bull; $V_{\text{out}}$: <span id="v-ldr-stat" style="color: #4ade80; font-weight: 700;">4.44 V</span> &bull; Lamp: <span id="lamp-state" style="color: #facc15; font-weight: 700;">ON</span>
-    </div>
+    <div id="ldr-stat" style="width: 100%; text-align: center; color: #f8fafc; font-size: 0.9rem; line-height: 1.6;"></div>
   </div>
 
   <script>
   (function() {
     let board = JXG.JSXGraph.initBoard('ldr-board', {
-      boundingbox: [-4, 3, 4, -3],
+      boundingbox: [-4.3, 3, 5.4, -3],
       axis: false,
       showNavigation: false,
       showCopyright: false,
@@ -134,48 +132,105 @@
       zoom: { enabled: false }
     });
 
-    let lampCircle = null, statusLabel = null;
+    // This board is a picture, not something to drag: every element is
+    // created fixed (the same wrapper as the other Physics MM demos).
+    const createFixed = board.create.bind(board);
+    board.create = (type, parents, attrs = {}) =>
+      createFixed(type, parents, { fixed: true, highlight: false, ...attrs, vertices: { fixed: true, visible: false, ...attrs.vertices } });
 
-    function updateLDR() {
-      board.suspendUpdate();
-      if (lampCircle) board.removeObject(lampCircle);
-      if (statusLabel) board.removeObject(statusLabel);
+    // ---------- The circuit's numbers ----------
+    const Vin = 5.0;            // supply (V)
+    const Rfixed = 47000;       // fixed resistor (ohm), on top
+    const Vswitch = 2.5;        // the switch turns the lamp on above this
+    let light = 20;             // 0 = dark night, 100 = bright sun
 
-      let lightLevel = parseFloat(document.getElementById('light-slider').value); // 1 to 100
-      // LDR resistance models from 100k down to 500 ohms
-      let R_ldr_k = 100.0 / Math.pow(lightLevel / 10.0, 1.2);
-      let R_fixed_k = 10.0; // 10k fixed bottom resistor
-      let Vin = 5.0; // 5V supply
-      // Potential divider: Vout across LDR (when placed on top): Vout = Vin * R_ldr / (R_ldr + R_fixed)
-      let Vout = Vin * (R_ldr_k / (R_ldr_k + R_fixed_k));
+    // LDR resistance: about 1 MΩ in the dark, falling to 200 Ω in bright
+    // light. It falls by the same factor for each step of light, so we
+    // join the two ends on a log scale.
+    const Rldr = () => 1e6 * Math.pow(200 / 1e6, light / 100);
+    // Potential divider: V_out (across the LDR) = Vin × R_LDR / (R_LDR + R_fixed)
+    const Vout = () => Vin * Rldr() / (Rldr() + Rfixed);
+    const lampOn = () => Vout() > Vswitch;
 
-      let isLampOn = Vout > 2.5; // threshold 2.5V
+    function ohms(R) { return R >= 1e6 ? (R / 1e6).toFixed(2) + ' MΩ' : R >= 1000 ? (R / 1000).toFixed(1) + ' kΩ' : R.toFixed(0) + ' Ω'; }
 
-      let lightStr = lightLevel < 15 ? 'Night' : (lightLevel < 40 ? 'Dusk' : 'Bright Daylight');
-      document.getElementById('light-val').textContent = lightStr + ' (' + lightLevel + '%)';
-      document.getElementById('r-ldr-stat').textContent = R_ldr_k > 10 ? R_ldr_k.toFixed(1) + ' kΩ' : (R_ldr_k * 1000).toFixed(0) + ' Ω';
-      document.getElementById('v-ldr-stat').textContent = Vout.toFixed(2) + ' V';
-      document.getElementById('lamp-state').textContent = isLampOn ? 'ON' : 'OFF';
-      document.getElementById('lamp-state').style.color = isLampOn ? '#facc15' : '#64748b';
+    // ---------- Drawing ----------
+    const WIRE = { strokeColor: '#94a3b8', strokeWidth: 3 };
+    const line = (p, q, style) => board.create('segment', [p, q], style || WIRE);
+    const text = (x, y, t, style) => board.create('text', [x, y, t], { fontSize: 12, color: '#cbd5e1', ...style });
 
-      // Draw Lamp at center
-      let lampCol = isLampOn ? '#facc15' : '#334155';
-      let lampOpacity = isLampOn ? 0.9 : 0.3;
-      lampCircle = board.create('circle', [[0, 0], 1.2], {
-        fillColor: lampCol, fillOpacity: lampOpacity, strokeColor: isLampOn ? '#f59e0b' : '#475569', strokeWidth: 3
-      });
+    // Supply: a cell on the left, top rail at y = 2, bottom rail (0 V) at y = -2
+    line([-3, 2], [0, 2]); line([-3, -2], [0, -2]);
+    line([-3, 2], [-3, 0.15]); line([-3, -0.15], [-3, -2]);
+    line([-3.4, 0.15], [-2.6, 0.15], { strokeColor: '#f8fafc', strokeWidth: 2 });   // long plate (+)
+    line([-3.2, -0.15], [-2.8, -0.15], { strokeColor: '#f8fafc', strokeWidth: 6 }); // short plate (−)
+    text(-3.55, 0.15, '+', { color: '#f87171', fontSize: 15, anchorX: 'right' });
+    text(-2.45, 0.05, '5 V', { anchorX: 'left' });
+    text(-3, 2.3, '5 V', { anchorX: 'middle', color: '#f87171' });
+    text(-3, -2.35, '0 V', { anchorX: 'middle', color: '#38bdf8' });
 
-      let msg = isLampOn ? 'STREET LAMP ILLUMINATED (Low Light Condition)' : 'STREET LAMP OFF (Daylight Detected)';
-      statusLabel = board.create('text', [0, 2.3, msg], {
-        anchorX: 'middle', strokeColor: isLampOn ? '#facc15' : '#94a3b8', fontSize: 12, fontWeight: 'bold'
-      });
+    // Resistor boxes on the divider column x = 0
+    function box(y0, y1, color) {
+      return board.create('polygon', [[-0.2, y0], [0.2, y0], [0.2, y1], [-0.2, y1]],
+        { fillColor: '#0f172a', fillOpacity: 1, borders: { strokeColor: color, strokeWidth: 3 } });
+    }
+    line([0, 2], [0, 1.6]); box(0.5, 1.6, '#fb923c'); line([0, 0.5], [0, -0.5]);
+    box(-1.6, -0.5, '#4ade80'); line([0, -1.6], [0, -2]);
+    text(0.35, 1.05, 'R = 47 kΩ', { color: '#fb923c', anchorX: 'left' });
+    board.create('circle', [[0, -1.05], 0.75], { strokeColor: '#4ade80', strokeWidth: 1.5, fillOpacity: 0 });   // LDR symbol: resistor in a circle
+    text(0.85, -0.8, 'LDR', { color: '#4ade80', anchorX: 'left', cssStyle: 'font-weight: 700' });
+    text(0.85, -1.2, () => 'R = ' + ohms(Rldr()), { color: '#4ade80', anchorX: 'left' });
 
-      board.unsuspendUpdate();
+    // The output: the node between the two resistors, measured to 0 V
+    board.create('point', [0, 0], { name: '', size: 4, fillColor: '#facc15', strokeColor: '#facc15' });
+    line([0, 0], [1.9, 0], { strokeColor: '#facc15', strokeWidth: 3 });
+    text(0.35, 0.3, () => 'V<sub>out</sub> = ' + Vout().toFixed(2) + ' V', { color: '#facc15', anchorX: 'left', cssStyle: 'font-weight: 700' });
+
+    // Switch (a transistor or relay): on when V_out > 2.5 V
+    board.create('polygon', [[1.9, -0.55], [3.3, -0.55], [3.3, 0.55], [1.9, 0.55]],
+      { fillColor: () => lampOn() ? '#14532d' : '#1e293b', fillOpacity: 1, borders: { strokeColor: '#cbd5e1', strokeWidth: 2 } });
+    text(2.6, 0.18, 'Switch', { anchorX: 'middle', color: '#f8fafc' });
+    text(2.6, -0.22, () => lampOn() ? 'ON' : 'OFF', { anchorX: 'middle', color: () => lampOn() ? '#4ade80' : '#94a3b8', cssStyle: 'font-weight: 700' });
+    text(2.6, -0.85, 'on if V<sub>out</sub> > 2.5 V', { anchorX: 'middle', fontSize: 11 });
+    line([3.3, 0], [3.65, 0]);
+
+    // The street lamp: a glow and rays when it is on
+    board.create('circle', [[4.15, 0], 0.95], { strokeWidth: 0, fillColor: '#facc15', fillOpacity: () => lampOn() ? 0.18 : 0 });
+    board.create('circle', [[4.15, 0], 0.5], { strokeColor: '#f8fafc', strokeWidth: 2, fillColor: '#facc15', fillOpacity: () => lampOn() ? 0.95 : 0.05 });
+    line([4.15 - 0.35, -0.35], [4.15 + 0.35, 0.35], { strokeColor: '#475569', strokeWidth: 2 });   // lamp symbol: a cross in a circle
+    line([4.15 - 0.35, 0.35], [4.15 + 0.35, -0.35], { strokeColor: '#475569', strokeWidth: 2 });
+    for (let k = 0; k < 8; k++) {
+      const a = k * Math.PI / 4, c = Math.cos(a), s = Math.sin(a);
+      line([4.15 + 0.65 * c, 0.65 * s], [4.15 + 0.9 * c, 0.9 * s], { strokeColor: '#facc15', strokeWidth: 2, visible: lampOn });
+    }
+    text(4.15, -1.15, 'Street lamp', { anchorX: 'middle' });
+
+    // The sun: brighter with more light, its rays falling on the LDR
+    board.create('circle', [[-1.6, -1.05], 0.38], { strokeColor: '#fde047', strokeWidth: 2, fillColor: '#facc15', fillOpacity: () => 0.1 + 0.85 * light / 100 });
+    [-0.35, 0, 0.35].forEach(function(dy) {
+      board.create('arrow', [[-1.1, -1.05 + dy * 0.6], [-0.85, -1.05 + dy * 0.35]],
+        { strokeColor: '#fde047', strokeWidth: 2, strokeOpacity: () => light / 100 });
+    });
+
+    // ---------- Readouts ----------
+    function update() {
+      const name = light < 15 ? 'Night' : light < 40 ? 'Dusk' : light < 70 ? 'Cloudy day' : 'Bright sun';
+      document.getElementById('light-val').textContent = name + ' (' + light + '%)';
+      // The sky behind the circuit gets lighter with the light level
+      document.getElementById('ldr-board').style.background = 'hsl(222, 47%, ' + (11 + 9 * light / 100) + '%)';
+      document.getElementById('ldr-stat').innerHTML =
+        'R<sub>LDR</sub> = <b style="color:#4ade80">' + ohms(Rldr()) + '</b> · ' +
+        'V<sub>out</sub> = 5 V × R<sub>LDR</sub> / (R<sub>LDR</sub> + 47 kΩ) = <b style="color:#facc15">' + Vout().toFixed(2) + ' V</b><br>' +
+        (lampOn() ? 'V<sub>out</sub> &gt; 2.5 V: the lamp is <b style="color:#facc15">ON</b> (dark, so the LDR has a large share of the 5 V)'
+                  : 'V<sub>out</sub> &lt; 2.5 V: the lamp is <b style="color:#94a3b8">OFF</b> (bright, so the LDR\'s resistance and voltage are small)');
+      board.update();
     }
 
-    updateLDR();
-
-    document.getElementById('light-slider').addEventListener('input', updateLDR);
+    document.getElementById('light-slider').addEventListener('input', function() {
+      light = parseFloat(this.value);
+      update();
+    });
+    update();
   })();
   </script>
 </div>

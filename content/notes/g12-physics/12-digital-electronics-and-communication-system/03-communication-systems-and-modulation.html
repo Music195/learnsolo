@@ -60,106 +60,118 @@
 
 <div class="note-demo">
   <span class="block-label">Interactive Visualization &mdash; AM vs. FM Waveform Modulation Comparison</span>
-  <p class="demo-instruction">Switch between Amplitude Modulation (AM) and Frequency Modulation (FM) to observe how the baseband audio signal reshapes the high-frequency RF carrier wave.</p>
+  <p class="demo-instruction">The audio signal (top) is carried by a high-frequency carrier wave (middle). In AM the carrier's <strong>amplitude</strong> follows the audio; in FM its <strong>frequency</strong> does. Switch between AM and FM and change the audio frequency and the modulation depth. (The carrier is drawn much slower than a real radio carrier so you can see each cycle.)</p>
 
-  <div id="mod-board" style="width: 100%; height: 350px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
+  <div id="mod-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
 
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <button id="btn-am" style="padding: 0.35rem 0.8rem; border-radius: 6px; background: #0284c7; color: white; border: none; cursor: pointer; font-weight: 600;">
-      Amplitude Modulation (AM)
-    </button>
-    <button id="btn-fm" style="padding: 0.35rem 0.8rem; border-radius: 6px; background: #334155; color: white; border: none; cursor: pointer; font-weight: 600;">
-      Frequency Modulation (FM)
-    </button>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      Modulation Index: <span id="mod-index-stat" style="color: #fb923c; font-weight: 700;">m = 0.60</span> &bull; Noise Rejection: <span id="noise-stat" style="color: #facc15; font-weight: 700;">Moderate</span>
-    </div>
+  <div class="demo-controls" style="display: flex; gap: 0.6rem 1.2rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
+    <button id="btn-am" style="padding: 0.35rem 0.8rem; border-radius: 6px; background: #0284c7; color: white; border: none; cursor: pointer; font-weight: 600;">Amplitude Modulation (AM)</button>
+    <button id="btn-fm" style="padding: 0.35rem 0.8rem; border-radius: 6px; background: #334155; color: white; border: none; cursor: pointer; font-weight: 600;">Frequency Modulation (FM)</button>
+    <label style="color: #cbd5e1; font-weight: 500;">
+      Audio frequency:
+      <input id="fa-slider" type="range" min="1" max="5" step="1" value="2" style="vertical-align: middle;">
+      <span id="fa-val" style="color: #facc15; font-weight: 700;">2 kHz</span>
+    </label>
+    <label style="color: #cbd5e1; font-weight: 500;">
+      Modulation depth:
+      <input id="depth-slider" type="range" min="0" max="100" step="5" value="60" style="vertical-align: middle;">
+      <span id="depth-val" style="color: #fb923c; font-weight: 700;">60%</span>
+    </label>
+    <div id="mod-stat" style="width: 100%; text-align: center; color: #f8fafc; font-size: 0.9rem; line-height: 1.6;"></div>
   </div>
 
   <script>
   (function() {
     let board = JXG.JSXGraph.initBoard('mod-board', {
-      boundingbox: [-0.5, 3.5, 10.5, -3.5],
-      axis: true,
-      defaultAxes: {
-        x: { name: 'Time t', withLabel: true, label: { position: 'rt', offset: [-20, -15], color: '#94a3b8' } },
-        y: { name: 'Signal Voltage', withLabel: true, label: { position: 'rt', offset: [15, -10], color: '#94a3b8' } }
-      },
+      boundingbox: [-1.7, 9.6, 8.2, -0.9],
+      axis: false,
       showNavigation: false,
       showCopyright: false,
       pan: { enabled: false },
       zoom: { enabled: false }
     });
 
+    // This board is a picture, not something to drag: every element is
+    // created fixed (the same wrapper as the other Physics MM demos).
+    const createFixed = board.create.bind(board);
+    board.create = (type, parents, attrs = {}) =>
+      createFixed(type, parents, { fixed: true, highlight: false, ...attrs, vertices: { fixed: true, visible: false, ...attrs.vertices } });
+
     let mode = 'AM';
-    let waveCurve = null, envCurve1 = null, envCurve2 = null;
+    let faKHz = 2;          // audio frequency (kHz)
+    let depth = 0.6;        // 0 to 1: AM index m, or FM deviation as a share of 75 kHz
 
-    function renderMod() {
-      board.suspendUpdate();
-      if (waveCurve) board.removeObject(waveCurve);
-      if (envCurve1) board.removeObject(envCurve1);
-      if (envCurve2) board.removeObject(envCurve2);
+    // Drawing scale: time runs from 0 to 8 across the board.
+    // 1 kHz of audio = 1/8 cycle per unit (1 cycle across the board).
+    const fa = () => faKHz / 8;       // audio cycles per unit
+    const FC = 3;                      // carrier cycles per unit (24 across the board)
+    const DEV = 1.8;                   // FM: largest drawn frequency change (cycles per unit)
 
-      let fc = 8.0; // carrier freq
-      let fm = 0.5; // audio signal freq
-      let m = 0.6; // modulation index
+    // The three traces, each on its own baseline
+    const ROW = { audio: 8, carrier: 4.8, out: 1.5 };
+    const audio = (t) => Math.cos(2 * Math.PI * fa() * t);
+    // AM: the carrier's amplitude is 1 + m × audio
+    const amWave = (t) => (1 + depth * audio(t)) * Math.cos(2 * Math.PI * FC * t);
+    // FM: the carrier's frequency is f_c + Δf × audio. The phase is the
+    // running total of the frequency: 2π (f_c t + Δf sin(2π f_a t) / (2π f_a)).
+    const fmWave = (t) => Math.cos(2 * Math.PI * FC * t + (depth * DEV / fa()) * Math.sin(2 * Math.PI * fa() * t));
 
-      if (mode === 'AM') {
-        document.getElementById('mod-index-stat').textContent = 'm = 0.60';
-        document.getElementById('noise-stat').textContent = 'Moderate (Susceptible to Static)';
-        document.getElementById('noise-stat').style.color = '#facc15';
+    // Faint baselines and labels on the left
+    Object.values(ROW).forEach((y) => board.create('segment', [[0, y], [8, y]], { strokeColor: '#334155', strokeWidth: 1, dash: 2 }));
+    board.create('text', [-1.6, ROW.audio, 'Audio<br>signal'], { color: '#facc15', fontSize: 12, anchorY: 'middle' });
+    board.create('text', [-1.6, ROW.carrier, 'Carrier<br>wave'], { color: '#94a3b8', fontSize: 12, anchorY: 'middle' });
+    board.create('text', [-1.6, ROW.out, () => mode === 'AM' ? 'AM<br>wave' : 'FM<br>wave'], { color: () => mode === 'AM' ? '#38bdf8' : '#4ade80', fontSize: 12, anchorY: 'middle', cssStyle: 'font-weight: 700' });
+    board.create('text', [8, -0.6, 'time →'], { color: '#94a3b8', fontSize: 11, anchorX: 'right' });
 
-        // AM: (1 + m*cos(2*pi*fm*t)) * cos(2*pi*fc*t)
-        waveCurve = board.create('functiongraph', [
-          function(t) {
-            let env = 1.0 + m * Math.cos(2 * Math.PI * fm * t);
-            return 1.8 * env * Math.cos(2 * Math.PI * fc * t);
-          }, 0, 10
-        ], {
-          strokeColor: '#38bdf8', strokeWidth: 2
-        });
+    board.create('functiongraph', [(t) => ROW.audio + 0.9 * audio(t), 0, 8], { strokeColor: '#facc15', strokeWidth: 2.5 });
+    board.create('functiongraph', [(t) => ROW.carrier + 0.9 * Math.cos(2 * Math.PI * FC * t), 0, 8], { strokeColor: '#94a3b8', strokeWidth: 1.5 });
 
-        // Envelope dashes
-        envCurve1 = board.create('functiongraph', [
-          function(t) { return 1.8 * (1.0 + m * Math.cos(2 * Math.PI * fm * t)); }, 0, 10
-        ], { strokeColor: '#fb923c', strokeWidth: 1.5, dash: 2 });
-        envCurve2 = board.create('functiongraph', [
-          function(t) { return -1.8 * (1.0 + m * Math.cos(2 * Math.PI * fm * t)); }, 0, 10
-        ], { strokeColor: '#fb923c', strokeWidth: 1.5, dash: 2 });
-      } else {
-        document.getElementById('mod-index-stat').textContent = 'Δf = 3.5 kHz';
-        document.getElementById('noise-stat').textContent = 'High Noise Immunity (Clear Audio)';
-        document.getElementById('noise-stat').style.color = '#4ade80';
-
-        // FM: A * cos(2*pi*fc*t + beta*sin(2*pi*fm*t))
-        let beta = 2.5;
-        waveCurve = board.create('functiongraph', [
-          function(t) {
-            return 2.2 * Math.cos(2 * Math.PI * fc * t + beta * Math.sin(2 * Math.PI * fm * t));
-          }, 0, 10
-        ], {
-          strokeColor: '#4ade80', strokeWidth: 2
-        });
+    // The modulated wave: drawn from many points so every carrier cycle shows
+    const out = board.create('curve', [[0], [0]], { strokeColor: () => mode === 'AM' ? '#38bdf8' : '#4ade80', strokeWidth: 1.8 });
+    out.updateDataArray = function() {
+      this.dataX = []; this.dataY = [];
+      for (let i = 0; i <= 1600; i++) {
+        const t = 8 * i / 1600;
+        this.dataX.push(t);
+        this.dataY.push(ROW.out + 0.8 * (mode === 'AM' ? amWave(t) : fmWave(t)));
       }
+    };
+    // AM only: the envelope, which has the same shape as the audio signal
+    [1, -1].forEach(function(sign) {
+      board.create('functiongraph', [(t) => ROW.out + sign * 0.8 * (1 + depth * audio(t)), 0, 8],
+        { strokeColor: '#facc15', strokeWidth: 1.5, dash: 2, visible: () => mode === 'AM' });
+    });
 
-      board.unsuspendUpdate();
+    // ---------- Readouts ----------
+    function update() {
+      document.getElementById('fa-val').textContent = faKHz + ' kHz';
+      document.getElementById('depth-val').textContent = Math.round(depth * 100) + '%';
+      let html;
+      if (mode === 'AM') {
+        // AM bandwidth: the two side frequencies f_c ± f_a, so 2 f_a
+        html = 'AM: modulation index m = <b style="color:#fb923c">' + depth.toFixed(2) + '</b> · the amplitude rises and falls with the audio; the frequency stays the same<br>' +
+               'Bandwidth = 2 f<sub>a</sub> = <b style="color:#facc15">' + (2 * faKHz) + ' kHz</b> · noise adds to the amplitude, so AM picks up static';
+      } else {
+        // FM bandwidth (Carson's rule): 2 (Δf + f_a)
+        const df = depth * 75;
+        html = 'FM: frequency deviation Δf = <b style="color:#fb923c">' + df.toFixed(0) + ' kHz</b> · the waves crowd together where the audio is high and spread out where it is low; the amplitude stays the same<br>' +
+               'Bandwidth ≈ 2 (Δf + f<sub>a</sub>) = <b style="color:#facc15">' + (2 * (df + faKHz)).toFixed(0) + ' kHz</b> · noise only changes the amplitude, which the receiver ignores';
+      }
+      document.getElementById('mod-stat').innerHTML = html;
+      board.update();
     }
 
-    renderMod();
-
-    document.getElementById('btn-am').addEventListener('click', function() {
-      mode = 'AM';
-      this.style.background = '#0284c7';
-      document.getElementById('btn-fm').style.background = '#334155';
-      renderMod();
-    });
-
-    document.getElementById('btn-fm').addEventListener('click', function() {
-      mode = 'FM';
-      this.style.background = '#16a34a';
-      document.getElementById('btn-am').style.background = '#334155';
-      renderMod();
-    });
+    function setMode(m) {
+      mode = m;
+      document.getElementById('btn-am').style.background = m === 'AM' ? '#0284c7' : '#334155';
+      document.getElementById('btn-fm').style.background = m === 'FM' ? '#16a34a' : '#334155';
+      update();
+    }
+    document.getElementById('btn-am').addEventListener('click', () => setMode('AM'));
+    document.getElementById('btn-fm').addEventListener('click', () => setMode('FM'));
+    document.getElementById('fa-slider').addEventListener('input', function() { faKHz = parseFloat(this.value); update(); });
+    document.getElementById('depth-slider').addEventListener('input', function() { depth = parseFloat(this.value) / 100; update(); });
+    update();
   })();
   </script>
 </div>
