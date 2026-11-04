@@ -2,15 +2,15 @@
 
 ## Start here
 
-LearnSolo is a study site for Japanese high-school maths (Math I, II, III, A, B and C), written in English. It has three kinds of content:
+LearnSolo is a study site for Japanese high-school **Mathematics** (Math I, II, III, A, B and C) and **Physics** (Mechanics Basic, Heat, Waves, Electricity, Magnetism and Atomic Physics), as well as **Grade 12 Myanmar** (Mathematics MM and Physics MM), written in English (with Japanese and Burmese terms and a built-in 3-way English/Burmese/Japanese floating dictionary). It has three kinds of content:
 
 | Kind | What it is | Where it lives | URL |
 |---|---|---|---|
 | **Notes** | One idea per page: concept, formula, proof, an interactive demo, worked examples | `content/notes/` | `/notes/...` |
 | **Practice sets** | 6–7 problems with hints, solutions and an answer box, for a few notes at a time, then a topic review | `content/practice/` | `/practice`, `/practice/...` |
-| **Past questions** | Exam papers, checked the same way as practice sets: **EJU Mock Papers** (original papers in the EJU format, 10 per course) and **University Past Questions** | `content/past/` | `/past`, `/past/...` |
+| **Mock Questions** | Exam papers, checked the same way as practice sets: **EJU Mock Papers** (original papers in the EJU format, 10 per course), **JLPT Mock Tests** (10 N2 mock tests, 25 multiple-choice questions each) and **University Mock Questions** | `content/past/` | `/past`, `/past/...` |
 
-**You write every page as an HTML file under `content/`.** `flask import-content` copies them into the PostgreSQL database, Flask sends them to the browser as JSON (`/api/...`), and the React app in `frontend/` shows them. To add a page, add a file and run the import (sections 6, 7 and 8). Nothing has to be registered.
+**You write every page as an HTML file under `content/`.** `flask import-content` copies them into the PostgreSQL database, Flask sends them to the browser as JSON (`/api/...`), and the React app in `frontend/` shows them. To add a page, add a file and run the import (sections 6, 7 and 8). Nothing has to be registered. (Curated dictionary entries live in `content/dictionary.json` and are imported with `flask import-dictionary`; see `docs/dictionary-guide.md`.)
 
 **How a student moves through the site:**
 
@@ -21,11 +21,12 @@ Home (/)  ── subject tabs → course → topic ──►  Note  ◄─ previ
    ▼                                              ▼
 Practice hub (/practice) ── tab per course ──►  Practice set ── Next practice → Topic review → Next topic
    │
-   └─ bottom link ──►  Past questions (/past) ──┬─►  EJU Mock Papers (/past/eju) ── Course 1 / Course 2 tab ──►  Paper
-                                                 └─►  University Past Questions (/past/university) ──►  Paper
+   └─ bottom link ──►  Mock Questions (/past) ─┬─►  EJU Mock Papers (/past/eju) ── Course 1 / Course 2 tab ──►  Paper
+                                               ├─►  JLPT Mock Tests (/past/jlpt) ── N2 tab ──►  Paper
+                                               └─►  University Mock Questions (/past/university) ──►  Paper
 ```
 
-The floating bar at the top of every page has the search box, which finds notes, sets and papers, plus links to Practice and Past questions.
+The floating bar at the top of every page has the search box, which finds notes, sets and papers, plus links to Practice and Mock Questions. A floating 📖 button at the bottom-right opens the 3-way dictionary on any page.
 
 ### How to use this guide
 
@@ -35,7 +36,7 @@ This guide is written for learning: it explains the whole project, from the idea
 |---|---|
 | Understand how the site works: the four programs, and one click followed through the code | **Part A** (A1–A5) |
 | Know what a file is for, and when to open it | **Part B** (B1–B5) |
-| Write notes, practice sets and past papers | **Part C** (sections 0–8) |
+| Write notes, practice sets and mock question papers | **Part C** (sections 0–8) |
 | Look up what is saved, how to run and deploy, the API, the React files | **Part D** (sections 9–12) |
 | Change or add something: a page, an API field, a database column, a test | **Part E** (E1–E9) |
 | Fix an error | **Part F** (F1–F2) |
@@ -51,19 +52,19 @@ Pages are served from a PostgreSQL database, not straight from the files. You st
 
 | Part | Files | Job |
 |---|---|---|
-| App | `app.py` | Creates the Flask app, connects the database and logins, registers the API and the React app, and the `flask import-content` command |
+| App | `app.py` | Creates the Flask app, connects the database and logins, registers the API and the React app, and the `flask import-content` and dictionary (`import-dictionary`, `list-dictionary`, `add-word`) commands |
 | React app | `frontend.py` | Sends the built React app (`frontend/dist`, made by `npm run build`): its files, and `index.html` for every other address so React shows the page. `/api/...` never gets it |
-| Settings | `config.py`, `.env` (project root) | `DATABASE_URL` and `SECRET_KEY`; copy `.env.example` to `.env` |
-| Database | `extensions.py`, `models.py`, `migrations/` | The tables (courses, topics, notes, problem_sets, users, progress) and their history for `flask db upgrade` |
+| Settings | `config.py`, `.env` (project root) | `DATABASE_URL`, `SECRET_KEY` and optional `GEMINI_API_KEY`; copy `.env.example` to `.env` |
+| Database | `extensions.py`, `models.py`, `migrations/` | The tables (courses, topics, notes, problem_sets, users, progress, dictionary_entries) and their history for `flask db upgrade` |
 | Importing content | `importer.py` | Reads every file in `content/` (titles, covers, exam labels…) and adds, updates or removes rows to match |
-| Reading content | `utils/content_loader.py` | Reads notes, practice sets and past papers from the database |
-| Page data | `services/home.py`, `notes.py`, `practice.py`, `past.py` | Works out what each page shows: lists, where a page sits, previous/next. Used by the API. `services/urls.py` builds page addresses (the React app's) |
-| JSON API | `api/__init__.py`, `api/content.py` | `/api/...`: notes, practice sets and papers as JSON for the React frontend (section 11) |
+| Reading content | `utils/content_loader.py` | Reads notes, practice sets and mock question papers from the database |
+| Page data | `services/home.py`, `notes.py`, `practice.py`, `past.py`, `dictionary.py` | Works out what each page shows: lists, where a page sits, previous/next, and dictionary lookups. Used by the API. `services/urls.py` builds page addresses (the React app's) |
+| JSON API | `api/__init__.py`, `api/content.py`, `api/dictionary.py` | `/api/...`: notes, practice sets, mock papers and dictionary lookups as JSON for the React frontend (section 11) |
 | Accounts | `api/auth.py`, `api/progress.py` | Sign up, log in and out (Flask-Login cookies), and each user's saved practice progress (sections 9 and 11) |
 | Tests | `tests/`, `pytest.ini` | `pytest` from `backend/` (section 10) |
-| Names | `utils/courses.py` | Display names: `math-1` → "Math I", topic name fixes, subjects, past-question categories (`eju` → "EJU Mock Papers", `course-1` → "Course 1 (Basic)") |
+| Names | `utils/courses.py` | Display names: `math-1` → "Math I", topic name fixes, subjects (`Mathematics`, `Physics`, `Grade 12 Myanmar`), mock-question categories (`eju` → "EJU Mock Papers", `jlpt` → "JLPT Mock Tests", `university` → "University Mock Questions") |
 | Pages | `frontend/src/` | The React app: pages, components, styles (section 12) |
-| Demo helpers | `frontend/public/static/js/demos/` | Drawing tools for the TRY IT demos in notes, at `/static/js/demos/...` (section 4) |
+| Demo helpers | `frontend/public/static/js/demos/`, `frontend/public/static/css/` | Drawing tools for the TRY IT demos in notes (`geom.js`, `plot.js`, `venn.js`, `physkit.js`, `jsxgraphcore.js`), at `/static/js/demos/...` (section 4) |
 
 
 # Part A: How the project works
@@ -287,9 +288,10 @@ SQLAlchemy turns this into the SQL `SELECT notes.html FROM notes WHERE notes.pat
 | A note | `pages/Note.jsx` | `/api/notes/<path>`, `/api/notes` | `note_page()`, `notes_sidebar()` in `services/notes.py` |
 | Practice hub | `pages/PracticeList.jsx` | `/api/practice` | `practice_courses()` in `services/practice.py` |
 | A practice set | `pages/PracticeSet.jsx` | `/api/practice/<path>` | `practice_page()` in `services/practice.py` |
-| Past question lists | `pages/PastList.jsx` | `/api/past`, `/api/past/<exam>` | `past_categories()`, `past_category_page()` in `services/past.py` |
-| A past paper | `pages/PastPaper.jsx` | `/api/past/<exam>/<paper>` | `past_paper_page()` in `services/past.py` |
+| Mock Questions lists | `pages/PastList.jsx` | `/api/past`, `/api/past/<exam>` | `past_categories()`, `past_category_page()` in `services/past.py` |
+| A mock paper | `pages/PastPaper.jsx` | `/api/past/<exam>/<paper>` | `past_paper_page()` in `services/past.py` |
 | Search box | `components/SearchBox.jsx` | `/api/search-index` | `build_search_index()` in `services/home.py` |
+| Floating dictionary | `components/FloatingDictionary.jsx` | `/api/dictionary?q=...` | `lookup_word()` in `services/dictionary.py` |
 | Log in / sign up | `pages/Account.jsx` (via `auth.jsx`) | `/api/auth/...` | in `api/auth.py` itself |
 
 So to change what a page **shows**, start in its component. To change what **data** it gets, start in its service function.
@@ -330,11 +332,12 @@ Each table says what the file is for and **when you'd open it**. Paths are from 
 |---|---|---|
 | `README.md` | The project's front page on GitHub: overview, folders, how to run it | You want the short version, or change the GitHub description |
 | `docs/content-guide.md` | This guide | Learning the project, writing content |
+| `docs/dictionary-guide.md` | How the 3-way English/Burmese/Japanese dictionary works and how to add vocabulary | Managing or extending the dictionary |
 | `docs/oracle-server.md` | How the Oracle Cloud copy of the site was built, every command explained | Looking after the Oracle server |
 | `backend/` | The server: Flask, the database models, the importer, tests (B2) | Changing data, the API, accounts |
 | `frontend/` | The React app: every page (B3) | Changing how pages look or behave |
-| `content/` | Every note, practice set and past paper, as HTML files (Part C) | Writing content |
-| `.env` | **Your** settings and secrets: `DATABASE_URL`, `SECRET_KEY`, `FLASK_DEBUG`. Not in git (`.gitignore`) | Setting up a new computer |
+| `content/` | Every note, practice set and mock question paper as HTML files, plus `dictionary.json` (Part C) | Writing content or adding curated dictionary words |
+| `.env` | **Your** settings and secrets: `DATABASE_URL`, `SECRET_KEY`, `FLASK_DEBUG`, optional `GEMINI_API_KEY`. Not in git (`.gitignore`) | Setting up a new computer |
 | `.env.example` | A template for `.env`, without real secrets. In git | Adding a new setting (add it here too, so others know it exists) |
 | `docker-compose.yml` | Starts PostgreSQL in Docker on your laptop: user, password and port match `.env.example` | Rarely; `docker compose up -d` uses it |
 | `render.yaml` | Render's "Blueprint": how the live site is built and started, its database, its settings | Changing the build or start commands, or the Render plan |
@@ -350,7 +353,7 @@ Each table says what the file is for and **when you'd open it**. Paths are from 
 
 | File | What it does | Open it when… |
 |---|---|---|
-| `app.py` | **Builds the app**, in `create_app()`: loads the settings, connects the database and the login system, registers the two blueprints, and adds the `flask import-content` command. `python app.py` runs it locally; `gunicorn app:app` online | Adding a new command, a new blueprint, or a new extension |
+| `app.py` | **Builds the app**, in `create_app()`: loads the settings, connects the database and the login system, registers the two blueprints, and adds the `flask import-content`, `flask import-dictionary`, `flask list-dictionary` and `flask add-word` commands. `python app.py` runs it locally; `gunicorn app:app` online | Adding a new command, a new blueprint, or a new extension |
 | `config.py` | **Settings**, read from environment variables / `.env`: `DATABASE_URL`, `SECRET_KEY`, cookie safety settings, where the React build is | Adding a setting |
 | `extensions.py` | Creates `db` (SQLAlchemy), `migrate` (Flask-Migrate) and `login_manager` (Flask-Login) once, so every file can import them | Adding a new Flask extension |
 | `frontend.py` | Sends the **built React app** (`frontend/dist`): real files (JS, CSS, images) as they are, and `index.html` for every other address, so React can show the page | Changing how the React files are served or cached |
@@ -361,7 +364,7 @@ Each table says what the file is for and **when you'd open it**. Paths are from 
 
 | File | What it does | Open it when… |
 |---|---|---|
-| `models.py` | **The tables**, one class each: `Course`, `Topic`, `Note`, `ProblemSet` (practice sets and past papers), `User`, `Progress`. Each `db.Column` is a column | Storing something new (E7) |
+| `models.py` | **The tables**, one class each: `Course`, `Topic`, `Note`, `ProblemSet` (practice sets and mock question papers), `User`, `Progress`, `DictionaryEntry` (3-way vocabulary). Each `db.Column` is a column | Storing something new (E7) |
 | `migrations/` | Made by Flask-Migrate (Alembic). `versions/` holds one script per change to the tables; `flask db upgrade` applies the ones not applied yet. `env.py`, `alembic.ini`, `script.py.mako` are its machinery | After `flask db migrate`: read the new file in `versions/` before committing it. Don't edit the machinery |
 | `importer.py` | **`flask import-content`**: reads every file in `content/` (`_paths`, `_read`), picks out the title, intro, problem count… with regular expressions (`parse_note`, `parse_set`), then adds, updates or deletes rows to match (`_sync`, `import_content`) | A new piece of information should be read from content files (E7) |
 
@@ -369,8 +372,9 @@ Each table says what the file is for and **when you'd open it**. Paths are from 
 
 | File | What it does | Open it when… |
 |---|---|---|
-| `api/__init__.py` | Creates `api_bp`, the blueprint for everything under `/api`, and turns errors into JSON (`{"error": "not found"}` with 404). The last line imports the three route files | A new route file, or a new kind of error |
-| `api/content.py` | **The read-only routes**: home, search index, notes, practice, past papers. Each is 1–3 lines that call a service | Adding a new address for content (E6) |
+| `api/__init__.py` | Creates `api_bp`, the blueprint for everything under `/api`, and turns errors into JSON (`{"error": "not found"}` with 404). The last line imports the route files (`content`, `auth`, `progress`, `dictionary`) | A new route file, or a new kind of error |
+| `api/content.py` | **The read-only routes**: home, search index, notes, practice, mock papers. Each is 1–3 lines that call a service | Adding a new address for content (E6) |
+| `api/dictionary.py` | **The dictionary route**: `GET /api/dictionary?q=<word>&from=auto` calls `lookup_word()` | Changing the dictionary API parameters or error handling |
 | `api/auth.py` | **Accounts**: `/api/auth/me`, `signup`, `login`, `logout`. Checks the email and password, hashes passwords, sets the login cookie | Changing sign-up rules (e.g. password length: `MIN_PASSWORD`) |
 | `api/progress.py` | **Saved progress** of logged-in users: get all, save one set, delete one, merge the browser's progress in. `@login_required` on each | Changing what progress can hold |
 
@@ -382,15 +386,16 @@ Each table says what the file is for and **when you'd open it**. Paths are from 
 | `services/home.py` | The home page's subject tabs, courses, topics and counts; and the search index | Changing the home page's data, or what search finds |
 | `services/notes.py` | One note page: the note, where it sits ("Note 5 of 8"), previous/next, its practice sets; and the Topics sidebar's list | Changing note navigation or what a note page gets |
 | `services/practice.py` | The practice hub (courses → topics → sets) and one set's page with its next/previous order | Changing practice order or data |
-| `services/past.py` | Past question categories, groups (EJU Course 1/2), one paper's page, and renamed papers (`PaperMoved`) | Changing the past question pages' data |
+| `services/past.py` | Mock question categories (`eju`, `jlpt`, `university`), groups (EJU Course 1/2, JLPT N2), one paper's page, and renamed papers (`PaperMoved`) | Changing the mock question pages' data |
+| `services/dictionary.py` | Hybrid 3-way dictionary lookup (`lookup_word`), language auto-detection (`detect_language`), database search and AI/translation fallback, plus `import_dictionary_json` | Changing how words are matched or translated |
 | `services/urls.py` | The address of each kind of page (`/notes/...`, `/practice/...`) in one place | A page's address changes |
 
 **Helpers:**
 
 | File | What it does | Open it when… |
 |---|---|---|
-| `utils/content_loader.py` | **Reads content from the database**: the notes list, one note's HTML, practice sets, past papers. Defines `ContentNotFound` | A service needs content in a new way |
-| `utils/courses.py` | **Display names**: `SUBJECTS` (home tabs), `COURSES` (`math-1` → "Math I"), `PAST_CATEGORIES` (exam names, icons, descriptions), `TOPIC_NAMES` (fixes) | Adding a course, subject or exam (E4) |
+| `utils/content_loader.py` | **Reads content from the database**: the notes list, one note's HTML, practice sets, mock papers. Defines `ContentNotFound` | A service needs content in a new way |
+| `utils/courses.py` | **Display names**: `SUBJECTS` (home tabs: Mathematics, Physics, Grade 12 Myanmar), `COURSES` (`math-1` → "Math I", `mechanics-basic` → "Mechanics Basic", `g12-physics` → "Physics MM"…), `PAST_CATEGORIES` (`eju`, `jlpt`, `university`), `TOPIC_NAMES` (fixes) | Adding a course, subject or exam (E4) |
 
 **Tests** (`pytest`, from `backend/`):
 
@@ -400,6 +405,7 @@ Each table says what the file is for and **when you'd open it**. Paths are from 
 | `tests/conftest.py` | Shared setup ("fixtures"): creates the `learnsolo_test` database, imports the content, gives tests `app` and `client` (a fake browser) |
 | `tests/test_api.py` | Every content route answers with the right shape of data, and unknown addresses give a JSON 404 |
 | `tests/test_accounts.py` | Sign up, log in, log out, wrong passwords, saving and merging progress, that users can't see each other's progress |
+| `tests/test_dictionary.py` | Language detection (English, Burmese, Japanese), curated database lookups, CLI commands and `/api/dictionary` |
 | `tests/test_importer.py` | Reading titles and problem counts from files; a second import changes nothing |
 | `tests/test_frontend.py` | Serving the built React app: `index.html` for page addresses, real files as they are, JSON 404 for `/api/...`, files outside the build refused |
 
@@ -412,20 +418,20 @@ Each table says what the file is for and **when you'd open it**. Paths are from 
 | `package.json` | The project's npm settings: its packages (`react`, `react-router`, `vite`…) and scripts (`npm run dev`, `npm run build`) | Adding a package (E9) |
 | `package-lock.json` | The **exact** version of every package and their packages, written by npm | Never by hand; commit it when npm changes it |
 | `vite.config.js` | Vite's settings: the React plugin, port 5173, and the **proxy** that passes `/api` to Flask | Changing the dev server |
-| `index.html` | **The one HTML page.** Loads Bootstrap (CSS framework), Font Awesome (icons), MathJax (formulas) and the demo helpers, then `src/main.jsx`. React draws everything inside `<div id="root">` | Adding something every page needs, like a font or a library |
-| `public/static/favicon.png` | The tab icon | Changing the icon |
-| `public/static/js/demos/` | `geom.js`, `plot.js`, `venn.js`: the drawing helpers for TRY IT demos (section 4). Files in `public/` are served as they are | Adding a drawing tool for demos |
+| `index.html` | **The one HTML page.** Loads Bootstrap (CSS framework), Font Awesome (icons), MathJax (formulas), JSXGraph (`jsxgraph.css` + `jsxgraphcore.js`) and the demo helpers (`geom.js`, `plot.js`, `physkit.js`), then `src/main.jsx`. React draws everything inside `<div id="root">` | Adding something every page needs, like a font or a library |
+| `public/static/favicon.png`, `logo.png`, `apple-touch-icon.png` | The tab icon and brand logos | Changing the icon or logo |
+| `public/static/js/demos/`, `public/static/css/jsxgraph.css` | `geom.js`, `plot.js`, `venn.js`, `physkit.js`, `jsxgraphcore.js`: the drawing helpers for TRY IT demos (section 4). Files in `public/` are served as they are | Adding a drawing tool for demos |
 
 **The app's backbone** (`src/`):
 
 | File | What it does | Open it when… |
 |---|---|---|
 | `main.jsx` | **The starting point.** Draws `<App />` inside `#root`, wrapped in `BrowserRouter` (addresses) and `AuthProvider` (who is logged in), and loads the styles | Rarely: wrapping the whole app in something new |
-| `App.jsx` | **Which page for which address**: one `<Route>` per page | Adding a page (E5) |
+| `App.jsx` | **Which page for which address**: one `<Route>` per page, plus `<FloatingDictionary />` on every page | Adding a page (E5) |
 | `api.js` | Talking to Flask: `fetchJson(url)`, `sendJson(method, url, data)`, and the `useApi(url)` hook | Changing how all requests are made |
 | `auth.jsx` | `AuthProvider` and `useAuth()`: who is logged in, `signup`, `login`, `logout`, and moving progress into the account | Changing what happens at log in or out |
 | `progress.js` | **The only place progress is read and saved**: in `localStorage` when logged out, in the account when logged in | Changing how progress is stored |
-| `practice.js` | Adds the answer boxes, answer checking (`toNumber`) and "I got it / Review later" buttons to a set's problems | Changing how answers are checked or marked |
+| `practice.js` | Adds the answer boxes (or multiple-choice option buttons when `data-choices` is set), answer checking (`toNumber`) and "I got it / Review later" buttons to a set's problems | Changing how answers are checked or marked |
 | `pageHooks.js` | Shared hooks: text size (`useTextSize`), ← / → keys (`useArrowKeys`), the tab title (`usePageTitle`), back to top (`useScrollToTop`) | Changing these behaviours on every page |
 | `mathjax.js` | `typeset(element)`: draws formulas inside an element, once, one job at a time | Formulas draw wrongly |
 | `styles.js` | Imports every CSS file in `styles/` | Adding a new CSS file |
@@ -434,12 +440,12 @@ Each table says what the file is for and **when you'd open it**. Paths are from 
 
 | File | Address | What it shows |
 |---|---|---|
-| `Home.jsx` | `/` | Hero with a live demo, subject tabs, course cards (icon and colour per course: `COURSE_STYLE`), "how a note works", links |
+| `Home.jsx` | `/` | Hero with a live demo, subject tabs (Mathematics, Physics, Grade 12 Myanmar), course cards (icon and colour per course: `COURSE_STYLE`), "how a note works", links to Practice and Mock Questions |
 | `Note.jsx` | `/notes/...` | Header (course, topic, title, "Note 5 of 8"), the note, "Practise this note", previous/next cards, Topics sidebar |
 | `PracticeList.jsx` | `/practice` | Course tabs; a card per topic listing its sets with "Solved n of m" |
 | `PracticeSet.jsx` | `/practice/...` | Header with "Solved 2 of 5" and "Start again", the problems, "Review the notes" and the next set |
-| `PastList.jsx` | `/past`, `/past/<exam>` | A card per exam; then one exam's papers (with tabs for EJU Course 1/2) |
-| `PastPaper.jsx` | `/past/<exam>/...` | One paper, like a practice set; old addresses of renamed papers redirect |
+| `PastList.jsx` | `/past`, `/past/<exam>` | A card per exam category (`EJU Mock Papers`, `JLPT Mock Tests`, `University Mock Questions`); then one exam's papers (with tabs for EJU Course 1/2 and JLPT N2) |
+| `PastPaper.jsx` | `/past/<exam>/...` | One mock paper, like a practice set; old addresses of renamed papers redirect |
 | `Account.jsx` | `/login`, `/signup` | The email + password form; goes back to the page you came from |
 | `NotFound.jsx` | anything else | "Page not found" |
 
@@ -448,9 +454,10 @@ Each table says what the file is for and **when you'd open it**. Paths are from 
 | File | What it is | Used by |
 |---|---|---|
 | `FloatBar.jsx` | The bar at the top: logo, where you are, search, text size, previous/next, Topics, Log in / Log out, and the ☰ phone menu | Every page |
+| `FloatingDictionary.jsx` | The floating 📖 button (bottom-right) and resizable 3-way dictionary window (English ↔ Burmese ↔ Japanese) | Every page (mounted in `App.jsx`) |
 | `SearchBox.jsx` | The search box: loads `/api/search-index` once, shows up to 8 matches, keyboard ↑ ↓ Enter Esc | `FloatBar` |
 | `TopicsSidebar.jsx` | The Topics sidebar on a note: course and topic dropdowns, the topic's notes | `Note` |
-| `NoteContent.jsx` | Puts a note's or set's HTML on the page, runs its scripts, then draws the formulas | `Note`, `PracticeSet`, `PastPaper` |
+| `NoteContent.jsx` | Puts a note's or set's HTML on the page, runs its scripts, cleans up any JSXGraph boards on unmount, then draws the formulas | `Note`, `PracticeSet`, `PastPaper` |
 | `HubTabs.jsx` | A row of tabs with a panel each (remembered in `localStorage`), and the "Solved n of m" badge | `PracticeList`, `PastList` |
 | `HeroDemo.jsx` | The draggable tangent-line demo on the home page | `Home` |
 | `LoadError.jsx` | "Sorry, this … doesn't exist" / "couldn't be loaded" | Every page with data |
@@ -460,22 +467,24 @@ Each table says what the file is for and **when you'd open it**. Paths are from 
 | File | Styles |
 |---|---|
 | `floatbar.css` | The floating bar and search results |
+| `dictionary.css` | The floating dictionary button, popup window, resize handle and result cards |
 | `home.css` | The home page |
 | `note-page.css` | The page around a note: colours (`--brand`…), header, card width, sidebar, previous/next cards |
 | `note-blocks.css` | The 8 blocks inside notes (CONCEPT, FORMULA…), with their colours and labels |
-| `practice.css` | A practice set or paper: problems, levels, answer boxes, buttons, "Practise this note" |
-| `practice-list.css` | The practice hub and the tabs on `/past/eju` |
-| `past.css` | The past question lists |
+| `practice.css` | A practice set or paper: problems, levels, answer boxes, multiple-choice buttons, "Practise this note" |
+| `practice-list.css` | The practice hub and the tabs on `/past/eju` and `/past/jlpt` |
+| `past.css` | The mock question lists |
 | `account.css` | The log in / sign up form and the account button |
 
 ## B4. content/ and docs/
 
-| Folder | What's in it |
+| Folder / file | What's in it |
 |---|---|
 | `content/notes/<course>/<topic>/<nn-name>.html` | The notes (sections 0–6) |
 | `content/practice/<course>/<topic>/<nn-name>.html` | Practice sets (section 7) |
-| `content/past/<exam>/[<group>/]<nn-name>.html` | Past papers (section 8) |
-| `docs/` | Guides in Markdown: this one and `oracle-server.md` |
+| `content/past/<exam>/[<group>/]<nn-name>.html` | Mock question papers (section 8) |
+| `content/dictionary.json` | Curated 3-way dictionary entries (English, Burmese, Japanese), imported via `flask import-dictionary` |
+| `docs/` | Guides in Markdown: `content-guide.md` (this one), `dictionary-guide.md`, and `oracle-server.md` |
 
 ## B5. Files you don't edit by hand
 
@@ -493,7 +502,7 @@ These are made by tools. Some are in git, some aren't:
 
 # Part C: Writing content
 
-Sections 0–6 cover notes, section 7 practice sets, section 8 past questions.
+Sections 0–6 cover notes, section 7 practice sets, section 8 mock questions.
 
 ## 0. Folders and file names
 
@@ -501,14 +510,19 @@ Sections 0–6 cover notes, section 7 practice sets, section 8 past questions.
 content/
 ├── notes/<course>/<topic>/<nn-name>.html      the notes
 ├── practice/<course>/<topic>/<nn-name>.html   practice sets (same course and topic folders as notes/)
-└── past/<category>/[<group>/]<nn-name>.html   past question papers (eju/course-1/, eju/course-2/, university/)
+├── past/<category>/[<group>/]<nn-name>.html   mock question papers (eju/course-1/, eju/course-2/, jlpt/n2/, university/)
+└── dictionary.json                            curated 3-way vocabulary (English, Burmese, Japanese)
 ```
 
 - Every folder and file name is **lowercase words joined by hyphens**, starting with a two-digit number that sets the order: `content/notes/math-1/03-quadratic-functions/05-quadratic-formula.html`.
-- Courses: `math-1`, `math-2`, `math-3`, `math-a`, `math-b`, `math-c`. Topics are numbered in textbook order.
+- Courses:
+  - **Mathematics**: `math-1`, `math-2`, `math-3`, `math-a`, `math-b`, `math-c`
+  - **Physics**: `mechanics-basic`, `heat`, `waves`, `electricity`, `magnetism`, `atomic-physics`
+  - **Grade 12 Myanmar**: `g12-math` (Mathematics MM), `g12-physics` (Physics MM)
+  - Topics are numbered in textbook order.
 - Keep names short and plain ASCII: write `x2` for x², `minus`, `over`, `theta`, `alpha` for symbols. The page title in the file's `<h1>` can use any characters.
 - The path without `content/<kind>/` and `.html` is the page's URL: `/notes/math-1/03-quadratic-functions/05-quadratic-formula`.
-- Display names live in **`utils/courses.py`**: `math-1` → "Math I", past categories → their names and descriptions. Topic names are made from the folder name (`03-quadratic-functions` → "Quadratic Functions"); add an entry to `TOPIC_NAMES` only if that gives the wrong name.
+- Display names live in **`utils/courses.py`**: `math-1` → "Math I", `g12-physics` → "Physics MM", mock categories → their names and descriptions. Topic names are made from the folder name (`03-quadratic-functions` → "Quadratic Functions"); add an entry to `TOPIC_NAMES` only if that gives the wrong name.
 
 A note file is not a full web page. It is a fragment of HTML: `flask import-content` saves it in the database, and the React page (`Note.jsx`) puts it inside the shared page layout. Every note uses the same structure, so they all look the same and are written the same way.
 
@@ -598,9 +612,11 @@ Every demo script has the same shape:
 | `/static/js/demos/geom.js` | Geometry notes | `NoteGeom.board()`: draggable points in pixel coordinates, plus maths helpers (`dist`, `mid`, `angle`…) |
 | `/static/js/demos/plot.js` | Graph and vector notes (built on `demos/geom.js`, so load both) | `NotePlot.graph()`: maths coordinates with y pointing up, automatic axes and grid, and drawing tools like `g.fn`, `g.seg`, `g.line`, `g.poly`, `g.region`. The `plain: true` option hides the axes and grid, for the 3D drawings |
 | `/static/js/demos/venn.js` | Set notes | `NoteVenn`: parses and formats sets and draws Venn diagrams |
+| `/static/js/demos/physkit.js` | Grade 12 Physics (`g12-physics`) notes | `PhysKit`: canvas board, slider controls, arrows, vectors, gauges and readout helpers for physics simulations |
+| `/static/js/demos/jsxgraphcore.js`, `/static/css/jsxgraph.css` | Physics and geometry notes using JSXGraph | `JXG.JSXGraph.initBoard()`: interactive coordinate boards, curves and sliders (cleaned up on unmount in `NoteContent.jsx`) |
 | `src/styles/note-blocks.css` | Every note | All the block styles |
 
-The demo helpers are in `frontend/public/static/js/demos/`. Notes load them by their address (`<script src="/static/js/demos/venn.js">`), and `geom.js` and `plot.js` are already loaded on every page. Paths starting with `src/` are in `frontend/`.
+The demo helpers are in `frontend/public/static/js/demos/`. Notes can load them by their address (`<script src="/static/js/demos/venn.js">`), and `geom.js`, `plot.js`, `physkit.js` and `jsxgraphcore.js` are already loaded on every page in `frontend/index.html`. Paths starting with `src/` are in `frontend/`.
 
 The page around the note, which notes don't need to touch:
 
@@ -614,14 +630,14 @@ Each helper file begins with a comment listing its functions and their options, 
 
 ## 5. Subjects on the home page
 
-The home page (`frontend/src/pages/Home.jsx`) groups the course folders into subject tabs. The list of subjects is `SUBJECTS` in `utils/courses.py`:
+The home page (`frontend/src/pages/Home.jsx`) groups the course folders into subject tabs. The list of subjects is `SUBJECTS` in `utils/courses.py` (currently **Mathematics**, **Physics**, and **Grade 12 Myanmar**):
 
-- Each course in `COURSES` names its subject. A course folder not listed there goes under the subject named by its first word: `physics-basic` → Physics.
+- Each course in `COURSES` names its subject (for example `"mechanics-basic": {"name": "Mechanics Basic", "subject": "Physics"}` or `"g12-physics": {"name": "Physics MM", "subject": "Grade 12 Myanmar"}`). A course folder not listed there goes under the subject named by its first word.
 - A subject with no notes yet shows a **Coming soon** tab. It switches on by itself once a folder for it has notes.
 - A folder that matches no subject in the list gets its own tab, named after the folder's first word (for example `chemistry-basic` → Chemistry). Add it to `SUBJECTS` to choose its icon and tab order.
-- Add the new course to `COURSES` to give it a display name (for example `physics-basic` → "Physics Basic").
+- Add the new course to `COURSES` to give it a display name (for example `chemistry-basic` → "Chemistry Basic").
 
-To start Physics, add notes like `content/notes/physics-basic/01-motion/01-velocity.html`, using the same 8-block layout as the maths notes.
+To start a new subject or course, add notes like `content/notes/chemistry-basic/01-atoms/01-periodic-table.html`, using the same 8-block layout as the maths and physics notes.
 
 ## 6. Adding a new note
 
@@ -643,7 +659,7 @@ content/practice/math-c/01-plane-vectors/02-dot-product.html   →   /practice/m
 - **Sets in a topic:** first the **concept sets**, each covering 3–5 related notes (about 6 problems, from `basic` up to one `exam` question in parts), then the **topic review**, a mix of the whole topic, named `<nn>-topic-review.html`. Every note should be used by at least two problems.
 - **Top comment:** a concept set says which notes it covers, as `Concept set 2 for Plane Vectors: covers notes 07–11.` The practice page shows this text ("Covers notes 07–11"), so write it the way a student should read it (`05, 10 and 11` is fine too).
 - **Renaming a set** changes its URL, and saved progress is stored by URL. List the old paths in `data-moved-from` on the `<article>` (separated by `|`); `src/progress.js` (`moveOldProgress`) moves saved progress to the new path the first time the page opens, and the practice page reads it from the old paths until then.
-- **The practice page** (`/practice`, the "Practice" link in the floating bar and on the home page) has a tab per course and a card per topic. Each card lists the topic's sets in order, with the notes they cover and "Solved 2 of 6" from the progress saved on the device; the topic review is marked **Topic review**. The past questions are linked at the bottom. `/practice#math-a` opens on Math A.
+- **The practice page** (`/practice`, the "Practice" link in the floating bar and on the home page) has a tab per course and a card per topic. Each card lists the topic's sets in order, with the notes they cover and "Solved 2 of 6" from the progress saved on the device; the topic review is marked **Topic review**. The mock questions are linked at the bottom. `/practice#math-a` opens on Math A.
 - The set page (`src/pages/PracticeSet.jsx`) has the same floating bar, header and card as a note. The header shows "Solved 2 of 5"; "Practice" in the floating bar goes back to the practice page.
 - **At the end of a set**, the next card leads on in the practice page's order: **Next practice** (the next set in the topic), **Topic review**, then **Next topic** (the next topic's first set; after a course's last topic, the next course). The ← / → buttons follow the same order.
 - After each note, a **Practise this note** card opens the first concept set whose problems link to that note (via "Uses:"), and the topic's other sets are listed under it. The search box finds practice sets too.
@@ -673,27 +689,30 @@ A practice file is a fragment like a note:
 
 - `data-level`: `basic`, `standard`, `challenge` or `exam` (the badge and colour).
 - `data-answer` (optional): the value the answer box checks against. Write it the way a student would type it: `45`, `6`, `2√7`, `5/2`, `√3/2`, `5π/6`, `3e`, `4/e^2`, `π^2/2` (digits, `+ − × ÷ ^ ( )`, `√`, `π` and `e` are understood). Typed answers count as correct within 0.01, so `5.29` is accepted for `2√7`. Leave it out for problems whose answer isn't one number (proofs, "find all…").
-- The answer box and the "I got it / Review later" buttons are added by `practice.js`; don't write them in the file.
+- `data-choices` (optional, for multiple-choice questions such as JLPT mock tests): a `|`-separated list of options (for example `data-choices="1. 準備|2. 整理|3. 連絡|4. 相談"` with `data-answer="1"`). `practice.js` renders clickable option buttons instead of a text box.
+- The answer box (or multiple-choice buttons) and the "I got it / Review later" buttons are added by `practice.js`; don't write them in the file.
 - Keep the solution steps short and numbered, like the examples in the notes, and put any extra insight in `<p class="practice-note">` inside the solution.
 
-## 8. Past questions
+## 8. Mock Questions (`content/past/`)
 
-Past exam questions use the same file format as practice sets, grouped by exam instead of by topic. There are two categories:
+Mock exam questions use the same file format as practice sets, grouped by exam instead of by topic (kept in `content/past/` and served at `/past`). There are three categories:
 
 | Folder | Name on the site | What it holds |
 |---|---|---|
 | `content/past/eju/course-1/`, `course-2/` | **EJU Mock Papers**, with a Course 1 (Basic) and a Course 2 (Advanced) tab | 10 original mock papers per course, 6 problems each |
-| `content/past/university/` | **University Past Questions** | Longer problems with written solutions |
+| `content/past/jlpt/n2/` | **JLPT Mock Tests**, with an N2 tab | 10 original N2 mock tests, 25 multiple-choice questions each (kanji, vocabulary, grammar, reading) |
+| `content/past/university/` | **University Mock Questions** | Longer problems with written solutions |
 
-An exam folder can be split into subfolders, as the EJU papers are by course:
+An exam folder can be split into subfolders, as the EJU and JLPT papers are by course or level:
 
 ```
 content/past/university/01-sample-paper-proof-and-calculus.html   →   /past/university/01-sample-paper-proof-and-calculus
 content/past/eju/course-1/03-mock-paper.html                       →   /past/eju/course-1/03-mock-paper
+content/past/jlpt/n2/01-mock-test.html                             →   /past/jlpt/n2/01-mock-test
 ```
 
-- **Past questions** (`/past`, linked at the bottom of the practice page and from "More to explore" on the home page) shows one card per folder in `content/past/`. Clicking a card lists its papers (`/past/<folder>`), and each paper opens like a practice set (`src/pages/PastPaper.jsx`) with hints, solutions and answer boxes. The search box finds papers too.
-- **Subfolders** (`eju/course-1/`, `eju/course-2/`) become tabs on the folder's list page, which uses the practice hub's tabs, rows and "Solved n of m" badges (`practice-list.css`, `src/components/HubTabs.jsx`). Previous / next on a paper stay inside its subfolder, and the floating bar shows "EJU Mock Papers › Course 1 (Basic) · Paper 3 of 10". `/past/eju#course-2` opens on Course 2. Name the subfolders under `"groups"` in `PAST_CATEGORIES`.
+- **Mock Questions** (`/past`, linked in the floating bar, at the bottom of the practice page, and from "More to explore" on the home page) shows one card per folder in `content/past/`. Clicking a card lists its papers (`/past/<folder>`), and each paper opens like a practice set (`src/pages/PastPaper.jsx`) with hints, solutions and answer boxes (or multiple-choice buttons). The search box finds papers too.
+- **Subfolders** (`eju/course-1/`, `eju/course-2/`, `jlpt/n2/`) become tabs on the folder's list page, which uses the practice hub's tabs, rows and "Solved n of m" badges (`practice-list.css`, `src/components/HubTabs.jsx`). Previous / next on a paper stay inside its subfolder, and the floating bar shows "EJU Mock Papers › Course 1 (Basic) · Paper 3 of 10". `/past/eju#course-2` opens on Course 2. Name the subfolders under `"groups"` in `PAST_CATEGORIES`.
 - **New exam:** make a new folder in `content/past/`. Give it a name, an icon and a one-line description in `PAST_CATEGORIES` in `utils/courses.py` (without one it gets a generic description). API: `/api/past/...` in `api/content.py`.
 - **New paper:** add an HTML file to the folder (or subfolder). Number files `01-`, `02-`, … to set the order. Use `data-level="exam"` for each problem.
 - **EJU mock papers** (10 per course) follow the exam's layout: six problems in the order I Q1, I Q2, II Q1, II Q2, III, IV. Course 1 and Course 2 share the kind of question in Section I (quadratic functions, then counting and probability). After that, Course 1 has numbers and sets, quadratics, integers and figures; Course 2 has sequences, logarithms or trigonometry, vectors or complex numbers, then Math III differentiation and integration. Each problem names its exam question in a label after the title, and the list page shows these labels as the paper's topics:
@@ -713,9 +732,9 @@ content/past/eju/course-1/03-mock-paper.html                       →   /past/e
 </ol>
 ```
 
-- Real past papers belong to the exam's publisher (JASSO for the EJU, or the university), so check you may republish a paper before adding it. The EJU mock papers are original problems in the same format, not copies of past papers.
-- Styles: `src/styles/past.css` (the list pages), `src/styles/practice-list.css` (the tabs on `/past/eju`) and `src/styles/practice.css` (the paper itself, including `.exam-label`).
-- The search box lists EJU papers as "Past question: Mock Paper 3 · Course 1" with "EJU Mock Papers · Course 1 (Basic) · Past question" under it.
+- Real past papers belong to the exam's publisher (JASSO for the EJU, JEES/Japan Foundation for the JLPT, or the university), so check you may republish a paper before adding it. The EJU and JLPT mock papers are original problems in the same format, not copies of past papers.
+- Styles: `src/styles/past.css` (the list pages), `src/styles/practice-list.css` (the tabs on `/past/eju` and `/past/jlpt`) and `src/styles/practice.css` (the paper itself, including `.exam-label`).
+- The search box lists EJU papers as "Mock Question: Mock Paper 3 · Course 1" with "EJU Mock Papers · Course 1 (Basic) · Mock Question" under it.
 
 # Part D: Reference
 
@@ -734,10 +753,11 @@ The `localStorage` keys:
 
 | Key | Written by | What it holds |
 |---|---|---|
-| `practice:<path>` | `src/progress.js` (logged out only) | One practice set's progress, for example `practice:math-1/03-quadratic-functions/01-vertex-form`. It is a JSON map from problem number (from 0) to `"solved"` or `"review"`. Past papers use `practice:past/<path>`, for example `practice:past/eju/course-1/03-mock-paper`, so they never clash with a set |
+| `practice:<path>` | `src/progress.js` (logged out only) | One practice set's progress, for example `practice:math-1/03-quadratic-functions/01-vertex-form`. It is a JSON map from problem number (from 0) to `"solved"` or `"review"`. Mock papers use `practice:past/<path>`, for example `practice:past/eju/course-1/03-mock-paper`, so they never clash with a set |
 | `practice-hub:course` | `src/components/HubTabs.jsx` | The course tab last opened on `/practice` |
-| `past-tab:<exam>` | `src/components/HubTabs.jsx` | The tab last opened on a past-question list, for example `past-tab:eju` |
+| `past-tab:<exam>` | `src/components/HubTabs.jsx` | The tab last opened on a mock-question list, for example `past-tab:eju` or `past-tab:jlpt` |
 | `noteFontSize` | `src/pageHooks.js` | The A−/A+ text size, from 70 to 150 (%) |
+| `learnsolo_dict_size` | `src/components/FloatingDictionary.jsx` | The user's preferred `{w, h}` size for the floating dictionary popup |
 
 Progress is stored under the set's path, both in the browser and in accounts. Renaming a set loses it unless you add `data-moved-from` (section 7); the progress then moves to the new path the first time the set is opened.
 
@@ -782,12 +802,14 @@ cd frontend && npm install && cd ..                    # 6. install React, Vite�
 cd backend
 ../venv/bin/flask db upgrade                           # 7. create the tables in the empty database
 ../venv/bin/flask import-content                       # 8. copy content/ into the database
+../venv/bin/flask import-dictionary                    # 9. copy content/dictionary.json into the database
 ```
 
 What to expect:
 - Step 5 prints `Container learnsolo-db-1 Started` (the first time it also downloads PostgreSQL).
 - Step 7 prints `Running upgrade ... Create content, user and progress tables`.
 - Step 8 prints three lines like `notes  335 added  0 updated  0 removed`.
+- Step 9 prints `Imported 90 dictionary entries (0 updated).`
 
 #### Every time (start working)
 
@@ -798,6 +820,7 @@ cd ~/Projects/learnsolo                # wherever you cloned it
 docker compose up -d                   # start PostgreSQL (it doesn't start by itself after a reboot)
 cd backend
 ../venv/bin/flask import-content       # only if content/ changed (e.g. after git pull)
+../venv/bin/flask import-dictionary    # only if content/dictionary.json changed
 ../venv/bin/python app.py              # Flask on http://localhost:5000; leave this terminal open
 ```
 
@@ -895,6 +918,7 @@ Everything under `/api` returns JSON instead of a page. The React frontend uses 
 | `/api/past` | `categories`, each with its papers |
 | `/api/past/<exam>` | one category: name, about, `papers`, `groups` |
 | `/api/past/<exam>/[<course>/]<paper>` | one paper, like a set, plus `paper` (its category) |
+| `/api/dictionary?q=<word>&from=auto` | `query`, `detected_lang` (`en`/`my`/`ja`), `source` (`database`/`gemini`/`translate`), and `results` (3-way English/Burmese/Japanese entries) |
 
 Anything that doesn't exist answers `404` with `{"error": "not found"}`. The old address of a renamed paper answers `404` with `{"error": "moved", "moved_to": "/past/..."}`.
 
@@ -918,7 +942,7 @@ Anything that doesn't exist answers `404` with `{"error": "not found"}`. The old
 
 ## 12. React frontend
 
-Every page of the site is a React page in `frontend/`: the home page, notes, practice, past questions, log in and sign up. Any other address shows "Page not found".
+Every page of the site is a React page in `frontend/`: the home page, notes, practice, mock questions, log in and sign up. Any other address shows "Page not found".
 
 **Run it** (Flask must be running too, for the data):
 
@@ -934,30 +958,31 @@ npm run dev        # http://localhost:5173
 
 | File | Job |
 |---|---|
-| `index.html` | The one HTML page. Loads Bootstrap, Font Awesome, MathJax and the demo helpers (`/static/js/demos/`) once for every page |
+| `index.html` | The one HTML page. Loads Bootstrap, Font Awesome, MathJax, JSXGraph and the demo helpers (`/static/js/demos/`) once for every page |
 | `src/main.jsx` | Starts React and the router |
-| `src/App.jsx` | Which page component to show for which address. Add a `<Route>` here for a new page (E5) |
+| `src/App.jsx` | Which page component to show for which address, plus `<FloatingDictionary />` on every page. Add a `<Route>` here for a new page (E5) |
 | `src/styles.js`, `src/styles/` | The CSS, one file per kind of page; `styles.js` imports them all |
-| `public/static/` | Copied as they are: `favicon.png` and `js/demos/` (the notes' drawing helpers) |
+| `public/static/` | Copied as they are: `favicon.png`, `logo.png`, `apple-touch-icon.png`, `css/jsxgraph.css` and `js/demos/` (the notes' drawing helpers) |
 | `src/api.js` | `fetchJson(url)` and the `useApi(url)` hook: load data from `/api/...`; `sendJson(method, url, data)` sends data (log in, save progress) |
 | `src/auth.jsx` | `<AuthProvider>` and `useAuth()`: who is logged in, and `signup`, `login`, `logout`. Asks `/api/auth/me` when the site opens |
 | `src/pages/Account.jsx`, `src/styles/account.css` | The `/login` and `/signup` pages (one form), and the account button's style. Afterwards you go back to the page you came from |
 | `src/mathjax.js` | `typeset(element)`: draw the `$...$` formulas inside an element, once |
 | `src/pages/Home.jsx` | The home page, from `/api/home` |
 | `src/pages/Note.jsx` | A note page (`/notes/<path>`), from `/api/notes/<path>`: header, practice links, previous/next cards, text size, ← / → keys |
-| `src/components/NoteContent.jsx` | Shows a note's HTML, runs its `<script>` tags in order (loading helpers like `venn.js` once) and then draws its formulas |
+| `src/components/NoteContent.jsx` | Shows a note's HTML, runs its `<script>` tags in order (loading helpers like `venn.js` once), cleans up JSXGraph boards on unmount, and then draws its formulas |
 | `src/components/TopicsSidebar.jsx` | The Topics sidebar, from `/api/notes` |
 | `src/pages/PracticeList.jsx` | The practice hub (`/practice`), from `/api/practice`: course tabs (remembered; `#math-a` opens Math A) and "Solved n of m" per set and topic |
 | `src/pages/PracticeSet.jsx` | One practice set (`/practice/<path>`), from `/api/practice/<path>`: header with progress and "Start again", next set |
-| `src/practice.js` | Answer boxes and "I got it" / "Review later" buttons for each problem |
+| `src/practice.js` | Answer boxes (or multiple-choice option buttons) and "I got it" / "Review later" buttons for each problem |
 | `src/progress.js` | Reads and saves practice progress: in localStorage when logged out, in the account when logged in (section 9). Pages only use this file, so they don't need to know which |
 | `src/pageHooks.js` | Shared by notes and sets: text size, ← / → keys, page title, back to the top on a new page |
 | `src/components/LoadError.jsx` | "Not found" / "couldn't be loaded" messages |
-| `src/pages/PastList.jsx` | `/past` (a card per exam) and `/past/<exam>` (its papers; tabs per subfolder, remembered as `past-tab:<exam>`, `#course-2` opens Course 2), from `/api/past` and `/api/past/<exam>` |
+| `src/pages/PastList.jsx` | `/past` (a card per exam category) and `/past/<exam>` (its papers; tabs per subfolder, remembered as `past-tab:<exam>`, `#course-2` opens Course 2), from `/api/past` and `/api/past/<exam>` |
 | `src/pages/PastPaper.jsx` | One paper (`/past/<exam>/[<course>/]<paper>`): works like a practice set, with progress under `past/<path>`. An old address of a renamed paper redirects to the new one |
-| `src/components/HubTabs.jsx` | The tabs and "Solved n of m" badges shared by the practice hub and the past paper lists |
+| `src/components/HubTabs.jsx` | The tabs and "Solved n of m" badges shared by the practice hub and the mock paper lists |
 | `src/pages/NotFound.jsx` | "Page not found" for any other address |
 | `src/components/FloatBar.jsx`, `SearchBox.jsx` | The floating bar (home version, or note version with where-you-are, text size, previous/next and Topics), its search box, and the "Log in" / "Log out" button |
+| `src/components/FloatingDictionary.jsx`, `src/styles/dictionary.css` | The floating 3-way dictionary button and resizable lookup window |
 | `src/components/HeroDemo.jsx` | The draggable demo on the home page |
 
 The styles are in `src/styles/`, one file per kind of page, all imported by `src/styles.js`.
@@ -998,6 +1023,7 @@ cd frontend && npm run dev             # then open http://localhost:5173
 |---|---|
 | A `.jsx`, `.js` or `.css` file in `frontend/src/` | Nothing: Vite updates the page as you save |
 | A content file in `content/` | `cd backend && ../venv/bin/flask import-content`, then refresh |
+| `content/dictionary.json` | `cd backend && ../venv/bin/flask import-dictionary`, then search again |
 | A `.py` file in `backend/` | Nothing, if `.env` has `FLASK_DEBUG=1`: Flask restarts itself. Otherwise stop it (Ctrl+C) and start it again |
 | `models.py` | Make and apply a migration (E7), then restart Flask |
 | `.env` | Restart Flask (it reads `.env` only at start) |
