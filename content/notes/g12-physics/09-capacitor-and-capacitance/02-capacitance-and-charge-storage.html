@@ -45,60 +45,83 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Charge Accumulation Under Applied Voltage</span>
-  <p class="demo-instruction">Adjust the battery voltage slider $V$ to see that charge $Q$ grows linearly while capacitance $C = Q/V$ remains strictly constant.</p>
-
-  <div id="q-v-board" style="width: 100%; height: 350px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Applied Voltage $V$: 
-      <input id="v-slider" type="range" min="0" max="100" step="5" value="50" style="vertical-align: middle;">
-      <span id="v-val" style="color: #38bdf8; font-weight: 700;">50 V</span>
-    </label>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      Charge $Q$: <span id="q-stat" style="color: #4ade80; font-weight: 700;">2.00 mC</span> &bull; Capacitance $C$: <span id="c-stat" style="color: #fb923c; font-weight: 700;">40.0 &mu;F</span>
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; Charging a Capacitor: Q = CV</span>
+  <p class="demo-question">When you connect a capacitor to a battery, where does the charge come from, and how much can it hold?</p>
+  <p class="demo-instruction">Change the battery voltage. Electrons (blue dots) are pulled off the top plate and pushed onto the bottom plate, so the plates end up with equal and opposite charges $+Q$ and $-Q$. The charge grows in proportion to $V$; the graph shows the straight line $Q = CV$, whose slope is the capacitance. A bigger capacitor holds more charge for the same voltage.</p>
+  <div id="pk-qcv"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('q-v-board', {
-      boundingbox: [-10, 5, 110, -0.5],
-      axis: true,
-      defaultAxes: {
-        x: { name: 'V (Volts)', withLabel: true, label: { position: 'rt', offset: [-20, -15], color: '#94a3b8' } },
-        y: { name: 'Q (mC)', withLabel: true, label: { position: 'rt', offset: [15, -10], color: '#94a3b8' } }
-      },
-      showNavigation: false,
-      showCopyright: false,
-      pan: { enabled: false },
-      zoom: { enabled: false }
-    });
+  (function () {
+    const k = PhysKit.mount('pk-qcv', { x: [-6.2, 6.2], y: [-2.6, 2.6] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    k.row();
+    const CS = [10, 40, 100];
+    const cap = k.choice(CS.map(c => `C = ${c} μF`), 1);
+    const VS = k.slider({ label: 'V (battery)', unit: 'V', min: 0, max: 120, step: 1, value: 50, digits: 0 });
+    k.row();
+    k.button('Example 9.1: 50 V', () => { cap.set(1); VS.value = 50; });
+    k.button('then 100 V', () => { cap.set(1); VS.value = 100; });
+    let Q = 0, flow = 0;                          // Q in mC, follows C·V smoothly (a short charging time)
+    k.loop(dt => {
+      const target = CS[cap.value] * VS.value / 1000, dQ = (target - Q) * Math.min(1, dt * 3);
+      Q += dQ; flow += dQ * 6;
+    }, { button: false });
 
-    let C_uF = 40.0; // 40 uF = 0.04 mC/V
-    let slope = C_uF / 1000.0; // in mC per V = 0.04
+    k.draw = g => {
+      const c = CS[cap.value], ph = 0.8 + 0.6 * Math.log10(c);        // plate width grows with C
+      const top = 0.7, bot = -0.7, cx = 1.0;
+      // wires and battery
+      g.path([[cx, top + 0.1], [cx, 1.9], [-4.4, 1.9], [-4.4, 0.35]], { color: C.ink, width: 3 });
+      g.path([[cx, bot - 0.1], [cx, -1.9], [-4.4, -1.9], [-4.4, -0.35]], { color: C.ink, width: 3 });
+      g.line([-4.9, 0.35], [-3.9, 0.35], { color: C.ink, width: 3 }); g.line([-4.65, -0.35], [-4.15, -0.35], { color: C.ink, width: 6 });
+      g.text([-3.7, 0.35], '+', { size: 15, bold: true, color: C.pos }); g.text([-3.7, -0.35], '−', { size: 15, bold: true, color: C.neg });
+      g.text([-5.4, 0], `${VS.value} V`, { size: 14, bold: true });
+      // plates
+      g.rect(cx - ph, top, 2 * ph, 0.16, { fill: '#475569', color: C.ink, width: 1 });
+      g.rect(cx - ph, bot - 0.16, 2 * ph, 0.16, { fill: '#475569', color: C.ink, width: 1 });
+      // charges: one symbol per 0.25 mC
+      const n = Math.min(40, Math.round(Q / 0.25));
+      for (let j = 0; j < n; j++) {
+        const col = j % 20, row = Math.floor(j / 20), x = cx - ph + 0.12 + (2 * ph - 0.24) * (col + 0.5) / 20;
+        g.text([x, top + 0.35 + row * 0.25], '+', { size: 12, bold: true, color: C.pos });
+        g.text([x, bot - 0.38 - row * 0.25], '−', { size: 12, bold: true, color: C.neg });
+      }
+      // field between the plates
+      const lines = Math.min(10, Math.round(VS.value / 12));
+      for (let j = 0; j < lines; j++) { const x = cx - ph + 2 * ph * (j + 0.5) / lines; g.arrow([x, top - 0.05], [0, -(top - bot) + 0.15], { color: C.field, width: 1.2, head: 5 }); }
+      // electrons moving round the circuit while the charge changes (from the top plate, through the battery, to the bottom plate)
+      const loop = [[cx, top], [cx, 1.9], [-4.4, 1.9], [-4.4, -1.9], [cx, -1.9], [cx, bot]];
+      const lens = []; let tot = 0;
+      for (let j = 1; j < loop.length; j++) { const d = Math.hypot(loop[j][0] - loop[j - 1][0], loop[j][1] - loop[j - 1][1]); lens.push(d); tot += d; }
+      for (let j = 0; j < 16; j++) {
+        let s = (((j / 16) + flow * 0.05) % 1 + 1) % 1 * tot;
+        for (let m = 0; m < lens.length; m++) { if (s <= lens[m]) { const f = s / lens[m]; g.dot([loop[m][0] + f * (loop[m + 1][0] - loop[m][0]), loop[m][1] + f * (loop[m + 1][1] - loop[m][1])], 3.5, C.neg); break; } s -= lens[m]; }
+      }
+      g.text([cx + ph + 0.2, top + 0.3], `+Q = ${num(Q, 2)} mC`, { align: 'left', size: 13, bold: true, color: C.pos });
+      g.text([cx + ph + 0.2, bot - 0.3], `−Q`, { align: 'left', size: 13, bold: true, color: C.neg });
+      const moving = Math.abs(CS[cap.value] * VS.value / 1000 - Q) > 0.01;
+      g.text([-1.7, 2.3], moving ? 'charge is flowing…' : 'full: no current now', { size: 13, bold: true, color: moving ? C.energy : C.muted });
+    };
 
-    // Plot Q = C * V line
-    board.create('line', [[0, 0], [100, 100 * slope]], {
-      strokeColor: '#38bdf8', strokeWidth: 2.5
-    });
+    const gv = k.addView({ x: [0, 120], y: [0, 12], equal: false, height: 170, title: 'Q against V: a straight line, slope = C' });
+    gv.draw = g => {
+      gv.setRange([-6, 125], [-0.8, 12.5]);
+      g.axes({ xstep: 20, ystep: 2, xlabel: 'V (V)', ylabel: 'Q (mC)' });
+      CS.forEach((c, i) => {
+        g.line([0, 0], [120, Math.min(12, c * 120 / 1000)], { color: i === cap.value ? C.acc : '#cbd5e1', width: i === cap.value ? 3 : 1.5 });
+        const xe = Math.min(120, 12000 / c);
+        g.text([xe, c * xe / 1000], `${c} μF`, { size: 11, color: i === cap.value ? C.acc : C.muted, dx: -20, dy: -8 });
+      });
+      g.dot([VS.value, Q], 6, C.bad);
+    };
 
-    let pt = board.create('point', [50, 50 * slope], {
-      size: 5, fillColor: '#4ade80', strokeColor: '#22c55e', name: 'Operating Point', fixed: true
-    });
-
-    function updatePoint() {
-      let v = parseFloat(document.getElementById('v-slider').value);
-      let q_mC = v * slope;
-      pt.moveTo([v, q_mC]);
-
-      document.getElementById('v-val').textContent = v + ' V';
-      document.getElementById('q-stat').textContent = q_mC.toFixed(2) + ' mC';
-      document.getElementById('c-stat').textContent = C_uF.toFixed(1) + ' µF';
-    }
-
-    document.getElementById('v-slider').addEventListener('input', updatePoint);
+    k.update = () => {
+      const c = CS[cap.value], V = VS.value, Qt = c * V / 1000;
+      k.readout([
+        `Q = CV = ${c}×10<sup>−6</sup> × ${V} = <b>${num(Qt, 3)}×10<sup>−3</sup> C</b> (${num(Qt * 1000, 0)} μC) on each plate: +Q on one, −Q on the other`,
+        `C = Q/V = ${c} μF does not change with V; it depends only on the plates and what is between them.`,
+        'Example 9.1: 0.002 C at 50 V gives C = 40 μF; at 100 V the same capacitor holds 0.004 C.'
+      ]);
+    };
   })();
   </script>
 </div>

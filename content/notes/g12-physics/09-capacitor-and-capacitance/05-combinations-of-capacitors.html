@@ -77,124 +77,124 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Series vs. Parallel Equivalent Calculator</span>
-  <p class="demo-instruction">Adjust capacitances $C_1$ and $C_2$ and toggle between Series and Parallel modes to observe the equivalent capacitance and charge distribution under $100\mathrm{\,V}$.</p>
-
-  <div id="combo-board" style="width: 100%; height: 350px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1.2rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <button id="toggle-mode-btn" style="padding: 0.4rem 0.8rem; border-radius: 6px; background: #0284c7; color: white; border: none; cursor: pointer; font-weight: 600;">Mode: Series</button>
-    <label style="color: #cbd5e1; font-weight: 500;">
-      $C_1$: 
-      <input id="c1-slider" type="range" min="2" max="20" step="1" value="4" style="vertical-align: middle;">
-      <span id="c1-val" style="color: #38bdf8; font-weight: 700;">4 &mu;F</span>
-    </label>
-    <label style="color: #cbd5e1; font-weight: 500;">
-      $C_2$: 
-      <input id="c2-slider" type="range" min="2" max="20" step="1" value="12" style="vertical-align: middle;">
-      <span id="c2-val" style="color: #4ade80; font-weight: 700;">12 &mu;F</span>
-    </label>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      $C_{\text{eq}}$: <span id="ceq-stat" style="color: #fb923c; font-weight: 700;">3.00 &mu;F</span> &bull; $Q_{\text{total}}$ ($100\mathrm{\,V}$): <span id="qtot-stat" style="color: #f43f5e; font-weight: 700;">300 &mu;C</span>
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; Capacitors in Series and in Parallel</span>
+  <p class="demo-question">If you join two capacitors, do you get more capacitance or less? It depends on how you join them.</p>
+  <p class="demo-instruction"><b>Parallel:</b> both capacitors get the full battery voltage, so their charges add: $C_p = C_1 + C_2$. <b>Series:</b> the same charge $Q$ sits on every plate (the middle plates only shift charge between themselves), and the voltages add, so $1/C_s = 1/C_1 + 1/C_2$ and the smaller capacitor takes the bigger share of the voltage. The coloured bars show each capacitor's voltage.</p>
+  <div id="pk-combo"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('combo-board', {
-      boundingbox: [-4, 3, 4, -3],
-      axis: false,
-      showNavigation: false,
-      showCopyright: false,
-      pan: { enabled: false },
-      zoom: { enabled: false }
-    });
+  (function () {
+    const k = PhysKit.mount('pk-combo', { x: [-6.2, 6.2], y: [-2.6, 2.6] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    k.row();
+    const mode = k.choice(['series', 'parallel', 'n identical (Exercise 11)'], 0, () => show());
+    const rows = [];
+    rows.push(k.row());
+    const c1S = k.slider({ label: 'C_1', unit: 'μF', min: 1, max: 20, step: 1, value: 4, digits: 0 });
+    const c2S = k.slider({ label: 'C_2', unit: 'μF', min: 1, max: 20, step: 1, value: 12, digits: 0 });
+    const VS = k.slider({ label: 'V', unit: 'V', min: 10, max: 300, step: 10, value: 200, digits: 0 });
+    k.button('Example 9.5 (4 and 12 μF, 200 V)', () => { c1S.value = 4; c2S.value = 12; VS.value = 200; mode.set(0); show(); });
+    rows.push(k.row());
+    const nS = k.slider({ label: 'n', min: 2, max: 8, step: 1, value: 5, digits: 0 });
+    const cS = k.slider({ label: 'C (each)', unit: 'μF', min: 0.5, max: 5, step: 0.5, value: 2, digits: 1 });
+    k.row();
+    function show() { rows[0].style.display = mode.value < 2 ? '' : 'none'; rows[1].style.display = mode.value === 2 ? '' : 'none'; }
 
-    let mode = 'series';
-    let schematics = [];
-
-    function drawCircuit() {
-      board.suspendUpdate();
-      board.removeObject(schematics);
-      schematics = [];
-
-      let C1 = parseFloat(document.getElementById('c1-slider').value);
-      let C2 = parseFloat(document.getElementById('c2-slider').value);
-      let V = 100.0;
-
-      let Ceq = (mode === 'series') ? ((C1 * C2) / (C1 + C2)) : (C1 + C2);
-      let Qtot = Ceq * V; // in uC
-
-      document.getElementById('ceq-stat').textContent = Ceq.toFixed(2) + ' µF';
-      document.getElementById('qtot-stat').textContent = Qtot.toFixed(0) + ' µC';
-
-      if (mode === 'series') {
-        // C1 and C2 in line
-        let w1 = board.create('segment', [[-3.5, 0], [-1.8, 0]], { strokeColor: '#94a3b8', strokeWidth: 3 });
-        let p1a = board.create('segment', [[-1.8, -1], [-1.8, 1]], { strokeColor: '#38bdf8', strokeWidth: 5 });
-        let p1b = board.create('segment', [[-1.2, -1], [-1.2, 1]], { strokeColor: '#38bdf8', strokeWidth: 5 });
-        let mid = board.create('segment', [[-1.2, 0], [1.2, 0]], { strokeColor: '#94a3b8', strokeWidth: 3 });
-        let p2a = board.create('segment', [[1.2, -1], [1.2, 1]], { strokeColor: '#4ade80', strokeWidth: 5 });
-        let p2b = board.create('segment', [[1.8, -1], [1.8, 1]], { strokeColor: '#4ade80', strokeWidth: 5 });
-        let w2 = board.create('segment', [[1.8, 0], [3.5, 0]], { strokeColor: '#94a3b8', strokeWidth: 3 });
-
-        let t1 = board.create('text', [-1.5, 1.4, 'C₁ = ' + C1 + ' µF'], { anchorX: 'middle', strokeColor: '#38bdf8', fontSize: 12 });
-        let t2 = board.create('text', [1.5, 1.4, 'C₂ = ' + C2 + ' µF'], { anchorX: 'middle', strokeColor: '#4ade80', fontSize: 12 });
-        let note = board.create('text', [0, -2.0, 'Series: Same Charge Q = ' + Qtot.toFixed(0) + ' µC on both'], {
-          anchorX: 'middle', strokeColor: '#cbd5e1', fontSize: 12
-        });
-        schematics.push(w1, p1a, p1b, mid, p2a, p2b, w2, t1, t2, note);
-      } else {
-        // Parallel branches
-        let wIn = board.create('segment', [[-3.5, 0], [-1.5, 0]], { strokeColor: '#94a3b8', strokeWidth: 3 });
-        let vertL = board.create('segment', [[-1.5, -1.5], [-1.5, 1.5]], { strokeColor: '#94a3b8', strokeWidth: 3 });
-        // Top branch C1
-        let topL = board.create('segment', [[-1.5, 1.5], [-0.3, 1.5]], { strokeColor: '#94a3b8', strokeWidth: 3 });
-        let p1a = board.create('segment', [[-0.3, 0.8], [-0.3, 2.2]], { strokeColor: '#38bdf8', strokeWidth: 5 });
-        let p1b = board.create('segment', [[0.3, 0.8], [0.3, 2.2]], { strokeColor: '#38bdf8', strokeWidth: 5 });
-        let topR = board.create('segment', [[0.3, 1.5], [1.5, 1.5]], { strokeColor: '#94a3b8', strokeWidth: 3 });
-        // Bottom branch C2
-        let botL = board.create('segment', [[-1.5, -1.5], [-0.3, -1.5]], { strokeColor: '#94a3b8', strokeWidth: 3 });
-        let p2a = board.create('segment', [[-0.3, -2.2], [-0.3, -0.8]], { strokeColor: '#4ade80', strokeWidth: 5 });
-        let p2b = board.create('segment', [[0.3, -2.2], [0.3, -0.8]], { strokeColor: '#4ade80', strokeWidth: 5 });
-        let botR = board.create('segment', [[0.3, -1.5], [1.5, -1.5]], { strokeColor: '#94a3b8', strokeWidth: 3 });
-        let vertR = board.create('segment', [[1.5, -1.5], [1.5, 1.5]], { strokeColor: '#94a3b8', strokeWidth: 3 });
-        let wOut = board.create('segment', [[1.5, 0], [3.5, 0]], { strokeColor: '#94a3b8', strokeWidth: 3 });
-
-        let t1 = board.create('text', [0, 2.5, 'C₁ = ' + C1 + ' µF'], { anchorX: 'middle', strokeColor: '#38bdf8', fontSize: 11 });
-        let t2 = board.create('text', [0, -0.5, 'C₂ = ' + C2 + ' µF'], { anchorX: 'middle', strokeColor: '#4ade80', fontSize: 11 });
-        let note = board.create('text', [0, -2.6, 'Parallel: Same Voltage V = 100 V across each'], {
-          anchorX: 'middle', strokeColor: '#cbd5e1', fontSize: 12
-        });
-        schematics.push(wIn, vertL, topL, p1a, p1b, topR, botL, p2a, p2b, botR, vertR, wOut, t1, t2, note);
+    const capSym = (g, x, y, vert, q, label, col) => {
+      // two plates; vert = plates horizontal (current flows up/down)
+      const a = 0.45, gp = 0.16;
+      if (vert) { g.line([x - a, y + gp], [x + a, y + gp], { color: C.ink, width: 5 }); g.line([x - a, y - gp], [x + a, y - gp], { color: C.ink, width: 5 }); }
+      else { g.line([x - gp, y - a], [x - gp, y + a], { color: C.ink, width: 5 }); g.line([x + gp, y - a], [x + gp, y + a], { color: C.ink, width: 5 }); }
+      const n = Math.min(6, Math.max(1, Math.round(q / 150)));
+      for (let j = 0; j < n; j++) {
+        const o = -a + 0.08 + j * (2 * a - 0.16) / Math.max(1, n - 1);
+        if (vert) { g.text([x + o, y + gp + 0.18], '+', { size: 11, bold: true, color: C.pos }); g.text([x + o, y - gp - 0.2], '−', { size: 11, bold: true, color: C.neg }); }
+        else { g.text([x - gp - 0.18, y + o], '+', { size: 11, bold: true, color: C.pos }); g.text([x + gp + 0.2, y + o], '−', { size: 11, bold: true, color: C.neg }); }
       }
+      g.text(vert ? [x + a + 0.15, y] : [x, y + a + 0.25], label, { align: vert ? 'left' : 'center', size: 12, bold: true, color: col });
+    };
+    const battery = (g, x, y, V) => {
+      g.line([x - 0.4, y + 0.2], [x + 0.4, y + 0.2], { color: C.ink, width: 3 }); g.line([x - 0.22, y - 0.2], [x + 0.22, y - 0.2], { color: C.ink, width: 6 });
+      g.text([x - 0.6, y], `${V} V`, { align: 'right', size: 12, bold: true });
+    };
 
-      board.unsuspendUpdate();
+    function solve() {
+      const V = VS.value;
+      if (mode.value === 0) {
+        const c1 = c1S.value, c2 = c2S.value, cs = c1 * c2 / (c1 + c2), Q = cs * V;
+        return { ceq: cs, Q1: Q, Q2: Q, V1: Q / c1, V2: Q / c2, V };
+      }
+      const c1 = c1S.value, c2 = c2S.value;
+      return { ceq: c1 + c2, Q1: c1 * V, Q2: c2 * V, V1: V, V2: V, V };
     }
 
-    drawCircuit();
-
-    document.getElementById('toggle-mode-btn').addEventListener('click', function() {
-      if (mode === 'series') {
-        mode = 'parallel';
-        this.textContent = 'Mode: Parallel';
-        this.style.background = '#8b5cf6';
-      } else {
-        mode = 'series';
-        this.textContent = 'Mode: Series';
-        this.style.background = '#0284c7';
+    k.draw = g => {
+      if (mode.value === 2) {
+        const n = nS.value, c = cS.value;
+        // top: n in parallel; bottom: n in series
+        g.text([-6.0, 2.35], `${n} in parallel: C = n·C = ${num(n * c, 1)} μF`, { align: 'left', size: 14, bold: true, color: C.acc });
+        for (let j = 0; j < n; j++) { const x = -5.0 + j * 1.3; g.line([x, 1.9], [x, 0.6], { color: C.ink, width: 2 }); capSym(g, x, 1.25, true, 0, '', C.ink); }
+        g.line([-5.0, 1.9], [-5.0 + (n - 1) * 1.3, 1.9], { color: C.ink, width: 2 }); g.line([-5.0, 0.6], [-5.0 + (n - 1) * 1.3, 0.6], { color: C.ink, width: 2 });
+        g.text([-6.0, -0.3], `${n} in series: C = C/n = ${num(c / n, 2)} μF`, { align: 'left', size: 14, bold: true, color: C.field });
+        g.line([-5.6, -1.4], [-5.6 + n * 1.3, -1.4], { color: C.ink, width: 2 });
+        for (let j = 0; j < n; j++) { const x = -5.0 + j * 1.3; g.rect(x - 0.3, -1.9, 0.6, 1.0, { fill: '#fff', color: 'none' }); capSym(g, x, -1.4, false, 0, '', C.ink); }
+        return;
       }
-      drawCircuit();
-    });
+      const s = solve(), Vmax = s.V;
+      if (mode.value === 0) {
+        // series loop: battery left, C1 and C2 on the top wire
+        g.path([[-4.6, 0.2], [-4.6, 1.6], [-2.36, 1.6]], { color: C.ink, width: 3 });
+        g.path([[-1.84, 1.6], [0.14, 1.6]], { color: C.ink, width: 3 });
+        g.path([[0.66, 1.6], [1.8, 1.6], [1.8, -1.4], [-4.6, -1.4], [-4.6, -0.2]], { color: C.ink, width: 3 });
+        capSym(g, -2.1, 1.6, false, s.Q1, `C₁ = ${c1S.value} μF`, C.bad);
+        capSym(g, 0.4, 1.6, false, s.Q2, `C₂ = ${c2S.value} μF`, C.acc);
+        g.rect(-1.6, 1.2, 1.5, 0.8, { color: C.muted, dash: [3, 3], radius: 6 });
+        g.text([-0.85, 0.95], 'isolated middle: +Q and −Q', { size: 10, color: C.muted });
+        battery(g, -4.6, 0, s.V);
+      } else {
+        g.path([[-4.6, 0.2], [-4.6, 1.6], [0.4, 1.6], [0.4, 0.45]], { color: C.ink, width: 3 });
+        g.path([[-2.1, 1.6], [-2.1, 0.45]], { color: C.ink, width: 3 });
+        g.path([[-2.1, -0.45], [-2.1, -1.4]], { color: C.ink, width: 3 });
+        g.path([[0.4, -0.45], [0.4, -1.4], [-4.6, -1.4], [-4.6, -0.2]], { color: C.ink, width: 3 });
+        capSym(g, -2.1, 0, true, s.Q1, `C₁ = ${c1S.value} μF`, C.bad);
+        capSym(g, 0.4, 0, true, s.Q2, `C₂ = ${c2S.value} μF`, C.acc);
+        battery(g, -4.6, 0, s.V);
+      }
+      // voltage and charge bars
+      const bx = 2.9, H = 3.6;
+      [['V₁', s.V1, Vmax, C.bad, 'V'], ['V₂', s.V2, Vmax, C.acc, 'V']].forEach(([n, v, m, col, u], i) => {
+        g.rect(bx + i * 0.9, -2.0, 0.6, H * v / m, { fill: col, color: 'none' });
+        g.text([bx + i * 0.9 + 0.3, -2.3], n, { size: 12, bold: true, color: col });
+        g.text([bx + i * 0.9 + 0.3, -2.0 + H * v / m + 0.2], `${num(v, 0)}`, { size: 11, bold: true });
+      });
+      const qm = Math.max(s.Q1, s.Q2);
+      [['Q₁', s.Q1, C.bad], ['Q₂', s.Q2, C.acc]].forEach(([n, q, col], i) => {
+        g.rect(bx + 2.0 + i * 0.9, -2.0, 0.6, H * 0.9 * q / qm, { fill: col, color: 'none', fillAlpha: 0.5 });
+        g.text([bx + 2.0 + i * 0.9 + 0.3, -2.3], n, { size: 12, bold: true, color: col });
+        g.text([bx + 2.0 + i * 0.9 + 0.3, -2.0 + H * 0.9 * q / qm + 0.2], `${num(q, 0)}`, { size: 11, bold: true });
+      });
+      g.text([bx + 0.75, 2.35], 'volts', { size: 11, color: C.muted }); g.text([bx + 2.75, 2.35], 'μC', { size: 11, color: C.muted });
+      g.text([-1.3, -2.2], `equivalent C = ${num(s.ceq, 2)} μF`, { size: 14, bold: true, color: C.vel });
+    };
 
-    document.getElementById('c1-slider').addEventListener('input', function(e) {
-      document.getElementById('c1-val').textContent = e.target.value + ' µF';
-      drawCircuit();
-    });
-    document.getElementById('c2-slider').addEventListener('input', function(e) {
-      document.getElementById('c2-val').textContent = e.target.value + ' µF';
-      drawCircuit();
-    });
+    k.update = () => {
+      if (mode.value === 2) {
+        const n = nS.value, c = cS.value;
+        k.readout([
+          `Parallel: ${rich('C_p')} = nC = ${n} × ${num(c, 1)} = <b>${num(n * c, 1)} μF</b>; series: ${rich('C_s')} = C/n = <b>${num(c / n, 2)} μF</b>; ratio ${rich('C_p')}/${rich('C_s')} = n<sup>2</sup> = ${n * n}`,
+          'Exercise 11: nC = 10 μF and C/n = 0.4 μF → n<sup>2</sup> = 10/0.4 = 25, so n = 5 and C = 2 μF.'
+        ]);
+        return;
+      }
+      const s = solve(), c1 = c1S.value, c2 = c2S.value;
+      k.readout(mode.value === 0 ? [
+        `1/${rich('C_s')} = 1/${c1} + 1/${c2} → ${rich('C_s')} = <b>${num(s.ceq, 2)} μF</b>; Q = ${rich('C_s')}V = ${num(s.ceq, 2)} × ${s.V} = <b>${num(s.Q1, 0)} μC</b> on each`,
+        `${rich('V_1')} = Q/${rich('C_1')} = <b>${num(s.V1, 1)} V</b>, ${rich('V_2')} = Q/${rich('C_2')} = <b>${num(s.V2, 1)} V</b>; together ${num(s.V1 + s.V2, 0)} V. Example 9.5: 3 μF, 600 μC, 150 V and 50 V.`
+      ] : [
+        `${rich('C_p')} = ${c1} + ${c2} = <b>${num(s.ceq, 0)} μF</b>; both have V = ${s.V} V`,
+        `${rich('Q_1')} = ${c1} × ${s.V} = <b>${num(s.Q1, 0)} μC</b>, ${rich('Q_2')} = ${c2} × ${s.V} = <b>${num(s.Q2, 0)} μC</b>; total ${num(s.Q1 + s.Q2, 0)} μC = ${rich('C_p')}V`
+      ]);
+    };
+    show();
   })();
   </script>
 </div>

@@ -53,93 +53,88 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; RC Charging and Discharging Exponential Curves</span>
-  <p class="demo-instruction">Adjust resistance $R$ and capacitance $C$ to see how the time constant $\tau = RC$ affects the rise time of capacitor voltage $V_c(t)$.</p>
-
-  <div id="rc-board" style="width: 100%; height: 350px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Resistance $R$: 
-      <input id="r-slider" type="range" min="20" max="150" step="10" value="80" style="vertical-align: middle;">
-      <span id="r-val" style="color: #38bdf8; font-weight: 700;">80 k&Omega;</span>
-    </label>
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Capacitance $C$: 
-      <input id="c-slider" type="range" min="10" max="100" step="10" value="50" style="vertical-align: middle;">
-      <span id="c-val" style="color: #4ade80; font-weight: 700;">50 &mu;F</span>
-    </label>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      Time Constant $\tau = RC$: <span id="tau-stat" style="color: #fb923c; font-weight: 700;">4.00 s</span> &bull; $W_{\max}$ ($10\mathrm{\,V}$): <span id="w-stat" style="color: #f43f5e; font-weight: 700;">2.50 mJ</span>
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; Charging and Discharging Through a Resistor</span>
+  <p class="demo-question">Why does a capacitor fill quickly at first and then more and more slowly, and what does the time constant RC tell you?</p>
+  <p class="demo-instruction">Flip the switch to <b>charge</b> (connect the battery) or <b>discharge</b> (connect the capacitor across the resistor). The current is largest at the start, when the capacitor is empty and the whole voltage is across $R$; as the capacitor fills, less voltage is left to push charge, so everything slows down. After one time constant $\tau = RC$ the voltage reaches 63 % of $V_0$. The bar shows the stored energy $\tfrac{1}{2}CV^2$.</p>
+  <div id="pk-rc"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('rc-board', {
-      boundingbox: [-1, 12, 20, -1],
-      axis: true,
-      defaultAxes: {
-        x: { name: 'Time t (s)', withLabel: true, label: { position: 'rt', offset: [-20, -15], color: '#94a3b8' } },
-        y: { name: 'Vc (V)', withLabel: true, label: { position: 'rt', offset: [15, -10], color: '#94a3b8' } }
-      },
-      showNavigation: false,
-      showCopyright: false,
-      pan: { enabled: false },
-      zoom: { enabled: false }
+  (function () {
+    const k = PhysKit.mount('pk-rc', { x: [-6.2, 6.2], y: [-2.6, 2.6] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    k.row();
+    const sw = k.choice(['charge', 'discharge'], 0, () => { v0 = Vc; t = 0; hist = []; });
+    const RS = k.slider({ label: 'R', unit: 'kΩ', min: 1, max: 200, step: 0.1, value: 89.6, digits: 1 });
+    const CS = k.slider({ label: 'C', unit: 'μF', min: 1, max: 200, step: 1, value: 50, digits: 0 });
+    const VS = k.slider({ label: 'V_0', unit: 'V', min: 1, max: 250, step: 1, value: 12, digits: 0 });
+    k.row();
+    k.button('Example 9.3 (10 μF, 200 V)', () => { CS.value = 10; VS.value = 200; RS.value = 100; sw.set(0); v0 = 0; Vc = 0; t = 0; hist = []; });
+    k.button('Example 9.4 (50 μF, 89.6 kΩ)', () => { CS.value = 50; RS.value = 89.6; sw.set(0); v0 = 0; Vc = 0; t = 0; hist = []; });
+    const tau = () => RS.value * 1e3 * CS.value * 1e-6;
+    let t = 0, Vc = 0, v0 = 0, hist = [];
+    k.loop(dt => {
+      const T = tau(), speed = T / 1.6;                  // show 5τ in about 8 s
+      t += dt * speed;
+      const target = sw.value === 0 ? VS.value : 0;
+      Vc = target + (v0 - target) * Math.exp(-t / T);
+      hist.push([t, Vc]); if (hist.length > 1200) hist.shift();
     });
 
-    let V0 = 10.0;
-    // Asymptote line at V0
-    board.create('line', [[0, V0], [20, V0]], {
-      strokeColor: '#475569', strokeWidth: 1.5, dash: 2
-    });
+    k.draw = g => {
+      const V0 = VS.value, I = (sw.value === 0 ? V0 - Vc : -Vc) / (RS.value * 1e3);
+      // circuit
+      const L = -5.6, Rr = -0.6, T = 1.9, B = -1.9;
+      g.path([[L, 0.35], [L, T], [-3.6, T]], { color: C.ink, width: 3 });
+      g.path([[-1.8, T], [Rr, T], [Rr, 0.5]], { color: C.ink, width: 3 });
+      g.path([[Rr, -0.5], [Rr, B], [L, B], [L, -0.35]], { color: C.ink, width: 3 });
+      g.line([L - 0.45, 0.35], [L + 0.45, 0.35], { color: C.ink, width: 3 }); g.line([L - 0.25, -0.35], [L + 0.25, -0.35], { color: C.ink, width: 6 });
+      g.text([L + 0.6, 0], `${V0} V`, { align: 'left', size: 12, bold: true });
+      // resistor zigzag on the top wire
+      const zz = [[-3.6, T]];
+      for (let j = 1; j <= 8; j++) zz.push([-3.6 + j * 0.225, T + (j % 2 ? 0.2 : -0.2)]);
+      zz.push([-1.8, T]);
+      g.path(zz, { color: C.ink, width: 2.5 });
+      g.text([-2.7, T + 0.45], `R = ${num(RS.value, 1)} kΩ`, { size: 12, bold: true });
+      // the capacitor
+      g.line([Rr - 0.5, 0.5], [Rr + 0.5, 0.5], { color: C.ink, width: 5 }); g.line([Rr - 0.5, -0.5], [Rr + 0.5, -0.5], { color: C.ink, width: 5 });
+      const n = Math.round(Vc / Math.max(1, V0) * 6);
+      for (let j = 0; j < n; j++) { g.text([Rr - 0.4 + j * 0.16, 0.72], '+', { size: 11, bold: true, color: C.pos }); g.text([Rr - 0.4 + j * 0.16, -0.75], '−', { size: 11, bold: true, color: C.neg }); }
+      g.text([Rr + 0.7, 0], `${CS.value} μF`, { align: 'left', size: 12, bold: true });
+      // switch: in "discharge" the battery is bypassed by a wire
+      if (sw.value === 1) { g.line([L + 0.9, T], [L + 0.9, B], { color: C.bad, width: 3, dash: [6, 4] }); g.text([L + 1.0, -1.2], 'battery bypassed', { align: 'left', size: 11, color: C.bad }); }
+      // current arrow
+      if (Math.abs(I) * RS.value * 1e3 > V0 * 0.01) g.arrow([-3.2, T - 0.45], [Math.sign(I) * (0.4 + 1.2 * Math.abs(I) * RS.value * 1e3 / V0), 0], { color: C.vel, width: 3, label: `I = ${num(Math.abs(I) * 1e3, 3)} mA`, side: [0, -1] });
+      // energy bar
+      const W = 0.5 * CS.value * 1e-6 * Vc * Vc, Wmax = 0.5 * CS.value * 1e-6 * V0 * V0;
+      g.rect(1.2, -2.0, 0.6, 3.6, { fill: '#f1f5f9', color: C.ink, width: 1 });
+      g.rect(1.2, -2.0, 0.6, 3.6 * W / Wmax, { fill: C.energy, color: 'none' });
+      g.text([1.5, 1.9], 'energy', { size: 11, color: C.muted });
+      g.text([1.95, -2.0 + 3.6 * W / Wmax], `${W < 0.01 ? num(W * 1000, 2) + ' mJ' : num(W, 3) + ' J'}`, { align: 'left', size: 12, bold: true, color: C.energy });
+      // big numbers
+      g.text([3.2, 1.7], `t = ${num(t, 2)} s = ${num(t / tau(), 2)} τ`, { align: 'left', size: 13, bold: true });
+      g.text([3.2, 1.15], `V_C = ${num(Vc, 2)} V (${num(Vc / V0 * 100, 1)} %)`, { align: 'left', size: 13, bold: true, color: C.acc });
+      g.text([3.2, 0.6], `τ = RC = ${num(tau(), 2)} s`, { align: 'left', size: 13, bold: true, color: C.field });
+    };
 
-    let vCurve = null;
-    let tauPoint = null;
+    const gv = k.addView({ x: [0, 1], y: [0, 1], equal: false, height: 180, title: 'Capacitor voltage against time (dashed: one time constant)' });
+    gv.draw = g => {
+      const T = tau(), V0 = VS.value;
+      gv.setRange([-0.3 * T, 5.2 * T], [-0.08 * V0, 1.12 * V0]);
+      g.axes({ xstep: T, ystep: V0 / 4, xfmt: x => `${num(x / T, 0)}τ`, xlabel: 't', ylabel: 'V_C' });
+      g.line([T, 0], [T, V0], { color: C.field, dash: [4, 4] });
+      g.line([0, 0.632 * V0], [5 * T, 0.632 * V0], { color: '#e2e8f0', dash: [4, 4] });
+      g.text([T, 0.632 * V0], '63 %', { size: 11, color: C.field, dx: 22, dy: -8 });
+      g.path(hist.filter(p => p[0] <= 5.2 * T), { color: C.acc, width: 3 });
+      if (Math.abs(RS.value - 89.6) < 0.05 && CS.value === 50 && sw.value === 0) { g.line([1, 0], [1, 0.2 * V0], { color: C.bad, dash: [3, 3] }); g.dot([1, 0.2 * V0], 5, C.bad); g.text([1, 0.2 * V0], '20 % at 1 s', { size: 11, color: C.bad, dx: 40 }); }
+    };
 
-    function updateRC() {
-      board.suspendUpdate();
-      if (vCurve) board.removeObject(vCurve);
-      if (tauPoint) board.removeObject(tauPoint);
-
-      let R_kOhm = parseFloat(document.getElementById('r-slider').value);
-      let C_uF = parseFloat(document.getElementById('c-slider').value);
-      let R = R_kOhm * 1e3;
-      let C = C_uF * 1e-6;
-      let tau = R * C; // in seconds
-      let W_mJ = 0.5 * C * (V0 * V0) * 1e3;
-
-      document.getElementById('tau-stat').textContent = tau.toFixed(2) + ' s';
-      document.getElementById('w-stat').textContent = W_mJ.toFixed(2) + ' mJ';
-
-      // Plot V_c(t) = V0 * (1 - exp(-t / tau))
-      vCurve = board.create('functiongraph', [
-        function(t) {
-          return V0 * (1.0 - Math.exp(-t / tau));
-        }, 0, 20
-      ], {
-        strokeColor: '#38bdf8', strokeWidth: 3
-      });
-
-      // Marker at t = tau (63.2% V0)
-      tauPoint = board.create('point', [tau, V0 * (1.0 - Math.exp(-1.0))], {
-        size: 4, fillColor: '#fb923c', strokeColor: '#ea580c', name: 'τ = RC (63.2%)', fixed: true
-      });
-
-      board.unsuspendUpdate();
-    }
-
-    updateRC();
-
-    document.getElementById('r-slider').addEventListener('input', function(e) {
-      document.getElementById('r-val').textContent = e.target.value + ' kΩ';
-      updateRC();
-    });
-    document.getElementById('c-slider').addEventListener('input', function(e) {
-      document.getElementById('c-val').textContent = e.target.value + ' µF';
-      updateRC();
-    });
+    k.update = () => {
+      const T = tau(), V0 = VS.value, W = 0.5 * CS.value * 1e-6 * V0 * V0;
+      k.readout([
+        sw.value === 0 ? `Charging: ${rich('V_C')} = ${rich('V_0')}(1 − e<sup>−t/RC</sup>); at t = τ it reaches 0.632 ${rich('V_0')}, at 5τ it is almost full.` : `Discharging: ${rich('V_C')} = V e<sup>−t/RC</sup>; after each τ only 36.8 % is left.`,
+        `Full energy W = ½C${rich('V_0^2')} = ½ × ${CS.value}×10<sup>−6</sup> × ${V0}<sup>2</sup> = <b>${W < 0.01 ? num(W * 1000, 3) + ' mJ' : num(W, 3) + ' J'}</b>. Example 9.3: 0.2 J in 10 μF needs V = √(2 × 0.2 / 10<sup>−5</sup>) = 200 V.`,
+        `Example 9.4: 20 % after 1 s means e<sup>−1/RC</sup> = 0.8, RC = 1/0.2231 = 4.48 s, so R = 4.48 / 50×10<sup>−6</sup> ≈ 89.6 kΩ.`
+      ]);
+    };
   })();
   </script>
 </div>
