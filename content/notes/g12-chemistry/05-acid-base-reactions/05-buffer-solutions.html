@@ -1,0 +1,191 @@
+<!-- tags: Acid-Base Reactions, G12 Chemistry Myanmar -->
+<!-- Grade 12 Chemistry textbook, Chapter 5, section 5.5 (pages 91–95) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Acid-Base Reactions">Buffer Solutions</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; A Solution That Resists pH Change</span>
+  <p>Blood stays at about pH 7.4 and gastric juice at about 1.5; enzymes only work at the right pH. A <strong>buffer solution</strong> resists changes in pH when it is diluted or when a small amount of acid or base is added. There are two kinds:</p>
+  <ul>
+    <li><strong>A weak acid and its salt</strong> (acidic buffers, e.g. CH<sub>3</sub>COOH / CH<sub>3</sub>COONa). The salt gives a large reserve of CH<sub>3</sub>COO⁻; the acid is a large reserve of H⁺.
+      <ul>
+        <li>Add H⁺: $\mathrm{H^+ + CH_3COO^- \to CH_3COOH}$ (the added H⁺ is used up)</li>
+        <li>Add OH⁻: $\mathrm{OH^- + CH_3COOH \to CH_3COO^- + H_2O}$ (the added OH⁻ is used up)</li>
+      </ul></li>
+    <li><strong>A weak base and its salt</strong> (pH about 7–11, e.g. NH<sub>4</sub>OH / NH<sub>4</sub>Cl).
+      <ul>
+        <li>Add OH⁻: $\mathrm{OH^- + NH_4^+ \to NH_4OH}$</li>
+        <li>Add H⁺: $\mathrm{H^+ + NH_4OH \to NH_4^+ + H_2O}$</li>
+      </ul></li>
+  </ul>
+  <p>A strong acid with its salt (HCl/NaCl) is <em>not</em> a buffer: Cl⁻ is too weak a base to take up added H⁺.</p>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formula</span>
+  <div class="formula-main">
+    $$K_a = \frac{[\mathrm{H^+}][\mathrm{A^-}]}{[\mathrm{HA}]} \;\Rightarrow\; [\mathrm{H^+}] = K_a\,\frac{[\mathrm{HA}]}{[\mathrm{A^-}]} \qquad \mathrm{pH} = \mathrm{p}K_a + \log\frac{[\mathrm{A^-}]}{[\mathrm{HA}]}$$
+  </div>
+  <ul class="symbols">
+    <li>$[\mathrm{HA}]$ ≈ the acid concentration put in; $[\mathrm{A^-}]$ ≈ the salt concentration put in</li>
+    <li>Equal amounts of acid and salt: $\mathrm{pH} = \mathrm{p}K_a$ (4.74 for ethanoic acid)</li>
+    <li>Only the <em>ratio</em> matters, so diluting a buffer hardly changes its pH</li>
+  </ul>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>Upside-down ratio:</strong> it is $\log([\text{salt}]/[\text{acid}])$; more salt raises the pH.</li>
+    <li><strong>"A buffer never changes":</strong> it only resists <em>small</em> additions. Once the A⁻ (or HA) reserve is used up, the pH jumps.</li>
+    <li><strong>Grams, not moles:</strong> convert masses to mol (and to mol dm⁻³ if the volumes differ) before the ratio.</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; Drop Acid or Base into Water and into a Buffer</span>
+  <p class="demo-question">How much does the pH move when you add the same drops of HCl or NaOH to pure water and to a buffer?</p>
+  <p class="demo-instruction">The beaker holds 100 cm³. Each drop adds 0.5 mmol of HCl or NaOH. Switch between water and the ethanoic acid / ethanoate buffer, and change the buffer's amounts. The bars show how the acid and salt reserves are used up; the graph shows the whole pH curve for both.</p>
+  <div id="pk-buf"></div>
+  <script>
+  (function () {
+    const Ka = 1.8e-5, Kw = 1e-14, V = 0.100, DROP = 0.5;     // V in dm³, DROP in mmol
+    const k = PhysKit.mount('pk-buf', { x: [-6.2, 6.2], y: [-2.5, 2.5] });
+    const C = PhysKit.C, num = k.num;
+    let n = 0;                                                 // drops: + = HCl, − = NaOH
+    k.row();
+    const mode = k.choice(['Pure water', 'Buffer'], 1, () => { n = 0; });
+    k.button('Add HCl drop', () => { if (n < 40) n++; }, { primary: true });
+    k.button('Add NaOH drop', () => { if (n > -40) n--; });
+    k.button('Reset', () => { n = 0; });
+    k.row();
+    const sA = k.slider({ label: 'CH₃COOH', unit: 'mmol', min: 1, max: 20, step: 1, value: 10, digits: 0 });
+    const sB = k.slider({ label: 'CH₃COONa', unit: 'mmol', min: 1, max: 20, step: 1, value: 10, digits: 0 });
+
+    // Exact pH from the charge balance [Na⁺] + [H⁺] = [OH⁻] + [A⁻] + [Cl⁻], solved by bisection in log[H⁺]
+    function pH(drops, buffer) {
+      const a = buffer ? sA.value : 0, b = buffer ? sB.value : 0;
+      const Vt = V + Math.abs(drops) * 0.0005;                 // each drop 0.5 cm³ of 1.0 mol dm⁻³
+      const cl = drops > 0 ? drops * DROP / 1000 / Vt : 0;
+      const na = (b + (drops < 0 ? -drops * DROP : 0)) / 1000 / Vt;
+      const tot = (a + b) / 1000 / Vt;
+      let lo = -15, hi = 1;
+      for (let i = 0; i < 80; i++) {
+        const m = (lo + hi) / 2, H = Math.pow(10, m);
+        const f = na + H - Kw / H - tot * Ka / (Ka + H) - cl;
+        if (f > 0) hi = m; else lo = m;
+      }
+      return -(lo + hi) / 2;
+    }
+    const UI = ['#b91c1c', '#dc2626', '#ef4444', '#f97316', '#fb923c', '#facc15', '#fde047', '#22c55e', '#14b8a6', '#0ea5e9', '#2563eb', '#4f46e5', '#6d28d9', '#7c3aed', '#5b21b6'];
+    const hex = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+    const col = p => { const i = Math.max(0, Math.min(13.999, p)), a = Math.floor(i), f = i - a, A = hex(UI[a]), B = hex(UI[a + 1]); return `rgb(${A.map((v, j) => Math.round(v + (B[j] - v) * f)).join(',')})`; };
+
+    const gv = k.addView({ x: [-44, 44], y: [-1.5, 14.5], equal: false, height: 220, title: 'pH against drops added (left: NaOH, right: HCl)' });
+    gv.draw = g => {
+      g.axes({ xstep: 10, ystep: 2, xlabel: 'drops', ylabel: 'pH' });
+      const W = [], B = [];
+      for (let d = -40; d <= 40; d++) { W.push([d, pH(d, false)]); B.push([d, pH(d, true)]); }
+      g.path(W, { color: C.muted, width: 2, dash: [6, 4] });
+      g.path(B, { color: C.vel, width: 3 });
+      g.text([30, 13], 'water (dashed)', { size: 12, color: C.muted, bold: true });
+      g.text([30, 11.6], 'buffer', { size: 12, color: C.vel, bold: true });
+      g.dot([n, pH(n, mode.value === 1)], 7, mode.value === 1 ? C.vel : C.ink);
+    };
+
+    k.draw = g => {
+      const buf = mode.value === 1, P = pH(n, buf);
+      // beaker
+      const bx = -5.4, bw = 3.2, by = -2.1, bh = 3.6, level = by + bh * 0.78;
+      g.rect(bx, by, bw, level - by, { fill: col(P), fillAlpha: 0.55, color: col(P) });
+      g.path([[bx, by + bh], [bx, by], [bx + bw, by], [bx + bw, by + bh]], { color: C.ink, width: 3 });
+      g.text([bx + bw / 2, by + bh + 0.3], buf ? 'buffer, 100 cm³' : 'pure water, 100 cm³', { size: 12, bold: true });
+      // drop from the burette
+      g.text([bx + bw / 2, level + 0.35], n > 0 ? `${n} drops HCl` : n < 0 ? `${-n} drops NaOH` : 'no drops yet', { size: 11, color: C.ink });
+      // pH meter
+      g.rect(-1.6, -0.3, 2.8, 1.6, { fill: '#0f172a', color: '#0f172a', radius: 6 });
+      g.text([-0.2, 0.65], 'pH ' + num(P, 2), { size: 22, bold: true, color: '#86efac' });
+      g.text([-0.2, 0.0], `start ${num(pH(0, buf), 2)}, change ${P - pH(0, buf) >= 0 ? '+' : ''}${num(P - pH(0, buf), 2)}`, { size: 11, color: '#cbd5e1' });
+      // reserves
+      if (buf) {
+        const add = n * DROP, ha = Math.max(0, sA.value + add), am = Math.max(0, sB.value - add);
+        const bar = (y, val, max, label, c) => {
+          g.rect(2.2, y, 3.6, 0.45, { fill: '#f1f5f9', color: C.faint, radius: 3 });
+          g.rect(2.2, y, 3.6 * Math.min(1, val / max), 0.45, { fill: c, color: c, radius: 3 });
+          g.text([2.2, y + 0.75], `${label}: ${num(val, 1)} mmol`, { size: 11, align: 'left', bold: true });
+        };
+        const mx = Math.max(sA.value, sB.value) + 20;
+        bar(0.9, ha, mx, 'CH₃COOH (HA)', C.pos);
+        bar(-0.6, am, mx, 'CH₃COO⁻ (A⁻)', C.neg);
+        g.text([4.0, -1.5], n > 0 ? 'H⁺ + A⁻ → HA' : n < 0 ? 'OH⁻ + HA → A⁻ + H₂O' : 'reserves full', { size: 12, color: C.ink, bold: true });
+        if ((n > 0 && sB.value - n * DROP <= 0) || (n < 0 && sA.value + n * DROP <= 0)) g.text([4.0, -2.05], 'reserve used up: buffer fails!', { size: 12, color: C.bad, bold: true });
+      } else {
+        g.text([4.0, 0.4], 'No reserve to react with', { size: 12, color: C.muted, bold: true });
+        g.text([4.0, -0.2], 'added H⁺ or OH⁻', { size: 12, color: C.muted, bold: true });
+      }
+    };
+    k.update = () => {
+      const buf = mode.value === 1;
+      sA.input.disabled = sB.input.disabled = !buf;
+      const lines = [];
+      if (buf) {
+        const add = n * DROP, ha = sA.value + add, am = sB.value - add;
+        lines.push(`Start: pH = pK<sub>a</sub> + log([A⁻]/[HA]) = 4.74 + log(${sB.value}/${sA.value}) = <b>${num(4.745 + Math.log10(sB.value / sA.value), 2)}</b>`);
+        if (n !== 0 && ha > 0 && am > 0) lines.push(`Now: HA ${num(ha, 1)} mmol, A⁻ ${num(am, 1)} mmol → pH ≈ 4.74 + log(${num(am, 1)}/${num(ha, 1)}) = ${num(4.745 + Math.log10(am / ha), 2)} (exact ${num(pH(n, true), 2)})`);
+      } else lines.push(`Water: ${Math.abs(n) * DROP} mmol of ${n >= 0 ? 'H⁺' : 'OH⁻'} in about 100 cm³ moves the pH all the way to ${num(pH(n, false), 2)}`);
+      k.readout(lines);
+    };
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Examples 10–12 and Review Questions (pp. 92–93)</span>
+
+  <p><strong>Example 10:</strong> Which are buffer solutions? (i) HCN/NaCN, (ii) HBr/KBr, (iii) HCOOH/HCOOK, (iv) HClO<sub>4</sub>/NaClO<sub>4</sub>.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">(i) Buffer: HCN is a weak acid and NaCN is its salt. (ii) Not a buffer: HBr is a strong acid. (iii) Buffer: HCOOH is a weak acid and HCOO⁻ is its conjugate base. (iv) Not a buffer: HClO<sub>4</sub> is a strong acid.</p></details>
+
+  <p><strong>Example 11:</strong> pH of a buffer with 0.01 mol ethanoic acid and 0.01 mol sodium ethanoate per dm³ ($K_a = 1.8 \times 10^{-5}$).</p>
+  <details><summary>Show answer</summary>
+    <p>$[\mathrm{CH_3COOH}] = [\mathrm{CH_3COO^-}] = 0.01$, so $[\mathrm{H^+}] = K_a \times \frac{0.01}{0.01} = 1.8 \times 10^{-5}$ mol dm⁻³.</p>
+    <p class="answer">$\mathrm{pH} = -\log(1.8 \times 10^{-5}) = \mathbf{4.74}$</p></details>
+
+  <p><strong>Example 12:</strong> A sodium ethanoate–ethanoic acid buffer has pH 4.50. Find $[\mathrm{CH_3COO^-}]/[\mathrm{CH_3COOH}]$.</p>
+  <details><summary>Show answer</summary>
+    <p>$[\mathrm{H^+}] = 10^{-4.50} = 3.16 \times 10^{-5}$ mol dm⁻³.</p>
+    <p class="answer">$\dfrac{[\mathrm{CH_3COO^-}]}{[\mathrm{CH_3COOH}]} = \dfrac{K_a}{[\mathrm{H^+}]} = \dfrac{1.8 \times 10^{-5}}{3.16 \times 10^{-5}} = \mathbf{0.570}$ (less salt than acid, because pH 4.50 &lt; pK<sub>a</sub> 4.74)</p></details>
+
+  <p><strong>Review Q1:</strong> Which are buffers? (i) H<sub>2</sub>CO<sub>3</sub>/HCO<sub>3</sub><sup>−</sup>, (ii) HCl/NaCl, (iii) NH<sub>3</sub>/NaOH, (iv) HF/NaF.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">(i) Yes: weak acid and its conjugate base (the buffer in blood). (ii) No: HCl is a strong acid. (iii) No: NaOH is a strong base, not the salt (conjugate acid) of NH<sub>3</sub>; it would need NH<sub>4</sub>Cl. (iv) Yes: HF is a weak acid and F⁻ its conjugate base.</p></details>
+
+  <p><strong>Review Q2:</strong> A methanoic acid / sodium methanoate buffer has a little dilute HCl added. What happens to the extra H⁺?</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">The methanoate ions take them up: $\mathrm{H^+ + HCOO^- \to HCOOH}$. The H⁺ becomes undissociated methanoic acid, so $[\mathrm{H^+}]$ and the pH hardly change.</p></details>
+
+  <p><strong>Review Q3:</strong> 0.2 g of HF and 0.42 g of NaF in 0.2 dm³ of water. pH? (pK<sub>a</sub> of HF = 3.14; Na 23, H 1, F 19)</p>
+  <details><summary>Show answer</summary>
+    <p>HF: $0.2 / 20 = 0.010$ mol. NaF: $0.42 / 42 = 0.010$ mol. Same volume, so the ratio is $1$.</p>
+    <p class="answer">$\mathrm{pH} = 3.14 + \log 1 = \mathbf{3.14}$</p></details>
+
+  <p><strong>Exercises 1(e), 2(e), 13 and 14:</strong> (1e) A buffer resists the change of ___. (2e) Which combination buffers at about pH 9: CH<sub>3</sub>COOH/CH<sub>3</sub>COONa, NH<sub>3</sub>/NH<sub>4</sub>Cl or HCl/NaCl? (13b) pH of 0.01 mol methanoic acid (pK<sub>a</sub> 3.8) and 0.1 mol sodium methanoate per dm³. (14) 2.2 g of sodium ethanoate added to 0.1 dm³ of 0.4 mol dm⁻³ ethanoic acid ($K_a = 1.8 \times 10^{-5}$). pH?</p>
+  <details><summary>Show answer</summary>
+    <p>(1e) pH. (2e) NH<sub>3</sub>/NH<sub>4</sub>Cl (a weak base and its salt; pH = 14 − 4.74 = 9.26 for equal amounts).</p>
+    <p>(13a) NH<sub>4</sub><sup>+</sup> removes added OH⁻ ($\mathrm{OH^- + NH_4^+ \to NH_4OH}$) and NH<sub>4</sub>OH removes added H⁺ ($\mathrm{H^+ + NH_4OH \to NH_4^+ + H_2O}$).</p>
+    <p>(13b) $\mathrm{pH} = 3.8 + \log\frac{0.1}{0.01} = 3.8 + 1 = \mathbf{4.8}$.</p>
+    <p>(14) CH<sub>3</sub>COONa: $M = 82$, $2.2 / 82 = 0.0268$ mol in 0.1 dm³ $= 0.268$ mol dm⁻³. $\mathrm{p}K_a = -\log(1.8 \times 10^{-5}) = 4.74$.</p>
+    <p class="answer">$\mathrm{pH} = 4.74 + \log\frac{0.268}{0.4} = 4.74 - 0.17 = \mathbf{4.57}$</p></details>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>Buffer = weak acid + its salt, or weak base + its salt.</li>
+    <li>The salt's ion removes added H⁺; the weak acid (or base) removes added OH⁻ (or H⁺).</li>
+    <li>$\mathrm{pH} = \mathrm{p}K_a + \log([\text{salt}]/[\text{acid}])$; equal amounts give pH = pK<sub>a</sub>.</li>
+  </ul>
+</div>
+
+</article>
