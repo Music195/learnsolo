@@ -106,3 +106,12 @@ def api_merge_progress():
             saved[set_path] = merged
     db.session.commit()
     return {"progress": saved}
+
+
+@api_bp.post("/progress/reset-all")
+@login_required
+def api_reset_all_progress():
+    """Reset all progress for the current logged-in user."""
+    Progress.query.filter_by(user_id=current_user.id).delete()
+    db.session.commit()
+    return {"ok": True, "message": "All progress reset."}

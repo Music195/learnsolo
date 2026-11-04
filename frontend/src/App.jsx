@@ -13,6 +13,7 @@ import PracticeSet from './pages/PracticeSet.jsx'
 import PastList from './pages/PastList.jsx'
 import PastPaper from './pages/PastPaper.jsx'
 import Account from './pages/Account.jsx'
+import AccountSettings from './pages/AccountSettings.jsx'
 import NotFound from './pages/NotFound.jsx'
 import { useAuth } from './auth.jsx'
 import FloatingDictionary from './components/FloatingDictionary.jsx'
@@ -35,9 +36,10 @@ export default function App() {
         <Route path="/past/:category" element={<PastList />} />
         {/* /past/eju/course-1/03-mock-paper: one paper */}
         <Route path="/past/:category/*" element={<PastPaper />} />
-        {/* Accounts: the same page, as a log in or a sign up form */}
+        {/* Accounts: login, signup, and logged-in account settings */}
         <Route path="/login" element={<Account mode="login" />} />
         <Route path="/signup" element={<Account mode="signup" />} />
+        <Route path="/account" element={<AccountSettings />} />
         {/* Anything else */}
         <Route path="*" element={<NotFound />} />
       </Routes>

@@ -71,6 +71,12 @@ export function AuthProvider({ children }) {
       setAccountProgress(null)   // back to this browser's progress
       setUser(null)
     },
+    changePassword: (current_password, new_password) =>
+      sendJson('POST', '/api/auth/change-password', { current_password, new_password }),
+    resetAllProgress: async () => {
+      await sendJson('POST', '/api/progress/reset-all')
+      setAccountProgress({})
+    },
   }
 
   if (!ready) return <p className="section">Loading…</p>

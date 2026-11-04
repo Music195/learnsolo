@@ -26,8 +26,8 @@ def test_sign_up_logs_in(client):
     email = new_email()
     response = sign_up(client, email)
     assert response.status_code == 201
-    assert response.get_json() == {"user": {"email": email}}
-    assert client.get("/api/auth/me").get_json() == {"user": {"email": email}}
+    assert response.get_json()["user"]["email"] == email
+    assert client.get("/api/auth/me").get_json()["user"]["email"] == email
 
 
 def test_password_is_stored_as_a_hash(client, app):
@@ -65,7 +65,31 @@ def test_log_out_and_back_in(client):
     assert client.get("/api/auth/me").get_json() == {"user": None}
     response = client.post("/api/auth/login", json={"email": email, "password": PASSWORD})
     assert response.status_code == 200
-    assert client.get("/api/auth/me").get_json() == {"user": {"email": email}}
+    assert client.get("/api/auth/me").get_json()["user"]["email"] == email
+
+
+def test_change_password(client):
+    email = new_email()
+    sign_up(client, email)
+
+    # Wrong current password fails
+    bad = client.post("/api/auth/change-password", json={"current_password": "wrong", "new_password": "brandnewpassword"})
+    assert bad.status_code == 401
+
+    # Short new password fails
+    short = client.post("/api/auth/change-password", json={"current_password": PASSWORD, "new_password": "short"})
+    assert short.status_code == 400
+
+    # Successful change
+    ok = client.post("/api/auth/change-password", json={"current_password": PASSWORD, "new_password": "brandnewpassword"})
+    assert ok.status_code == 200
+
+    # Log out and log back in with new password
+    client.post("/api/auth/logout")
+    old_try = client.post("/api/auth/login", json={"email": email, "password": PASSWORD})
+    assert old_try.status_code == 401
+    new_try = client.post("/api/auth/login", json={"email": email, "password": "brandnewpassword"})
+    assert new_try.status_code == 200
 
 
 def test_wrong_password_and_unknown_email_look_the_same(client):
@@ -142,3 +166,15 @@ def test_merge_keeps_the_best_of_both(client):
         SET: {"0": "solved", "1": "solved", "2": "review"},   # solved in either place wins
         "math-a/01-sets/01-sets-and-operations": {"3": "solved"},
     }}
+
+
+def test_reset_all_progress(client):
+    sign_up(client)
+    client.put("/api/progress/" + SET, json={"0": "solved"})
+    client.put("/api/progress/past/eju/course-1/01-mock-paper", json={"1": "solved"})
+    assert len(client.get("/api/progress").get_json()["progress"]) == 2
+
+    # Reset all progress
+    res = client.post("/api/progress/reset-all")
+    assert res.status_code == 200
+    assert client.get("/api/progress").get_json() == {"progress": {}}

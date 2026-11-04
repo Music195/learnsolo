@@ -113,3 +113,16 @@ class DictionaryEntry(db.Model):
     created_at = db.Column(db.DateTime(timezone=True), nullable=False,
                            default=lambda: datetime.now(timezone.utc))
 
+
+class Feedback(db.Model):
+    """User feedback submitted via the top bar."""
+    __tablename__ = "feedbacks"
+    id = db.Column(db.Integer, primary_key=True)
+    user_email = db.Column(db.String(255), nullable=True)
+    category = db.Column(db.String(50), nullable=False, default="general")
+    message = db.Column(db.Text, nullable=False)
+    page_url = db.Column(db.String(500), nullable=True)
+    created_at = db.Column(db.DateTime(timezone=True), nullable=False,
+                           default=lambda: datetime.now(timezone.utc))
+
+
