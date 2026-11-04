@@ -1,0 +1,214 @@
+<!-- tags: Capacitor and Capacitance, G12 Physics Myanmar -->
+<!-- Grade 12 Physics textbook, Chapter 9, section 9.4 (pages 145–148) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Capacitor and Capacitance">Energy Stored and RC Circuits</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Electrostatic Field Energy and Transient Dynamics</span>
+  <p>Charging a capacitor requires electrical work to push electrons against the opposing Coulomb repulsive force of previously accumulated charge. This work is stored as <strong>electrostatic potential energy</strong> within the electric field:</p>
+  <ul>
+    <li><strong>Derivation of Stored Energy:</strong>
+      When intermediate charge $q$ resides on the plates, the potential difference across them is $v = \frac{q}{C}$. The incremental work $dW$ required to transfer an additional charge $dq$ is:
+      $$dW = v\,dq = \frac{q}{C}\,dq$$
+      Integrating from uncharged ($q = 0$) to final charge $Q$:
+      $$W = \int_0^Q \frac{q}{C}\,dq = \left[\frac{q^2}{2C}\right]_0^Q = \frac{Q^2}{2C} = \frac{1}{2}QV = \frac{1}{2}CV^2$$
+      <em>Physical Significance:</em> During charging by a battery of voltage $V_0$, total energy supplied is $W_{\text{battery}} = Q V_0 = C V_0^2$. Exactly half ($50\%$) is stored in the capacitor's electric field; the other half is dissipated as Joule heat in connecting wire resistance.
+    </li>
+    <li><strong>RC Charging Transient:</strong>
+      When an uncharged capacitor $C$ is connected in series with a resistor $R$ and DC source $V_0$:
+      $$V_c(t) = V_0\left(1 - e^{-t/RC}\right) \qquad q(t) = Q_0\left(1 - e^{-t/RC}\right)$$
+      The charging current begins at $I_0 = \frac{V_0}{R}$ and decays exponentially:
+      $$I(t) = \frac{V_0}{R}e^{-t/RC}$$
+    </li>
+    <li><strong>RC Discharging Transient:</strong>
+      When a fully charged capacitor discharges across resistor $R$:
+      $$V_c(t) = V_0 e^{-t/RC} \qquad q(t) = Q_0 e^{-t/RC}$$
+    </li>
+    <li><strong>Time Constant ($\tau = RC$):</strong>
+      The product $\tau = RC$ has units of seconds ($\Omega \cdot \mathrm{F} = \mathrm{s}$) and governs the rate of exponential response:
+      <ul>
+        <li>At $t = \tau$ during charging: $V_c = V_0(1 - e^{-1}) \approx 0.632 V_0$ ($63.2\%$ of maximum voltage).</li>
+        <li>At $t = \tau$ during discharging: $V_c = V_0 e^{-1} \approx 0.368 V_0$ ($36.8\%$ of initial voltage).</li>
+        <li>After $5\tau$, the capacitor is considered virtually fully charged or discharged ($> 99.3\%$).</li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formulas &mdash; Energy and RC Transients</span>
+  <div class="formula-main">
+    $$W = \frac{1}{2}QV = \frac{1}{2}CV^2 = \frac{Q^2}{2C} \qquad\qquad \tau = RC \qquad\qquad V_c(t) = V_0\left(1 - e^{-t/\tau}\right)$$
+  </div>
+  <ul class="symbols">
+    <li>$W$ = electrostatic energy stored in the capacitor ($\mathrm{J}$)</li>
+    <li>$C$ = capacitance ($\mathrm{F}$)</li>
+    <li>$V$ or $V_0$ = supply or capacitor potential difference ($\mathrm{V}$)</li>
+    <li>$Q$ = stored charge magnitude ($\mathrm{C}$)</li>
+    <li>$R$ = circuit series resistance ($\Omega$)</li>
+    <li>$\tau = RC$ = capacitive time constant ($\mathrm{s}$)</li>
+    <li>$t$ = elapsed time ($\mathrm{s}$)</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Visualization &mdash; RC Charging and Discharging Exponential Curves</span>
+  <p class="demo-instruction">Adjust resistance $R$ and capacitance $C$ to see how the time constant $\tau = RC$ affects the rise time of capacitor voltage $V_c(t)$.</p>
+
+  <div id="rc-board" style="width: 100%; height: 350px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
+
+  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
+    <label style="color: #cbd5e1; font-weight: 500;">
+      Resistance $R$: 
+      <input id="r-slider" type="range" min="20" max="150" step="10" value="80" style="vertical-align: middle;">
+      <span id="r-val" style="color: #38bdf8; font-weight: 700;">80 k&Omega;</span>
+    </label>
+    <label style="color: #cbd5e1; font-weight: 500;">
+      Capacitance $C$: 
+      <input id="c-slider" type="range" min="10" max="100" step="10" value="50" style="vertical-align: middle;">
+      <span id="c-val" style="color: #4ade80; font-weight: 700;">50 &mu;F</span>
+    </label>
+    <div style="color: #f8fafc; font-size: 0.9rem;">
+      Time Constant $\tau = RC$: <span id="tau-stat" style="color: #fb923c; font-weight: 700;">4.00 s</span> &bull; $W_{\max}$ ($10\mathrm{\,V}$): <span id="w-stat" style="color: #f43f5e; font-weight: 700;">2.50 mJ</span>
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    let board = JXG.JSXGraph.initBoard('rc-board', {
+      boundingbox: [-1, 12, 20, -1],
+      axis: true,
+      defaultAxes: {
+        x: { name: 'Time t (s)', withLabel: true, label: { position: 'rt', offset: [-20, -15], color: '#94a3b8' } },
+        y: { name: 'Vc (V)', withLabel: true, label: { position: 'rt', offset: [15, -10], color: '#94a3b8' } }
+      },
+      showNavigation: false,
+      showCopyright: false,
+      pan: { enabled: false },
+      zoom: { enabled: false }
+    });
+
+    let V0 = 10.0;
+    // Asymptote line at V0
+    board.create('line', [[0, V0], [20, V0]], {
+      strokeColor: '#475569', strokeWidth: 1.5, dash: 2
+    });
+
+    let vCurve = null;
+    let tauPoint = null;
+
+    function updateRC() {
+      board.suspendUpdate();
+      if (vCurve) board.removeObject(vCurve);
+      if (tauPoint) board.removeObject(tauPoint);
+
+      let R_kOhm = parseFloat(document.getElementById('r-slider').value);
+      let C_uF = parseFloat(document.getElementById('c-slider').value);
+      let R = R_kOhm * 1e3;
+      let C = C_uF * 1e-6;
+      let tau = R * C; // in seconds
+      let W_mJ = 0.5 * C * (V0 * V0) * 1e3;
+
+      document.getElementById('tau-stat').textContent = tau.toFixed(2) + ' s';
+      document.getElementById('w-stat').textContent = W_mJ.toFixed(2) + ' mJ';
+
+      // Plot V_c(t) = V0 * (1 - exp(-t / tau))
+      vCurve = board.create('functiongraph', [
+        function(t) {
+          return V0 * (1.0 - Math.exp(-t / tau));
+        }, 0, 20
+      ], {
+        strokeColor: '#38bdf8', strokeWidth: 3
+      });
+
+      // Marker at t = tau (63.2% V0)
+      tauPoint = board.create('point', [tau, V0 * (1.0 - Math.exp(-1.0))], {
+        size: 4, fillColor: '#fb923c', strokeColor: '#ea580c', name: 'τ = RC (63.2%)', fixed: true
+      });
+
+      board.resumeUpdate();
+    }
+
+    updateRC();
+
+    document.getElementById('r-slider').addEventListener('input', function(e) {
+      document.getElementById('r-val').textContent = e.target.value + ' kΩ';
+      updateRC();
+    });
+    document.getElementById('c-slider').addEventListener('input', function(e) {
+      document.getElementById('c-val').textContent = e.target.value + ' µF';
+      updateRC();
+    });
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Worked Example 9.3 &mdash; Required Voltage for Target Stored Energy</span>
+  <div class="example-problem">
+    <strong>Textbook Example 9.3 (Page 147):</strong><br>
+    What potential difference must be applied across a $10\,\mu\mathrm{F}$ capacitor if it is to store an energy content of $0.2\mathrm{\,J}$?
+  </div>
+  <div class="example-solution">
+    <strong>Given Data:</strong>
+    <ul>
+      <li>Capacitance $C = 10\,\mu\mathrm{F} = 10 \times 10^{-6}\mathrm{\,F} = 1.0 \times 10^{-5}\mathrm{\,F}$</li>
+      <li>Stored energy $W = 0.2\mathrm{\,J}$</li>
+    </ul>
+
+    <strong>Calculation:</strong><br>
+    The energy stored in terms of capacitance and voltage is:
+    $$W = \frac{1}{2}CV^2$$
+    Rearranging to solve for potential difference $V$:
+    $$V^2 = \frac{2W}{C} = \frac{2 \times 0.2\mathrm{\,J}}{1.0 \times 10^{-5}\mathrm{\,F}} = \frac{0.4}{1.0 \times 10^{-5}} = 40{,}000\mathrm{\,V^2}$$
+    Taking the square root:
+    $$V = \sqrt{40{,}000\mathrm{\,V^2}} = 200\mathrm{\,V}$$
+
+    <strong>Conclusion:</strong><br>
+    A potential difference of $200\mathrm{\,V}$ must be applied across the capacitor.
+  </div>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Worked Example 9.4 &mdash; RC Charging Resistance Value</span>
+  <div class="example-problem">
+    <strong>Textbook Example 9.4 (Page 147):</strong><br>
+    In a capacitor charging $RC$ circuit, $C = 50\,\mu\mathrm{F}$. What is the value of resistance $R$ that would produce a voltage rise to $20\%$ of supply voltage after $1\mathrm{\,s}$?
+  </div>
+  <div class="example-solution">
+    <strong>Given Data:</strong>
+    <ul>
+      <li>Capacitance $C = 50\,\mu\mathrm{F} = 5.0 \times 10^{-5}\mathrm{\,F}$</li>
+      <li>Elapsed time $t = 1\mathrm{\,s}$</li>
+      <li>Capacitor voltage $V_c = 0.20\,V_0$ ($20\%$ of supply $V_0$)</li>
+    </ul>
+
+    <strong>Step 1: Write the charging equation:</strong>
+    $$V_c(t) = V_0\left(1 - e^{-t/RC}\right)$$
+    $$0.20\,V_0 = V_0\left(1 - e^{-t/RC}\right) \implies 0.20 = 1 - e^{-t/RC}$$
+
+    <strong>Step 2: Solve for the exponential term:</strong>
+    $$e^{-t/RC} = 1 - 0.20 = 0.80$$
+    Taking natural logarithms of both sides:
+    $$-\frac{t}{RC} = \ln(0.80) \approx -0.2231$$
+    $$\frac{t}{RC} = 0.2231 \implies R = \frac{t}{0.2231 \cdot C}$$
+
+    <strong>Step 3: Substitute numerical values:</strong>
+    $$R = \frac{1\mathrm{\,s}}{0.2231 \times (5.0 \times 10^{-5}\mathrm{\,F})} = \frac{1}{1.1155 \times 10^{-5}} \approx 89{,}640\,\Omega \approx 89.6\text{ k}\Omega$$
+
+    <strong>Conclusion:</strong><br>
+    The required circuit resistance is $R \approx 89.6\text{ k}\Omega$.
+  </div>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>Electrostatic energy stored in a capacitor: $W = \frac{1}{2}QV = \frac{1}{2}CV^2 = \frac{Q^2}{2C}$.</li>
+    <li>In an $RC$ charging circuit, voltage climbs according to $V_c(t) = V_0(1 - e^{-t/RC})$.</li>
+    <li>The time constant $\tau = RC$ measures the charging response time ($63.2\%$ voltage achieved at $t = \tau$).</li>
+  </ul>
+</div>
+
+</article>
