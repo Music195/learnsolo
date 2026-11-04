@@ -6,6 +6,7 @@ import { Link, Navigate } from 'react-router'
 import { useAuth } from '../auth.jsx'
 import { usePageTitle } from '../pageHooks.js'
 import FloatBar from '../components/FloatBar.jsx'
+import Footer from '../components/Footer.jsx'
 import '../styles/account.css'
 
 export default function AccountSettings() {
@@ -213,6 +214,8 @@ export default function AccountSettings() {
           </button>
         </section>
       </main>
+
+      <Footer />
     </>
   )
 }

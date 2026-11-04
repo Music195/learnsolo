@@ -12,6 +12,7 @@ import { useAuth } from '../auth.jsx'
 import { solvedCount } from '../progress.js'
 import { usePageTitle } from '../pageHooks.js'
 import FloatBar from '../components/FloatBar.jsx'
+import Footer from '../components/Footer.jsx'
 import LoadError from '../components/LoadError.jsx'
 import { HubTabs, SetProgress, plural } from '../components/HubTabs.jsx'
 
@@ -56,6 +57,8 @@ export default function PracticeList() {
           <span className="hub-past-go">Open <i className="fas fa-arrow-right"></i></span>
         </Link>
       </main>
+
+      <Footer />
     </>
   )
 }

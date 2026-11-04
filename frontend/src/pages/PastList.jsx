@@ -11,6 +11,7 @@ import { useApi } from '../api.js'
 import { solvedCount } from '../progress.js'
 import { usePageTitle } from '../pageHooks.js'
 import FloatBar from '../components/FloatBar.jsx'
+import Footer from '../components/Footer.jsx'
 import LoadError from '../components/LoadError.jsx'
 import { HubTabs, SetProgress, plural } from '../components/HubTabs.jsx'
 
@@ -24,6 +25,7 @@ export default function PastList() {
       <FloatBar />
       {/* key={category}: a different exam gets a fresh page (its own tabs) */}
       {category ? <ExamPage key={category} folder={category} /> : <AllExams />}
+      <Footer />
     </>
   )
 }

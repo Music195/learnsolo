@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { useApi } from '../api.js'
 import FloatBar from '../components/FloatBar.jsx'
+import Footer from '../components/Footer.jsx'
 import HeroDemo from '../components/HeroDemo.jsx'
 import LoadError from '../components/LoadError.jsx'
 
@@ -186,9 +187,7 @@ function HomeContent({ subjects, stats }) {
         </section>
       </main>
 
-      <footer className="footer">
-        <p>💡 Keep learning, keep growing! · Made with ❤️ for learners</p>
-      </footer>
+      <Footer />
     </>
   )
 }
