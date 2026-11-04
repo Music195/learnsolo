@@ -107,130 +107,160 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; LDR Potential Divider Street Light Controller</span>
-  <p class="demo-instruction">An LDR and a fixed resistor share a $5\text{ V}$ supply (a potential divider). $V_{\text{out}}$ is the voltage across the LDR, and a switch turns the street lamp on when $V_{\text{out}} &gt; 2.5\text{ V}$. Slide the light level from night to day and watch the LDR's resistance, $V_{\text{out}}$ and the lamp.</p>
-
-  <div id="ldr-board" style="width: 100%; height: 350px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 0.6rem 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Light level:
-      <input id="light-slider" type="range" min="0" max="100" step="1" value="20" style="vertical-align: middle;">
-      <span id="light-val" style="color: #38bdf8; font-weight: 700;">Dusk (20%)</span>
-    </label>
-    <div id="ldr-stat" style="width: 100%; text-align: center; color: #f8fafc; font-size: 0.9rem; line-height: 1.6;"></div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; Sensors in a Potential Divider, and a Zener Regulator</span>
+  <p class="demo-question">How does a street lamp "know" it is getting dark, and how does a Zener diode hold a voltage steady?</p>
+  <p class="demo-instruction"><b>Sensor switch:</b> the sensor and a fixed 10 kΩ resistor share the 9 V supply (a potential divider). Change the light level (or the temperature for a thermistor): the sensor's resistance changes, so its share of the voltage $V_{\text{out}}$ changes. When $V_{\text{out}}$ passes the switching level, the processor turns the output on. <b>Zener regulator:</b> raise the input voltage or change the load; once the Zener breaks down, the load voltage stays at $V_Z$ and the extra current goes through the diode.</p>
+  <div id="pk-sensor"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('ldr-board', {
-      boundingbox: [-4.3, 3, 5.4, -3],
-      axis: false,
-      showNavigation: false,
-      showCopyright: false,
-      pan: { enabled: false },
-      zoom: { enabled: false }
-    });
+  (function () {
+    const VS = 9, RF = 10000, VZ = 5.1, RSZ = 100;
+    const k = PhysKit.mount('pk-sensor', { x: [-6.2, 6.2], y: [-2.6, 2.6] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    k.row();
+    const scene = k.choice(['LDR street lamp', 'Thermistor fire alarm', 'Zener regulator'], 0, () => show());
+    const rows = [];
+    rows.push(k.row());
+    const luxS = k.slider({ label: 'light', min: -1, max: 4, step: 0.02, value: 3.5, format: v => { const L = 10 ** v; return L < 10 ? `${num(L, 1)} lux` : `${num(L, 0)} lux`; } });
+    rows.push(k.row());
+    const TS = k.slider({ label: 'temperature', unit: '°C', min: 0, max: 100, step: 1, value: 25, digits: 0 });
+    const thrRow = k.row(); rows.push(thrRow);
+    const thS = k.slider({ label: 'switching level', unit: 'V', min: 1, max: 8, step: 0.1, value: 4.5 });
+    rows.push(k.row());
+    const VinS = k.slider({ label: 'V_{in}', unit: 'V', min: 0, max: 15, step: 0.1, value: 9 });
+    const RLS = k.slider({ label: 'R_L (load)', unit: 'Ω', min: 50, max: 2000, step: 10, value: 500, digits: 0 });
+    function show() { const s = scene.value; rows[0].style.display = s === 0 ? '' : 'none'; rows[1].style.display = s === 1 ? '' : 'none'; rows[2].style.display = s < 2 ? '' : 'none'; rows[3].style.display = s === 2 ? '' : 'none'; }
+    let t = 0;
+    k.loop(dt => { t += dt; }, { button: false });
 
-    // This board is a picture, not something to drag: every element is
-    // created fixed (the same wrapper as the other Physics MM demos).
-    const createFixed = board.create.bind(board);
-    board.create = (type, parents, attrs = {}) =>
-      createFixed(type, parents, { fixed: true, highlight: false, ...attrs, vertices: { fixed: true, visible: false, ...attrs.vertices } });
+    // sensor models
+    const Rldr = lg => Math.max(200, Math.min(5e6, 5e5 * Math.pow(10 ** lg, -0.7)));
+    const Rth = T => 10000 * Math.exp(3500 * (1 / (T + 273) - 1 / 298));
+    const fmtR = R => R >= 1e6 ? `${num(R / 1e6, 2)} MΩ` : R >= 1000 ? `${num(R / 1000, R >= 1e5 ? 0 : 1)} kΩ` : `${num(R, 0)} Ω`;
+    const divider = () => {
+      if (scene.value === 0) { const R = Rldr(luxS.value); return { Rs: R, V: VS * R / (RF + R), top: 'R 10 kΩ', bot: 'LDR' }; }
+      const R = Rth(TS.value); return { Rs: R, V: VS * RF / (RF + R), top: 'thermistor', bot: 'R 10 kΩ' };
+    };
+    const zener = () => {
+      const Vin = VinS.value, RL = RLS.value, Vopen = Vin * RL / (RSZ + RL);
+      if (Vopen < VZ) { const I = Vin / (RSZ + RL); return { on: false, Vout: Vopen, Is: I, IL: I, Iz: 0 }; }
+      const Is = (Vin - VZ) / RSZ, IL = VZ / RL; return { on: true, Vout: VZ, Is, IL, Iz: Is - IL };
+    };
 
-    // ---------- The circuit's numbers ----------
-    const Vin = 5.0;            // supply (V)
-    const Rfixed = 47000;       // fixed resistor (ohm), on top
-    const Vswitch = 2.5;        // the switch turns the lamp on above this
-    let light = 20;             // 0 = dark night, 100 = bright sun
+    const resistor = (g, x, y0, y1, col, label, ldr) => {
+      g.line([x, y0], [x, y0 - 0.25], { color: C.ink, width: 2.5 }); g.line([x, y1 + 0.25], [x, y1], { color: C.ink, width: 2.5 });
+      g.rect(x - 0.22, y1 + 0.25, 0.44, y0 - y1 - 0.5, { fill: '#fff', color: col, width: 2.5 });
+      if (ldr) { const ym = (y0 + y1) / 2; [0, 1].forEach(j => g.arrow([x - 1.0, ym + 0.55 - j * 0.35], [0.6, -0.3], { color: '#f59e0b', width: 2, head: 7 })); }
+      g.text([x + 0.35, (y0 + y1) / 2], label, { align: 'left', size: 12, bold: true, color: col });
+    };
 
-    // LDR resistance: about 1 MΩ in the dark, falling to 200 Ω in bright
-    // light. It falls by the same factor for each step of light, so we
-    // join the two ends on a log scale.
-    const Rldr = () => 1e6 * Math.pow(200 / 1e6, light / 100);
-    // Potential divider: V_out (across the LDR) = Vin × R_LDR / (R_LDR + R_fixed)
-    const Vout = () => Vin * Rldr() / (Rldr() + Rfixed);
-    const lampOn = () => Vout() > Vswitch;
-
-    function ohms(R) { return R >= 1e6 ? (R / 1e6).toFixed(2) + ' MΩ' : R >= 1000 ? (R / 1000).toFixed(1) + ' kΩ' : R.toFixed(0) + ' Ω'; }
-
-    // ---------- Drawing ----------
-    const WIRE = { strokeColor: '#94a3b8', strokeWidth: 3 };
-    const line = (p, q, style) => board.create('segment', [p, q], style || WIRE);
-    const text = (x, y, t, style) => board.create('text', [x, y, t], { fontSize: 12, color: '#cbd5e1', ...style });
-
-    // Supply: a cell on the left, top rail at y = 2, bottom rail (0 V) at y = -2
-    line([-3, 2], [0, 2]); line([-3, -2], [0, -2]);
-    line([-3, 2], [-3, 0.15]); line([-3, -0.15], [-3, -2]);
-    line([-3.4, 0.15], [-2.6, 0.15], { strokeColor: '#f8fafc', strokeWidth: 2 });   // long plate (+)
-    line([-3.2, -0.15], [-2.8, -0.15], { strokeColor: '#f8fafc', strokeWidth: 6 }); // short plate (−)
-    text(-3.55, 0.15, '+', { color: '#f87171', fontSize: 15, anchorX: 'right' });
-    text(-2.45, 0.05, '5 V', { anchorX: 'left' });
-    text(-3, 2.3, '5 V', { anchorX: 'middle', color: '#f87171' });
-    text(-3, -2.35, '0 V', { anchorX: 'middle', color: '#38bdf8' });
-
-    // Resistor boxes on the divider column x = 0
-    function box(y0, y1, color) {
-      return board.create('polygon', [[-0.2, y0], [0.2, y0], [0.2, y1], [-0.2, y1]],
-        { fillColor: '#0f172a', fillOpacity: 1, borders: { strokeColor: color, strokeWidth: 3 } });
-    }
-    line([0, 2], [0, 1.6]); box(0.5, 1.6, '#fb923c'); line([0, 0.5], [0, -0.5]);
-    box(-1.6, -0.5, '#4ade80'); line([0, -1.6], [0, -2]);
-    text(0.35, 1.05, 'R = 47 kΩ', { color: '#fb923c', anchorX: 'left' });
-    board.create('circle', [[0, -1.05], 0.75], { strokeColor: '#4ade80', strokeWidth: 1.5, fillOpacity: 0 });   // LDR symbol: resistor in a circle
-    text(0.85, -0.8, 'LDR', { color: '#4ade80', anchorX: 'left', cssStyle: 'font-weight: 700' });
-    text(0.85, -1.2, () => 'R = ' + ohms(Rldr()), { color: '#4ade80', anchorX: 'left' });
-
-    // The output: the node between the two resistors, measured to 0 V
-    board.create('point', [0, 0], { name: '', size: 4, fillColor: '#facc15', strokeColor: '#facc15' });
-    line([0, 0], [1.9, 0], { strokeColor: '#facc15', strokeWidth: 3 });
-    text(0.35, 0.3, () => 'V<sub>out</sub> = ' + Vout().toFixed(2) + ' V', { color: '#facc15', anchorX: 'left', cssStyle: 'font-weight: 700' });
-
-    // Switch (a transistor or relay): on when V_out > 2.5 V
-    board.create('polygon', [[1.9, -0.55], [3.3, -0.55], [3.3, 0.55], [1.9, 0.55]],
-      { fillColor: () => lampOn() ? '#14532d' : '#1e293b', fillOpacity: 1, borders: { strokeColor: '#cbd5e1', strokeWidth: 2 } });
-    text(2.6, 0.18, 'Switch', { anchorX: 'middle', color: '#f8fafc' });
-    text(2.6, -0.22, () => lampOn() ? 'ON' : 'OFF', { anchorX: 'middle', color: () => lampOn() ? '#4ade80' : '#94a3b8', cssStyle: 'font-weight: 700' });
-    text(2.6, -0.85, 'on if V<sub>out</sub> > 2.5 V', { anchorX: 'middle', fontSize: 11 });
-    line([3.3, 0], [3.65, 0]);
-
-    // The street lamp: a glow and rays when it is on
-    board.create('circle', [[4.15, 0], 0.95], { strokeWidth: 0, fillColor: '#facc15', fillOpacity: () => lampOn() ? 0.18 : 0 });
-    board.create('circle', [[4.15, 0], 0.5], { strokeColor: '#f8fafc', strokeWidth: 2, fillColor: '#facc15', fillOpacity: () => lampOn() ? 0.95 : 0.05 });
-    line([4.15 - 0.35, -0.35], [4.15 + 0.35, 0.35], { strokeColor: '#475569', strokeWidth: 2 });   // lamp symbol: a cross in a circle
-    line([4.15 - 0.35, 0.35], [4.15 + 0.35, -0.35], { strokeColor: '#475569', strokeWidth: 2 });
-    for (let k = 0; k < 8; k++) {
-      const a = k * Math.PI / 4, c = Math.cos(a), s = Math.sin(a);
-      line([4.15 + 0.65 * c, 0.65 * s], [4.15 + 0.9 * c, 0.9 * s], { strokeColor: '#facc15', strokeWidth: 2, visible: lampOn });
-    }
-    text(4.15, -1.15, 'Street lamp', { anchorX: 'middle' });
-
-    // The sun: brighter with more light, its rays falling on the LDR
-    board.create('circle', [[-1.6, -1.05], 0.38], { strokeColor: '#fde047', strokeWidth: 2, fillColor: '#facc15', fillOpacity: () => 0.1 + 0.85 * light / 100 });
-    [-0.35, 0, 0.35].forEach(function(dy) {
-      board.create('arrow', [[-1.1, -1.05 + dy * 0.6], [-0.85, -1.05 + dy * 0.35]],
-        { strokeColor: '#fde047', strokeWidth: 2, strokeOpacity: () => light / 100 });
-    });
-
-    // ---------- Readouts ----------
-    function update() {
-      const name = light < 15 ? 'Night' : light < 40 ? 'Dusk' : light < 70 ? 'Cloudy day' : 'Bright sun';
-      document.getElementById('light-val').textContent = name + ' (' + light + '%)';
-      // The sky behind the circuit gets lighter with the light level
-      document.getElementById('ldr-board').style.background = 'hsl(222, 47%, ' + (11 + 9 * light / 100) + '%)';
-      document.getElementById('ldr-stat').innerHTML =
-        'R<sub>LDR</sub> = <b style="color:#4ade80">' + ohms(Rldr()) + '</b> · ' +
-        'V<sub>out</sub> = 5 V × R<sub>LDR</sub> / (R<sub>LDR</sub> + 47 kΩ) = <b style="color:#facc15">' + Vout().toFixed(2) + ' V</b><br>' +
-        (lampOn() ? 'V<sub>out</sub> &gt; 2.5 V: the lamp is <b style="color:#facc15">ON</b> (dark, so the LDR has a large share of the 5 V)'
-                  : 'V<sub>out</sub> &lt; 2.5 V: the lamp is <b style="color:#94a3b8">OFF</b> (bright, so the LDR\'s resistance and voltage are small)');
-      board.update();
+    function sensorScene(g) {
+      const { Rs, V, top, bot } = divider(), on = V > thS.value, ldr = scene.value === 0;
+      // block model along the top
+      [['input: sensor', -4.3], ['processor', 0.2], ['output', 4.3]].forEach(([s, x], j) => { g.rect(x - 1.15, 1.85, 2.3, 0.55, { fill: '#f1f5f9', color: C.muted, width: 1.5, radius: 6 }); g.text([x, 2.12], s, { size: 12, bold: true }); if (j < 2) g.arrow([x + 1.2, 2.12], [1.6, 0], { color: C.muted, width: 1.5, head: 8 }); });
+      // sky or flame indicator
+      if (ldr) { const L = (luxS.value + 1) / 5; g.rect(-6.1, -1.0, 1.1, 1.0, { fill: `rgb(${Math.round(15 + 210 * L)}, ${Math.round(23 + 200 * L)}, ${Math.round(60 + 190 * L)})`, color: C.ink, width: 1, radius: 4 }); g.circle([-5.55, -0.5], 0.25, { fill: L > 0.45 ? '#facc15' : '#e2e8f0', color: 'none' }); g.text([-5.55, 0.2], L > 0.45 ? 'day' : 'night', { size: 11, color: C.muted }); }
+      else { const h = TS.value / 100; g.rect(-6.1, -1.0, 1.1, 1.0, { fill: '#fff7ed', color: C.ink, width: 1, radius: 4 }); g.rect(-5.62, -0.9, 0.14, 0.8 * h + 0.05, { fill: C.bad, color: 'none' }); g.text([-5.55, 0.2], `${TS.value} °C`, { size: 11, color: C.muted }); }
+      // the divider: supply on the left, two resistors in a column
+      const X = -3.4, YT = 1.4, YM = -0.35, YB = -2.1;
+      g.line([-4.6, YT], [X, YT], { color: C.bad, width: 2.5 }); g.line([-4.6, YB], [X, YB], { color: C.acc, width: 2.5 });
+      g.text([-4.7, YT], '+9 V', { size: 12, bold: true, align: 'right', color: C.bad }); g.text([-4.7, YB], '0 V', { size: 12, bold: true, align: 'right', color: C.acc });
+      resistor(g, X, YT, YM + 0.05, ldr ? C.muted : C.energy, top === 'R 10 kΩ' ? '10 kΩ' : `thermistor ${fmtR(Rs)}`, false);
+      resistor(g, X, YM - 0.05, YB, ldr ? C.energy : C.muted, bot === 'LDR' ? `LDR ${fmtR(Rs)}` : '10 kΩ', ldr);
+      g.dot([X, YM], 5, C.ink);
+      g.line([X, YM], [-0.9, YM], { color: C.ink, width: 2.5 });
+      g.text([-1.9, YM + 0.3], `V_{out} = ${num(V, 2)} V`, { size: 13, bold: true, color: C.vel });
+      // processor: a comparator against the switching level
+      g.path([[-0.9, YM + 0.8], [-0.9, YM - 0.8], [0.6, YM]], { close: true, fill: '#f8fafc', color: C.ink, width: 2 });
+      g.text([-0.55, YM], V > thS.value ? '>' : '<', { size: 16, bold: true, color: on ? C.good : C.muted });
+      g.text([-0.2, YM - 1.15], `switch at ${num(thS.value, 1)} V`, { size: 11, color: C.muted });
+      // voltage meter bar
+      const MX = 1.2, MW = 0.45, MB = -2.1, MH = 3.3;
+      g.rect(MX, MB, MW, MH, { fill: '#f1f5f9', color: C.ink, width: 1.5, radius: 4 });
+      g.rect(MX, MB, MW, MH * V / VS, { fill: C.vel, color: 'none', radius: 4 });
+      g.line([MX - 0.15, MB + MH * thS.value / VS], [MX + MW + 0.15, MB + MH * thS.value / VS], { color: C.bad, width: 2.5 });
+      g.text([MX + MW / 2, MB - 0.25], '0–9 V', { size: 10, color: C.muted });
+      g.line([0.6, YM], [3.0, YM], { color: on ? C.good : '#cbd5e1', width: 2.5 });
+      // output: lamp or alarm bell
+      if (ldr) {
+        g.line([4.3, -2.3], [4.3, 0.3], { color: '#475569', width: 4 }); g.line([4.3, 0.3], [3.6, 0.3], { color: '#475569', width: 4 });
+        g.circle([3.6, 0.05], 0.28, { fill: on ? '#fde047' : '#e5e7eb', color: C.ink, width: 1.5 });
+        if (on) for (let j = 0; j < 5; j++) { const a = -Math.PI / 2 + (j - 2) * 0.4; g.line([3.6 + 0.4 * Math.cos(a), 0.05 + 0.4 * Math.sin(a)], [3.6 + 0.75 * Math.cos(a), 0.05 + 0.75 * Math.sin(a)], { color: '#f59e0b', width: 2 }); }
+        g.text([5.0, -0.9], on ? 'lamp ON' : 'lamp off', { size: 13, bold: true, color: on ? C.energy : C.muted });
+      } else {
+        const sh = on ? 0.06 * Math.sin(t * 40) : 0;
+        g.circle([4.0 + sh, YM], 0.5, { fill: on ? '#fecaca' : '#f1f5f9', color: C.ink, width: 2 }); g.dot([4.0 + sh, YM - 0.55], 4, C.ink);
+        g.text([4.0, -1.35], on ? 'ALARM!' : 'quiet', { size: 13, bold: true, color: on ? C.bad : C.muted });
+      }
     }
 
-    document.getElementById('light-slider').addEventListener('input', function() {
-      light = parseFloat(this.value);
-      update();
-    });
-    update();
+    function zenerScene(g) {
+      const z = zener(), Vin = VinS.value;
+      const YT = 1.2, YB = -1.8;
+      g.text([-5.6, YT + 0.35], `V_{in} = ${num(Vin, 1)} V`, { size: 13, bold: true, color: C.bad });
+      g.circle([-5.6, (YT + YB) / 2], 0.4, { fill: '#fff', color: C.ink, width: 2 }); g.text([-5.6, (YT + YB) / 2], '⎓', { size: 16 });
+      g.path([[-5.6, -0.3 + 0.4 * 0 + 0.4], [-5.6, YT], [-4.2, YT]], { color: C.ink, width: 2.5 }); g.path([[-5.6, -0.7], [-5.6, YB], [3.8, YB]], { color: C.ink, width: 2.5 });
+      // series resistor
+      g.rect(-4.2, YT - 0.22, 1.4, 0.44, { fill: '#fff', color: C.ink, width: 2.5 }); g.text([-3.5, YT + 0.5], `R_S = ${RSZ} Ω`, { size: 12, bold: true });
+      g.line([-2.8, YT], [3.8, YT], { color: C.ink, width: 2.5 });
+      // Zener (reverse biased: cathode at the top)
+      const XZ = -0.8, YZ = (YT + YB) / 2;
+      g.line([XZ, YT], [XZ, YZ + 0.3], { color: C.ink, width: 2.5 }); g.line([XZ, YZ - 0.3], [XZ, YB], { color: C.ink, width: 2.5 });
+      g.path([[XZ - 0.3, YZ - 0.3], [XZ + 0.3, YZ - 0.3], [XZ, YZ + 0.3]], { close: true, fill: z.on ? '#bbf7d0' : '#fff', color: C.ink, width: 2 });
+      g.path([[XZ - 0.4, YZ + 0.42], [XZ - 0.3, YZ + 0.3], [XZ + 0.3, YZ + 0.3], [XZ + 0.4, YZ + 0.18]], { color: C.ink, width: 2.5 });
+      g.text([XZ - 0.5, YZ], `Zener ${VZ} V`, { size: 12, bold: true, align: 'right' });
+      // load
+      const XL = 2.2;
+      g.line([XL, YT], [XL, YZ + 0.6], { color: C.ink, width: 2.5 }); g.line([XL, YZ - 0.6], [XL, YB], { color: C.ink, width: 2.5 });
+      g.rect(XL - 0.22, YZ - 0.6, 0.44, 1.2, { fill: '#fff', color: C.vel, width: 2.5 }); g.text([XL + 0.35, YZ], `R_L ${RLS.value} Ω`, { size: 12, bold: true, align: 'left', color: C.vel });
+      g.text([4.6, YZ + 0.35], `V_{out}`, { size: 13, bold: true, color: C.vel }); g.text([4.6, YZ - 0.1], `${num(z.Vout, 2)} V`, { size: 15, bold: true, color: C.vel });
+      // current arrows sized by current
+      const w = I => Math.max(1.5, Math.min(8, I * 80));
+      g.arrow([-2.6, YT + 0.3], [1.0, 0], { color: C.energy, width: w(z.Is), head: 9 }); g.text([-2.1, YT + 0.6], `I_S ${num(z.Is * 1000, 1)} mA`, { size: 11, bold: true, color: C.energy });
+      if (z.Iz > 1e-6) { g.arrow([XZ + 0.45, YZ + 0.7], [0, -1.0], { color: C.good, width: w(z.Iz), head: 9 }); g.text([XZ + 0.6, YZ + 0.9], `I_Z ${num(z.Iz * 1000, 1)} mA`, { size: 11, bold: true, color: C.good, align: 'left' }); }
+      g.arrow([XL + 0.45, YZ + 1.0], [0, -0.7], { color: C.vel, width: w(z.IL), head: 9 }); g.text([XL + 0.6, YZ + 1.15], `I_L ${num(z.IL * 1000, 1)} mA`, { size: 11, bold: true, color: C.vel, align: 'left' });
+      g.text([0, 2.35], z.on ? `regulating: V_{out} held at V_Z = ${VZ} V` : `below breakdown: Zener off, V_{out} = V_{in} × R_L/(R_S + R_L)`, { size: 13, bold: true, color: z.on ? C.good : C.muted });
+    }
+
+    k.draw = g => scene.value === 2 ? zenerScene(g) : sensorScene(g);
+
+    const gv = k.addView({ x: [0, 1], y: [0, 1], equal: false, height: 160, title: 'Output voltage against the input' });
+    gv.draw = g => {
+      const s = scene.value;
+      if (s === 2) {
+        gv.setRange([-0.5, 15.5], [-0.5, 9]);
+        g.axes({ xstep: 3, ystep: 2, xlabel: 'V_{in} (V)', ylabel: 'V_{out} (V)' });
+        const RL = RLS.value, pts = []; for (let v = 0; v <= 15; v += 0.05) pts.push([v, Math.min(VZ, v * RL / (RSZ + RL))]); g.path(pts, { color: C.vel, width: 2.5 });
+        g.dot([VinS.value, zener().Vout], 6, C.energy);
+      } else {
+        const ldr = s === 0;
+        gv.setRange(ldr ? [-1.2, 4.2] : [-4, 104], [0, 9.6]);
+        g.axes({ xstep: ldr ? 1 : 20, ystep: 2, xlabel: ldr ? 'lux' : 'T (°C)', ylabel: 'V_{out} (V)', xfmt: ldr ? (v => `${+(10 ** v).toPrecision(1)}`) : undefined });
+        const pts = []; if (ldr) for (let v = -1; v <= 4; v += 0.02) { const R = Rldr(v); pts.push([v, VS * R / (RF + R)]); } else for (let T = 0; T <= 100; T += 1) { const R = Rth(T); pts.push([T, VS * RF / (RF + R)]); }
+        g.path(pts, { color: C.vel, width: 2.5 });
+        g.line([ldr ? -1 : 0, thS.value], [ldr ? 4 : 100, thS.value], { color: C.bad, width: 1.5, dash: [5, 4] });
+        g.dot([ldr ? luxS.value : TS.value, divider().V], 6, C.energy);
+      }
+    };
+
+    k.update = () => {
+      const s = scene.value;
+      if (s === 2) {
+        const z = zener();
+        k.readout(z.on ? [
+          `${rich('I_S')} = (${rich('V_{in}')} − ${rich('V_Z')})/${rich('R_S')} = (${num(VinS.value, 1)} − ${VZ})/${RSZ} = <b>${num(z.Is * 1000, 1)} mA</b>; ${rich('I_L')} = ${rich('V_Z')}/${rich('R_L')} = <b>${num(z.IL * 1000, 1)} mA</b>; ${rich('I_Z')} = ${rich('I_S')} − ${rich('I_L')} = <b>${num(z.Iz * 1000, 1)} mA</b>`,
+          'Raise the input: only the Zener current grows, the load voltage stays the same. That is regulation.'
+        ] : [`The divider alone would give ${num(z.Vout, 2)} V, less than ${rich('V_Z')} = ${VZ} V, so the Zener does not conduct yet.`]);
+      } else {
+        const { Rs, V } = divider(), ldr = s === 0;
+        k.readout([
+          ldr ? `${rich('V_{out}')} = 9 × ${rich('R_{LDR}')}/(10 kΩ + ${rich('R_{LDR}')}) = 9 × ${fmtR(Rs)}/(10 kΩ + ${fmtR(Rs)}) = <b>${num(V, 2)} V</b>`
+            : `${rich('V_{out}')} = 9 × 10 kΩ/(${rich('R_{th}')} + 10 kΩ) = 9 × 10 kΩ/(${fmtR(Rs)} + 10 kΩ) = <b>${num(V, 2)} V</b>`,
+          ldr ? 'Exercise 1: the LDR. In the dark its resistance is large, so it takes most of the 9 V and the lamp switches on.'
+            : 'NTC thermistor: hotter → lower resistance → it takes less of the supply, so the fixed resistor’s share (V<sub>out</sub>) rises and sets off the alarm.'
+        ]);
+      }
+    };
+    show();
   })();
   </script>
 </div>

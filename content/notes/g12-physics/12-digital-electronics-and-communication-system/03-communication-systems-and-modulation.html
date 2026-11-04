@@ -59,119 +59,110 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; AM vs. FM Waveform Modulation Comparison</span>
-  <p class="demo-instruction">The audio signal (top) is carried by a high-frequency carrier wave (middle). In AM the carrier's <strong>amplitude</strong> follows the audio; in FM its <strong>frequency</strong> does. Switch between AM and FM and change the audio frequency and the modulation depth. (The carrier is drawn much slower than a real radio carrier so you can see each cycle.)</p>
-
-  <div id="mod-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 0.6rem 1.2rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <button id="btn-am" style="padding: 0.35rem 0.8rem; border-radius: 6px; background: #0284c7; color: white; border: none; cursor: pointer; font-weight: 600;">Amplitude Modulation (AM)</button>
-    <button id="btn-fm" style="padding: 0.35rem 0.8rem; border-radius: 6px; background: #334155; color: white; border: none; cursor: pointer; font-weight: 600;">Frequency Modulation (FM)</button>
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Audio frequency:
-      <input id="fa-slider" type="range" min="1" max="5" step="1" value="2" style="vertical-align: middle;">
-      <span id="fa-val" style="color: #facc15; font-weight: 700;">2 kHz</span>
-    </label>
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Modulation depth:
-      <input id="depth-slider" type="range" min="0" max="100" step="5" value="60" style="vertical-align: middle;">
-      <span id="depth-val" style="color: #fb923c; font-weight: 700;">60%</span>
-    </label>
-    <div id="mod-stat" style="width: 100%; text-align: center; color: #f8fafc; font-size: 0.9rem; line-height: 1.6;"></div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; AM, FM and Tuning a Radio</span>
+  <p class="demo-question">How is a voice carried on a radio wave, why does FM sound cleaner, and how does a radio pick one station out of many?</p>
+  <p class="demo-instruction"><b>AM vs FM:</b> the slow audio signal (top) is put onto a fast carrier wave. In AM the carrier's <i>height</i> follows the audio; in FM its <i>spacing</i> (frequency) does. Switch on <b>lightning noise</b>: noise changes the height of the wave, so the AM output gets crackles but the FM output stays clean. <b>Tuning:</b> turn the variable capacitor. The LC circuit only responds near $f_0 = 1/(2\pi\sqrt{LC})$, so only the station under the peak is heard.</p>
+  <div id="pk-radio"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('mod-board', {
-      boundingbox: [-1.7, 9.6, 8.2, -0.9],
-      axis: false,
-      showNavigation: false,
-      showCopyright: false,
-      pan: { enabled: false },
-      zoom: { enabled: false }
-    });
+  (function () {
+    const k = PhysKit.mount('pk-radio', { x: [-6.2, 6.2], y: [-2.6, 2.6] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    k.row();
+    const scene = k.choice(['AM vs FM', 'Tuning circuit'], 0, () => show());
+    const rows = [];
+    rows.push(k.row());
+    const mode = k.choice(['AM', 'FM'], 0);
+    const noise = k.check('lightning noise', false);
+    const mS = k.slider({ label: 'modulation depth', min: 0.1, max: 1, step: 0.05, value: 0.6 });
+    rows.push(k.row());
+    const LS = k.slider({ label: 'L', unit: 'μH', min: 50, max: 500, step: 10, value: 200, digits: 0 });
+    const CS = k.slider({ label: 'C', unit: 'pF', min: 20, max: 200, step: 1, value: 80, digits: 0 });
+    k.button('C = 200 pF (lowest f)', () => { LS.value = 200; CS.value = 200; });
+    k.button('C = 20 pF (highest f)', () => { LS.value = 200; CS.value = 20; });
+    function show() { rows.forEach((r, i) => { r.style.display = i === scene.value ? '' : 'none'; }); }
+    let t = 0;
+    k.loop(dt => { t += dt; }, { button: false });
 
-    // This board is a picture, not something to drag: every element is
-    // created fixed (the same wrapper as the other Physics MM demos).
-    const createFixed = board.create.bind(board);
-    board.create = (type, parents, attrs = {}) =>
-      createFixed(type, parents, { fixed: true, highlight: false, ...attrs, vertices: { fixed: true, visible: false, ...attrs.vertices } });
+    // a fixed noise pattern (spikes) that scrolls with the signal
+    const spikes = Array.from({ length: 9 }, (_, j) => ({ u: (j * 0.137 + 0.05) % 1, a: 0.5 + 0.5 * ((j * 7) % 5) / 4 }));
+    const nz = u => { if (!noise.value) return 0; let s = 0; spikes.forEach(p => { const d = ((u - p.u + 1.5) % 1) - 0.5; s += p.a * Math.exp(-((d / 0.006) ** 2)); }); return s; };
 
-    let mode = 'AM';
-    let faKHz = 2;          // audio frequency (kHz)
-    let depth = 0.6;        // 0 to 1: AM index m, or FM deviation as a share of 75 kHz
+    function amfm(g) {
+      const am = mode.value === 0, m = mS.value, X0 = -5.6, X1 = 5.8, N = 900, fa = 2, fc = 34, sp = t * 0.08;
+      const audio = u => Math.sin(2 * Math.PI * fa * (u + sp));
+      const rows3 = [[1.7, 'audio signal (from the microphone)', C.vel], [-0.1, am ? 'AM wave: amplitude follows the audio' : 'FM wave: frequency follows the audio', C.energy], [-1.95, 'receiver output', C.good]];
+      rows3.forEach(([y, s, col]) => g.text([X0, y + 0.72], s, { align: 'left', size: 12, bold: true, color: col }));
+      // audio
+      const pa = []; for (let i = 0; i <= N; i++) { const u = i / N; pa.push([X0 + (X1 - X0) * u, 1.7 + 0.42 * audio(u)]); } g.path(pa, { color: C.vel, width: 2.5 });
+      // modulated wave (with noise added to its amplitude)
+      const pw = []; let ph = 0;
+      for (let i = 0; i <= N * 2; i++) {
+        const u = i / (N * 2), a = audio(u);
+        ph += 2 * Math.PI * fc * (am ? 1 : 1 + 0.55 * m * a) / (N * 2);
+        const amp = am ? 0.45 * (1 + m * a) / (1 + m) * 1.6 : 0.6;
+        pw.push([X0 + (X1 - X0) * u, -0.1 + amp * Math.sin(ph + 2 * Math.PI * fc * sp) + nz(u) * 0.55 * Math.sign(Math.sin(ph * 3.1))]);
+      }
+      g.path(pw, { color: C.energy, width: 1.4 });
+      if (am) { const env = []; for (let i = 0; i <= N; i++) { const u = i / N; env.push([X0 + (X1 - X0) * u, -0.1 + 0.45 * (1 + m * audio(u)) / (1 + m) * 1.6]); } g.path(env, { color: C.vel, width: 1.5, dash: [5, 4], alpha: 0.8 }); }
+      // demodulated output: AM detector follows the height (noise included); FM limiter removes height changes
+      const po = []; for (let i = 0; i <= N; i++) { const u = i / N; po.push([X0 + (X1 - X0) * u, -1.95 + 0.42 * audio(u) * (am ? m / 0.6 : 1) + (am ? nz(u) * 0.6 : 0)]); }
+      g.path(po, { color: C.good, width: 2.5 });
+      if (noise.value) g.text([X1, -1.25], am ? 'crackles: the noise got through' : 'clean: FM ignores changes in height', { align: 'right', size: 12, bold: true, color: am ? C.bad : C.good, bg: '#fff' });
+    }
 
-    // Drawing scale: time runs from 0 to 8 across the board.
-    // 1 kHz of audio = 1/8 cycle per unit (1 cycle across the board).
-    const fa = () => faKHz / 8;       // audio cycles per unit
-    const FC = 3;                      // carrier cycles per unit (24 across the board)
-    const DEV = 1.8;                   // FM: largest drawn frequency change (cycles per unit)
+    const STATIONS = [{ f: 820, n: 'News' }, { f: 1010, n: 'Music' }, { f: 1300, n: 'Sport' }, { f: 1720, n: 'Talk' }, { f: 2250, n: 'Jazz' }];
+    const f0 = () => 1 / (2 * Math.PI * Math.sqrt(LS.value * 1e-6 * CS.value * 1e-12)) / 1000;   // kHz
+    const resp = (f, F0) => { const Q = 25, x = f / F0 - F0 / f; return 1 / Math.sqrt(1 + Q * Q * x * x); };
 
-    // The three traces, each on its own baseline
-    const ROW = { audio: 8, carrier: 4.8, out: 1.5 };
-    const audio = (t) => Math.cos(2 * Math.PI * fa() * t);
-    // AM: the carrier's amplitude is 1 + m × audio
-    const amWave = (t) => (1 + depth * audio(t)) * Math.cos(2 * Math.PI * FC * t);
-    // FM: the carrier's frequency is f_c + Δf × audio. The phase is the
-    // running total of the frequency: 2π (f_c t + Δf sin(2π f_a t) / (2π f_a)).
-    const fmWave = (t) => Math.cos(2 * Math.PI * FC * t + (depth * DEV / fa()) * Math.sin(2 * Math.PI * fa() * t));
+    function tuning(g) {
+      const F0 = f0();
+      // LC tank circuit drawing
+      const X = -4.6;
+      g.line([X - 1.0, 1.6], [X + 1.0, 1.6], { color: C.ink, width: 2.5 }); g.line([X - 1.0, -1.6], [X + 1.0, -1.6], { color: C.ink, width: 2.5 });
+      const coil = []; for (let s = 0; s <= 1.0001; s += 0.01) coil.push([X - 1.0 + 0.25 * Math.sin(s * Math.PI * 10), 1.0 - 2.0 * s]); g.line([X - 1.0, 1.6], [X - 1.0, 1.0], { color: C.ink, width: 2.5 }); g.line([X - 1.0, -1.0], [X - 1.0, -1.6], { color: C.ink, width: 2.5 });
+      g.path(coil, { color: C.energy, width: 2.5 }); g.text([X - 1.45, 0], `L ${LS.value} μH`, { align: 'right', size: 12, bold: true, color: C.energy });
+      g.line([X + 1.0, 1.6], [X + 1.0, 0.15], { color: C.ink, width: 2.5 }); g.line([X + 1.0, -0.15], [X + 1.0, -1.6], { color: C.ink, width: 2.5 });
+      g.line([X + 0.6, 0.15], [X + 1.4, 0.15], { color: C.vel, width: 3 }); g.line([X + 0.6, -0.15], [X + 1.4, -0.15], { color: C.vel, width: 3 });
+      g.arrow([X + 0.6, -0.55], [0.8, 1.1], { color: C.vel, width: 1.5, head: 7 });
+      g.text([X + 1.0, -2.0], `C ${CS.value} pF`, { size: 12, bold: true, color: C.vel });
+      g.line([X, 1.6], [X, 2.3], { color: C.ink, width: 2 }); g.path([[X - 0.3, 2.45], [X, 2.1], [X + 0.3, 2.45]], { color: C.ink, width: 2 });
+      g.text([X + 0.4, 2.3], 'antenna', { align: 'left', size: 10, color: C.muted });
+      // frequency axis with stations and the resonance curve
+      const FX0 = -2.0, FX1 = 5.9, fmin = 600, fmax = 2800, fx = f => FX0 + (FX1 - FX0) * (f - fmin) / (fmax - fmin), BY = -1.6, H = 3.2;
+      g.line([FX0, BY], [FX1, BY], { color: C.ink, width: 1.5 });
+      for (let f = 800; f <= 2800; f += 400) { g.line([fx(f), BY], [fx(f), BY - 0.1], { color: C.ink, width: 1 }); g.text([fx(f), BY - 0.3], `${f}`, { size: 10, color: C.muted }); }
+      g.text([FX1, BY - 0.62], 'f (kHz)', { align: 'right', size: 10, color: C.muted });
+      const pts = []; for (let f = fmin; f <= fmax; f += 5) pts.push([fx(f), BY + H * resp(f, F0)]); g.path(pts, { color: C.energy, width: 2.5 });
+      let best = null;
+      STATIONS.forEach(s => {
+        const r = resp(s.f, F0), loud = r > 0.5;
+        if (loud && (!best || r > best.r)) best = { ...s, r };
+        g.rect(fx(s.f) - 0.07, BY, 0.14, 0.9, { fill: loud ? C.good : '#cbd5e1', color: 'none' });
+        g.text([fx(s.f), BY + 1.1], s.n, { size: 10, bold: loud, color: loud ? C.good : C.muted });
+      });
+      if (F0 >= fmin && F0 <= fmax) { g.line([fx(F0), BY], [fx(F0), BY + H], { color: C.energy, width: 1, dash: [4, 3] }); g.text([fx(F0), BY + H + 0.25], `f₀ = ${num(F0, 0)} kHz`, { size: 12, bold: true, color: C.energy, bg: '#fff' }); }
+      // the loudspeaker
+      g.text([1.95, 2.35], best ? `🔊 playing: ${best.n} (${best.f} kHz)` : '🔈 only hiss: no station near f₀', { size: 13, bold: true, color: best ? C.good : C.muted });
+    }
 
-    // Faint baselines and labels on the left
-    Object.values(ROW).forEach((y) => board.create('segment', [[0, y], [8, y]], { strokeColor: '#334155', strokeWidth: 1, dash: 2 }));
-    board.create('text', [-1.6, ROW.audio, 'Audio<br>signal'], { color: '#facc15', fontSize: 12, anchorY: 'middle' });
-    board.create('text', [-1.6, ROW.carrier, 'Carrier<br>wave'], { color: '#94a3b8', fontSize: 12, anchorY: 'middle' });
-    board.create('text', [-1.6, ROW.out, () => mode === 'AM' ? 'AM<br>wave' : 'FM<br>wave'], { color: () => mode === 'AM' ? '#38bdf8' : '#4ade80', fontSize: 12, anchorY: 'middle', cssStyle: 'font-weight: 700' });
-    board.create('text', [8, -0.6, 'time →'], { color: '#94a3b8', fontSize: 11, anchorX: 'right' });
+    k.draw = g => scene.value === 0 ? amfm(g) : tuning(g);
 
-    board.create('functiongraph', [(t) => ROW.audio + 0.9 * audio(t), 0, 8], { strokeColor: '#facc15', strokeWidth: 2.5 });
-    board.create('functiongraph', [(t) => ROW.carrier + 0.9 * Math.cos(2 * Math.PI * FC * t), 0, 8], { strokeColor: '#94a3b8', strokeWidth: 1.5 });
-
-    // The modulated wave: drawn from many points so every carrier cycle shows
-    const out = board.create('curve', [[0], [0]], { strokeColor: () => mode === 'AM' ? '#38bdf8' : '#4ade80', strokeWidth: 1.8 });
-    out.updateDataArray = function() {
-      this.dataX = []; this.dataY = [];
-      for (let i = 0; i <= 1600; i++) {
-        const t = 8 * i / 1600;
-        this.dataX.push(t);
-        this.dataY.push(ROW.out + 0.8 * (mode === 'AM' ? amWave(t) : fmWave(t)));
+    k.update = () => {
+      if (scene.value === 0) k.readout([
+        mode.value === 0 ? 'AM: the carrier frequency is fixed; its amplitude rises and falls with the audio. Simple, but noise (which also changes the amplitude) is heard.'
+          : 'FM: the amplitude is fixed; the carrier frequency goes up and down with the audio. The receiver cuts off height changes, so noise is removed.',
+        'Why modulate? A 15 kHz audio wave has λ = c/f = 20 km, needing a 5 km antenna (λ/4). On a 100 MHz carrier, λ/4 is only 75 cm.'
+      ]);
+      else {
+        const L = LS.value * 1e-6, Cc = CS.value * 1e-12, F0 = f0() * 1000, lam = 3e8 / F0;
+        k.readout([
+          `${rich('f_0')} = 1/(2π√(LC)) = 1/(2π√(${num(L, 6)} × ${CS.value}×10<sup>−12</sup>)) = <b>${num(F0 / 1000, 0)} kHz</b>`,
+          `Wavelength λ = c/f = <b>${num(lam, 0)} m</b>; a quarter-wave antenna would be ${num(lam / 4, 0)} m (radios use a ferrite rod instead).`,
+          'Worked problem (L = 200 μH): C = 200 pF gives 796 kHz, C = 20 pF gives 2520 kHz, the whole medium-wave band.'
+        ]);
       }
     };
-    // AM only: the envelope, which has the same shape as the audio signal
-    [1, -1].forEach(function(sign) {
-      board.create('functiongraph', [(t) => ROW.out + sign * 0.8 * (1 + depth * audio(t)), 0, 8],
-        { strokeColor: '#facc15', strokeWidth: 1.5, dash: 2, visible: () => mode === 'AM' });
-    });
-
-    // ---------- Readouts ----------
-    function update() {
-      document.getElementById('fa-val').textContent = faKHz + ' kHz';
-      document.getElementById('depth-val').textContent = Math.round(depth * 100) + '%';
-      let html;
-      if (mode === 'AM') {
-        // AM bandwidth: the two side frequencies f_c ± f_a, so 2 f_a
-        html = 'AM: modulation index m = <b style="color:#fb923c">' + depth.toFixed(2) + '</b> · the amplitude rises and falls with the audio; the frequency stays the same<br>' +
-               'Bandwidth = 2 f<sub>a</sub> = <b style="color:#facc15">' + (2 * faKHz) + ' kHz</b> · noise adds to the amplitude, so AM picks up static';
-      } else {
-        // FM bandwidth (Carson's rule): 2 (Δf + f_a)
-        const df = depth * 75;
-        html = 'FM: frequency deviation Δf = <b style="color:#fb923c">' + df.toFixed(0) + ' kHz</b> · the waves crowd together where the audio is high and spread out where it is low; the amplitude stays the same<br>' +
-               'Bandwidth ≈ 2 (Δf + f<sub>a</sub>) = <b style="color:#facc15">' + (2 * (df + faKHz)).toFixed(0) + ' kHz</b> · noise only changes the amplitude, which the receiver ignores';
-      }
-      document.getElementById('mod-stat').innerHTML = html;
-      board.update();
-    }
-
-    function setMode(m) {
-      mode = m;
-      document.getElementById('btn-am').style.background = m === 'AM' ? '#0284c7' : '#334155';
-      document.getElementById('btn-fm').style.background = m === 'FM' ? '#16a34a' : '#334155';
-      update();
-    }
-    document.getElementById('btn-am').addEventListener('click', () => setMode('AM'));
-    document.getElementById('btn-fm').addEventListener('click', () => setMode('FM'));
-    document.getElementById('fa-slider').addEventListener('input', function() { faKHz = parseFloat(this.value); update(); });
-    document.getElementById('depth-slider').addEventListener('input', function() { depth = parseFloat(this.value) / 100; update(); });
-    update();
+    show();
   })();
   </script>
 </div>
