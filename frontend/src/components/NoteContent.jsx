@@ -81,6 +81,18 @@ export default function NoteContent({ html, style, onReady }) {
 
     return () => {
       cancelled = true
+      if (window.JXG && window.JXG.JSXGraph && window.JXG.boards) {
+        for (const id in window.JXG.boards) {
+          const board = window.JXG.boards[id]
+          if (board && board.containerObj && holder.contains(board.containerObj)) {
+            try {
+              window.JXG.JSXGraph.freeBoard(board)
+            } catch {
+              // ignore board cleanup errors
+            }
+          }
+        }
+      }
       holder.remove()
     }
     // Only `html` is listed: a new onReady on every draw shouldn't rebuild the note
