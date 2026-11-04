@@ -50,97 +50,112 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Joule Heat Generation $H \propto I^2 R t$</span>
-  <p class="demo-instruction">Adjust current $I$, resistance $R$, and time $t$ to observe how heat energy in calories grows quadratically with current according to Joule's law.</p>
-
-  <div id="joule-board" style="width: 100%; height: 350px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1.2rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Current $I$: 
-      <input id="j-i-slider" type="range" min="0.5" max="5.0" step="0.5" value="3.0" style="vertical-align: middle;">
-      <span id="j-i-val" style="color: #38bdf8; font-weight: 700;">3.0 A</span>
-    </label>
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Resistance $R$: 
-      <input id="j-r-slider" type="range" min="5" max="50" step="5" value="20" style="vertical-align: middle;">
-      <span id="j-r-val" style="color: #4ade80; font-weight: 700;">20 &Omega;</span>
-    </label>
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Time $t$: 
-      <input id="j-t-slider" type="range" min="30" max="300" step="30" value="120" style="vertical-align: middle;">
-      <span id="j-t-val" style="color: #facc15; font-weight: 700;">120 s</span>
-    </label>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      Work $W$: <span id="j-w-stat" style="color: #fb923c; font-weight: 700;">21.60 kJ</span> &bull; Heat $H$: <span id="j-h-stat" style="color: #f43f5e; font-weight: 700;">5.14 kcal</span>
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; Joule Heating: H = I²Rt</span>
+  <p class="demo-question">Double the current through a heater: does it make twice as much heat, or more?</p>
+  <p class="demo-instruction"><b>One resistor:</b> a coil heats 500 g of water. Press <b>Switch on</b> to run the current for the chosen time (sped up) and watch the thermometer. The heat is $I^2Rt$ joules, or $I^2Rt/J$ calories with $J = 4.2$ J/cal. <b>Three resistors:</b> the same three resistors heat up in very different ways in series (same current: the biggest $R$ gets hottest) and in parallel (same voltage: the smallest $R$ gets hottest).</p>
+  <div id="pk-joule"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('joule-board', {
-      boundingbox: [-0.5, 30, 5.5, -2],
-      axis: true,
-      defaultAxes: {
-        x: { name: 'Current I (A)', withLabel: true, label: { position: 'rt', offset: [-20, -15], color: '#94a3b8' } },
-        y: { name: 'Heat H (kcal)', withLabel: true, label: { position: 'rt', offset: [15, -10], color: '#94a3b8' } }
-      },
-      showNavigation: false,
-      showCopyright: false,
-      pan: { enabled: false },
-      zoom: { enabled: false }
-    });
+  (function () {
+    const J = 4.2, M = 500, CW = 4.2;               // J/cal, grams of water, J/(g °C)
+    const k = PhysKit.mount('pk-joule', { x: [-6.2, 6.2], y: [-2.6, 2.6] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    k.row();
+    const scene = k.choice(['One resistor', 'Three resistors: series vs parallel'], 0, () => show());
+    const rows = [];
+    rows.push(k.row());
+    const IS = k.slider({ label: 'I', unit: 'A', min: 0.5, max: 6, step: 0.1, value: 3 });
+    const RS = k.slider({ label: 'R', unit: 'Ω', min: 1, max: 40, step: 1, value: 20, digits: 0 });
+    const tS = k.slider({ label: 't', unit: 'min', min: 0.5, max: 10, step: 0.5, value: 2, digits: 1 });
+    k.button('Switch on', () => { run = 0; on = true; }, { primary: true });
+    k.button('Example 10.8 (3 A, 20 Ω, 2 min)', () => { IS.value = 3; RS.value = 20; tS.value = 2; run = 0; on = true; });
+    rows.push(k.row());
+    const wire = k.choice(['parallel across 12 V', 'series across 12 V'], 0);
+    k.button('Example 10.9 (5, 10, 15 Ω, 5 min)', () => { wire.set(0); });
+    k.row();
+    function show() { rows.forEach((r, i) => { r.style.display = i === scene.value ? '' : 'none'; }); graph.canvas.parentElement.style.display = scene.value === 0 ? '' : 'none'; }
+    let run = 0, on = false, t = 0;
+    k.loop(dt => { t += dt; if (on) { run = Math.min(tS.value * 60, run + dt * 30); if (run >= tS.value * 60) on = false; } }, { button: false });
 
-    let hCurve = null;
-    let hPt = null;
+    k.draw = g => {
+      if (scene.value === 0) {
+        const I = IS.value, R = RS.value, W = I * I * R * run, dT = W / (M * CW), glow = on ? Math.min(1, I * I * R / 500) : 0;
+        // beaker
+        g.path([[-4.6, 1.6], [-4.6, -2.1], [-1.4, -2.1], [-1.4, 1.6]], { color: C.ink, width: 3 });
+        const wc = Math.min(1, dT / 40);
+        g.rect(-4.55, -2.05, 3.1, 3.0, { fill: `rgb(${Math.round(186 + 60 * wc)}, ${Math.round(230 - 120 * wc)}, ${Math.round(253 - 180 * wc)})`, color: 'none', fillAlpha: 0.8 });
+        // coil
+        const pts = [];
+        for (let s = 0; s <= 1.0001; s += 0.01) pts.push([-4.0 + 2.0 * s, -1.2 + 0.3 * Math.sin(s * 2 * Math.PI * 6)]);
+        g.path(pts, { color: glow > 0 ? `rgb(${Math.round(120 + 135 * glow)}, ${Math.round(60 * (1 - glow))}, 20)` : '#64748b', width: 3 });
+        g.line([-4.0, -1.2], [-4.0, 2.2], { color: C.ink, width: 2 }); g.line([-2.0, -1.2], [-2.0, 2.2], { color: C.ink, width: 2 });
+        // bubbles when warm
+        if (on) for (let j = 0; j < 8; j++) { const y = -1.0 + ((t * 0.8 + j * 0.37) % 1) * 1.9; g.circle([-3.8 + j * 0.25, y], 0.05 + 0.04 * (j % 2), { color: '#fff', width: 1.5 }); }
+        g.text([-3.0, 1.9], `${M} g water`, { size: 12, color: C.muted });
+        // thermometer
+        const TX = -0.6, T0 = 25, Tn = T0 + dT;
+        g.rect(TX - 0.12, -1.8, 0.24, 3.7, { fill: '#fff', color: C.ink, width: 1.5, radius: 6 });
+        g.circle([TX, -1.95], 0.22, { fill: C.bad, color: C.ink, width: 1.5 });
+        g.rect(TX - 0.06, -1.8, 0.12, 3.6 * Math.min(1, (Tn - 20) / 80), { fill: C.bad, color: 'none' });
+        g.text([TX + 0.35, -1.8 + 3.6 * Math.min(1, (Tn - 20) / 80)], `${num(Tn, 1)} °C`, { align: 'left', size: 12, bold: true, color: C.bad });
+        // readings
+        g.text([1.4, 2.0], `time ${num(run / 60, 2)} of ${num(tS.value, 1)} min`, { align: 'left', size: 13, bold: true });
+        g.text([1.4, 1.4], `heat so far: ${num(W, 0)} J`, { align: 'left', size: 14, bold: true, color: C.energy });
+        g.text([1.4, 0.85], `= ${num(W / J, 0)} cal`, { align: 'left', size: 14, bold: true, color: C.energy });
+        g.text([1.4, 0.15], `power I²R = ${num(I * I * R, 1)} W`, { align: 'left', size: 13, bold: true, color: C.bad });
+        g.text([1.4, -0.45], `water warms by ΔT = W/(mc) = ${num(dT, 2)} °C`, { align: 'left', size: 12, color: C.muted });
+      } else {
+        const Rs = [5, 10, 15], V = 12, ts = 300, par = wire.value === 0;
+        const Is = par ? Rs.map(R => V / R) : Rs.map(() => V / 30), Ws = Rs.map((R, i) => Is[i] * Is[i] * R * ts), mx = Math.max(...Ws);
+        // circuit sketch
+        if (par) {
+          g.line([-5.6, 1.9], [-1.0, 1.9], { color: C.ink, width: 2.5 }); g.line([-5.6, -1.9], [-1.0, -1.9], { color: C.ink, width: 2.5 });
+          Rs.forEach((R, i) => { const x = -4.6 + i * 1.6; g.line([x, 1.9], [x, -1.9], { color: C.ink, width: 2.5 }); g.rect(x - 0.25, -0.7, 0.5, 1.4, { fill: `rgba(239, 68, 68, ${0.15 + 0.8 * Ws[i] / mx})`, color: C.ink, width: 2 }); g.text([x + 0.4, 0], `${R} Ω`, { align: 'left', size: 12, bold: true }); });
+        } else {
+          g.path([[-5.6, -1.9], [-5.6, 1.9], [-1.0, 1.9], [-1.0, -1.9], [-5.6, -1.9]], { color: C.ink, width: 2.5 });
+          Rs.forEach((R, i) => { const x = -4.6 + i * 1.6; g.rect(x - 0.6, 1.65, 1.2, 0.5, { fill: `rgba(239, 68, 68, ${0.15 + 0.8 * Ws[i] / mx})`, color: C.ink, width: 2 }); g.text([x, 1.2], `${R} Ω`, { size: 12, bold: true }); });
+        }
+        g.rect(-5.85, -0.3, 0.5, 0.6, { fill: '#fff', color: 'none' });
+        g.line([-5.95, 0.15], [-5.25, 0.15], { color: C.ink, width: 3 }); g.line([-5.8, -0.15], [-5.4, -0.15], { color: C.ink, width: 6 });
+        g.text([-5.6, -0.55], '12 V', { size: 12, bold: true });
+        // heat bars
+        const bx = 0.6, H = 3.2;
+        Rs.forEach((R, i) => {
+          g.rect(bx + i * 1.6, -1.9, 0.9, H * Ws[i] / mx, { fill: C.bad, color: 'none', fillAlpha: 0.85 });
+          g.text([bx + i * 1.6 + 0.45, -2.2], `${R} Ω`, { size: 12, bold: true });
+          g.text([bx + i * 1.6 + 0.45, -1.9 + H * Ws[i] / mx + 0.4], `${num(Ws[i], 0)} J`, { size: 11, bold: true });
+          g.text([bx + i * 1.6 + 0.45, -1.9 + H * Ws[i] / mx + 0.15], `${num(Ws[i] / J, 0)} cal`, { size: 10, color: C.muted });
+        });
+        g.text([bx + 2.05, 2.35], par ? 'parallel: same V, H = V²t/R' : 'series: same I, H = I²Rt', { size: 13, bold: true, color: C.energy });
+      }
+    };
 
-    function updateJoule() {
-      board.suspendUpdate();
-      if (hCurve) board.removeObject(hCurve);
-      if (hPt) board.removeObject(hPt);
+    const graph = k.addView({ x: [0, 6], y: [0, 1], equal: false, height: 160, title: 'Heat in the chosen time against current (R and t fixed): a parabola' });
+    graph.draw = g => {
+      const R = RS.value, t = tS.value * 60, top = 36 * R * t * 1.08;
+      graph.setRange([-0.2, 6.2], [-top * 0.08, top]);
+      g.axes({ xstep: 1, ystep: top > 5e5 ? 2e5 : top > 2e5 ? 1e5 : top > 5e4 ? 2e4 : 1e4, xlabel: 'I (A)', ylabel: 'H (J)', yfmt: v => num(v / 1000, 0) + 'k' });
+      const pts = []; for (let I = 0; I <= 6; I += 0.05) pts.push([I, I * I * R * t]); g.path(pts, { color: C.energy, width: 2.5 });
+      const I = IS.value; g.dot([I, I * I * R * t], 6, C.bad);
+      if (2 * I <= 6) { g.dot([2 * I, 4 * I * I * R * t], 5, C.muted); g.text([2 * I, 4 * I * I * R * t], 'double I → 4× heat', { size: 11, color: C.muted, dx: -60 }); }
+    };
 
-      let I = parseFloat(document.getElementById('j-i-slider').value);
-      let R = parseFloat(document.getElementById('j-r-slider').value);
-      let t = parseFloat(document.getElementById('j-t-slider').value);
-
-      let W_J = I * I * R * t;
-      let H_cal = W_J / 4.2;
-      let H_kcal = H_cal / 1000.0;
-
-      document.getElementById('j-w-stat').textContent = (W_J / 1000.0).toFixed(2) + ' kJ';
-      document.getElementById('j-h-stat').textContent = H_kcal.toFixed(2) + ' kcal';
-
-      // Plot H(i) = i^2 * R * t / 4200 (in kcal)
-      let coeff = (R * t) / 4200.0;
-      hCurve = board.create('functiongraph', [
-        function(ix) {
-          return coeff * ix * ix;
-        }, 0, 5.5
-      ], {
-        strokeColor: '#ef4444', strokeWidth: 3
-      });
-
-      hPt = board.create('point', [I, H_kcal], {
-        size: 5, fillColor: '#facc15', strokeColor: '#eab308', name: 'H = ' + H_kcal.toFixed(2) + ' kcal', fixed: true
-      });
-
-      board.unsuspendUpdate();
-    }
-
-    updateJoule();
-
-    document.getElementById('j-i-slider').addEventListener('input', function(e) {
-      document.getElementById('j-i-val').textContent = parseFloat(e.target.value).toFixed(1) + ' A';
-      updateJoule();
-    });
-    document.getElementById('j-r-slider').addEventListener('input', function(e) {
-      document.getElementById('j-r-val').textContent = e.target.value + ' Ω';
-      updateJoule();
-    });
-    document.getElementById('j-t-slider').addEventListener('input', function(e) {
-      document.getElementById('j-t-val').textContent = e.target.value + ' s';
-      updateJoule();
-    });
+    k.update = () => {
+      if (scene.value === 0) {
+        const I = IS.value, R = RS.value, t = tS.value * 60, W = I * I * R * t;
+        k.readout([
+          `W = I<sup>2</sup>Rt = ${num(I, 1)}<sup>2</sup> × ${R} × ${t} = <b>${num(W, 0)} J</b>; H = W/J = ${num(W, 0)}/4.2 = <b>${num(W / J, 0)} cal</b>`,
+          'Example 10.8: 3<sup>2</sup> × 20 × 120 = 21 600 J = 5143 cal. Heat grows with the square of the current.'
+        ]);
+      } else {
+        const par = wire.value === 0;
+        k.readout([
+          par ? 'Parallel (Example 10.9): each resistor has 12 V, so H = V<sup>2</sup>t/R: 5 Ω → 8640 J (2057 cal), 10 Ω → 4320 J (1029 cal), 15 Ω → 2880 J (686 cal).'
+            : 'Series: the same current 12/30 = 0.4 A flows through all three, so H = I<sup>2</sup>Rt is biggest in the 15 Ω resistor.',
+          'So which resistor gets hottest depends on how it is connected.'
+        ]);
+      }
+    };
+    show();
   })();
   </script>
 </div>

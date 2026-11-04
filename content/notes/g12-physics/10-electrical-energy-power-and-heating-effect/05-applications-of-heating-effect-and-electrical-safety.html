@@ -77,103 +77,82 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Domestic Branch Circuit and Fuse Trip Monitor</span>
-  <p class="demo-instruction">Turn domestic appliances on and off to monitor the total circuit current against the $10\mathrm{\,A}$ fuse rating on a $220\mathrm{\,V}$ mains supply.</p>
-
-  <div id="fuse-board" style="width: 100%; height: 350px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <label style="color: #cbd5e1; font-weight: 500;">
-      <input id="chk-refrig" type="checkbox" checked style="vertical-align: middle;"> Two Refrigerators ($300\mathrm{\,W}$)
-    </label>
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Lamps ($100\mathrm{\,W}$ each): 
-      <input id="lamp-slider" type="range" min="0" max="15" step="1" value="10" style="vertical-align: middle;">
-      <span id="lamp-val" style="color: #38bdf8; font-weight: 700;">10</span>
-    </label>
-    <label style="color: #cbd5e1; font-weight: 500;">
-      <input id="chk-kettle" type="checkbox" style="vertical-align: middle;"> Electric Kettle ($1200\mathrm{\,W}$)
-    </label>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      Total Power: <span id="tot-p-stat" style="color: #fb923c; font-weight: 700;">1300 W</span> &bull; Current: <span id="tot-i-stat" style="color: #4ade80; font-weight: 700;">5.91 A</span> / $10\mathrm{\,A}$
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; How a Fuse Protects a Circuit</span>
+  <p class="demo-question">What decides how many appliances you can switch on before the fuse blows?</p>
+  <p class="demo-instruction">Add lamps and refrigerators on the 220 V supply. The total current $I = P/V$ flows through the fuse in the live wire. If it goes above the fuse rating, the thin fuse wire heats up, melts and cuts the circuit off before the house wiring can overheat. Try <b>Exercise 23</b> and then add one lamp too many, or press <b>short circuit</b>.</p>
+  <div id="pk-fuse"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('fuse-board', {
-      boundingbox: [-1, 14, 11, -2],
-      axis: true,
-      defaultAxes: {
-        x: { name: 'Current I (A)', withLabel: true, label: { position: 'rt', offset: [-20, -15], color: '#94a3b8' } },
-        y: { name: 'Status', withLabel: false }
-      },
-      showNavigation: false,
-      showCopyright: false,
-      pan: { enabled: false },
-      zoom: { enabled: false }
-    });
+  (function () {
+    const VM = 220;
+    const k = PhysKit.mount('pk-fuse', { x: [-6.2, 6.2], y: [-2.6, 2.6] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    k.row();
+    const FUSES = [5, 10, 13];
+    const fuse = k.choice(FUSES.map(f => `${f} A fuse`), 1, () => repair());
+    k.row();
+    const aS = k.slider({ label: '100 W lamps', min: 0, max: 20, step: 1, value: 10, digits: 0 });
+    const bS = k.slider({ label: '150 W fridges', min: 0, max: 4, step: 1, value: 2, digits: 0 });
+    const cS = k.slider({ label: 'extra 60 W lamps', min: 0, max: 25, step: 1, value: 0, digits: 0 });
+    k.row();
+    k.button('Exercise 23 (+15 lamps)', () => { aS.value = 10; bS.value = 2; cS.value = 15; fuse.set(1); repair(); });
+    k.button('short circuit!', () => { shorted = true; }, { primary: false });
+    k.button('replace the fuse', () => repair());
+    let blown = false, shorted = false, heat = 0, t = 0;
+    function repair() { blown = false; shorted = false; heat = 0; }
+    [aS, bS, cS].forEach(s => s.on(() => { if (!blown) heat = 0; }));
+    const P = () => aS.value * 100 + bS.value * 150 + cS.value * 60;
+    const I = () => shorted ? 200 : P() / VM;
+    k.loop(dt => {
+      t += dt;
+      const ratio = I() / FUSES[fuse.value];
+      if (!blown) { heat = ratio > 1.0001 ? heat + dt * (ratio - 1) * (shorted ? 30 : 1.5) : Math.max(0, heat - dt); if (heat >= 1) blown = true; }
+    }, { button: false });
 
-    // This board is a picture, not something to drag. JSXGraph makes the
-    // corners of shapes (and loose points) draggable by default, so a
-    // stray mouse drag could bend the drawing. Wrap board.create so every
-    // new element is fixed unless it says otherwise, and shape corners are
-    // hidden (they would look like drag handles).
-    const createFixed = board.create.bind(board);
-    board.create = (type, parents, attrs = {}) =>
-      createFixed(type, parents, { fixed: true, ...attrs, vertices: { fixed: true, visible: false, ...attrs.vertices } });
-
-    let fuseLimit = 10.0;
-    // Fuse threshold marker line
-    board.create('line', [[fuseLimit, -2], [fuseLimit, 14]], {
-      strokeColor: '#ef4444', strokeWidth: 2, dash: 2
-    });
-    board.create('text', [fuseLimit + 0.2, 10, 'Fuse Limit: 10 A (Blows if exceeded)'], {
-      strokeColor: '#ef4444', fontSize: 11, fontWeight: 'bold'
-    });
-
-    let currentBar = null;
-    let statusText = null;
-
-    function updateFuse() {
-      board.suspendUpdate();
-      if (currentBar) board.removeObject(currentBar);
-      if (statusText) board.removeObject(statusText);
-
-      let pRef = document.getElementById('chk-refrig').checked ? 300 : 0;
-      let numLamps = parseInt(document.getElementById('lamp-slider').value);
-      let pLamps = numLamps * 100;
-      let pKettle = document.getElementById('chk-kettle').checked ? 1200 : 0;
-
-      let totalP = pRef + pLamps + pKettle;
-      let currentI = totalP / 220.0;
-
-      document.getElementById('lamp-val').textContent = numLamps;
-      document.getElementById('tot-p-stat').textContent = totalP + ' W';
-      document.getElementById('tot-i-stat').textContent = currentI.toFixed(2) + ' A';
-
-      let isTripped = currentI > fuseLimit;
-      let barCol = isTripped ? '#ef4444' : (currentI > 8.0 ? '#facc15' : '#4ade80');
-
-      currentBar = board.create('polygon', [
-        [0, 3], [currentI, 3], [currentI, 6], [0, 6]
-      ], {
-        fillColor: barCol, fillOpacity: 0.85, borders: { strokeColor: barCol }
+    k.draw = g => {
+      const Itot = blown ? 0 : I(), F = FUSES[fuse.value], ratio = I() / F;
+      // supply and wires
+      g.rect(-6.1, -1.0, 1.0, 2.6, { fill: '#f1f5f9', color: C.ink, width: 2, radius: 6 });
+      g.text([-5.6, 1.25], '220 V', { size: 12, bold: true }); g.text([-5.6, 0.85], 'mains', { size: 10, color: C.muted });
+      g.line([-5.1, 1.2], [-3.9, 1.2], { color: C.bad, width: 3 });
+      // fuse holder and wire
+      g.rect(-3.9, 0.95, 1.6, 0.5, { fill: '#fff', color: C.ink, width: 2, radius: 10 });
+      const glow = blown ? 0 : Math.min(1, Math.max(0, heat));
+      if (!blown) g.line([-3.75, 1.2], [-2.45, 1.2], { color: glow > 0.05 ? `rgb(${Math.round(150 + 105 * glow)}, ${Math.round(150 - 100 * glow)}, 40)` : '#94a3b8', width: 2 + 2 * glow });
+      else { g.line([-3.75, 1.2], [-3.25, 1.18], { color: '#94a3b8', width: 2 }); g.line([-2.95, 1.22], [-2.45, 1.2], { color: '#94a3b8', width: 2 }); g.dot([-3.25, 1.18], 3, '#78716c'); g.dot([-2.95, 1.22], 3, '#78716c'); }
+      g.text([-3.1, 1.75], `fuse ${F} A`, { size: 12, bold: true, color: blown ? C.bad : C.ink });
+      g.line([-2.3, 1.2], [5.9, 1.2], { color: blown ? '#fca5a5' : C.bad, width: 3 });
+      g.line([-5.1, -0.8], [5.9, -0.8], { color: blown ? '#93c5fd' : C.acc, width: 3 });
+      // appliance icons: lamps glow when the circuit is on
+      const items = [];
+      for (let j = 0; j < aS.value; j++) items.push(['lamp', 100]);
+      for (let j = 0; j < bS.value; j++) items.push(['fridge', 150]);
+      for (let j = 0; j < cS.value; j++) items.push(['lamp', 60]);
+      const n = items.length, w = Math.min(0.55, 8.0 / Math.max(1, n));
+      items.forEach(([kind, p], j) => {
+        const x = -1.9 + w * (j + 0.5);
+        g.line([x, 1.2], [x, 0.55], { color: blown ? '#e5e7eb' : '#94a3b8', width: 1 });
+        g.line([x, -0.15], [x, -0.8], { color: blown ? '#e5e7eb' : '#94a3b8', width: 1 });
+        if (kind === 'lamp') g.circle([x, 0.2], Math.min(0.22, w * 0.42), { fill: blown ? '#f1f5f9' : (p === 60 ? '#fde68a' : '#facc15'), color: C.ink, width: 1 });
+        else g.rect(x - Math.min(0.2, w * 0.4), -0.15, 2 * Math.min(0.2, w * 0.4), 0.7, { fill: blown ? '#f1f5f9' : '#e0f2fe', color: C.ink, width: 1, radius: 2 });
       });
+      // current gauge against the fuse rating
+      const GX = -5.6, GW = 11.2, GY = -1.9, full = 16;
+      g.rect(GX, GY - 0.18, GW, 0.36, { fill: '#f1f5f9', color: C.ink, width: 1, radius: 6 });
+      g.rect(GX, GY - 0.18, GW * Math.min(1, I() / full), 0.36, { fill: ratio > 1 ? C.bad : C.vel, color: 'none', radius: 6 });
+      g.line([GX + GW * F / full, GY - 0.35], [GX + GW * F / full, GY + 0.35], { color: C.ink, width: 3 });
+      g.text([GX + GW * F / full, GY + 0.55], `${F} A limit`, { size: 11, bold: true });
+      g.text([GX, GY - 0.48], '0 A', { align: 'left', size: 10, color: C.muted }); g.text([GX + GW, GY - 0.48], `${full} A`, { align: 'right', size: 10, color: C.muted });
+      g.text([0, 2.3], blown ? (shorted ? 'SHORT CIRCUIT: the fuse melted at once — everything is off' : 'the fuse melted — the circuit is off') : ratio > 1 ? 'too much current: the fuse wire is heating up…' : `total ${P()} W draws ${num(I(), 2)} A — safe`, { size: 14, bold: true, color: blown || ratio > 1 ? C.bad : C.good });
+    };
 
-      let msg = isTripped ? 'CIRCUIT TRIPPED! FUSE BLOWN (Overload)' : 'NORMAL OPERATING CONDITIONS (Safe)';
-      statusText = board.create('text', [0.2, 8, msg], {
-        strokeColor: barCol, fontSize: 13, fontWeight: 'bold'
-      });
-
-      board.unsuspendUpdate();
-    }
-
-    updateFuse();
-
-    document.getElementById('chk-refrig').addEventListener('change', updateFuse);
-    document.getElementById('lamp-slider').addEventListener('input', updateFuse);
-    document.getElementById('chk-kettle').addEventListener('change', updateFuse);
+    k.update = () => {
+      const F = FUSES[fuse.value], Pm = VM * F, Pn = P(), spare = Pm - (aS.value * 100 + bS.value * 150);
+      k.readout([
+        `Maximum safe power ${rich('P_{max}')} = V × ${rich('I_{fuse}')} = 220 × ${F} = <b>${Pm} W</b>; now P = ${Pn} W, I = P/V = <b>${num(Pn / VM, 2)} A</b>`,
+        `Exercise 23: lamps and fridges use 1300 W (13 units in 10 h, 650 kyats at 50 kyats a unit). Spare = 2200 − 1300 = 900 W, so 900/60 = <b>15</b> extra 60 W lamps (with this fuse: ${Math.floor(Math.max(0, spare) / 60)}).`,
+        'The fuse goes in the live wire, so when it melts the appliances are no longer connected to the high voltage.'
+      ]);
+    };
   })();
   </script>
 </div>
