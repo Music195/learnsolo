@@ -52,90 +52,79 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Magnetic Flux Through a Rotatable Surface</span>
-  <p class="demo-instruction">Rotate the loop angle $\theta$ and adjust magnetic field $B$ to visualize magnetic flux line penetration and verify $\Phi = B A \cos\theta$.</p>
-
-  <div id="flux-board" style="width: 100%; height: 350px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Angle &theta; (to normal): 
-      <input id="theta-slider" type="range" min="0" max="90" step="5" value="0" style="vertical-align: middle;">
-      <span id="theta-val" style="color: #38bdf8; font-weight: 700;">0&deg;</span>
-    </label>
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Field $B$: 
-      <input id="b-slider" type="range" min="0.2" max="2.0" step="0.1" value="1.25" style="vertical-align: middle;">
-      <span id="b-val" style="color: #4ade80; font-weight: 700;">1.25 T</span>
-    </label>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      Flux &Phi;: <span id="flux-stat" style="color: #fb923c; font-weight: 700;">12.50 mWb</span> ($A = 0.01\mathrm{\,m^2}$)
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; Counting Field Lines: Φ = BA cos θ</span>
+  <p class="demo-question">A loop sits in a magnetic field. When does the most field pass through it, and when none at all?</p>
+  <p class="demo-instruction">The field lines run left to right. Drag the <b>green normal arrow</b> to turn the square loop (it turns about the axis going into the page). The lines that pass through the loop are highlighted: their number is the flux. Make $B$ stronger to pack the lines closer, or make the loop bigger. $\theta$ is measured between $\mathbf{B}$ and the normal.</p>
+  <div id="pk-flux"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('flux-board', {
-      boundingbox: [-4, 3, 4, -3],
-      axis: false,
-      showNavigation: false,
-      showCopyright: false,
-      pan: { enabled: false },
-      zoom: { enabled: false }
-    });
+  (function () {
+    const k = PhysKit.mount('pk-flux', { x: [-6.2, 6.2], y: [-2.6, 2.6] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    k.row();
+    const BS = k.slider({ label: 'B', unit: 'T', min: 0.05, max: 2, step: 0.01, value: 1.25 });
+    const sS = k.slider({ label: 'side s', unit: 'cm', min: 2, max: 20, step: 0.5, value: 10, digits: 1 });
+    const tS = k.slider({ label: 'θ', unit: '°', min: 0, max: 180, step: 1, value: 30, digits: 0 });
+    k.row();
+    k.button('Example 11.3: maximum (10 cm, 1.25 T, θ = 0°)', () => { BS.value = 1.25; sS.value = 10; tS.value = 0; });
+    k.button('Example 11.3: minimum (θ = 90°)', () => { BS.value = 1.25; sS.value = 10; tS.value = 90; });
+    k.button('Exercise 9 (5 cm, 0.16 T, 30° to the surface)', () => { BS.value = 0.16; sS.value = 5; tS.value = 60; });
+    let t = 0;
+    k.loop(dt => { t += dt; }, { button: false });
 
-    let bArrows = [];
-    let loopPlate = null, normalArrow = null;
+    const O = [-1.2, 0], DEP = [0.75, 0.5];                   // loop centre; the "into the page" direction
+    const L = () => sS.value * 0.2;                          // drawn side length
+    const nrm = () => { const a = tS.value * Math.PI / 180; return [Math.cos(a), Math.sin(a)]; };
+    k.view.drag({ get: () => { const n = nrm(); return [O[0] + 2.0 * n[0], O[1] + 2.0 * n[1]]; }, r: 20,
+      set: p => { let a = Math.atan2(p[1] - O[1], p[0] - O[0]) * 180 / Math.PI; a = Math.max(0, Math.min(180, Math.round(Math.abs(a)))); tS.value = a; k.update(); } });
 
-    function drawFlux() {
-      board.suspendUpdate();
-      board.removeObject(bArrows);
-      if (loopPlate) board.removeObject(loopPlate);
-      if (normalArrow) board.removeObject(normalArrow);
-      bArrows = [];
-
-      let theta_deg = parseFloat(document.getElementById('theta-slider').value);
-      let B = parseFloat(document.getElementById('b-slider').value);
-      let theta_rad = theta_deg * Math.PI / 180.0;
-
-      let A = 0.01; // m^2
-      let Phi = B * A * Math.cos(theta_rad);
-      let Phi_mWb = Phi * 1000.0;
-
-      document.getElementById('theta-val').textContent = theta_deg + '°';
-      document.getElementById('b-val').textContent = B.toFixed(2) + ' T';
-      document.getElementById('flux-stat').textContent = Phi_mWb.toFixed(2) + ' mWb';
-
-      // Draw horizontal magnetic field lines (pointing left to right)
-      for (let y = -2.0; y <= 2.0; y += 0.8) {
-        let arrow = board.create('arrow', [[-3.5, y], [3.5, y]], {
-          strokeColor: '#38bdf8', strokeWidth: 1.5, strokeOpacity: 0.6
-        });
-        bArrows.push(arrow);
-      }
-
-      // Loop tilted at angle: loop plane is tilted such that normal makes angle theta with B (x-axis)
-      // Normal vector: (cos(theta), sin(theta))
-      // Loop plane segment vector: (-sin(theta), cos(theta))
-      let L = 1.8;
-      let nx = Math.cos(theta_rad), ny = Math.sin(theta_rad);
-      let px = -ny, py = nx; // perpendicular direction for plane
-
-      loopPlate = board.create('segment', [[-px * L, -py * L], [px * L, py * L]], {
-        strokeColor: '#4ade80', strokeWidth: 6, name: 'Loop Profile'
+    k.draw = g => {
+      const B = BS.value, n = nrm(), e = [-n[1], n[0]], h = L() / 2, c = Math.cos(tS.value * Math.PI / 180);
+      // field lines: spacing shrinks as B grows (line density ∝ B)
+      const gap = 0.4 / B, lines = [];
+      for (let y = 0; y <= 2.3; y += gap) { lines.push(y); if (y > 0) lines.push(-y); }
+      // the loop seen edge-on spans heights O ± h|cos θ| (plus the depth shift, drawn at the middle)
+      const span = h * Math.abs(c);
+      lines.forEach(y => {
+        const through = Math.abs(y) < span - 1e-9;
+        const yy = y + DEP[1] * 0.5;
+        g.line([-6.0, yy], [5.9, yy], { color: through ? (c >= 0 ? C.field : C.bad) : '#cbd5e1', width: through ? 2.5 : 1.2 });
+        const x = -5.6 + ((t * 0.9) % 1.2);
+        for (let xa = x; xa < 5.6; xa += 2.4) g.arrow([xa, yy], [0.25, 0], { color: through ? (c >= 0 ? C.field : C.bad) : '#cbd5e1', width: through ? 2 : 1, head: 7 });
       });
+      // the loop: a square with one pair of sides going into the page
+      const P = (u, v) => [O[0] + u * e[0] + v * DEP[0], O[1] + u * e[1] + v * DEP[1]];
+      const corners = [P(-h, 0), P(h, 0), P(h, 1), P(-h, 1)];
+      g.path(corners, { close: true, fill: c >= 0 ? '#dcfce7' : '#fee2e2', fillAlpha: 0.55, color: C.ink, width: 3 });
+      const mid = P(0, 0.5);
+      // normal arrow, draggable
+      g.arrow(mid, [1.7 * n[0], 1.7 * n[1]], { color: C.good, width: 3, label: 'normal n', side: 'left' });
+      g.handle([O[0] + 2.0 * n[0], O[1] + 2.0 * n[1]], C.good);
+      // angle arc between B (pointing right) and n
+      const arc = []; for (let a = 0; a <= tS.value * Math.PI / 180 + 1e-9; a += 0.04) arc.push([mid[0] + 0.7 * Math.cos(a), mid[1] + 0.7 * Math.sin(a)]);
+      if (arc.length > 1) g.path(arc, { color: C.good, width: 1.5 });
+      g.text([mid[0] + 0.95 * Math.cos(tS.value * Math.PI / 360), mid[1] + 0.95 * Math.sin(tS.value * Math.PI / 360)], `θ = ${tS.value}°`, { size: 12, bold: true, color: C.good, bg: '#fff' });
+      g.text([5.8, 2.35], `B = ${num(B, 2)} T →`, { size: 13, bold: true, color: C.field, align: 'right' });
+      const A = (sS.value / 100) ** 2, Phi = B * A * c, nThrough = lines.filter(y => Math.abs(y) < span - 1e-9).length;
+      g.text([-6.0, 2.35], `${nThrough} line${nThrough === 1 ? '' : 's'} pass through the loop`, { size: 13, bold: true, align: 'left', color: c >= 0 ? C.field : C.bad });
+      g.text([-6.0, -2.35], Math.abs(c) < 1e-9 ? 'loop edge-on to the field: no line passes through, Φ = 0' : c < 0 ? 'lines enter from the other face: Φ is negative' : Math.abs(c - 1) < 1e-9 ? 'loop face-on to the field: maximum flux' : 'tilted: only the component B cos θ passes through', { size: 12, align: 'left', color: C.muted });
+    };
 
-      normalArrow = board.create('arrow', [[0, 0], [nx * 1.5, ny * 1.5]], {
-        strokeColor: '#facc15', strokeWidth: 2.5
-      });
+    const gv = k.addView({ x: [-5, 185], y: [-1.25, 1.25], equal: false, height: 150, title: 'Flux against angle: Φ = BA cos θ' });
+    gv.draw = g => {
+      g.axes({ xstep: 30, ystep: 0.5, xlabel: 'θ (°)', ylabel: 'Φ / BA' });
+      const pts = []; for (let a = 0; a <= 180; a += 2) pts.push([a, Math.cos(a * Math.PI / 180)]); g.path(pts, { color: C.field, width: 2.5 });
+      g.dot([tS.value, Math.cos(tS.value * Math.PI / 180)], 6, C.good);
+    };
 
-      board.unsuspendUpdate();
-    }
-
-    drawFlux();
-
-    document.getElementById('theta-slider').addEventListener('input', drawFlux);
-    document.getElementById('b-slider').addEventListener('input', drawFlux);
+    k.update = () => {
+      const B = BS.value, s = sS.value / 100, A = s * s, th = tS.value, Phi = B * A * Math.cos(th * Math.PI / 180);
+      const sci = x => { if (Math.abs(x) < 1e-12) return '0'; const ex = Math.floor(Math.log10(Math.abs(x))); return `${num(x / 10 ** ex, 2)}×10<sup>${ex}</sup>`; };
+      k.readout([
+        `A = s<sup>2</sup> = (${num(s, 3)} m)<sup>2</sup> = ${sci(A)} m<sup>2</sup>; Φ<sub>max</sub> = BA = <b>${sci(B * A)} Wb</b>`,
+        `Φ = BA cos θ = ${sci(B * A)} × cos ${th}° = <b>${sci(Phi)} Wb</b>` + (th !== 90 && th !== 0 ? ` (the field makes ${90 - th >= 0 ? 90 - th : th - 90}° with the surface)` : ''),
+        'Exercise 9: 30° to the <i>surface</i> means θ = 60° to the normal, so Φ = 4.0×10<sup>−4</sup> × 0.5 = 2.0×10<sup>−4</sup> Wb.'
+      ]);
+    };
   })();
   </script>
 </div>

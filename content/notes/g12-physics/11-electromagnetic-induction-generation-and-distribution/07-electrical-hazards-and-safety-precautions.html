@@ -75,117 +75,74 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Body Shock Current Simulator (Dry vs. Wet Skin)</span>
-  <p class="demo-instruction">Toggle skin condition between Dry and Wet, and adjust contact voltage to evaluate resulting body shock current against lethal physiological thresholds.</p>
-
-  <div id="shock-board" style="width: 100%; height: 350px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <button id="btn-skin-toggle" style="padding: 0.35rem 0.75rem; border-radius: 6px; background: #0284c7; color: white; border: none; cursor: pointer; font-weight: 600;">
-      Skin: DRY (100 k&Omega;)
-    </button>
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Voltage $V$: 
-      <input id="shock-v-slider" type="range" min="50" max="240" step="10" value="220" style="vertical-align: middle;">
-      <span id="shock-v-val" style="color: #38bdf8; font-weight: 700;">220 V</span>
-    </label>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      Body Current: <span id="shock-i-stat" style="color: #4ade80; font-weight: 700;">2.2 mA</span> &bull; Hazard: <span id="shock-h-stat" style="color: #fb923c; font-weight: 700;">Mild Tingling</span>
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; How Much Current Goes Through You?</span>
+  <p class="demo-question">Why are wet hands so dangerous, and why can a fuse not save a person from a shock?</p>
+  <p class="demo-instruction">The person holds a bare wire at a voltage $V$ while standing on the ground. The current through the body is $I = V/R$, where $R$ is mostly the skin resistance. Choose dry or wet skin and move the voltage. The scale shows the current (it is logarithmic: each step is 10 times bigger) against what it does to the body. A 5 A fuse trips far off to the right; an RCD trips at 30 mA.</p>
+  <div id="pk-shock"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('shock-board', {
-      boundingbox: [-10, 250, 260, -20],
-      axis: true,
-      defaultAxes: {
-        x: { name: 'Contact V (V)', withLabel: true, label: { position: 'rt', offset: [-20, -15], color: '#94a3b8' } },
-        y: { name: 'Body Current I (mA)', withLabel: true, label: { position: 'rt', offset: [15, -10], color: '#94a3b8' } }
-      },
-      showNavigation: false,
-      showCopyright: false,
-      pan: { enabled: false },
-      zoom: { enabled: false }
-    });
+  (function () {
+    const k = PhysKit.mount('pk-shock', { x: [-6.2, 6.2], y: [-2.6, 2.6] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    k.row();
+    const skin = k.choice(['dry skin (100 kΩ)', 'wet skin (1 kΩ)'], 1);
+    const VS = k.slider({ label: 'V', unit: 'V', min: 0, max: 240, step: 5, value: 220, digits: 0 });
+    k.row();
+    const rcd = k.check('RCD fitted (trips at 30 mA in 30 ms)', false, () => { tripped = false; });
+    k.button('Exercise 8: 100 mA (wet, 100 V)', () => { skin.set(1); VS.value = 100; tripped = false; });
+    k.button('wet hands on 220 V', () => { skin.set(1); VS.value = 220; tripped = false; });
+    k.button('dry hands on 220 V', () => { skin.set(0); VS.value = 220; tripped = false; });
+    let t = 0, flow = 0, tripped = false;
+    const R = () => skin.value === 0 ? 1e5 : 1e3;
+    const I = () => (tripped ? 0 : VS.value / R());
+    VS.input.addEventListener('input', () => { tripped = false; });
+    k.loop(dt => { t += dt; if (rcd.value && VS.value / R() > 0.03) tripped = true; flow += dt * (I() > 0 ? 0.4 + Math.max(0, Math.log10(I() * 1e4)) * 0.5 : 0); }, { button: false });
 
-    let isWet = false;
-    // Lethal fibrillation threshold line at 50 mA
-    board.create('line', [[0, 50], [250, 50]], {
-      strokeColor: '#ef4444', strokeWidth: 2, dash: 2
-    });
-    board.create('text', [150, 56, 'Ventricular Fibrillation Threshold (50 mA)'], {
-      strokeColor: '#ef4444', fontSize: 10, fontWeight: 'bold'
-    });
+    const ZONES = [[1e-4, 1e-3, '#e0f2fe', 'not felt'], [1e-3, 5e-3, '#dcfce7', 'tingle'], [5e-3, 1e-2, '#fef9c3', 'painful'], [1e-2, 5e-2, '#fed7aa', 'cannot let go'], [5e-2, 1, '#fecaca', 'heart fibrillation'], [1, 10, '#f87171', 'burns, heart stops']];
+    const SX0 = -2.2, SX1 = 5.9, lx = i => SX0 + (SX1 - SX0) * (Math.log10(i) + 4) / 5;   // 0.1 mA … 10 A
 
-    let shockGraph = null;
-    let shockPoint = null;
+    k.draw = g => {
+      const i = I(), wet = skin.value === 1, danger = i >= 0.05, pain = i >= 0.01;
+      // the wire and the person
+      g.line([-6.0, 1.9], [-1.6, 1.9], { color: VS.value > 0 ? C.bad : '#94a3b8', width: 4 });
+      g.text([-6.0, 2.25], `bare wire at ${VS.value} V`, { size: 12, bold: true, color: C.bad, align: 'left' });
+      const col = danger ? C.bad : C.ink, wob = pain ? 0.04 * Math.sin(t * 40) : 0, X = -3.6;
+      g.circle([X + wob, 0.95], 0.28, { fill: '#fff', color: col, width: 2.5 });
+      g.line([X + wob, 0.67], [X, -0.9], { color: col, width: 3 });
+      g.line([X, 0.4], [X + 0.6, 1.9], { color: col, width: 3 }); g.line([X, 0.4], [X - 0.5, -0.2], { color: col, width: 3 });
+      g.line([X, -0.9], [X - 0.35, -1.9], { color: col, width: 3 }); g.line([X, -0.9], [X + 0.35, -1.9], { color: col, width: 3 });
+      if (wet) for (let j = 0; j < 3; j++) g.circle([X + 0.75 + 0.12 * j, 1.65 - 0.18 * j], 0.05, { fill: '#38bdf8', color: 'none' });
+      g.line([-6.0, -1.95], [-1.4, -1.95], { color: '#78716c', width: 2.5 });
+      g.text([-4.8, -2.3], 'ground (0 V)', { size: 11, color: C.muted });
+      // current dots: hand → body → feet
+      if (i > 0) { const path = [[X + 0.6, 1.9], [X, 0.4], [X, -0.9], [X + 0.35, -1.9]], seg = [];
+        for (let j = 0; j < path.length - 1; j++) seg.push(Math.hypot(path[j + 1][0] - path[j][0], path[j + 1][1] - path[j][1]));
+        const tot = seg.reduce((a, b) => a + b, 0);
+        for (let d = (flow % 0.45); d < tot; d += 0.45) { let s = d, j = 0; while (s > seg[j]) { s -= seg[j]; j++; } const a = path[j], b = path[j + 1], u = s / seg[j]; g.dot([a[0] + (b[0] - a[0]) * u, a[1] + (b[1] - a[1]) * u], 3.5, '#f59e0b'); } }
+      g.text([X - 0.9, 0.3], `R ≈ ${wet ? '1 kΩ' : '100 kΩ'}`, { size: 12, bold: true, align: 'right', color: C.muted });
+      // logarithmic danger scale
+      const SY = 0.2;
+      ZONES.forEach(([a, b, fill, lab], j) => { g.rect(lx(a), SY - 0.35, lx(b) - lx(a), 0.7, { fill, color: 'none' }); g.text([(lx(a) + lx(b)) / 2, SY + (j % 2 ? -0.9 : -0.6)], lab, { size: 10, color: C.ink }); });
+      g.rect(SX0, SY - 0.35, SX1 - SX0, 0.7, { color: C.ink, width: 1.5 });
+      [1e-4, 1e-3, 1e-2, 1e-1, 1, 10].forEach(v => { g.line([lx(v), SY - 0.35], [lx(v), SY - 0.5], { color: C.ink, width: 1 }); g.text([lx(v), SY - 1.3], v < 1 ? `${num(v * 1000, v < 1e-3 ? 1 : 0)} mA` : `${v} A`, { size: 10, color: C.muted }); });
+      // RCD and fuse markers
+      g.line([lx(0.03), SY - 0.55], [lx(0.03), SY + 1.0], { color: C.good, width: 2, dash: [4, 3] }); g.text([lx(0.03), SY + 1.2], 'RCD 30 mA', { size: 10, bold: true, color: C.good });
+      g.line([lx(5), SY - 0.55], [lx(5), SY + 1.0], { color: C.acc, width: 2, dash: [4, 3] }); g.text([lx(5), SY + 1.2], 'fuse 5 A', { size: 10, bold: true, color: C.acc });
+      // pointer for the body current
+      const show = Math.max(1e-4, Math.min(10, VS.value / R()));
+      if (VS.value > 0) { g.path([[lx(show), SY + 0.38], [lx(show) - 0.15, SY + 0.68], [lx(show) + 0.15, SY + 0.68]], { close: true, fill: tripped ? '#94a3b8' : C.ink, color: 'none' }); }
+      const big = VS.value / R();
+      g.text([1.85, 2.3], tripped ? `RCD tripped: ${num(big * 1000, 0)} mA was cut off within 30 ms` : VS.value === 0 ? 'no voltage, no current' : `I = ${VS.value} V / ${wet ? '1000' : '100 000'} Ω = ${num(big * 1000, big < 0.01 ? 1 : 0)} mA`, { size: 14, bold: true, color: tripped ? C.good : danger ? C.bad : pain ? C.energy : C.good });
+      g.text([1.85, -2.05], big > 0 ? `the 5 A fuse needs ${num(5 / big, 0)} times more current to blow` : '', { size: 12, color: C.muted });
+    };
 
-    function updateShock() {
-      board.suspendUpdate();
-      if (shockGraph) board.removeObject(shockGraph);
-      if (shockPoint) board.removeObject(shockPoint);
-
-      let V = parseFloat(document.getElementById('shock-v-slider').value);
-      let R_skin = isWet ? 1000.0 : 100000.0;
-      let I_mA = (V / R_skin) * 1000.0;
-
-      document.getElementById('shock-v-val').textContent = V + ' V';
-      document.getElementById('shock-i-stat').textContent = I_mA.toFixed(1) + ' mA';
-
-      let hazardStr = '';
-      let hazardCol = '#4ade80';
-      if (I_mA < 1.0) {
-        hazardStr = 'Imperceptible';
-        hazardCol = '#94a3b8';
-      } else if (I_mA < 5.0) {
-        hazardStr = 'Mild Tingling (Harmless)';
-        hazardCol = '#38bdf8';
-      } else if (I_mA < 20.0) {
-        hazardStr = 'Painful Shock; Cannot Let Go!';
-        hazardCol = '#facc15';
-      } else if (I_mA < 50.0) {
-        hazardStr = 'Severe Convulsions & Respiratory Distress';
-        hazardCol = '#fb923c';
-      } else {
-        hazardStr = 'FATAL FIBRILLATION & CARDIAC ARREST!';
-        hazardCol = '#ef4444';
-      }
-
-      document.getElementById('shock-h-stat').textContent = hazardStr;
-      document.getElementById('shock-h-stat').style.color = hazardCol;
-
-      // Plot curve
-      shockGraph = board.create('functiongraph', [
-        function(vx) {
-          return (vx / R_skin) * 1000.0;
-        }, 0, 250
-      ], {
-        strokeColor: hazardCol, strokeWidth: 3
-      });
-
-      shockPoint = board.create('point', [V, I_mA], {
-        size: 5, fillColor: hazardCol, strokeColor: '#ffffff', name: I_mA.toFixed(1) + ' mA', fixed: true
-      });
-
-      board.unsuspendUpdate();
-    }
-
-    updateShock();
-
-    document.getElementById('btn-skin-toggle').addEventListener('click', function() {
-      isWet = !isWet;
-      if (isWet) {
-        this.textContent = 'Skin: WET (1 kΩ - DANGEROUS)';
-        this.style.background = '#dc2626';
-      } else {
-        this.textContent = 'Skin: DRY (100 kΩ)';
-        this.style.background = '#0284c7';
-      }
-      updateShock();
-    });
-
-    document.getElementById('shock-v-slider').addEventListener('input', updateShock);
+    k.update = () => {
+      const i = VS.value / R();
+      k.readout([
+        `I = V/R = ${VS.value}/${skin.value === 0 ? '100 000' : '1000'} = <b>${num(i * 1000, i < 0.01 ? 1 : 0)} mA</b> (${i >= 0.05 ? 'can stop the heart' : i >= 0.01 ? 'cannot let go' : i >= 0.005 ? 'painful' : 'small'})`,
+        'Wet skin has about 1/100 of the resistance of dry skin, so the same voltage drives 100 times the current.',
+        'Exercise 8: 100 mA is only 1/50 of what a 5 A fuse needs, so the fuse never blows. Fuses protect the wiring; an RCD (30 mA) protects people.'
+      ]);
+    };
   })();
   </script>
 </div>

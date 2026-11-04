@@ -74,98 +74,113 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Transformer Turns Ratio and Voltage Stepping</span>
-  <p class="demo-instruction">Adjust primary turns $N_p$, secondary turns $N_s$, and input voltage $V_p$ to inspect step-up or step-down voltage transformation and current conservation.</p>
-
-  <div id="trans-board" style="width: 100%; height: 350px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Primary $N_p$: 
-      <input id="np-slider" type="range" min="100" max="1000" step="50" value="400" style="vertical-align: middle;">
-      <span id="np-val" style="color: #38bdf8; font-weight: 700;">400 turns</span>
-    </label>
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Secondary $N_s$: 
-      <input id="ns-slider" type="range" min="50" max="1200" step="50" value="100" style="vertical-align: middle;">
-      <span id="ns-val" style="color: #4ade80; font-weight: 700;">100 turns</span>
-    </label>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      Ratio $N_s/N_p$: <span id="turns-ratio-stat" style="color: #fb923c; font-weight: 700;">0.25</span> &bull; Output $V_s$ ($240\mathrm{\,V}$ in): <span id="vs-stat" style="color: #f43f5e; font-weight: 700;">60.0 V</span>
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; AC Generator and Transformer</span>
+  <p class="demo-question">How does a spinning coil make AC, and how does a transformer change 240 V into 60 V?</p>
+  <p class="demo-instruction"><b>Generator:</b> the coil turns between the poles. The flux through it, $BA\cos\omega t$ (dashed), changes fastest when the coil is edge-on, so that is when the emf $E = NBA\omega \sin \omega t$ peaks. Change $N$, $B$, $A$ or $f$ and watch the peak $E_0 = NBA\omega$. <b>Transformer:</b> the alternating flux in the iron core links both coils, so every turn gets the same emf: $V_s/V_p = N_s/N_p$. Try a DC battery: the flux stops changing and the secondary gives nothing.</p>
+  <div id="pk-gentx"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('trans-board', {
-      boundingbox: [-4, 3, 4, -3],
-      axis: false,
-      showNavigation: false,
-      showCopyright: false,
-      pan: { enabled: false },
-      zoom: { enabled: false }
-    });
+  (function () {
+    const k = PhysKit.mount('pk-gentx', { x: [-6.2, 6.2], y: [-2.6, 2.6] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    k.row();
+    const scene = k.choice(['AC generator', 'Transformer'], 0, () => show());
+    const rows = [];
+    rows.push(k.row());
+    const NS = k.slider({ label: 'N (turns)', min: 10, max: 500, step: 10, value: 100, digits: 0 });
+    const BS = k.slider({ label: 'B', unit: 'T', min: 0.05, max: 1, step: 0.05, value: 0.2 });
+    const AS = k.slider({ label: 'A', unit: 'cm²', min: 50, max: 1000, step: 10, value: 400, digits: 0 });
+    const fS = k.slider({ label: 'f', unit: 'Hz', min: 1, max: 60, step: 1, value: 50, digits: 0 });
+    rows.push(k.row());
+    const VpS = k.slider({ label: 'V_p', unit: 'V', min: 10, max: 480, step: 10, value: 240, digits: 0 });
+    const NpS = k.slider({ label: 'N_p', min: 50, max: 2000, step: 10, value: 400, digits: 0 });
+    const NsS = k.slider({ label: 'N_s', min: 10, max: 4000, step: 10, value: 100, digits: 0 });
+    const PS = k.slider({ label: 'load P', unit: 'W', min: 100, max: 5000, step: 100, value: 2000, digits: 0 });
+    const r3 = k.row(); rows.push(r3);
+    const sup = k.choice(['AC supply', 'DC battery'], 0);
+    k.button('Example 11.6 (2 kW, 240 V → 60 V)', () => { VpS.value = 240; NpS.value = 400; NsS.value = 100; PS.value = 2000; sup.set(0); });
+    k.button('step-up (1 : 10)', () => { VpS.value = 240; NpS.value = 100; NsS.value = 1000; PS.value = 2000; sup.set(0); });
+    function show() { rows.forEach((r, i) => { r.style.display = (i === 0 ? scene.value === 0 : scene.value === 1) ? '' : 'none'; }); }
+    let ph = 0, t = 0;
+    k.loop(dt => { t += dt; ph += dt * 2 * Math.PI * (0.25 + fS.value / 120); }, { button: false });
 
-    // This board is a picture, not something to drag. JSXGraph makes the
-    // corners of shapes (and loose points) draggable by default, so a
-    // stray mouse drag could bend the drawing. Wrap board.create so every
-    // new element is fixed unless it says otherwise, and shape corners are
-    // hidden (they would look like drag handles).
-    const createFixed = board.create.bind(board);
-    board.create = (type, parents, attrs = {}) =>
-      createFixed(type, parents, { fixed: true, ...attrs, vertices: { fixed: true, visible: false, ...attrs.vertices } });
-
-    // Draw laminated rectangular soft-iron core
-    board.create('polygon', [[-2.5, -2], [2.5, -2], [2.5, 2], [-2.5, 2]], {
-      fillColor: '#334155', fillOpacity: 0.85, borders: { strokeColor: '#64748b', strokeWidth: 3 }
-    });
-    // Inner core cutout
-    board.create('polygon', [[-1.2, -1], [1.2, -1], [1.2, 1], [-1.2, 1]], {
-      fillColor: '#0f172a', fillOpacity: 1.0, borders: { strokeColor: '#64748b', strokeWidth: 2 }
-    });
-
-    let pCoil = null, sCoil = null, typeLabel = null;
-
-    function updateTransformer() {
-      board.suspendUpdate();
-      if (pCoil) board.removeObject(pCoil);
-      if (sCoil) board.removeObject(sCoil);
-      if (typeLabel) board.removeObject(typeLabel);
-
-      let Np = parseFloat(document.getElementById('np-slider').value);
-      let Ns = parseFloat(document.getElementById('ns-slider').value);
-      let Vp = 240.0;
-      let ratio = Ns / Np;
-      let Vs = Vp * ratio;
-
-      document.getElementById('np-val').textContent = Np + ' turns';
-      document.getElementById('ns-val').textContent = Ns + ' turns';
-      document.getElementById('turns-ratio-stat').textContent = ratio.toFixed(2);
-      document.getElementById('vs-stat').textContent = Vs.toFixed(1) + ' V';
-
-      // Primary winding on left limb (-2.5 to -1.2)
-      pCoil = board.create('segment', [[-1.85, -1.5], [-1.85, 1.5]], {
-        strokeColor: '#38bdf8', strokeWidth: 10, name: 'Primary'
-      });
-      // Secondary winding on right limb (1.2 to 2.5)
-      sCoil = board.create('segment', [[1.85, -1.5], [1.85, 1.5]], {
-        strokeColor: '#4ade80', strokeWidth: 10, name: 'Secondary'
-      });
-
-      let typeStr = ratio > 1.0 ? 'STEP-UP TRANSFORMER (Vs > Vp)' : (ratio < 1.0 ? 'STEP-DOWN TRANSFORMER (Vs < Vp)' : '1:1 ISOLATION TRANSFORMER');
-      let typeCol = ratio > 1.0 ? '#fb923c' : (ratio < 1.0 ? '#4ade80' : '#cbd5e1');
-
-      typeLabel = board.create('text', [0, 2.5, typeStr], {
-        anchorX: 'middle', strokeColor: typeCol, fontSize: 13, fontWeight: 'bold'
-      });
-
-      board.unsuspendUpdate();
+    function generator(g) {
+      const E0 = NS.value * BS.value * AS.value * 1e-4 * 2 * Math.PI * fS.value, c = Math.cos(ph), s = Math.sin(ph);
+      // magnet poles and field
+      g.rect(-6.0, -1.5, 0.8, 3.0, { fill: '#fecaca', color: C.bad, width: 2, radius: 4 }); g.text([-5.6, 0], 'N', { size: 18, bold: true, color: C.bad });
+      g.rect(-1.4, -1.5, 0.8, 3.0, { fill: '#bfdbfe', color: C.acc, width: 2, radius: 4 }); g.text([-1.0, 0], 'S', { size: 18, bold: true, color: C.acc });
+      for (let y = -1.2; y <= 1.21; y += 0.6) g.arrow([-5.1, y], [3.6, 0], { color: '#cbd5e1', width: 1.2, head: 7 });
+      // coil: turns about the axis into the page; normal at angle ph
+      const O = [-3.5, -0.15], DEP = [0.6, 0.4], h = 0.4 + Math.sqrt(AS.value) * 0.045, n = [c, s], e = [-s, c];
+      const P = (u, v) => [O[0] + u * e[0] + v * DEP[0], O[1] + u * e[1] + v * DEP[1]];
+      g.path([P(-h, 0), P(h, 0), P(h, 1), P(-h, 1)], { close: true, fill: c >= 0 ? '#dcfce7' : '#fee2e2', fillAlpha: 0.6, color: C.ink, width: 3 });
+      g.arrow(P(0, 0.5), [0.9 * n[0], 0.9 * n[1]], { color: C.good, width: 2.5 });
+      g.text([-3.3, 1.95], `coil of ${NS.value} turns`, { size: 12, bold: true });
+      // slip rings feed a lamp
+      const glow = Math.abs(s);
+      g.line([-3.2, -1.7], [-3.2, -2.1], { color: C.ink, width: 2 });
+      g.circle([-2.6, -2.15], 0.26, { fill: `rgba(250, 204, 21, ${0.15 + 0.85 * glow})`, color: C.ink, width: 1.5 });
+      g.text([-4.1, -2.15], 'slip rings →', { size: 11, color: C.muted });
+      // graph
+      const GX0 = 0.2, GX1 = 5.9, GY = 0.1, AM = 1.5, win = 4 * Math.PI;
+      g.line([GX0, GY], [GX1, GY], { color: C.ink, width: 1.5 }); g.line([GX0, GY - AM - 0.2], [GX0, GY + AM + 0.2], { color: C.ink, width: 1.5 });
+      const p0 = Math.max(0, ph - win), fx = a => GX0 + (GX1 - GX0) * (a - p0) / win;
+      const ef = [], fl = []; for (let a = p0; a <= ph + 1e-9; a += 0.04) { ef.push([fx(a), GY + AM * Math.sin(a)]); fl.push([fx(a), GY + AM * Math.cos(a)]); }
+      if (fl.length > 1) g.path(fl, { color: C.field, width: 2, dash: [5, 4] });
+      if (ef.length > 1) g.path(ef, { color: C.energy, width: 3 });
+      g.dot([fx(ph), GY + AM * s], 6, C.energy); g.dot([fx(ph), GY + AM * c], 5, C.field);
+      g.text([GX0 + 0.1, GY + AM + 0.45], `emf (peak ${num(E0, 1)} V)`, { align: 'left', size: 12, bold: true, color: C.energy });
+      g.text([GX1, GY + AM + 0.45], 'flux Φ (dashed)', { align: 'right', size: 12, bold: true, color: C.field });
+      g.text([3.05, -2.2], Math.abs(s) > 0.97 ? 'coil edge-on: flux changing fastest → emf is biggest' : Math.abs(c) > 0.97 ? 'coil face-on: flux is biggest but not changing → emf is zero' : 'emf ∝ rate of change of flux', { size: 12, bold: true, color: C.muted });
     }
 
-    updateTransformer();
+    function transformer(g) {
+      const ac = sup.value === 0, Np = NpS.value, Ns = NsS.value, Vp = VpS.value, Vs = ac ? Vp * Ns / Np : 0;
+      const Is = ac ? PS.value / Vs : 0, Ip = ac ? PS.value / Vp : 0, osc = ac ? Math.sin(ph) : 1;
+      // iron core
+      const X0 = -2.9, X1 = 1.3, Y0 = -1.5, Y1 = 1.5, TH = 0.45;
+      g.rect(X0 - TH / 2, Y0 - TH / 2, X1 - X0 + TH, Y1 - Y0 + TH, { fill: '#cbd5e1', color: '#64748b', width: 2 });
+      g.rect(X0 + TH / 2, Y0 + TH / 2, X1 - X0 - TH, Y1 - Y0 - TH, { fill: '#ffffff', color: '#64748b', width: 2 });
+      g.text([(X0 + X1) / 2, Y1 + 0.5], 'laminated iron core', { size: 11, color: C.muted });
+      // flux dots circulating round the core (reverse with the AC)
+      const per = 2 * (X1 - X0 + Y1 - Y0), pos = s => { s = ((s % per) + per) % per; const w = X1 - X0, hh = Y1 - Y0; if (s < w) return [X0 + s, Y1]; s -= w; if (s < hh) return [X1, Y1 - s]; s -= hh; if (s < w) return [X1 - s, Y0]; s -= w; return [X0, Y0 + s]; };
+      const shift = ac ? 0.6 * Math.cos(ph) : 0;
+      for (let j = 0; j < 16; j++) g.dot(pos(j * per / 16 + shift), 3.5, ac ? C.field : '#94a3b8');
+      // coils: number of drawn turns ∝ real turns
+      const big = Math.max(Np, Ns), coil = (x, N, col) => { const nd = Math.max(1, Math.round(14 * N / big)); for (let j = 0; j < nd; j++) { const y = -1.0 + (2.0 * (j + 0.5)) / nd; g.path([[x - 0.4, y - 0.05], [x + 0.4, y + 0.05]], { color: col, width: Math.max(1.5, 4 - nd * 0.15) }); } return nd; };
+      coil(X0, Np, C.energy); coil(X1, Ns, C.vel);
+      g.text([X0, -1.95], `N_p = ${Np}`, { size: 12, bold: true, color: C.energy }); g.text([X1, -1.95], `N_s = ${Ns}`, { size: 12, bold: true, color: C.vel });
+      // supply and load
+      g.path([[X0 - 0.4, 0.95], [-4.6, 0.95], [-4.6, 0.4]], { color: C.ink, width: 2 }); g.path([[X0 - 0.4, -0.95], [-4.6, -0.95], [-4.6, -0.4]], { color: C.ink, width: 2 });
+      g.circle([-4.6, 0], 0.4, { fill: '#fff', color: C.ink, width: 2 });
+      if (ac) { const sw = []; for (let u = -0.25; u <= 0.25; u += 0.02) sw.push([-4.6 + u, 0.15 * Math.sin(u / 0.25 * Math.PI)]); g.path(sw, { color: C.ink, width: 2 }); }
+      else g.text([-4.6, 0], 'DC', { size: 11, bold: true });
+      g.text([-5.1, 1.55], `V_p = ${Vp} V`, { size: 13, bold: true, color: C.energy }); g.text([-5.1, -1.55], `I_p = ${num(Ip, 2)} A`, { size: 12, bold: true, color: C.energy });
+      g.path([[X1 + 0.4, 0.95], [3.4, 0.95], [3.4, 0.4]], { color: C.ink, width: 2 }); g.path([[X1 + 0.4, -0.95], [3.4, -0.95], [3.4, -0.4]], { color: C.ink, width: 2 });
+      const zr = [[3.4, 0.4]]; for (let j = 1; j <= 6; j++) zr.push([3.4 + (j % 2 ? 0.22 : -0.22), 0.4 - j * 0.115]); zr.push([3.4, -0.4]);
+      g.path(zr, { color: C.vel, width: 2.5 }); g.text([3.75, 0], 'load', { size: 11, align: 'left', color: C.muted });
+      g.text([4.8, 1.55], `V_s = ${num(Vs, 1)} V`, { size: 13, bold: true, color: C.vel }); g.text([4.8, -1.55], `I_s = ${num(Is, 2)} A`, { size: 12, bold: true, color: C.vel });
+      g.text([0, 2.35], !ac ? 'DC: the flux is steady, so nothing is induced in the secondary' : Ns < Np ? `step-down: ${num(Np / Ns, 2)} : 1 — voltage down, current up` : Ns > Np ? `step-up: 1 : ${num(Ns / Np, 2)} — voltage up, current down` : '1 : 1', { size: 13, bold: true, color: ac ? C.ink : C.bad });
+    }
 
-    document.getElementById('np-slider').addEventListener('input', updateTransformer);
-    document.getElementById('ns-slider').addEventListener('input', updateTransformer);
+    k.draw = g => scene.value === 0 ? generator(g) : transformer(g);
+
+    k.update = () => {
+      if (scene.value === 0) {
+        const A = AS.value * 1e-4, w = 2 * Math.PI * fS.value, E0 = NS.value * BS.value * A * w;
+        k.readout([
+          `${rich('E_0')} = NBAω = ${NS.value} × ${num(BS.value, 2)} × ${num(A, 4)} × (2π × ${fS.value}) = <b>${num(E0, 1)} V</b>`,
+          'Double any one of N, B, A or f and the peak doubles. Raising f also makes the output alternate faster.'
+        ]);
+      } else {
+        const ac = sup.value === 0, Vp = VpS.value, Np = NpS.value, Ns = NsS.value, Vs = Vp * Ns / Np, P = PS.value;
+        k.readout(ac ? [
+          `${rich('V_s')} = ${rich('V_p')} × ${rich('N_s')}/${rich('N_p')} = ${Vp} × ${Ns}/${Np} = <b>${num(Vs, 1)} V</b> (turns ratio ${rich('N_s')}/${rich('N_p')} = ${num(Ns / Np, 3)})`,
+          `Ideal (P in = P out = ${P} W): ${rich('I_p')} = P/${rich('V_p')} = <b>${num(P / Vp, 2)} A</b>, ${rich('I_s')} = P/${rich('V_s')} = <b>${num(P / Vs, 2)} A</b>`,
+          'Example 11.6: ratio 1/4, I<sub>p</sub> = 2000/240 = 8.33 A, I<sub>s</sub> = 2000/60 = 33.33 A.'
+        ] : ['With DC the core flux is constant after switching on, so dΦ/dt = 0 and the secondary emf is zero. Transformers only work with AC.']);
+      }
+    };
+    show();
   })();
   </script>
 </div>
