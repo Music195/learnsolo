@@ -217,7 +217,7 @@ To change what **data** a page receives, start in its **service function** in `b
 | `services/home.py` | The home page's subject tabs, courses, topics and counts; and `build_search_index()` | Changing the home page's data, or what search finds |
 | `services/notes.py` | One note page: the note, where it sits ("Note 5 of 8"), previous/next, its practice sets; and the Topics sidebar's list | Changing note navigation or what a note page gets |
 | `services/practice.py` | The practice hub (courses → topics → sets) and one set's page with its next/previous order | Changing practice order or data |
-| `services/past.py` | Mock question categories (`eju`, `jlpt`, `university`), groups (EJU Course 1/2, JLPT N2), one paper's page, and renamed papers (`PaperMoved`) | Changing the mock question pages' data |
+| `services/past.py` | Mock question categories (`eju`, `jlpt`, `university`), level tabs (`n1`–`n5`), skill sections (`vocab`, `grammar`, `reading`, `listening`), one paper's page, and renamed papers (`PaperMoved`) | Changing the mock question pages' data |
 | `services/dictionary.py` | Hybrid 3-way dictionary lookup (`lookup_word`), language auto-detection (`detect_language`), database search and AI/translation fallback, plus `import_dictionary_json` | Changing how words are matched or translated |
 | `services/urls.py` | The address of each kind of page (`/notes/...`, `/practice/...`, `/past/...`) in one place | A page's address changes |
 

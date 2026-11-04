@@ -20,7 +20,7 @@ The project documentation is split into three connected guides so you can focus 
 |---|---|---|---|
 | **Notes** | One idea per page: concept, formula, proof, an interactive demo, worked examples | `content/notes/` | `/notes/...` |
 | **Practice sets** | 6–7 problems with hints, solutions and an answer box, for a few notes at a time, then a topic review | `content/practice/` | `/practice`, `/practice/...` |
-| **Mock Questions** | Exam papers, checked the same way as practice sets: **EJU Mock Papers** (original papers in the EJU format, 10 per course), **JLPT Mock Tests** (10 N2 mock tests, 25 multiple-choice questions each) and **University Mock Questions** | `content/past/` | `/past`, `/past/...` |
+| **Mock Questions** | Exam papers, checked the same way as practice sets: **EJU Mock Papers** (original papers in the EJU format, 10 per course), **JLPT Mock Tests** (N1 to N5 levels, each with 10 mock tests across 4 skill sections: Vocabulary, Grammar, Reading, and Listening with audio scripts; 200 mock tests total) and **University Mock Questions** | `content/past/` | `/past`, `/past/...` |
 
 **You write every page as an HTML file under `content/`.** To add a page, create the HTML file and run `flask import-content` (sections 3, 6 and 7). Nothing has to be registered in code.
 
@@ -34,7 +34,7 @@ Home (/)  ── subject tabs → course → topic ──►  Note  ◄─ previ
 Practice hub (/practice) ── tab per course ──►  Practice set ── Next practice → Topic review → Next topic
    │
    └─ bottom link ──►  Mock Questions (/past) ─┬─►  EJU Mock Papers (/past/eju) ── Course 1 / Course 2 tab ──►  Paper
-                                               ├─►  JLPT Mock Tests (/past/jlpt) ── N2 tab ──►  Paper
+                                               ├─►  JLPT Mock Tests (/past/jlpt) ── N1 to N5 level tabs ──► Section cards ──► Test
                                                └─►  University Mock Questions (/past/university) ──►  Paper
 ```
 
@@ -110,10 +110,10 @@ components/NoteContent.jsx                      ← 6. Puts the note's HTML on t
 
 ```
 content/
-├── notes/<course>/<topic>/<nn-name>.html      the notes
-├── practice/<course>/<topic>/<nn-name>.html   practice sets (same course and topic folders as notes/)
-├── past/<category>/[<group>/]<nn-name>.html   mock question papers (eju/course-1/, eju/course-2/, jlpt/n2/, university/)
-└── dictionary.json                            curated 3-way vocabulary (English, Burmese, Japanese)
+├── notes/<course>/<topic>/<nn-name>.html            the notes
+├── practice/<course>/<topic>/<nn-name>.html         practice sets (same course and topic folders as notes/)
+├── past/<category>/[<group>/[<section>/]]<nn>.html  mock question papers (eju/course-1/, jlpt/n1/vocab/, jlpt/n2/listening/, university/)
+└── dictionary.json                                  curated 3-way vocabulary (English, Burmese, Japanese)
 ```
 
 - Every folder and file name is **lowercase words joined by hyphens**, starting with a two-digit number that sets the order: `content/notes/math-1/03-quadratic-functions/05-quadratic-formula.html`.
@@ -273,8 +273,8 @@ content/practice/math-c/01-plane-vectors/02-dot-product.html   →   /practice/m
 ```
 
 - `data-level`: `basic`, `standard`, `challenge` or `exam` (sets the badge text and colour).
-- `data-answer` (optional): the value the answer box checks against. Write it the way a student would type it: `45`, `6`, `2√7`, `5/2`, `√3/2`, `5π/6`, `3e`, `4/e^2`, `π^2/2` (digits, `+ − × ÷ ^ ( )`, `√`, `π` and `e` are understood by `toNumber` in `frontend/src/practice.js`). Typed answers count as correct within 0.01, so `5.29` is accepted for `2√7`. Leave `data-answer` out for problems whose answer isn't one number (proofs, "find all…").
-- `data-choices` (optional, for multiple-choice questions such as JLPT mock tests): a `|`-separated list of options (for example `data-choices="1. 準備|2. 整理|3. 連絡|4. 相談"` with `data-answer="1"`). `frontend/src/practice.js` renders clickable option buttons instead of a text input box.
+- `data-answer` (optional, for numeric problems): the value the answer box checks against. Write it the way a student would type it: `45`, `6`, `2√7`, `5/2`, `√3/2`, `5π/6`, `3e`, `4/e^2`, `π^2/2` (digits, `+ − × ÷ ^ ( )`, `√`, `π` and `e` are understood by `toNumber` in `frontend/src/practice.js`). Typed answers count as correct within 0.01, so `5.29` is accepted for `2√7`. Leave `data-answer` out for problems whose answer isn't one number (proofs, "find all…").
+- `data-choice` (optional, for multiple-choice questions such as JLPT mock tests): the 1-based index of the correct option (`1`, `2`, `3`, or `4`), paired with an ordered list of choices `<ol class="choices"><li>...</li></ol>`. `frontend/src/practice.js` transforms each `<li>` into an interactive `.choice-btn` button, handles green (right) / red (wrong) visual feedback, records review status on incorrect attempts, and calculates the live test score.
 - The answer box (or multiple-choice buttons) and the **"I got it / Review later"** buttons are added automatically by `frontend/src/practice.js`; don't write them in the HTML file.
 - Keep the solution steps short and numbered, like the examples in the notes, and put any extra insight in `<p class="practice-note">` inside the solution.
 - **Before merging a new practice set**, open it in the browser and check:
@@ -291,22 +291,107 @@ Mock exam questions use the **same HTML format** as practice sets, grouped by ex
 | Folder | Name on the site | What it holds |
 |---|---|---|
 | `content/past/eju/course-1/`, `course-2/` | **EJU Mock Papers**, with a Course 1 (Basic) and a Course 2 (Advanced) tab | 10 original mock papers per course, 6 problems each |
-| `content/past/jlpt/n2/` | **JLPT Mock Tests**, with an N2 tab | 10 original N2 mock tests, 25 multiple-choice questions each (kanji, vocabulary, grammar, reading) |
+| `content/past/jlpt/<level>/<section>/` (`n1`–`n5` / `vocab`, `grammar`, `reading`, `listening`) | **JLPT Mock Tests**, with N1 to N5 level tabs and 4 skill sections per level | 10 mock tests per section across all 5 levels (200 tests total), structured according to official JLPT mondai formats with full listening narration transcripts and live scoring |
 | `content/past/university/` | **University Mock Questions** | Longer university-style problems with written solutions |
 
-An exam folder can be split into subfolders, as the EJU and JLPT papers are by course or level:
+An exam folder can be split into subfolders, as the EJU and JLPT papers are by course, level, or skill section:
 
 ```
 content/past/university/01-sample-paper-proof-and-calculus.html   →   /past/university/01-sample-paper-proof-and-calculus
 content/past/eju/course-1/03-mock-paper.html                       →   /past/eju/course-1/03-mock-paper
-content/past/jlpt/n2/01-mock-test.html                             →   /past/jlpt/n2/01-mock-test
+content/past/jlpt/n2/vocab/01-mock-test.html                       →   /past/jlpt/n2/vocab/01-mock-test
+content/past/jlpt/n1/listening/05-mock-test.html                   →   /past/jlpt/n1/listening/05-mock-test
 ```
 
-- **Mock Questions** (`/past`, linked in the floating bar, at the bottom of `/practice`, and from "More to explore" on the home page) shows one card per folder in `content/past/`. Clicking a card lists its papers (`/past/<folder>`), and each paper opens like a practice set (`frontend/src/pages/PastPaper.jsx`) with hints, solutions, and answer boxes (or multiple-choice buttons).
-- **Subfolders** (`eju/course-1/`, `eju/course-2/`, `jlpt/n2/`) become tabs on the folder's list page (`frontend/src/components/HubTabs.jsx`). Previous / next on a paper stay inside its subfolder, and the floating bar shows `"EJU Mock Papers › Course 1 (Basic) · Paper 3 of 10"`. `/past/eju#course-2` opens on Course 2. Subfolder display names live under `"groups"` in `PAST_CATEGORIES` in `backend/utils/courses.py`.
-- **Adding a new exam category:** make a new folder in `content/past/` and give it a name, icon, description, and optional `groups` in `PAST_CATEGORIES` in `backend/utils/courses.py`.
-- **Adding a new paper:** add an HTML file to the folder (or subfolder), numbered `01-`, `02-`, … to set the order, and run `flask import-content`. Use `data-level="exam"` for each problem.
-- **Exam section labels (`.exam-label`):** Each problem can name its exam section in a `<span class="exam-label">` inside `<h2>`, and `backend/importer.py` extracts these labels to display as the paper's topics on the list page:
+- **Mock Questions Hub** (`/past`, linked in the floating bar, at the bottom of `/practice`, and from "More to explore" on the home page) shows one card per exam folder in `content/past/`. Clicking a card lists its papers (`/past/<folder>`), and each paper opens like a practice set (`frontend/src/pages/PastPaper.jsx`) with hints, solutions, and answer boxes (or multiple-choice buttons).
+- **Subfolders and Level Tabs:**
+  - On `/past/eju`, `course-1` and `course-2` become the top tabs (`Course 1 (Basic)` and `Course 2 (Advanced)`).
+  - On `/past/jlpt`, `n1`, `n2`, `n3`, `n4`, and `n5` become the level tabs. Under each level tab, tests are categorized into 4 skill section cards:
+    - **Vocabulary (文字・語彙)** (`vocab/`)
+    - **Grammar (文法)** (`grammar/`)
+    - **Reading (読解)** (`reading/`)
+    - **Listening (聴解)** (`listening/`)
+  - Subfolder and level display names live under `"groups"` and `"sections"` in `PAST_CATEGORIES` in `backend/utils/courses.py`.
+
+### JLPT Mock Tests Structure & Formatting
+
+Each JLPT mock test contains 10–25 authentic exam-style questions following the official JLPT test specifications:
+
+1. **Vocabulary (文字・語彙)**:
+   - 問題1: 漢字読み (Kanji reading)
+   - 問題2: 表記 (Kanji writing / orthography)
+   - 問題3: 語形成 (Word formation, e.g. prefixes/suffixes)
+   - 問題4: 文脈規定 (Contextual vocabulary)
+   - 問題5: 言い換え類義 (Paraphrasing & synonyms)
+   - 問題6: 用法 (Correct word usage in context)
+
+2. **Grammar (文法)**:
+   - 問題1: 文法形式の判断 (Sentence grammar 1 — selecting correct grammatical pattern)
+   - 問題2: 文の組み立て (Sentence grammar 2 — star `★` arrangement problems)
+   - 問題3: 文章の文法 (Text grammar / cohesive discourse)
+
+3. **Reading (読解)**:
+   - 内容理解 (短文) (Short passages, ~200 characters)
+   - 内容理解 (中文) (Medium passages, ~500 characters)
+   - 統合理解 (Integrated / comparative reading across multiple texts)
+   - 主張理解 (長文) (Thematic / long passage comprehension)
+   - 情報検索 (Information retrieval / notices, flyers, catalogues)
+
+4. **Listening (聴解) & Audio Narration Scripts**:
+   - 問題1: 課題理解 (Task-based comprehension)
+   - 問題2: ポイント理解 (Key point comprehension)
+   - 問題3: 概要理解 (Gist / general comprehension)
+   - 問題4: 即時応答 (Quick verbal response)
+   - 問題5: 統合理解 (Integrated comprehension)
+
+Every listening test includes an expandable audio transcript formatted for YouTube API or Text-to-Speech (TTS) narration:
+
+```html
+<section class="practice-problem" data-level="exam" data-choice="1">
+  <h2>Question 1 <span class="exam-label">問題1 · 課題理解</span></h2>
+  <div class="listening-situation">
+    <p class="sit-jp"><strong>【場面】</strong> 会社で、女性の上司と男性の社員が話しています。男性はまず何をしますか。</p>
+    <p class="sit-en"><em>Situation:</em> At a company, a female supervisor and a male employee are talking. What does the man do first?</p>
+  </div>
+  <details class="transcript">
+    <summary>🎧 Show Audio Script / Dialogue (音声スクリプト)</summary>
+    <div class="transcript-content">
+      <p>女：佐藤くん、明日の資料の日付、修正してある？<br>
+      男：すみません、まだ確認していませんでした。<br>
+      女：じゃあ、先に印刷した資料の日付をチェックして、違っていたらすぐ刷り直して。<br>
+      男：わかりました。すぐに確認します！</p>
+    </div>
+  </details>
+  <p class="question"><strong>質問：</strong>男性の社員は、まず何をしなければなりませんか。</p>
+  <ol class="choices">
+    <li>配付資料の日付を確認する</li>
+    <li>プロジェクターの動作を確認する</li>
+    <li>会議室の椅子を並べる</li>
+    <li>新しいプレゼン資料を作成する</li>
+  </ol>
+  <details class="solution">
+    <summary>Show explanation</summary>
+    <p>Explanation in English with Japanese cues.</p>
+    <p class="answer">Answer: 1 · 配付資料の日付を確認する</p>
+  </details>
+</section>
+```
+
+### Live Scoring & Test Score Cards
+
+Mock tests include a complete real-time scoring system:
+
+- **Live Header Score**: As questions are answered, the page header immediately updates (`Score: 8/10 (80%) · 2 to review`).
+- **Interactive Choice Buttons**: Selecting a choice immediately checks the answer. An incorrect choice marks the problem for review, preserving genuine exam accuracy.
+- **Test Selection Badges**: The test list displays color-coded score pills (`Score: 8/10 (80%)`):
+  - Green pill (`.is-done`): Passed ($\ge 60\%$).
+  - Amber pill (`.is-review`): Review needed ($< 60\%$).
+- **Test Completion Score Card (`<TestScoreCard />`)**:
+  - Displays at the bottom of each test with status badges (`🏆 Test Passed · 合格` vs `📖 Review Needed · 要復習`).
+  - Breakdown stats: Correct, Review, and Remaining questions.
+  - Action buttons: **Retake Test** (wipes saved score and resets DOM choice states), **Jump to First Mistake** (smooth-scrolls to the first incorrect question), and **Next Test**.
+
+---
 
 ```html
 <h2>Problem 1 <span class="exam-label">I Q1 · Quadratic functions</span></h2>
