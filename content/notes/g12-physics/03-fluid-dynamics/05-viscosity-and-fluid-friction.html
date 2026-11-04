@@ -68,112 +68,180 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Terminal Velocity in a Viscous Medium</span>
-  <p class="demo-instruction">Adjust the liquid viscosity $\eta$ and sphere radius $r$. Watch how the falling sphere quickly reaches its steady terminal velocity $v_t$, where gravity is balanced by buoyancy and Stokes drag.</p>
-
-  <div id="viscosity-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Viscosity $\eta$: 
-      <input id="eta-slider" type="range" min="0.1" max="2.0" step="0.1" value="0.5" style="vertical-align: middle;">
-      <span id="eta-val" style="color: #38bdf8; font-weight: 700;">0.50 Pa·s</span>
-    </label>
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Radius $r$: 
-      <input id="radius-slider" type="range" min="1" max="5" step="0.5" value="3" style="vertical-align: middle;">
-      <span id="radius-val" style="color: #fb923c; font-weight: 700;">3.0 mm</span>
-    </label>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      Terminal Velocity $v_t \approx$ <span id="vt-stat" style="color: #4ade80; font-weight: 700;">0.30 m/s</span>
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; Viscosity: Fluid Friction at Work</span>
+  <p class="demo-question">Why does a steel ball sink through glycerine at a steady speed instead of going faster and faster?</p>
+  <p class="demo-instruction"><b>Layers of oil:</b> drag a plate over a thin oil film; each layer moves a little slower than the one above, and viscosity resists this sliding. <b>Ball viscometer:</b> drop a ball and time it between marks A and B; its speed becomes constant when drag + upthrust = weight. <b>Raindrop:</b> see the speed rise to the terminal speed $v_t$.</p>
+  <div id="pk-viscosity"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('viscosity-board', {
-      boundingbox: [-1, 7, 7, -1],
-      axis: false,
-      showNavigation: false,
-      showCopyright: false
-    });
+  (function () {
+    const G = 9.8;
+    const k = PhysKit.mount('pk-viscosity', { x: [-6.2, 6.2], y: [-3, 3] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
 
-    let eta = 0.50;
-    let r_mm = 3.0;
-    const rho1 = 7800; // steel
-    const rho2 = 1260; // glycerol
-    const g = 9.8;
-
-    function calcVt() {
-      let r_m = r_mm * 1e-3;
-      return (2 * g * r_m * r_m * (rho1 - rho2)) / (9 * eta);
+    k.row();
+    const scene = k.choice(['Layers of oil', 'Ball viscometer', 'Raindrop in air'], 1, () => { show(); restart(); });
+    const rows = [];
+    rows.push(k.row());
+    const fS = k.slider({ label: 'F', unit: 'N', min: 5, max: 100, step: 1, value: 50, digits: 0 });
+    const dS = k.slider({ label: 'Δy (oil)', unit: 'mm', min: 0.1, max: 0.5, step: 0.01, value: 0.25 });
+    k.button('Example 3.9', () => { fS.value = 50; dS.value = 0.25; });
+    rows.push(k.row());
+    const LIQ = [
+      { name: 'glycerine', eta: 1.49, rho: 1260, col: '#fde68a' },
+      { name: 'castor oil', eta: 0.99, rho: 960, col: '#fef08a' },
+      { name: 'engine oil', eta: 0.25, rho: 880, col: '#fcd34d' }
+    ];
+    const liq = k.choice(LIQ.map(l => l.name), 0, () => restart());
+    const rS = k.slider({ label: 'r (ball)', unit: 'mm', min: 0.5, max: 3, step: 0.1, value: 2 });
+    k.button('↓ Drop the ball', () => restart(), { primary: true });
+    rows.push(k.row());
+    const rdS = k.slider({ label: 'r (drop)', unit: 'mm', min: 0.1, max: 0.4, step: 0.001, value: 0.273, digits: 3 });
+    k.button('Example 3.10 (r = 0.273 mm)', () => { rdS.value = 0.273; restart(); });
+    k.button('↓ Release the drop', () => restart(), { primary: true });
+    k.row();
+    function show() {
+      rows.forEach((r, i) => { r.style.display = i === scene.value ? '' : 'none'; });
+      if (graph) graph.canvas.parentElement.style.display = scene.value === 0 ? 'none' : '';
     }
+    let graph = null;
+    rS.on(() => restart()); rdS.on(() => restart());
 
-    // Graduated cylinder representation
-    board.create('polygon', [[1, 0.5], [3, 0.5], [3, 6], [1, 6]], {
-      fillColor: '#38bdf8',
-      fillOpacity: 0.25,
-      strokeColor: '#94a3b8',
-      strokeWidth: 2,
-      vertices: { visible: false }
-    });
+    // Example 3.9 values: plate area 2.5 × 10⁻⁴ m², η of the oil in that example
+    const PLATE_A = 2.5e-4, ETA_PLATE = 1667;
 
-    // Sphere in cylinder
-    let sphere = board.create('circle', [[2, 3.5], function() { return 0.15 + (r_mm / 5) * 0.2; }], {
-      fillColor: '#f59e0b',
-      fillOpacity: 0.9,
-      strokeColor: '#b45309',
-      strokeWidth: 2
-    });
-
-    // Free body force arrows
-    // Weight (downward)
-    board.create('arrow', [[2, 3.5], [2, 1.8]], { strokeColor: '#ef4444', strokeWidth: 3 });
-    board.create('text', [2.2, 2.0, 'W (Weight)'], { color: '#ef4444', fontSize: 11 });
-
-    // Buoyancy + Drag (upward)
-    board.create('arrow', [[1.8, 3.5], [1.8, 4.4]], { strokeColor: '#38bdf8', strokeWidth: 2.5 });
-    board.create('text', [0.8, 4.2, 'R (Upthrust)'], { color: '#38bdf8', fontSize: 11 });
-
-    board.create('arrow', [[2.2, 3.5], [2.2, 5.0]], { strokeColor: '#4ade80', strokeWidth: 2.5 });
-    board.create('text', [2.4, 4.8, 'F (Stokes Drag)'], { color: '#4ade80', fontSize: 11 });
-
-    // Graph panel on the right: v(t) curve
-    board.create('segment', [[4, 1], [6.5, 1]], { strokeColor: '#cbd5e1', strokeWidth: 1.5 });
-    board.create('segment', [[4, 1], [4, 5.5]], { strokeColor: '#cbd5e1', strokeWidth: 1.5 });
-    board.create('text', [6.2, 0.6, 'Time t'], { color: '#cbd5e1', fontSize: 11 });
-    board.create('text', [3.3, 5.2, 'v(t)'], { color: '#cbd5e1', fontSize: 11 });
-
-    let vCurve = board.create('curve', [
-      function(t) { return 4 + t; },
-      function(t) {
-        let vt = calcVt();
-        let k = (6 * Math.PI * eta * (r_mm * 1e-3)) / ( (4/3) * Math.PI * Math.pow(r_mm * 1e-3, 3) * rho1 );
-        let norm = Math.min(vt, 1.5);
-        return 1 + (norm * 2.5) * (1 - Math.exp(-k * t * 0.05));
-      },
-      0, 2.5
-    ], { strokeColor: '#fb923c', strokeWidth: 2.5 });
-
-    function update() {
-      let vt = calcVt();
-      document.getElementById('eta-val').textContent = eta.toFixed(2) + ' Pa·s';
-      document.getElementById('radius-val').textContent = r_mm.toFixed(1) + ' mm';
-      document.getElementById('vt-stat').textContent = vt.toFixed(2) + ' m/s';
-      board.update();
+    // ---------- Falling sphere: m dv/dt = W − U − 6πηrv ----------
+    // Dividing by m: dv/dt = g(1 − ρ₂/ρ₁) − v/τ, with τ = 2r²ρ₁/(9η)
+    function sphere() {
+      if (scene.value === 1) { const L = LIQ[liq.value]; return { r: rS.value / 1000, rho1: 7800, rho2: L.rho, eta: L.eta, H: 0.4 }; }
+      return { r: rdS.value / 1000, rho1: 1000, rho2: 1.21, eta: 1.8e-5, H: 25 };
     }
+    const vTerm = s => 2 * G * s.r * s.r * (s.rho1 - s.rho2) / (9 * s.eta);
+    let y = 0, v = 0, t = 0, tA = null, tB = null;
+    const hist = [];
+    function restart() { y = 0; v = 0; t = 0; tA = tB = null; hist.length = 0; shift = 0; }
+    let shift = 0;   // oil layers' animation offset
 
-    document.getElementById('eta-slider').addEventListener('input', function() {
-      eta = parseFloat(this.value);
-      update();
+    k.loop(dt => {
+      shift += dt;
+      if (scene.value === 0) return;
+      const s = sphere(), tau = 2 * s.r * s.r * s.rho1 / (9 * s.eta), a = G * (1 - s.rho2 / s.rho1);
+      const n = 20, h = dt / n;
+      for (let i = 0; i < n; i++) {                 // small steps; implicit so it never blows up
+        if (y >= s.H) { v = 0; break; }
+        v = (v + a * h) / (1 + h / tau);
+        y += v * h; t += h;
+        if (scene.value === 1) {
+          if (tA === null && y >= 0.1) tA = t;
+          if (tB === null && y >= 0.3) tB = t;
+        }
+      }
+      if (y < s.H) hist.push([t, v]);
     });
 
-    document.getElementById('radius-slider').addEventListener('input', function() {
-      r_mm = parseFloat(this.value);
-      update();
-    });
+    k.draw = g => {
+      const sc = scene.value;
+      if (sc === 0) {
+        // oil film between a fixed bottom plate and a moving top plate (thickness drawn 3 units)
+        const vTop = fS.value * dS.value / 1000 / (ETA_PLATE * PLATE_A);   // m/s
+        g.rect(-5.5, -2.0, 11, 0.4, { fill: '#94a3b8', color: C.ink, width: 2 });
+        g.text([0, -2.35], 'fixed plate (v = 0)', { size: 12, color: C.muted });
+        g.rect(-5.5, -1.6, 11, 3.0, { fill: '#fef3c7', color: 'none' });
+        const LAYERS = 6;
+        for (let i = 0; i < LAYERS; i++) {
+          const yy = -1.6 + 3.0 * (i + 0.5) / LAYERS, f = (i + 0.5) / LAYERS;
+          g.line([-5.5, -1.6 + 3.0 * i / LAYERS], [5.5, -1.6 + 3.0 * i / LAYERS], { color: '#fcd34d', width: 1 });
+          for (let j = 0; j < 9; j++) {
+            const x = -5.5 + ((j * 1.25 + shift * f * 1.6) % 11.25);
+            g.dot([x, yy], 3, '#b45309', { alpha: 0.7 });
+          }
+          g.arrow([-5.3, yy], [f * 2.2, 0], { color: C.vel, width: 2, head: 7 });
+        }
+        const px = -1.5 + ((shift * 1.6) % 3);
+        g.rect(-3.6 + px, 1.4, 4.2, 0.45, { fill: '#64748b', color: C.ink, width: 2 });
+        g.arrow([0.6 + px, 1.62], [1.4, 0], { color: C.force, width: 3, label: 'F', side: [0, 1] });
+        g.text([-1.5 + px, 2.15], `moving plate, v = ${num(vTop * 100, 1)} cm/s`, { size: 13, bold: true });
+        g.text([-3.6, -0.2], 'speed grows', { size: 12, color: C.vel, align: 'left' });
+        g.text([-3.6, -0.55], 'steadily upward', { size: 12, color: C.vel, align: 'left' });
+        g.text([5.4, -1.25], `Δy = ${num(dS.value, 2)} mm (drawn thick)`, { align: 'right', size: 12, color: C.muted });
+        return;
+      }
+      const s = sphere(), vt = vTerm(s);
+      const TOP = 2.6, BOT = -2.6, X = -3;
+      const yToU = yy => TOP - (TOP - BOT) * yy / s.H;
+      // column
+      if (sc === 1) {
+        const L = LIQ[liq.value];
+        g.rect(X - 1.0, BOT, 2.0, TOP - BOT, { fill: L.col, color: C.ink, width: 2, fillAlpha: 0.8 });
+        for (const [m, name] of [[0.1, 'A'], [0.3, 'B']]) {
+          g.line([X - 1.2, yToU(m)], [X + 1.2, yToU(m)], { color: C.force, width: 1.5, dash: true });
+          g.text([X - 1.4, yToU(m)], name, { color: C.force, bold: true, size: 15, align: 'right' });
+        }
+        g.text([X, BOT - 0.25], `${L.name}, 40 cm tall`, { size: 12, color: C.muted });
+      } else {
+        g.rect(X - 1.0, BOT, 2.0, TOP - BOT, { fill: '#eff6ff', color: '#cbd5e1', width: 1 });
+        for (let m = 0; m <= 25; m += 5) g.text([X + 1.2, yToU(m)], m + ' m', { size: 11, color: C.muted, align: 'left' });
+        g.text([X, BOT - 0.25], 'air, 25 m of fall', { size: 12, color: C.muted });
+      }
+      const P = [X, Math.max(BOT + 0.2, yToU(y))];
+      g.dot(P, sc === 1 ? 4 + rS.value * 2.5 : 7, sc === 1 ? '#475569' : C.fluid, { stroke: C.ink, width: 1.5 });
+      // forces on the sphere (W drawn 1.8 units long)
+      const W = s.rho1, U = s.rho2, Fd = (s.rho1 - s.rho2) * v / vt;   // all in proportion to weight
+      const K = 1.8 / W;
+      if (y >= s.H) { g.text([X, P[1] + 0.5], 'reached the bottom', { size: 13, bold: true, color: C.muted, bg: true }); }
+      else {
+      g.arrow([X + 0.35, P[1]], [0, -W * K], { color: C.ink, label: 'W', side: [1, 0] });
+      if (U * K > 0.05) g.arrow([X - 0.35, P[1]], [0, U * K], { color: C.acc, label: 'U', side: [-1, 0] });
+      if (Fd * K > 0.05) g.arrow([X - 0.35, P[1] + U * K], [0, Fd * K], { color: C.force, label: 'F_{drag}', side: [-1, 0] });
+      }
 
-    update();
+      // live numbers on the right
+      const XR = -0.6;
+      g.text([XR, 2.5], `v = ${num(v * (sc === 1 ? 100 : 1), 2)} ${sc === 1 ? 'cm/s' : 'm/s'}`, { align: 'left', size: 17, bold: true, color: C.vel });
+      g.text([XR, 1.9], `terminal speed v_t = ${num(vt * (sc === 1 ? 100 : 1), 2)} ${sc === 1 ? 'cm/s' : 'm/s'}`, { align: 'left', size: 14 });
+      g.text([XR, 1.35], `drag = ${num(Math.min(100, v / vt * 100), 0)} % of (W − U)`, { align: 'left', size: 14, color: C.force });
+      if (sc === 1) {
+        g.text([XR, 0.6], tA === null ? 'timer: waits for mark A' : tB === null ? `timer running: ${num(t - tA, 2)} s` : `A → B (20 cm) took ${num(tB - tA, 2)} s`,
+          { align: 'left', size: 15, bold: true, color: C.force });
+        if (tB !== null) {
+          const vm = 0.2 / (tB - tA), eta = 2 * G * s.r * s.r * (s.rho1 - s.rho2) / (9 * vm);
+          g.text([XR, 0.05], `measured: v = 0.20 / ${num(tB - tA, 2)} = ${num(vm * 100, 2)} cm/s`, { align: 'left', size: 13 });
+          g.text([XR, -0.45], `η = 2gr^2(ρ_1 − ρ_2) / 9v = ${num(eta, 2)} Pa s`, { align: 'left', size: 14, bold: true, color: C.ink });
+        }
+      }
+    };
+
+    // v–t graph
+    graph = k.addView({ x: [-0.1, 1], y: [-0.1, 1], equal: false, height: 160, title: 'Speed–time graph: rises, then levels off at v_t' });
+    graph.draw = g => {
+      const s = sphere(), vt = vTerm(s), unit = scene.value === 1 ? 100 : 1;
+      const tEnd = Math.max(scene.value === 1 ? 2 : 4, t * 1.1);
+      graph.setRange([-tEnd * 0.06, tEnd], [-vt * unit * 0.15, vt * unit * 1.25]);
+      g.axes({ xstep: tEnd > 8 ? 2 : (tEnd > 3 ? 1 : 0.5), ystep: vt * unit > 5 ? 2 : (vt * unit > 2 ? 1 : 0.5), xlabel: 't (s)', ylabel: scene.value === 1 ? 'v (cm/s)' : 'v (m/s)' });
+      g.line([0, vt * unit], [tEnd, vt * unit], { color: C.force, width: 1.5, dash: true });
+      g.text([tEnd, vt * unit], 'v_t', { color: C.force, align: 'right', dy: 10, size: 13, bold: true });
+      g.path(hist.map(([tt, vv]) => [tt, vv * unit]), { color: C.vel, width: 3 });
+    };
+
+    k.update = () => {
+      const sc = scene.value;
+      if (sc === 0) {
+        const grad = 1, vTop = fS.value * dS.value / 1000 / (ETA_PLATE * PLATE_A);
+        k.readout([
+          `Shear stress τ = F/A = ${fS.value} / 2.5×10<sup>−4</sup> = <b>${num(fS.value / PLATE_A / 1e5, 2)} × 10<sup>5</sup> Pa</b>`,
+          `Speed gradient Δv/Δy = τ/η → plate speed v = τΔy/η = <b>${num(vTop * 100, 2)} cm/s</b> (η = 1.67 × 10<sup>3</sup> Pa s, as in Example 3.9)`,
+          'Double the force → double the speed; a thicker film (bigger Δy) also lets the plate move faster.'
+        ]);
+        return;
+      }
+      const s = sphere(), vt = vTerm(s);
+      const lines = [
+        `v<sub>t</sub> = 2gr<sup>2</sup>(${rich('ρ_1')} − ${rich('ρ_2')}) / 9η = 2 × 9.8 × (${num(s.r * 1000, 3)}×10<sup>−3</sup>)<sup>2</sup> × (${s.rho1} − ${s.rho2}) / (9 × ${sc === 1 ? s.eta : '1.8×10<sup>−5</sup>'}) = <b>${num(vt * (sc === 1 ? 100 : 1), 2)} ${sc === 1 ? 'cm/s' : 'm/s'}</b>`,
+        'At first only W − U acts, so the sphere speeds up. Drag 6πηrv grows with v until F<sub>drag</sub> + U = W; then the net force is zero and v stays at v<sub>t</sub>.'
+      ];
+      if (sc === 1) lines.push(`Twice the radius → 4× the terminal speed (v<sub>t</sub> ∝ r<sup>2</sup>). A runnier liquid (smaller η) → faster fall.`);
+      k.readout(lines);
+    };
+    show();
   })();
   </script>
 </div>

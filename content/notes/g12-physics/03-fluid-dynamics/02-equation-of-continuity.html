@@ -63,99 +63,98 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Continuity in a Constricted Pipe</span>
-  <p class="demo-instruction">Drag the slider to adjust the constriction ratio $r_2 / r_1$. Observe how the fluid velocity vector (orange arrow) lengthens in the narrow neck to maintain a constant volume flow rate $Q = A_1 v_1 = A_2 v_2$.</p>
-
-  <div id="continuity-board" style="width: 100%; height: 360px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Constriction Radius $r_2$: 
-      <input id="r2-slider" type="range" min="0.5" max="2.0" step="0.1" value="1.0" style="vertical-align: middle;">
-      <span id="r2-val" style="color: #38bdf8; font-weight: 700;">1.0 m</span>
-    </label>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      $v_1 = 2.0\text{ m/s}$ &bull; $v_2 = $ <span id="v2-val" style="color: #fb923c; font-weight: 700;">8.0 m/s</span>
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; Same Volume Every Second: $A_1v_1 = A_2v_2$</span>
+  <p class="demo-question">Water cannot pile up inside a full pipe. So when the pipe gets narrower, what must happen to the water's speed?</p>
+  <p class="demo-instruction">Each coloured stripe holds the <b>same volume</b> of water. In the narrow part the stripes get longer, so the same volume passes every second only if the water moves faster. Change the diameters and the flow rate, or load Example 3.1 (a garden hose with a nozzle).</p>
+  <div id="pk-continuity"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('continuity-board', {
-      boundingbox: [-1, 3.5, 9, -3.5],
-      axis: false,
-      showNavigation: false,
-      showCopyright: false
+  (function () {
+    const k = PhysKit.mount('pk-continuity', { x: [-6.2, 6.2], y: [-2.4, 2.4] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+
+    k.row();
+    const d1S = k.slider({ label: 'd_1', unit: 'cm', min: 1, max: 3, step: 0.05, value: 2.5 });
+    const d2S = k.slider({ label: 'd_2', unit: 'cm', min: 0.5, max: 3, step: 0.05, value: 1.2 });
+    const qS = k.slider({ label: 'V/t', unit: 'L/min', min: 5, max: 40, step: 1, value: 30, digits: 0 });
+    k.row();
+    k.button('Example 3.1: hose + nozzle (0.5 cm²)', () => { d1S.value = 2.5; d2S.value = 0.8; qS.value = 30; });
+
+    // Pipe shape: wide for x < −1, narrow for x > 0.6, smooth taper between.
+    const HSCALE = 0.55;   // 1 cm of diameter is drawn 0.55 units tall (half-height = d/2 · 2·0.55)
+    const half = x => {
+      const h1 = d1S.value * HSCALE, h2 = d2S.value * HSCALE;
+      if (x <= -1) return h1; if (x >= 0.6) return h2;
+      const s = (x + 1) / 1.6; return h1 + (h2 - h1) * (1 - Math.cos(Math.PI * s)) / 2;
+    };
+    // Real speed (m/s) at x: v = (V/t) / A, with A = π d²/4
+    const Q = () => qS.value / 1000 / 60;                     // m³/s
+    const speed = x => { const d = half(x) / HSCALE / 100; return Q() / (Math.PI * d * d / 4); };
+    const VIS = 0.55;                                         // 1 m/s drawn as 0.55 units/s
+
+    // Volume coordinate: how much water lies to the left of x (per unit, ∝ ∫ d² dx).
+    // Stripe edges move so that the volume between two edges stays the same.
+    const N = 400, xs = [], cum = [];
+    function buildTable() {
+      cum.length = xs.length = 0; let c = 0;
+      for (let i = 0; i <= N; i++) {
+        const x = -6.2 + 12.4 * i / N; xs.push(x);
+        if (i) { const h = half(x - 6.2 / N); c += h * h * (12.4 / N); }
+        cum.push(c);
+      }
+    }
+    const xAt = c => {                                        // invert the table
+      if (c <= 0) return xs[0];
+      for (let i = 1; i <= N; i++) if (cum[i] >= c) return xs[i - 1] + (xs[i] - xs[i - 1]) * (c - cum[i - 1]) / (cum[i] - cum[i - 1]);
+      return xs[N];
+    };
+
+    let flowed = 0;   // how much volume coordinate has moved past the left end
+    const parts = [];
+    for (let i = 0; i < 80; i++) parts.push({ x: -6.2 + 12.4 * Math.random(), s: Math.random() * 1.8 - 0.9 });
+    k.loop(dt => {
+      // the volume coordinate moves at (half-height² × drawn speed), the same everywhere
+      const h1 = half(-6), v1 = speed(-6) * VIS;
+      flowed += h1 * h1 * v1 * dt;
+      for (const p of parts) { p.x += speed(p.x) * VIS * dt; if (p.x > 6.2) p.x -= 12.4; }
     });
 
-    let r1 = 2.0;
-    let r2 = 1.0;
-    let v1 = 2.0;
+    k.draw = g => {
+      buildTable();
+      const top = [], bot = [];
+      for (let i = 0; i <= 124; i++) { const x = -6.2 + i * 0.1; top.push([x, half(x)]); bot.push([x, -half(x)]); }
+      const stripe = 0.9;                                     // volume per stripe (drawing units)
+      const total = cum[N];
+      const start = -((flowed % (2 * stripe)) + 2 * stripe);
+      for (let c = start; c < total; c += stripe) {
+        const xa = xAt(c), xb = xAt(c + stripe);
+        if (xb <= xa) continue;
+        const pts = [];
+        for (let x = xa; x <= xb + 1e-6; x += Math.max(0.02, (xb - xa) / 20)) pts.push([x, half(x)]);
+        for (let x = xb; x >= xa - 1e-6; x -= Math.max(0.02, (xb - xa) / 20)) pts.push([x, -half(x)]);
+        const even = Math.round((c - start) / stripe) % 2 === 0;
+        g.path(pts, { close: true, fill: even ? '#7dd3fc' : '#e0f2fe', color: 'none' });
+      }
+      g.path(top, { color: C.ink, width: 3 }); g.path(bot, { color: C.ink, width: 3 });
+      for (const p of parts) g.dot([p.x, p.s * half(p.x)], 2.2, '#0369a1', { alpha: 0.7 });
+      // Labels for each section
+      for (const [x, name] of [[-3.6, '1'], [3.4, '2']]) {
+        const v = speed(x);
+        g.arrow([x - 0.6, 0], [Math.min(3.0, 0.25 + v * 0.3), 0], { color: C.vel, width: 3 });
+        g.text([x, half(x) + 0.35], `d_${name} = ${num(half(x) / HSCALE, 2)} cm   v_${name} = ${num(v, 2)} m/s`, { size: 13, bold: true, color: C.vel });
+      }
+      g.text([0, -2.2], 'each stripe = the same volume of water', { size: 12, color: C.muted });
+    };
 
-    // Draw pipe boundaries
-    let topWall = board.create('curve', [
-      function(t) { return t; },
-      function(t) {
-        if (t <= 2) return r1;
-        if (t >= 5) return r2;
-        let s = (t - 2) / 3;
-        return r1 + (r2 - r1) * (3 * s * s - 2 * s * s * s);
-      },
-      0, 8
-    ], { strokeColor: '#94a3b8', strokeWidth: 3 });
-
-    let botWall = board.create('curve', [
-      function(t) { return t; },
-      function(t) {
-        if (t <= 2) return -r1;
-        if (t >= 5) return -r2;
-        let s = (t - 2) / 3;
-        return -r1 - (r2 - r1) * (3 * s * s - 2 * s * s * s);
-      },
-      0, 8
-    ], { strokeColor: '#94a3b8', strokeWidth: 3 });
-
-    // Streamline in center
-    let centerLine = board.create('segment', [[0, 0], [8, 0]], {
-      strokeColor: '#38bdf8',
-      strokeWidth: 1.5,
-      dash: 2
-    });
-
-    // Velocity arrow 1 at x = 1
-    let arr1 = board.create('arrow', [[1, 0], [function() { return 1 + v1 * 0.4; }, 0]], {
-      strokeColor: '#38bdf8',
-      strokeWidth: 3
-    });
-    board.create('text', [1, 0.4, function() { return 'v₁ = ' + v1.toFixed(1) + ' m/s'; }], {
-      color: '#38bdf8',
-      fontSize: 13
-    });
-
-    // Velocity arrow 2 at x = 6
-    let arr2 = board.create('arrow', [[6, 0], [function() {
-      let v2 = v1 * (r1 * r1) / (r2 * r2);
-      return 6 + Math.min(v2 * 0.15, 2.5);
-    }, 0]], {
-      strokeColor: '#fb923c',
-      strokeWidth: 3
-    });
-    let txt2 = board.create('text', [6, 0.4, function() {
-      let v2 = v1 * (r1 * r1) / (r2 * r2);
-      return 'v₂ = ' + v2.toFixed(1) + ' m/s';
-    }], {
-      color: '#fb923c',
-      fontSize: 13
-    });
-
-    let slider = document.getElementById('r2-slider');
-    slider.addEventListener('input', function() {
-      r2 = parseFloat(this.value);
-      document.getElementById('r2-val').textContent = r2.toFixed(1) + ' m';
-      let v2 = v1 * (r1 * r1) / (r2 * r2);
-      document.getElementById('v2-val').textContent = v2.toFixed(1) + ' m/s';
-      board.update();
-    });
+    k.update = () => {
+      const d1 = d1S.value, d2 = d2S.value, A1 = Math.PI * d1 * d1 / 4, A2 = Math.PI * d2 * d2 / 4;
+      const q = qS.value * 1000 / 60;   // cm³/s
+      k.readout([
+        `Volume per second V/t = ${qS.value} L/min = ${num(q, 1)} cm<sup>3</sup>/s (the same in both parts)`,
+        `${rich('A_1')} = π(${num(d1, 2)})<sup>2</sup>/4 = ${num(A1, 2)} cm<sup>2</sup> → ${rich('v_1')} = (V/t)/${rich('A_1')} = <b>${num(q / A1 / 100, 2)} m/s</b>; ` +
+        `${rich('A_2')} = ${num(A2, 2)} cm<sup>2</sup> → ${rich('v_2')} = <b>${num(q / A2 / 100, 2)} m/s</b>`,
+        `${rich('v_2')}/${rich('v_1')} = ${rich('A_1')}/${rich('A_2')} = (${rich('d_1')}/${rich('d_2')})<sup>2</sup> = <b>${num((d1 / d2) ** 2, 2)}</b>`
+      ]);
+    };
   })();
   </script>
 </div>
