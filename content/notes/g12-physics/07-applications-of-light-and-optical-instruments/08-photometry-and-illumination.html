@@ -1,0 +1,189 @@
+<!-- tags: Applications of Light and Optical Instruments, G12 Physics Myanmar -->
+<!-- Grade 12 Physics textbook, Chapter 7, section 7.8 & Exercises (pages 117–122) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Applications of Light and Optical Instruments">Photometry and Illumination</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Measuring Visible Light Energy</span>
+  <p><strong>Photometry</strong> is the branch of optics that measures the power of electromagnetic radiation in the visible spectrum ($380\mathrm{nm}\text{ to }750\mathrm{nm}$) weighted according to the human eye's spectral sensitivity (which peaks at $555\mathrm{nm}$ in bright daylight):</p>
+  <ul>
+    <li><strong>The Four Fundamental Photometric Quantities:</strong>
+      <ul>
+        <li><strong>1. Solid Angle ($\omega$ or $\Omega$):</strong> The three-dimensional angular cone subtended at the center of a sphere of radius $r$ by a surface area $A$ on the sphere:
+          $$\omega = \frac{A}{r^2} \quad (\text{SI unit: steradian, }\mathrm{sr})$$
+          The total solid angle enclosing any point in three-dimensional space is $\omega_{\text{total}} = \frac{4\pi r^2}{r^2} = 4\pi\mathrm{sr} \approx 12.57\mathrm{sr}$.</li>
+        <li><strong>2. Luminous Flux ($\Phi$ or $F$):</strong> The total rate of luminous energy emitted in all directions by a light source as perceived by the eye:
+          $$\text{SI unit: lumen }(\mathrm{lm})$$
+          For a uniform isotropic point source of luminous intensity $I$: $\Phi = 4\pi I$.</li>
+        <li><strong>3. Luminous Intensity ($I$):</strong> The luminous flux radiated by a point source per unit solid angle in a specified direction:
+          $$I = \frac{\Delta \Phi}{\Delta \omega} \quad (\text{SI unit: candela, }\mathrm{cd} = \mathrm{lm\,sr^{-1}})$$
+        </li>
+        <li><strong>4. Illuminance ($E$ or $E_v$):</strong> The areal density of luminous flux incident upon a receiving surface:
+          $$E = \frac{\Delta \Phi}{\Delta A} \quad (\text{SI unit: lux, }\mathrm{lx} = \mathrm{lm\,m^{-2}})$$
+        </li>
+      </ul>
+    </li>
+    <li><strong>Laws of Illumination:</strong>
+      <ul>
+        <li><strong>Inverse Square Law:</strong> Illuminance on a normal surface decreases inversely with the square of the distance from the point source: $E = \frac{I}{r^2}$.</li>
+        <li><strong>Lambert's Cosine Law:</strong> If light strikes a surface whose normal is inclined at an angle $\theta$ to the incident ray, the illuminance is reduced by $\cos\theta$:
+          $$E = \frac{I \cos\theta}{r^2}$$
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Formulas &mdash; Photometry Equations</span>
+  <div class="formula-main">
+    $$I = \frac{\Phi}{\omega} \qquad\qquad \Phi = 4\pi I \qquad\qquad E = \frac{I \cos\theta}{r^2} \qquad\qquad \text{Efficacy} = \frac{\Phi}{P_{\text{electric}}}\ (\mathrm{lm\,W^{-1}})$$
+  </div>
+  <ul class="symbols">
+    <li>$\Phi$ = total luminous flux ($\mathrm{lm}$)</li>
+    <li>$I$ = luminous intensity in candelas ($\mathrm{cd}$)</li>
+    <li>$\omega$ = solid angle ($\mathrm{sr}$)</li>
+    <li>$E$ = surface illuminance ($\mathrm{lx} = \mathrm{lm\,m^{-2}}$)</li>
+    <li>$r$ = distance from source to surface point ($\mathrm{m}$)</li>
+    <li>$\theta$ = angle between incident light ray and surface normal vector</li>
+    <li>Luminous efficacy = ratio of luminous flux output to electric power consumed ($\mathrm{lm\,W^{-1}}$)</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Visualization &mdash; Lambert's Cosine Law and Distance Attenuation</span>
+  <p class="demo-instruction">Move the test surface point along the floor or adjust mounting height $h$. Observe how distance $r$ and inclination angle $\theta$ diminish the surface illuminance in lux.</p>
+
+  <div id="photometry-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
+
+  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
+    <label style="color: #cbd5e1; font-weight: 500;">
+      Mounting Height $h$: 
+      <input id="h-slider" type="range" min="2" max="6" step="0.5" value="4" style="vertical-align: middle;">
+      <span id="h-val" style="color: #38bdf8; font-weight: 700;">4.0 m</span>
+    </label>
+    <label style="color: #cbd5e1; font-weight: 500;">
+      Horizontal Distance $x$: 
+      <input id="x-slider" type="range" min="0" max="6" step="0.5" value="3" style="vertical-align: middle;">
+      <span id="x-val" style="color: #fb923c; font-weight: 700;">3.0 m</span>
+    </label>
+    <div style="color: #f8fafc; font-size: 0.9rem;">
+      Illuminance ($I = 200\text{ cd}$): <span id="e-stat" style="color: #4ade80; font-weight: 700;">6.40 lx</span>
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    let board = JXG.JSXGraph.initBoard('photometry-board', {
+      boundingbox: [-1, 7, 8, -1],
+      axis: true,
+      defaultAxes: {
+        x: { name: 'Floor Distance x (m)', withLabel: true, label: { position: 'rt', offset: [-15, -15], color: '#cbd5e1' } },
+        y: { name: 'Height y (m)', withLabel: true, label: { position: 'rt', offset: [-10, -10], color: '#cbd5e1' } }
+      },
+      showNavigation: false,
+      showCopyright: false
+    });
+
+    let h_val = 4.0;
+    let x_val = 3.0;
+    const I_source = 200;
+
+    // Floor line
+    board.create('segment', [[0, 0], [7.5, 0]], { strokeColor: '#cbd5e1', strokeWidth: 3 });
+
+    // Lamp point at (0, h)
+    let lamp = board.create('point', [0, function() { return h_val; }], {
+      name: 'Lamp (200 cd)', fillColor: '#facc15', strokeColor: '#fff', size: 6, fixed: true
+    });
+
+    // Floor target point at (x, 0)
+    let target = board.create('point', [function() { return x_val; }, 0], {
+      name: 'Point P', fillColor: '#4ade80', strokeColor: '#fff', size: 5, fixed: true
+    });
+
+    // Light ray from lamp to target
+    board.create('segment', [
+      [0, function() { return h_val; }],
+      [function() { return x_val; }, 0]
+    ], { strokeColor: '#facc15', strokeWidth: 2.5 });
+
+    // Normal line at target
+    board.create('segment', [
+      [function() { return x_val; }, 0],
+      [function() { return x_val; }, 2.0]
+    ], { strokeColor: '#38bdf8', strokeWidth: 1.5, dash: 2 });
+    board.create('text', [function() { return x_val + 0.2; }, 1.5, 'Normal'], { color: '#38bdf8', fontSize: 11 });
+
+    function update() {
+      document.getElementById('h-val').textContent = h_val.toFixed(1) + ' m';
+      document.getElementById('x-val').textContent = x_val.toFixed(1) + ' m';
+      let r = Math.sqrt(h_val * h_val + x_val * x_val);
+      let cosTheta = h_val / r;
+      let E = (I_source * cosTheta) / (r * r);
+      document.getElementById('e-stat').textContent = E.toFixed(2) + ' lx';
+      board.update();
+    }
+
+    document.getElementById('h-slider').addEventListener('input', function() {
+      h_val = parseFloat(this.value);
+      update();
+    });
+
+    document.getElementById('x-slider').addEventListener('input', function() {
+      x_val = parseFloat(this.value);
+      update();
+    });
+
+    update();
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Textbook Worked Examples &mdash; Luminous Flux and Illuminance</span>
+
+  <div class="example-item">
+    <p class="example-title"><strong>Example 7.7:</strong> A $10\text{ W}$ energy-efficient fluorescent tube emits light uniformly in all directions with a luminous intensity of $35\text{ cd}$.<br>
+    (i) Find the total luminous flux emitted by the lamp.<br>
+    (ii) Calculate the luminous efficacy of the lamp in lumens per watt.</p>
+    <p class="solution"><strong>Solution:</strong><br>
+      Given: Luminous intensity $I = 35\text{ cd}$, Electric power $P = 10\text{ W}$.<br><br>
+      (i) Total luminous flux radiated across all $4\pi\text{ steradians}$:
+      $$\Phi = 4\pi I = 4 \times 3.1416 \times 35\text{ cd} \approx 439.8\text{ lm} \approx 440\text{ lm}$$
+      (ii) Luminous efficacy:
+      $$\text{Efficacy} = \frac{\Phi}{P} = \frac{440\text{ lm}}{10\text{ W}} = 44\text{ lm\,W^{-1}}$$
+    </p>
+  </div>
+
+  <div class="example-item">
+    <p class="example-title"><strong>Example 7.8:</strong> A street lamp of luminous intensity $200\text{ cd}$ is mounted at a height of $4\text{ m}$ above the ground. Determine the illuminance at:<br>
+    (i) A point $A$ directly underneath the lamp on the ground.<br>
+    (ii) A point $B$ on the ground located $3\text{ m}$ horizontally away from point $A$.</p>
+    <p class="solution"><strong>Solution:</strong><br>
+      Given: $I = 200\text{ cd}$, $h = 4\text{ m}$.<br><br>
+      (i) At point $A$ directly beneath the lamp ($\theta = 0^\circ, \cos\theta = 1, r = h = 4\text{ m}$):
+      $$E_A = \frac{I \cos 0^\circ}{h^2} = \frac{200\text{ cd}}{(4\text{ m})^2} = \frac{200}{16} = 12.5\text{ lx}$$
+      (ii) At point $B$ ($3\text{ m}$ horizontal offset):<br>
+      Slant distance from lamp to point $B$:
+      $$r = \sqrt{h^2 + x^2} = \sqrt{4^2 + 3^2} = \sqrt{16 + 9} = \sqrt{25} = 5\text{ m}$$
+      Angle of incidence with the surface normal:
+      $$\cos\theta = \frac{h}{r} = \frac{4\text{ m}}{5\text{ m}} = 0.80$$
+      Applying Lambert's cosine law:
+      $$E_B = \frac{I \cos\theta}{r^2} = \frac{200\text{ cd} \times 0.80}{(5\text{ m})^2} = \frac{160}{25} = 6.4\text{ lx}$$
+    </p>
+  </div>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>Solid angle: $\omega = A / r^2$ in steradians ($\mathrm{sr}$); total sphere is $4\pi\mathrm{sr}$.</li>
+    <li>Luminous intensity $I = \Phi / \omega$ in candelas ($\mathrm{cd}$); isotropic source emits $\Phi = 4\pi I$.</li>
+    <li>Illuminance $E = \Phi / A$ in lux ($\mathrm{lx} = \mathrm{lm\,m^{-2}}$).</li>
+    <li>Lambert's cosine law: $E = \frac{I\cos\theta}{r^2}$.</li>
+  </ul>
+</div>
+
+</article>
