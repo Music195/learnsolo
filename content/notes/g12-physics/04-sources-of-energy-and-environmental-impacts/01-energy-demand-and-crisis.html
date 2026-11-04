@@ -37,70 +37,71 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Global Energy Supply vs. Demand Projection</span>
-  <p class="demo-instruction">Adjust the annual demand growth rate slider below. Observe how quickly rising demand overtakes dwindling conventional fossil fuel supplies, accelerating the onset of the global energy deficit unless compensated by renewable deployment.</p>
-
-  <div id="demand-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Annual Demand Growth: 
-      <input id="growth-slider" type="range" min="1.0" max="4.0" step="0.5" value="2.5" style="vertical-align: middle;">
-      <span id="growth-val" style="color: #38bdf8; font-weight: 700;">2.5%</span>
-    </label>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      Fossil Depletion Horizon: <span id="depletion-stat" style="color: #f87171; font-weight: 700;">~2065</span>
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; How Long Will the Fuel Last?</span>
+  <p class="demo-question">If the world has enough fossil fuel for 300 years at today's rate of use, does it really last 300 years?</p>
+  <p class="demo-instruction">Set the reserve (in "years of today's use") and how fast use grows each year, then press Play. The tank drains while the yearly use (the curve) keeps growing; the shaded area under the curve is the fuel used so far. Even a small growth rate makes the fuel run out much sooner.</p>
+  <div id="pk-reserve"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('demand-board', {
-      boundingbox: [-5, 120, 55, -10],
-      axis: true,
-      defaultAxes: {
-        x: { name: 'Years from Today', withLabel: true, label: { position: 'rt', offset: [-20, -15], color: '#cbd5e1' } },
-        y: { name: 'Energy (PWh/yr)', withLabel: true, label: { position: 'rt', offset: [-10, -10], color: '#cbd5e1' } }
-      },
-      showNavigation: false,
-      showCopyright: false
+  (function () {
+    const k = PhysKit.mount('pk-reserve', { x: [-6.2, 6.2], y: [-2.6, 2.6], play: false });
+    const C = PhysKit.C, num = k.num;
+    k.row();
+    const RS = k.slider({ label: 'reserve', unit: 'years of today’s use', min: 50, max: 500, step: 10, value: 300, digits: 0 });
+    const gS = k.slider({ label: 'growth of use', unit: '% per year', min: 0, max: 5, step: 0.1, value: 2, digits: 1 });
+    k.button('↺ Back to today', () => { yr = 0; k.setPlaying(false); });
+
+    // Use in year t (in units of today's use): (1 + g)^t. Fuel used after t years:
+    // ∫ e^{rt} dt = (e^{rt} − 1)/r with r = ln(1 + g). It runs out when that equals the reserve.
+    const r = () => Math.log(1 + gS.value / 100);
+    const used = t => (r() < 1e-9 ? t : (Math.exp(r() * t) - 1) / r());
+    const life = () => (r() < 1e-9 ? RS.value : Math.log(1 + r() * RS.value) / r());
+    let yr = 0;
+    [RS, gS].forEach(s => s.on(() => { yr = Math.min(yr, life()); }));
+    k.loop(dt => {
+      yr = Math.min(life(), yr + dt * Math.max(12, life() / 8));   // the whole story takes about 8 s
+      if (yr >= life()) k.setPlaying(false);
     });
 
-    let rate = 0.025; // 2.5%
+    k.draw = g => {
+      const left = Math.max(0, RS.value - used(yr)), frac = left / RS.value;
+      // Tank
+      g.rect(-5.8, -2.0, 1.8, 3.8, { fill: '#fff', color: C.ink, width: 2.5, radius: 6 });
+      g.rect(-5.7, -1.9, 1.6, 3.6 * frac, { fill: '#44403c', color: 'none' });
+      g.text([-4.9, 2.2], 'fuel left', { size: 13, bold: true });
+      g.text([-4.9, -2.35], `${num(frac * 100, 0)} %`, { size: 15, bold: true, color: frac < 0.15 ? C.bad : C.ink });
+      // Year counter
+      g.text([-3.4, 2.2], `year ${2025 + Math.round(yr)}`, { align: 'left', size: 18, bold: true });
+      g.text([-3.4, 1.65], `use this year = ${num(Math.exp(r() * yr), 2)} × today's`, { align: 'left', size: 14, color: C.energy, bold: true });
+      if (yr >= life() - 1e-6) g.text([-3.4, 1.1], `Empty after ${num(life(), 0)} years!`, { align: 'left', size: 16, bold: true, color: C.bad });
+    };
 
-    // Demand curve
-    let demandCurve = board.create('curve', [
-      function(t) { return t; },
-      function(t) { return 40 * Math.exp(rate * t); },
-      0, 50
-    ], { strokeColor: '#f87171', strokeWidth: 3, name: 'Demand' });
+    // Graph of yearly use against time; shaded area = fuel used
+    const graph = k.addView({ x: [0, 1], y: [0, 1], equal: false, height: 190, title: 'Yearly use (× today’s) against years from now; shaded area = fuel used' });
+    graph.draw = g => {
+      const L = life(), tMax = Math.max(L, 50) * 1.08, yMax = Math.max(1.5, Math.exp(r() * L)) * 1.15;
+      graph.setRange([-tMax * 0.07, tMax], [-yMax * 0.12, yMax]);
+      const step = tMax > 300 ? 100 : tMax > 120 ? 50 : 20;
+      g.axes({ xstep: step, ystep: yMax > 12 ? 5 : yMax > 5 ? 2 : yMax > 2.5 ? 1 : 0.5, xlabel: 'years' });
+      const curve = [], area = [[0, 0]];
+      for (let i = 0; i <= 120; i++) { const t = L * i / 120; curve.push([t, Math.exp(r() * t)]); }
+      for (let i = 0; i <= 80; i++) { const t = yr * i / 80; area.push([t, Math.exp(r() * t)]); }
+      area.push([yr, 0]);
+      g.path(area, { close: true, fill: '#44403c', fillAlpha: 0.3, color: 'none' });
+      g.path(curve, { color: C.energy, width: 3 });
+      g.line([0, 1], [RS.value, 1], { color: C.muted, width: 1.5, dash: true });
+      g.text([tMax * 0.02, 1], 'no growth (1 × today)', { align: 'left', dy: -10, dx: 10, size: 12, color: C.muted });
+      g.line([L, 0], [L, Math.exp(r() * L)], { color: C.bad, width: 2, dash: true });
+      g.text([L, Math.exp(r() * L)], `runs out: ${num(L, 0)} yr`, { align: 'right', dx: -8, size: 13, bold: true, color: C.bad, bg: true });
+    };
 
-    // Fossil Fuel Supply (peaking and decaying: Hubbert bell curve)
-    let fossilCurve = board.create('curve', [
-      function(t) { return t; },
-      function(t) { return 50 * Math.exp(-Math.pow((t - 15) / 18, 2)); },
-      0, 50
-    ], { strokeColor: '#94a3b8', strokeWidth: 2.5, dash: 2 });
-
-    // Renewable Supply (expanding)
-    let renewCurve = board.create('curve', [
-      function(t) { return t; },
-      function(t) { return 10 + 1.2 * t + 0.03 * t * t; },
-      0, 50
-    ], { strokeColor: '#4ade80', strokeWidth: 3 });
-
-    board.create('text', [35, 95, 'Global Demand'], { color: '#f87171', fontSize: 12 });
-    board.create('text', [35, 20, 'Fossil Fuels'], { color: '#94a3b8', fontSize: 12 });
-    board.create('text', [35, 60, 'Renewables'], { color: '#4ade80', fontSize: 12 });
-
-    let slider = document.getElementById('growth-slider');
-    slider.addEventListener('input', function() {
-      rate = parseFloat(this.value) / 100;
-      document.getElementById('growth-val').textContent = this.value + '%';
-      let yearCross = Math.round(2026 + 25 / (parseFloat(this.value) / 2));
-      document.getElementById('depletion-stat').textContent = '~' + yearCross;
-      board.update();
-    });
+    k.update = () => {
+      const L = life();
+      k.readout([
+        `With no growth the reserve lasts <b>${RS.value} years</b>. With use growing ${num(gS.value, 1)} % a year it lasts only <b>${num(L, 0)} years</b>.`,
+        `Unit check (Example 4.1): 10<sup>17</sup> Btu per year = 10<sup>17</sup> × 1055 J / 3.15×10<sup>7</sup> s ≈ <b>3.35 × 10<sup>9</sup> kW</b> of continuous use.`,
+        'This is why saving energy and switching to renewable sources both matter: growth eats a fixed reserve surprisingly fast.'
+      ]);
+    };
   })();
   </script>
 </div>

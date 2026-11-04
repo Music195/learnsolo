@@ -66,82 +66,122 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; Cubic Wind Power Scaling</span>
-  <p class="demo-instruction">Use the sliders to adjust wind speed $v$ and rotor blade length $r$. Notice how doubling the wind speed results in an 8-fold spike in available aerodynamic power ($P \propto v^3$).</p>
-
-  <div id="wind-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Wind Speed $v$: 
-      <input id="ws-slider" type="range" min="5" max="25" step="1" value="12" style="vertical-align: middle;">
-      <span id="ws-val" style="color: #38bdf8; font-weight: 700;">12 m/s</span>
-    </label>
-    <label style="color: #cbd5e1; font-weight: 500;">
-      Blade Radius $r$: 
-      <input id="br-slider" type="range" min="10" max="50" step="5" value="25" style="vertical-align: middle;">
-      <span id="br-val" style="color: #fb923c; font-weight: 700;">25 m</span>
-    </label>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      Power Output: <span id="wp-stat" style="color: #4ade80; font-weight: 700;">2.21 MW</span>
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; Wind Power $\tfrac{1}{2}\rho A v^3$ and Solar Panels</span>
+  <p class="demo-question">If the wind blows twice as fast, does a turbine get twice the power? And why do solar panels face the Sun?</p>
+  <p class="demo-instruction"><b>Wind:</b> change the wind speed and blade length. In one second a cylinder of air of length $v$ passes through the swept circle; its mass is $\rho A v$ and its kinetic energy is $\tfrac{1}{2}(\rho A v)v^2$. <b>Solar:</b> move the Sun and tilt the panel; only the part of the sunlight that hits the panel square-on counts.</p>
+  <div id="pk-windsolar"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('wind-board', {
-      boundingbox: [-2, 30, 28, -2],
-      axis: true,
-      defaultAxes: {
-        x: { name: 'Wind Speed (m/s)', withLabel: true, label: { position: 'rt', offset: [-15, -15], color: '#cbd5e1' } },
-        y: { name: 'Wind Power (MW)', withLabel: true, label: { position: 'rt', offset: [-10, -10], color: '#cbd5e1' } }
-      },
-      showNavigation: false,
-      showCopyright: false
-    });
-
-    let v = 12;
-    let r = 25;
-    const rho = 1.3;
-
-    function calcMW(speed, radius) {
-      let A = Math.PI * radius * radius;
-      return (0.5 * rho * A * Math.pow(speed, 3)) / 1e6;
+  (function () {
+    const RHO = 1.3;
+    const k = PhysKit.mount('pk-windsolar', { x: [-6.2, 6.2], y: [-2.9, 2.9] });
+    const C = PhysKit.C, rich = k.rich, num = k.num;
+    k.row();
+    const scene = k.choice(['Wind turbine', 'Solar panel'], 0, () => show());
+    const rows = [k.row()];
+    const vS = k.slider({ label: 'v', unit: 'm/s', min: 2, max: 25, step: 0.5, value: 10 });
+    const LS = k.slider({ label: 'blade length', unit: 'm', min: 10, max: 60, step: 1, value: 45, digits: 0 });
+    k.button('Example 4.3', () => { vS.value = 20; LS.value = 20; });
+    k.button('Exercise 12', () => { vS.value = 10; LS.value = 45; });
+    rows.push(k.row());
+    const sunS = k.slider({ label: 'Sun height', unit: '°', min: 5, max: 90, step: 1, value: 50, digits: 0 });
+    const tiltS = k.slider({ label: 'panel tilt', unit: '°', min: 0, max: 80, step: 1, value: 20, digits: 0 });
+    k.button('Face the Sun', () => { tiltS.value = 90 - sunS.value; });
+    k.row();
+    let graph = null;
+    function show() {
+      rows.forEach((r, i) => { r.style.display = i === scene.value ? '' : 'none'; });
+      if (graph) graph.canvas.parentElement.style.display = scene.value === 0 ? '' : 'none';
     }
+    const P = () => 0.5 * RHO * Math.PI * LS.value ** 2 * vS.value ** 3;
 
-    let pCurve = board.create('curve', [
-      function(t) { return t; },
-      function(t) { return calcMW(t, r); },
-      0, 26
-    ], { strokeColor: '#38bdf8', strokeWidth: 3 });
+    let rot = 0, airX = 0, sunT = 0;
+    k.loop(dt => { rot += vS.value * 0.12 * dt; airX = (airX + vS.value * 0.08 * dt) % 1; sunT += dt; });
 
-    let pPoint = board.create('point', [
-      function() { return v; },
-      function() { return calcMW(v, r); }
-    ], { fillColor: '#4ade80', strokeColor: '#ffffff', size: 5, name: '' });
+    k.draw = g => {
+      if (scene.value === 0) {
+        const H = [1.4, 0.5], R = 0.6 + LS.value / 60 * 1.6;    // hub and drawn blade length
+        // air cylinder that passes in one second (length ∝ v)
+        const len = vS.value * 0.16;
+        g.rect(H[0] - len - 0.2, H[1] - R, len, 2 * R, { fill: C.fluid, fillAlpha: 0.12, color: C.fluid, width: 1, dash: [4, 4] });
+        g.text([H[0] - len / 2 - 0.2, H[1] + R + 0.25], 'air passing in 1 s', { size: 12, color: C.fluid, bold: true });
+        for (let i = 0; i < 7; i++) for (let j = -2; j <= 2; j++) {
+          const x = -6 + ((i / 7 + airX) % 1) * 7.3;
+          g.dot([x, H[1] + j * R * 0.4], 2.5, C.fluid, { alpha: 0.8 });
+        }
+        // tower, blades seen from the side as a disc outline and from the front
+        g.line([H[0], H[1]], [H[0], -2.7], { color: '#94a3b8', width: 8 });
+        g.circle(H, R, { color: '#cbd5e1', width: 1.5, dash: [3, 4] });
+        for (let b = 0; b < 3; b++) {
+          const a = rot + b * 2 * Math.PI / 3;
+          g.path([[H[0], H[1]], [H[0] + R * Math.cos(a - 0.08), H[1] + R * Math.sin(a - 0.08)], [H[0] + R * Math.cos(a), H[1] + R * Math.sin(a)]], { close: true, fill: '#f8fafc', color: C.ink, width: 1.5 });
+        }
+        g.dot(H, 6, C.ink);
+        g.text([H[0] + R + 0.2, H[1] + 0.2], `A = πL^2 = ${num(Math.PI * LS.value ** 2, 0)} m^2`, { align: 'left', size: 13, bold: true });
+        g.text([H[0] + R + 0.2, H[1] - 0.35], `P = ${num(P() / 1e6, 2)} MW`, { align: 'left', size: 16, bold: true, color: C.energy });
+        g.line([-6.2, -2.7], [6.2, -2.7], { color: C.ink, width: 2 });
+      } else {
+        // Sun moving on an arc; panel on the ground
+        const sa = sunS.value * Math.PI / 180, O = [0.6, -2.0];
+        const S = [O[0] - 4.5 * Math.cos(sa), O[1] + 4.5 * Math.sin(sa)];
+        g.circle(S, 0.45, { fill: '#fde047', color: '#f59e0b', width: 2 });
+        const ta = tiltS.value * Math.PI / 180;
+        const half = 1.4, u = [Math.cos(ta), Math.sin(ta)];       // panel faces left (towards the Sun side)
+        const A = [O[0] - u[0] * half, O[1] - u[1] * half * -1], B = [O[0] + u[0] * half, O[1] + u[1] * half];
+        const P1 = [O[0] - half * Math.cos(ta), O[1] - half * Math.sin(ta)], P2 = [O[0] + half * Math.cos(ta), O[1] + half * Math.sin(ta)];
+        g.line([O[0], O[1]], [O[0], -2.7], { color: '#94a3b8', width: 4 });
+        g.line(P1, P2, { color: '#1e3a8a', width: 9 });
+        // normal to the panel (pointing up-left) and angle to the Sun's rays
+        const n = [-Math.sin(ta), Math.cos(ta)];
+        g.arrow(O, [n[0] * 1.3, n[1] * 1.3], { color: C.muted, width: 1.5, dash: [3, 3], label: 'normal', side: [1, 0] });
+        // sun rays
+        const ray = [Math.cos(sa), -Math.sin(sa)];
+        for (let i = -2; i <= 2; i++) {
+          const off = [-ray[1] * i * 0.45, ray[0] * i * 0.45];
+          const end = [O[0] + off[0], O[1] + off[1]];
+          g.arrow([end[0] - ray[0] * 3.4, end[1] - ray[1] * 3.4], [ray[0] * 3.0, ray[1] * 3.0], { color: '#f59e0b', width: 1.8, head: 8 });
+        }
+        const cosI = Math.max(0, n[0] * -ray[0] + n[1] * -ray[1]);
+        g.text([3.2, 2.2], `angle to the normal = ${num(Math.acos(cosI) * 180 / Math.PI, 0)}°`, { size: 14, bold: true, align: 'left' });
+        g.text([3.2, 1.6], `power = ${num(cosI * 100, 0)} % of full`, { size: 16, bold: true, color: C.energy, align: 'left' });
+        g.line([-6.2, -2.7], [6.2, -2.7], { color: C.ink, width: 2 });
+      }
+    };
 
-    board.create('text', [function() { return v + 1; }, function() { return calcMW(v, r) + 1.5; }, function() {
-      return calcMW(v, r).toFixed(2) + ' MW';
-    }], { color: '#4ade80', fontSize: 13, fontWeight: 'bold' });
+    graph = k.addView({ x: [-1, 26], y: [-1, 10], equal: false, height: 160, title: 'Wind power P against wind speed v (blades as set): a cubic curve' });
+    graph.draw = g => {
+      const top = 0.5 * RHO * Math.PI * LS.value ** 2 * 25 ** 3 / 1e6;
+      graph.setRange([-1.5, 26], [-top * 0.12, top * 1.1]);
+      g.axes({ xstep: 5, ystep: top > 100 ? 50 : top > 40 ? 20 : top > 15 ? 5 : 2, xlabel: 'v (m/s)', ylabel: 'P (MW)' });
+      const pts = [];
+      for (let v = 0; v <= 25; v += 0.25) pts.push([v, 0.5 * RHO * Math.PI * LS.value ** 2 * v ** 3 / 1e6]);
+      g.path(pts, { color: C.energy, width: 3 });
+      g.dot([vS.value, P() / 1e6], 6, C.energy);
+      const half = vS.value / 2;
+      if (half >= 2) {
+        g.dot([half, P() / 8e6], 5, C.muted);
+        g.text([half, P() / 8e6], 'half the speed: 1/8 the power', { align: 'left', dx: 8, dy: 10, size: 11, color: C.muted });
+      }
+    };
 
-    function update() {
-      document.getElementById('ws-val').textContent = v + ' m/s';
-      document.getElementById('br-val').textContent = r + ' m';
-      document.getElementById('wp-stat').textContent = calcMW(v, r).toFixed(2) + ' MW';
-      board.update();
-    }
-
-    document.getElementById('ws-slider').addEventListener('input', function() {
-      v = parseFloat(this.value);
-      update();
-    });
-
-    document.getElementById('br-slider').addEventListener('input', function() {
-      r = parseFloat(this.value);
-      update();
-    });
-
-    update();
+    k.update = () => {
+      if (scene.value === 0) {
+        const A = Math.PI * LS.value ** 2;
+        k.readout([
+          `Mass of air through the blades each second = ρAv = 1.3 × ${num(A, 0)} × ${num(vS.value, 1)} = ${num(RHO * A * vS.value / 1000, 1)} t/s`,
+          `P = ½ρAv<sup>3</sup> = ½ × 1.3 × ${num(A, 0)} × ${num(vS.value, 1)}<sup>3</sup> = <b>${num(P() / 1e6, 2)} MW</b> (power in the wind; a real turbine can capture at most about 59 % of it)`,
+          'Doubling v doubles the air mass per second <b>and</b> quadruples its energy per kg, so P goes up 2 × 4 = 8 times.'
+        ]);
+      } else {
+        const sa = sunS.value * Math.PI / 180, ta = tiltS.value * Math.PI / 180;
+        const cosI = Math.max(0, Math.cos(Math.PI / 2 - sa - ta));
+        k.readout([
+          `Sunlight intensity about 1000 W/m<sup>2</sup> at noon. Useful part on the panel = I cos(angle to normal) = 1000 × ${num(cosI, 2)} = <b>${num(1000 * cosI, 0)} W/m<sup>2</sup></b>.`,
+          `A 2 m<sup>2</sup> panel with 20 % efficiency gives ${num(1000 * cosI * 2 * 0.2, 0)} W. Face the panel straight at the Sun (tilt = 90° − Sun height) for the most power.`,
+          'Solar collectors for hot water work the same way: energy collected = I × A × t (Example 4.2).'
+        ]);
+      }
+    };
+    show();
   })();
   </script>
 </div>

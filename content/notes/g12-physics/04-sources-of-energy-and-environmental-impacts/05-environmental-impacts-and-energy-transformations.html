@@ -79,103 +79,73 @@
 </div>
 
 <div class="note-demo">
-  <span class="block-label">Interactive Visualization &mdash; The Atmospheric Greenhouse Effect</span>
-  <p class="demo-instruction">Toggle atmospheric greenhouse gas concentrations from "Natural Baseline" to "Elevated Fossil Emissions" to observe how trapped outgoing terrestrial thermal radiation warms the global planetary surface.</p>
-
-  <div id="greenhouse-board" style="width: 100%; height: 380px; max-width: 680px; margin: 0 auto; border-radius: 8px; border: 1px solid var(--border-color, #cbd5e1); background: #0f172a;"></div>
-
-  <div class="demo-controls" style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-    <button id="btn-natural" class="btn" style="padding: 0.4rem 1rem; font-weight: 600; background: #0284c7; color: white; border-radius: 6px; border: none; cursor: pointer;">Natural Equilibrium</button>
-    <button id="btn-fossil" class="btn" style="padding: 0.4rem 1rem; font-weight: 600; background: #64748b; color: white; border-radius: 6px; border: none; cursor: pointer;">High Fossil Emissions</button>
-    <div style="color: #f8fafc; font-size: 0.9rem;">
-      Surface Temp: <span id="temp-stat" style="color: #4ade80; font-weight: 700;">+14 °C (Stable)</span>
-    </div>
-  </div>
-
+  <span class="block-label">Interactive Demo &mdash; Energy Chains and Their Cost to the Environment</span>
+  <p class="demo-question">Every power station changes energy from one form to another. How many steps does each source take, and how much CO₂ does each one release?</p>
+  <p class="demo-instruction">Choose a source. Energy dots travel along the chain of transformations; at every step some dots turn red and leave as waste heat. The bar chart below compares the CO₂ released for each kilowatt-hour of electricity (whole-life estimates, including building the station).</p>
+  <div id="pk-chain"></div>
   <script>
-  (function() {
-    let board = JXG.JSXGraph.initBoard('greenhouse-board', {
-      boundingbox: [-1, 7, 9, -1],
-      axis: false,
-      showNavigation: false,
-      showCopyright: false
-    });
-
-    let mode = 'natural';
-    let elements = [];
-
-    // Earth surface
-    board.create('polygon', [[0, 0], [8, 0], [8, 1], [0, 1]], {
-      fillColor: '#15803d',
-      fillOpacity: 0.8,
-      strokeColor: '#22c55e',
-      strokeWidth: 2,
-      vertices: { visible: false }
-    });
-    board.create('text', [4, 0.5, 'Earth Surface'], { color: '#ffffff', fontSize: 12, anchorX: 'middle', fontWeight: 'bold' });
-
-    // Atmosphere layer
-    let atmo = board.create('polygon', [[0, 3.5], [8, 3.5], [8, 5], [0, 5]], {
-      fillColor: '#38bdf8',
-      fillOpacity: 0.25,
-      strokeColor: '#38bdf8',
-      strokeWidth: 1.5,
-      dash: 2,
-      vertices: { visible: false }
-    });
-    let atmoText = board.create('text', [4, 4.3, 'Atmosphere (Greenhouse Gases)'], { color: '#38bdf8', fontSize: 11, anchorX: 'middle' });
-
-    function renderRays() {
-      board.suspendUpdate();
-      for (let el of elements) board.removeObject(el);
-      elements = [];
-
-      // Solar incoming ray (yellow)
-      let sunArrow = board.create('arrow', [[1.5, 6.5], [1.5, 1.2]], { strokeColor: '#facc15', strokeWidth: 3 });
-      let sunText = board.create('text', [1.7, 6.0, 'Incoming Sunlight'], { color: '#facc15', fontSize: 11 });
-      elements.push(sunArrow, sunText);
-
-      // Terrestrial outgoing IR (red)
-      let ir1 = board.create('arrow', [[5.0, 1.2], [5.0, 3.5]], { strokeColor: '#f87171', strokeWidth: 3 });
-      elements.push(ir1);
-
-      if (mode === 'natural') {
-        // Escapes to space
-        let irEsc = board.create('arrow', [[5.0, 5.0], [5.0, 6.5]], { strokeColor: '#f87171', strokeWidth: 2.5 });
-        let escText = board.create('text', [5.2, 6.0, 'Heat escapes to space'], { color: '#f87171', fontSize: 11 });
-        elements.push(irEsc, escText);
-      } else {
-        // Trapped and re-radiated downward
-        let irEsc = board.create('arrow', [[5.0, 5.0], [5.0, 6.5]], { strokeColor: '#f87171', strokeWidth: 1.5, dash: 2 });
-        let irBack = board.create('arrow', [[5.5, 4.0], [5.5, 1.3]], { strokeColor: '#ef4444', strokeWidth: 3.5 });
-        let trapText = board.create('text', [5.7, 2.5, 'Trapped Heat\nRe-radiated downward!'], { color: '#ef4444', fontSize: 11, fontWeight: 'bold' });
-        elements.push(irEsc, irBack, trapText);
+  (function () {
+    const k = PhysKit.mount('pk-chain', { x: [-6.2, 6.2], y: [-2.2, 2.2] });
+    const C = PhysKit.C, num = k.num;
+    const SRC = [
+      { name: 'Coal', steps: ['chemical', 'heat', 'kinetic', 'electrical'], eff: [0.88, 0.42, 0.98], co2: 820, note: 'Smoke, CO₂ and SO₂ (acid rain); mining damages land.' },
+      { name: 'Natural gas', steps: ['chemical', 'heat', 'kinetic', 'electrical'], eff: [0.9, 0.6, 0.98], co2: 490, note: 'About half the CO₂ of coal (combined-cycle plants are more efficient), but still a fossil fuel.' },
+      { name: 'Nuclear', steps: ['nuclear', 'heat', 'kinetic', 'electrical'], eff: [0.95, 0.35, 0.98], co2: 12, note: 'Almost no CO₂, but radioactive waste must be stored safely for thousands of years.' },
+      { name: 'Hydro', steps: ['potential', 'kinetic', 'electrical'], eff: [0.92, 0.95], co2: 24, note: 'Clean electricity, but dams flood valleys and change rivers and fish life.' },
+      { name: 'Wind', steps: ['kinetic (air)', 'kinetic (rotor)', 'electrical'], eff: [0.45, 0.95], co2: 11, note: 'No fuel, no smoke; turbines are noisy and need windy sites.' },
+      { name: 'Solar cell', steps: ['light', 'electrical'], eff: [0.2], co2: 48, note: 'No moving parts or smoke; needs large areas and works only in daylight.' }
+    ];
+    k.row();
+    const src = k.choice(SRC.map(s => s.name), 0, () => { dots.length = 0; });
+    const dots = [];
+    let spawn = 0;
+    k.loop(dt => {
+      const s = SRC[src.value], n = s.steps.length;
+      spawn += dt * 9;
+      while (spawn > 1) { dots.push({ u: 0, y: (Math.random() - 0.5) * 0.9, lost: false, vy: 0 }); spawn -= 1; }
+      for (const d of dots) {
+        const before = Math.floor(d.u);
+        d.u += dt * 0.7;
+        if (!d.lost && Math.floor(d.u) > before && before < n - 1 && Math.random() > s.eff[before]) { d.lost = true; d.vy = -0.6; }
+        if (d.lost) { d.y += d.vy * dt * 2; }
       }
-
-      board.unsuspendUpdate();
-    }
-
-    renderRays();
-
-    document.getElementById('btn-natural').addEventListener('click', function() {
-      mode = 'natural';
-      this.style.background = '#0284c7';
-      document.getElementById('btn-fossil').style.background = '#64748b';
-      document.getElementById('temp-stat').textContent = '+14 °C (Stable)';
-      document.getElementById('temp-stat').style.color = '#4ade80';
-      atmo.setAttribute({ fillColor: '#38bdf8', fillOpacity: 0.25 });
-      renderRays();
+      for (let i = dots.length - 1; i >= 0; i--) if (dots[i].u > n - 1 + 0.4 || dots[i].y < -2.3) dots.splice(i, 1);
     });
+    const xOf = (u, n) => -5.2 + 10.4 * u / (n - 1);
 
-    document.getElementById('btn-fossil').addEventListener('click', function() {
-      mode = 'fossil';
-      this.style.background = '#ef4444';
-      document.getElementById('btn-natural').style.background = '#64748b';
-      document.getElementById('temp-stat').textContent = '+17 °C (Severe Warming)';
-      document.getElementById('temp-stat').style.color = '#ef4444';
-      atmo.setAttribute({ fillColor: '#f97316', fillOpacity: 0.45 });
-      renderRays();
-    });
+    k.draw = g => {
+      const s = SRC[src.value], n = s.steps.length;
+      let left = 1;
+      s.steps.forEach((name, i) => {
+        const x = xOf(i, n);
+        g.rect(x - 0.85, 0.65, 1.7, 0.75, { fill: i === n - 1 ? '#dcfce7' : '#fef3c7', color: C.ink, width: 1.5, radius: 8 });
+        g.text([x, 1.03], name, { size: 13, bold: true });
+        g.text([x, 1.75], `${num(left * 100, 0)} %`, { size: 13, color: C.energy, bold: true });
+        if (i < n - 1) { g.arrow([x + 0.9, 1.03], [xOf(i + 1, n) - x - 1.8, 0], { color: C.muted, width: 2 }); left *= s.eff[i]; }
+      });
+      for (const d of dots) g.dot([xOf(Math.min(d.u, n - 1 + 0.4), n), d.y], 3, d.lost ? C.bad : C.energy, { alpha: d.lost ? 0.7 : 0.9 });
+      g.text([0, -2.0], 'red dots: energy lost as heat', { size: 12, color: C.bad });
+    };
+
+    const bars = k.addView({ x: [-0.5, 6.5], y: [-120, 900], equal: false, height: 180, title: 'CO_2 per kWh of electricity (g), whole-life estimates' });
+    bars.draw = g => {
+      g.line([-0.5, 0], [6.5, 0], { color: C.muted, width: 1.5 });
+      SRC.forEach((s, i) => {
+        const on = i === src.value;
+        g.rect(i + 0.15, 0, 0.7, s.co2, { fill: on ? C.bad : '#cbd5e1', color: 'none' });
+        g.text([i + 0.5, s.co2], String(s.co2), { dy: 9, size: 12, bold: true, color: on ? C.bad : C.muted });
+        g.text([i + 0.5, -60], s.name, { size: 11, bold: on, color: on ? C.ink : C.muted });
+      });
+    };
+
+    k.update = () => {
+      const s = SRC[src.value], eta = s.eff.reduce((a, b) => a * b, 1);
+      k.readout([
+        `${s.steps.join(' → ')}`,
+        `Overall efficiency η = useful output / input = ${s.eff.map(e => num(e * 100, 0) + ' %').join(' × ')} = <b>${num(eta * 100, 0)} %</b>`,
+        `CO<sub>2</sub>: about <b>${s.co2} g per kWh</b>. ${s.note}`
+      ]);
+    };
   })();
   </script>
 </div>
