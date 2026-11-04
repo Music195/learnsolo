@@ -1,3 +1,4 @@
+from unittest.mock import patch
 from extensions import db
 from models import DictionaryEntry
 
@@ -37,28 +38,61 @@ def test_dictionary_curated_lookup(app, client):
 
 
 def test_dictionary_auto_detect_burmese(client):
-    res = client.get("/api/dictionary?q=လုပ်ဆောင်ချက်")
-    assert res.status_code == 200
-    data = res.get_json()
-    assert data["detected_lang"] == "my"
-    assert data["english"] != ""
-    assert data["japanese"] != ""
+    with patch("services.dictionary._translate_online") as mock_translate:
+        mock_translate.return_value = {
+            "query": "လုပ်ဆောင်ချက်",
+            "from": "my",
+            "english": "function",
+            "burmese": "လုပ်ဆောင်ချက်",
+            "japanese": "機能",
+            "reading": "きのう",
+            "notes": "",
+            "source": "online",
+        }
+        res = client.get("/api/dictionary?q=လုပ်ဆောင်ချက်")
+        assert res.status_code == 200
+        data = res.get_json()
+        assert data["detected_lang"] == "my"
+        assert data["english"] != ""
+        assert data["japanese"] != ""
 
 
 def test_dictionary_auto_detect_japanese(client):
-    res = client.get("/api/dictionary?q=関数")
-    assert res.status_code == 200
-    data = res.get_json()
-    assert data["detected_lang"] == "ja"
-    assert data["english"] != ""
-    assert data["burmese"] != ""
+    with patch("services.dictionary._translate_online") as mock_translate:
+        mock_translate.return_value = {
+            "query": "関数",
+            "from": "ja",
+            "english": "function",
+            "burmese": "လုပ်ဆောင်ချက်",
+            "japanese": "関数",
+            "reading": "かんすう",
+            "notes": "",
+            "source": "online",
+        }
+        res = client.get("/api/dictionary?q=関数")
+        assert res.status_code == 200
+        data = res.get_json()
+        assert data["detected_lang"] == "ja"
+        assert data["english"] != ""
+        assert data["burmese"] != ""
 
 
 def test_dictionary_does_not_add_unverified_to_db(app, client):
     # Ensure a random unverified search is not saved into the database table
     random_word = "xyzunverifiedword123"
-    res = client.get(f"/api/dictionary?q={random_word}")
-    assert res.status_code in (200, 404)
+    with patch("services.dictionary._translate_online") as mock_translate:
+        mock_translate.return_value = {
+            "query": random_word,
+            "from": "en",
+            "english": random_word,
+            "burmese": "",
+            "japanese": "",
+            "reading": "",
+            "notes": "",
+            "source": "online",
+        }
+        res = client.get(f"/api/dictionary?q={random_word}")
+        assert res.status_code in (200, 404)
 
     with app.app_context():
         entry = DictionaryEntry.query.filter_by(word=random_word).first()

@@ -95,10 +95,15 @@ function ExamPage({ folder }) {
         {exam.groups.length > 0 ? (
           // Subfolders: a tab each, remembered per exam (e.g. "past-tab:eju")
           <HubTabs
-            tabs={exam.groups.map((group) => ({ id: group.folder, name: group.name, papers: group.papers }))}
+            tabs={exam.groups.map((group) => ({
+              id: group.folder,
+              name: group.name,
+              papers: group.papers,
+              sections: group.sections,
+            }))}
             rememberKey={`past-tab:${exam.folder}`}
-            label="Courses"
-            renderPanel={(group) => <GroupCard group={group} />}
+            label="Levels"
+            renderPanel={(group) => <GroupCard group={group} examFolder={exam.folder} />}
           />
         ) : (
           // No subfolders: a plain list of papers
@@ -123,25 +128,49 @@ function ExamPage({ folder }) {
 }
 
 // One subfolder's papers, with your saved progress.
-// Papers keep their progress under "past/<path>", apart from practice sets.
-function GroupCard({ group }) {
-  const solved = group.papers.map((paper) => solvedCount(`past/${paper.path}`, paper.moved_from))
+// If the group has sub-sections (e.g. JLPT vocab, grammar, reading, listening),
+// render a second tier of tabs for the sections.
+function GroupCard({ group, examFolder }) {
+  if (group.sections && group.sections.length > 0) {
+    return (
+      <div className="group-sections">
+        <HubTabs
+          tabs={group.sections.map((sec) => ({
+            id: sec.folder,
+            name: sec.name,
+            papers: sec.papers,
+          }))}
+          rememberKey={`past-section:${examFolder}:${group.folder}`}
+          label="Sections"
+          renderPanel={(section) => (
+            <PaperListCard groupName={`${group.name} · ${section.name}`} papers={section.papers} />
+          )}
+        />
+      </div>
+    )
+  }
+
+  return <PaperListCard groupName={group.name} papers={group.papers} />
+}
+
+function PaperListCard({ groupName, papers }) {
+  const solved = papers.map((paper) => solvedCount(`past/${paper.path}`, paper.moved_from))
   const groupSolved = solved.reduce((sum, n) => sum + (n || 0), 0)
-  const problems = group.papers.reduce((sum, paper) => sum + paper.count, 0)
+  const problems = papers.reduce((sum, paper) => sum + paper.count, 0)
 
   return (
     <article className="topic-card">
       <header className="topic-head">
         <div className="topic-text">
-          <h2>{group.name}</h2>
+          <h2>{groupName}</h2>
           <p className="topic-meta">
-            {plural(group.papers.length, 'paper')} · {problems} problems{' '}
+            {plural(papers.length, 'test')} · {problems} problems{' '}
             <span className="topic-solved" hidden={!groupSolved}>Solved {groupSolved} of {problems}</span>
           </p>
         </div>
       </header>
       <ol className="set-list">
-        {group.papers.map((paper, i) => (
+        {papers.map((paper, i) => (
           <li key={paper.path}>
             <Link className="set-row" to={`/past/${paper.path}`}>
               <span className="set-num">{i + 1}</span>

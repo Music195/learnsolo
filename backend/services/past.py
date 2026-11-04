@@ -1,5 +1,5 @@
 from utils.content_loader import get_past_papers, load_past, ContentNotFound
-from utils.courses import past_category, past_group
+from utils.courses import past_category, past_group, past_section
 from services.urls import past_category_url, past_paper_url
 
 # Data for the past question pages (content/past/<category>/).
@@ -8,8 +8,9 @@ from services.urls import past_category_url, past_paper_url
 #   /past/<category>/[<group>/]<paper>   one paper, shown like a practice set
 # A new folder in content/past/ becomes a new category; its name and
 # description go in PAST_CATEGORIES in utils/courses.py.
-# A category may be split into subfolders ("groups", e.g. eju/course-1/):
-# its list page then has one tab per group, and next/previous stay in the group.
+# A category may be split into subfolders ("groups", e.g. eju/course-1/,
+# or 2 tiers e.g. jlpt/n2/vocab/): its list page then shows tabs per group/section,
+# and next/previous stay in the same section.
 
 
 class PaperMoved(Exception):
@@ -20,14 +21,25 @@ class PaperMoved(Exception):
 
 
 def _group(paper):
-    """"course-1" for "eju/course-1/01-mock-paper", None for "eju/01-paper"."""
+    """"course-1" for "eju/course-1/01-mock-paper", "n2" for "jlpt/n2/vocab/01-mock-test"."""
     parts = paper["path"].split("/")
     return parts[1] if len(parts) > 2 else None
 
 
+def _section(paper):
+    """"vocab" for "jlpt/n2/vocab/01-mock-test", None for "eju/course-1/01-mock-paper"."""
+    parts = paper["path"].split("/")
+    return parts[2] if len(parts) > 3 else None
+
+
+def _paper_key(paper):
+    parts = paper["path"].split("/")
+    return tuple(parts[:-1])
+
+
 def past_categories():
     """{folder: {"folder", "name", "icon", "about", "papers": [...],
-    "groups": [{"folder", "name", "papers"}]}} in folder order.
+    "groups": [{"folder", "name", "papers", "sections": [...]}]}} in folder order.
     "groups" is empty for a category without subfolders."""
     categories = {}
     for paper in get_past_papers():
@@ -35,11 +47,39 @@ def past_categories():
         cat = categories.setdefault(folder, dict(past_category(folder), papers=[], groups={}))
         cat["papers"].append(paper)
         group = _group(paper)
+        section = _section(paper)
         if group:
-            cat["groups"].setdefault(group, {"folder": group, "name": past_group(folder, group), "papers": []})
-            cat["groups"][group]["papers"].append(paper)
-    for cat in categories.values():
-        cat["groups"] = list(cat["groups"].values())
+            g_dict = cat["groups"].setdefault(group, {
+                "folder": group,
+                "name": past_group(folder, group),
+                "papers": [],
+                "sections": {},
+            })
+            g_dict["papers"].append(paper)
+            if section:
+                s_dict = g_dict["sections"].setdefault(section, {
+                    "folder": section,
+                    "name": past_section(folder, section),
+                    "papers": [],
+                })
+                s_dict["papers"].append(paper)
+
+    for folder, cat in categories.items():
+        cat_info = past_category(folder)
+        group_order = list(cat_info.get("groups", {}).keys())
+        section_order = list(cat_info.get("sections", {}).keys())
+
+        for g in cat["groups"].values():
+            if "sections" in g:
+                secs = list(g["sections"].values())
+                if section_order:
+                    secs.sort(key=lambda s: section_order.index(s["folder"]) if s["folder"] in section_order else 999)
+                g["sections"] = secs
+
+        grps = list(cat["groups"].values())
+        if group_order:
+            grps.sort(key=lambda g: group_order.index(g["folder"]) if g["folder"] in group_order else 999)
+        cat["groups"] = grps
     return categories
 
 
@@ -71,17 +111,28 @@ def past_paper_page(category, paper):
     info = past_category(category)
     this = next(p for p in papers if p["path"] == past_path)
     group = _group(this)
-    # Papers in the same category and group, e.g. EJU Course 1
-    siblings = [p for p in papers if p["path"].split("/")[0] == category and _group(p) == group]
+    section = _section(this)
+    this_key = _paper_key(this)
+    siblings = [p for p in papers if _paper_key(p) == this_key]
     index = siblings.index(this)
     category_url = past_category_url(category, group)
-    where = info["name"] + (" · " + past_group(category, group) if group else "")
-    # Floating bar: EJU Mock Papers › Course 1 (Basic) · Paper 3 of 10
+
+    where_parts = [info["name"]]
+    if group:
+        where_parts.append(past_group(category, group))
+    if section:
+        where_parts.append(past_section(category, section))
+    where = " · ".join(where_parts)
+
     location = {
-        "course": info["name"], "course_url": past_category_url(category),
-        "topic": past_group(category, group) if group else None, "topic_url": category_url,
+        "course": info["name"],
+        "course_url": past_category_url(category),
+        "topic": " · ".join(where_parts[1:]) if len(where_parts) > 1 else None,
+        "topic_url": category_url,
         "topic_first": None,
-        "index": index + 1, "total": len(siblings), "kind": "Paper",
+        "index": index + 1,
+        "total": len(siblings),
+        "kind": "Test" if category == "jlpt" else "Paper",
     }
     nav = {}
     for key, i in (("prev", index - 1), ("next", index + 1)):

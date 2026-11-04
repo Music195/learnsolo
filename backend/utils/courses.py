@@ -72,8 +72,20 @@ PAST_CATEGORIES = {
         "name": "JLPT Mock Tests",
         "icon": "fa-language",
         "about": "Original mock tests in the style of the JLPT (Japanese-Language Proficiency Test): "
-                 "vocabulary, grammar and reading, 25 multiple-choice questions each, explained in English.",
-        "groups": {"n2": "N2"},
+                 "vocabulary, grammar, reading and listening, structured by level (N1 to N5).",
+        "groups": {
+            "n1": "N1",
+            "n2": "N2",
+            "n3": "N3",
+            "n4": "N4",
+            "n5": "N5",
+        },
+        "sections": {
+            "vocab": "Vocabulary (文字・語彙)",
+            "grammar": "Grammar (文法)",
+            "reading": "Reading (読解)",
+            "listening": "Listening (聴解)",
+        },
     },
     "university": {
         "name": "University Mock Questions",
@@ -124,7 +136,7 @@ def topic_name(folder):
 
 
 def past_category(folder):
-    """{"folder", "name", "icon", "about", "groups"} for a folder in content/past/."""
+    """{"folder", "name", "icon", "about", "groups", "sections"} for a folder in content/past/."""
     info = PAST_CATEGORIES.get(folder, {})
     return {
         "folder": folder,
@@ -132,9 +144,15 @@ def past_category(folder):
         "icon": info.get("icon", "fa-folder-open"),
         "about": info.get("about", "Past exam problems with hints and full solutions."),
         "groups": info.get("groups", {}),
+        "sections": info.get("sections", {}),
     }
 
 
 def past_group(category, folder):
     """Name of a subfolder of a past category: "course-1" -> "Course 1 (Basic)"."""
     return past_category(category)["groups"].get(folder) or _from_folder(folder)
+
+
+def past_section(category, folder):
+    """Name of a skill section subfolder: "vocab" -> "Vocabulary (文字・語彙)"."""
+    return PAST_CATEGORIES.get(category, {}).get("sections", {}).get(folder) or _from_folder(folder)
