@@ -1,86 +1,114 @@
 // The floating bar at the top of the page: logo, links and search.
 // Styled by src/styles/floatbar.css. On phones, everything after the logo folds
 // into the ☰ menu.
-//
-// Two versions, chosen by the props (the inputs a page passes in):
-//   <FloatBar />                    home page: Subjects, How it works, Practice, search
-//   <FloatBar location={...} nav={...} onTextSize={...} onTopics={...} topicsOpen={...} />
-//                                   note page: "where you are", search, text size,
-//                                   previous/next and the Topics button
-// Both end with the account button: "Log in", or "Log out" when logged in.
 
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router'
 import { useAuth } from '../auth.jsx'
 import SearchBox from './SearchBox.jsx'
+import NotificationBell from './NotificationBell.jsx'
+import FeedbackModal from './FeedbackModal.jsx'
 
 export default function FloatBar({ location, nav, onTextSize, onTopics, topicsOpen }) {
-  // Is the phone menu open? false at the start.
   const [menuOpen, setMenuOpen] = useState(false)
+  const [feedbackOpen, setFeedbackOpen] = useState(false)
   const closeMenu = () => setMenuOpen(false)
 
   return (
-    <nav className="floatbar" aria-label="Main">
-      {/* In JSX, class is written className (class is a JavaScript word) */}
-      <div className="floatbar-inner">
-        {/* <Link> changes page inside React, without reloading the whole site */}
-        <Link className="brand" to="/"><i className="fas fa-book-open"></i> Learn Solo</Link>
-        <span className="beta" title="New notes and features are still being added">Beta</span>
+    <>
+      <nav className="floatbar" aria-label="Main">
+        <div className="floatbar-inner">
+          {/* Logo + Brand Name */}
+          <Link className="brand" to="/">
+            <img src="/static/logo.png" alt="Learn Solo Logo" className="brand-logo" />
+            <span>Learn Solo</span>
+          </Link>
+          <span className="beta" title="New notes and features are still being added">Beta</span>
 
-        {/* "a && b" in JSX: show b only when a is there */}
-        {location && <Crumbs location={location} />}
+          {/* "a && b" in JSX: show b only when a is there */}
+          {location && <Crumbs location={location} />}
 
-        <button
-          className="menu-btn"
-          aria-expanded={menuOpen}
-          aria-controls="floatMenu"
-          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
-          <i className={menuOpen ? 'fas fa-times' : 'fas fa-bars'}></i>
-        </button>
+          <button
+            className="menu-btn"
+            aria-expanded={menuOpen}
+            aria-controls="floatMenu"
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            <i className={menuOpen ? 'fas fa-times' : 'fas fa-bars'}></i>
+          </button>
 
-        {/* The "open" class shows the menu on phones (floatbar.css) */}
-        <div className={'float-menu' + (menuOpen ? ' open' : '')} id="floatMenu">
-          {!location && (
-            <>
-              {/* Plain <a> for #jump links: the browser scrolls to the section itself */}
-              <a href="/#subjects" onClick={closeMenu}>Subjects</a>
-              <a href="/#how" onClick={closeMenu}>How it works</a>
-              <Link to="/practice" onClick={closeMenu}>Practice</Link>
-            </>
-          )}
+          {/* The "open" class shows the menu on phones (floatbar.css) */}
+          <div className={'float-menu' + (menuOpen ? ' open' : '')} id="floatMenu">
+            {/* Search Box - untouched */}
+            <SearchBox />
 
-          <SearchBox />
+            {location && (
+              <>
+                {/* Text size for the note (saved for next time) */}
+                <div className="bar-group" role="group" aria-label="Text size">
+                  <button className="bar-btn" title="Smaller text" aria-label="Smaller text" onClick={() => onTextSize(-1)}>A−</button>
+                  <button className="bar-btn" title="Bigger text" aria-label="Bigger text" onClick={() => onTextSize(1)}>A+</button>
+                </div>
 
-          {location && (
-            <>
-              {/* Text size for the note (saved for next time) */}
-              <div className="bar-group" role="group" aria-label="Text size">
-                <button className="bar-btn" title="Smaller text" aria-label="Smaller text" onClick={() => onTextSize(-1)}>A−</button>
-                <button className="bar-btn" title="Bigger text" aria-label="Bigger text" onClick={() => onTextSize(1)}>A+</button>
-              </div>
+                {/* Previous / next note (also the ← / → keys) */}
+                <div className="bar-group" role="group" aria-label="Previous and next note">
+                  <PagerButton link={nav.prev} label="Previous" icon="fa-chevron-left" onClick={closeMenu} />
+                  <PagerButton link={nav.next} label="Next" icon="fa-chevron-right" onClick={closeMenu} />
+                </div>
 
-              {/* Previous / next note (also the ← / → keys) */}
-              <div className="bar-group" role="group" aria-label="Previous and next note">
-                <PagerButton link={nav.prev} label="Previous" icon="fa-chevron-left" onClick={closeMenu} />
-                <PagerButton link={nav.next} label="Next" icon="fa-chevron-right" onClick={closeMenu} />
-              </div>
+                {/* Opens the Topics sidebar (TopicsSidebar.jsx) */}
+                {onTopics && (
+                  <button className="bar-btn bar-topics" aria-controls="sidebar" aria-expanded={topicsOpen}
+                          onClick={() => { closeMenu(); onTopics() }}>
+                    <i className="fas fa-list-ul"></i> Topics
+                  </button>
+                )}
+              </>
+            )}
 
-              {/* Opens the Topics sidebar (TopicsSidebar.jsx) */}
-              {onTopics && (
-                <button className="bar-btn bar-topics" aria-controls="sidebar" aria-expanded={topicsOpen}
-                        onClick={() => { closeMenu(); onTopics() }}>
-                  <i className="fas fa-list-ul"></i> Topics
-                </button>
-              )}
-            </>
-          )}
+            {/* Day user logged in */}
+            <UserDayBadge />
 
-          <AccountButton onClick={closeMenu} />
+            {/* Notifications from creator */}
+            <NotificationBell />
+
+            {/* Feedback button */}
+            <button
+              type="button"
+              className="bar-btn bar-feedback"
+              title="Send feedback or report an issue"
+              onClick={() => { closeMenu(); setFeedbackOpen(true) }}
+            >
+              <i className="fas fa-comment-dots"></i>
+              <span className="bar-feedback-text">Feedback</span>
+            </button>
+
+            {/* Account / User Info button */}
+            <AccountButton onClick={closeMenu} />
+          </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+
+      {/* Feedback modal popup */}
+      <FeedbackModal isOpen={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
+    </>
+  )
+}
+
+// Displays active login day/date for logged-in users
+function UserDayBadge() {
+  const { user } = useAuth()
+  if (!user) return null
+
+  const now = new Date()
+  const dayStr = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
+
+  return (
+    <div className="bar-day-badge" title={`Active Session · Logged in today (${dayStr})`}>
+      <i className="fas fa-calendar-check"></i>
+      <span>{dayStr}</span>
+    </div>
   )
 }
 

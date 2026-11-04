@@ -41,4 +41,4 @@ def page_not_found(error):
 
 # Load the routes. This import is at the bottom because the route files need
 # api_bp, which has to exist first.
-from api import content, auth, progress, dictionary  # noqa: E402,F401
+from api import content, auth, progress, dictionary, notifications  # noqa: E402,F401

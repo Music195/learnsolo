@@ -79,3 +79,34 @@ def test_unknown_addresses_give_json_404(client):
         response = client.get(url)
         assert response.status_code == 404, url
         assert response.get_json() == {"error": "not found"}, url
+
+
+def test_notifications_endpoint(client):
+    response = client.get("/api/notifications")
+    assert response.status_code == 200
+    data = response.get_json()
+    assert "notifications" in data
+    assert len(data["notifications"]) > 0
+    assert "title" in data["notifications"][0]
+
+
+def test_feedback_submission(client, app):
+    from models import Feedback
+
+    # Empty feedback fails
+    bad = client.post("/api/feedback", json={"message": ""})
+    assert bad.status_code == 400
+
+    # Valid feedback works
+    res = client.post("/api/feedback", json={
+        "category": "suggestion",
+        "message": "Love the JLPT audio tests! Please add N2 reading mock 11.",
+        "page_url": "/past/jlpt/n2/reading/01-mock-test",
+    })
+    assert res.status_code == 200
+    assert res.get_json()["ok"] is True
+
+    with app.app_context():
+        latest = Feedback.query.order_by(Feedback.id.desc()).first()
+        assert latest.category == "suggestion"
+        assert "JLPT" in latest.message
