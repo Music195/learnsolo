@@ -91,10 +91,11 @@ export default function FloatBar({ location, nav, onTextSize, onTopics, topicsOp
               type="button"
               className="bar-btn bar-theme-toggle"
               aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-              title={theme === 'dark' ? 'Light mode (☀️)' : 'Dark mode (🌙)'}
+              title={theme === 'dark' ? 'Switch to light mode (☀️)' : 'Switch to dark mode (🌙)'}
               onClick={toggleTheme}
             >
               <i className={theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon'}></i>
+              <span className="bar-theme-text">{theme === 'dark' ? 'Light' : 'Dark'}</span>
             </button>
 
             {/* Account / User Info button */}
