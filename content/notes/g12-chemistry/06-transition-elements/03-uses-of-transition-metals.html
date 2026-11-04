@@ -1,0 +1,137 @@
+<!-- tags: Transition Elements, G12 Chemistry Myanmar -->
+<!-- Grade 12 Chemistry textbook, Chapter 6, section 6.3 (pages 105–107) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Transition Elements">Uses of the 3d Series Transition Metals</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Everyday Metals, Chosen for Their Properties</span>
+  <p>Transition metals conduct heat and electricity, are strong, malleable and ductile, form coloured compounds and act as catalysts. Their properties are similar but not identical, so each job needs the right metal.</p>
+  <ul>
+    <li><strong>Building materials.</strong> <em>Titanium</em>: strong, lightweight and highly corrosion-resistant, for roofs, flooring and ceilings, spacecraft, ships and marine equipment. <em>Iron</em> is too soft alone; mixed with small amounts of other elements it makes <strong>alloy steels</strong> that are strong, easily shaped and cheap, for bridges, buildings, ships and cars. <em>Manganese</em>: about 1 % in steel raises strength and resistance; manganese steel is used for railway tracks.</li>
+    <li><strong>Industry.</strong> <em>Vanadium</em>: steel alloys, sheets, wires and tubes, ceramics; V₂O₅ as a catalyst and as a mordant in dyeing fabrics. <em>Chromium</em>: tough and resistant to heat and corrosion, so stainless steel, electroplating, tanning, dyeing and car brake pads. <em>Manganese</em>: gasoline additive, dry cells, paint. <em>Cobalt</em>: alloys, brilliant blue pigments for ceramics, paint and ink, rechargeable batteries. <em>Nickel</em>: anti-corrosion coating and nickel plating, rechargeable batteries, stainless steel. <em>Copper</em>: a very good electrical conductor, so wires, circuit boards, water pipes and heat exchangers.</li>
+    <li><strong>Medicine.</strong> Iron treats or prevents anaemia; copper is used against Wilson's and Menkes diseases. Surgical instruments are stainless steel, cobalt–chrome alloys or titanium. Titanium is lighter, durable and corrosion-resistant, so it is used for dental implants, artificial hip joints and eyeglass frames.</li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Property → Use</span>
+  <div class="formula-main">
+    $$\text{strong + cheap} \to \text{steel (Fe)} \qquad \text{light + corrosion-resistant} \to \text{Ti} \qquad \text{conductor} \to \text{Cu wire}$$
+    $$\text{coloured compounds} \to \text{pigments (Co blue)} \qquad \text{variable oxidation states} \to \text{catalysts (Fe, V₂O₅, Ni)}$$
+  </div>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>Pure iron as a building metal:</strong> it is too soft; it is the alloy steels that are used.</li>
+    <li><strong>Catalysts mixed up:</strong> Haber (NH₃) uses iron; Contact (H₂SO₄) uses vanadium(V) oxide; hydrogenation of alkenes uses nickel.</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; Which Metal for the Job?</span>
+  <p class="demo-question">Can you match each use to the 3d metal chosen for it, and say which property makes it suitable?</p>
+  <p class="demo-instruction"><em>Explore</em>: click a metal tile to see its uses and the property behind them. <em>Quiz</em>: read the job, click the metal you think fits, then press <em>Next job</em>.</p>
+  <div id="pk-uses"></div>
+  <script>
+  (function () {
+    const EL = ['Sc', 'Ti', 'V', 'Cr', 'Mn', 'Fe', 'Co', 'Ni', 'Cu', 'Zn'];
+    const USE = {
+      Ti: { p: 'strong, lightweight, corrosion-resistant', u: ['roofs, flooring, ceilings', 'spacecraft, ships, marine equipment', 'dental implants, hip joints, eyeglass frames', 'surgical instruments'] },
+      V: { p: 'hardens steel; its oxide is a catalyst', u: ['alloy steels; sheets, wires, tubes', 'ceramics industry', 'V₂O₅ catalyst (Contact process, ceramics)', 'mordant for dyeing fabrics'] },
+      Cr: { p: 'tough; resists heat and corrosion', u: ['stainless steel', 'electroplating (chromium plating)', 'tanning, printing, dyeing', 'car brake pads'] },
+      Mn: { p: 'adds strength and hardness to steel', u: ['manganese steel for railway tracks', 'about 1 % in ordinary steel', 'dry cell batteries', 'paint; gasoline additive'] },
+      Fe: { p: 'strong and cheap as alloy steel', u: ['steel for bridges, buildings, ships, cars', 'catalyst in the Haber process', 'treats or prevents anaemia'] },
+      Co: { p: 'brilliant blue compounds', u: ['blue pigments for ceramics, paint, ink', 'alloys with other metals', 'rechargeable batteries'] },
+      Ni: { p: 'resists corrosion; catalyst', u: ['anti-corrosion coating, nickel plating', 'stainless steel', 'rechargeable batteries', 'catalyst for hydrogenation of alkenes'] },
+      Cu: { p: 'excellent conductor of electricity and heat', u: ['electrical wire, circuit boards', 'water pipes', 'heat exchangers', "treats Wilson's and Menkes diseases"] }
+    };
+    const QUIZ = [['railway tracks', 'Mn'], ['jet aircraft and dental implants', 'Ti'], ['electrical wiring', 'Cu'], ['Haber process catalyst', 'Fe'],
+      ['Contact process catalyst (as its oxide)', 'V'], ['brilliant blue pigment in ceramics', 'Co'], ['hydrogenation of alkenes', 'Ni'],
+      ['chromium plating and stainless steel', 'Cr'], ['bridges and car bodies (as steel)', 'Fe'], ['heat exchangers and water pipes', 'Cu'], ['hip replacement joints', 'Ti'], ['nickel plating against corrosion', 'Ni']];
+    const k = PhysKit.mount('pk-uses', { x: [-6.2, 6.2], y: [-2.4, 2.4] });
+    const C = PhysKit.C;
+    let sel = 1, q = 0, pick = -1, score = 0, tries = 0, lastP = null;
+    k.row();
+    const mode = k.choice(['Explore', 'Quiz'], 0, () => { pick = -1; });
+    k.button('Next job', () => { if (mode.value === 1) { q = (q + 1 + Math.floor(Math.random() * (QUIZ.length - 1))) % QUIZ.length; pick = -1; } }, { primary: true });
+    const TW = 1.1, X0 = -5.5;
+    const tileAt = p => { if (!p || p[1] < 1.0 || p[1] > 2.2) return -1; const i = Math.floor((p[0] - X0) / (TW + 0.02)); return i >= 0 && i < 10 ? i : -1; };
+    // A click: hit() sees the pointer first, then start() acts on it
+    k.view.drag({
+      hit: p => { lastP = p; return tileAt(p) >= 0; },
+      get: () => [0, 0], set: () => {},
+      start: () => {
+        const i = tileAt(lastP); if (i < 0) return;
+        if (mode.value === 0) sel = i;
+        else if (pick < 0) { pick = i; tries++; if (EL[i] === QUIZ[q][1]) score++; }
+        if (k.update) k.update(); k.redraw();
+      }
+    });
+    k.draw = g => {
+      for (let i = 0; i < 10; i++) {
+        const x = X0 + i * (TW + 0.02), has = !!USE[EL[i]];
+        let fill = has ? '#ecfeff' : '#f1f5f9', line = has ? C.fluid : C.faint;
+        if (mode.value === 0 && i === sel) { fill = C.energy; line = '#b45309'; }
+        if (mode.value === 1 && pick >= 0) {
+          if (EL[i] === QUIZ[q][1]) { fill = '#bbf7d0'; line = C.good; }
+          else if (i === pick) { fill = '#fecaca'; line = C.bad; }
+        }
+        g.rect(x, 1.0, TW, 1.2, { fill, color: line, width: 2, radius: 6 });
+        g.text([x + TW / 2, 1.75], EL[i], { size: 16, bold: true, color: has ? C.ink : C.faint });
+        g.text([x + TW / 2, 1.25], String(21 + i), { size: 10, color: C.muted });
+      }
+      if (mode.value === 0) {
+        const s = EL[sel], d = USE[s];
+        if (!d) { g.text([0, 0.0], `${s}: few uses in this section (${s === 'Zn' ? 'not a true transition element' : 'rare and expensive'})`, { size: 13, color: C.muted, bold: true }); return; }
+        g.text([-5.5, 0.55], `${s} — ${d.p}`, { size: 14, bold: true, align: 'left', color: C.vel });
+        d.u.forEach((u, j) => g.text([-5.2, 0.0 - j * 0.5], '• ' + u, { size: 13, align: 'left' }));
+      } else {
+        g.text([0, 0.45], 'Which metal is used for:', { size: 13, color: C.muted });
+        g.text([0, -0.15], QUIZ[q][0] + '?', { size: 17, bold: true });
+        if (pick >= 0) {
+          const ok = EL[pick] === QUIZ[q][1], a = QUIZ[q][1];
+          g.text([0, -0.9], ok ? `Right! ${a}: ${USE[a].p}` : `Not ${EL[pick]}. It is ${a}: ${USE[a].p}`, { size: 13, bold: true, color: ok ? C.good : C.bad });
+        }
+        g.text([0, -1.8], `score ${score} / ${tries}`, { size: 12, color: C.muted });
+      }
+    };
+    k.update = () => k.readout([mode.value === 0 ? 'Click any tile. Sc and Zn (grey) are not described in this section.' : 'Click one tile per job; the right tile turns green.']);
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Review Questions (p. 107)</span>
+
+  <p><strong>Review Q1:</strong> (a) Two transition elements used for building materials. (b) Most paints contain a transition-element compound. Why?</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">(a) Iron (as steel) and titanium (also chromium, manganese). (b) Transition elements form coloured compounds, which make good pigments (e.g. cobalt blue).</p></details>
+
+  <p><strong>Review Q2:</strong> (a) Which element's compound is the catalyst in the ceramics industry: scandium, cobalt, vanadium or chromium? (b) Two transition elements used for electroplating.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">(a) Vanadium, as vanadium(V) oxide, V₂O₅. (b) Chromium (chromium plating) and nickel (nickel plating, against corrosion).</p></details>
+
+  <p><strong>Review Q3:</strong> (a) Why is titanium used in surgical instruments? (b) Two uses each of manganese, nickel, copper and chromium.</p>
+  <details><summary>Show answer</summary>
+    <p>(a) It is lightweight, durable and corrosion-resistant (better than stainless steel in these ways).</p>
+    <p class="answer">(b) Mn: steel for railway tracks; dry cells (also paint). Ni: nickel plating; rechargeable batteries (also stainless steel, hydrogenation catalyst). Cu: electrical wires; water pipes (also circuit boards, heat exchangers). Cr: stainless steel; electroplating (also tanning, brake pads).</p></details>
+
+  <p><strong>Exercises 5 and 12 (pp. 107–108):</strong> (5) Two uses of copper and of titanium. (12) Why are titanium surgical instruments more suitable than stainless steel ones?</p>
+  <details><summary>Show answer</summary>
+    <p>(5) Copper: electrical wire, water pipes. Titanium: jet aircraft and spacecraft, dental implants.</p>
+    <p class="answer">(12) Titanium instruments are lighter, durable and more corrosion-resistant than stainless steel ones.</p></details>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>Building: steel (Fe with Mn, Cr, V), titanium.</li>
+    <li>Industry: Cu wires, Cr and Ni plating, Co pigments and batteries, V₂O₅ catalyst.</li>
+    <li>Medicine: Ti implants and instruments; Fe for anaemia.</li>
+  </ul>
+</div>
+
+</article>

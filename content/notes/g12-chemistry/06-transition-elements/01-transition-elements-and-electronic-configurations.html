@@ -1,0 +1,166 @@
+<!-- tags: Transition Elements, G12 Chemistry Myanmar -->
+<!-- Grade 12 Chemistry textbook, Chapter 6, section 6.1 (pages 97–101) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Transition Elements">The 3d Series and Electronic Configurations</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; The d-Block Between Groups II and III</span>
+  <p>The <strong>transition elements</strong> sit between Group II (s-block) and Group III (p-block), in Groups 3 to 12. IUPAC defines a transition element as one whose atom has a <strong>partially filled d subshell</strong>, or which gives cations with an <strong>incomplete d subshell</strong>. They are also called d-block elements.</p>
+  <ul>
+    <li>Three series: <strong>3d</strong> (₂₁Sc to ₃₀Zn, in Period 4), 4d (₃₉Y to ₄₈Cd), 5d (₅₇La to ₈₀Hg, leaving out the 14 lanthanides ₅₈Ce to ₇₁Lu). The lanthanides and actinides are the inner transition elements.</li>
+    <li>Across the 3d series the nuclear charge rises, so the <strong>atomic radius falls slowly</strong> (162 pm for Sc to 124 pm for Ni) and the <strong>first ionisation energy rises slightly</strong>. The radii are so similar that these metals blend into alloys. Zn is larger again (138 pm) with a high IE (906 kJ mol⁻¹), because its full 3d shell adds electron–electron repulsion.</li>
+    <li><strong>Filling:</strong> the 4s orbital is slightly lower in energy than 3d, so 4s fills first and the rest go into 3d, one per orbital before pairing (Hund's rule). ₂₂Ti: [Ar] 4s² 3d².</li>
+    <li><strong>Two exceptions:</strong> a half-filled or completely filled 3d set is extra stable, so one 4s electron moves into 3d. ₂₄Cr: [Ar] 4s¹ 3d⁵ (not 4s² 3d⁴); ₂₉Cu: [Ar] 4s¹ 3d¹⁰ (not 4s² 3d⁹).</li>
+    <li><strong>Ions:</strong> electrons are removed from <strong>4s first</strong>, then from 3d. Fe²⁺ is [Ar] 3d⁶ and Fe³⁺ is [Ar] 3d⁵.</li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Core Patterns</span>
+  <div class="formula-main">
+    $$\text{atoms: } (n-1)d^{1\text{–}10}\, ns^{1\text{–}2} \qquad \text{ions: } (n-1)d^{\,0\text{–}10} \qquad [\mathrm{Ar}] = 1s^2\,2s^2\,2p^6\,3s^2\,3p^6$$
+    $$\text{number of 3d electrons in } \mathrm{M}^{n+} = Z - 18 - n$$
+  </div>
+  <ul class="symbols">
+    <li>The shortcut works for every 3d ion because all the 4s electrons go first</li>
+    <li>Cu is a transition element because Cu²⁺ is [Ar] 3d⁹ (incomplete); Zn is not, because both Zn and Zn²⁺ have a full 3d¹⁰</li>
+  </ul>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>Removing 3d electrons first:</strong> Fe²⁺ is 3d⁶, not 4s² 3d⁴. The 4s fills first <em>and</em> empties first.</li>
+    <li><strong>Forgetting Cr and Cu:</strong> they have 4s¹, so Cr³⁺ is 3d³ and Cu²⁺ is 3d⁹ (count with $Z - 18 - n$).</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; Fill the 4s and 3d Boxes</span>
+  <p class="demo-question">How do the electrons fill the 4s and 3d orbitals across the series, and which ones leave when an ion forms?</p>
+  <p class="demo-instruction">Choose an element and atom or ion. Press <em>Fill</em> to add electrons one at a time by Hund's rule. For Cr and Cu, tick <em>Expected filling</em> to compare with the real, more stable configuration. The lower graph plots the atomic radius or the first ionisation energy (Table 6.1).</p>
+  <div id="pk-3d"></div>
+  <script>
+  (function () {
+    const EL = ['Sc', 'Ti', 'V', 'Cr', 'Mn', 'Fe', 'Co', 'Ni', 'Cu', 'Zn'];
+    const ATOM = [[2, 1], [2, 2], [2, 3], [1, 5], [2, 5], [2, 6], [2, 7], [2, 8], [1, 10], [2, 10]];   // [4s, 3d]
+    const RAD = [162, 147, 134, 130, 135, 126, 125, 124, 128, 138], IE = [631, 658, 650, 652, 717, 759, 760, 736, 745, 906];
+    const k = PhysKit.mount('pk-3d', { x: [-6.2, 6.2], y: [-2.3, 2.3] });
+    const C = PhysKit.C;
+    let shown = 99, t = 0;                       // electrons drawn so far (99 = all)
+    k.row();
+    const el = k.choice(EL, 5, () => { shown = 99; });
+    k.row();
+    const sp = k.choice(['Atom', 'M²⁺ ion', 'M³⁺ ion'], 0, () => { shown = 99; });
+    const ex = k.check('Expected filling (Cr, Cu)', false, () => { shown = 99; });
+    k.button('Fill', () => { shown = 0; t = 0; }, { primary: true });
+    k.row();
+    const gch = k.choice(['Atomic radius', 'First IE'], 0);
+    k.loop(dt => { dt = Math.max(0, Math.min(dt, 0.04)); if (shown < 99) { t += dt; if (t > 0.35) { t = 0; shown++; if (shown > 12) shown = 99; } } }, { button: false });
+
+    // [4s, 3d] of the chosen species; null if the ion is not formed (Sc²⁺, Zn³⁺ in Table 6.2)
+    function config() {
+      const i = el.value, Z = 21 + i, n = sp.value === 0 ? 0 : sp.value + 1;
+      if (n === 0) { let [s, d] = ATOM[i]; if (ex.value && (i === 3 || i === 8)) { s = 2; d -= 1; } return [s, d]; }
+      if ((i === 0 && n === 2) || (i === 9 && n === 3)) return null;
+      return [0, Z - 18 - n];
+    }
+    const sup = n => String(n).split('').map(c => '⁰¹²³⁴⁵⁶⁷⁸⁹'[c]).join('');
+    function box(g, x, y, ups, downs, hl) {
+      g.rect(x, y, 0.9, 1.0, { fill: hl ? '#ecfdf5' : '#fff', color: C.ink, width: 1.8 });
+      if (ups) g.arrow([x + 0.3, y + 0.15], [0, 0.7], { color: C.vel, width: 2.5, head: 9 });
+      if (downs) g.arrow([x + 0.6, y + 0.85], [0, -0.7], { color: C.acc, width: 2.5, head: 9 });
+    }
+    k.draw = g => {
+      const cf = config(), name = EL[el.value] + (sp.value === 0 ? '' : sp.value === 1 ? '²⁺' : '³⁺');
+      const y = -0.2;
+      g.rect(-5.9, y, 1.6, 1.0, { fill: '#f1f5f9', color: C.muted, width: 1.5 });
+      g.text([-5.1, y + 0.5], '[Ar]', { size: 14, bold: true, color: C.muted });
+      g.text([-5.1, y - 0.35], '18 e⁻', { size: 11, color: C.muted });
+      if (!cf) { g.text([0, 0.3], `${name} is not formed (Table 6.2)`, { size: 15, bold: true, color: C.bad }); return; }
+      let [s, d] = cf;
+      const lim = Math.min(shown, s + d), sNow = Math.min(s, lim), dNow = Math.max(0, lim - s);
+      // 4s box
+      box(g, -3.7, y, sNow >= 1, sNow >= 2, false);
+      g.text([-3.25, y - 0.35], '4s', { size: 13, bold: true });
+      // five 3d boxes, Hund's rule: singles first, then pairs
+      for (let j = 0; j < 5; j++) {
+        const up = dNow > j, down = dNow > 5 + j;
+        box(g, -2.2 + j * 1.0, y, up, down, d === 5 || d === 10);
+      }
+      g.text([0.25, y - 0.35], '3d', { size: 13, bold: true });
+      const unp = (s === 1 ? 1 : 0) + (d <= 5 ? d : 10 - d);
+      g.text([0.25, 1.75], `${name}:  [Ar] ${s ? '4s' + sup(s) + ' ' : ''}3d${sup(d)}`, { size: 17, bold: true });
+      g.text([4.6, 0.7], `unpaired: ${unp}`, { size: 14, bold: true, color: unp ? C.energy : C.muted });
+      g.text([4.6, 0.15], d === 0 || d === 10 ? 'd shell empty/full' : 'd shell incomplete', { size: 12, color: d === 0 || d === 10 ? C.muted : C.good, bold: true });
+      if (d === 5) g.text([4.6, -0.4], 'half-filled: extra stable', { size: 12, color: C.good });
+      if (d === 10) g.text([4.6, -0.4], 'completely filled', { size: 12, color: C.good });
+      if (ex.value && sp.value === 0 && (el.value === 3 || el.value === 8)) g.text([0.25, -1.4], 'expected only: one 4s electron really moves into 3d', { size: 12, color: C.bad, bold: true });
+      else if (sp.value > 0) g.text([0.25, -1.4], `4s electrons leave first, then 3d: ${21 + el.value} − 18 − ${sp.value + 1} = ${d} electrons in 3d`, { size: 12, color: C.ink });
+    };
+    const gv = k.addView({ x: [-1.2, 10.5], y: [-140, 1000], equal: false, height: 200, title: 'Table 6.1 across the 3d series' });
+    gv.draw = g => {
+      const ie = gch.value === 1, V = ie ? IE : RAD, top = ie ? 1000 : 200;
+      gv.setRange([-1.2, 10.5], [-top * 0.14, top]);
+      g.axes({ xstep: 100, ystep: ie ? 200 : 50, ylabel: ie ? 'IE (kJ mol⁻¹)' : 'radius (pm)' });
+      V.forEach((v, i) => {
+        const on = i === el.value;
+        g.rect(i + 0.15, 0, 0.7, v, { fill: on ? C.energy : '#cbd5e1', color: on ? '#b45309' : '#94a3b8' });
+        g.text([i + 0.5, v + top * 0.05], String(v), { size: 10, bold: on });
+        g.text([i + 0.5, -top * 0.07], EL[i], { size: 11, bold: on });
+      });
+    };
+    k.update = () => {
+      const cf = config();
+      if (!cf) { k.readout(['Sc only forms Sc³⁺ ([Ar] 3d⁰) and Zn only forms Zn²⁺ ([Ar] 3d¹⁰).']); return; }
+      const i = el.value, Z = 21 + i;
+      k.readout([`${EL[i]} (Z = ${Z}): radius ${RAD[i]} pm, first IE ${IE[i]} kJ mol⁻¹`,
+        i === 9 ? 'Zn: full 3d¹⁰ in the atom and the ion, so it is not a transition element by the IUPAC definition.' : 'Partially filled 3d in the atom or a common ion: a transition element.']);
+    };
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Example 1 and Review Questions (pp. 100–101)</span>
+
+  <p><strong>Example 1:</strong> Why is copper (₂₉Cu) considered a transition element?</p>
+  <details><summary>Show answer</summary>
+    <p>₂₉Cu is [Ar] 3d¹⁰ 4s¹ (a full 3d set), but Cu²⁺ is [Ar] 3d⁹.</p>
+    <p class="answer">Copper is a transition element <strong>because the Cu²⁺ ion has an incomplete 3d subshell</strong>.</p></details>
+
+  <p><strong>Review Q1:</strong> Choose the transition elements from ₁₁Na, ₂₄Cr, ₃Li, ₁₂Mg, ₂₂Ti, ₂₀Ca, ₁₃Al, ₂₆Fe, ₂₈Ni, ₂₅Mn and write their complete configurations.</p>
+  <details><summary>Show answer</summary>
+    <p>Transition elements: Cr, Ti, Fe, Ni, Mn (Z = 21 to 30). With $1s^2\,2s^2\,2p^6\,3s^2\,3p^6$ first in each:</p>
+    <p class="answer">₂₂Ti: … 4s² 3d² &nbsp; ₂₄Cr: … 4s¹ 3d⁵ &nbsp; ₂₅Mn: … 4s² 3d⁵ &nbsp; ₂₆Fe: … 4s² 3d⁶ &nbsp; ₂₈Ni: … 4s² 3d⁸</p></details>
+
+  <p><strong>Review Q2:</strong> Essential configurations of (i) Sc, (ii) Fe²⁺, (iii) Co, (iv) Cu, (v) Zn²⁺.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">(i) 3d¹ 4s² &nbsp; (ii) 3d⁶ &nbsp; (iii) 3d⁷ 4s² &nbsp; (iv) 3d¹⁰ 4s¹ &nbsp; (v) 3d¹⁰</p></details>
+
+  <p><strong>Review Q3:</strong> (a) With an argon core: (i) V²⁺, (ii) Cr³⁺, (iii) Mn²⁺, (iv) Co³⁺, (v) Ni²⁺. (b) Number of 3d electrons in Fe, Fe³⁺, Mn, Mn³⁺, Co, Co³⁺.</p>
+  <details><summary>Show answer</summary>
+    <p>(a) Use $Z - 18 - n$ for the 3d count, with no 4s left:</p>
+    <p class="answer">(i) V²⁺: 23 − 18 − 2 = [Ar] 3d³ &nbsp; (ii) Cr³⁺: [Ar] 3d³ &nbsp; (iii) Mn²⁺: [Ar] 3d⁵ &nbsp; (iv) Co³⁺: [Ar] 3d⁶ &nbsp; (v) Ni²⁺: [Ar] 3d⁸</p>
+    <p class="answer">(b) Fe 6, Fe³⁺ 5, Mn 5, Mn³⁺ 4, Co 7, Co³⁺ 6</p></details>
+
+  <p><strong>Exercises 3, 4, 6, 8 and 15 (pp. 108):</strong> (3) Complete configurations of Cr³⁺, Zn²⁺, Cu, V, Co³⁺, Mn²⁺. (4) Argon-core configurations of Cr, Cu²⁺, V²⁺. (6) Which 3d elements are not transition elements by the IUPAC definition? (8) Most stable oxidation states of Sc and Zn, and why. (15) Why do Cr and Cu break the regular filling pattern?</p>
+  <details><summary>Show answer</summary>
+    <p>(3) Each begins $1s^2\,2s^2\,2p^6\,3s^2\,3p^6$, then: Cr³⁺ 3d³; Zn²⁺ 3d¹⁰; Cu 4s¹ 3d¹⁰; V 4s² 3d³; Co³⁺ 3d⁶; Mn²⁺ 3d⁵.</p>
+    <p>(4) Cr: [Ar] 4s¹ 3d⁵; Cu²⁺: [Ar] 3d⁹; V²⁺: [Ar] 3d³.</p>
+    <p>(6) Zinc: Zn is [Ar] 3d¹⁰ 4s² and its only ion Zn²⁺ is [Ar] 3d¹⁰, so its d subshell is never incomplete. (Scandium still counts: the atom has 3d¹.)</p>
+    <p>(8) Sc: +3, since Sc³⁺ is [Ar] 3d⁰, the stable argon arrangement. Zn: +2, since Zn²⁺ is [Ar] 3d¹⁰, a completely filled 3d set.</p>
+    <p class="answer">(15) 3d and 4s are very close in energy, and a half-filled (3d⁵) or completely filled (3d¹⁰) set is extra stable, so one 4s electron moves into 3d: Cr 4s¹ 3d⁵ and Cu 4s¹ 3d¹⁰.</p></details>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>Transition element: partially filled d subshell in the atom or in a common ion; Zn is not one.</li>
+    <li>4s fills before 3d but empties before 3d; Cr and Cu have 4s¹.</li>
+    <li>Across Sc → Cu, radius falls slowly and the first IE rises slightly.</li>
+  </ul>
+</div>
+
+</article>
