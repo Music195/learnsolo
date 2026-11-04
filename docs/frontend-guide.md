@@ -235,7 +235,7 @@ Hiding where progress is stored behind `src/progress.js` is called **encapsulati
 | `practice-hub:course` | `src/components/HubTabs.jsx` | The course tab last opened on `/practice` |
 | `past-tab:<exam>` | `src/components/HubTabs.jsx` | The tab last opened on a mock-question list, e.g. `past-tab:eju` or `past-tab:jlpt` |
 | `noteFontSize` | `src/pageHooks.js` | The A−/A+ text size, from 70 to 150 (%) |
-| `learnsolo_dict_size` | `src/components/FloatingDictionary.jsx` | The user's preferred `{w, h}` size for the floating dictionary popup |
+| `learnsolo_dict_size` | `src/components/FloatingDictionary.jsx` | The user's preferred `{width, height}` size for the floating dictionary popup |
 
 ---
 

@@ -277,7 +277,7 @@ Everything under `/api` returns JSON. You can open any `GET` route directly in y
 | `GET /api/past` | `categories`, each with its papers |
 | `GET /api/past/<exam>` | one category: name, about, `papers`, `groups` |
 | `GET /api/past/<exam>/[<course>/]<paper>` | one paper, like a set, plus `paper` (its category) |
-| `GET /api/dictionary?q=<word>&from=auto` | `query`, `detected_lang` (`en`/`my`/`ja`), `source` (`database`/`gemini`/`translate`), and `results` (3-way English/Burmese/Japanese entries) |
+| `GET /api/dictionary?q=<word>&from=auto` | `query`, `detected_lang` (`en`/`my`/`ja`), `english`, `burmese`, `japanese`, `reading`, `notes`, and `source` (`curated`/`ai`/`online`) |
 
 Anything that doesn't exist answers `404` with `{"error": "not found"}`. The old address of a renamed paper answers `404` with `{"error": "moved", "moved_to": "/past/..."}`.
 
