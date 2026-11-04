@@ -47,10 +47,13 @@ This project is built to act as a personal study companion, helping users struct
 ├── content/                # All learning material, as HTML fragments
 │   ├── notes/              #   notes/<course>/<topic>/<nn-name>.html
 │   ├── practice/           #   practice sets, same course/topic folders as notes/
-│   └── past/               #   past question papers by exam (eju/, university/)
+│   ├── past/               #   mock question papers by exam (eju/, jlpt/, university/)
+│   └── dictionary.json     #   curated 3-way vocabulary (English, Burmese, Japanese)
 ├── docker-compose.yml      # Local PostgreSQL (docker compose up -d)
 ├── .env.example            # Copy to .env: DATABASE_URL, SECRET_KEY
-├── docs/content-guide.md   # Learn the whole project: how it works, every file, writing content, recipes for changing it
+├── docs/content-guide.md   # Content guide: writing notes, practice sets, mock questions, and TRY IT demos
+├── docs/backend-guide.md   # Backend guide: Flask, PostgreSQL, models, migrations, API, accounts, and pytest
+├── docs/frontend-guide.md  # Frontend guide: React, Vite, pages, components, styles, MathJax, and localStorage
 ├── docs/dictionary-guide.md # 3-way dictionary guide: writing terms, CLI commands, hybrid engine
 ├── docs/oracle-server.md   # A second copy of the site on a free Oracle Cloud server, every command explained
 └── README.md               # Project documentation
@@ -60,7 +63,7 @@ This project is built to act as a personal study companion, helping users struct
 ## ▶️ Running locally
 
 Needs Python 3.12+, Node.js 20.19+, and Docker. On Ubuntu the command is `python3`, not `python`.
-Step by step, with what to do when something fails: [docs/content-guide.md, section 10](docs/content-guide.md#10-running-and-deploying).
+Step by step, with what to do when something fails: [docs/backend-guide.md, section 6](docs/backend-guide.md#6-running-testing-and-deploying).
 
 ```bash
 python3 -m venv venv && source venv/bin/activate
