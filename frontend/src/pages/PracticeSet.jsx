@@ -43,14 +43,26 @@ export default function PracticeSet() {
 
   return (
     <>
-      <FloatBar location={location} nav={nav} onTextSize={changeTextSize} />
+      <FloatBar location={location} nav={nav} />
 
       {/* HEADER: course and topic, the title, and how many problems are done */}
       <header className="note-header practice-header">
         <div className="note-header-inner">
           <p className="note-chips">
-            {location.course_first && <Link to={`/notes/${location.course_first}`}>{location.course}</Link>}
-            {location.topic_first && <Link to={`/notes/${location.topic_first}`}>{location.topic}</Link>}
+            <Link to="/" title="Home"><i className="fas fa-house"></i></Link>
+            {location.course_first && (
+              <>
+                <i className="fas fa-chevron-right note-chip-sep"></i>
+                <Link to={`/notes/${location.course_first}`}>{location.course}</Link>
+              </>
+            )}
+            {location.topic_first && (
+              <>
+                <i className="fas fa-chevron-right note-chip-sep"></i>
+                <Link to={`/notes/${location.topic_first}`}>{location.topic}</Link>
+              </>
+            )}
+            <i className="fas fa-chevron-right note-chip-sep"></i>
             <span className="chip-practice"><i className="fas fa-puzzle-piece"></i> {review ? 'Topic review' : 'Practice'}</span>
           </p>
           <h1>{title}</h1>

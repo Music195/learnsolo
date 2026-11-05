@@ -8,20 +8,54 @@ import { useNavigate } from 'react-router'
 // Text size: 70%–150% in steps of 5%, remembered in the browser (localStorage)
 // under the same name the old site used, so a saved size carries over.
 const SIZE_KEY = 'noteFontSize'
-const clampSize = (size) => Math.min(Math.max(size, 70), 150)
+const clampSize = (size) => Math.min(Math.max(size, 70), 160)
 
-// const [textSize, changeTextSize] = useTextSize()
-//   textSize           e.g. 100 (percent)
-//   changeTextSize(1)  5% bigger; changeTextSize(-1) 5% smaller
-export function useTextSize() {
-  // useState(() => ...) runs the function only once, for the first value
-  const [size, setSize] = useState(() => clampSize(parseInt(localStorage.getItem(SIZE_KEY), 10) || 100))
-  function change(step) {
-    const next = clampSize(size + 5 * step)
-    setSize(next)
-    localStorage.setItem(SIZE_KEY, next)
+// Font size hook: integer percentage (85, 100, 115, 130).
+// Persisted in localStorage under 'noteFontSize'.
+// Syncs CSS variable --content-font-size and broadcasts live changes.
+export function useFontSize() {
+  const [fontSize, setFontSizeState] = useState(() => {
+    try {
+      return clampSize(parseInt(localStorage.getItem(SIZE_KEY), 10) || 100)
+    } catch {
+      return 100
+    }
+  })
+
+  useEffect(() => {
+    document.documentElement.style.setProperty('--content-font-size', `${fontSize}%`)
+    try {
+      localStorage.setItem(SIZE_KEY, String(fontSize))
+      localStorage.setItem('app_font_size', String(fontSize))
+    } catch {}
+
+    const onCustom = (e) => {
+      if (e.detail?.fontSize) {
+        setFontSizeState(e.detail.fontSize)
+      }
+    }
+    window.addEventListener('app_font_size_change', onCustom)
+    return () => window.removeEventListener('app_font_size_change', onCustom)
+  }, [fontSize])
+
+  function setFontSize(newSize) {
+    const clamped = clampSize(Number(newSize) || 100)
+    setFontSizeState(clamped)
+    window.dispatchEvent(new CustomEvent('app_font_size_change', { detail: { fontSize: clamped } }))
   }
-  return [size, change]
+
+  function changeFontSize(delta) {
+    setFontSize(fontSize + delta * 10)
+  }
+
+  return { fontSize, setFontSize, changeFontSize }
+}
+
+// const [textSize, changeTextSize, setTextSize] = useTextSize()
+// Backwards compatible wrapper for Note.jsx, PracticeSet.jsx, PastPaper.jsx
+export function useTextSize() {
+  const { fontSize, setFontSize, changeFontSize } = useFontSize()
+  return [fontSize, changeFontSize, setFontSize]
 }
 
 // ← / → keys go to nav.prev / nav.next ({ url } or null).
@@ -82,5 +116,30 @@ export function useTheme() {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))
   }
 
-  return [theme, toggleTheme]
+  return [theme, toggleTheme, setTheme]
+}
+
+// Font family hook: 'default', 'noto', 'serif'.
+// Persisted in localStorage under 'app_font_family'.
+export function useFontFamily() {
+  const [fontFamily, setFontFamilyState] = useState(() => {
+    try {
+      return localStorage.getItem('app_font_family') || 'default'
+    } catch {
+      return 'default'
+    }
+  })
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-font', fontFamily)
+    try {
+      localStorage.setItem('app_font_family', fontFamily)
+    } catch {}
+  }, [fontFamily])
+
+  function setFontFamily(family) {
+    setFontFamilyState(family)
+  }
+
+  return { fontFamily, setFontFamily }
 }

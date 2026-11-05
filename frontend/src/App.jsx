@@ -36,10 +36,11 @@ export default function App() {
         <Route path="/past/:category" element={<PastList />} />
         {/* /past/eju/course-1/03-mock-paper: one paper */}
         <Route path="/past/:category/*" element={<PastPaper />} />
-        {/* Accounts: login, signup, and logged-in account settings */}
+        {/* Settings & Accounts: login, signup, settings and account hub */}
         <Route path="/login" element={<Account mode="login" />} />
         <Route path="/signup" element={<Account mode="signup" />} />
         <Route path="/account" element={<AccountSettings />} />
+        <Route path="/settings" element={<AccountSettings />} />
         {/* Anything else */}
         <Route path="*" element={<NotFound />} />
       </Routes>

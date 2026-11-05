@@ -73,7 +73,7 @@ Here is what happens step-by-step in `frontend/` when a student clicks a link to
    `useApi` (in `src/api.js`) calls `fetch()` and re-renders `Note` once the JSON arrives from `backend/api/content.py` → `backend/services/notes.py`.
 3. **React draws the page layout (`Note.jsx`):**
    ```jsx
-   <FloatBar location={location} nav={nav} ... />       // top floating bar
+   <FloatBar location={location} nav={nav} ... />       // Slim Icon Rail (AppRail) + Topics flyout
    <header className="note-header"> ... <h1>{title}</h1> ... </header>
    <NoteContent html={content} ... />                   // the note's HTML fragment
    <PagerCard link={nav.prev} side="prev" />            // previous / next cards
@@ -158,7 +158,7 @@ Here is what happens step-by-step in `frontend/` when a student clicks a link to
 | `auth.jsx` | `AuthProvider` and `useAuth()`: who is logged in, `signup`, `login`, `logout`, and moving browser progress into the account | Changing what happens at log in or out |
 | `progress.js` | **The only place progress is read and saved**: in `localStorage` when logged out, in the account (`/api/progress/...`) when logged in | Changing how progress is stored |
 | `practice.js` | Adds the answer boxes (or multiple-choice option buttons with `data-choice`), answer checking (`toNumber`), score updates, and "I got it / Review later" buttons to a set's problems | Changing how answers are checked or marked |
-| `pageHooks.js` | Shared hooks: dark mode (`useTheme`), text size (`useTextSize`), ← / → keys (`useArrowKeys`), the tab title (`usePageTitle`), back to top (`useScrollToTop`) | Changing these behaviours on every page |
+| `pageHooks.js` | Shared hooks: dark mode (`useTheme`), global font scale (`useFontSize`), font family (`useFontFamily`), text size (`useTextSize`), ← / → keys (`useArrowKeys`), the tab title (`usePageTitle`), back to top (`useScrollToTop`) | Changing these behaviours on every page |
 | `mathjax.js` | `typeset(element)`: draws formulas inside an element, once, one job at a time | Formulas draw wrongly |
 | `styles.js` | Imports every CSS file in `styles/` | Adding a new CSS file |
 
@@ -173,21 +173,23 @@ Here is what happens step-by-step in `frontend/` when a student clicks a link to
 | `PastList.jsx` | `/past`, `/past/<exam>` | A card per exam category (`EJU Mock Papers`, `JLPT Mock Tests`, `University Mock Questions`); then one exam's papers (with tabs for EJU Course 1/2 and JLPT N1–N5 levels and skill sections), and site footer |
 | `PastPaper.jsx` | `/past/<exam>/...` | One mock paper or test, with live scoring header, hints/solutions, choices, and end-of-test `<TestScoreCard />` |
 | `Account.jsx` | `/login`, `/signup` | The email + password form; goes back to the page you came from |
-| `AccountSettings.jsx` | `/account` | Logged-in user settings: avatar, email, membership date, change password form, study progress controls (reset all progress), and session logout |
+| `AccountSettings.jsx` | `/settings`, `/account` | Settings hub with 3 tabs: Account & Security (password change, progress reset, logout), Theme & Appearance (Light/Dark selection), and Font & Typography (font size presets and live preview) |
 | `NotFound.jsx` | anything else | "Page not found" |
 
 ### Components (`frontend/src/components/`, reusable pieces)
 
 | File | What it is | Used by |
 |---|---|---|
-| `FloatBar.jsx` | The top floating bar: custom logo, where you are, search, text size, previous/next, Topics, active login date badge, notifications bell, feedback button, dark/light mode toggle, and Account button | Every page |
-| `NotificationBell.jsx` | The announcement bell: unread badge counter, popover drawer with creator announcements, and "Mark all as read" | `FloatBar` |
-| `FeedbackModal.jsx` | Feedback dialog modal: category selector, message textarea, and submission to `/api/feedback` | `FloatBar` |
+| `AppRail.jsx` / `FloatBar.jsx` | **Slim Icon Rail Navigation**: 58px left vertical rail on desktop (bottom tab bar on mobile) giving 100% full-height reading canvas. Holds Home, Topics flyout, Practice, Exams, Search, Announcements, and Settings | Every page |
+| `TopicsFlyout.jsx` | **Course & Topics Flyout (State B)**: docked curriculum drawer beside the rail with course/topic dropdowns, live filter, note index, and `▶ Now` indicator | `AppRail` (all pages) |
+| `SearchModal.jsx` | **Command Palette Search Modal**: centered quick find modal (`Ctrl + K` / `Cmd + K`) for instant note and topic lookups | `AppRail` |
+| `SettingsPopover.jsx` | Quick Settings popover with Theme switcher (Light/Dark), Font scale controls (85%–130% + stepper + live preview), Account quick view, and nested Send Feedback button | `AppRail` |
+| `NotificationBell.jsx` | The announcement bell: unread badge counter, popover drawer with creator announcements, and "Mark all as read" | `AppRail` |
+| `FeedbackModal.jsx` | Feedback dialog modal: category selector, message textarea, and submission to `/api/feedback` | `AppRail`, `AccountSettings` |
 | `Footer.jsx` | Site footer: logo, platform description, About Me portfolio link (`https://music195.github.io/portfolio/`), GitHub repository, subjects, and mock exam links | `Home`, `PracticeList`, `PastList`, `AccountSettings` |
 | `TestScoreCard.jsx` | Test completion summary card: pass/review badges (`合格`/`要復習`), score stats, "Retake Test", "Jump to First Mistake", and "Next Test" | `PastPaper` |
 | `FloatingDictionary.jsx` | The floating 📖 button (bottom-right) and resizable 3-way dictionary window (English ↔ Burmese ↔ Japanese) | Every page (mounted in `App.jsx`) |
-| `SearchBox.jsx` | The search box: loads `/api/search-index` once, shows up to 8 matches, keyboard ↑ ↓ Enter Esc | `FloatBar` |
-| `TopicsSidebar.jsx` | The Topics sidebar on a note: course and topic dropdowns, the topic's notes | `Note` |
+| `SearchBox.jsx` | The inline search box: loads `/api/search-index` once, shows up to 8 matches, keyboard ↑ ↓ Enter Esc | Search components |
 | `NoteContent.jsx` | Puts a note's or set's HTML on the page, runs its scripts, cleans up any JSXGraph boards on unmount, then draws the formulas | `Note`, `PracticeSet`, `PastPaper` |
 | `HubTabs.jsx` | A row of tabs with a panel each (remembered in `localStorage`), and the "Solved n of m" or "Score: X/Y (Z%)" badge | `PracticeList`, `PastList` |
 | `HeroDemo.jsx` | The draggable tangent-line demo on the home page | `Home` |
@@ -197,18 +199,20 @@ Here is what happens step-by-step in `frontend/` when a student clicks a link to
 
 | File | Styles |
 |---|---|
-| `floatbar.css` | The floating bar, search results, notifications popover, and feedback modal |
-| `dark-mode.css` | **Complete dark mode theme**: background colors, cards, note blocks, choices, score cards, and dictionary when `[data-theme="dark"]` |
+| `siderail.css` | The Slim Icon Rail (58px vertical desktop rail & mobile bottom bar), State B Topics Flyout, and Command Palette search modal |
+| `floatbar.css` | Popovers, notifications dropdown, and legacy menu styling |
+| `dark-mode.css` | **Complete dark mode theme**: background colors, cards, note blocks, choices, score cards, rail, flyout, and dictionary when `[data-theme="dark"]` |
 | `footer.css` | The 4-column responsive site footer and creator about-me portfolio links |
 | `test-score.css` | The test completion score summary card, pass/review badges, and action buttons |
 | `dictionary.css` | The floating dictionary button, popup window, resize handle and result cards |
 | `home.css` | The home page |
-| `note-page.css` | The page around a note: colours (`--brand`…), header, card width, sidebar, previous/next cards |
+| `note-page.css` | The page around a note: colours (`--brand`…), header, card width, previous/next cards |
 | `note-blocks.css` | The 8 blocks inside notes (`CONCEPT`, `FORMULA`…), with their colours and labels |
 | `practice.css` | A practice set or paper: problems, levels, answer boxes, multiple-choice buttons, "Practise this note" |
 | `practice-list.css` | The practice hub and the tabs on `/past/eju` and `/past/jlpt` |
 | `past.css` | The mock question lists |
 | `account.css` | The log in / sign up form and the account settings page (`/account`) |
+| `settings.css` | Quick Settings popover, theme selector cards, font size presets, font style chips, live preview, feedback cards, and full `/settings` page tabs |
 
 ---
 
@@ -242,8 +246,9 @@ Hiding where progress is stored behind `src/progress.js` is called **encapsulati
 | `practice:<path>` | `src/progress.js` (logged out only) | One practice set's progress, e.g. `practice:math-1/03-quadratic-functions/01-vertex-form`. A JSON map from problem index (from 0) to `"solved"` or `"review"`. Mock papers use `practice:past/<path>` so they never clash with a practice set |
 | `practice-hub:course` | `src/components/HubTabs.jsx` | The course tab last opened on `/practice` |
 | `past-tab:<exam>` | `src/components/HubTabs.jsx` | The tab last opened on a mock-question list, e.g. `past-tab:eju` or `past-tab:jlpt` |
-| `noteFontSize` | `src/pageHooks.js` | The A−/A+ text size, from 70 to 150 (%) |
-| `theme` | `src/pageHooks.js` | User's preferred color scheme (`"dark"` or `"light"`). Pre-checked by `index.html` inline script to avoid screen flash |
+| `noteFontSize` / `app_font_size` | `src/pageHooks.js` (`useFontSize`) | Reading font scaling percentage, from 70% to 160% (presets: 85%, 100%, 115%, 130%) |
+| `app_font_family` | `src/pageHooks.js` (`useFontFamily`) | Selected typeface family (`"default"`, `"noto"`, `"serif"`) |
+| `theme` | `src/pageHooks.js` (`useTheme`) | User's preferred color scheme (`"dark"` or `"light"`). Pre-checked by `index.html` inline script to avoid screen flash |
 | `read_notifications` | `src/components/NotificationBell.jsx` | Array of broadcast notification IDs marked as read |
 | `learnsolo_dict_size` | `src/components/FloatingDictionary.jsx` | The user's preferred `{width, height}` size for the floating dictionary popup |
 
@@ -253,8 +258,25 @@ LearnSolo features a complete system-aware and toggleable dark theme:
 
 - **State Hook (`src/pageHooks.js`):** `useTheme()` reads `localStorage.getItem('theme')`, falling back to the OS system preference via `window.matchMedia('(prefers-color-scheme: dark)')`. It returns `[theme, toggleTheme]` and syncs the root `data-theme="dark"` (or `"light"`) attribute on `document.documentElement`.
 - **Zero-Flash Pre-render Script (`index.html`):** An inline `<script>` in `<head>` executes before the DOM renders to immediately set `data-theme` from `localStorage`, preventing any white screen flash.
-- **Toggle Button (`FloatBar.jsx`):** Renders a sun (`fa-sun`) / moon (`fa-moon`) icon button in the top navigation bar.
 - **Theme Stylesheet (`src/styles/dark-mode.css`):** Overrides color variables and card styles when `[data-theme="dark"]` is active, providing high-contrast backgrounds for notes, the 8 note blocks, multiple choice test buttons, problem checks, test score cards, and the floating dictionary.
+
+### 4.5 Hybrid Settings & Preferences System (Theme, Font, Account)
+
+LearnSolo provides a hybrid settings architecture designed for seamless study workflows:
+
+1. **Quick Settings Popover (`src/components/SettingsPopover.jsx`):**
+   - Opened instantly by clicking `⚙️ Settings` in the Slim Icon Rail (`AppRail.jsx`) from any page without navigating away.
+   - **Theme Tab:** Instant 1-click toggle between ☀️ Light Mode and 🌙 Dark Mode with live card selection.
+   - **Font Tab:** Preset scale buttons (`85% Compact`, `100% Default`, `115% Comfortable`, `130% Large`), stepper controls (`A−` / `A+`), and an interactive live preview scaling Japanese reading text and mathematical formulas in real time.
+   - **Account Tab:** Displays the current logged-in email, active session status, logout button, or guest sign-up prompt.
+   - **Footer Shortcut:** A direct link to the comprehensive settings page (`/settings`).
+
+2. **Dedicated Settings Hub (`src/pages/AccountSettings.jsx` at `/settings` and `/account`):**
+   - Full-page tabbed interface with 3 deep-preference tabs:
+     - **Account & Security:** Change password form (current password, new password with 8-character validation, confirmation), two-step progress reset ("Danger Zone"), and session management.
+     - **Theme & Appearance:** Detailed theme selector cards, zero-flash persistence overview, and full component previews.
+     - **Font & Typography:** Reading text size presets, font style picker (Modern System Sans, Japanese Noto Sans, Academic Serif), and dynamic reading preview.
+   - URL hash synchronization (`/settings#account`, `/settings#theme`, `/settings#font`) enables direct deep linking to any setting tab.
 
 ---
 
@@ -443,4 +465,4 @@ Always commit `package.json` and `package-lock.json` together.
 2. **Level 3 (React):**
    - Read `frontend/src/App.jsx`, then `pages/NotFound.jsx` (the smallest page), then `pages/Note.jsx` alongside Sections 1 and 2 above.
    - Build the `/about` page (Section 6.3) on a test branch.
-   - Find `"Note 5 of 8"` in `Note.jsx`, change how it is formatted, and inspect how `useState` works in `FloatBar.jsx` (the mobile ☰ menu) and `FloatingDictionary.jsx`.
+   - Find `"Note 5 of 8"` in `Note.jsx`, change how it is formatted, and inspect how `useState` works in `AppRail.jsx` / `FloatBar.jsx` (the navigation rail & drawers) and `FloatingDictionary.jsx`.

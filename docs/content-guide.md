@@ -70,7 +70,7 @@ Content files in `content/` are **HTML fragments** (not full `<html>...</html>` 
                                        ▼
 ┌────────────────────────── 3. FRONTEND (frontend/) ──────────────────────────┐
 │  • React pages (Note.jsx, PracticeSet.jsx, PastPaper.jsx) fetch the JSON     │
-│    and draw the shared layout (FloatBar, purple header, sidebar, pager).     │
+│    and draw the shared layout (AppRail, purple header, flyout, pager).       │
 │  • NoteContent.jsx injects the HTML fragment, executes its <script> tags     │
 │    (which call /static/js/demos/plot.js, physkit.js, jsxgraphcore.js, etc.), │
 │    and runs MathJax (typeset()) to render $...$ formulas.                    │
@@ -93,8 +93,8 @@ utils/content_loader.py                         ← 3. Reads the notes list and 
 api/content.py (/api/notes/<path>)              ← 4. backend/services/notes.py loads the note, works
         │                                            out where it sits (Math C › Plane Vectors · 17 of 17)
         │                                            and the previous/next notes, and returns JSON
-frontend/src/pages/Note.jsx                     ← 5. React, at /notes/<path>: draws the floating bar,
-        │                                            Topics sidebar, purple header, and prev/next cards
+frontend/src/pages/Note.jsx                     ← 5. React, at /notes/<path>: draws the Slim Icon Rail (AppRail),
+        │                                            Topics flyout drawer, purple header, and prev/next cards
 components/NoteContent.jsx                      ← 6. Puts the note's HTML on the page, runs its demo
                                                      <script>, and calls MathJax to draw the formulas
 ```
@@ -303,7 +303,7 @@ content/past/jlpt/n2/vocab/01-mock-test.html                       →   /past/j
 content/past/jlpt/n1/listening/05-mock-test.html                   →   /past/jlpt/n1/listening/05-mock-test
 ```
 
-- **Mock Questions Hub** (`/past`, linked in the floating bar, at the bottom of `/practice`, and from "More to explore" on the home page) shows one card per exam folder in `content/past/`. Clicking a card lists its papers (`/past/<folder>`), and each paper opens like a practice set (`frontend/src/pages/PastPaper.jsx`) with hints, solutions, and answer boxes (or multiple-choice buttons).
+- **Mock Questions Hub** (`/past`, linked in the left navigation rail, at the bottom of `/practice`, and from "More to explore" on the home page) shows one card per exam folder in `content/past/`. Clicking a card lists its papers (`/past/<folder>`), and each paper opens like a practice set (`frontend/src/pages/PastPaper.jsx`) with hints, solutions, and answer boxes (or multiple-choice buttons).
 - **Subfolders and Level Tabs:**
   - On `/past/eju`, `course-1` and `course-2` become the top tabs (`Course 1 (Basic)` and `Course 2 (Advanced)`).
   - On `/past/jlpt`, `n1`, `n2`, `n3`, `n4`, and `n5` become the level tabs. Under each level tab, tests are categorized into 4 skill section cards:

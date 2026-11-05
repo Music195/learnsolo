@@ -12,7 +12,6 @@ import { useArrowKeys, usePageTitle, useScrollToTop, useTextSize } from '../page
 import FloatBar from '../components/FloatBar.jsx'
 import LoadError from '../components/LoadError.jsx'
 import NoteContent from '../components/NoteContent.jsx'
-import TopicsSidebar from '../components/TopicsSidebar.jsx'
 
 export default function Note() {
   // The route in App.jsx is "/notes/*"; useParams()['*'] is the part the *
@@ -20,14 +19,9 @@ export default function Note() {
   const path = useParams()['*']
 
   const { data, error } = useApi(`/api/notes/${path}`)   // this note
-  const sidebar = useApi('/api/notes').data              // every note, for the sidebar
 
   const [topicsOpen, setTopicsOpen] = useState(false)
   const [textSize, changeTextSize] = useTextSize()      // see src/pageHooks.js
-
-  // useCallback keeps the same function between draws, so the sidebar's
-  // effect that uses it doesn't restart every time this page draws.
-  const closeTopics = useCallback(() => setTopicsOpen(false), [])
 
   // A new note: start at the top with the sidebar closed, as a new page would
   useScrollToTop(path)
@@ -48,22 +42,23 @@ export default function Note() {
     <>
       <FloatBar
         location={location} nav={nav}
-        onTextSize={changeTextSize}
-        onTopics={sidebar ? () => setTopicsOpen(!topicsOpen) : undefined}
+        onTopics={() => setTopicsOpen(!topicsOpen)}
         topicsOpen={topicsOpen}
       />
-
-      {/* key={path}: a new note gets a fresh sidebar, starting on its own course and topic */}
-      {sidebar && (
-        <TopicsSidebar key={path} sidebar={sidebar} currentPath={path} open={topicsOpen} onClose={closeTopics} />
-      )}
 
       {/* NOTE HEADER: course and topic, the title, and how far along the topic this note is */}
       <header className="note-header">
         <div className="note-header-inner">
           <p className="note-chips">
+            <Link to="/" title="Home"><i className="fas fa-house"></i></Link>
+            <i className="fas fa-chevron-right note-chip-sep"></i>
             <Link to={`/notes/${location.course_first}`}>{location.course}</Link>
-            {location.topic && <Link to={`/notes/${location.topic_first}`}>{location.topic}</Link>}
+            {location.topic && (
+              <>
+                <i className="fas fa-chevron-right note-chip-sep"></i>
+                <Link to={`/notes/${location.topic_first}`}>{location.topic}</Link>
+              </>
+            )}
           </p>
           <h1>{title}</h1>
           <p className="note-progress">
