@@ -158,7 +158,7 @@ Here is what happens step-by-step in `frontend/` when a student clicks a link to
 | `auth.jsx` | `AuthProvider` and `useAuth()`: who is logged in, `signup`, `login`, `logout`, and moving browser progress into the account | Changing what happens at log in or out |
 | `progress.js` | **The only place progress is read and saved**: in `localStorage` when logged out, in the account (`/api/progress/...`) when logged in | Changing how progress is stored |
 | `practice.js` | Adds the answer boxes (or multiple-choice option buttons with `data-choice`), answer checking (`toNumber`), score updates, and "I got it / Review later" buttons to a set's problems | Changing how answers are checked or marked |
-| `pageHooks.js` | Shared hooks: dark mode (`useTheme`), text size (`useTextSize`), ← / → keys (`useArrowKeys`), the tab title (`usePageTitle`), back to top (`useScrollToTop`) | Changing these behaviours on every page |
+| `pageHooks.js` | Shared hooks: dark mode (`useTheme`), global font scale (`useFontSize`), font family (`useFontFamily`), text size (`useTextSize`), ← / → keys (`useArrowKeys`), the tab title (`usePageTitle`), back to top (`useScrollToTop`) | Changing these behaviours on every page |
 | `mathjax.js` | `typeset(element)`: draws formulas inside an element, once, one job at a time | Formulas draw wrongly |
 | `styles.js` | Imports every CSS file in `styles/` | Adding a new CSS file |
 
@@ -173,14 +173,15 @@ Here is what happens step-by-step in `frontend/` when a student clicks a link to
 | `PastList.jsx` | `/past`, `/past/<exam>` | A card per exam category (`EJU Mock Papers`, `JLPT Mock Tests`, `University Mock Questions`); then one exam's papers (with tabs for EJU Course 1/2 and JLPT N1–N5 levels and skill sections), and site footer |
 | `PastPaper.jsx` | `/past/<exam>/...` | One mock paper or test, with live scoring header, hints/solutions, choices, and end-of-test `<TestScoreCard />` |
 | `Account.jsx` | `/login`, `/signup` | The email + password form; goes back to the page you came from |
-| `AccountSettings.jsx` | `/account` | Logged-in user settings: avatar, email, membership date, change password form, study progress controls (reset all progress), and session logout |
+| `AccountSettings.jsx` | `/settings`, `/account` | Settings hub with 3 tabs: Account & Security (password change, progress reset, logout), Theme & Appearance (Light/Dark selection), and Font & Typography (font size presets and live preview) |
 | `NotFound.jsx` | anything else | "Page not found" |
 
 ### Components (`frontend/src/components/`, reusable pieces)
 
 | File | What it is | Used by |
 |---|---|---|
-| `FloatBar.jsx` | The top floating bar: custom logo, where you are, search, text size, previous/next, Topics, active login date badge, notifications bell, feedback button, dark/light mode toggle, and Account button | Every page |
+| `FloatBar.jsx` | The top floating bar: custom logo, where you are, search, text size, previous/next, Topics, active login date badge, notifications bell, feedback button, and unified Settings popover button | Every page |
+| `SettingsPopover.jsx` | Quick Settings popover with 3 tabs: Theme switcher (Light/Dark), Font scale controls (85%–130% + stepper + live preview), Account quick view, and link to full `/settings` page | `FloatBar` |
 | `NotificationBell.jsx` | The announcement bell: unread badge counter, popover drawer with creator announcements, and "Mark all as read" | `FloatBar` |
 | `FeedbackModal.jsx` | Feedback dialog modal: category selector, message textarea, and submission to `/api/feedback` | `FloatBar` |
 | `Footer.jsx` | Site footer: logo, platform description, About Me portfolio link (`https://music195.github.io/portfolio/`), GitHub repository, subjects, and mock exam links | `Home`, `PracticeList`, `PastList`, `AccountSettings` |
@@ -209,6 +210,7 @@ Here is what happens step-by-step in `frontend/` when a student clicks a link to
 | `practice-list.css` | The practice hub and the tabs on `/past/eju` and `/past/jlpt` |
 | `past.css` | The mock question lists |
 | `account.css` | The log in / sign up form and the account settings page (`/account`) |
+| `settings.css` | Quick Settings popover, theme selector cards, font size presets, font style chips, live preview, and full `/settings` page tabs |
 
 ---
 
@@ -242,8 +244,9 @@ Hiding where progress is stored behind `src/progress.js` is called **encapsulati
 | `practice:<path>` | `src/progress.js` (logged out only) | One practice set's progress, e.g. `practice:math-1/03-quadratic-functions/01-vertex-form`. A JSON map from problem index (from 0) to `"solved"` or `"review"`. Mock papers use `practice:past/<path>` so they never clash with a practice set |
 | `practice-hub:course` | `src/components/HubTabs.jsx` | The course tab last opened on `/practice` |
 | `past-tab:<exam>` | `src/components/HubTabs.jsx` | The tab last opened on a mock-question list, e.g. `past-tab:eju` or `past-tab:jlpt` |
-| `noteFontSize` | `src/pageHooks.js` | The A−/A+ text size, from 70 to 150 (%) |
-| `theme` | `src/pageHooks.js` | User's preferred color scheme (`"dark"` or `"light"`). Pre-checked by `index.html` inline script to avoid screen flash |
+| `noteFontSize` / `app_font_size` | `src/pageHooks.js` (`useFontSize`) | Reading font scaling percentage, from 70% to 160% (presets: 85%, 100%, 115%, 130%) |
+| `app_font_family` | `src/pageHooks.js` (`useFontFamily`) | Selected typeface family (`"default"`, `"noto"`, `"serif"`) |
+| `theme` | `src/pageHooks.js` (`useTheme`) | User's preferred color scheme (`"dark"` or `"light"`). Pre-checked by `index.html` inline script to avoid screen flash |
 | `read_notifications` | `src/components/NotificationBell.jsx` | Array of broadcast notification IDs marked as read |
 | `learnsolo_dict_size` | `src/components/FloatingDictionary.jsx` | The user's preferred `{width, height}` size for the floating dictionary popup |
 
@@ -253,8 +256,25 @@ LearnSolo features a complete system-aware and toggleable dark theme:
 
 - **State Hook (`src/pageHooks.js`):** `useTheme()` reads `localStorage.getItem('theme')`, falling back to the OS system preference via `window.matchMedia('(prefers-color-scheme: dark)')`. It returns `[theme, toggleTheme]` and syncs the root `data-theme="dark"` (or `"light"`) attribute on `document.documentElement`.
 - **Zero-Flash Pre-render Script (`index.html`):** An inline `<script>` in `<head>` executes before the DOM renders to immediately set `data-theme` from `localStorage`, preventing any white screen flash.
-- **Toggle Button (`FloatBar.jsx`):** Renders a sun (`fa-sun`) / moon (`fa-moon`) icon button in the top navigation bar.
 - **Theme Stylesheet (`src/styles/dark-mode.css`):** Overrides color variables and card styles when `[data-theme="dark"]` is active, providing high-contrast backgrounds for notes, the 8 note blocks, multiple choice test buttons, problem checks, test score cards, and the floating dictionary.
+
+### 4.5 Hybrid Settings & Preferences System (Theme, Font, Account)
+
+LearnSolo provides a hybrid settings architecture designed for seamless study workflows:
+
+1. **Quick Settings Popover (`src/components/SettingsPopover.jsx`):**
+   - Opened instantly by clicking `⚙️ Settings` in the top floating navigation bar (`FloatBar.jsx`) from any page without navigating away.
+   - **Theme Tab:** Instant 1-click toggle between ☀️ Light Mode and 🌙 Dark Mode with live card selection.
+   - **Font Tab:** Preset scale buttons (`85% Compact`, `100% Default`, `115% Comfortable`, `130% Large`), stepper controls (`A−` / `A+`), and an interactive live preview scaling Japanese reading text and mathematical formulas in real time.
+   - **Account Tab:** Displays the current logged-in email, active session status, logout button, or guest sign-up prompt.
+   - **Footer Shortcut:** A direct link to the comprehensive settings page (`/settings`).
+
+2. **Dedicated Settings Hub (`src/pages/AccountSettings.jsx` at `/settings` and `/account`):**
+   - Full-page tabbed interface with 3 deep-preference tabs:
+     - **Account & Security:** Change password form (current password, new password with 8-character validation, confirmation), two-step progress reset ("Danger Zone"), and session management.
+     - **Theme & Appearance:** Detailed theme selector cards, zero-flash persistence overview, and full component previews.
+     - **Font & Typography:** Reading text size presets, font style picker (Modern System Sans, Japanese Noto Sans, Academic Serif), and dynamic reading preview.
+   - URL hash synchronization (`/settings#account`, `/settings#theme`, `/settings#font`) enables direct deep linking to any setting tab.
 
 ---
 

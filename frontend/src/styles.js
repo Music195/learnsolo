@@ -12,5 +12,6 @@ import './styles/practice.css'       // practice sets, and the "Practise this no
 import './styles/practice-list.css'  // the practice hub, and tabs on the past paper lists
 import './styles/past.css'           // the past question lists
 import './styles/account.css'        // log in / sign up, and the account button
+import './styles/settings.css'       // hybrid settings popover and preferences page
 import './styles/footer.css'         // footer component
 import './styles/dark-mode.css'      // complete dark mode theme

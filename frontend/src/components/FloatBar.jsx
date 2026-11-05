@@ -9,10 +9,12 @@ import { useTheme } from '../pageHooks.js'
 import SearchBox from './SearchBox.jsx'
 import NotificationBell from './NotificationBell.jsx'
 import FeedbackModal from './FeedbackModal.jsx'
+import SettingsPopover from './SettingsPopover.jsx'
 
 export default function FloatBar({ location, nav, onTextSize, onTopics, topicsOpen }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [feedbackOpen, setFeedbackOpen] = useState(false)
+  const [settingsOpen, setSettingsOpen] = useState(false)
   const [theme, toggleTheme] = useTheme()
   const closeMenu = () => setMenuOpen(false)
 
@@ -86,17 +88,21 @@ export default function FloatBar({ location, nav, onTextSize, onTopics, topicsOp
               <span className="bar-feedback-text">Feedback</span>
             </button>
 
-            {/* Dark / Light Mode Toggle */}
-            <button
-              type="button"
-              className="bar-btn bar-theme-toggle"
-              aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-              title={theme === 'dark' ? 'Switch to light mode (☀️)' : 'Switch to dark mode (🌙)'}
-              onClick={toggleTheme}
-            >
-              <i className={theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon'}></i>
-              <span className="bar-theme-text">{theme === 'dark' ? 'Light' : 'Dark'}</span>
-            </button>
+            {/* Hybrid Quick Settings (Theme, Font, Account) */}
+            <div className="settings-wrapper">
+              <button
+                type="button"
+                className={`bar-btn bar-settings ${settingsOpen ? 'active' : ''}`}
+                aria-label="Settings and Preferences"
+                aria-expanded={settingsOpen}
+                title="Settings (Theme, Font & Account)"
+                onClick={() => { closeMenu(); setSettingsOpen(!settingsOpen) }}
+              >
+                <i className="fas fa-gear"></i>
+                <span className="bar-settings-text">Settings</span>
+              </button>
+              <SettingsPopover isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
+            </div>
 
             {/* Account / User Info button */}
             <AccountButton onClick={closeMenu} />
@@ -176,8 +182,8 @@ function AccountButton({ onClick }) {
     )
   }
   return (
-    <Link className="bar-btn bar-account" to="/account" onClick={onClick}
-          title={`Logged in as ${user.email}`}>
+    <Link className="bar-btn bar-account" to="/settings" onClick={onClick}
+          title={`Logged in as ${user.email} · Settings`}>
       <i className="fas fa-circle-user"></i> Account
       {/* The email is only shown in the phone menu, where there is room */}
       <span className="bar-account-email">({user.email})</span>
