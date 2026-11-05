@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router'
 import { useAuth } from '../auth.jsx'
 import { useTheme, useFontSize, useFontFamily } from '../pageHooks.js'
 
-export default function SettingsPopover({ isOpen, onClose }) {
+export default function SettingsPopover({ isOpen, onClose, onOpenFeedback }) {
   const [activeTab, setActiveTab] = useState('theme')
   const [theme, toggleTheme, setTheme] = useTheme()
   const { fontSize, setFontSize, changeFontSize } = useFontSize()
@@ -306,6 +306,27 @@ export default function SettingsPopover({ isOpen, onClose }) {
             )}
           </div>
         )}
+      </div>
+
+      {/* Feedback Section inside Settings */}
+      <div className="settings-feedback-prompt">
+        <button
+          type="button"
+          className="settings-feedback-btn"
+          onClick={() => {
+            onClose()
+            onOpenFeedback?.()
+          }}
+        >
+          <div className="settings-feedback-icon">
+            <i className="fas fa-comment-dots"></i>
+          </div>
+          <div className="settings-feedback-text">
+            <strong>Send Feedback</strong>
+            <span>Report a typo or suggest an improvement</span>
+          </div>
+          <i className="fas fa-chevron-right settings-feedback-arrow"></i>
+        </button>
       </div>
 
       {/* Footer shortcut to full page */}

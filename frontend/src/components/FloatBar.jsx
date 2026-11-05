@@ -65,18 +65,7 @@ export default function FloatBar({ location, nav, onTopics, topicsOpen }) {
             {/* Notifications from creator */}
             <NotificationBell />
 
-            {/* Feedback button */}
-            <button
-              type="button"
-              className="bar-btn bar-feedback"
-              title="Send feedback or report an issue"
-              onClick={() => { closeMenu(); setFeedbackOpen(true) }}
-            >
-              <i className="fas fa-comment-dots"></i>
-              <span className="bar-feedback-text">Feedback</span>
-            </button>
-
-            {/* Hybrid Quick Settings (Theme, Font, Account) */}
+            {/* Hybrid Quick Settings (Theme, Font, Account & Feedback) */}
             <div className="settings-wrapper">
               <button
                 type="button"
@@ -89,7 +78,11 @@ export default function FloatBar({ location, nav, onTopics, topicsOpen }) {
                 <i className="fas fa-gear"></i>
                 <span className="bar-settings-text">Settings</span>
               </button>
-              <SettingsPopover isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
+              <SettingsPopover
+                isOpen={settingsOpen}
+                onClose={() => setSettingsOpen(false)}
+                onOpenFeedback={() => { setSettingsOpen(false); setFeedbackOpen(true) }}
+              />
             </div>
           </div>
         </div>

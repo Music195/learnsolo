@@ -7,6 +7,7 @@ import { useAuth } from '../auth.jsx'
 import { usePageTitle, useTheme, useFontSize, useFontFamily } from '../pageHooks.js'
 import FloatBar from '../components/FloatBar.jsx'
 import Footer from '../components/Footer.jsx'
+import FeedbackModal from '../components/FeedbackModal.jsx'
 import '../styles/account.css'
 import '../styles/settings.css'
 
@@ -19,6 +20,7 @@ export default function AccountSettings() {
   const [theme, toggleTheme, setTheme] = useTheme()
   const { fontSize, setFontSize, changeFontSize } = useFontSize()
   const { fontFamily, setFontFamily } = useFontFamily()
+  const [feedbackOpen, setFeedbackOpen] = useState(false)
 
   // Tab state synced with URL hash (#account, #theme, #font)
   const [activeTab, setActiveTab] = useState(() => {
@@ -473,7 +475,28 @@ export default function AccountSettings() {
             </section>
           </div>
         )}
+
+        {/* Global Feedback Section inside Settings */}
+        <div className="settings-page-feedback-card">
+          <div className="feedback-card-content">
+            <i className="fas fa-comment-dots"></i>
+            <div>
+              <strong>Have feedback or spotted a typo?</strong>
+              <p>Send a suggestion or report an issue directly to help us improve LearnSolo.</p>
+            </div>
+          </div>
+          <button
+            type="button"
+            className="settings-action-btn primary settings-feedback-action-btn"
+            onClick={() => setFeedbackOpen(true)}
+          >
+            <i className="fas fa-paper-plane"></i> Send Feedback
+          </button>
+        </div>
       </main>
+
+      {/* Feedback Dialog Popup */}
+      <FeedbackModal isOpen={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
 
       <Footer />
     </>
