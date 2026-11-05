@@ -1,10 +1,11 @@
 // AppRail.jsx — Slim Icon Rail Navigation (Left vertical rail on desktop, bottom bar on mobile)
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Link, useLocation } from 'react-router'
 import NotificationBell from './NotificationBell.jsx'
 import SettingsPopover from './SettingsPopover.jsx'
 import FeedbackModal from './FeedbackModal.jsx'
 import SearchModal from './SearchModal.jsx'
+import TopicsFlyout from './TopicsFlyout.jsx'
 
 export default function AppRail({ location: noteLocation, nav, onTopics, topicsOpen }) {
   const currentLoc = useLocation()
@@ -13,6 +14,28 @@ export default function AppRail({ location: noteLocation, nav, onTopics, topicsO
   const [searchOpen, setSearchOpen] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [feedbackOpen, setFeedbackOpen] = useState(false)
+  const [topicsOpenLocal, setTopicsOpenLocal] = useState(false)
+
+  // Unified State B (Flyout drawer)
+  const isTopicsOpen = onTopics ? topicsOpen : topicsOpenLocal
+  const handleToggleTopics = useCallback(() => {
+    if (onTopics) {
+      onTopics()
+    } else {
+      setTopicsOpenLocal((prev) => !prev)
+    }
+  }, [onTopics])
+
+  const handleCloseTopics = useCallback(() => {
+    if (onTopics) {
+      if (topicsOpen) onTopics()
+    } else {
+      setTopicsOpenLocal(false)
+    }
+  }, [onTopics, topicsOpen])
+
+  // Current note path if reading a note
+  const currentNotePath = pathname.startsWith('/notes/') ? pathname.replace('/notes/', '') : ''
 
   // Active path helpers
   const isHome = pathname === '/'
@@ -21,17 +44,20 @@ export default function AppRail({ location: noteLocation, nav, onTopics, topicsO
   const isPast = pathname.startsWith('/past')
   const isSettings = pathname.startsWith('/settings') || pathname.startsWith('/account')
 
-  // Keyboard shortcut: Ctrl+K or Cmd+K to open Search
+  // Global Keyboard shortcuts: Ctrl+K for Search, Alt+T for Topics
   useEffect(() => {
     function handleKeyDown(e) {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault()
         setSearchOpen((prev) => !prev)
+      } else if (e.altKey && e.key.toLowerCase() === 't') {
+        e.preventDefault()
+        handleToggleTopics()
       }
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [])
+  }, [handleToggleTopics])
 
   return (
     <>
@@ -59,30 +85,18 @@ export default function AppRail({ location: noteLocation, nav, onTopics, topicsO
               <span className="rail-tooltip">Home</span>
             </Link>
 
-            {/* 2. Topics / Notes */}
-            {onTopics ? (
-              <button
-                type="button"
-                className={`rail-btn bar-topics ${topicsOpen || isNotes ? 'active' : ''}`}
-                onClick={onTopics}
-                title="Curriculum Topics (Alt+T)"
-                aria-label="Topics"
-                aria-expanded={topicsOpen}
-              >
-                <i className="fas fa-book-open"></i>
-                <span className="rail-tooltip">Topics</span>
-              </button>
-            ) : (
-              <Link
-                to="/notes/math-1/numbers-and-sets/01-natural-numbers-and-integers"
-                className={`rail-btn ${isNotes ? 'active' : ''}`}
-                title="Course Notes"
-                aria-label="Notes"
-              >
-                <i className="fas fa-book-open"></i>
-                <span className="rail-tooltip">Notes</span>
-              </Link>
-            )}
+            {/* 2. State B: Topics / Curriculum Flyout Trigger */}
+            <button
+              type="button"
+              className={`rail-btn bar-topics ${isTopicsOpen || isNotes ? 'active' : ''}`}
+              onClick={handleToggleTopics}
+              title="Course Topics & Curriculum (Alt+T)"
+              aria-label="Topics"
+              aria-expanded={isTopicsOpen}
+            >
+              <i className="fas fa-book-open"></i>
+              <span className="rail-tooltip">Topics (Alt+T)</span>
+            </button>
 
             {/* 3. Practice Sets */}
             <Link
@@ -220,6 +234,13 @@ export default function AppRail({ location: noteLocation, nav, onTopics, topicsO
           </div>
         </div>
       </aside>
+
+      {/* State B: Global Topics & Curriculum Flyout Drawer */}
+      <TopicsFlyout
+        isOpen={isTopicsOpen}
+        onClose={handleCloseTopics}
+        currentPath={currentNotePath}
+      />
 
       {/* Global Quick Search Modal */}
       <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
