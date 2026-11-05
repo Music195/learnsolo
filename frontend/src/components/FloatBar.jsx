@@ -3,19 +3,16 @@
 // into the ☰ menu.
 
 import { useState } from 'react'
-import { Link, useLocation } from 'react-router'
-import { useAuth } from '../auth.jsx'
-import { useTheme } from '../pageHooks.js'
+import { Link } from 'react-router'
 import SearchBox from './SearchBox.jsx'
 import NotificationBell from './NotificationBell.jsx'
 import FeedbackModal from './FeedbackModal.jsx'
 import SettingsPopover from './SettingsPopover.jsx'
 
-export default function FloatBar({ location, nav, onTextSize, onTopics, topicsOpen }) {
+export default function FloatBar({ location, nav, onTopics, topicsOpen }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [feedbackOpen, setFeedbackOpen] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
-  const [theme, toggleTheme] = useTheme()
   const closeMenu = () => setMenuOpen(false)
 
   return (
@@ -49,12 +46,6 @@ export default function FloatBar({ location, nav, onTextSize, onTopics, topicsOp
 
             {location && (
               <>
-                {/* Text size for the note (saved for next time) */}
-                <div className="bar-group" role="group" aria-label="Text size">
-                  <button className="bar-btn" title="Smaller text" aria-label="Smaller text" onClick={() => onTextSize(-1)}>A−</button>
-                  <button className="bar-btn" title="Bigger text" aria-label="Bigger text" onClick={() => onTextSize(1)}>A+</button>
-                </div>
-
                 {/* Previous / next note (also the ← / → keys) */}
                 <div className="bar-group" role="group" aria-label="Previous and next note">
                   <PagerButton link={nav.prev} label="Previous" icon="fa-chevron-left" onClick={closeMenu} />
@@ -70,9 +61,6 @@ export default function FloatBar({ location, nav, onTextSize, onTopics, topicsOp
                 )}
               </>
             )}
-
-            {/* Day user logged in */}
-            <UserDayBadge />
 
             {/* Notifications from creator */}
             <NotificationBell />
@@ -103,9 +91,6 @@ export default function FloatBar({ location, nav, onTextSize, onTopics, topicsOp
               </button>
               <SettingsPopover isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
             </div>
-
-            {/* Account / User Info button */}
-            <AccountButton onClick={closeMenu} />
           </div>
         </div>
       </nav>
@@ -113,22 +98,6 @@ export default function FloatBar({ location, nav, onTextSize, onTopics, topicsOp
       {/* Feedback modal popup */}
       <FeedbackModal isOpen={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
     </>
-  )
-}
-
-// Displays active login day/date for logged-in users
-function UserDayBadge() {
-  const { user } = useAuth()
-  if (!user) return null
-
-  const now = new Date()
-  const dayStr = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
-
-  return (
-    <div className="bar-day-badge" title={`Active Session · Logged in today (${dayStr})`}>
-      <i className="fas fa-calendar-check"></i>
-      <span>{dayStr}</span>
-    </div>
   )
 }
 
@@ -163,30 +132,6 @@ function PagerButton({ link, label, icon, onClick }) {
     <Link className="bar-btn" to={link.url} onClick={onClick}
           title={`${label}: ${link.title}`} aria-label={`${label}: ${link.title}`}>
       <i className={`fas ${icon}`}></i>
-    </Link>
-  )
-}
-
-// "Log in" (a link to /login), or "Account" (/account) when logged in.
-function AccountButton({ onClick }) {
-  const { user } = useAuth()
-  const here = useLocation()
-
-  if (!user) {
-    // state: the log in page sends you back to this page afterwards
-    return (
-      <Link className="bar-btn bar-account" to="/login" onClick={onClick}
-            state={{ from: here.pathname + here.search + here.hash }}>
-        <i className="fas fa-user"></i> Log in
-      </Link>
-    )
-  }
-  return (
-    <Link className="bar-btn bar-account" to="/settings" onClick={onClick}
-          title={`Logged in as ${user.email} · Settings`}>
-      <i className="fas fa-circle-user"></i> Account
-      {/* The email is only shown in the phone menu, where there is room */}
-      <span className="bar-account-email">({user.email})</span>
     </Link>
   )
 }

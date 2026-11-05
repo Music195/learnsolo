@@ -180,7 +180,7 @@ Here is what happens step-by-step in `frontend/` when a student clicks a link to
 
 | File | What it is | Used by |
 |---|---|---|
-| `FloatBar.jsx` | The top floating bar: custom logo, where you are, search, text size, previous/next, Topics, active login date badge, notifications bell, feedback button, and unified Settings popover button | Every page |
+| `FloatBar.jsx` | Streamlined top floating bar: custom logo, where you are, search, previous/next, Topics, notifications bell, feedback button, and unified Settings popover button | Every page |
 | `SettingsPopover.jsx` | Quick Settings popover with 3 tabs: Theme switcher (Light/Dark), Font scale controls (85%–130% + stepper + live preview), Account quick view, and link to full `/settings` page | `FloatBar` |
 | `NotificationBell.jsx` | The announcement bell: unread badge counter, popover drawer with creator announcements, and "Mark all as read" | `FloatBar` |
 | `FeedbackModal.jsx` | Feedback dialog modal: category selector, message textarea, and submission to `/api/feedback` | `FloatBar` |

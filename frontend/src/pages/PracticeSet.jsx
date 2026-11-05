@@ -43,7 +43,7 @@ export default function PracticeSet() {
 
   return (
     <>
-      <FloatBar location={location} nav={nav} onTextSize={changeTextSize} />
+      <FloatBar location={location} nav={nav} />
 
       {/* HEADER: course and topic, the title, and how many problems are done */}
       <header className="note-header practice-header">

@@ -48,7 +48,6 @@ export default function Note() {
     <>
       <FloatBar
         location={location} nav={nav}
-        onTextSize={changeTextSize}
         onTopics={sidebar ? () => setTopicsOpen(!topicsOpen) : undefined}
         topicsOpen={topicsOpen}
       />
