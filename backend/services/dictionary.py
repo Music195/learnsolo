@@ -3,11 +3,28 @@ import re
 import json
 import logging
 import requests
+from dotenv import load_dotenv
 from models import DictionaryEntry
 
 logger = logging.getLogger(__name__)
 
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+# Find .env in project root regardless of where python is executed from
+_SERVICES_DIR = os.path.dirname(os.path.abspath(__file__))
+_PROJECT_ROOT = os.path.dirname(os.path.dirname(_SERVICES_DIR))
+_ENV_PATH = os.path.join(_PROJECT_ROOT, ".env")
+if os.path.exists(_ENV_PATH):
+    load_dotenv(_ENV_PATH)
+
+
+def _get_api_keys():
+    """Returns (groq_key, gemini_key), dynamically reloading .env if needed."""
+    groq_key = os.environ.get("GROQ_API_KEY")
+    gemini_key = os.environ.get("GEMINI_API_KEY")
+    if (not groq_key or not gemini_key) and os.path.exists(_ENV_PATH):
+        load_dotenv(_ENV_PATH, override=False)
+        groq_key = os.environ.get("GROQ_API_KEY")
+        gemini_key = os.environ.get("GEMINI_API_KEY")
+    return groq_key, gemini_key
 
 
 def detect_language(text: str) -> str:
@@ -37,9 +54,12 @@ def lookup_word(query: str, source_lang: str = "auto") -> dict:
     """
     Hybrid lookup with automatic language detection:
     1. Automatically detects input language if set to 'auto'.
-    2. Checks the curated database first for a matching entry.
-    3. If not found, falls back to AI or online translation dynamically
-       (without adding unverified entries to the database).
+    2. Checks the curated database first for a matching entry (Tier 1).
+    3. If not found in database, attempts AI translation:
+       - Tier 2A: Groq AI (llama-3.3-70b-versatile, fast JSON mode) if GROQ_API_KEY is set.
+       - Tier 2B: Gemini AI (gemini-2.0-flash) if GEMINI_API_KEY is set.
+    4. If no AI keys are configured or AI fails, falls back to free MyMemory API (Tier 3).
+       (Does NOT add unverified dynamic entries to the database).
     """
     clean_query = query.strip()
     if not clean_query:
@@ -77,12 +97,23 @@ def lookup_word(query: str, source_lang: str = "auto") -> dict:
     # 2. Not in database: fallback to AI / Online translation
     # Note: Does NOT add/insert to database upon translation.
     result = None
-    if GEMINI_API_KEY:
+    groq_key, gemini_key = _get_api_keys()
+
+    # Tier 2A: Groq AI (llama-3.3-70b-versatile)
+    if groq_key:
         try:
-            result = _translate_gemini(clean_query, source_lang)
+            result = _translate_groq(clean_query, source_lang, groq_key)
+        except Exception as e:
+            logger.warning("Groq translation failed, falling back: %s", e)
+
+    # Tier 2B: Gemini AI (if Groq not configured or failed)
+    if not result and gemini_key:
+        try:
+            result = _translate_gemini(clean_query, source_lang, gemini_key)
         except Exception as e:
             logger.warning("Gemini translation failed, falling back to online: %s", e)
 
+    # Tier 3: Online translation fallback (MyMemory + Google)
     if not result:
         result = _translate_online(clean_query, source_lang)
 
@@ -90,60 +121,80 @@ def lookup_word(query: str, source_lang: str = "auto") -> dict:
     return result
 
 
-def _translate_online(query: str, source_lang: str) -> dict:
-    """Free translation fallback across English, Burmese, and Japanese."""
-    url = "https://translate.googleapis.com/translate_a/single"
+def _translate_groq(query: str, source_lang: str, api_key: str = None) -> dict:
+    """Translates and enriches using Groq API (llama-3.3-70b-versatile with JSON mode)."""
+    if not api_key:
+        groq_key, _ = _get_api_keys()
+        api_key = groq_key
+    if not api_key:
+        raise ValueError("GROQ_API_KEY is not configured")
 
-    targets = {
-        "en": "en",
-        "my": "my",
-        "ja": "ja",
+    url = "https://api.groq.com/openai/v1/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+    }
+    system_prompt = (
+        "You are an educational trilingual dictionary assistant for students learning math, science, "
+        "and general studies in English, Burmese, and Japanese.\n"
+        "Translate and define the given word or phrase across English, Burmese, and Japanese.\n"
+        "Respond ONLY with a valid JSON object matching this schema:\n"
+        "{\n"
+        '  "english": "English term / definition",\n'
+        '  "burmese": "Burmese translation in Myanmar Unicode font",\n'
+        '  "japanese": "Japanese translation (Kanji/Kana)",\n'
+        '  "reading": "Hiragana reading or Furigana for Japanese",\n'
+        '  "notes": "Short educational context, part of speech, or note"\n'
+        "}\n"
+        "Do NOT wrap in markdown backticks. Return raw JSON only."
+    )
+    user_prompt = f'Translate and define the word or phrase: "{query}" (Source language: {source_lang}).'
+
+    payload = {
+        "model": "llama-3.3-70b-versatile",
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ],
+        "response_format": {"type": "json_object"},
+        "temperature": 0.2,
     }
 
-    results = {
+    resp = requests.post(url, headers=headers, json=payload, timeout=8)
+    if not resp.ok:
+        raise RuntimeError(f"Groq API returned status {resp.status_code}: {resp.text}")
+
+    data = resp.json()
+    text = data["choices"][0]["message"]["content"].strip()
+    if text.startswith("```json"):
+        text = text[7:]
+    if text.startswith("```"):
+        text = text[3:]
+    if text.endswith("```"):
+        text = text[:-3]
+
+    parsed = json.loads(text.strip())
+    return {
         "query": query,
         "from": source_lang,
-        "english": query if source_lang == "en" else "",
-        "burmese": query if source_lang == "my" else "",
-        "japanese": query if source_lang == "ja" else "",
-        "reading": "",
-        "notes": "",
-        "source": "online",
+        "english": parsed.get("english", "") or (query if source_lang == "en" else ""),
+        "burmese": parsed.get("burmese", "") or (query if source_lang == "my" else ""),
+        "japanese": parsed.get("japanese", "") or (query if source_lang == "ja" else ""),
+        "reading": parsed.get("reading", "") or "",
+        "notes": parsed.get("notes", "") or "",
+        "source": "ai",
     }
 
-    session = requests.Session()
-    session.headers.update({"User-Agent": "Mozilla/5.0"})
 
-    for lang_code in ("en", "my", "ja"):
-        if lang_code == source_lang:
-            continue
-        try:
-            params = {
-                "client": "gtx",
-                "sl": source_lang,
-                "tl": targets[lang_code],
-                "dt": "t",
-                "q": query,
-            }
-            resp = session.get(url, params=params, timeout=5)
-            if resp.ok:
-                data = resp.json()
-                translated_text = "".join([segment[0] for segment in data[0] if segment and segment[0]])
-                if lang_code == "en":
-                    results["english"] = translated_text
-                elif lang_code == "my":
-                    results["burmese"] = translated_text
-                elif lang_code == "ja":
-                    results["japanese"] = translated_text
-        except Exception as e:
-            logger.warning("Online translation to %s failed: %s", lang_code, e)
-
-    return results
-
-
-def _translate_gemini(query: str, source_lang: str) -> dict:
+def _translate_gemini(query: str, source_lang: str, api_key: str = None) -> dict:
     """Translates and enriches using Gemini API."""
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GEMINI_API_KEY}"
+    if not api_key:
+        _, gemini_key = _get_api_keys()
+        api_key = gemini_key
+    if not api_key:
+        raise ValueError("GEMINI_API_KEY is not configured")
+
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
     prompt = f"""You are an educational trilingual dictionary assistant for students learning math, science, and general studies in English, Burmese, and Japanese.
 Translate and define the word or phrase: "{query}" (Source language: {source_lang}).
 Respond ONLY with a valid JSON object in this exact schema:
@@ -177,3 +228,70 @@ Do NOT wrap in markdown backticks. Return raw JSON only."""
     parsed["from"] = source_lang
     parsed["source"] = "ai"
     return parsed
+
+
+def _translate_online(query: str, source_lang: str) -> dict:
+    """Free translation fallback across English, Burmese, and Japanese using MyMemory API with Google fallback."""
+    results = {
+        "query": query,
+        "from": source_lang,
+        "english": query if source_lang == "en" else "",
+        "burmese": query if source_lang == "my" else "",
+        "japanese": query if source_lang == "ja" else "",
+        "reading": "",
+        "notes": "",
+        "source": "online",
+    }
+
+    session = requests.Session()
+    session.headers.update({"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"})
+
+    for lang_code in ("en", "my", "ja"):
+        if lang_code == source_lang:
+            continue
+        translated_text = ""
+        # 1. Try MyMemory API (free, reliable translation across EN, MY, JA)
+        try:
+            pair = f"{source_lang}|{lang_code}"
+            mm_resp = session.get(
+                "https://api.mymemory.translated.net/get",
+                params={"q": query, "langpair": pair},
+                timeout=5,
+            )
+            if mm_resp.ok:
+                mm_data = mm_resp.json()
+                candidate = mm_data.get("responseData", {}).get("translatedText", "").strip()
+                if candidate and not candidate.startswith("MYMEMORY WARNING"):
+                    translated_text = candidate
+        except Exception as e:
+            logger.warning("MyMemory translation to %s failed: %s", lang_code, e)
+
+        # 2. Secondary fallback: Google translate_a
+        if not translated_text:
+            try:
+                g_url = "https://translate.googleapis.com/translate_a/single"
+                params = {
+                    "client": "gtx",
+                    "sl": source_lang,
+                    "tl": lang_code,
+                    "dt": "t",
+                    "q": query,
+                }
+                resp = session.get(g_url, params=params, timeout=5)
+                if resp.ok:
+                    data = resp.json()
+                    candidate = "".join([segment[0] for segment in data[0] if segment and segment[0]]).strip()
+                    if candidate:
+                        translated_text = candidate
+            except Exception as e:
+                logger.warning("Google translation to %s failed: %s", lang_code, e)
+
+        if translated_text:
+            if lang_code == "en":
+                results["english"] = translated_text
+            elif lang_code == "my":
+                results["burmese"] = translated_text
+            elif lang_code == "ja":
+                results["japanese"] = translated_text
+
+    return results
