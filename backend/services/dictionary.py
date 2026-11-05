@@ -137,11 +137,13 @@ def _translate_groq(query: str, source_lang: str, api_key: str = None) -> dict:
     system_prompt = (
         "You are an educational trilingual dictionary assistant for students learning math, science, "
         "and general studies in English, Burmese, and Japanese.\n"
-        "Translate and define the given word or phrase across English, Burmese, and Japanese.\n"
+        "Translate and define the given word or phrase accurately using standard, established dictionary terms "
+        "in standard Myanmar Unicode font (Pyidaungsu / Noto Sans Myanmar).\n"
+        "Do NOT invent or assemble literal syllable-by-syllable translations for Burmese (for example: apple is 'ပန်းသီး', never 'သွားသီး' or 'သိမ်းသီး').\n"
         "Respond ONLY with a valid JSON object matching this schema:\n"
         "{\n"
-        '  "english": "English term / definition",\n'
-        '  "burmese": "Burmese translation in Myanmar Unicode font",\n'
+        '  "english": "English term / concise definition",\n'
+        '  "burmese": "Standard Burmese translation in Myanmar Unicode",\n'
         '  "japanese": "Japanese translation (Kanji/Kana)",\n'
         '  "reading": "Hiragana reading or Furigana for Japanese",\n'
         '  "notes": "Short educational context, part of speech, or note"\n'
@@ -152,9 +154,9 @@ def _translate_groq(query: str, source_lang: str, api_key: str = None) -> dict:
 
     candidate_models = [m for m in [
         os.environ.get("GROQ_MODEL"),
-        "qwen/qwen3.8-27b",
         "openai/gpt-oss-120b",
         "openai/gpt-oss-20b",
+        "qwen/qwen3.8-27b",
         "llama-3.3-70b-versatile",
     ] if m]
 
