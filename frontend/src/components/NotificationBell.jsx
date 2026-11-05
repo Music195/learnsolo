@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
 import { fetchJson } from '../api.js'
 
-export default function NotificationBell() {
+export default function NotificationBell({ buttonClass = '' }) {
   const [notifications, setNotifications] = useState([])
   const [isOpen, setIsOpen] = useState(false)
   const [readIds, setReadIds] = useState(() => {
@@ -62,7 +62,7 @@ export default function NotificationBell() {
     <div className="noti-wrapper" ref={menuRef}>
       <button
         type="button"
-        className={`bar-btn bar-noti ${isOpen ? 'active' : ''}`}
+        className={`bar-btn bar-noti ${buttonClass} ${isOpen ? 'active' : ''}`}
         aria-label="Notifications"
         aria-expanded={isOpen}
         title="Notifications from Learn Solo"

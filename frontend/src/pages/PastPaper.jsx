@@ -55,7 +55,10 @@ export default function PastPaper() {
       <header className="note-header practice-header">
         <div className="note-header-inner">
           <p className="note-chips">
+            <Link to="/" title="Home"><i className="fas fa-house"></i></Link>
+            <i className="fas fa-chevron-right note-chip-sep"></i>
             <Link to={paper.category_url}>{paper.category}</Link>
+            <i className="fas fa-chevron-right note-chip-sep"></i>
             <span className="chip-practice chip-past"><i className="fas fa-file-pen"></i> Mock Question</span>
           </p>
           <h1>{title}</h1>

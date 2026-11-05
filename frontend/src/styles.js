@@ -5,6 +5,7 @@
 // so loading them together is safe.
 
 import './styles/floatbar.css'       // the floating bar at the top
+import './styles/siderail.css'       // slim icon rail navigation and search modal
 import './styles/home.css'           // the home page
 import './styles/note-page.css'      // the page around a note
 import './styles/note-blocks.css'    // the 8 blocks inside a note

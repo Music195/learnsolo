@@ -61,8 +61,15 @@ export default function Note() {
       <header className="note-header">
         <div className="note-header-inner">
           <p className="note-chips">
+            <Link to="/" title="Home"><i className="fas fa-house"></i></Link>
+            <i className="fas fa-chevron-right note-chip-sep"></i>
             <Link to={`/notes/${location.course_first}`}>{location.course}</Link>
-            {location.topic && <Link to={`/notes/${location.topic_first}`}>{location.topic}</Link>}
+            {location.topic && (
+              <>
+                <i className="fas fa-chevron-right note-chip-sep"></i>
+                <Link to={`/notes/${location.topic_first}`}>{location.topic}</Link>
+              </>
+            )}
           </p>
           <h1>{title}</h1>
           <p className="note-progress">
