@@ -23,7 +23,7 @@ The dictionary is a floating, resizable study companion available on every page 
 | **Floating Action Button (FAB)** | Pinned to the bottom-right corner of every page (`FloatingDictionary.jsx`, mounted globally in `frontend/src/App.jsx`). |
 | **Interactive & Resizable** | Users can drag the top-left corner or top/left edges to resize width and height, or click the expand/restore button (`⤢` / `⤡`). Size is saved in `localStorage` (`learnsolo_dict_size`). |
 | **Automatic Language Detection** | Detects whether the user types in English, Burmese Unicode, or Japanese (Kanji/Kana) instantaneously on both the client (`detectScript`) and the server (`detect_language`). |
-| **Hybrid Lookup** | Queries the local curated PostgreSQL database (`dictionary_entries`) first for instant, verified results (`source: "curated"`). Falls back to Gemini AI (`source: "ai"`) or online translation (`source: "online"`) if unlisted. |
+| **Hybrid Lookup** | Queries the local curated PostgreSQL database (`dictionary_entries`) first for instant, verified results (`source: "curated"`). Falls back to Groq AI (`openai/gpt-oss-120b`, `source: "ai"`), Gemini AI (`source: "ai"`), or free MyMemory online translation (`source: "online"`) if unlisted. |
 | **Clean Database Policy** | Dynamic fallback lookups do **not** write unverified translations into PostgreSQL; only curated terms in `content/dictionary.json` or explicitly added via `flask add-word` are stored in the database. |
 
 ---
@@ -49,7 +49,7 @@ Just like notes and practice sets, the 3-way dictionary spans all three layers o
 │  • services/dictionary.py (`lookup_word`):                                   │
 │      1. Auto-detects language (`en`, `my`, or `ja`)                          │
 │      2. Searches `dictionary_entries` across English, Burmese, and Japanese │
-│      3. If not in DB, falls back to Gemini 2.0 Flash or online translation   │
+│      3. If not in DB, falls back to Groq AI, Gemini AI, or MyMemory online │
 └──────────────────────────────────────┬──────────────────────────────────────┘
                                        │
                                JSON over HTTP (/api/dictionary)
@@ -203,22 +203,28 @@ flowchart TD
     A["GET /api/dictionary?q=...&from=auto"] --> B["detect_language(q): Regex Unicode check"]
     B --> C{"Search PostgreSQL dictionary_entries"}
     C -- "Match found" --> D["Return curated row (source: 'curated' → 'Verified DB')"]
-    C -- "Not found" --> E{"Is GEMINI_API_KEY set in .env?"}
-    E -- "Yes" --> F["_translate_gemini(): Gemini 2.0 Flash"]
-    E -- "No (or if Gemini fails)" --> G["_translate_online(): Free HTTP translation fallback"]
-    F --> H["Return AI result (source: 'ai' → 'AI Translation')"]
-    G --> I["Return online result (source: 'online' → 'Online Translation')"]
+    C -- "Not found" --> E{"Is GROQ_API_KEY set in .env?"}
+    E -- "Yes" --> F["_translate_groq(): Groq AI (openai/gpt-oss-120b)"]
+    E -- "No (or if Groq fails)" --> G{"Is GEMINI_API_KEY set in .env?"}
+    G -- "Yes" --> H["_translate_gemini(): Gemini 2.0 Flash"]
+    G -- "No (or if Gemini fails)" --> I["_translate_online(): MyMemory API + Google fallback"]
+    F --> J["Return AI result (source: 'ai' → 'AI Translation')"]
+    H --> J
+    I --> K["Return online result (source: 'online' → 'Online Translation')"]
 ```
 
 1. **Automatic Script Detection (`detect_language`)**:
    - **Burmese (`"my"`)**: Myanmar Unicode blocks `\u1000-\u109F`, `\uAA60-\uAA7F`, `\uA9E0-\uA9FF`.
    - **Japanese (`"ja"`)**: Hiragana `\u3040-\u309F`, Katakana `\u30A0-\u30FF`, CJK Kanji `\u4E00-\u9FAF`, `\u3400-\u4DBF`.
    - **English (`"en"`)**: Latin letters `[a-zA-Z]`.
-2. **Curated Database Search**:
-   - Searches `DictionaryEntry` where `word == normalized`, `english ILIKE query`, `burmese ILIKE %query%`, or `japanese ILIKE %query%`.
-3. **Dynamic Fallback**:
-   - If `GEMINI_API_KEY` is configured in `.env`, `_translate_gemini()` requests a structured JSON definition and reading from `gemini-2.0-flash`.
-   - Otherwise (or if the API call fails), `_translate_online()` translates the query into the other two languages using `requests`.
+2. **Curated Database Search (Tier 1)**:
+   - Searches `DictionaryEntry` where `word == normalized`, `english ILIKE query`, `burmese ILIKE %query%`, or `japanese ILIKE %query%`. Returns with `source: "curated"`.
+3. **Groq AI Translation (Tier 2A)**:
+   - If `GROQ_API_KEY` is present in `.env`, `_translate_groq()` queries Groq's high-speed completion API using `openai/gpt-oss-120b` (with fallback to `openai/gpt-oss-20b`, `qwen/qwen3.8-27b`, or `llama-3.3-70b-versatile`). Generates standard Myanmar Unicode terms, Hiragana readings, and context notes in JSON mode with `source: "ai"`.
+4. **Gemini AI Translation (Tier 2B)**:
+   - If Groq is not configured or fails, and `GEMINI_API_KEY` is present in `.env`, `_translate_gemini()` queries `gemini-2.0-flash` with `source: "ai"`.
+5. **MyMemory Free Online Fallback (Tier 3)**:
+   - If no AI keys are configured or AI calls fail, `_translate_online()` translates via MyMemory API with secondary Google fallback, returning `source: "online"`.
 
 ### API Endpoint (`backend/api/dictionary.py`)
 

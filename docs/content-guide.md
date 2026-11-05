@@ -417,6 +417,15 @@ Mock tests include a complete real-time scoring system:
 
 Alongside `notes/`, `practice/`, and `past/`, `content/dictionary.json` holds curated trilingual study terms (**English ↔ Burmese ↔ Japanese** with readings, part of speech, notes, and example sentences).
 
+### Lookup Hierarchy in the App
+
+When a student types a word into the floating dictionary (`FloatingDictionary.jsx`):
+1. **Tier 1 (Curated Database)**: The backend searches PostgreSQL `dictionary_entries` first. If found, returns the verified high-school definition (`source: "curated"`, badge: **Verified DB**).
+2. **Tier 2A (Groq AI)**: If not in the database and `GROQ_API_KEY` is present in `.env`, translates via Groq AI using high-accuracy multilingual models (`openai/gpt-oss-120b` / `llama-3.3-70b-versatile`) with Furigana readings and context notes (`source: "ai"`, badge: **AI Translation**).
+3. **Tier 2B (Gemini AI)**: If Groq is not configured or fails, falls back to Gemini 2.0 Flash if `GEMINI_API_KEY` is set (`source: "ai"`, badge: **AI Translation**).
+4. **Tier 3 (MyMemory Free Fallback)**: If no AI keys are provided or AI calls fail, translates via MyMemory API with Google backup (`source: "online"`, badge: **Online Translation**).
+5. **Clean Database Policy**: Dynamic lookups do **not** write unverified translations into PostgreSQL; only curated entries in `content/dictionary.json` or explicitly added via `flask add-word` are stored in the database.
+
 - After editing `content/dictionary.json`, import it into PostgreSQL from `backend/`:
   ```bash
   cd backend && ../venv/bin/flask import-dictionary

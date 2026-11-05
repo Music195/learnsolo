@@ -154,7 +154,7 @@ To change what **data** a page receives, start in its **service function** in `b
 | **Migration** | A small script that changes the tables (adds a column…), kept in `migrations/versions/` and applied with `flask db upgrade` | Section 7.5 |
 | **Exception** | An error raised with `raise` and caught with `try/except` or an error handler | `raise ContentNotFound(path)` → JSON 404 |
 | **venv** | A folder with this project's own Python packages | `venv/` on your laptop |
-| **Environment variable** | A setting given to a program from outside its code | `DATABASE_URL`, `SECRET_KEY`, `GEMINI_API_KEY` (from `.env`) |
+| **Environment variable** | A setting given to a program from outside its code | `DATABASE_URL`, `SECRET_KEY`, `GROQ_API_KEY`, `GEMINI_API_KEY` (from `.env`) |
 
 ---
 
@@ -169,7 +169,7 @@ To change what **data** a page receives, start in its **service function** in `b
 | `backend/` | The server: Flask, database models, importer, services, API, tests | Changing data, the API, accounts |
 | `frontend/` | The React app: every page ([docs/frontend-guide.md](frontend-guide.md)) | Changing how pages look or behave |
 | `content/` | Every note, practice set, mock paper, and `dictionary.json` ([docs/content-guide.md](content-guide.md)) | Writing content |
-| `.env` | **Your** settings and secrets: `DATABASE_URL`, `SECRET_KEY`, `FLASK_DEBUG`, optional `GEMINI_API_KEY`. Not in git (`.gitignore`) | Setting up a new computer |
+| `.env` | **Your** settings and secrets: `DATABASE_URL`, `SECRET_KEY`, `FLASK_DEBUG`, optional `GROQ_API_KEY`, optional `GEMINI_API_KEY`. Not in git (`.gitignore`) | Setting up a new computer |
 | `.env.example` | A template for `.env`, without real secrets. In git | Adding a new setting (add it here too, so others know it exists) |
 | `docker-compose.yml` | Starts PostgreSQL in Docker on your laptop: user, password and port match `.env.example` | Rarely; `docker compose up -d` uses it |
 | `render.yaml` | Render's "Blueprint": how the live site is built and started, its database, its settings | Changing the build or start commands, or the Render plan |
