@@ -122,7 +122,7 @@ def lookup_word(query: str, source_lang: str = "auto") -> dict:
 
 
 def _translate_groq(query: str, source_lang: str, api_key: str = None) -> dict:
-    """Translates and enriches using Groq API (llama-3.3-70b-versatile with JSON mode)."""
+    """Translates and enriches using Groq API with JSON mode and multi-model fallback."""
     if not api_key:
         groq_key, _ = _get_api_keys()
         api_key = groq_key
@@ -150,40 +150,57 @@ def _translate_groq(query: str, source_lang: str, api_key: str = None) -> dict:
     )
     user_prompt = f'Translate and define the word or phrase: "{query}" (Source language: {source_lang}).'
 
-    payload = {
-        "model": "llama-3.3-70b-versatile",
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt},
-        ],
-        "response_format": {"type": "json_object"},
-        "temperature": 0.2,
-    }
+    candidate_models = [m for m in [
+        os.environ.get("GROQ_MODEL"),
+        "qwen/qwen3.8-27b",
+        "openai/gpt-oss-120b",
+        "openai/gpt-oss-20b",
+        "llama-3.3-70b-versatile",
+    ] if m]
 
-    resp = requests.post(url, headers=headers, json=payload, timeout=8)
-    if not resp.ok:
-        raise RuntimeError(f"Groq API returned status {resp.status_code}: {resp.text}")
+    last_error = None
+    for model in candidate_models:
+        payload = {
+            "model": model,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+            "response_format": {"type": "json_object"},
+            "temperature": 0.2,
+        }
 
-    data = resp.json()
-    text = data["choices"][0]["message"]["content"].strip()
-    if text.startswith("```json"):
-        text = text[7:]
-    if text.startswith("```"):
-        text = text[3:]
-    if text.endswith("```"):
-        text = text[:-3]
+        try:
+            resp = requests.post(url, headers=headers, json=payload, timeout=8)
+            if not resp.ok:
+                last_error = f"Groq API ({model}) returned {resp.status_code}: {resp.text}"
+                continue
 
-    parsed = json.loads(text.strip())
-    return {
-        "query": query,
-        "from": source_lang,
-        "english": parsed.get("english", "") or (query if source_lang == "en" else ""),
-        "burmese": parsed.get("burmese", "") or (query if source_lang == "my" else ""),
-        "japanese": parsed.get("japanese", "") or (query if source_lang == "ja" else ""),
-        "reading": parsed.get("reading", "") or "",
-        "notes": parsed.get("notes", "") or "",
-        "source": "ai",
-    }
+            data = resp.json()
+            text = data["choices"][0]["message"]["content"].strip()
+            if text.startswith("```json"):
+                text = text[7:]
+            if text.startswith("```"):
+                text = text[3:]
+            if text.endswith("```"):
+                text = text[:-3]
+
+            parsed = json.loads(text.strip())
+            return {
+                "query": query,
+                "from": source_lang,
+                "english": parsed.get("english", "") or (query if source_lang == "en" else ""),
+                "burmese": parsed.get("burmese", "") or (query if source_lang == "my" else ""),
+                "japanese": parsed.get("japanese", "") or (query if source_lang == "ja" else ""),
+                "reading": parsed.get("reading", "") or "",
+                "notes": parsed.get("notes", "") or "",
+                "source": "ai",
+            }
+        except Exception as e:
+            last_error = str(e)
+            continue
+
+    raise RuntimeError(f"All Groq candidate models failed. Last error: {last_error}")
 
 
 def _translate_gemini(query: str, source_lang: str, api_key: str = None) -> dict:
