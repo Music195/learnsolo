@@ -73,7 +73,7 @@ Here is what happens step-by-step in `frontend/` when a student clicks a link to
    `useApi` (in `src/api.js`) calls `fetch()` and re-renders `Note` once the JSON arrives from `backend/api/content.py` → `backend/services/notes.py`.
 3. **React draws the page layout (`Note.jsx`):**
    ```jsx
-   <FloatBar location={location} nav={nav} ... />       // top floating bar
+   <FloatBar location={location} nav={nav} ... />       // Slim Icon Rail (AppRail) + Topics flyout
    <header className="note-header"> ... <h1>{title}</h1> ... </header>
    <NoteContent html={content} ... />                   // the note's HTML fragment
    <PagerCard link={nav.prev} side="prev" />            // previous / next cards
@@ -180,15 +180,16 @@ Here is what happens step-by-step in `frontend/` when a student clicks a link to
 
 | File | What it is | Used by |
 |---|---|---|
-| `FloatBar.jsx` | Streamlined top floating bar: custom logo, where you are, search, previous/next, Topics, notifications bell, feedback button, and unified Settings popover button | Every page |
-| `SettingsPopover.jsx` | Quick Settings popover with 3 tabs: Theme switcher (Light/Dark), Font scale controls (85%–130% + stepper + live preview), Account quick view, and link to full `/settings` page | `FloatBar` |
-| `NotificationBell.jsx` | The announcement bell: unread badge counter, popover drawer with creator announcements, and "Mark all as read" | `FloatBar` |
-| `FeedbackModal.jsx` | Feedback dialog modal: category selector, message textarea, and submission to `/api/feedback` | `FloatBar` |
+| `AppRail.jsx` / `FloatBar.jsx` | **Slim Icon Rail Navigation**: 58px left vertical rail on desktop (bottom tab bar on mobile) giving 100% full-height reading canvas. Holds Home, Topics flyout, Practice, Exams, Search, Announcements, and Settings | Every page |
+| `TopicsFlyout.jsx` | **Course & Topics Flyout (State B)**: docked curriculum drawer beside the rail with course/topic dropdowns, live filter, note index, and `▶ Now` indicator | `AppRail` (all pages) |
+| `SearchModal.jsx` | **Command Palette Search Modal**: centered quick find modal (`Ctrl + K` / `Cmd + K`) for instant note and topic lookups | `AppRail` |
+| `SettingsPopover.jsx` | Quick Settings popover with Theme switcher (Light/Dark), Font scale controls (85%–130% + stepper + live preview), Account quick view, and nested Send Feedback button | `AppRail` |
+| `NotificationBell.jsx` | The announcement bell: unread badge counter, popover drawer with creator announcements, and "Mark all as read" | `AppRail` |
+| `FeedbackModal.jsx` | Feedback dialog modal: category selector, message textarea, and submission to `/api/feedback` | `AppRail`, `AccountSettings` |
 | `Footer.jsx` | Site footer: logo, platform description, About Me portfolio link (`https://music195.github.io/portfolio/`), GitHub repository, subjects, and mock exam links | `Home`, `PracticeList`, `PastList`, `AccountSettings` |
 | `TestScoreCard.jsx` | Test completion summary card: pass/review badges (`合格`/`要復習`), score stats, "Retake Test", "Jump to First Mistake", and "Next Test" | `PastPaper` |
 | `FloatingDictionary.jsx` | The floating 📖 button (bottom-right) and resizable 3-way dictionary window (English ↔ Burmese ↔ Japanese) | Every page (mounted in `App.jsx`) |
-| `SearchBox.jsx` | The search box: loads `/api/search-index` once, shows up to 8 matches, keyboard ↑ ↓ Enter Esc | `FloatBar` |
-| `TopicsSidebar.jsx` | The Topics sidebar on a note: course and topic dropdowns, the topic's notes | `Note` |
+| `SearchBox.jsx` | The inline search box: loads `/api/search-index` once, shows up to 8 matches, keyboard ↑ ↓ Enter Esc | Search components |
 | `NoteContent.jsx` | Puts a note's or set's HTML on the page, runs its scripts, cleans up any JSXGraph boards on unmount, then draws the formulas | `Note`, `PracticeSet`, `PastPaper` |
 | `HubTabs.jsx` | A row of tabs with a panel each (remembered in `localStorage`), and the "Solved n of m" or "Score: X/Y (Z%)" badge | `PracticeList`, `PastList` |
 | `HeroDemo.jsx` | The draggable tangent-line demo on the home page | `Home` |
@@ -198,19 +199,20 @@ Here is what happens step-by-step in `frontend/` when a student clicks a link to
 
 | File | Styles |
 |---|---|
-| `floatbar.css` | The floating bar, search results, notifications popover, and feedback modal |
-| `dark-mode.css` | **Complete dark mode theme**: background colors, cards, note blocks, choices, score cards, and dictionary when `[data-theme="dark"]` |
+| `siderail.css` | The Slim Icon Rail (58px vertical desktop rail & mobile bottom bar), State B Topics Flyout, and Command Palette search modal |
+| `floatbar.css` | Popovers, notifications dropdown, and legacy menu styling |
+| `dark-mode.css` | **Complete dark mode theme**: background colors, cards, note blocks, choices, score cards, rail, flyout, and dictionary when `[data-theme="dark"]` |
 | `footer.css` | The 4-column responsive site footer and creator about-me portfolio links |
 | `test-score.css` | The test completion score summary card, pass/review badges, and action buttons |
 | `dictionary.css` | The floating dictionary button, popup window, resize handle and result cards |
 | `home.css` | The home page |
-| `note-page.css` | The page around a note: colours (`--brand`…), header, card width, sidebar, previous/next cards |
+| `note-page.css` | The page around a note: colours (`--brand`…), header, card width, previous/next cards |
 | `note-blocks.css` | The 8 blocks inside notes (`CONCEPT`, `FORMULA`…), with their colours and labels |
 | `practice.css` | A practice set or paper: problems, levels, answer boxes, multiple-choice buttons, "Practise this note" |
 | `practice-list.css` | The practice hub and the tabs on `/past/eju` and `/past/jlpt` |
 | `past.css` | The mock question lists |
 | `account.css` | The log in / sign up form and the account settings page (`/account`) |
-| `settings.css` | Quick Settings popover, theme selector cards, font size presets, font style chips, live preview, and full `/settings` page tabs |
+| `settings.css` | Quick Settings popover, theme selector cards, font size presets, font style chips, live preview, feedback cards, and full `/settings` page tabs |
 
 ---
 
@@ -263,7 +265,7 @@ LearnSolo features a complete system-aware and toggleable dark theme:
 LearnSolo provides a hybrid settings architecture designed for seamless study workflows:
 
 1. **Quick Settings Popover (`src/components/SettingsPopover.jsx`):**
-   - Opened instantly by clicking `⚙️ Settings` in the top floating navigation bar (`FloatBar.jsx`) from any page without navigating away.
+   - Opened instantly by clicking `⚙️ Settings` in the Slim Icon Rail (`AppRail.jsx`) from any page without navigating away.
    - **Theme Tab:** Instant 1-click toggle between ☀️ Light Mode and 🌙 Dark Mode with live card selection.
    - **Font Tab:** Preset scale buttons (`85% Compact`, `100% Default`, `115% Comfortable`, `130% Large`), stepper controls (`A−` / `A+`), and an interactive live preview scaling Japanese reading text and mathematical formulas in real time.
    - **Account Tab:** Displays the current logged-in email, active session status, logout button, or guest sign-up prompt.
@@ -463,4 +465,4 @@ Always commit `package.json` and `package-lock.json` together.
 2. **Level 3 (React):**
    - Read `frontend/src/App.jsx`, then `pages/NotFound.jsx` (the smallest page), then `pages/Note.jsx` alongside Sections 1 and 2 above.
    - Build the `/about` page (Section 6.3) on a test branch.
-   - Find `"Note 5 of 8"` in `Note.jsx`, change how it is formatted, and inspect how `useState` works in `FloatBar.jsx` (the mobile ☰ menu) and `FloatingDictionary.jsx`.
+   - Find `"Note 5 of 8"` in `Note.jsx`, change how it is formatted, and inspect how `useState` works in `AppRail.jsx` / `FloatBar.jsx` (the navigation rail & drawers) and `FloatingDictionary.jsx`.
