@@ -153,7 +153,7 @@ Here is what happens step-by-step in `frontend/` when a student clicks a link to
 | File | What it does | Open it when… |
 |---|---|---|
 | `main.jsx` | **The starting point.** Draws `<App />` inside `#root`, wrapped in `BrowserRouter` (addresses) and `AuthProvider` (who is logged in), and loads the styles | Rarely: wrapping the whole app in something new |
-| `App.jsx` | **Which page for which address**: one `<Route>` per page, plus `<FloatingDictionary />` on every page | Adding a new page (Section 6.3) |
+| `App.jsx` | **Which page for which address**: one `<Route>` per page, plus `<FloatingTools />` (Speed-Dial launcher for Dictionary & Scientific Calculator) on every page | Adding a new page (Section 6.3) |
 | `api.js` | Talking to Flask: `fetchJson(url)`, `sendJson(method, url, data)`, and the `useApi(url)` hook | Changing how all requests are made |
 | `auth.jsx` | `AuthProvider` and `useAuth()`: who is logged in, `signup`, `login`, `logout`, and moving browser progress into the account | Changing what happens at log in or out |
 | `progress.js` | **The only place progress is read and saved**: in `localStorage` when logged out, in the account (`/api/progress/...`) when logged in | Changing how progress is stored |
@@ -188,7 +188,9 @@ Here is what happens step-by-step in `frontend/` when a student clicks a link to
 | `FeedbackModal.jsx` | Feedback dialog modal: category selector, message textarea, and submission to `/api/feedback` | `AppRail`, `AccountSettings` |
 | `Footer.jsx` | Site footer: logo, platform description, About Me portfolio link (`https://music195.github.io/portfolio/`), GitHub repository, subjects, and mock exam links | `Home`, `PracticeList`, `PastList`, `AccountSettings` |
 | `TestScoreCard.jsx` | Test completion summary card: pass/review badges (`合格`/`要復習`), score stats, "Retake Test", "Jump to First Mistake", and "Next Test" | `PastPaper` |
-| `FloatingDictionary.jsx` | The floating 📖 button (bottom-right) and resizable 3-way dictionary window (English ↔ Burmese ↔ Japanese) | Every page (mounted in `App.jsx`) |
+| `FloatingTools.jsx` | **Floating Speed-Dial Launcher** (bottom-right FAB) that expands to toggle the 3-Way Dictionary and Scientific Calculator | Every page (mounted in `App.jsx`) |
+| `FloatingDictionary.jsx` | Resizable 3-way dictionary window (English ↔ Burmese ↔ Japanese) with script auto-detection and AI translation | Embedded in `FloatingTools` |
+| `FloatingCalculator.jsx` | **Rich Scientific Calculator**: DEG/RAD angles, inverse trig, powers, logs, factorial, physics constants ($c, g, e, m_e, N_A, h, R, G$), calculation history, keyboard input, and dark mode | Embedded in `FloatingTools` |
 | `SearchBox.jsx` | The inline search box: loads `/api/search-index` once, shows up to 8 matches, keyboard ↑ ↓ Enter Esc | Search components |
 | `NoteContent.jsx` | Puts a note's or set's HTML on the page, runs its scripts, cleans up any JSXGraph boards on unmount, then draws the formulas | `Note`, `PracticeSet`, `PastPaper` |
 | `HubTabs.jsx` | A row of tabs with a panel each (remembered in `localStorage`), and the "Solved n of m" or "Score: X/Y (Z%)" badge | `PracticeList`, `PastList` |
@@ -201,10 +203,12 @@ Here is what happens step-by-step in `frontend/` when a student clicks a link to
 |---|---|
 | `siderail.css` | The Slim Icon Rail (58px vertical desktop rail & mobile bottom bar), State B Topics Flyout, and Command Palette search modal |
 | `floatbar.css` | Popovers, notifications dropdown, and legacy menu styling |
-| `dark-mode.css` | **Complete dark mode theme**: background colors, cards, note blocks, choices, score cards, rail, flyout, and dictionary when `[data-theme="dark"]` |
+| `dark-mode.css` | **Complete dark mode theme**: background colors, cards, note blocks, choices, score cards, rail, flyout, floating tools, and dictionary when `[data-theme="dark"]` |
 | `footer.css` | The 4-column responsive site footer and creator about-me portfolio links |
 | `test-score.css` | The test completion score summary card, pass/review badges, and action buttons |
-| `dictionary.css` | The floating dictionary button, popup window, resize handle and result cards |
+| `dictionary.css` | The floating dictionary drawer, resize handles and result cards |
+| `calculator.css` | Scientific calculator drawer, keypad, display screen, constants panel, history list, and dark mode |
+| `floating-tools.css` | Bottom-right speed-dial launcher FAB, animations, and active tool indicators |
 | `home.css` | The home page |
 | `note-page.css` | The page around a note: colours (`--brand`…), header, card width, previous/next cards |
 | `note-blocks.css` | The 8 blocks inside notes (`CONCEPT`, `FORMULA`…), with their colours and labels |
@@ -251,6 +255,8 @@ Hiding where progress is stored behind `src/progress.js` is called **encapsulati
 | `theme` | `src/pageHooks.js` (`useTheme`) | User's preferred color scheme (`"dark"` or `"light"`). Pre-checked by `index.html` inline script to avoid screen flash |
 | `read_notifications` | `src/components/NotificationBell.jsx` | Array of broadcast notification IDs marked as read |
 | `learnsolo_dict_size` | `src/components/FloatingDictionary.jsx` | The user's preferred `{width, height}` size for the floating dictionary popup |
+| `learnsolo_calc_size` | `src/components/FloatingCalculator.jsx` | The user's preferred `{width, height}` size for the scientific calculator window |
+| `learnsolo_calc_hist` | `src/components/FloatingCalculator.jsx` | Recent calculation history items (expressions, answers, DEG/RAD mode) |
 
 ### 4.4 Dark Mode Theme Switching (`useTheme` & `dark-mode.css`)
 

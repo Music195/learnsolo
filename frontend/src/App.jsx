@@ -16,7 +16,7 @@ import Account from './pages/Account.jsx'
 import AccountSettings from './pages/AccountSettings.jsx'
 import NotFound from './pages/NotFound.jsx'
 import { useAuth } from './auth.jsx'
-import FloatingDictionary from './components/FloatingDictionary.jsx'
+import FloatingTools from './components/FloatingTools.jsx'
 
 export default function App() {
   const { user } = useAuth()
@@ -44,7 +44,7 @@ export default function App() {
         {/* Anything else */}
         <Route path="*" element={<NotFound />} />
       </Routes>
-      <FloatingDictionary />
+      <FloatingTools />
     </>
   )
 }

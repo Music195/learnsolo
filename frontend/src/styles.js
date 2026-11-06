@@ -14,5 +14,8 @@ import './styles/practice-list.css'  // the practice hub, and tabs on the past p
 import './styles/past.css'           // the past question lists
 import './styles/account.css'        // log in / sign up, and the account button
 import './styles/settings.css'       // hybrid settings popover and preferences page
+import './styles/dictionary.css'     // 3-way floating dictionary
+import './styles/calculator.css'     // scientific calculator
+import './styles/floating-tools.css' // floating speed-dial tools launcher
 import './styles/footer.css'         // footer component
 import './styles/dark-mode.css'      // complete dark mode theme

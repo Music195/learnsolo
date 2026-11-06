@@ -25,8 +25,21 @@ const LANG_LABELS = {
   auto: 'Auto Detect',
 }
 
-export default function FloatingDictionary() {
-  const [isOpen, setIsOpen] = useState(false)
+export default function FloatingDictionary({
+  isOpen: propIsOpen,
+  onClose: propOnClose,
+  isEmbedded = false,
+} = {}) {
+  const [internalOpen, setInternalOpen] = useState(false)
+  const isOpen = propIsOpen !== undefined ? propIsOpen : internalOpen
+  const setIsOpen = (val) => {
+    if (typeof val === 'function') {
+      setInternalOpen(val)
+      return
+    }
+    if (!val && propOnClose) propOnClose()
+    else setInternalOpen(val)
+  }
   const [query, setQuery] = useState('')
   const [result, setResult] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -151,15 +164,17 @@ export default function FloatingDictionary() {
 
   return (
     <>
-      {/* Floating Action Button */}
-      <button
-        className="floating-dict-btn"
-        onClick={() => setIsOpen(!isOpen)}
-        aria-label={isOpen ? 'Close Dictionary' : 'Open Dictionary'}
-        title="Dictionary (Burmese / English / Japanese)"
-      >
-        <i className={isOpen ? 'fas fa-times' : 'fas fa-language'}></i>
-      </button>
+      {/* Floating Action Button (only rendered when standalone) */}
+      {!isEmbedded && (
+        <button
+          className="floating-dict-btn"
+          onClick={() => setIsOpen(!isOpen)}
+          aria-label={isOpen ? 'Close Dictionary' : 'Open Dictionary'}
+          title="Dictionary (Burmese / English / Japanese)"
+        >
+          <i className={isOpen ? 'fas fa-times' : 'fas fa-language'}></i>
+        </button>
+      )}
 
       {/* Dictionary Drawer / Window */}
       {isOpen && (
@@ -202,7 +217,10 @@ export default function FloatingDictionary() {
               </button>
               <button
                 className="dict-close"
-                onClick={() => setIsOpen(false)}
+                onClick={() => {
+                  if (propOnClose) propOnClose()
+                  setIsOpen(false)
+                }}
                 aria-label="Close"
               >
                 ×
