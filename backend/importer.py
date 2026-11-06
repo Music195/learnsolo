@@ -1,9 +1,10 @@
+import json
 import os
 import re
 
 from config import PROJECT_ROOT
 from extensions import db
-from models import Course, Note, ProblemSet, Topic
+from models import Course, DictionaryEntry, Note, ProblemSet, Topic
 from utils.courses import course_name, course_subject, topic_name
 
 # Copies content/ into the database: run `flask import-content` after
@@ -105,13 +106,65 @@ def _sync(model, rows, key_of, existing, stats):
     return result
 
 
+def sync_dictionary(report):
+    """Sync content/dictionary.json into the dictionary_entries table."""
+    dict_file = os.path.join(CONTENT_FOLDER, "dictionary.json")
+    stats = report.setdefault("dictionary", {"added": 0, "updated": 0, "removed": 0})
+    if not os.path.exists(dict_file):
+        return
+
+    with open(dict_file, "r", encoding="utf-8") as f:
+        items = json.load(f)
+
+    old_entries = {e.word: e for e in DictionaryEntry.query.all()}
+    for item in items:
+        key = item.get("word", item.get("english", "")).lower().strip()
+        if not key:
+            continue
+        obj = old_entries.pop(key, None)
+        if obj is None:
+            obj = DictionaryEntry(
+                word=key,
+                source_lang=item.get("source_lang", "en"),
+                english=item.get("english", key),
+                burmese=item.get("burmese", ""),
+                japanese=item.get("japanese", ""),
+                reading=item.get("reading", ""),
+                notes=item.get("notes", ""),
+                source=item.get("source", "curated"),
+            )
+            db.session.add(obj)
+            stats["added"] += 1
+        else:
+            changed = False
+            for field, val in [
+                ("english", item.get("english", obj.english)),
+                ("burmese", item.get("burmese", obj.burmese)),
+                ("japanese", item.get("japanese", obj.japanese)),
+                ("reading", item.get("reading", obj.reading or "")),
+                ("notes", item.get("notes", obj.notes or "")),
+                ("source", item.get("source", "curated")),
+            ]:
+                if getattr(obj, field) != val:
+                    setattr(obj, field, val)
+                    changed = True
+            if changed:
+                stats["updated"] += 1
+
+    # Only delete leftover rows that were curated from dictionary.json
+    for obj in old_entries.values():
+        if obj.source == "curated":
+            db.session.delete(obj)
+            stats["removed"] += 1
+
+
 def import_content():
     """Sync the database with content/. Returns {table: {"added", "updated", "removed"}}."""
     notes = [parse_note(p, _read(NOTES_FOLDER, p)) for p in _paths(NOTES_FOLDER)]
     sets = ([dict(parse_set(p, _read(PRACTICE_FOLDER, p)), kind="practice") for p in _paths(PRACTICE_FOLDER)]
             + [dict(parse_set(p, _read(PAST_FOLDER, p)), kind="past") for p in _paths(PAST_FOLDER)])
     report = {name: {"added": 0, "updated": 0, "removed": 0}
-              for name in ("courses", "topics", "notes", "problem sets")}
+              for name in ("courses", "topics", "notes", "problem sets", "dictionary")}
 
     # Courses and topics come from the note folders, in folder order
     course_rows, topic_rows = {}, {}
@@ -146,6 +199,8 @@ def import_content():
             db.session.delete(obj)
         report[name]["removed"] = len(leftovers)
         db.session.flush()
+
+    sync_dictionary(report)
 
     db.session.commit()
     return report

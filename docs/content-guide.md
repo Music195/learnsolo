@@ -53,7 +53,8 @@ Content files in `content/` are **HTML fragments** (not full `<html>...</html>` 
 │    content/dictionary.json                                                   │
 └──────────────────────────────────────┬──────────────────────────────────────┘
                                        │
-                         flask import-content / import-dictionary
+                         flask import-content
+                   (or flask import-dictionary shortcut)
                                        │
                                        ▼
 ┌─────────────────────────── 2. BACKEND (backend/) ───────────────────────────┐
@@ -428,9 +429,10 @@ When a student types a word into the floating dictionary (`FloatingDictionary.js
 
 - After editing `content/dictionary.json`, import it into PostgreSQL from `backend/`:
   ```bash
-  cd backend && ../venv/bin/flask import-dictionary
+  cd backend && ../venv/bin/flask import-content
   ```
-- See **[docs/dictionary-guide.md](dictionary-guide.md)** for the full JSON format, CLI commands (`flask import-dictionary`, `flask list-dictionary`, `flask add-word`), and how the hybrid lookup service works.
+  *(Tip: `flask import-content` syncs both lessons and `dictionary.json`. If you only changed vocabulary and want an instant sync without re-scanning HTML notes, you can also run `../venv/bin/flask import-dictionary`.)*
+- See **[docs/dictionary-guide.md](dictionary-guide.md)** for the full JSON format, CLI commands (`flask import-content`, `flask import-dictionary`, `flask list-dictionary`, `flask add-word`), and how the hybrid lookup service works.
 
 ---
 
@@ -440,7 +442,7 @@ When a student types a word into the floating dictionary (`FloatingDictionary.js
 |---|---|---|
 | "Sorry, this note doesn't exist" for a new file | The file isn't in the database yet | Run `cd backend && ../venv/bin/flask import-content` |
 | A change in a note, set, or mock paper doesn't show | The site reads PostgreSQL, not the raw HTML files | Run `cd backend && ../venv/bin/flask import-content`, then refresh |
-| A change in `content/dictionary.json` doesn't show | The dictionary table hasn't been synced | Run `cd backend && ../venv/bin/flask import-dictionary` |
+| A change in `content/dictionary.json` doesn't show | The dictionary table hasn't been synced | Run `cd backend && ../venv/bin/flask import-content` (or `import-dictionary`) |
 | Formulas show as raw `$x^2$` | MathJax didn't run on that element, or `<` / `>` inside `$...$` broke the HTML parser, or `$` is inside an HTML attribute | Write `&lt;` and `&gt;` inside maths, and check F12 → Console for `MathJax:` errors |
 | A TRY IT demo stays blank | Its `<script>` threw an error | Open F12 → Console to see the error and line number; check that canvas/slider IDs in the script match the HTML |
 | A practice set doesn't appear on `/practice` | Its `<course>/<topic>` folder has no notes in `content/notes/`, or `flask import-content` wasn't run | Ensure the topic has at least one note and run `flask import-content` |

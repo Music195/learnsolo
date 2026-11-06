@@ -13,8 +13,8 @@ def test_dictionary_missing_query(client):
 
 def test_dictionary_curated_lookup(app, client):
     with app.app_context():
-        # Ensure test entry exists
-        if not DictionaryEntry.query.filter_by(word="testterm").first():
+        entry = DictionaryEntry.query.filter_by(word="testterm").first()
+        if not entry:
             entry = DictionaryEntry(
                 word="testterm",
                 source_lang="en",
@@ -28,15 +28,22 @@ def test_dictionary_curated_lookup(app, client):
             db.session.add(entry)
             db.session.commit()
 
-    res = client.get("/api/dictionary?q=testterm")
-    assert res.status_code == 200
-    data = res.get_json()
-    assert data["english"] == "Test Term"
-    assert data["burmese"] == "စမ်းသပ်ချက်"
-    assert data["japanese"] == "テスト用語"
-    assert data["reading"] == "てすとようご"
-    assert data["source"] == "curated"
-    assert data["detected_lang"] == "en"
+    try:
+        res = client.get("/api/dictionary?q=testterm")
+        assert res.status_code == 200
+        data = res.get_json()
+        assert data["english"] == "Test Term"
+        assert data["burmese"] == "စမ်းသပ်ချက်"
+        assert data["japanese"] == "テスト用語"
+        assert data["reading"] == "てすとようご"
+        assert data["source"] == "curated"
+        assert data["detected_lang"] == "en"
+    finally:
+        with app.app_context():
+            e = DictionaryEntry.query.filter_by(word="testterm").first()
+            if e:
+                db.session.delete(e)
+                db.session.commit()
 
 
 def test_dictionary_auto_detect_burmese(client):

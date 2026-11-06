@@ -43,52 +43,23 @@ def create_app():
     # flask import-content: copy content/ into the database (importer.py)
     @app.cli.command("import-content")
     def import_content_command():
-        """Copy every note, practice set and past paper from content/ into the database."""
+        """Copy every note, practice set, past paper and dictionary entry from content/ into the database."""
         from importer import import_content
         for table, counts in import_content().items():
-            print(f"{table:13} {counts['added']:4} added {counts['updated']:4} updated {counts['removed']:4} removed")
+            print(f"{table:14} {counts['added']:4} added {counts['updated']:4} updated {counts['removed']:4} removed")
 
     # flask import-dictionary: copy content/dictionary.json into the database
     @app.cli.command("import-dictionary")
     def import_dictionary_command():
         """Import curated terms from content/dictionary.json into the database."""
-        import json
-        import os
-        from config import PROJECT_ROOT
+        from importer import sync_dictionary
         from models import DictionaryEntry
-        path = os.path.join(PROJECT_ROOT, "content", "dictionary.json")
-        if not os.path.exists(path):
-            print(f"File not found: {path}")
-            return
-        with open(path, "r", encoding="utf-8") as f:
-            items = json.load(f)
-        added, updated = 0, 0
-        for item in items:
-            key = item.get("word", item.get("english", "")).lower().strip()
-            existing = DictionaryEntry.query.filter_by(word=key).first()
-            if existing:
-                existing.english = item.get("english", existing.english)
-                existing.burmese = item.get("burmese", existing.burmese)
-                existing.japanese = item.get("japanese", existing.japanese)
-                existing.reading = item.get("reading", existing.reading)
-                existing.notes = item.get("notes", existing.notes)
-                existing.source = item.get("source", "curated")
-                updated += 1
-            else:
-                entry = DictionaryEntry(
-                    word=key,
-                    source_lang=item.get("source_lang", "en"),
-                    english=item.get("english", key),
-                    burmese=item.get("burmese", ""),
-                    japanese=item.get("japanese", ""),
-                    reading=item.get("reading", ""),
-                    notes=item.get("notes", ""),
-                    source=item.get("source", "curated"),
-                )
-                db.session.add(entry)
-                added += 1
+        report = {}
+        sync_dictionary(report)
         db.session.commit()
-        print(f"Dictionary imported successfully: {added} added, {updated} updated.")
+        counts = report.get("dictionary", {"added": 0, "updated": 0, "removed": 0})
+        total = DictionaryEntry.query.count()
+        print(f"Dictionary imported successfully: {counts['added']} added, {counts['updated']} updated, {counts['removed']} removed (total in DB: {total}).")
 
     # flask list-dictionary: show all dictionary entries in the database
     @app.cli.command("list-dictionary")

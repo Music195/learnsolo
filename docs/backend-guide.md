@@ -3,7 +3,7 @@
 ## Start here
 
 The LearnSolo backend is a **Python + Flask** server (`backend/`) backed by a **PostgreSQL** database. It has three responsibilities:
-1. **Importing content** (`importer.py`, `services/dictionary.py`): reading HTML files from `content/` and curated words from `content/dictionary.json` into PostgreSQL tables (`flask import-content`, `flask import-dictionary`).
+1. **Importing content** (`importer.py`): reading HTML files from `content/` and curated words from `content/dictionary.json` into PostgreSQL tables (`flask import-content`, with optional `flask import-dictionary` shortcut).
 2. **Answering JSON API requests** (`/api/...`): serving structured JSON for notes, practice sets, mock question papers, search, the 3-way dictionary, user accounts, and saved practice progress.
 3. **Serving the built React app** (`frontend.py`): on the live server, sending `frontend/dist/` for every non-`/api/` address.
 
@@ -41,9 +41,8 @@ When someone opens LearnSolo, four programs work together, with **Flask** and **
 │            users, progress, dictionary_entries                           │
 └──────────────────────────────────────────────────────────────────────────┘
 
-   content/*.html ──flask import-content──▶ the database
-   content/dictionary.json ──flask import-dictionary──▶ the database
-   (you write here)                                     (the site reads here)
+   content/ (*.html & dictionary.json) ──flask import-content──▶ the database
+   (you write here)                                              (the site reads here)
 ```
 
 | Program | Language | Folder | Its one job |
@@ -328,8 +327,7 @@ docker compose up -d                                   # 5. start PostgreSQL in 
 cd frontend && npm install && cd ..                    # 6. install React, Vite… into frontend/node_modules/
 cd backend
 ../venv/bin/flask db upgrade                           # 7. create the tables in the empty database
-../venv/bin/flask import-content                       # 8. copy content/ into the database
-../venv/bin/flask import-dictionary                    # 9. copy content/dictionary.json into the database
+../venv/bin/flask import-content                       # 8. copy content/ & dictionary.json into database
 ```
 
 #### Every time (start working)
@@ -341,7 +339,6 @@ cd ~/Projects/learnsolo
 docker compose up -d                   # start PostgreSQL (it doesn't start by itself after a reboot)
 cd backend
 ../venv/bin/flask import-content       # only if content/ changed (e.g. after git pull)
-../venv/bin/flask import-dictionary    # only if content/dictionary.json changed
 ../venv/bin/python app.py              # Flask on http://localhost:5000; leave this terminal open
 ```
 
@@ -352,7 +349,7 @@ cd ~/Projects/learnsolo/frontend
 npm run dev                            # Vite on http://localhost:5173; leave this terminal open
 ```
 
-- **After `git pull`**, run `../venv/bin/flask db upgrade` and `../venv/bin/flask import-content` (and `import-dictionary`) from `backend/`.
+- **After `git pull`**, run `../venv/bin/flask db upgrade` and `../venv/bin/flask import-content` from `backend/`.
 - **After changing `models.py`**, generate and apply a migration:
   ```bash
   cd backend

@@ -38,8 +38,8 @@ Just like notes and practice sets, the 3-way dictionary spans all three layers o
 │    Master JSON list of curated English / Burmese / Japanese study terms      │
 └──────────────────────────────────────┬──────────────────────────────────────┘
                                        │
-                            flask import-dictionary
-                            (or flask add-word CLI)
+                             flask import-content
+                       (or flask import-dictionary shortcut)
                                        │
                                        ▼
 ┌─────────────────────────── 2. BACKEND (backend/) ───────────────────────────┐
@@ -129,11 +129,14 @@ After editing `content/dictionary.json`, run from `backend/`:
 
 ```bash
 cd backend
-../venv/bin/flask import-dictionary
+../venv/bin/flask import-content
 ```
+
+*(Tip: `flask import-content` syncs both lessons and `dictionary.json`. If you only want to sync the dictionary without touching notes, `../venv/bin/flask import-dictionary` is also available as a standalone shortcut).*
 
 - New words are inserted into `dictionary_entries` with `source="curated"`.
 - Existing words (matched by lowercase `word`) have their `english`, `burmese`, `japanese`, `reading`, and `notes` updated.
+- Curated words removed from `dictionary.json` are cleaned up automatically.
 
 ---
 
@@ -259,19 +262,18 @@ flowchart TD
 
 ## 6. Deploying & Server Setup
 
-Because curated dictionary entries live in `content/dictionary.json`, the database needs `flask db upgrade` (to create the `dictionary_entries` table) and `flask import-dictionary` (to load the words from `content/dictionary.json`).
+Because `flask import-content` automatically syncs both lesson HTML pages and `content/dictionary.json`, deployment is unified into a single import step.
 
 ### On your Oracle Cloud server (`https://learnsolo.duckdns.org`)
 
-In `/etc/systemd/system/learnsolo.service`, `ExecStartPre` runs the database migrations, content import, and dictionary import automatically every time the service starts or restarts:
+In `/etc/systemd/system/learnsolo.service`, `ExecStartPre` runs database migrations and content import automatically every time the service starts or restarts:
 
 ```ini
 ExecStartPre=/home/ubuntu/learnsolo/.venv/bin/flask db upgrade
 ExecStartPre=/home/ubuntu/learnsolo/.venv/bin/flask import-content
-ExecStartPre=/home/ubuntu/learnsolo/.venv/bin/flask import-dictionary
 ```
 
-*(Remember: if you ever edit `/etc/systemd/system/learnsolo.service`, run `sudo systemctl daemon-reload` before `sudo systemctl restart learnsolo`. Also ensure `requests` is installed in `.venv` via `~/learnsolo/.venv/bin/pip install requests`.)*
+*(Note: `flask import-content` syncs both lesson content and dictionary entries into PostgreSQL, so you only need this single command.)*
 
 ---
 
