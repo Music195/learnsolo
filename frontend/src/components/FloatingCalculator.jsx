@@ -119,7 +119,29 @@ export default function FloatingCalculator({ isOpen = false, onClose }) {
     return { width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT }
   })
   const [isMaximized, setIsMaximized] = useState(false)
+
+  // Draggable position state
+  const [pos, setPos] = useState(() => {
+    try {
+      const saved = localStorage.getItem('learnsolo_calc_pos')
+      if (saved) {
+        const p = JSON.parse(saved)
+        if (typeof p.x === 'number' && typeof p.y === 'number') {
+          return {
+            x: Math.max(10, Math.min(window.innerWidth - DEFAULT_WIDTH - 10, p.x)),
+            y: Math.max(60, Math.min(window.innerHeight - 80, p.y)),
+          }
+        }
+      }
+    } catch {}
+    const defaultX = typeof window !== 'undefined' ? Math.max(20, window.innerWidth - DEFAULT_WIDTH - 24) : 80
+    const defaultY = typeof window !== 'undefined' ? Math.max(70, window.innerHeight - DEFAULT_HEIGHT - 86) : 80
+    return { x: defaultX, y: defaultY }
+  })
+  const [isDragging, setIsDragging] = useState(false)
+
   const resizeRef = useRef(null)
+  const dragRef = useRef(null)
 
   // Save history
   useEffect(() => {
@@ -128,12 +150,18 @@ export default function FloatingCalculator({ isOpen = false, onClose }) {
     } catch {}
   }, [history])
 
-  // Save customized size
+  // Save customized size & position
   useEffect(() => {
     try {
       localStorage.setItem('learnsolo_calc_size', JSON.stringify(size))
     } catch {}
   }, [size])
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('learnsolo_calc_pos', JSON.stringify(pos))
+    } catch {}
+  }, [pos])
 
   // Real-time evaluation preview while typing
   useEffect(() => {
@@ -228,9 +256,60 @@ export default function FloatingCalculator({ isOpen = false, onClose }) {
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [isOpen, insert, handleEquals, handleBackspace, handleClear])
 
+  // Dragging handler for the header
+  const startDrag = (e) => {
+    if (isMaximized) return
+    if (e.target.closest('button, input, textarea, a')) return
+
+    const clientX = e.clientX || (e.touches && e.touches[0].clientX)
+    const clientY = e.clientY || (e.touches && e.touches[0].clientY)
+    if (clientX === undefined || clientY === undefined) return
+
+    setIsDragging(true)
+    dragRef.current = {
+      startX: clientX,
+      startY: clientY,
+      initialX: pos.x,
+      initialY: pos.y,
+    }
+
+    const onMove = (moveEvent) => {
+      if (!dragRef.current) return
+      const currentX = moveEvent.clientX || (moveEvent.touches && moveEvent.touches[0].clientX)
+      const currentY = moveEvent.clientY || (moveEvent.touches && moveEvent.touches[0].clientY)
+      if (currentX === undefined || currentY === undefined) return
+
+      const deltaX = currentX - dragRef.current.startX
+      const deltaY = currentY - dragRef.current.startY
+
+      const maxX = Math.max(10, window.innerWidth - size.width - 10)
+      const maxY = Math.max(60, window.innerHeight - 60)
+
+      const nextX = Math.max(10, Math.min(maxX, dragRef.current.initialX + deltaX))
+      const nextY = Math.max(60, Math.min(maxY, dragRef.current.initialY + deltaY))
+
+      setPos({ x: nextX, y: nextY })
+    }
+
+    const onEnd = () => {
+      dragRef.current = null
+      setIsDragging(false)
+      window.removeEventListener('mousemove', onMove)
+      window.removeEventListener('mouseup', onEnd)
+      window.removeEventListener('touchmove', onMove)
+      window.removeEventListener('touchend', onEnd)
+    }
+
+    window.addEventListener('mousemove', onMove)
+    window.addEventListener('mouseup', onEnd)
+    window.addEventListener('touchmove', onMove, { passive: true })
+    window.addEventListener('touchend', onEnd)
+  }
+
   // Resize handlers
   const startResize = (direction, e) => {
     e.preventDefault()
+    e.stopPropagation()
     if (isMaximized) return
 
     const clientX = e.clientX || (e.touches && e.touches[0].clientX)
@@ -242,6 +321,8 @@ export default function FloatingCalculator({ isOpen = false, onClose }) {
       startY: clientY,
       startWidth: size.width,
       startHeight: size.height,
+      startPosX: pos.x,
+      startPosY: pos.y,
     }
 
     const onMove = (moveEvent) => {
@@ -250,24 +331,41 @@ export default function FloatingCalculator({ isOpen = false, onClose }) {
       const currentY = moveEvent.clientY || (moveEvent.touches && moveEvent.touches[0].clientY)
       if (currentX === undefined || currentY === undefined) return
 
-      const { direction, startX, startY, startWidth, startHeight } = resizeRef.current
+      const { direction, startX, startY, startWidth, startHeight, startPosX, startPosY } = resizeRef.current
       const maxWidth = Math.min(800, window.innerWidth - 32)
-      const maxHeight = Math.min(840, window.innerHeight - 100)
+      const maxHeight = Math.min(840, window.innerHeight - 80)
 
       let nextWidth = startWidth
       let nextHeight = startHeight
+      let nextPosX = startPosX
+      let nextPosY = startPosY
 
-      if (direction === 'corner' || direction === 'left') {
-        const deltaX = startX - currentX
+      // Bottom-Right Corner & Edges
+      if (direction === 'corner-br' || direction === 'right') {
+        const deltaX = currentX - startX
         nextWidth = Math.min(maxWidth, Math.max(MIN_WIDTH, startWidth + deltaX))
       }
-
-      if (direction === 'corner' || direction === 'top') {
-        const deltaY = startY - currentY
+      if (direction === 'corner-br' || direction === 'bottom') {
+        const deltaY = currentY - startY
         nextHeight = Math.min(maxHeight, Math.max(MIN_HEIGHT, startHeight + deltaY))
       }
 
+      // Top-Left Corner & Edges
+      if (direction === 'corner' || direction === 'left') {
+        const deltaX = startX - currentX
+        nextWidth = Math.min(maxWidth, Math.max(MIN_WIDTH, startWidth + deltaX))
+        nextPosX = startPosX - (nextWidth - startWidth)
+      }
+      if (direction === 'corner' || direction === 'top') {
+        const deltaY = startY - currentY
+        nextHeight = Math.min(maxHeight, Math.max(MIN_HEIGHT, startHeight + deltaY))
+        nextPosY = startPosY - (nextHeight - startHeight)
+      }
+
       setSize({ width: nextWidth, height: nextHeight })
+      if (nextPosX !== startPosX || nextPosY !== startPosY) {
+        setPos({ x: Math.max(10, nextPosX), y: Math.max(60, nextPosY) })
+      }
     }
 
     const onEnd = () => {
@@ -280,7 +378,7 @@ export default function FloatingCalculator({ isOpen = false, onClose }) {
 
     window.addEventListener('mousemove', onMove)
     window.addEventListener('mouseup', onEnd)
-    window.addEventListener('touchmove', onMove)
+    window.addEventListener('touchmove', onMove, { passive: true })
     window.addEventListener('touchend', onEnd)
   }
 
@@ -300,8 +398,12 @@ export default function FloatingCalculator({ isOpen = false, onClose }) {
         maxHeight: 'none',
       }
     : {
+        left: `${pos.x}px`,
+        top: `${pos.y}px`,
         width: `${size.width}px`,
         height: `${size.height}px`,
+        bottom: 'auto',
+        right: 'auto',
       }
 
   return (
@@ -327,12 +429,28 @@ export default function FloatingCalculator({ isOpen = false, onClose }) {
             onMouseDown={(e) => startResize('left', e)}
             onTouchStart={(e) => startResize('left', e)}
           />
+          <div
+            className="calc-resize-corner-br"
+            onMouseDown={(e) => startResize('corner-br', e)}
+            onTouchStart={(e) => startResize('corner-br', e)}
+            title="Drag to resize"
+          >
+            <i className="fas fa-arrows-alt"></i>
+          </div>
         </>
       )}
 
       {/* Header */}
-      <div className="calc-header">
+      <div
+        className={`calc-header ${isDragging ? 'is-dragging' : ''}`}
+        onMouseDown={startDrag}
+        onTouchStart={startDrag}
+        title="Click and drag to move window"
+      >
         <div className="calc-header-title">
+          <span className="calc-drag-grip" title="Drag to move">
+            <i className="fas fa-grip-vertical"></i>
+          </span>
           <i className="fas fa-calculator"></i>
           <span>Scientific Calculator</span>
         </div>

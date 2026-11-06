@@ -55,19 +55,96 @@ export default function FloatingDictionary({
   })
   const [isMaximized, setIsMaximized] = useState(false)
 
-  // Dragging / Resizing refs
-  const resizeRef = useRef(null)
+  // Draggable position state
+  const [pos, setPos] = useState(() => {
+    try {
+      const saved = localStorage.getItem('learnsolo_dict_pos')
+      if (saved) {
+        const p = JSON.parse(saved)
+        if (typeof p.x === 'number' && typeof p.y === 'number') {
+          return {
+            x: Math.max(10, Math.min(window.innerWidth - DEFAULT_WIDTH - 10, p.x)),
+            y: Math.max(60, Math.min(window.innerHeight - 80, p.y)),
+          }
+        }
+      }
+    } catch {}
+    const defaultX = typeof window !== 'undefined' ? Math.max(20, window.innerWidth - DEFAULT_WIDTH - 24) : 100
+    const defaultY = typeof window !== 'undefined' ? Math.max(70, window.innerHeight - DEFAULT_HEIGHT - 86) : 100
+    return { x: defaultX, y: defaultY }
+  })
+  const [isDragging, setIsDragging] = useState(false)
 
-  // Save customized size to localStorage
+  const resizeRef = useRef(null)
+  const dragRef = useRef(null)
+
+  // Save customized size & position to localStorage
   useEffect(() => {
     try {
       localStorage.setItem('learnsolo_dict_size', JSON.stringify(size))
     } catch {}
   }, [size])
 
+  useEffect(() => {
+    try {
+      localStorage.setItem('learnsolo_dict_pos', JSON.stringify(pos))
+    } catch {}
+  }, [pos])
+
+  // Dragging handler for the header
+  const startDrag = (e) => {
+    if (isMaximized) return
+    if (e.target.closest('button, input, textarea, a')) return
+
+    const clientX = e.clientX || (e.touches && e.touches[0].clientX)
+    const clientY = e.clientY || (e.touches && e.touches[0].clientY)
+    if (clientX === undefined || clientY === undefined) return
+
+    setIsDragging(true)
+    dragRef.current = {
+      startX: clientX,
+      startY: clientY,
+      initialX: pos.x,
+      initialY: pos.y,
+    }
+
+    const onMove = (moveEvent) => {
+      if (!dragRef.current) return
+      const currentX = moveEvent.clientX || (moveEvent.touches && moveEvent.touches[0].clientX)
+      const currentY = moveEvent.clientY || (moveEvent.touches && moveEvent.touches[0].clientY)
+      if (currentX === undefined || currentY === undefined) return
+
+      const deltaX = currentX - dragRef.current.startX
+      const deltaY = currentY - dragRef.current.startY
+
+      const maxX = Math.max(10, window.innerWidth - size.width - 10)
+      const maxY = Math.max(60, window.innerHeight - 60)
+
+      const nextX = Math.max(10, Math.min(maxX, dragRef.current.initialX + deltaX))
+      const nextY = Math.max(60, Math.min(maxY, dragRef.current.initialY + deltaY))
+
+      setPos({ x: nextX, y: nextY })
+    }
+
+    const onEnd = () => {
+      dragRef.current = null
+      setIsDragging(false)
+      window.removeEventListener('mousemove', onMove)
+      window.removeEventListener('mouseup', onEnd)
+      window.removeEventListener('touchmove', onMove)
+      window.removeEventListener('touchend', onEnd)
+    }
+
+    window.addEventListener('mousemove', onMove)
+    window.addEventListener('mouseup', onEnd)
+    window.addEventListener('touchmove', onMove, { passive: true })
+    window.addEventListener('touchend', onEnd)
+  }
+
   // Mouse / Touch resize handlers
   const startResize = (direction, e) => {
     e.preventDefault()
+    e.stopPropagation()
     if (isMaximized) return
 
     const clientX = e.clientX || (e.touches && e.touches[0].clientX)
@@ -79,6 +156,8 @@ export default function FloatingDictionary({
       startY: clientY,
       startWidth: size.width,
       startHeight: size.height,
+      startPosX: pos.x,
+      startPosY: pos.y,
     }
 
     const onMove = (moveEvent) => {
@@ -87,24 +166,41 @@ export default function FloatingDictionary({
       const currentY = moveEvent.clientY || (moveEvent.touches && moveEvent.touches[0].clientY)
       if (currentX === undefined || currentY === undefined) return
 
-      const { direction, startX, startY, startWidth, startHeight } = resizeRef.current
+      const { direction, startX, startY, startWidth, startHeight, startPosX, startPosY } = resizeRef.current
       const maxWidth = Math.min(820, window.innerWidth - 32)
-      const maxHeight = Math.min(760, window.innerHeight - 100)
+      const maxHeight = Math.min(760, window.innerHeight - 80)
 
       let nextWidth = startWidth
       let nextHeight = startHeight
+      let nextPosX = startPosX
+      let nextPosY = startPosY
 
-      if (direction === 'corner' || direction === 'left') {
-        const deltaX = startX - currentX
+      // Bottom-Right Corner (intuitive expanding)
+      if (direction === 'corner-br' || direction === 'right') {
+        const deltaX = currentX - startX
         nextWidth = Math.min(maxWidth, Math.max(MIN_WIDTH, startWidth + deltaX))
       }
-
-      if (direction === 'corner' || direction === 'top') {
-        const deltaY = startY - currentY
+      if (direction === 'corner-br' || direction === 'bottom') {
+        const deltaY = currentY - startY
         nextHeight = Math.min(maxHeight, Math.max(MIN_HEIGHT, startHeight + deltaY))
       }
 
+      // Top-Left Corner
+      if (direction === 'corner' || direction === 'left') {
+        const deltaX = startX - currentX
+        nextWidth = Math.min(maxWidth, Math.max(MIN_WIDTH, startWidth + deltaX))
+        nextPosX = startPosX - (nextWidth - startWidth)
+      }
+      if (direction === 'corner' || direction === 'top') {
+        const deltaY = startY - currentY
+        nextHeight = Math.min(maxHeight, Math.max(MIN_HEIGHT, startHeight + deltaY))
+        nextPosY = startPosY - (nextHeight - startHeight)
+      }
+
       setSize({ width: nextWidth, height: nextHeight })
+      if (nextPosX !== startPosX || nextPosY !== startPosY) {
+        setPos({ x: Math.max(10, nextPosX), y: Math.max(60, nextPosY) })
+      }
     }
 
     const onEnd = () => {
@@ -154,12 +250,22 @@ export default function FloatingDictionary({
 
   const drawerStyle = isMaximized
     ? {
-        width: 'min(720px, calc(100vw - 32px))',
-        height: 'min(720px, calc(100vh - 110px))',
+        top: '60px',
+        left: '20px',
+        right: '20px',
+        bottom: '80px',
+        width: 'auto',
+        height: 'auto',
+        maxWidth: 'none',
+        maxHeight: 'none',
       }
     : {
+        left: `${pos.x}px`,
+        top: `${pos.y}px`,
         width: `${size.width}px`,
         height: `${size.height}px`,
+        bottom: 'auto',
+        right: 'auto',
       }
 
   return (
@@ -179,7 +285,7 @@ export default function FloatingDictionary({
       {/* Dictionary Drawer / Window */}
       {isOpen && (
         <div className="dict-drawer" style={drawerStyle}>
-          {/* Resize handles */}
+          {/* Top-Left Resize handle */}
           {!isMaximized && (
             <>
               <div
@@ -200,12 +306,31 @@ export default function FloatingDictionary({
                 onMouseDown={(e) => startResize('left', e)}
                 onTouchStart={(e) => startResize('left', e)}
               />
+              {/* Bottom-Right Resize handle */}
+              <div
+                className="dict-resize-corner-br"
+                onMouseDown={(e) => startResize('corner-br', e)}
+                onTouchStart={(e) => startResize('corner-br', e)}
+                title="Drag to resize"
+              >
+                <i className="fas fa-arrows-alt"></i>
+              </div>
             </>
           )}
 
-          {/* Header */}
-          <div className="dict-header">
-            <h3><i className="fas fa-book"></i> 3-Way Dictionary</h3>
+          {/* Draggable Header */}
+          <div
+            className={`dict-header ${isDragging ? 'is-dragging' : ''}`}
+            onMouseDown={startDrag}
+            onTouchStart={startDrag}
+            title="Click and drag to move window"
+          >
+            <div className="dict-header-title">
+              <span className="dict-drag-grip" title="Drag to move">
+                <i className="fas fa-grip-vertical"></i>
+              </span>
+              <h3><i className="fas fa-book"></i> 3-Way Dictionary</h3>
+            </div>
             <div className="dict-header-actions">
               <button
                 className="dict-btn-icon"
