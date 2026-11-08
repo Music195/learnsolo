@@ -1,0 +1,233 @@
+<!-- tags: Coordination and Response, G12 Biology Myanmar -->
+<!-- Grade 12 Biology textbook, Chapter 5, section 5.5 (pages 98–100) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Coordination and Response">The Endocrine System</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Chemical Messengers in the Blood</span>
+  <p>The <strong>endocrine system</strong> is made of endocrine glands and their hormones. Endocrine glands secrete chemical messengers called <strong>hormones</strong> directly into the <strong>bloodstream</strong>, which carries them throughout the body. ("Hormone" comes from a Greek word meaning "to excite" or "set in motion".) Compared with the rapid nervous system, the endocrine system usually has <strong>slower, longer-lasting</strong> effects on a <strong>broader range</strong> of cells.</p>
+  <ul>
+    <li><strong>Steroid hormones</strong> are lipid-based: testosterone, estrogen, cortisol. <strong>Water-soluble hormones:</strong> epinephrine, human growth hormone (hGH), thyroxine (T<sub>4</sub>), insulin.</li>
+  </ul>
+  <p><strong>Glands and hormones (Table 5.6):</strong></p>
+  <ul>
+    <li><strong>Hypothalamus:</strong> releasing and inhibiting hormones, which regulate the anterior pituitary.</li>
+    <li><strong>Anterior pituitary:</strong> hGH (cell division, bone and muscle growth, metabolism); TSH (thyroid makes thyroxine); ACTH (adrenal cortex secretes glucocorticoids); FSH (ova and sperm production); LH (sex hormones from ovaries and testes); prolactin (milk production).</li>
+    <li><strong>Posterior pituitary:</strong> ADH (water retention by the kidneys); oxytocin (uterine contractions, release of milk).</li>
+    <li><strong>Thyroid:</strong> thyroxine (all tissues: raises metabolic rate, regulates growth and development); calcitonin (lowers blood calcium).</li>
+    <li><strong>Parathyroid:</strong> PTH (raises blood calcium from bones, gut and kidneys).</li>
+    <li><strong>Adrenal cortex:</strong> glucocorticoids such as cortisol (raise blood glucose, break down protein); mineralocorticoids such as aldosterone (sodium and water reabsorption by the kidneys); gonadocorticoids (secondary sexual characteristics). <strong>Adrenal medulla:</strong> epinephrine and norepinephrine (fight-or-flight).</li>
+    <li><strong>Pancreas:</strong> <strong>insulin</strong> (lowers blood glucose, glycogen formation in the liver); <strong>glucagon</strong> (raises blood glucose by converting liver glycogen to glucose).</li>
+    <li><strong>Ovaries:</strong> estrogen (uterine lining growth, female secondary sexual characteristics); progesterone (uterine lining growth, prevents uterine contractions). <strong>Testes:</strong> testosterone (sperm formation, male secondary sexual characteristics).</li>
+  </ul>
+  <p><strong>Nervous vs endocrine system.</strong> <em>Similarities:</em> both coordinate the body's activities, both need a stimulus to produce a response, and both have specific effectors as targets. <em>Differences:</em></p>
+  <ul>
+    <li>Information: nerve impulse (electrical along a neurone, chemical across synapses) vs hormone (chemical).</li>
+    <li>Route: neurones vs bloodstream. Speed: fast vs slow (set by blood flow).</li>
+    <li>Duration: short, within milliseconds vs longer, minutes to days.</li>
+    <li>Localisation: a local region (e.g. the hand muscle in a withdrawal reflex) vs one or more organs in different parts of the body.</li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Pattern</span>
+  <div class="formula-main">
+    $$\text{gland} \xrightarrow{\text{secretes}} \text{hormone} \xrightarrow{\text{bloodstream}} \text{target organ} \to \text{response}$$
+  </div>
+  <ul class="symbols">
+    <li>Insulin lowers blood glucose; glucagon raises it (both from the pancreas).</li>
+  </ul>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>"Insulin is made in the liver":</strong> it is made in the pancreas (islets of Langerhans); the liver is its target.</li>
+    <li><strong>"Hormones travel along nerves":</strong> they travel in the blood.</li>
+    <li><strong>Anterior vs posterior pituitary:</strong> ADH and oxytocin come from the posterior; hGH, TSH, ACTH, FSH, LH and prolactin from the anterior.</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; Glands, Hormones and Speed</span>
+  <p class="demo-question">Which gland makes which hormone, where does it act, and how does a hormone message differ from a nerve message?</p>
+  <p class="demo-instruction"><strong>Glands:</strong> pick a gland to see its hormones travel in the blood to their targets. <strong>Nerve vs hormone:</strong> send one signal each way and compare how fast it arrives, how many organs it reaches, and how long the effect lasts (slowed down to watch).</p>
+  <div id="pk-endo"></div>
+  <script>
+  (function () {
+    const k = PhysKit.mount('pk-endo', { x: [-6, 6], y: [-3, 3] });
+    const C = PhysKit.C;
+    let t = 0, sent = -99;
+    const mode = k.choice(['Glands', 'Nerve vs hormone'], 0);
+    k.row();
+    const g1 = k.choice(['Hypothalamus', 'Anterior pituitary', 'Posterior pituitary', 'Thyroid', 'Parathyroid'], 1, () => g2.set(-1));
+    k.row();
+    const g2 = k.choice(['Adrenal cortex', 'Adrenal medulla', 'Pancreas', 'Ovaries', 'Testes'], -1, () => g1.set(-1));
+    const send = k.button('Send a signal', () => { sent = t; }, { primary: true });
+    const gland = () => g1.value >= 0 ? g1.value : 5 + g2.value;
+
+    const X = -3.6;                                   // body centre line
+    const POS = { hyp: [X, 2.3], pit: [X + 0.05, 2.0], thy: [X, 1.32], par: [X + 0.2, 1.4], adr: [X + 0.42, -0.02], panc: [X + 0.2, -0.45],
+      ovary: [X + 0.45, -1.25], testis: [X + 0.2, -2.05], liver: [X - 0.4, -0.1], kidney: [X + 0.42, -0.35], bone: [X - 0.35, -2.45],
+      muscle: [X - 0.95, 0.4], uterus: [X, -1.35], breast: [X - 0.45, 0.6], all: [X + 0.6, 0.5], body: [X - 0.6, -0.9] };
+    // each gland: [position key, [[hormone, effect, target key], ...]]
+    const GL = [
+      ['hyp', [['releasing and inhibiting hormones', 'regulate the anterior pituitary hormones', 'pit']]],
+      ['pit', [['human growth hormone (hGH)', 'cell division, bone and muscle growth, metabolism', 'bone'], ['TSH', 'thyroid gland produces thyroxine', 'thy'], ['ACTH', 'adrenal cortex secretes glucocorticoids', 'adr'],
+        ['FSH', 'production of ova and sperm', 'ovary'], ['LH', 'sex hormone production by ovaries and testes', 'testis'], ['prolactin (PRL)', 'milk production by mammary glands', 'breast']]],
+      ['pit', [['antidiuretic hormone (ADH)', 'retention of water by the kidneys', 'kidney'], ['oxytocin (OCT)', 'uterine contractions, release of milk', 'uterus']]],
+      ['thy', [['thyroxine (T₄)', 'all tissues: raises metabolic rate, growth and development', 'all'], ['calcitonin', 'lowers blood calcium (bones and kidneys)', 'bone']]],
+      ['par', [['parathyroid hormone (PTH)', 'raises blood calcium (bone, gut, kidneys)', 'bone']]],
+      ['adr', [['glucocorticoids (cortisol)', 'raise blood glucose, break down protein', 'liver'], ['mineralocorticoids (aldosterone)', 'reabsorption of sodium and water by kidneys', 'kidney'], ['gonadocorticoids', 'secondary sexual characteristics', 'body']]],
+      ['adr', [['epinephrine and norepinephrine', 'fight-or-flight', 'muscle']]],
+      ['panc', [['insulin', 'lowers blood glucose; glycogen formed in the liver', 'liver'], ['glucagon', 'raises blood glucose: liver glycogen → glucose', 'liver']]],
+      ['ovary', [['estrogen', 'uterine lining growth; female secondary sexual characteristics', 'uterus'], ['progesterone', 'uterine lining growth; prevents uterine contractions', 'uterus']]],
+      ['testis', [['testosterone', 'sperm formation; male secondary sexual characteristics', 'body']]]];
+    const NAMES = ['Hypothalamus', 'Anterior pituitary', 'Posterior pituitary', 'Thyroid', 'Parathyroid', 'Adrenal cortex', 'Adrenal medulla', 'Pancreas', 'Ovaries', 'Testes'];
+    const HCOL = ['#7c3aed', '#2563eb', '#0891b2', '#16a34a', '#ca8a04', '#ea580c', '#dc2626', '#db2777'];
+
+    k.loop(dt => { t += dt; }, { button: false });
+
+    function body(g) {
+      g.circle([X, 2.15], 0.55, { fill: '#fde7d4', color: '#9a3412', width: 2 });
+      g.rect(X - 0.18, 1.2, 0.36, 0.45, { fill: '#fde7d4', color: 'none' });
+      g.path([[X - 0.85, 1.25], [X + 0.85, 1.25], [X + 0.7, -1.6], [X - 0.7, -1.6]], { close: true, fill: '#fde7d4', color: '#9a3412', width: 2 });
+      g.path([[X - 0.85, 1.2], [X - 1.25, -0.6]], { color: '#9a3412', width: 10 }); g.path([[X + 0.85, 1.2], [X + 1.25, -0.6]], { color: '#9a3412', width: 10 });
+      g.path([[X - 0.85, 1.2], [X - 1.25, -0.6]], { color: '#fde7d4', width: 7 }); g.path([[X + 0.85, 1.2], [X + 1.25, -0.6]], { color: '#fde7d4', width: 7 });
+      [-0.35, 0.35].forEach(dx => { g.line([X + dx, -1.6], [X + dx * 1.1, -2.9], { color: '#9a3412', width: 13 }); g.line([X + dx, -1.6], [X + dx * 1.1, -2.9], { color: '#fde7d4', width: 10 }); });
+      // faint organs used as targets
+      g.circle(POS.liver, 0.28, { fill: 'rgba(146,64,14,0.25)', color: 'none' });
+      [-1, 1].forEach(s => g.circle([X + s * 0.42, -0.35], 0.16, { fill: 'rgba(185,28,28,0.25)', color: 'none' }));
+      g.circle(POS.uterus, 0.2, { fill: 'rgba(219,39,119,0.2)', color: 'none' });
+    }
+    function glandDots(g, sel) {
+      const pts = [['hyp', 0], ['pit', 1], ['thy', 3], ['par', 4], ['adr', 5], ['panc', 7], ['ovary', 8], ['testis', 9]];
+      pts.forEach(([key, gi]) => {
+        const on = GL[sel][0] === key;
+        g.dot(POS[key], on ? 9 : 5, on ? '#7c3aed' : '#94a3b8', { stroke: '#fff', width: 2 });
+      });
+    }
+
+    function glands(g) {
+      const sel = gland(), [key, list] = GL[sel];
+      body(g); glandDots(g, sel);
+      // hormone dots travel from the gland to each target in a loop
+      list.forEach(([, , tgt], i) => {
+        const a = POS[key], b = POS[tgt], col = HCOL[i % HCOL.length];
+        g.line(a, b, { color: col, width: 1, dash: [3, 4] });
+        for (let j = 0; j < 3; j++) { const u = ((t * 0.5 + j / 3 + i * 0.13) % 1); g.dot([a[0] + (b[0] - a[0]) * u, a[1] + (b[1] - a[1]) * u], 4, col); }
+        g.circle(b, 0.12, { fill: 'none', color: col, width: 2 });
+      });
+      g.text([-0.9, 2.6], NAMES[sel], { size: 15, bold: true, color: '#7c3aed', align: 'left' });
+      list.forEach(([h, eff], i) => {
+        const y = 2.0 - i * 0.78;
+        g.dot([-0.8, y + 0.02], 5, HCOL[i % HCOL.length]);
+        g.text([-0.6, y], h, { size: 12, bold: true, color: HCOL[i % HCOL.length], align: 'left' });
+        g.text([-0.6, y - 0.33], eff, { size: 10, color: '#334155', align: 'left' });
+      });
+      g.text([X, -2.95 + 0.1], 'hormones travel in the blood', { size: 10, color: C.muted });
+    }
+
+    function race(g) {
+      const s = t - sent;                         // seconds since the signal (slowed down)
+      // nerve lane
+      g.text([-5.8, 2.65], 'Nervous system', { size: 13, bold: true, color: '#2563eb', align: 'left' });
+      g.circle([-4.9, 1.65], 0.45, { fill: '#e0e7ff', color: '#3730a3', width: 2 }); g.text([-4.9, 1.65], 'CNS', { size: 10, bold: true, color: '#3730a3' });
+      g.line([-4.45, 1.65], [-0.6, 1.65], { color: '#2563eb', width: 3 });
+      g.rect(-0.6, 1.35, 1.1, 0.6, { fill: s > 0.15 && s < 1.0 ? '#f87171' : '#fecaca', color: '#991b1b', width: 2, radius: 10 });
+      g.text([-0.05, 1.05], 'one muscle', { size: 10, color: '#991b1b' });
+      if (s >= 0 && s < 0.15) g.dot([-4.45 + 3.85 * s / 0.15, 1.65], 8, '#facc15', { stroke: '#a16207', width: 2 });
+      // hormone lane
+      g.text([-5.8, 0.65], 'Endocrine system', { size: 13, bold: true, color: '#db2777', align: 'left' });
+      g.circle([-4.9, -0.35], 0.42, { fill: '#fce7f3', color: '#9d174d', width: 2 }); g.text([-4.9, -0.35], 'gland', { size: 10, bold: true, color: '#9d174d' });
+      const ORG = [[-0.4, 0.15], [0.3, -0.45], [-0.4, -1.05]];
+      g.path([[-4.48, -0.35], [-2.5, -0.35], [-1.3, 0.15], [-0.75, 0.15]], { color: '#fda4af', width: 6 });
+      g.path([[-2.5, -0.35], [-0.05, -0.45]], { color: '#fda4af', width: 6 });
+      g.path([[-2.5, -0.35], [-1.3, -1.05], [-0.75, -1.05]], { color: '#fda4af', width: 6 });
+      g.text([-2.6, -1.25], 'bloodstream', { size: 10, color: '#be123c' });
+      const arrive = 2.5, last = 9;                // hormone arrives later and its effect lasts longer
+      ORG.forEach((o, i) => {
+        const active = s > arrive + i * 0.3 && s < last;
+        g.rect(o[0] - 0.35, o[1] - 0.22, 0.7, 0.44, { fill: active ? '#f472b6' : '#fce7f3', color: '#9d174d', width: 2, radius: 8 });
+      });
+      g.text([1.0, -0.45], 'several organs', { size: 10, color: '#9d174d', align: 'left' });
+      if (s >= 0 && s < arrive + 0.6) for (let j = 0; j < 9; j++) {
+        const u = Math.min(1, Math.max(0, (s - j * 0.2) / arrive)), br = j % 3;
+        if (u <= 0 || u >= 1) continue;
+        const path = [[-4.48, -0.35], [-2.5, -0.35], ORG[br]];
+        const p = u < 0.55 ? [path[0][0] + (path[1][0] - path[0][0]) * u / 0.55, path[0][1]] : [path[1][0] + (path[2][0] - path[1][0]) * (u - 0.55) / 0.45, path[1][1] + (path[2][1] - path[1][1]) * (u - 0.55) / 0.45];
+        g.dot(p, 4, '#db2777');
+      }
+      // effect-vs-time sketch
+      const gx = 2.2, gy = -2.6, gw = 3.6, gh = 1.5;
+      g.line([gx, gy], [gx + gw, gy], { color: C.muted, width: 1.5 }); g.line([gx, gy], [gx, gy + gh + 0.2], { color: C.muted, width: 1.5 });
+      g.text([gx + gw, gy - 0.25], 'time', { size: 10, color: C.muted, align: 'right' });
+      g.text([gx - 0.1, gy + gh + 0.35], 'effect', { size: 10, color: C.muted, align: 'left' });
+      const nerve = [], horm = [];
+      for (let i = 0; i <= 60; i++) {
+        const tt = i / 60 * 10;
+        nerve.push([gx + gw * tt / 10, gy + gh * (tt > 0.15 && tt < 1.0 ? 1 : 0)]);
+        horm.push([gx + gw * tt / 10, gy + gh * 0.75 * (tt < arrive ? 0 : tt < arrive + 1 ? (tt - arrive) : tt < last ? 1 : Math.max(0, 1 - (tt - last)))]);
+      }
+      g.path(nerve, { color: '#2563eb', width: 2 }); g.path(horm, { color: '#db2777', width: 2 });
+      if (s >= 0 && s <= 10) g.line([gx + gw * s / 10, gy], [gx + gw * s / 10, gy + gh + 0.1], { color: '#0f172a', width: 1, dash: [3, 3] });
+      g.text([gx + 0.4, gy + gh + 0.05], 'nerve: fast, short', { size: 10, bold: true, color: '#2563eb', align: 'left' });
+      g.text([gx + gw, gy + gh * 0.75 + 0.2], 'hormone: slow, long', { size: 10, bold: true, color: '#db2777', align: 'right' });
+      g.text([4.0, 2.65], s < 0 || s > 11 ? 'press "Send a signal"' : `t = ${s.toFixed(1)} (slowed down)`, { size: 12, bold: true, color: '#0f766e' });
+      g.text([4.0, 2.2], 'real: milliseconds vs minutes to days', { size: 10, color: C.muted });
+    }
+
+    k.draw = g => { (mode.value === 0 ? glands : race)(g); };
+    function vis() {
+      const m = mode.value;
+      g1.buttons[0].parentElement.style.display = m === 0 ? '' : 'none';
+      g2.buttons[0].parentElement.style.display = m === 0 ? '' : 'none';
+      send.style.display = m === 1 ? '' : 'none';
+    }
+    k.update = () => {
+      vis();
+      if (mode.value === 0) k.readout([`${NAMES[gland()]}: ${GL[gland()][1].map(h => h[0]).join(', ')}.`, 'Each hormone is secreted into the blood and acts only on target cells that respond to it.']);
+      else k.readout(['Nervous: electrical impulses along neurones (chemical at synapses), fast, short-lived (milliseconds), local (e.g. one hand muscle).', 'Endocrine: hormones in the bloodstream, slower (set by blood flow), longer lasting (minutes to days), may affect several organs.']);
+    };
+    vis();
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Sample Questions (pp. 101–102)</span>
+
+  <p><strong>Q1 (vi):</strong> True or false? Insulin is produced by the islets of Langerhans in the liver.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">False: the islets of Langerhans are in the pancreas.</p></details>
+
+  <p><strong>Q2 (vi):</strong> Thyroid-stimulating hormone stimulates the thyroid gland to produce ___.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">thyroxine (T<sub>4</sub>).</p></details>
+
+  <p><strong>Q3 (v), (vi):</strong> (v) Which one of the following normally enters the blood as it passes through the pancreas? (A. glycogen B. insulin C. lipase D. urea). (vi) How do hormones travel around the body? (A. in glands B. in nerves C. in the blood stream D. in white blood cells).</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">(v) B. insulin; (vi) C. in the blood stream.</p></details>
+
+  <p><strong>Example:</strong> Name the hormones that raise and lower blood glucose, and their glands.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">Lower: insulin (pancreas). Raise: glucagon (pancreas) and glucocorticoids such as cortisol (adrenal cortex).</p></details>
+
+  <p><strong>Q8 (c):</strong> Compare and contrast the nervous system and the endocrine system.</p>
+  <details><summary>Show answer</summary>
+    <p><strong>Similarities:</strong> both coordinate the body's activities; both need a stimulus to produce a response; both have specific effectors as target organs.</p>
+    <p class="answer"><strong>Differences:</strong> the nervous system transmits information as nerve impulses (electrical along neurones, chemical across synapses), carried by neurones, fast, short-lived (milliseconds) and localised (e.g. the muscle in the hand during withdrawal from pain). The endocrine system transmits information as hormones, carried by the bloodstream, slowly (set by blood flow), lasting minutes to days, and may affect one or more organs in different parts of the body.</p></details>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>Endocrine glands secrete hormones into the blood; hormones act on target organs.</li>
+    <li>Pituitary (anterior: hGH, TSH, ACTH, FSH, LH, prolactin; posterior: ADH, oxytocin) is controlled by the hypothalamus.</li>
+    <li>Pancreas: insulin lowers and glucagon raises blood glucose; thyroxine raises metabolic rate.</li>
+    <li>Nerves: fast, short, local. Hormones: slow, long-lasting, widespread.</li>
+  </ul>
+</div>
+
+</article>
