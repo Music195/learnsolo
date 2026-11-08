@@ -1,0 +1,205 @@
+<!-- tags: Molecular Biology, G12 Biology Myanmar -->
+<!-- Grade 12 Biology textbook, Chapter 2, section 2.2 (pages 27–29) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Molecular Biology">The Genetic Code</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Three Letters Make One Amino Acid</span>
+  <p>The <strong>genetic code</strong> is the set of rules for turning the nucleotide sequence of a gene into the amino acid sequence of a protein. It links each nucleotide <strong>codon</strong> to an amino acid.</p>
+  <ul>
+    <li><strong>Why triplets?</strong> RNA has only 4 nucleotides (A, U, G, C) but proteins use 20 amino acids. One nucleotide per amino acid gives only 4 codes; two give 4 × 4 = 16, still too few. Three give 4 × 4 × 4 = <strong>64</strong> combinations, enough for 20. This is the <strong>triplet hypothesis</strong>: a combination of three nucleotides is a <strong>codon</strong>.</li>
+    <li>Between 1961 and 1965, research groups compared artificial RNA of known sequence with the polypeptides made from it, and worked out every mRNA codon.</li>
+    <li><strong>AUG</strong> is the <strong>start codon</strong> and also codes for <strong>methionine</strong>. <strong>UAA, UAG and UGA</strong> are <strong>stop</strong> (terminator) codons. The code is written as <strong>mRNA codons</strong>, not as DNA.</li>
+  </ul>
+  <p>Three important characteristics:</p>
+  <ol>
+    <li><strong>Redundant:</strong> more than one codon can code for the same amino acid (e.g. six codons for leucine). Only the three stop codons code for no amino acid.</li>
+    <li><strong>Continuous:</strong> read as a series of three-letter codons <strong>without spaces, punctuation or overlap</strong>. Knowing where to start and stop is essential: adding or losing one or two nucleotides shifts the codon groups and gives a wrong amino acid sequence.</li>
+    <li><strong>Nearly universal:</strong> almost all organisms use the same code (rare exceptions in some protists). A codon in a fruit fly codes for the same amino acid as in a human, so a gene moved from one organism into another makes the same protein: the basis of gene technology and cloning.</li>
+  </ol>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Counting the Codes</span>
+  <div class="formula-main">
+    $$4^1 = 4 \qquad 4^2 = 16 \qquad 4^3 = 64 \ \ (\geq 20 \text{ amino acids})$$
+    $$64 \text{ codons} = 61 \text{ coding for amino acids} + 3 \text{ stop codons}$$
+  </div>
+  <ul class="symbols">
+    <li>Start: AUG (Met). Stop: UAA, UAG, UGA</li>
+    <li>A protein of n amino acids needs n codons + 1 stop codon = 3(n + 1) nucleotides of mRNA</li>
+  </ul>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>Reading the table with DNA letters:</strong> the table uses mRNA codons, so there is U, never T.</li>
+    <li><strong>Stop codons code for an amino acid:</strong> they do not; they end translation.</li>
+    <li><strong>The textbook's Table 2.2:</strong> in the G column (second base G), the C, A and G rows are printed as UGU, UGC, UGA, UGG again. They should be CGU–CGG (Arg), AGU, AGC (Ser), AGA, AGG (Arg), and GGU–GGG (Gly). The table in the demo below is the correct one.</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; Read the Code</span>
+  <p class="demo-question">Which amino acid does each codon give, why are there so many spare codons, and what happens if one base is added or lost?</p>
+  <p class="demo-instruction"><em>Codon table:</em> click any codon; every codon for the same amino acid lights up. <em>Reading frame:</em> insert or delete one base and watch every codon after it change. <em>Why triplets:</em> move the slider for the number of bases per codon.</p>
+  <div id="pk-code"></div>
+  <script>
+  (function () {
+    const k = PhysKit.mount('pk-code', { x: [-6, 6], y: [-3, 3] });
+    const C = PhysKit.C;
+    const B = 'UCAG';
+    // the standard code, first base U C A G, then second, then third (64 letters)
+    const AA1 = 'FFLLSSSSYY**CC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG';
+    const NAME = { F: 'Phe', L: 'Leu', S: 'Ser', Y: 'Tyr', '*': 'Stop', C: 'Cys', W: 'Trp', P: 'Pro', H: 'His', Q: 'Gln', R: 'Arg', I: 'Ile', M: 'Met', T: 'Thr', N: 'Asn', K: 'Lys', V: 'Val', A: 'Ala', D: 'Asp', E: 'Glu', G: 'Gly' };
+    const aa = cod => NAME[AA1[16 * B.indexOf(cod[0]) + 4 * B.indexOf(cod[1]) + B.indexOf(cod[2])]];
+    let pick = 'AUG', click = null;
+    let mrna = 'AUGGCCUUUGGAUCAUGGUAA', changed = -1;
+
+    const mode = k.choice(['Codon table', 'Reading frame', 'Why triplets'], 0);
+    k.row();
+    const bIns = k.button('Insert a base', () => { const i = 6 + Math.floor(Math.random() * 3); mrna = mrna.slice(0, i) + 'ACGU'[Math.floor(Math.random() * 4)] + mrna.slice(i); changed = i; });
+    const bDel = k.button('Delete a base', () => { const i = 6 + Math.floor(Math.random() * 3); mrna = mrna.slice(0, i) + mrna.slice(i + 1); changed = i; });
+    const bRes = k.button('Original', () => { mrna = 'AUGGCCUUUGGAUCAUGGUAA'; changed = -1; });
+    const nB = k.slider({ label: 'bases per codon', min: 1, max: 3, step: 1, value: 1 });
+
+    // table geometry: 4 columns (second base) × 4 rows (first base) of boxes, 4 codons in each box
+    const X0 = -5.4, Y0 = 2.55, CW = 2.3, RH = 1.28;
+    const where = (i1, i2, i3) => [X0 + CW * i2 + 0.12, Y0 - RH * i1 - 0.2 - 0.27 * i3];
+    k.view.drag({ hit: p => { click = p; return mode.value === 0; }, start() {
+      const i2 = Math.floor((click[0] - X0) / CW), i1 = Math.floor((Y0 - click[1]) / RH), i3 = Math.floor(((Y0 - click[1]) - RH * i1 - 0.06) / 0.27);
+      if (i1 >= 0 && i1 < 4 && i2 >= 0 && i2 < 4 && i3 >= 0 && i3 < 4) pick = B[i1] + B[i2] + B[i3];
+    }, get: () => [0, 0], set() {} });
+
+    function table(g) {
+      const name = aa(pick);
+      for (let i = 0; i < 4; i++) {
+        g.text([X0 + CW * (i + 0.5), 2.8], B[i], { size: 13, bold: true, color: C.acc });
+        g.text([X0 - 0.3, Y0 - RH * (i + 0.5)], B[i], { size: 13, bold: true, color: C.acc });
+      }
+      for (let i1 = 0; i1 < 4; i1++) for (let i2 = 0; i2 < 4; i2++) {
+        g.rect(X0 + CW * i2, Y0 - RH * (i1 + 1), CW, RH, { color: C.faint, width: 1 });
+        for (let i3 = 0; i3 < 4; i3++) {
+          const cod = B[i1] + B[i2] + B[i3], a = aa(cod), p = where(i1, i2, i3);
+          const same = a === name, me = cod === pick;
+          if (same) g.rect(p[0] - 0.06, p[1] - 0.13, CW - 0.12, 0.26, { fill: me ? '#fde68a' : (a === 'Stop' ? '#fee2e2' : '#dcfce7'), color: 'none' });
+          g.text([p[0] + 0.05, p[1]], cod, { size: 10, align: 'left', bold: me, color: a === 'Stop' ? C.bad : C.ink });
+          g.text([p[0] + 1.25, p[1]], a, { size: 10, align: 'left', color: a === 'Stop' ? C.bad : a === 'Met' ? C.good : C.muted, bold: a === 'Met' || a === 'Stop' });
+        }
+      }
+      const n = [...Array(64).keys()].filter(i => NAME[AA1[i]] === name).length;
+      g.text([4.95, 1.9], pick, { size: 20, bold: true, color: C.energy });
+      g.text([4.95, 1.25], '→ ' + name, { size: 16, bold: true });
+      g.text([4.95, 0.5], `${n} codon${n > 1 ? 's' : ''} for ${name}`, { size: 11, color: C.good, bold: true });
+      g.text([4.95, -0.3], pick === 'AUG' ? 'also the START codon' : name === 'Stop' ? 'ends translation' : n > 1 ? 'redundant code' : 'only one codon', { size: 10, color: C.muted });
+      g.text([4.95, -2.0], 'second base ↑ top', { size: 9, color: C.muted });
+      g.text([4.95, -2.35], 'first base ← left', { size: 9, color: C.muted });
+      g.text([4.95, -2.7], 'third base: row in box', { size: 9, color: C.muted });
+    }
+
+    function frame(g) {
+      // read from the first AUG in steps of three until a stop codon
+      const cods = [];
+      for (let i = 0; i + 3 <= mrna.length; i += 3) cods.push(mrna.slice(i, i + 3));
+      let stopped = false;
+      g.text([-5.6, 2.4], "5′", { size: 12, bold: true });
+      cods.forEach((c, j) => {
+        const x = -4.9 + j * 1.45, a = aa(c), after = stopped;
+        if (!after && a === 'Stop') stopped = true;
+        const shifted = changed >= 0 && 3 * j + 2 >= changed;
+        g.rect(x - 0.62, 1.95, 1.24, 0.7, { fill: shifted ? '#fef3c7' : '#f1f5f9', color: shifted ? C.energy : C.muted, radius: 5 });
+        g.text([x, 2.3], c, { size: 14, bold: true, color: after ? C.muted : C.ink });
+        if (!after) {
+          g.circle([x, 0.6], 0.48, { fill: a === 'Stop' ? '#fee2e2' : shifted ? '#fef3c7' : '#dcfce7', color: a === 'Stop' ? C.bad : shifted ? C.energy : C.good });
+          g.text([x, 0.6], a, { size: 11, bold: true });
+          g.arrow([x, 1.9], [0, -0.75], { color: C.muted, width: 1.5, head: 7 });
+          if (j > 0 && a !== 'Stop') g.line([x - 0.97, 0.6], [x - 0.48, 0.6], { color: C.ink, width: 3 });
+        }
+      });
+      if (mrna.length % 3) g.text([-4.9 + cods.length * 1.45, 2.3], mrna.slice(3 * cods.length), { size: 14, color: C.muted });
+      const prot = [];
+      for (const c of cods) { const a = aa(c); if (a === 'Stop') break; prot.push(a); }
+      g.text([0, -0.9], 'protein: ' + prot.join('–'), { size: 14, bold: true, color: changed >= 0 ? C.energy : C.good });
+      g.text([0, -1.6], changed < 0 ? 'the original gene: Met–Ala–Phe–Gly–Ser–Trp, then stop' : `one base ${mrna.length > 21 ? 'added' : 'lost'} at position ${changed + 1}: every later codon is regrouped`, { size: 11, color: C.muted });
+      g.text([0, -2.3], 'no spaces or commas: the ribosome simply counts in threes from AUG', { size: 10, color: C.muted });
+    }
+
+    function triplets(g) {
+      const n = nB.value, combos = Math.pow(4, n);
+      // bars for 4, 16, 64 compared with the 20 amino acids
+      const sc = 4.6 / 64;
+      [1, 2, 3].forEach((m, i) => {
+        const v = Math.pow(4, m), x = -4.2 + i * 2.6, on = m === n;
+        g.rect(x - 0.6, -2.3, 1.2, v * sc, { fill: on ? (v >= 20 ? '#bbf7d0' : '#fecaca') : '#f1f5f9', color: on ? (v >= 20 ? C.good : C.bad) : C.faint, width: 2 });
+        g.text([x, -2.65], `${m} base${m > 1 ? 's' : ''}: 4^${m} = ${v}`, { size: 12, bold: on, color: on ? C.ink : C.muted });
+      });
+      g.line([-5.2, -2.3 + 20 * sc], [2.2, -2.3 + 20 * sc], { color: C.field, width: 2, dash: true });
+      g.text([1.8, -2.3 + 20 * sc + 0.25], '20 amino acids', { size: 11, color: C.field, bold: true });
+      g.text([4.3, 1.8], `${combos} codes`, { size: 18, bold: true, color: combos >= 20 ? C.good : C.bad });
+      g.text([4.3, 1.1], combos >= 20 ? 'enough for 20' : 'not enough for 20', { size: 12, bold: true, color: combos >= 20 ? C.good : C.bad });
+      if (n === 3) { g.text([4.3, 0.2], '61 code for amino acids', { size: 10 }); g.text([4.3, -0.2], '3 are stop codons', { size: 10 }); }
+    }
+
+    k.draw = g => {
+      const M = mode.value;
+      bIns.style.display = bDel.style.display = bRes.style.display = M === 1 ? '' : 'none';
+      nB.input.parentElement.style.display = M === 2 ? '' : 'none';
+      if (M === 0) table(g);
+      if (M === 1) frame(g);
+      if (M === 2) triplets(g);
+    };
+    k.update = () => {
+      const M = mode.value;
+      if (M === 0) k.readout([`Codon ${pick} codes for <b>${aa(pick)}</b>. The highlighted codons all give the same result: the code is <b>redundant</b>.`]);
+      if (M === 1) k.readout([`mRNA 5′-${mrna}-3′ (${mrna.length} bases). The code is <b>continuous</b>: a single added or lost base shifts the reading frame.`]);
+      if (M === 2) k.readout([`With ${nB.value} base${nB.value > 1 ? 's' : ''} per codon there are 4<sup>${nB.value}</sup> = ${Math.pow(4, nB.value)} different codons. Only triplets give at least 20.`]);
+    };
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Sample Questions (pp. 36–37)</span>
+
+  <p><strong>Example A (translate):</strong> Translate the mRNA 5′-AUG UUU GGC UCA UGG UAG-3′.</p>
+  <details><summary>Show answer</summary>
+    <p>AUG = Met (start), UUU = Phe, GGC = Gly, UCA = Ser, UGG = Trp, UAG = stop.</p>
+    <p class="answer">Met–Phe–Gly–Ser–Trp (5 amino acids), then translation stops.</p></details>
+
+  <p><strong>Example B (length):</strong> A protein has 150 amino acids. What is the smallest number of mRNA nucleotides that code for it, counting the stop codon?</p>
+  <details><summary>Show answer</summary>
+    <p>Each amino acid needs one codon of 3 nucleotides, and one more codon is needed to stop.</p>
+    <p class="answer">3 × (150 + 1) = 453 nucleotides.</p></details>
+
+  <p><strong>Example C (frame shift):</strong> The mRNA AUG GCC UUU GGA UCA … loses the first U of UUU. What are the first four amino acids now?</p>
+  <details><summary>Show answer</summary>
+    <p>The sequence becomes AUG GCC UUG GAU CA…: the codons after the deletion are regrouped.</p>
+    <p class="answer">Met–Ala–Leu–Asp (instead of Met–Ala–Phe–Gly): the code has no punctuation, so one lost base changes every later codon.</p></details>
+
+  <p><strong>Q3 (iv):</strong> A triple code of nucleotides could produce (A. 8 B. 16 C. 64 D. 32) possible combinations.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">C, 64 (= 4 × 4 × 4).</p></details>
+
+  <p><strong>Q4 (ii):</strong> A codon is matched with (A. always pairs with thymine … F. a combination of three nucleotides).</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">F, a combination of three nucleotides.</p></details>
+
+  <p><strong>Q8 (b):</strong> State the three important characteristics of the genetic code.</p>
+  <details><summary>Show answer</summary>
+    <p>(1) Redundant: more than one codon can code for the same amino acid; only the three stop codons code for none.</p>
+    <p>(2) Continuous: read as three-letter codons without spaces, punctuation or overlap, so the start and stop are essential; a shift of one or two nucleotides changes the codon groups.</p>
+    <p class="answer">(3) Nearly universal: almost all organisms use the same code, so a gene moved into another organism makes the same protein (important for gene technology).</p></details>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>A codon is three mRNA nucleotides; 4<sup>3</sup> = 64 codons for 20 amino acids.</li>
+    <li>AUG = start and methionine; UAA, UAG, UGA = stop.</li>
+    <li>The code is redundant, continuous (no punctuation) and nearly universal.</li>
+  </ul>
+</div>
+
+</article>

@@ -1,0 +1,267 @@
+<!-- tags: Molecular Biology, G12 Biology Myanmar -->
+<!-- Grade 12 Biology textbook, Chapter 2, section 2.3 (pages 29–33) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Molecular Biology">Protein Synthesis: Transcription and Translation</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; From Gene to Protein in Two Steps</span>
+  <p>Protein synthesis has two steps. In <strong>transcription</strong>, mRNA is made from the DNA template of a gene. In <strong>translation</strong>, the mRNA's nucleotide sequence is turned into the amino acid sequence of a protein, using the genetic code. This one-way flow, <strong>DNA → RNA → protein</strong>, is the <strong>central dogma</strong> of molecular biology.</p>
+  <p><strong>1. Transcription</strong> happens in the <strong>nucleus</strong>: DNA is copied into mRNA in three stages.</p>
+  <ul>
+    <li><strong>Initiation:</strong> for each gene only <strong>one strand</strong> is transcribed: the <strong>antisense</strong> or <strong>template strand</strong>. The other, the <strong>sense</strong> or <strong>coding strand</strong>, has the same sequence as the mRNA, but with T in place of U.</li>
+    <li><strong>Elongation:</strong> the <strong>RNA polymerase</strong> complex moves along the DNA, making mRNA complementary to the template strand, 5′ → 3′.</li>
+    <li><strong>Termination:</strong> at the termination signal the polymerase detaches and the new mRNA is released.</li>
+  </ul>
+  <p><strong>2. Modification of mRNA:</strong> the new <strong>precursor mRNA (pre-mRNA)</strong> is changed into mature mRNA before it leaves the nucleus: (1) a <strong>5′ cap</strong> (7-methylguanosine) is added at the 5′ end; (2) a <strong>3′ poly-A tail</strong> of 100–200 adenine nucleotides is added at the 3′ end; (3) <strong>introns</strong> (non-coding regions) are removed by the spliceosome (snRNPs), and the <strong>exons</strong> (coding regions) are joined. This is <strong>splicing</strong>.</p>
+  <p><strong>3. Translation</strong> happens in the <strong>cytoplasm</strong> at the ribosome. The ribosome has a small subunit, where the mRNA binds, and a large subunit with three tRNA sites: <strong>A</strong> (arriving tRNA), <strong>P</strong> (holds the growing chain) and <strong>E</strong> (exit). Each tRNA carries one specific amino acid on its <strong>acceptor stem</strong>; at the other end its <strong>anticodon</strong> pairs with the codon on the mRNA.</p>
+  <ul>
+    <li><strong>Initiation:</strong> the small subunit binds the mRNA near the <strong>start codon AUG</strong>. The initiator tRNA (anticodon <strong>UAC</strong>, carrying <strong>methionine</strong>) pairs with AUG; then the large subunit joins. The initiator tRNA sits in the P site.</li>
+    <li><strong>Elongation:</strong> a four-step cycle repeats: (1) a tRNA with the next amino acid enters the A site; (2) a <strong>peptide bond</strong> forms; (3) the chain is moved onto the amino acid of the tRNA in the A site; (4) the mRNA moves forward one codon, so the chain-holding tRNA is now in the P site, and the empty tRNA leaves from the E site.</li>
+    <li><strong>Termination:</strong> when a <strong>stop codon</strong> reaches the A site, a <strong>release factor</strong> cuts the polypeptide from the last tRNA. The chain is released and folds into its three-dimensional shape; the ribosome comes apart.</li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Pairing Rules Along the Way</span>
+  <div class="formula-main">
+    $$\text{template DNA } 3'\text{-TAC ACC AAA-}5' \;\to\; \text{mRNA } 5'\text{-AUG UGG UUU-}3' \;\to\; \text{Met–Trp–Phe}$$
+    $$\text{codon AUG} \;\leftrightarrow\; \text{anticodon UAC (initiator tRNA, Met)}$$
+  </div>
+  <ul class="symbols">
+    <li>Template → mRNA: A→U, T→A, G→C, C→G. Coding strand = mRNA with T for U</li>
+    <li>Anticodon is complementary to the codon (A–U, G–C)</li>
+  </ul>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>"Translation occurs in the nucleus":</strong> transcription is in the nucleus; translation is in the <em>cytoplasm</em>.</li>
+    <li><strong>Reading the code from the coding strand:</strong> mRNA is made from the <em>template</em> strand, so mRNA matches the coding strand, not the template.</li>
+    <li><strong>Introns and exons:</strong> introns are cut <em>out</em>; exons are kept and joined (exons are <em>ex</em>pressed).</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; Watch a Gene Become a Protein</span>
+  <p class="demo-question">What happens at each stage, from the DNA in the nucleus to the finished polypeptide in the cytoplasm?</p>
+  <p class="demo-instruction">Press <em>Next stage</em> to move through the eight stages (or tick <em>Auto</em>). Each stage plays as a short animation; the readout explains it. The gene has one intron (grey) that is removed before translation.</p>
+  <div id="pk-prot"></div>
+  <script>
+  (function () {
+    const k = PhysKit.mount('pk-prot', { x: [-6, 6], y: [-3, 3] });
+    const C = PhysKit.C;
+    // the gene: exon 1, intron (6 bases), exon 2
+    const CODING = 'ATGTGG' + 'GTAAGT' + 'TTTGGCTCATAA';
+    const PAIR = { A: 'T', T: 'A', G: 'C', C: 'G' };
+    const TEMPLATE = CODING.split('').map(b => PAIR[b]).join('');
+    const PRE = CODING.replace(/T/g, 'U');
+    const MATURE = ['AUG', 'UGG', 'UUU', 'GGC', 'UCA', 'UAA'];
+    const ANTI = ['UAC', 'ACC', 'AAA', 'CCG', 'AGU'];
+    const AA = ['Met', 'Trp', 'Phe', 'Gly', 'Ser'];
+    const BCOL = { A: '#16a34a', U: '#dc2626', T: '#dc2626', G: '#d97706', C: '#2563eb' };
+    const STAGES = [
+      ['The gene', 'In the nucleus. The <b>coding (sense) strand</b> runs 5′→3′; the <b>template (antisense) strand</b> below it is the one that will be read. The grey bases are an <b>intron</b>.'],
+      ['Transcription: initiation', '<b>RNA polymerase</b> binds at the start of the gene and the two DNA strands separate. Only the template strand is transcribed.'],
+      ['Transcription: elongation', 'RNA polymerase moves along the template, adding complementary RNA nucleotides (A→U, T→A, G→C, C→G). The mRNA grows 5′→3′.'],
+      ['Transcription: termination', 'At the termination signal the polymerase detaches and the new <b>pre-mRNA</b> is released. The DNA zips up again.'],
+      ['Modification of mRNA', 'A <b>5′ cap</b> is added, then a <b>3′ poly-A tail</b>; the <b>intron</b> is cut out and the exons are joined (splicing). The mature mRNA leaves the nucleus.'],
+      ['Translation: initiation', 'In the cytoplasm the small ribosomal subunit binds near <b>AUG</b>; the initiator tRNA (anticodon <b>UAC</b>, carrying <b>Met</b>) pairs with it in the <b>P site</b>; the large subunit joins.'],
+      ['Translation: elongation', 'A tRNA enters the <b>A site</b>, a <b>peptide bond</b> forms and the chain moves onto it; the mRNA shifts one codon and the empty tRNA leaves from the <b>E site</b>. Repeat.'],
+      ['Translation: termination', 'The stop codon <b>UAA</b> reaches the A site. A <b>release factor</b> cuts the polypeptide free; it folds into a protein, and the ribosome comes apart.']
+    ];
+    const DUR = [3, 3, 6, 3, 6, 4, 14, 5];
+    let st = 0, p = 0;
+    const bBack = k.button('◀ Back', () => { st = Math.max(0, st - 1); p = 0; });
+    const bNext = k.button('Next stage ▶', () => { st = Math.min(7, st + 1); p = 0; }, { primary: true });
+    k.button('Start again', () => { st = 0; p = 0; });
+    const auto = k.check('Auto', false);
+    k.loop(dt => {
+      p = Math.min(1, p + dt / DUR[st]);
+      if (p >= 1 && auto.value && st < 7) { st++; p = 0; }
+    }, { button: false });
+
+    const lerp = (a, b, u) => a + (b - a) * u;
+    const clamp = u => Math.max(0, Math.min(1, u));
+    const bx = i => -4.9 + 0.45 * i;               // x of base i of the gene
+
+    function strand(g, seq, y, from, to, o = {}) {
+      for (let i = from; i < to; i++) {
+        const intr = i >= 6 && i < 12;
+        // canvas text has no transparency option, so a fading base gets an rgba colour
+        const col = o.alpha != null ? `rgba(148,163,184,${o.alpha})` : intr ? '#94a3b8' : BCOL[seq[i]];
+        g.text([bx(i) + (o.dx || 0), y], seq[i], { size: 10, bold: true, color: col });
+      }
+    }
+
+    // ---------- the ribosome and tRNA pieces ----------
+    const cx = i => -3.6 + 1.6 * i;                // x of codon i on the mature mRNA
+    function mrnaLine(g) {
+      g.line([-5.3, -1.2], [5.6, -1.2], { color: '#a855f7', width: 3 });
+      MATURE.forEach((c, i) => g.text([cx(i), -1.45], c, { size: 13, bold: true, color: i === 5 ? C.bad : i === 0 ? C.good : '#7e22ce' }));
+      g.text([-5.6, -1.45], "5′", { size: 11, bold: true }); g.text([5.75, -1.45], "3′", { size: 11, bold: true });
+    }
+    function tRNA(g, x, y, i, showAA, alpha = 1) {
+      g.rect(x - 0.42, y - 0.15, 0.84, 1.15, { fill: '#fed7aa', color: '#ea580c', width: 1.5, radius: 4, alpha, fillAlpha: alpha });
+      g.text([x, y + 0.08], ANTI[i], { size: 11, bold: true, color: '#9a3412' });
+      if (showAA) { g.circle([x, y + 1.35], 0.32, { fill: '#fef3c7', color: C.energy, width: 1.5 }); g.text([x, y + 1.35], AA[i], { size: 9, bold: true }); }
+    }
+    // chain: amino acids 0..n-1, the newest drawn at (x, y), older ones going up and left
+    function chain(g, n, x, y) {
+      for (let j = 0; j < n; j++) {
+        const q = [x - 0.62 * j, y + 0.32 * j], aa = AA[n - 1 - j];
+        if (j) g.line([q[0] + 0.62 - 0.3, q[1] - 0.32 + 0.15], [q[0] + 0.3, q[1] - 0.15], { color: C.ink, width: 3 });
+        g.circle(q, 0.32, { fill: '#fef3c7', color: C.energy, width: 1.5 });
+        g.text(q, aa, { size: 9, bold: true });
+      }
+    }
+    function ribosome(g, xP, small = 1, large = 1, dySmall = 0, dyLarge = 0) {
+      if (small > 0) {
+        g.rect(xP - 2.3, -2.3 + dySmall, 4.6, 0.65, { fill: '#c4b5fd', color: '#7c3aed', radius: 14, alpha: small, fillAlpha: 0.55 * small });
+        if (small > 0.9) ['E', 'P', 'A'].forEach((s, i) => g.text([xP - 1.6 + 1.6 * i, -2.0 + dySmall], s + ' site', { size: 9, bold: true, color: '#5b21b6' }));
+      }
+      if (large > 0) g.rect(xP - 2.3, -0.95 + dyLarge, 4.6, 1.7, { fill: '#ddd6fe', color: '#7c3aed', radius: 16, alpha: large, fillAlpha: 0.45 * large });
+    }
+
+    k.draw = g => {
+      bBack.disabled = st === 0; bNext.disabled = st === 7;
+      const inNucleus = st <= 4;
+      g.rect(-5.95, -2.95, 11.9, 5.9, { fill: inNucleus ? '#eff6ff' : '#f0fdf4', color: inNucleus ? '#93c5fd' : '#86efac', radius: 18, fillAlpha: 0.6 });
+      g.text([4.9, 2.65], inNucleus ? 'NUCLEUS' : 'CYTOPLASM', { size: 12, bold: true, color: inNucleus ? C.acc : C.good });
+      g.text([-3.0, 2.65], `Stage ${st + 1} of 8: ${STAGES[st][0]}`, { size: 13, bold: true });
+
+      if (st <= 3) {
+        // DNA: coding strand at the top, template below; they open where the polymerase is
+        const open = st === 0 ? 0 : 1;
+        const gap = st === 3 ? 0.9 * (1 - p) : st === 0 ? 0 : 0.9 * clamp(st === 1 ? p * 2 : 1);
+        const yC = 1.35 + gap / 2, yT = 0.75 - gap / 2;
+        g.text([-5.45, yC], "5′", { size: 10, bold: true }); g.text([5.75, yC], "3′", { size: 10, bold: true });
+        g.text([-5.45, yT], "3′", { size: 10, bold: true }); g.text([5.75, yT], "5′", { size: 10, bold: true });
+        strand(g, CODING, yC, 0, 24);
+        strand(g, TEMPLATE, yT, 0, 24);
+        if (gap < 0.2) for (let i = 0; i < 24; i++) g.line([bx(i), 1.22], [bx(i), 0.88], { color: C.faint, width: 1.5 });
+        g.text([-3.4, yC + 0.4], 'coding (sense) strand', { size: 9, color: C.muted });
+        g.text([-3.4, yT - 0.4], 'template (antisense) strand', { size: 9, color: C.muted });
+        // RNA polymerase position and the growing mRNA under the template
+        let n = 0, xPol = bx(0);
+        if (st === 1) { xPol = bx(0); }
+        if (st === 2) { n = Math.floor(p * 24.99); xPol = bx(Math.min(23, n)); }
+        if (st === 3) n = 24;
+        const yR = st === 3 ? -0.85 - 1.0 * p : -0.85;
+        strand(g, PRE, yR, 0, n);
+        if (n) g.line([bx(0) - 0.2, yR - 0.22], [bx(n - 1) + 0.2, yR - 0.22], { color: '#a855f7', width: 2 });
+        if (n && st === 2) g.text([bx(0) - 0.45, yR], "5′", { size: 9, bold: true, color: '#7e22ce' });
+        if (st === 1 || st === 2) {
+          g.rect(xPol - 0.55, -1.15, 1.1, 2.2, { fill: '#99f6e4', color: '#0d9488', radius: 16, fillAlpha: 0.45 });
+          g.text([xPol, -1.45], 'RNA polymerase', { size: 9, bold: true, color: '#0f766e', bg: true });
+        }
+        if (st === 3) g.text([0, yR - 0.55], 'pre-mRNA (with the intron) released', { size: 10, color: '#7e22ce', bold: true });
+        if (st === 0) g.text([bx(9), 0.3], 'intron', { size: 10, color: '#94a3b8', bold: true });
+      }
+
+      if (st === 4) {
+        // cap, tail, then splice: the intron loops out and exon 2 slides left to meet exon 1
+        const capU = clamp(p / 0.25), tailU = clamp((p - 0.25) / 0.25), splU = clamp((p - 0.5) / 0.35), outU = clamp((p - 0.85) / 0.15);
+        const y = 0.4 - outU * 1.6;
+        strand(g, PRE, y, 0, 6, { dx: 0 });
+        strand(g, PRE, y + 0.9 * splU, 6, 12, { alpha: 1 - splU });
+        strand(g, PRE, y, 12, 24, { dx: -2.7 * splU });
+        if (splU > 0 && splU < 1) g.text([bx(9), y + 0.5 + 0.9 * splU], 'intron cut out', { size: 10, color: '#94a3b8', bold: true });
+        const xEnd = bx(23) - 2.7 * splU;
+        g.line([bx(0) - 0.2, y - 0.22], [xEnd + 0.2, y - 0.22], { color: '#a855f7', width: 2 });
+        if (capU > 0) { g.circle([bx(0) - 0.6, y], 0.25 * capU, { fill: '#fca5a5', color: C.bad }); if (capU > 0.9) g.text([bx(0) - 0.6, y + 0.5], '5′ cap', { size: 9, bold: true, color: C.bad }); }
+        if (tailU > 0) { const nA = Math.round(tailU * 6); g.text([xEnd + 0.35, y], 'A'.repeat(nA), { size: 10, bold: true, color: '#16a34a', align: 'left' }); if (tailU > 0.9) g.text([xEnd + 1.2, y + 0.5], 'poly-A tail', { size: 9, bold: true, color: C.good }); }
+        if (outU > 0) g.text([0, y - 0.7], 'mature mRNA → out through a nuclear pore', { size: 11, bold: true, color: '#7e22ce' });
+        g.text([-3.6, -2.4], 'exon 1', { size: 10, color: C.muted }); g.text([0.6, -2.4], 'exon 2', { size: 10, color: C.muted });
+      }
+
+      if (st >= 5) {
+        mrnaLine(g);
+        if (st === 5) {
+          const sU = clamp(p / 0.3), tU = clamp((p - 0.3) / 0.3), lU = clamp((p - 0.6) / 0.35);
+          ribosome(g, cx(0), sU, lU, -1.0 * (1 - sU), 1.6 * (1 - lU));   // P site over AUG
+          if (tU > 0) tRNA(g, cx(0), -0.95 + 1.6 * (1 - tU), 0, true);
+        }
+        if (st === 6) {
+          // 4 cycles: codons 1..4 are added; c = which cycle, f = progress inside it
+          const q = Math.min(3.999, p * 4), c = Math.floor(q), f = q - c;
+          const shift = clamp((f - 0.65) / 0.35);
+          ribosome(g, cx(c) + 1.6 * shift);   // P site starts over codon c, then moves one codon on
+          // the tRNA that just gave up its chain: in P, then E, then leaving
+          tRNA(g, cx(c) - (shift > 0.6 ? (shift - 0.6) * 2 : 0), -0.95 + (shift > 0.6 ? (shift - 0.6) * 3 : 0), c, false, 1 - Math.max(0, shift - 0.5) * 2);
+          // the arriving tRNA drops into the A site
+          const arr = clamp(f / 0.35);
+          tRNA(g, cx(c + 1), -0.95 + 2.2 * (1 - arr), c + 1, true);
+          // the chain moves across when the peptide bond forms
+          const bond = clamp((f - 0.35) / 0.3);
+          const n = c + 1;
+          const x0 = lerp(cx(c), cx(c + 1) - 0.62, bond), y0 = lerp(0.4, 0.72, bond);   // 0.4 = height of a tRNA's amino acid
+          chain(g, n, x0, y0);
+          if (f > 0.35 && f < 0.65) g.text([cx(c + 1) + 1.6, 1.65], 'peptide bond', { size: 10, bold: true, color: C.energy, bg: true });
+        }
+        if (st === 7) {
+          const rU = clamp(p / 0.3), cU = clamp((p - 0.3) / 0.3), sU = clamp((p - 0.6) / 0.4);
+          ribosome(g, cx(4), 1 - sU, 1 - sU, -1.0 * sU, 1.5 * sU);   // stop codon UAA is in the A site
+          tRNA(g, cx(4), -0.95 + 1.5 * sU, 4, false, 1 - sU);
+          // release factor (a pentagon) enters the A site
+          const yR = -0.85 + 2.0 * (1 - rU);
+          if (sU < 1) g.path([[cx(5) - 0.35, yR], [cx(5) + 0.35, yR], [cx(5) + 0.45, yR + 0.6], [cx(5), yR + 0.95], [cx(5) - 0.45, yR + 0.6]], { close: true, fill: '#5eead4', color: '#0d9488', alpha: 1 - sU, fillAlpha: 1 - sU });
+          if (rU > 0.9 && sU < 0.5) g.text([cx(5), yR + 1.25], 'release factor', { size: 9, bold: true, color: '#0f766e', bg: true });
+          chain(g, 5, cx(4) - 2.6 * cU, 0.4 + 0.5 * cU);
+          if (cU > 0.9) g.text([-2.6, -2.55], 'polypeptide released: Met–Trp–Phe–Gly–Ser', { size: 11, bold: true, color: C.energy, bg: true });
+        }
+      }
+    };
+    k.update = () => k.readout([`<b>${STAGES[st][0]}.</b> ${STAGES[st][1]}`]);
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Sample Questions (pp. 36–37)</span>
+
+  <p><strong>Example A (Figure 2.8):</strong> The template strand reads 3′-ACC AAA CCG AGT-5′. Write the mRNA, the tRNA anticodons and the amino acids.</p>
+  <details><summary>Show answer</summary>
+    <p>mRNA is complementary to the template (A→U, T→A, G→C, C→G): 5′-UGG UUU GGC UCA-3′.</p>
+    <p>Anticodons pair with the codons: ACC, AAA, CCG, AGU (the same letters as the template, with U for T).</p>
+    <p class="answer">Amino acids: UGG = Trp, UUU = Phe, GGC = Gly, UCA = Ser: Trp–Phe–Gly–Ser.</p></details>
+
+  <p><strong>Q1 (iv):</strong> TRUE or FALSE: The second stage of protein synthesis involves translation, which occurs in the nucleus.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">FALSE: translation occurs in the cytoplasm (at the ribosomes).</p></details>
+
+  <p><strong>Q2 (iv):</strong> The two steps in protein synthesis are transcription and ___.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">translation.</p></details>
+
+  <p><strong>Q3 (ii), (v):</strong> (ii) (A. Messenger B. Transfer C. Ribosomal D. Template) RNA reads the codon on mRNA. (v) The small ribosomal sub-unit attaches to the mRNA near the start codon (A. UAA B. AUG C. UAG D. UGA).</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">(ii) C, ribosomal RNA (Table 2.1); (v) B, AUG.</p></details>
+
+  <p><strong>Q4 (vi):</strong> Transcription is matched with (B) copying the sequence of DNA to mRNA.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">Transcription → B.</p></details>
+
+  <p><strong>Q7 (b):</strong> Clarify the different stages of transcription in protein synthesis.</p>
+  <details><summary>Show answer</summary>
+    <p>Transcription copies DNA into mRNA in the nucleus.</p>
+    <p class="answer"><strong>Initiation:</strong> only one strand of the gene, the antisense or template strand, is transcribed (the other is the sense or coding strand, with the same sequence as mRNA but T for U). <strong>Elongation:</strong> RNA polymerase moves along the DNA, making mRNA complementary to the template strand, 5′ → 3′. <strong>Termination:</strong> at the termination signal the polymerase detaches and the new mRNA is released.</p></details>
+
+  <p><strong>Q7 (c):</strong> How does a strand of mRNA elongate during protein synthesis?</p>
+  <details><summary>Show answer</summary>
+    <p>(The question is about the elongation stage of translation, where the chain made on the mRNA grows.)</p>
+    <p class="answer">A tRNA with the polypeptide is in the P site; a tRNA carrying the next amino acid enters the A site; a peptide bond forms and the chain is transferred to the amino acid in the A site, making it one amino acid longer; the mRNA moves forward one codon, so the chain-holding tRNA is in the P site and the empty tRNA leaves from the E site. The free A site receives the next tRNA, and the cycle repeats until a stop codon.</p></details>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>Central dogma: DNA → RNA → protein. Transcription in the nucleus, translation in the cytoplasm.</li>
+    <li>Transcription: initiation, elongation, termination; only the template (antisense) strand is read.</li>
+    <li>Pre-mRNA gets a 5′ cap, a poly-A tail, and has its introns removed (splicing).</li>
+    <li>Translation: AUG start with Met-tRNA (UAC); A, P, E sites; peptide bonds; release factor at the stop codon.</li>
+  </ul>
+</div>
+
+</article>
