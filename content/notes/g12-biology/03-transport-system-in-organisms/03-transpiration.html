@@ -1,0 +1,160 @@
+<!-- tags: Transport System in Organisms, G12 Biology Myanmar -->
+<!-- Grade 12 Biology textbook, Chapter 3, section 3.3 (pages 43–45) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Transport System in Organisms">Transpiration</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Leaves Lose Water, and That Pulls More Up</span>
+  <p>Mesophyll cells are loosely packed with air spaces around them. Their walls are wet, and some water evaporates into the air spaces, so the air inside the leaf is usually <strong>saturated with water vapour</strong>. This air connects with the outside air through small pores, the <strong>stomata</strong>. Inside the leaf the water potential is higher than outside, so water vapour diffuses out down this gradient. Some water is used (e.g. in photosynthesis), but most evaporates and diffuses out: this is <strong>transpiration</strong>. Water molecules held together by <strong>cohesion</strong> (hydrogen bonding) and stuck to the xylem walls by <strong>adhesion</strong> are pulled up from the roots in a continuous column.</p>
+  <p><strong>Factors affecting transpiration:</strong></p>
+  <ul>
+    <li><strong>Humidity:</strong> low humidity makes the water potential gradient steeper, so transpiration is faster than in high humidity.</li>
+    <li><strong>Wind speed and temperature:</strong> transpiration increases with wind speed and with rising temperature.</li>
+    <li><strong>Light intensity:</strong> in most plants stomata open in the day and close at night, so transpiration is almost zero at night. Stomata must open in the day for CO₂ to diffuse in for photosynthesis, which unavoidably increases transpiration; closing at night, when photosynthesis is impossible, saves water.</li>
+    <li><strong>Very dry conditions:</strong> the plant may partly or completely close its stomata to stop its leaves drying out, even though this reduces photosynthesis.</li>
+  </ul>
+  <p>In hot conditions transpiration <strong>cools</strong> the leaves: evaporating water absorbs heat. If water is lost faster than it is taken up, cells become less turgid and the plant <strong>wilts</strong>; it also closes its stomata.</p>
+  <p><strong>Benefits of transpiration:</strong> ascent of sap (the transpiration pull, which also helps water absorption); removal of excess water; cooling (lowers leaf temperature by 10–15 °C); development of mechanical tissue; distribution of mineral salts by the rising sap; increased concentration of mineral salts in the plant; better root development; higher ash and sugar content in fruits; hardening and resistance to moderate drought; turgidity of cells; and water for photosynthesis, pulled into the leaf molecule by molecule.</p>
+  <p><strong>Demonstration of transpiration pull:</strong> a thistle funnel full of water is fixed by a rubber stopper to a leafy twig, with its bottom in a bowl of mercury. As the twig loses water by transpiration, it draws water up from the funnel, leaving a vacuum below that is filled by rising mercury. The rise of water and mercury is due to the transpiration pull.</p>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">What Speeds It Up</span>
+  <div class="formula-main">
+    $$\text{transpiration} \uparrow \text{ when: humidity} \downarrow, \;\; \text{wind} \uparrow, \;\; \text{temperature} \uparrow, \;\; \text{light} \uparrow \text{ (stomata open)}$$
+  </div>
+  <ul class="symbols">
+    <li>Water vapour diffuses from high water potential (inside leaf) to low (outside air)</li>
+    <li>Cohesion: water to water; adhesion: water to xylem walls</li>
+  </ul>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>"More humidity, more transpiration":</strong> it is the reverse; humid air makes the gradient shallower.</li>
+    <li><strong>Stomata exist to lose water:</strong> they open to let CO₂ in for photosynthesis; water loss is the unavoidable cost.</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; Control the Weather Around a Leaf</span>
+  <p class="demo-question">How do humidity, wind, temperature and light change the rate of transpiration, and how does that pull mercury up the funnel?</p>
+  <p class="demo-instruction">Move the sliders. The leaf section on the left shows water vapour leaving through the stomata; the funnel on the right shows the mercury being pulled up. The rate is a simple model in relative units, made to show the directions of the effects.</p>
+  <div id="pk-transp"></div>
+  <script>
+  (function () {
+    const k = PhysKit.mount('pk-transp', { x: [-6, 6], y: [-3, 3] });
+    const C = PhysKit.C;
+    const hum = k.slider({ label: 'humidity', unit: '%', min: 10, max: 100, step: 5, value: 50 });
+    const wind = k.slider({ label: 'wind', unit: 'm/s', min: 0, max: 8, step: 0.5, value: 2 });
+    k.row();
+    const temp = k.slider({ label: 'temperature', unit: '°C', min: 10, max: 40, step: 1, value: 25 });
+    const light = k.slider({ label: 'light', unit: '%', min: 0, max: 100, step: 5, value: 80 });
+    const dry = k.check('very dry soil', false);
+    k.button('Refill funnel', () => { hg = 0; });
+    let t = 0, hg = 0, vap = [];
+
+    // simple model: rate = gradient × wind factor × temperature factor × how open the stomata are
+    function rate() {
+      const grad = 1 - hum.value / 100;
+      const wf = 1 + 0.15 * wind.value;
+      const tf = Math.pow(1.05, temp.value - 25);
+      let open = 0.05 + 0.95 * light.value / 100;
+      if (dry.value) open *= 0.15;                 // stomata close to stop the leaves drying out
+      return 2.0 * grad * wf * tf * open;
+    }
+    k.loop(dt => {
+      t += dt;
+      const r = rate();
+      hg = Math.min(2.6, hg + r * dt * 0.08);
+      if (Math.random() < r * dt * 3) vap.push({ x: [-4.3, -2.7, -1.1][Math.floor(Math.random() * 3)], y: -1.1, vx: (Math.random() - 0.5) * 0.3 + 0.12 * wind.value, vy: -0.8 - Math.random() * 0.3 });
+      vap.forEach(v => { v.x += v.vx * dt; v.y += v.vy * dt; });
+      vap = vap.filter(v => v.y > -2.9 && v.x < 0.4);
+    }, { button: false });
+
+    k.draw = g => {
+      const open = (0.05 + 0.95 * light.value / 100) * (dry.value ? 0.15 : 1);
+      // leaf section: upper epidermis, mesophyll cells, air spaces, lower epidermis with stomata
+      g.rect(-5.6, 0.9, 5.6, 0.35, { fill: '#bbf7d0', color: C.vel });
+      g.text([-2.8, 1.5], 'upper epidermis', { size: 9, color: C.vel });
+      for (let i = 0; i < 6; i++) g.rect(-5.5 + i * 0.93, -0.1, 0.8, 0.95, { fill: '#86efac', color: C.vel, radius: 6 });
+      for (let i = 0; i < 7; i++) g.circle([-5.3 + i * 0.85, -0.6], 0.3, { fill: '#86efac', color: C.vel });
+      g.text([-2.8, 0.35], 'mesophyll (wet walls)', { size: 9, bold: true });
+      g.rect(-5.6, -1.25, 5.6, 0.3, { fill: '#bbf7d0', color: C.vel });
+      [-4.3, -2.7, -1.1].forEach(x => {
+        // guard cells: the gap between them grows when the stoma is open
+        const gap = 0.05 + 0.25 * open;
+        g.rect(x - gap / 2 - 0.35, -1.27, 0.35, 0.34, { fill: '#4ade80', color: C.vel, radius: 8 });
+        g.rect(x + gap / 2, -1.27, 0.35, 0.34, { fill: '#4ade80', color: C.vel, radius: 8 });
+      });
+      g.text([-2.8, -1.5], 'stomata (lower epidermis)', { size: 9, color: C.vel });
+      vap.forEach(v => g.dot([v.x, v.y], 3.5, C.fluid));
+      g.text([-2.8, -2.75], `outside air: ${hum.value} % humidity`, { size: 10, color: C.muted });
+      // rate bar
+      const r = rate();
+      g.rect(0.6, -2.6, 0.5, 4.8, { color: C.ink, width: 1.5 });
+      g.rect(0.6, -2.6, 0.5, Math.min(4.8, r * 2.4), { fill: C.fluid, color: 'none' });
+      g.text([0.85, 2.5], 'rate', { size: 10, bold: true });
+      // thistle funnel over mercury
+      const fx = 3.6;
+      g.rect(2.2, -2.9, 2.8, 0.6, { fill: '#cbd5e1', color: '#64748b' });
+      g.text([4.6, -2.6], 'mercury', { size: 9, color: '#334155' });
+      g.rect(fx - 0.08, -2.75, 0.16, 4.05, { fill: '#e0f2fe', color: '#0284c7', width: 1 });
+      g.rect(fx - 0.08, -2.75, 0.16, 0.45 + hg, { fill: '#94a3b8', color: 'none' });
+      g.path([[fx - 0.08, -2.3], [fx - 0.5, -1.7], [fx + 0.5, -1.7], [fx + 0.08, -2.3]], { close: true, fill: '#e0f2fe', color: '#0284c7' });
+      // leafy twig at the top
+      g.rect(fx - 0.2, 1.3, 0.4, 0.25, { fill: '#a16207', color: 'none' });
+      g.line([fx, 1.55], [fx, 2.6], { color: '#92400e', width: 3 });
+      [[-0.5, 2.1], [0.5, 2.25], [-0.4, 2.55], [0.45, 1.9]].forEach(d => g.circle([fx + d[0], d[1]], 0.2, { fill: '#4ade80', color: C.vel }));
+      g.text([fx + 0.6, 2.8], 'leafy twig', { size: 9, color: C.vel });
+      g.text([fx + 1.3, 1.4], 'rubber stopper', { size: 9, color: C.muted });
+      g.text([fx + 1.2, -0.3 + hg * 0.3], `mercury rise ${(hg * 10).toFixed(0)} mm`, { size: 10, bold: true, color: '#334155' });
+    };
+    k.update = () => {
+      const r = rate();
+      const why = dry.value ? 'Very dry soil: the stomata close to save water (less photosynthesis too).' :
+        light.value < 20 ? 'Little light: stomata are nearly closed, as at night.' :
+        hum.value > 85 ? 'Humid air: the water potential gradient is shallow.' : 'Open stomata and a steep gradient: water vapour diffuses out quickly.';
+      k.readout([`Transpiration rate (relative): ${r.toFixed(2)}. ${why}`, 'The water lost from the leaves pulls the water column up the twig and the funnel, so the mercury rises: the transpiration pull.']);
+    };
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Sample Questions (pp. 59–60)</span>
+
+  <p><strong>Q2 (ii), (iii):</strong> (ii) Most transpiration takes place through the ___. (iii) Radiant heat falling on the plants increases their ___ that may be dangerous to the plants.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">(ii) stomata; (iii) temperature.</p></details>
+
+  <p><strong>Q3 (ii), (iii):</strong> (ii) In plants, stomata closing at night when (A. absorption B. photosynthesis C. turgidity D. respiration) is impossible. (iii) The cells become less (A. cooling B. turgid C. temperature D. humidity) and the plant wilts.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">(ii) B, photosynthesis; (iii) B, turgid.</p></details>
+
+  <p><strong>Q4 (i):</strong> "Loss of water from the surface of the plant" is matched with (F) transpiration.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">Transpiration.</p></details>
+
+  <p><strong>Q8 (a):</strong> Demonstrate the transpiration pull with an illustration.</p>
+  <details><summary>Show answer</summary>
+    <p>Fill a thistle funnel with water and fix a leafy twig into it with a rubber stopper. Stand the open bottom of the funnel in a bowl of mercury (see the funnel in the demo).</p>
+    <p class="answer">After some time the mercury rises in the funnel. The twig loses water by transpiration, which draws water up out of the funnel; this leaves a vacuum at the bottom that is filled by the rising mercury. The rise of water and mercury is due to the transpiration pull.</p></details>
+
+  <p><strong>Example:</strong> A plant on a hot, windy, dry afternoon wilts although its soil is moist. Explain.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">High temperature, wind and low humidity make transpiration very fast. When water is lost faster than the roots can take it up, the cells lose turgor and the soft parts droop; the plant then closes its stomata.</p></details>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>Water evaporates from wet mesophyll walls and diffuses out through the stomata.</li>
+    <li>Faster in low humidity, wind, high temperature and light; slows when stomata close (night, drought).</li>
+    <li>Benefits include the transpiration pull, cooling, mineral distribution and turgidity.</li>
+  </ul>
+</div>
+
+</article>

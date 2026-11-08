@@ -1,0 +1,149 @@
+<!-- tags: Transport System in Organisms, G12 Biology Myanmar -->
+<!-- Grade 12 Biology textbook, Chapter 3, section 3.2 (pages 41–42) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Transport System in Organisms">Transport Mechanisms in Plants</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Two Routes Across the Root</span>
+  <p>Mineral ions and organic compounds (e.g. sucrose) are transported <strong>dissolved in water</strong>: dissolved mineral ions in the <strong>xylem</strong>, dissolved organic compounds in the <strong>phloem</strong>. Roots take up water and mineral ions, and <strong>root hairs</strong> increase the surface area for absorption.</p>
+  <ul>
+    <li>The <strong>uptake of water</strong> is a <strong>passive</strong> process by <strong>osmosis</strong>: the diffusion of water from a higher water potential to a lower water potential.</li>
+    <li>The uptake of minerals can be passive (diffusion) and/or <strong>active transport</strong>.</li>
+  </ul>
+  <p><strong>Movement of water in a plant.</strong> In active absorption water enters the cell sap and passes from one cell to another: movement involving the protoplasm is the <strong>symplast</strong>. In passive absorption water moves through the <strong>apoplast</strong>: the cell walls and intercellular spaces. Water and ions go from the root hair, through the root cortex, to the xylem by both routes, at the same time or separately, at different rates.</p>
+  <ul>
+    <li><strong>Apoplastic pathway:</strong> most water goes this way (when transpiration is high), through the spaces in the <strong>cellulose cell walls</strong>, dead cells and the hollow xylem tubes. Water moves by <strong>diffusion</strong>, since it does not cross a partially permeable membrane, from wall to wall or through intercellular spaces. It is <strong>faster</strong> than the symplastic pathway. At the <strong>endodermis</strong>, a thick, waterproof, waxy band of <strong>suberin</strong> in the cell walls, the <strong>Casparian strip</strong>, blocks the apoplast: an impassable barrier, so the water must enter the cytoplasm.</li>
+    <li><strong>Symplastic pathway:</strong> a smaller amount of water travels through the <strong>cytoplasm</strong> and <strong>plasmodesmata</strong> (or vacuoles). Water moves by <strong>osmosis</strong> into the cell across the partially permeable surface membrane, possibly into the vacuole through the tonoplast, and between cells through the plasmodesmata. It is <strong>slower</strong> than the apoplastic pathway.</li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Direction of Water Movement</span>
+  <div class="formula-main">
+    $$\text{soil water} \;\to\; \text{root hair} \;\to\; \text{cortex} \;\to\; \text{endodermis} \;\to\; \text{xylem}$$
+    $$\text{water moves from higher water potential to lower water potential}$$
+  </div>
+  <ul class="symbols">
+    <li>Apoplast: cell walls and spaces, diffusion, fast, stopped by the Casparian strip</li>
+    <li>Symplast: cytoplasm and plasmodesmata, osmosis, slow</li>
+  </ul>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>"The apoplast is slower":</strong> water moves through the apoplast <em>more rapidly</em> than through the symplast.</li>
+    <li><strong>The Casparian strip stops water reaching the xylem:</strong> it only blocks the <em>wall</em> route; water passes through the endodermis cells' cytoplasm instead.</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; Race Across the Root</span>
+  <p class="demo-question">Which route is faster, what does the Casparian strip do, and how does transpiration change the share of each route?</p>
+  <p class="demo-instruction">Water (blue dots) enters at the root hair and crosses the cortex to the xylem. Dots on the <em>apoplast</em> travel in the cell walls (grey gaps); dots on the <em>symplast</em> travel through the cytoplasm and plasmodesmata. Move the transpiration slider and watch the share of each route.</p>
+  <div id="pk-root"></div>
+  <script>
+  (function () {
+    const k = PhysKit.mount('pk-root', { x: [-6, 6], y: [-3, 3] });
+    const C = PhysKit.C;
+    const tr = k.slider({ label: 'transpiration rate', min: 0, max: 1, step: 0.05, value: 0.6, format: v => v < 0.35 ? 'low' : v < 0.7 ? 'medium' : 'high' });
+    const casp = k.check('Casparian strip', true);
+    let t = 0, dots = [], arrA = 0, arrS = 0;
+    k.loop(dt => {
+      t += dt;
+      // a new water molecule every 0.25 s; its route depends on the transpiration rate
+      if (Math.random() < dt / 0.25) dots.push({ u: 0, apo: Math.random() < 0.35 + 0.55 * tr.value });
+      dots.forEach(d => { d.u += dt * (d.apo ? 0.2 : 0.1); });
+      dots = dots.filter(d => { if (d.u >= 1) { if (d.apo) arrA++; else arrS++; return false; } return true; });
+    }, { button: false });
+
+    // cells: epidermis (with root hair), 4 cortex cells, endodermis, then the xylem vessel
+    const CELLS = [['epidermis', -4.6], ['cortex', -3.1], ['cortex', -1.6], ['cortex', -0.1], ['cortex', 1.4], ['endodermis', 2.9]];
+    const W = 1.3, H = 1.8, Y = -0.4;
+    const XY = 4.8;                                   // centre of the xylem vessel
+    // apoplast route: along the wall gaps above the cells; at the endodermis it must cross the cell
+    function apoPoint(u) {
+      const x = -5.6 + u * (XY - 0.6 + 5.6);
+      const inEndo = casp.value && x > 2.9 - W / 2 - 0.05 && x < 2.9 + W / 2 + 0.05;
+      // in the walls the path weaves between cells; in the endodermis it drops into the cytoplasm
+      const y = inEndo ? Y + 0.15 : Y + H / 2 + 0.12 - 0.05 * Math.sin(x * 4);
+      return [x, y];
+    }
+    function symPoint(u) {
+      const x = -5.6 + u * (XY - 0.6 + 5.6);
+      return [x, Y - 0.25 + 0.1 * Math.sin(x * 3)];
+    }
+
+    k.draw = g => {
+      // soil and the root hair
+      g.rect(-6, -3, 0.75, 6, { fill: '#a16207', fillAlpha: 0.2, color: 'none' });
+      g.text([-5.6, 2.6], 'soil', { size: 10, color: '#a16207', bold: true });
+      g.path([[-5.25, Y + 0.2], [-5.9, Y + 0.15], [-5.9, Y - 0.15], [-5.25, Y - 0.2]], { fill: '#fef9c3', color: '#ca8a04', width: 1.5 });
+      g.text([-5.6, Y - 0.55], 'root hair', { size: 9, color: '#a16207' });
+      CELLS.forEach(([n, x], i) => {
+        g.rect(x - W / 2, Y - H / 2, W, H, { fill: n === 'endodermis' ? '#fef3c7' : '#f0fdf4', color: C.vel, width: 1.5, radius: 10 });
+        g.circle([x + 0.3, Y + 0.45], 0.16, { fill: '#a7f3d0', color: C.vel, width: 1 });
+        if (i === 0 || i === 5) g.text([x, Y - H / 2 - 0.3], n, { size: 10, bold: true, color: n === 'endodermis' ? '#b45309' : C.vel });
+        // plasmodesmata: small gaps in the wall between neighbours
+        if (i < CELLS.length - 1) g.line([x + W / 2 + 0.1, Y - 0.35], [x + W / 2 + 0.1, Y - 0.15], { color: '#0d9488', width: 3 });
+      });
+      g.text([-0.85, Y - H / 2 - 0.3], 'cortex', { size: 10, bold: true, color: C.vel });
+      // Casparian strip: a dark band across the endodermis walls
+      if (casp.value) {
+        g.rect(2.9 - W / 2 - 0.12, Y + H / 2 - 0.05, W + 0.24, 0.28, { fill: '#b91c1c', color: 'none' });
+        g.text([2.9, Y + H / 2 + 0.55], 'Casparian strip (suberin)', { size: 10, bold: true, color: '#b91c1c' });
+      }
+      // xylem vessel
+      g.rect(XY - 0.6, -2.7, 1.2, 5.4, { fill: '#e0f2fe', color: C.fluid, width: 2.5, radius: 6 });
+      g.text([XY, 2.55], 'xylem', { size: 11, bold: true, color: '#0284c7' });
+      g.arrow([XY, -1.6], [0, 3.2], { color: C.fluid, width: 2 });
+      // routes, labelled
+      g.text([-2.4, Y + H / 2 + 0.55], 'apoplast: through cell walls (fast)', { size: 10, bold: true, color: '#475569' });
+      g.text([-2.4, -2.55], 'symplast: through cytoplasm and plasmodesmata (slow)', { size: 10, bold: true, color: '#0d9488' });
+      dots.forEach(d => g.dot(d.apo ? apoPoint(d.u) : symPoint(d.u), 4, d.apo ? '#1d4ed8' : '#0d9488'));
+      // water potential arrow
+      g.arrow([-4.0, 2.55], [5.2, 0], { color: C.muted, width: 1.5, head: 8 });
+      g.text([-4.2, 2.55], 'high ψ', { size: 9, color: C.muted, align: 'right' });
+      g.text([1.6, 2.55], 'low ψ', { size: 9, color: C.muted, align: 'left' });
+    };
+    k.update = () => {
+      const tot = arrA + arrS;
+      k.readout([`Arrived at the xylem: apoplast ${arrA}, symplast ${arrS}${tot ? ` (apoplast share ${Math.round(100 * arrA / tot)} %)` : ''}. Apoplast dots move about twice as fast.`,
+        casp.value ? 'At the endodermis the Casparian strip blocks the walls, so apoplast water must pass through the cytoplasm.' : 'Without the strip, water and ions could slip through the walls straight into the xylem unchecked.']);
+    };
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Sample Questions (pp. 59–60)</span>
+
+  <p><strong>Q1 (iii):</strong> TRUE or FALSE: The movement of water in the apoplastic pathway is slower than the symplastic pathway.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">FALSE: the apoplastic pathway is faster (water does not have to cross membranes).</p></details>
+
+  <p><strong>Q2 (i):</strong> Root hairs increase the surface area for ___ of the substances.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">absorption.</p></details>
+
+  <p><strong>Q6 (a):</strong> How do you understand the symplastic pathway?</p>
+  <details><summary>Show answer</summary>
+    <p>A smaller amount of water travels through the cytoplasm and plasmodesmata (or vacuoles) of the cells.</p>
+    <p class="answer">Water moves by osmosis into a cell across the partially permeable surface membrane, possibly into the vacuole through the tonoplast, and from cell to cell through the plasmodesmata. It is slower than the apoplastic pathway.</p></details>
+
+  <p><strong>Example:</strong> Why must all water reaching the xylem pass through at least one living membrane?</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">The Casparian strip, a waterproof band of suberin in the endodermis walls, blocks the apoplast. Water travelling in the walls has to enter the endodermis cells (crossing their membranes) before it reaches the xylem.</p></details>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>Water uptake is passive, by osmosis; mineral uptake can be passive or active.</li>
+    <li>Apoplast: cell walls and spaces, faster, most water; symplast: cytoplasm and plasmodesmata, slower.</li>
+    <li>The Casparian strip (suberin) in the endodermis blocks the apoplast.</li>
+  </ul>
+</div>
+
+</article>
