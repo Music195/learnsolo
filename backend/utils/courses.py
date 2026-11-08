@@ -55,6 +55,10 @@ COURSES = {
     # instruments, interference and diffraction, capacitors, electrical energy
     # and power, electromagnetic induction, digital electronics, modern physics
     "g12-physics": {"name": "Physics MM", "subject": "Grade 12 Myanmar"},
+    # Grade 12 Myanmar Chemistry: chemical bonding and intermolecular forces,
+    # energy changes, reaction rates, chemical equilibrium, acid-base reactions,
+    # transition elements, chemistry and the environment, organic compounds
+    "g12-chemistry": {"name": "Chemistry MM", "subject": "Grade 12 Myanmar"},
 }
 
 # Past question folders (content/past/<folder>/) -> name, icon and description.
@@ -107,6 +111,9 @@ TOPIC_NAMES = {
     "11-electromagnetic-induction-generation-and-distribution": "Electromagnetic Induction, Generation and Distribution",
     "12-digital-electronics-and-communication-system": "Digital Electronics and Communication System",
     "13-modern-physics": "Modern Physics",
+    # Chemistry MM: a folder name can't hold the colon or the hyphenated word
+    "03-chemical-kinetics-rates-of-reaction": "Chemical Kinetics: Rates of Reaction",
+    "05-acid-base-reactions": "Acid-Base Reactions",
 }
 
 _SMALL_WORDS = {"and", "of", "the", "in", "on", "to", "a", "an", "for"}

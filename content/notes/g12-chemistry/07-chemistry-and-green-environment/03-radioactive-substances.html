@@ -1,0 +1,130 @@
+<!-- tags: Chemistry and Green Environment, G12 Chemistry Myanmar -->
+<!-- Grade 12 Chemistry textbook, Chapter 7, section 7.3 (pages 118–120) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Chemistry and Green Environment">Radioactive Substances</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Unstable Nuclei and Their Radiation</span>
+  <p>A <strong>radionuclide</strong> is an atom with an unstable nucleus that has excess energy. <strong>Radioactive pollution</strong> comes from radionuclides released into the environment (radioactive material, radioisotopes and radioactive waste).</p>
+  <ul>
+    <li><strong>Radioactivity</strong> is the spontaneous decay of heavy nuclei, giving off <strong>alpha (α) particles, beta (β) particles and gamma (γ) rays</strong> and forming new elements. These and X-rays are <strong>ionising radiation</strong>.</li>
+    <li><strong>Penetrating power:</strong> α is stopped by a few sheets of paper; β passes paper but is stopped by aluminium foil (low-energy β enters the surface of skin, high-energy β a centimetre or more); γ is the hardest to stop and needs concrete, lead or other heavy shielding. γ rays and X-rays can badly damage cells.</li>
+    <li><strong>Background radiation</strong> is mostly natural: radioactive minerals in the ground, soil and water, cosmic radiation, and radionuclides in our own bodies (mainly potassium-40 from food and water). Traces of uranium and thorium are found on Earth. Radon gas collects in homes and buildings and in underground water; long exposure can cause lung cancer.</li>
+    <li><strong>Man-made sources:</strong> fissile U-235, Am-241 and Pu-239 made in breeder reactors; H-3 (tritium), Co-60, I-129, Cs-137 and Ba-137. Ionisation smoke detectors use Am-241 as an α source (safe if undamaged and used as directed).</li>
+    <li><strong>Uses of radioisotopes:</strong> radiotracers in medicine, agriculture, food preservation and sterilisation, industry, civil engineering and research. C-14 for <em>radiocarbon dating</em> of wooden and organic objects; U-235 as fuel for nuclear power and naval propulsion; Cs-137 in radiation therapy for cancer and in industrial gauges for liquid flow in pipes.</li>
+    <li><strong>Nuclear power and weapons:</strong> reactors use fissile heavy atoms (U-233, U-235, Pu-239) instead of fossil fuels. A nuclear bomb releases heat, blast waves and radiation, destroying buildings, with effects on the environment for many years.</li>
+    <li><strong>Impact:</strong> K-40, Ra-226 and Ra-228 leach from minerals into water; mines, power plants and industry can leak waste. Radionuclides in water and food can collect in blood and vital organs and cause tumours and cancer.</li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Penetration Ladder</span>
+  <div class="formula-main">
+    $$\text{penetrating power: } \gamma > \beta > \alpha \qquad \text{stopped by: } \alpha \to \text{paper},\ \beta \to \text{Al foil},\ \gamma \to \text{thick lead or concrete}$$
+  </div>
+  <ul class="symbols">
+    <li>α is a helium nucleus (+2 charge, heavy), β is a fast electron (−1), γ is high-energy electromagnetic radiation (no charge)</li>
+    <li>Fissile nuclides can keep up a fission chain reaction: U-233, U-235, Pu-239</li>
+  </ul>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>"α is weak, so harmless":</strong> it penetrates least, but inside the body (radon breathed in) it ionises strongly.</li>
+    <li><strong>Background = man-made:</strong> most background radiation is natural.</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; What Gets Through?</span>
+  <p class="demo-question">Which shields stop alpha, beta and gamma radiation?</p>
+  <p class="demo-instruction">Choose the radiation and tick the shields to put in the way. The source fires a stream; the counter on the right shows the fraction that reaches it. Drag the lead block to change its thickness.</p>
+  <div id="pk-rad"></div>
+  <script>
+  (function () {
+    const k = PhysKit.mount('pk-rad', { x: [-6.2, 6.2], y: [-2.3, 2.3] });
+    const C = PhysKit.C, num = k.num;
+    const RAD = [{ n: 'α alpha', c: '#dc2626', sp: 2.2 }, { n: 'β beta', c: '#2563eb', sp: 4.5 }, { n: 'γ gamma', c: '#7c3aed', sp: 7 }];
+    let parts = [], tf = 0, hits = 0, sent = 0, lead = 0.6;          // lead thickness in board units (1 unit ≈ 5 cm)
+    k.row();
+    const rc = k.choice(RAD.map(r => r.n), 0, () => { parts = []; hits = sent = 0; });
+    const cPaper = k.check('paper', false, () => { hits = sent = 0; });
+    const cAl = k.check('aluminium foil', false, () => { hits = sent = 0; });
+    const cPb = k.check('lead block', false, () => { hits = sent = 0; });
+    const XP = -2.0, XA = 0.0, XL = 1.6;
+    // chance that one particle gets through each barrier
+    function pass(r, which) {
+      if (which === 'paper') return r === 0 ? 0 : 1;
+      if (which === 'al') return r === 2 ? 0.97 : 0;
+      return r === 2 ? Math.pow(0.5, lead / 0.6) : 0;                  // gamma: halves every 0.6 units (3 cm) of lead
+    }
+    k.view.drag({ hit: p => cPb.value && p[0] > XL - 0.2 && p[0] < XL + lead + 0.3 && Math.abs(p[1]) < 1.6, get: () => [XL + lead, 0], set: p => { lead = Math.max(0.2, Math.min(2.4, p[0] - XL)); hits = sent = 0; } });
+    k.loop(dt => {
+      dt = Math.max(0, Math.min(dt, 0.04)); tf += dt;
+      const r = rc.value, R = RAD[r];
+      if (tf > 0.08) { tf = 0; parts.push({ x: -4.6, y: (Math.random() - 0.5) * 1.4, alive: true, checked: {} }); }
+      parts.forEach(p => {
+        if (!p.alive) return;
+        p.x += R.sp * dt;
+        const bars = [['paper', XP, cPaper.value], ['al', XA, cAl.value], ['pb', XL, cPb.value]];
+        bars.forEach(([w, x, on]) => { if (on && !p.checked[w] && p.x >= x) { p.checked[w] = true; if (Math.random() > pass(r, w)) { p.alive = false; p.stopX = x; sent++; } } });   // counted once its fate is known
+        if (p.alive && p.x > 5.0) { p.alive = false; p.hit = true; hits++; sent++; }
+      });
+      parts = parts.filter(p => p.alive || (p.fade = (p.fade || 0) + dt) < 0.4);
+      if (sent > 400) { sent = Math.round(sent / 2); hits = Math.round(hits / 2); }
+    }, { button: false });
+    k.draw = g => {
+      const R = RAD[rc.value];
+      // source
+      g.rect(-5.9, -0.9, 1.2, 1.8, { fill: '#fef3c7', color: '#92400e', width: 2, radius: 6 });
+      g.text([-5.3, 0], 'source', { size: 11, bold: true });
+      // barriers
+      if (cPaper.value) { g.rect(XP, -1.6, 0.08, 3.2, { fill: '#e2e8f0', color: '#94a3b8' }); g.text([XP, 1.9], 'paper', { size: 11, bold: true }); }
+      if (cAl.value) { g.rect(XA, -1.6, 0.15, 3.2, { fill: '#cbd5e1', color: '#64748b' }); g.text([XA, 1.9], 'Al foil', { size: 11, bold: true }); }
+      if (cPb.value) { g.rect(XL, -1.6, lead, 3.2, { fill: '#475569', color: '#1e293b' }); g.text([XL + lead / 2, 1.9], `lead ${num(lead * 5, 0)} cm`, { size: 11, bold: true }); g.handle([XL + lead, 0], C.energy); }
+      // detector
+      g.rect(5.0, -1.0, 0.9, 2.0, { fill: '#ecfdf5', color: C.good, width: 2, radius: 6 });
+      const fr = sent ? hits / sent : 0;
+      g.text([5.45, 1.35], 'detector', { size: 11, bold: true });
+      g.text([5.45, 0], Math.round(fr * 100) + '%', { size: 15, bold: true, color: C.good });
+      parts.forEach(p => g.dot([p.alive || p.hit ? p.x : p.stopX, p.y], rc.value === 0 ? 5 : 3, R.c));
+      g.text([0, -2.05], rc.value === 0 ? 'α: heavy, +2 charge, ionises strongly, short range' : rc.value === 1 ? 'β: fast electron, −1 charge' : 'γ: electromagnetic wave, no charge; only weakened, never fully stopped', { size: 12, color: C.ink, bold: true });
+    };
+    k.update = () => k.readout(['Paper stops α. Aluminium foil stops β. Thick lead or concrete is needed for γ: every ~3 cm of lead halves it here.']);
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Review Questions (p. 120)</span>
+
+  <p><strong>Review Q1:</strong> Which particles or rays come from a radioactive substance, and how penetrating is each?</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">α particles: stopped by a few sheets of paper. β particles: pass through paper, stopped by aluminium foil. γ rays: most penetrating, need concrete or lead shielding.</p></details>
+
+  <p><strong>Review Q2:</strong> Uses of carbon-14, caesium-137, uranium-235 and americium-241.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">C-14: radiocarbon dating of wooden and organic objects. Cs-137: radiation therapy for cancer, and industrial gauges for liquid flow in pipes. U-235: fuel for nuclear power plants and naval propulsion. Am-241: α source in ionisation smoke detectors.</p></details>
+
+  <p><strong>Review Q3:</strong> Choose the fissile nuclides: Co-60, I-129, U-233, Pu-239, Ba-137.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">U-233 and Pu-239 (they can sustain a fission chain reaction). Co-60, I-129 and Ba-137 are radioactive but not fissile.</p></details>
+
+  <p><strong>Exercises 2(c), 3(c), 3(d), 4(b)–(d), 5(c), 6(e), 11 (pp. 124–125):</strong></p>
+  <details><summary>Show answer</summary>
+    <p>(2c) Carbon-14. (3c) paper. (3d) background radiation. (4b) U-235: a fuel for a nuclear reactor. (4c) thick lead: a shield that can block γ rays. (4d) Am-241: used in a smoke detector. (5c) radioactivity. (6e) γ rays &gt; β particles &gt; α particles.</p>
+    <p class="answer">(11) Benefit: Cs-137 radiation therapy treats cancer (or C-14 dates archaeological objects). Harm: ionising radiation damages cells; radionuclides taken in with water and food collect in blood and vital organs and cause tumours and cancer; radon causes lung cancer.</p></details>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>α (paper), β (Al foil), γ (lead or concrete): γ &gt; β &gt; α in penetration.</li>
+    <li>Most background radiation is natural (minerals, radon, K-40, cosmic rays).</li>
+    <li>Uses: C-14 dating, U-235 fuel, Cs-137 therapy and gauges, Am-241 smoke detectors.</li>
+  </ul>
+</div>
+
+</article>
