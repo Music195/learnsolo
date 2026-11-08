@@ -59,6 +59,10 @@ COURSES = {
     # energy changes, reaction rates, chemical equilibrium, acid-base reactions,
     # transition elements, chemistry and the environment, organic compounds
     "g12-chemistry": {"name": "Chemistry MM", "subject": "Grade 12 Myanmar"},
+    # Grade 12 Myanmar Biology: themes of biology, molecular biology (DNA, protein
+    # synthesis, genetic engineering), transport in plants and animals, plant and
+    # animal diseases, coordination and response, biodiversity and conservation
+    "g12-biology": {"name": "Biology MM", "subject": "Grade 12 Myanmar"},
 }
 
 # Past question folders (content/past/<folder>/) -> name, icon and description.

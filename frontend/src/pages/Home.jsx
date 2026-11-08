@@ -31,6 +31,7 @@ const COURSE_STYLE = {
   'Mathematics MM': ['fa-square-root-variable', '#4f46e5'],
   'Physics MM': ['fa-atom', '#0891b2'],
   'Chemistry MM': ['fa-flask', '#059669'],
+  'Biology MM': ['fa-dna', '#65a30d'],
 }
 
 // Subject names as English: "A", "A and B", "A, B and C"
