@@ -121,7 +121,7 @@ content/
 - **Courses currently in the project**:
   - **Mathematics**: `math-1` (Math I), `math-2` (Math II), `math-3` (Math III), `math-a` (Math A), `math-b` (Math B), `math-c` (Math C)
   - **Physics**: `mechanics-basic` (Mechanics Basic), `heat` (Heat), `waves` (Waves), `electricity` (Electricity), `magnetism` (Magnetism), `atomic-physics` (Atomic Physics)
-  - **Grade 12 Myanmar**: `g12-math` (Mathematics MM), `g12-physics` (Physics MM)
+  - **Grade 12 Myanmar**: `g12-math` (Mathematics MM), `g12-physics` (Physics MM), `g12-chemistry` (Chemistry MM), `g12-biology` (Biology MM)
   - Topics inside each course are numbered in textbook order.
 - Keep filenames short and plain ASCII: write `x2` for x², `minus`, `over`, `theta`, `alpha` for symbols. The page title in the file's `<h1>` can use any characters (`²`, `θ`, Burmese, Japanese, etc.).
 - The path without `content/<kind>/` and `.html` is the page's URL: `/notes/math-1/03-quadratic-functions/05-quadratic-formula`.
@@ -215,7 +215,7 @@ The demo helpers live in `frontend/public/static/js/demos/` (and `frontend/publi
 | `/static/js/demos/geom.js` | Geometry notes | `NoteGeom.board()`: draggable points in pixel coordinates, plus maths helpers (`dist`, `mid`, `angle`…) |
 | `/static/js/demos/plot.js` | Graph and vector notes (built on `demos/geom.js`) | `NotePlot.graph()`: maths coordinates with y pointing up, automatic axes and grid, and drawing tools like `g.fn`, `g.seg`, `g.line`, `g.poly`, `g.region`. The `plain: true` option hides the axes and grid, for 3D drawings |
 | `/static/js/demos/venn.js` | Set notes | `NoteVenn`: parses and formats sets and draws Venn diagrams |
-| `/static/js/demos/physkit.js` | Grade 12 Physics (`g12-physics`) notes | `PhysKit`: canvas board, slider controls, arrows, vectors, springs, waves, rays, circuits, gauges and readout helpers for physics simulations |
+| `/static/js/demos/physkit.js` | Grade 12 Physics, Chemistry and Biology notes (`g12-physics`, `g12-chemistry`, `g12-biology`) | `PhysKit`: canvas board, slider controls, choice buttons, arrows, vectors, springs, waves, rays, circuits, gauges and readout helpers. Built for physics simulations, and also used to animate chemistry and biology processes (reactions, DNA replication, the cardiac cycle, nerve impulses) |
 | `/static/js/demos/jsxgraphcore.js`, `/static/css/jsxgraph.css` | Physics and geometry notes using JSXGraph | `JXG.JSXGraph.initBoard()`: interactive coordinate boards, curves and sliders (automatically cleaned up on unmount in `NoteContent.jsx`) |
 | `frontend/src/styles/note-blocks.css`, `dark-mode.css` | Every note | All 8 block styles (`note-concept`, `note-formula`, `note-demo`, etc.) with light and dark mode adaptations |
 
@@ -231,6 +231,7 @@ The home page (`frontend/src/pages/Home.jsx`) groups the course folders in `cont
   ```python
   "mechanics-basic": {"name": "Mechanics Basic", "subject": "Physics"},
   "g12-physics":     {"name": "Physics MM",      "subject": "Grade 12 Myanmar"},
+  "g12-biology":     {"name": "Biology MM",      "subject": "Grade 12 Myanmar"},
   ```
 - A course folder not listed in `COURSES` goes under the subject named by its first word (`chemistry-basic` → Chemistry).
 - A subject in `SUBJECTS` with no notes yet shows a **Coming soon** tab on the home page. It switches on automatically once a course folder for it has notes and `flask import-content` has been run.
