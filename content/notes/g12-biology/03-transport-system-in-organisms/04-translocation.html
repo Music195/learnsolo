@@ -1,0 +1,136 @@
+<!-- tags: Transport System in Organisms, G12 Biology Myanmar -->
+<!-- Grade 12 Biology textbook, Chapter 3, section 3.4 (pages 45–46) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Transport System in Organisms">Translocation</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Moving Food from Source to Sink</span>
+  <p><strong>Translocation</strong> is the movement of dissolved substances through a plant. Water and dissolved salts travel up from the soil in the xylem vessels; food made in the leaves passes <strong>downwards or upwards</strong> in the sieve tubes of the <strong>phloem</strong>.</p>
+  <ul>
+    <li>Leaves make carbohydrates by photosynthesis and send them out as <strong>sucrose</strong>. In the stem it can travel <strong>upwards</strong> to growing regions, maturing fruits and seeds, or <strong>downwards</strong> to the roots and underground storage organs. Both directions can happen at the same time in the phloem.</li>
+    <li><strong>Phloem</strong> is a complex tissue: <strong>sieve tubes</strong>, <strong>companion cells</strong>, phloem parenchyma and phloem fibres. All are living except the fibres.</li>
+    <li>Sieve tubes (sieve cells) have <strong>no nucleus</strong>; with the companion cells they do the work of translocation. They are cylindrical cells with a layer of cytoplasm just inside the wall. Their name comes from the perforated cross walls, the <strong>sieve plates</strong>, through which materials pass from cell to cell.</li>
+    <li>Sieve cells survive without nuclei because they are kept alive by the nucleated <strong>companion cells</strong> beside them, joined by many cytoplasmic connections. Fibre cells strengthen the tissue.</li>
+    <li>Two ideas explain the flow (Figure 3.6): <strong>cytoplasmic streaming</strong> could carry two substances in opposite directions at once; the <strong>pressure flow theory</strong> says sugar entering the sieve tubes at a <strong>source</strong> (leaf) draws water in by osmosis, giving a <strong>high turgor pressure</strong>; at a <strong>sink</strong> (growing tip, root) sugar is removed for growth and water leaves by osmosis, giving low pressure. The sugar solution flows from high to low turgor pressure.</li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Pressure Flow in One Line</span>
+  <div class="formula-main">
+    $$\text{source: sugar in} \to \text{water in (osmosis)} \to \text{high pressure} \;\Longrightarrow\; \text{sink: sugar out} \to \text{water out} \to \text{low pressure}$$
+  </div>
+  <ul class="symbols">
+    <li>Source = where sugar is made or released (leaf); sink = where it is used or stored (growing tip, root, fruit, tuber)</li>
+    <li>Xylem: one way, up. Phloem: up or down, from source to sink</li>
+  </ul>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>Phloem flows only downwards:</strong> it flows from source to sink, which can be up or down.</li>
+    <li><strong>Sieve tubes are dead like xylem:</strong> they are living, but have no nucleus; companion cells keep them alive.</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; The Pressure Flow Model</span>
+  <p class="demo-question">Why does sugar solution flow from a leaf to a root or a growing tip?</p>
+  <p class="demo-instruction">Sugar (orange) is loaded into the sieve tube at the leaf; water (blue) follows by osmosis from the xylem and raises the pressure. At the sink, sugar is removed and water leaves. Choose a sink, change the loading rate, or switch the leaf to shade (no photosynthesis).</p>
+  <div id="pk-transl"></div>
+  <script>
+  (function () {
+    const k = PhysKit.mount('pk-transl', { x: [-6, 6], y: [-3, 3] });
+    const C = PhysKit.C;
+    const sink = k.choice(['Root (storage)', 'Growing shoot tip', 'Ripening fruit'], 0);
+    k.row();
+    const load = k.slider({ label: 'sugar loading', min: 0, max: 1, step: 0.05, value: 0.7, format: v => Math.round(v * 100) + ' %' });
+    const shade = k.check('leaf in deep shade', false);
+    let t = 0, sug = [], wat = [];
+    const L = -4.0, R = 4.0, Y0 = 0.3, Y1 = 1.1;      // sieve tube
+    k.loop(dt => {
+      t += dt;
+      const ld = shade.value ? 0.05 : load.value;
+      const v = 0.3 + 1.2 * ld;                        // flow speed follows the pressure difference
+      if (Math.random() < ld * dt * 6) sug.push({ x: L + 0.2, y: Y0 + 0.15 + Math.random() * 0.5 });
+      if (Math.random() < ld * dt * 4) wat.push({ x: L + 0.4 + Math.random() * 0.6, y: -1.0, ph: 0 });
+      sug.forEach(s => { s.x += v * dt; });
+      sug = sug.filter(s => s.x < R - 0.2);
+      wat.forEach(w => { if (w.ph === 0) { w.y += 1.0 * dt; if (w.y > Y0 + 0.4) w.ph = 1; } else if (w.ph === 1) { w.x += v * dt; if (w.x > R - 0.6) w.ph = 2; } else w.y -= 1.0 * dt; });
+      wat = wat.filter(w => w.y > -1.1 || w.ph < 2);
+    }, { button: false });
+
+    k.draw = g => {
+      const ld = shade.value ? 0.05 : load.value;
+      // source leaf
+      g.path([[-5.9, 1.6], [-5.0, 2.6], [-4.0, 2.2], [-4.6, 1.3]], { close: true, fill: shade.value ? '#d1d5db' : '#86efac', color: C.vel });
+      g.text([-4.9, 2.85], shade.value ? 'leaf (shaded)' : 'leaf: SOURCE', { size: 11, bold: true, color: C.vel });
+      if (!shade.value) g.text([-5.4, 1.05], 'photosynthesis', { size: 9, color: C.muted });
+      // sink
+      const SN = ['root (sucrose → starch)', 'growing shoot tip', 'ripening fruit'][sink.value];
+      g.circle([5.1, 0.7], 0.75, { fill: ['#fde68a', '#bbf7d0', '#fecaca'][sink.value], color: ['#b45309', C.vel, '#dc2626'][sink.value] });
+      g.text([5.1, 1.75], 'SINK', { size: 11, bold: true, color: C.energy });
+      g.text([5.1, -0.35], SN, { size: 9, color: C.muted });
+      // sieve tube with sieve plates and companion cells
+      g.rect(L, Y0, R - L, Y1 - Y0, { fill: '#fff7ed', color: '#ea580c', width: 2 });
+      for (let x = L + 1.6; x < R; x += 1.6) { g.line([x, Y0], [x, Y1], { color: '#ea580c', width: 1.5, dash: [3, 3] }); }
+      for (let x = L + 0.2; x < R - 0.5; x += 1.6) g.rect(x, Y0 - 0.35, 1.1, 0.3, { fill: '#fde68a', color: '#b45309', width: 1, radius: 4 });
+      g.text([0, Y1 + 0.3], 'sieve tube (sieve plates dashed)', { size: 10, bold: true, color: '#c2410c' });
+      g.text([-2.4, Y0 - 0.65], 'companion cells', { size: 9, color: '#b45309' });
+      // xylem underneath
+      g.rect(L, -1.6, R - L, 0.55, { fill: '#e0f2fe', color: C.fluid, width: 2 });
+      g.text([0, -1.9], 'xylem (water)', { size: 10, bold: true, color: '#0284c7' });
+      // pressure along the tube, high at the source, low at the sink
+      for (let i = 0; i < 20; i++) {
+        const u = i / 19, p = ld * (1 - u);
+        g.rect(L + u * (R - L) - 0.2, 2.35, 0.4, 0.25, { fill: `rgba(234,88,12,${0.15 + 0.8 * p})`, color: 'none' });
+      }
+      g.text([0, 2.85], 'turgor pressure: high at source → low at sink', { size: 10, bold: true, color: '#c2410c' });
+      sug.forEach(s => g.dot([s.x, s.y], 4, '#ea580c'));
+      wat.forEach(w => g.dot([w.x, w.y], 3.5, C.fluid));
+      g.arrow([L + 0.7, -1.0], [0, 1.15], { color: C.fluid, width: 1.5, head: 7 });
+      g.text([L + 0.6, -0.45], 'water in', { size: 9, color: '#0284c7', bold: true, align: 'right' });
+      g.arrow([R - 0.7, Y0 - 0.05], [0, -0.95], { color: C.fluid, width: 1.5, head: 7 });
+      g.text([R - 0.55, -0.45], 'water out', { size: 9, color: '#0284c7', bold: true, align: 'left' });
+      g.arrow([-0.6, -2.55], [1.8, 0], { color: '#c2410c', width: 2.5 });
+      g.text([-0.9, -2.55], 'flow', { size: 11, bold: true, color: '#c2410c', align: 'right' });
+    };
+    k.update = () => {
+      const ld = shade.value ? 0.05 : load.value;
+      k.readout([`Sugar loading ${Math.round(ld * 100)} %. ${ld < 0.15 ? 'With almost no sugar loaded, little water enters, so there is hardly any pressure difference and the flow almost stops.' : 'Sugar at the source draws water in, raising turgor pressure; at the sink sugar is used and water leaves. Sap flows from high to low pressure.'}`,
+        sink.value === 1 ? 'Here the sink is above the leaf: the phloem carries sugar <b>upwards</b>.' : sink.value === 0 ? 'Here the sink is below: the phloem carries sugar <b>downwards</b> to be stored as starch.' : 'Fruits and seeds are strong sinks while they ripen.']);
+    };
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Sample Questions (pp. 59–60)</span>
+
+  <p><strong>Q4 (iii):</strong> "Movement of dissolved substances through a plant" is matched with (E) translocation.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">Translocation.</p></details>
+
+  <p><strong>Q7 (a):</strong> Discuss the movement of dissolved substances through a plant.</p>
+  <details><summary>Show answer</summary>
+    <p>This movement is translocation. Water and dissolved salts travel up from the soil in the xylem vessels; food made in the leaves is carried downwards or upwards in the sieve tubes of the phloem.</p>
+    <p>Leaves send carbohydrates out as sucrose; in the stem it moves up to growing regions, fruits and seeds or down to roots and storage organs, both at the same time.</p>
+    <p class="answer">Phloem consists of sieve tubes, companion cells, phloem parenchyma and fibres (all living except fibres). Sieve tubes have no nucleus and pass materials through perforated sieve plates; they are kept alive by the companion cells, with many cytoplasmic connections. Fibres strengthen the tissue.</p></details>
+
+  <p><strong>Example:</strong> In spring a potato tuber sprouts. Is the tuber a source or a sink now? Explain.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">A source: its stored starch is changed back into sugar and sent through the phloem to the growing shoots, which are the sinks. (While it was filling up, the tuber was a sink.)</p></details>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>Translocation moves sucrose and amino acids in the phloem, from sources to sinks, up or down.</li>
+    <li>Sieve tubes: living, no nucleus, sieve plates; companion cells keep them alive.</li>
+    <li>Pressure flow: sugar in → water in → high pressure at the source; sugar out → water out → low pressure at the sink.</li>
+  </ul>
+</div>
+
+</article>

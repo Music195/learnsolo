@@ -1,0 +1,186 @@
+<!-- tags: Coordination and Response, G12 Biology Myanmar -->
+<!-- Grade 12 Biology textbook, Chapter 5, section 5.4 (pages 94–98) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Coordination and Response">Sense Organs: The Eye</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; How the Eye Works</span>
+  <p><strong>Sense organs</strong> (eyes, ears, nose, tongue, skin) are organs in which sensory receptors are highly concentrated. When the receptors are stimulated, they convert the stimulus into electrical signals (action potentials), which go to a specific region of the brain for that sense. Signals from the eyes are interpreted as images in the vision region of the <strong>occipital lobe</strong>.</p>
+  <p><strong>Parts of the eye:</strong></p>
+  <ul>
+    <li><strong>Sclera:</strong> tough, fibrous, opaque outer coat; protects and keeps the shape of the eyeball. <strong>Cornea:</strong> transparent front, continuous with the sclera; light enters through it and it refracts the light. <strong>Conjunctiva:</strong> thin transparent membrane that protects the cornea.</li>
+    <li><strong>Choroid:</strong> middle coat with black pigment (absorbs light, prevents internal reflection) and blood capillaries (oxygen and nutrients for the retina). <strong>Ciliary body:</strong> thickened front of the choroid; changes the thickness of the lens (accommodation).</li>
+    <li><strong>Iris:</strong> ring of circular and radial muscles with pigment (eye colour); changes the size of the <strong>pupil</strong>, the opening that lets light in.</li>
+    <li><strong>Retina:</strong> inner layer with photoreceptors: <strong>rods</strong> (sensitive in low light; night vision) and <strong>cones</strong> (colour vision in bright light). <strong>Fovea</strong> (yellow spot): only cones, the clearest vision, where images are normally focused. <strong>Blind spot:</strong> where the neurones leave as the optic nerve; no photoreceptors, so no vision there.</li>
+    <li><strong>Lens:</strong> flexible biconvex structure behind the iris; its curvature (and focal length) changes to focus near or far objects onto the retina. It divides the eye into the aqueous and vitreous chambers.</li>
+    <li><strong>Aqueous humour:</strong> watery fluid in front of the lens; keeps the internal pressure, feeds the lens and cornea, refracts light. <strong>Vitreous humour:</strong> jelly behind the lens; keeps the eye's shape, refracts light.</li>
+    <li><strong>Suspensory ligaments:</strong> attach the lens to the ciliary body. <strong>Optic nerve:</strong> carries impulses from the retina to the brain.</li>
+  </ul>
+  <p><strong>Two eyes</strong> cancel each other's blind spot, give a wider field of view, and each forms a slightly different image; the brain combines them into <strong>stereoscopic (3-D) vision</strong> to judge distance, depth and speed.</p>
+  <p><strong>Iris reflex:</strong> in bright light the <strong>circular muscles contract</strong> and the radial muscles relax, so the pupil <strong>constricts</strong>; in dim light the <strong>radial muscles contract</strong> and the circular muscles relax, so the pupil <strong>dilates</strong>.</p>
+  <p><strong>Accommodation</strong> (focusing at different distances): for a <strong>distant</strong> object, rays are almost parallel; the cornea does most of the refraction. The <strong>ciliary muscles relax</strong>, the pressure in the eye pushes outwards, the <strong>suspensory ligaments are pulled tight</strong> and the lens is <strong>flatter</strong> (less convex); this is the eye at rest. For a <strong>near</strong> object, rays diverge, so the lens must refract more: the <strong>ciliary muscles contract</strong>, the <strong>ligaments become slack</strong> and the elastic lens <strong>bulges</strong> into a more convex shape.</p>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Two Reflexes of the Eye</span>
+  <div class="formula-main">
+    $$\text{bright: circular contract, radial relax} \Rightarrow \text{pupil constricts}$$
+    $$\text{near: ciliary contract} \Rightarrow \text{ligaments slack} \Rightarrow \text{lens more convex}$$
+  </div>
+  <ul class="symbols">
+    <li>Extra lens power needed for an object at distance <em>d</em> (compared with a distant object) &asymp; 1/<em>d</em> dioptres, with <em>d</em> in metres (thin-lens model).</li>
+  </ul>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>"Contracting ciliary muscles pull the lens thin":</strong> the opposite. Contracting ciliary muscles make the ligaments <em>slack</em>, so the lens <em>bulges</em> (near vision).</li>
+    <li><strong>"The image forms on the cornea or lens":</strong> it forms on the <em>retina</em> (normally the fovea).</li>
+    <li><strong>Rods vs cones:</strong> rods for dim light, cones for colour in bright light; the fovea has only cones.</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; Pupil Reflex and Accommodation</span>
+  <p class="demo-question">How does the iris control the light entering the eye, and how does the lens change to focus near and far objects?</p>
+  <p class="demo-instruction"><strong>Pupil reflex:</strong> change the light level and watch which iris muscles contract (red). <strong>Accommodation:</strong> move the object nearer or farther and watch the ciliary muscles, ligaments and lens; the rays always meet at the fovea.</p>
+  <div id="pk-eye"></div>
+  <script>
+  (function () {
+    const k = PhysKit.mount('pk-eye', { x: [-6, 6], y: [-3, 3] });
+    const C = PhysKit.C;
+    const mode = k.choice(['Pupil reflex', 'Accommodation'], 0);
+    k.row();
+    const light = k.slider({ label: 'light level', min: 0, max: 1, step: 0.01, value: 0.8, format: v => v < 0.25 ? 'dim' : v < 0.6 ? 'medium' : 'bright' });
+    const dist = k.slider({ label: 'object distance', min: 0, max: 1, step: 0.01, value: 0.2, format: v => v >= 0.99 ? 'far (6 m or more)' : `${(0.25 * Math.pow(24, v)).toFixed(2)} m` });
+    const D = v => 0.25 * Math.pow(24, v);       // 0.25 m (near point) to 6 m (effectively distant)
+
+    function pupil(g) {
+      const I = light.value, c = [-2.6, 0], R = 1.9;
+      const r = 0.35 + 0.85 * (1 - I);                         // pupil radius in the drawing
+      // white of the eye and lids
+      g.path([[-5.6, 0], [-4.2, 1.9], [-1.0, 1.9], [0.4, 0], [-1.0, -1.9], [-4.2, -1.9]], { close: true, fill: '#f8fafc', color: '#334155', width: 2 });
+      g.circle(c, R, { fill: '#38bdf8', color: '#075985', width: 2 });
+      const circ = I > 0.5, rad = I < 0.5;                     // which muscles are contracting
+      for (let i = 0; i < 18; i++) {                           // radial muscles: spokes
+        const a = i / 18 * 2 * Math.PI, r1 = r + 0.45;
+        g.line([c[0] + r1 * Math.cos(a), c[1] + r1 * Math.sin(a)], [c[0] + (R - 0.1) * Math.cos(a), c[1] + (R - 0.1) * Math.sin(a)], { color: rad ? '#dc2626' : '#0369a1', width: rad ? 3 : 1.5 });
+      }
+      for (let j = 0; j < 3; j++) g.circle(c, r + 0.1 + j * 0.13, { fill: 'none', color: circ ? '#dc2626' : '#0369a1', width: circ ? 3 : 1.5 });   // circular muscles: rings
+      g.circle(c, r, { fill: '#0f172a', color: 'none' });
+      g.circle([c[0] + 0.35 * r, c[1] + 0.35 * r], 0.08 + 0.05 * r, { fill: '#fff', color: 'none' });
+      // light rays coming in
+      const n = Math.round(2 + 6 * I);
+      for (let i = 0; i < n; i++) g.arrow([1.3 + i * 0.55, 2.6], [-0.8, -0.5], { color: '#facc15', width: 2 });
+      g.text([1.0, 1.55], `${I < 0.25 ? 'dim' : I < 0.6 ? 'medium' : 'bright'} light`, { size: 13, bold: true, color: '#a16207', align: 'left' });
+      g.text([1.0, 0.9], 'circular muscles: ' + (circ ? 'contract' : 'relax'), { size: 12, bold: true, color: circ ? '#dc2626' : '#0369a1', align: 'left' });
+      g.text([1.0, 0.45], 'radial muscles: ' + (rad ? 'contract' : 'relax'), { size: 12, bold: true, color: rad ? '#dc2626' : '#0369a1', align: 'left' });
+      g.text([1.0, -0.15], `pupil ${r < 0.65 ? 'constricted' : r > 0.95 ? 'dilated' : 'medium'}`, { size: 13, bold: true, align: 'left' });
+      g.text([1.0, -0.6], `pupil area ${Math.round(100 * (r / 1.2) ** 2)} % of its widest`, { size: 11, color: C.muted, align: 'left' });
+      g.text([1.0, -1.1], 'protects the retina in bright light;', { size: 10, color: C.muted, align: 'left' });
+      g.text([1.0, -1.45], 'lets more light in when it is dim', { size: 10, color: C.muted, align: 'left' });
+    }
+
+    function accom(g) {
+      const v = dist.value, d = D(v), far = v >= 0.99;
+      const f = 1 - v;                                         // 1 = nearest, 0 = far
+      const ec = [1.6, 0], ER = 2.3, xl = -0.15, a = 0.2 + 0.24 * f, hl = 0.8;
+      const fov = [ec[0] + ER - 0.05, 0];
+      // eyeball: sclera, choroid, retina
+      g.circle(ec, ER, { fill: '#f8fafc', color: '#475569', width: 3 });
+      g.circle(ec, ER - 0.12, { fill: 'none', color: '#7c2d12', width: 2 });
+      g.circle(ec, ER - 0.22, { fill: 'none', color: '#db2777', width: 2 });
+      g.path([[-0.65, 0.95], [-0.95, 0.5], [-1.02, 0], [-0.95, -0.5], [-0.65, -0.95]], { color: '#0ea5e9', width: 3 });   // cornea
+      g.line([3.6, -0.75], [5.8, -1.0], { color: '#ca8a04', width: 6 });                                                // optic nerve
+      g.text([5.8, -1.4], 'optic nerve', { size: 10, color: '#a16207', align: 'right' });
+      g.dot(fov, 6, '#facc15', { stroke: '#a16207', width: 1 });
+      g.text([fov[0] + 0.2, 0.35], 'fovea', { size: 10, bold: true, color: '#a16207', align: 'left' });
+      g.text([ec[0] + 1.0, 2.05], 'retina', { size: 10, color: '#db2777', align: 'left' });
+      // ciliary muscles and suspensory ligaments (top and bottom)
+      [1, -1].forEach(s => {
+        const cm = [xl, s * 1.65];
+        g.circle(cm, f > 0.5 ? 0.24 : 0.17, { fill: f > 0.5 ? '#dc2626' : '#fca5a5', color: '#7f1d1d', width: 1.5 });
+        const p0 = [xl, s * hl], p1 = [xl, s * 1.42], pts = [];
+        for (let i = 0; i <= 10; i++) { const y = p0[1] + (p1[1] - p0[1]) * i / 10; pts.push([xl + (f > 0.5 ? 0.09 * Math.sin(i * Math.PI) * (i % 2 ? 1 : -1) * f : 0), y]); }
+        g.path(pts, { color: '#64748b', width: 1.5 });
+      });
+      // the lens (ellipse whose half-thickness a grows for near objects)
+      const lens = [];
+      for (let i = 0; i <= 40; i++) { const t = i / 40 * 2 * Math.PI; lens.push([xl + a * Math.cos(t), hl * Math.sin(t)]); }
+      g.path(lens, { close: true, fill: '#bae6fd', color: '#0369a1', width: 2 });
+      // rays: from the object (or parallel from far away) through the lens to the fovea
+      const xo = -1.6 - 4.0 * v;
+      [-0.6, -0.3, 0, 0.3, 0.6].forEach(y => {
+        const start = far ? [-5.9, y] : [xo, 0];
+        g.line(start, [xl, y], { color: '#f59e0b', width: 1.5 });
+        g.line([xl, y], fov, { color: '#f59e0b', width: 1.5 });
+      });
+      if (!far) { g.arrow([xo, -0.8], [0, 1.6], { color: '#16a34a', width: 3 }); g.text([xo, -1.1], 'object', { size: 10, color: '#15803d' }); }
+      else g.text([-4.6, 0.95], 'parallel rays from a distant object', { size: 10, color: '#a16207' });
+      // labels
+      g.text([-5.8, 2.6], far ? 'Distant object' : 'Near object', { size: 14, bold: true, color: '#0f766e', align: 'left' });
+      g.text([-5.8, 2.15], `ciliary muscles ${f > 0.5 ? 'contract' : 'relax'}`, { size: 12, bold: true, color: f > 0.5 ? '#dc2626' : '#475569', align: 'left' });
+      g.text([-5.8, 1.75], `suspensory ligaments ${f > 0.5 ? 'slack' : 'pulled tight'}`, { size: 12, bold: true, color: '#475569', align: 'left' });
+      g.text([-5.8, 1.35], `lens ${f > 0.5 ? 'more convex (rounded)' : 'less convex (flatter)'}`, { size: 12, bold: true, color: '#0369a1', align: 'left' });
+      g.text([xl, 2.15], 'ciliary muscle', { size: 10, color: '#7f1d1d' });
+      g.text([-1.25, -1.15], 'cornea', { size: 10, color: '#0369a1' });
+      g.text([-5.8, -2.6], far ? 'extra lens power needed: about 0 D' : `extra lens power needed ≈ 1/${d.toFixed(2)} = ${(1 / d).toFixed(1)} D`, { size: 12, bold: true, color: '#0f766e', align: 'left' });
+    }
+
+    k.draw = g => { (mode.value === 0 ? pupil : accom)(g); };
+    function vis() {
+      light.input.parentElement.style.display = mode.value === 0 ? '' : 'none';
+      dist.input.parentElement.style.display = mode.value === 1 ? '' : 'none';
+    }
+    k.update = () => {
+      vis();
+      if (mode.value === 0) k.readout([light.value > 0.5 ? 'Bright light: circular muscles contract and radial muscles relax, so the pupil constricts and less light enters.' : 'Dim light: radial muscles contract and circular muscles relax, so the pupil dilates and more light enters.', 'This is an automatic (reflex) response.']);
+      else {
+        const d = D(dist.value), far = dist.value >= 0.99;
+        k.readout([far ? 'Distant object: the rays are almost parallel. The ciliary muscles relax, the ligaments are pulled tight and the lens is flatter. The cornea does most of the refraction.' : `Object at ${d.toFixed(2)} m: the rays diverge, so the lens must refract more. The ciliary muscles contract, the ligaments go slack and the elastic lens bulges.`,
+          `Model: the lens adds about 1/d = ${far ? '0' : (1 / d).toFixed(1)} dioptres more than for a distant object (thin-lens approximation).`]);
+      }
+    };
+    vis();
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Sample Questions (pp. 101–102)</span>
+
+  <p><strong>Q1 (v):</strong> True or false? The lens focuses the image on the cornea of the eye.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">False: the lens focuses the image on the retina.</p></details>
+
+  <p><strong>Q2 (v):</strong> Aqueous and vitreous chambers are involved in the ___ of light rays onto the retina.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">refraction (the aqueous and vitreous humours refract light rays).</p></details>
+
+  <p><strong>Q6 (c):</strong> State the two types of photoreceptor cells in retina and their functions.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">Rod cells are sensitive under low light and are responsible for vision at night. Cone cells are responsible for colour vision under conditions of high light intensity.</p></details>
+
+  <p><strong>Example:</strong> Why is there no vision at the blind spot, and why do we not notice it?</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">The blind spot is where the neurones leave the retina to form the optic nerve; it has no photoreceptors, so an image falling there is not detected. With two eyes, each eye covers the other's blind spot.</p></details>
+
+  <p><strong>Example:</strong> A student looks up from a book to a distant tree. Describe the changes in the eye. How much less lens power is needed if the book was 0.25 m away?</p>
+  <details><summary>Show answer</summary>
+    <p>For the tree the ciliary muscles relax, the pressure in the eye pushes outwards, the suspensory ligaments are pulled tight, and the lens becomes flatter (less convex).</p>
+    <p class="answer">In the thin-lens model the extra power needed for the book was 1/<em>d</em> = 1/0.25 = 4 dioptres, so the lens reduces its power by about 4 D.</p></details>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>Receptors in sense organs turn stimuli into impulses; the brain interprets them (vision: occipital lobe).</li>
+    <li>Retina: rods (dim light), cones (colour); fovea = clearest vision; blind spot = no receptors.</li>
+    <li>Bright light: circular muscles contract, pupil constricts. Dim light: radial muscles contract, pupil dilates.</li>
+    <li>Near: ciliary contract, ligaments slack, lens rounder. Far: ciliary relax, ligaments tight, lens flatter.</li>
+  </ul>
+</div>
+
+</article>

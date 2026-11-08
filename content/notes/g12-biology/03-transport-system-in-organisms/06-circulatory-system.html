@@ -1,0 +1,170 @@
+<!-- tags: Transport System in Organisms, G12 Biology Myanmar -->
+<!-- Grade 12 Biology textbook, Chapter 3, section 3.6 (pages 47–49) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Transport System in Organisms">Circulatory System</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Open, Single and Double Circulation</span>
+  <p>There are two main types of circulatory system: <strong>open</strong> and <strong>closed</strong>.</p>
+  <ul>
+    <li><strong>Open circulatory system:</strong> blood pumped by a <strong>tubular heart</strong> leaves <strong>open-ended vessels</strong> into blood spaces around the tissues. When the heart relaxes, blood flows back into the vessels through pores called <strong>ostia</strong>. Found in most arthropods (insects, spiders, crabs), e.g. the grasshopper.</li>
+    <li><strong>Closed circulatory system:</strong> the heart pumps blood into vessels that carry it to the tissues of the whole body and back to the heart. Advantages: (i) the <strong>pressure</strong> can be raised so blood flows more quickly; (ii) the flow can be <strong>directed</strong> precisely to the organs that need most oxygen and nutrients. Two types: single and double.</li>
+    <li><strong>Single circulatory system</strong> (fish): the heart pumps deoxygenated blood to the <strong>gills</strong>, where it takes in oxygen and gives up CO₂. The blood then travels round the body, giving oxygen to the cells, and returns to the heart. Blood passes <strong>once</strong> through the heart in each circuit.</li>
+    <li><strong>Double circulatory system</strong> (birds and mammals): two separate circulations. The <strong>systemic circulation</strong> carries oxygenated blood from the heart to the body cells and deoxygenated blood back. The <strong>pulmonary circulation</strong> carries deoxygenated blood to the lungs and oxygenated blood back to the heart. Blood passes <strong>twice</strong> through the heart in each full circuit.</li>
+  </ul>
+  <p>Birds and mammals need much more oxygen than fish: they move without the support of water and keep a constant body temperature, which uses a lot of resources, so their cells need plenty of oxygen and glucose and quick removal of waste.</p>
+  <p><strong>Advantages of double circulation:</strong> (i) oxygenated and deoxygenated blood cannot mix, so tissues get as much oxygen as possible; (ii) fully oxygenated blood reaches the tissues quickly at <strong>high pressure</strong>; (iii) blood in the tiny lung vessels is at relatively <strong>low pressure</strong>, so it does not damage them and allows gas exchange; (iv) oxygenated blood returning to the heart is pumped hard and reaches all the capillaries quickly, supplying oxygen for an active way of life.</p>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Counting the Passes</span>
+  <div class="formula-main">
+    $$\text{fish: heart} \to \text{gills} \to \text{body} \to \text{heart} \quad (1 \text{ pass})$$
+    $$\text{mammal: heart} \to \text{lungs} \to \text{heart} \to \text{body} \to \text{heart} \quad (2 \text{ passes})$$
+  </div>
+  <ul class="symbols">
+    <li>Open: blood leaves the vessels and bathes the tissues; closed: blood stays inside vessels</li>
+  </ul>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>"Fish need more oxygen than birds and mammals":</strong> birds and mammals need much more (they move without water's support and keep a constant body temperature).</li>
+    <li><strong>Pulmonary vs systemic:</strong> pulmonary = heart ↔ lungs; systemic = heart ↔ rest of the body.</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; Follow One Drop of Blood</span>
+  <p class="demo-question">Where does the blood go in an insect, a fish and a mammal, and how many times does it pass through the heart?</p>
+  <p class="demo-instruction">Choose an animal. Red = oxygenated, blue = deoxygenated. The highlighted drop counts its passes through the heart. Notice how the drops slow down after the fish's gills, but not after the mammal's lungs.</p>
+  <div id="pk-circ"></div>
+  <script>
+  (function () {
+    const k = PhysKit.mount('pk-circ', { x: [-6, 6], y: [-3, 3] });
+    const C = PhysKit.C;
+    const kind = k.choice(['Insect (open)', 'Fish (single)', 'Mammal (double)'], 2, () => { passes = 0; lastU = -1; });
+    let t = 0, passes = 0, lastU = -1;   // lastU = the path segment the tracked drop was on
+    k.loop(dt => { t += dt; }, { button: false });
+
+    // paths: a list of points, plus speed per segment and colour change points
+    const FISH = { pts: [[-4.2, 0], [-2.6, 1.6], [-1.0, 1.6], [3.8, 1.6], [3.8, -1.6], [-4.2, -1.6], [-4.2, 0]], speed: [2.2, 2.2, 0.9, 0.9, 0.9, 0.9] };
+    const MAM = { pts: [[-0.7, 0], [-2.8, 1.2], [-1.2, 2.3], [1.2, 2.3], [2.8, 1.2], [0.7, 0], [2.8, -1.2], [1.2, -2.3], [-1.2, -2.3], [-2.8, -1.2], [-0.7, 0]], speed: [1.6, 1.6, 1.6, 1.6, 1.6, 2.0, 2.0, 2.0, 2.0, 2.0] };
+    function lengths(P) { const L = []; for (let i = 1; i < P.pts.length; i++) L.push(Math.hypot(P.pts[i][0] - P.pts[i - 1][0], P.pts[i][1] - P.pts[i - 1][1])); return L; }
+    // time to travel each segment, so drops can be placed by time
+    function at(P, time) {
+      const L = lengths(P), T = L.map((l, i) => l / P.speed[i]), tot = T.reduce((a, b) => a + b, 0);
+      let r = ((time % tot) + tot) % tot, i = 0;
+      while (r > T[i]) { r -= T[i]; i++; }
+      const f = r / T[i], a = P.pts[i], b = P.pts[i + 1];
+      return { p: [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f], seg: i, frac: (time % tot) / tot, tot };
+    }
+    // boxes are drawn first; their labels are written last so drops and paths never cover them
+    let labels = [];
+    const box = (g, c, w, h, txt, fill, col) => { g.rect(c[0] - w / 2, c[1] - h / 2, w, h, { fill, color: col, width: 2, radius: 10, fillAlpha: 0.7 }); labels.push([c, txt]); };
+
+    k.draw = g => {
+      const K = kind.value;
+      labels = [];
+      if (K === 0) {
+        // grasshopper body outline with a tubular heart along the back
+        g.path([[-5.4, -0.4], [-4.6, 1.3], [3.8, 1.6], [5.3, 0.6], [5.0, -1.5], [-4.6, -1.7]], { close: true, fill: '#ecfccb', color: '#4d7c0f', width: 2 });
+        g.rect(-3.6, 0.9, 7.6, 0.4, { fill: '#fde68a', color: '#b45309', width: 2, radius: 8 });
+        g.text([0.3, 1.95], 'tubular heart (pumps forwards) with ostia', { size: 10, bold: true, color: '#b45309' });
+        for (let x = -2.6; x < 4; x += 1.4) g.circle([x, 0.9], 0.07, { fill: '#fff', color: '#b45309', width: 1.5 });
+        g.text([-4.4, 1.4], 'open-ended', { size: 9, color: '#b45309' });
+        g.text([0, -2.3], 'blood spaces: haemolymph bathes the organs directly', { size: 10, bold: true, color: '#4d7c0f' });
+        // drops: in the heart they move left fast; out in the body cavity they drift slowly back
+        for (let i = 0; i < 18; i++) {
+          const ph = ((t * 0.12 + i / 18) % 1);
+          let p;
+          if (ph < 0.3) p = [3.6 - ph / 0.3 * 7.2, 1.1];
+          else { const u = (ph - 0.3) / 0.7; p = [-3.8 + 7.0 * u + 0.3 * Math.sin(i + t), 0.5 - 1.6 * Math.sin(Math.PI * u) + 0.25 * Math.cos(i * 2 + t * 0.7)]; }
+          g.dot(p, 4.5, '#92400e');
+        }
+        g.text([0, 2.6], 'Open circulation (insect)', { size: 14, bold: true });
+      }
+      if (K === 1) {
+        g.path(FISH.pts, { color: C.faint, width: 6 });
+        box(g, [-4.2, 0], 1.3, 0.9, 'heart', '#fecaca', '#dc2626');
+        box(g, [-1.8, 1.6], 1.6, 0.8, 'gills', '#e0f2fe', C.fluid);
+        box(g, [3.8, 0], 1.6, 1.0, 'body cells', '#dcfce7', C.vel);
+        for (let i = 0; i < 14; i++) {
+          const q = at(FISH, t + i * 1.0);
+          const oxy = q.seg >= 2 && q.seg <= 3 || (q.seg === 4 && q.p[1] > 0.2);
+          g.dot(q.p, 5, oxy ? '#dc2626' : '#2563eb');
+        }
+        g.text([0.8, 2.2], 'after the gills: lower pressure, slower flow', { size: 10, color: C.muted });
+        g.text([0, -2.4], 'Single circulation (fish): one pass through the heart per circuit', { size: 12, bold: true });
+      }
+      if (K === 2) {
+        g.path(MAM.pts, { color: C.faint, width: 6 });
+        box(g, [-0.7, 0], 1.2, 1.0, 'right', '#bfdbfe', '#2563eb');
+        box(g, [0.7, 0], 1.2, 1.0, 'left', '#fecaca', '#dc2626');
+        g.text([0, 0.75], 'heart', { size: 10, bold: true });
+        box(g, [0, 2.3], 2.2, 0.7, 'lungs', '#e0f2fe', C.fluid);
+        box(g, [0, -2.3], 2.2, 0.7, 'body cells', '#dcfce7', C.vel);
+        for (let i = 0; i < 16; i++) {
+          const q = at(MAM, t + i * 0.9);
+          const oxy = q.seg >= 2 && q.seg <= 6 || (q.seg === 7 && q.p[0] > 0);
+          g.dot(q.p, 5, oxy ? '#dc2626' : '#2563eb');
+        }
+        g.text([-4.2, 1.9], 'pulmonary circulation', { size: 11, bold: true, color: C.fluid });
+        g.text([-4.2, 1.5], '(low pressure, lungs safe)', { size: 9, color: C.muted });
+        g.text([-4.2, -1.6], 'systemic circulation', { size: 11, bold: true, color: C.vel });
+        g.text([-4.2, -2.0], '(high pressure, fast)', { size: 9, color: C.muted });
+      }
+      // the tracked drop: count each time it reaches the heart
+      if (K > 0) {
+        const P = K === 1 ? FISH : MAM;
+        const q = at(P, t);
+        // a pass is counted when the drop enters a heart chamber: the start of the path
+        // (both animals) and, for the mammal, the left heart after the lungs (segment 5)
+        if (lastU >= 0 && q.seg !== lastU && (q.seg === 0 || (K === 2 && q.seg === 5))) passes++;
+        lastU = q.seg;
+        g.dot(q.p, 9, '#facc15', { stroke: C.ink, width: 2 });
+        labels.forEach(([c, txt]) => g.text(c, txt, { size: 11, bold: true, bg: 'rgba(255,255,255,0.75)' }));
+        g.text([4.4, 2.6], `heart passes: ${passes}`, { size: 13, bold: true, color: '#a16207' });
+      }
+    };
+    k.update = () => {
+      const K = kind.value;
+      k.readout([['Open: the tubular heart pumps blood out of open-ended vessels into spaces round the organs; it returns through the ostia when the heart relaxes.',
+        'Single: heart → gills → body → heart. The blood passes through the heart once per circuit, and its pressure is lower after the gills.',
+        'Double: heart → lungs → heart → body → heart. Two passes per circuit; oxygenated and deoxygenated blood never mix, and the body gets blood at high pressure.'][K]]);
+    };
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Sample Questions (pp. 59–60)</span>
+
+  <p><strong>Q1 (iv):</strong> TRUE or FALSE: Fish need much more oxygen than birds and mammals.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">FALSE: birds and mammals need much more oxygen than fish.</p></details>
+
+  <p><strong>Q7 (b):</strong> Briefly explain the advantages of double circulation.</p>
+  <details><summary>Show answer</summary>
+    <p>(i) The separate circuits keep oxygenated and deoxygenated blood from mixing, so the tissues receive as much oxygen as possible.</p>
+    <p>(ii) Fully oxygenated blood is delivered quickly to the body tissues at high pressure.</p>
+    <p>(iii) Blood in the tiny lung vessels is at relatively low pressure, so it does not damage them and allows gas exchange.</p>
+    <p class="answer">(iv) Oxygenated blood returning to the heart is pumped hard round the body at high pressure, reaching all the capillaries quickly and supplying oxygen for an active way of life.</p></details>
+
+  <p><strong>Example:</strong> State one difference between an open and a closed circulatory system, and one advantage of the closed one.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">In an open system blood leaves the vessels and bathes the tissues directly (returning through ostia); in a closed system it stays inside vessels. A closed system can raise the pressure for faster flow and can direct blood to the organs that need it most.</p></details>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>Open (arthropods): tubular heart, open-ended vessels, blood spaces, ostia.</li>
+    <li>Closed: higher pressure and directed flow; single in fish, double in birds and mammals.</li>
+    <li>Double circulation: pulmonary (low pressure) + systemic (high pressure); no mixing of blood.</li>
+  </ul>
+</div>
+
+</article>

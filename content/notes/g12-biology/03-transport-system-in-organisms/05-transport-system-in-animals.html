@@ -1,0 +1,168 @@
+<!-- tags: Transport System in Organisms, G12 Biology Myanmar -->
+<!-- Grade 12 Biology textbook, Chapter 3, section 3.5 (pages 46–47) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Transport System in Organisms">Transport System in Animals</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Too Big for Diffusion Alone</span>
+  <p>Large multicellular animals have evolved transport systems because they are bigger and have higher metabolic rates.</p>
+  <ul>
+    <li><strong>Principles of circulation:</strong> in many large animals, including all vertebrates, the circulatory system is a <strong>mass transport system</strong>: substances are carried in the flow of a fluid, with a mechanism for moving it around the body.</li>
+    <li><strong>The need for transport:</strong> single-celled organisms have a <strong>high surface area to volume ratio</strong>, so their surface membrane can supply all the oxygen and materials their volume demands. Large multicellular organisms have a <strong>low</strong> ratio: their surface is not enough for their metabolic needs, so they need a transport system.</li>
+    <li>Every cell carries out chemical reactions and needs glucose and oxygen for <strong>cellular respiration</strong>; these must be brought from outside a large organism. Respiration releases energy for the other reactions of life but also produces the toxic waste <strong>carbon dioxide</strong>, which, with other wastes, must be removed before it damages the cells.</li>
+  </ul>
+  <p><strong>Features of mass transport systems:</strong></p>
+  <ol>
+    <li><strong>exchange surfaces</strong> to get materials into and out of the system;</li>
+    <li>a <strong>system of vessels</strong>, usually tubes, following a specific route or widely branching;</li>
+    <li>a way of making sure substances move in the <strong>right direction</strong> (nutrients in, waste out);</li>
+    <li>a way of moving materials <strong>fast enough</strong>: mechanical methods such as the pumping of the heart, or keeping a concentration gradient (e.g. facilitated diffusion and active transport);</li>
+    <li>a suitable <strong>transport medium</strong> (a fluid);</li>
+    <li>often, a way of <strong>adapting the rate</strong> of transport to the organism's needs.</li>
+  </ol>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Why Size Matters</span>
+  <div class="formula-main">
+    $$\text{sphere: } \frac{A}{V} = \frac{4\pi r^2}{\tfrac{4}{3}\pi r^3} = \frac{3}{r} \qquad t_{\text{diffusion}} \approx \frac{x^2}{2D}$$
+  </div>
+  <ul class="symbols">
+    <li>x = distance to diffuse; D = diffusion coefficient (oxygen in water, about 2 × 10⁻⁹ m² s⁻¹)</li>
+    <li>Ten times farther takes about a hundred times longer</li>
+  </ul>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>"Big animals have a big surface, so they need no transport":</strong> the surface grows as r², but the volume as r³; per unit volume, a big animal has <em>less</em> surface.</li>
+    <li><strong>Diffusion time grows in step with distance:</strong> it grows with the <em>square</em> of the distance.</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; How Far Can Oxygen Diffuse?</span>
+  <p class="demo-question">As an organism gets bigger, what happens to its surface area to volume ratio and to the time oxygen needs to reach its centre?</p>
+  <p class="demo-instruction"><em>Diffusion and size:</em> drag the size slider from a single cell to a large animal; oxygen (blue) diffuses in from the surface. <em>Mass transport:</em> click the numbered features to see where each one is in a circulation.</p>
+  <div id="pk-size"></div>
+  <script>
+  (function () {
+    const k = PhysKit.mount('pk-size', { x: [-6, 6], y: [-3, 3] });
+    const C = PhysKit.C;
+    const mode = k.choice(['Diffusion and size', 'Mass transport features'], 0);
+    k.row();
+    // slider in powers of ten: radius from 0.01 mm to 100 mm
+    const lg = k.slider({ label: 'radius', min: -2, max: 2, step: 0.1, value: -1, format: v => { const r = Math.pow(10, v); return r < 1 ? r.toFixed(r < 0.1 ? 3 : 2) + ' mm' : r < 10 ? r.toFixed(1) + ' mm' : (r / 10).toFixed(r < 100 ? 1 : 0) + ' cm'; } });
+    const feat = k.choice(['1', '2', '3', '4', '5', '6'], 0);
+    let t = 0;
+    k.loop(dt => { t += dt; }, { button: false });
+    const D = 2e-9;                                   // oxygen in water, m² per s
+    const fmt = s => s < 60 ? s.toFixed(s < 1 ? 2 : 1) + ' s' : s < 3600 ? (s / 60).toFixed(1) + ' min' : s < 86400 * 2 ? (s / 3600).toFixed(1) + ' h' : (s / 86400).toFixed(0) + ' days';
+
+    function sizeView(g) {
+      const rmm = Math.pow(10, lg.value), r = rmm / 1000;            // metres
+      const tc = r * r / (2 * D);                                    // time to reach the centre
+      const ratio = 3 / rmm;                                         // per mm
+      const R = 2.3;                                                 // drawn radius is fixed; the label gives the real size
+      // oxygen front moves in: the drawing is sped up so that every size fills in 8 s,
+      // but the real time is printed beside it
+      const u = (t % 8) / 8, front = R * Math.sqrt(Math.max(0, 1 - u));
+      g.circle([-2.6, -0.2], R, { fill: '#fef3c7', color: '#b45309', width: 2 });
+      g.circle([-2.6, -0.2], R, { fill: '#bfdbfe', color: 'none', fillAlpha: 0.9 });
+      g.circle([-2.6, -0.2], front, { fill: '#fef3c7', color: 'none' });
+      g.dot([-2.6, -0.2], 4, C.ink);
+      g.text([-2.6, 2.55], rmm < 0.1 ? 'single cell' : rmm < 2 ? 'tiny animal' : rmm < 20 ? 'small animal' : 'large animal', { size: 13, bold: true });
+      g.text([-2.6, -2.85], `radius ${lg.input.parentElement.querySelector('.pk-val').textContent}`, { size: 11, color: C.muted });
+      g.text([2.9, 2.0], `A/V = 3/r = ${ratio < 1 ? ratio.toFixed(2) : ratio.toFixed(0)} per mm`, { size: 14, bold: true, color: C.vel });
+      g.text([2.9, 1.1], 'time for O₂ to reach the centre', { size: 11, color: C.muted });
+      g.text([2.9, 0.5], `≈ ${fmt(tc)}`, { size: 22, bold: true, color: tc < 60 ? C.good : C.bad });
+      g.text([2.9, -0.3], tc < 60 ? 'diffusion is enough' : 'far too slow: needs a transport system', { size: 12, bold: true, color: tc < 60 ? C.good : C.bad });
+      g.text([2.9, -1.4], 'animation is sped up to the same', { size: 9, color: C.muted });
+      g.text([2.9, -1.75], 'length for every size', { size: 9, color: C.muted });
+    }
+
+    // a simple circulation: pump, exchange surface (lungs or gills), vessels, body cells
+    const F = [
+      ['exchange surfaces', 'Lungs, gills and capillary walls let materials in and out.'],
+      ['system of vessels', 'Tubes (arteries, veins, capillaries) follow set routes and branch widely.'],
+      ['right direction', 'Valves let blood flow one way only.'],
+      ['fast enough', 'The heart pumps; gradients are kept up by facilitated diffusion and active transport.'],
+      ['transport medium', 'Blood: a fluid that carries O₂, CO₂, nutrients, wastes, hormones.'],
+      ['rate adapted', 'Heart rate and vessel width change with the body\'s needs (e.g. exercise).']
+    ];
+    function massView(g) {
+      const f = feat.value;
+      const hot = i => i === f ? C.energy : C.muted;
+      // loop of vessels
+      g.rect(-3.5, -2.0, 7, 4.0, { color: f === 1 || f === 4 ? C.energy : '#dc2626', width: f === 1 || f === 4 ? 6 : 4, radius: 30 });
+      // heart (pump)
+      const pump = f === 3 || f === 5;              // the heart is the pump and sets the rate
+      g.circle([-3.5, 0], 0.7, { fill: pump ? '#fde68a' : '#fecaca', color: pump ? C.energy : '#dc2626', width: 3 });
+      g.text([-3.5, 0], 'heart', { size: 11, bold: true });
+      // lungs (exchange surface) on top, body cells at the bottom
+      g.rect(-1.2, 1.55, 2.4, 0.9, { fill: f === 0 ? '#fde68a' : '#e0f2fe', color: hot(0), width: 2, radius: 12 });
+      g.text([0, 2.0], 'lungs / gills', { size: 11, bold: true });
+      g.rect(-1.2, -2.45, 2.4, 0.9, { fill: f === 0 ? '#fde68a' : '#dcfce7', color: hot(0), width: 2, radius: 12 });
+      g.text([0, -2.0], 'body cells', { size: 11, bold: true });
+      // valves (one-way flaps)
+      [[3.5, 0.6], [3.5, -0.6]].forEach(p => g.path([[p[0] - 0.35, p[1] + 0.25], [p[0], p[1] - 0.15], [p[0] + 0.35, p[1] + 0.25]], { color: hot(2), width: 3 }));
+      g.text([4.6, 0], 'valves', { size: 10, color: hot(2), bold: f === 2 });
+      // blood dots moving round (clockwise)
+      const per = 2 * (7 + 4);
+      for (let i = 0; i < 16; i++) {
+        let d = ((t * (f === 5 ? 3.2 : 1.6) + i * per / 16) % per);
+        let p;
+        if (d < 7) p = [-3.5 + d, 2.0]; else if ((d -= 7) < 4) p = [3.5, 2.0 - d]; else if ((d -= 4) < 7) p = [3.5 - d, -2.0]; else { d -= 7; p = [-3.5, -2.0 + d]; }
+        const oxy = (p[1] > 0 && p[0] > 0) || (p[0] > 3) || (p[1] < 0 && p[0] > 0);
+        g.dot(p, 5, oxy ? '#dc2626' : '#2563eb', { stroke: f === 4 ? C.energy : undefined, width: 2 });
+      }
+      g.text([0.3, 0.3], `${f + 1}. ${F[f][0]}`, { size: 15, bold: true, color: C.energy });
+      if (f === 5) g.text([0.3, -0.4], 'faster flow shown: exercise', { size: 10, color: C.muted });
+    }
+
+    k.draw = g => {
+      const M = mode.value;
+      lg.input.parentElement.style.display = M === 0 ? '' : 'none';
+      feat.buttons[0].parentElement.style.display = M === 1 ? '' : 'none';
+      if (M === 0) sizeView(g); else massView(g);
+    };
+    k.update = () => {
+      if (mode.value === 0) {
+        const r = Math.pow(10, lg.value) / 1000;
+        k.readout([`Estimate t ≈ x²/(2D) with x = ${(r * 1000).toPrecision(2)} mm and D = 2 × 10⁻⁹ m² s⁻¹: about ${fmt(r * r / (2 * D))}. A/V falls as 3/r, so big bodies have too little surface and too long distances.`]);
+      } else k.readout([`Feature ${feat.value + 1}: <b>${F[feat.value][0]}</b>. ${F[feat.value][1]}`]);
+    };
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Sample Questions (pp. 59–60)</span>
+
+  <p><strong>Example A:</strong> Using t ≈ x²/(2D) with D = 2 × 10⁻⁹ m² s⁻¹, estimate how long oxygen takes to diffuse (a) 0.1 mm and (b) 1 cm.</p>
+  <details><summary>Show answer</summary>
+    <p>(a) x = 1 × 10⁻⁴ m: t = (10⁻⁸) / (4 × 10⁻⁹) = 2.5 s.</p>
+    <p>(b) x = 1 × 10⁻² m: t = (10⁻⁴) / (4 × 10⁻⁹) = 2.5 × 10⁴ s ≈ 7 hours.</p>
+    <p class="answer">100 times the distance takes 10 000 times as long, so a body more than about a millimetre thick cannot rely on diffusion: it needs mass transport.</p></details>
+
+  <p><strong>Q3 (iv):</strong> Within any organism, (A. substances B. oxygen C. blood D. carbon dioxide) need to be removed from one place to another.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">A, substances.</p></details>
+
+  <p><strong>Q5:</strong> Use life, organism, toxic, oxygen, cells, multicellular, materials, metabolic: "In (a) animals, many chemical reactions take place inside every microscopic cell. These cells require a supply of chemical substances such as glucose and (b) for cellular respiration. These must be transported from outside of a large (c) into the cells. Respiration supplies energy for the other reactions of (d), but it also produces the (e) waste product carbon dioxide. This and other waste products need to be removed from the (f) before they cause damage to them."</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">(a) multicellular; (b) oxygen; (c) organism; (d) life; (e) toxic; (f) cells.</p></details>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>Big organisms have a low surface area to volume ratio and long diffusion distances.</li>
+    <li>Mass transport carries substances in a moving fluid.</li>
+    <li>Six features: exchange surfaces, vessels, one-way direction, fast movement, a medium, an adjustable rate.</li>
+  </ul>
+</div>
+
+</article>

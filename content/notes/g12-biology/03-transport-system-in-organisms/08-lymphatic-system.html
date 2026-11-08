@@ -1,0 +1,136 @@
+<!-- tags: Transport System in Organisms, G12 Biology Myanmar -->
+<!-- Grade 12 Biology textbook, Chapter 3, section 3.8 (page 58) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Transport System in Organisms">Lymphatic System</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; The Drain for Tissue Fluid</span>
+  <p>Between the capillaries and the cells is a watery liquid called <strong>tissue fluid</strong>. It forms when part of the blood plasma leaks out of the capillaries (at the arterial end, where blood pressure is high). It bathes the cells, supplying them with materials and taking away their wastes.</p>
+  <ul>
+    <li>Most of the water in tissue fluid <strong>re-enters the capillaries by osmosis</strong> (at the venous end).</li>
+    <li>Some fluid passes into another system, the <strong>lymphatic system</strong>: vessels similar to blood capillaries, called <strong>lymphatic capillaries</strong>, with <strong>valves to prevent backflow</strong>. The fluid inside them is called <strong>lymph</strong>.</li>
+    <li>Lymph is carried back to the blood: the lymph vessels join the main lymph vessel (thoracic duct), which opens into the <strong>subclavian veins</strong> in the shoulders.</li>
+    <li>The <strong>lacteals</strong>, which carry <strong>fats</strong> from the villi of the small intestine, are part of the lymphatic system.</li>
+    <li>Before lymph returns to the blood it is <strong>filtered</strong> in swellings called <strong>lymph nodes</strong>, which remove dead cells and bacteria. Lymph nodes contain <strong>white blood cells</strong> that destroy harmful bacteria. One of the first signs of infection is often swelling of the lymph nodes ("swollen glands").</li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Fluid Balance</span>
+  <div class="formula-main">
+    $$\text{fluid leaving capillaries} = \text{fluid returning to capillaries} + \text{lymph}$$
+    $$\text{plasma} \to \text{tissue fluid} \to \text{lymph} \to \text{lymph nodes} \to \text{subclavian veins} \to \text{blood}$$
+  </div>
+  <ul class="symbols">
+    <li>Pushed out by blood pressure at the arterial end; drawn back by osmosis at the venous end</li>
+  </ul>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>Lymph is a separate fluid made by the nodes:</strong> lymph is simply tissue fluid that has drained into lymph vessels.</li>
+    <li><strong>Lymph returns to the heart through arteries:</strong> it rejoins the blood in the <em>subclavian veins</em>.</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; Where Does the Leaked Fluid Go?</span>
+  <p class="demo-question">How is tissue fluid made and returned, and what happens if the lymph cannot drain or an infection arrives?</p>
+  <p class="demo-instruction">Fluid (light blue dots) is pushed out at the arterial end, bathes the cells, and returns at the venous end; the rest drains into the lymph vessel (yellow) and passes through a lymph node. Raise the blood pressure, block the lymph vessel, or add an infection. The pressures are typical textbook values used as a simple model.</p>
+  <div id="pk-lymph"></div>
+  <script>
+  (function () {
+    const k = PhysKit.mount('pk-lymph', { x: [-6, 6], y: [-3, 3] });
+    const C = PhysKit.C;
+    const pa = k.slider({ label: 'blood pressure at arterial end', unit: 'mmHg', min: 25, max: 50, step: 1, value: 35 });
+    k.row();
+    const block = k.check('lymph vessel blocked', false);
+    const inf = k.check('infection (bacteria)', false);
+    k.button('Reset', () => { extra = 0; dots = []; });
+    const PV = 16, OSM = 25;                // venous-end pressure and the plasma's osmotic pull (mmHg)
+    let t = 0, dots = [], extra = 0;
+    const out = () => Math.max(0, pa.value - OSM), back = () => Math.max(0, OSM - PV);
+    k.loop(dt => {
+      t += dt;
+      const o = out(), b = back();
+      // new fluid dots leave the arterial half of the capillary at a rate set by the outward push
+      if (Math.random() < o * dt * 0.35) dots.push({ x: -4.5 + Math.random() * 3.5, y: 0.75, st: 0, toLymph: Math.random() > Math.min(1, b / Math.max(o, 0.01)) });
+      dots.forEach(d => {
+        if (d.st === 0) { d.y -= 0.8 * dt; d.x += 0.25 * dt; if (d.y < -0.2) d.st = 1; }
+        else if (d.st === 1) {
+          if (!d.toLymph) { d.x += 1.0 * dt; d.y += (d.x > 1.2 ? 0.9 : 0) * dt; if (d.y > 0.75) d.st = 9; }
+          else if (block.value) { d.x += 0.3 * Math.sin(t * 3 + d.y * 7) * dt; }   // stuck in the tissue
+          else { if (d.x < -2.6) d.x += 1.0 * dt; else d.y -= 0.8 * dt; if (d.y < -1.6) { d.st = 2; } }   // walk to the lymph capillary, then drop in
+        } else if (d.st === 2) { d.x += 1.0 * dt; if (d.x > 5.8) d.st = 9; }
+      });
+      dots = dots.filter(d => d.st !== 9);
+      const stuck = dots.filter(d => d.st === 1 && d.toLymph && block.value).length;
+      extra = stuck;
+    }, { button: false });
+
+    k.draw = g => {
+      const o = out(), b = back(), ly = Math.max(0, o - b);
+      const swell = Math.min(1, extra / 8);
+      // tissue area (swells when fluid builds up)
+      g.rect(-5.4, -1.25 - 0.3 * swell, 9.3, 1.75 + 0.6 * swell, { fill: swell > 0.4 ? '#fee2e2' : '#f0fdf4', color: 'none', radius: 14 });
+      for (let i = 0; i < 6; i++) g.circle([-4.6 + i * 1.5, -0.35], 0.42, { fill: '#dcfce7', color: C.vel });
+      g.text([-4.3, -1.05 - 0.3 * swell], swell > 0.4 ? 'tissue swelling!' : 'body cells in tissue fluid', { size: 10, bold: true, color: swell > 0.4 ? C.bad : C.vel, align: 'left' });
+      // blood capillary: red at the arterial end, blue at the venous end
+      for (let i = 0; i < 40; i++) { const u = i / 39; g.rect(-5.6 + u * 9.6, 0.65, 0.26, 0.35, { fill: `rgb(${Math.round(220 - 180 * u)},${Math.round(38 + 60 * u)},${Math.round(38 + 200 * u)})`, color: 'none' }); }
+      g.text([-4.8, 1.3], `arterial end: ${pa.value} mmHg pushes fluid out`, { size: 10, bold: true, color: '#b91c1c', align: 'left' });
+      g.text([4.0, 1.3], `venous end: osmosis draws fluid back`, { size: 10, bold: true, color: '#1d4ed8', align: 'right' });
+      g.arrow([-5.9, 0.82], [0.4, 0], { color: '#b91c1c', width: 2 });
+      // lymph capillary with valves, then a lymph node, then on to the subclavian vein
+      g.rect(-3.0, -1.95, 7.5, 0.4, { fill: block.value ? '#e5e7eb' : '#fef9c3', color: '#ca8a04', width: 2, radius: 10 });
+      if (block.value) g.text([-2.1, -1.75], '✕ blocked', { size: 11, bold: true, color: C.bad });
+      [-1.2, 1.2].forEach(x => g.path([[x - 0.15, -1.6], [x + 0.1, -1.75], [x - 0.15, -1.9]], { color: '#a16207', width: 2 }));
+      const nodeR = inf.value ? 0.75 : 0.5;
+      g.circle([4.9, -1.75], nodeR, { fill: inf.value ? '#fecaca' : '#fde68a', color: '#a16207', width: 2 });
+      g.text([4.9, -2.75], inf.value ? 'lymph node swollen' : 'lymph node', { size: 10, bold: true, color: inf.value ? C.bad : '#a16207' });
+      if (inf.value) for (let i = 0; i < 5; i++) { const a = t * 1.5 + i * 1.26; g.dot([4.9 + 0.4 * Math.cos(a), -1.75 + 0.4 * Math.sin(a)], 5, '#f8fafc', { stroke: '#7c3aed', width: 2 }); }
+      g.text([-3.6, -2.55], 'lymph capillary (valves stop backflow) → to subclavian vein', { size: 10, color: '#a16207', align: 'left' });
+      if (inf.value) for (let i = 0; i < 4; i++) g.dot([-0.5 + i * 1.4 + 0.2 * Math.sin(t + i), -1.75], 3, '#16a34a');
+      dots.forEach(d => g.dot([d.x, d.y], 3.5, d.st === 2 ? '#ca8a04' : C.fluid));
+      // numbers
+      g.text([4.95, 2.75], `out ${o} · back ${b} · to lymph ${ly}`, { size: 11, bold: true });
+      g.text([4.95, 2.35], o ? `${Math.round(100 * ly / o)} % of the leaked fluid becomes lymph` : 'no fluid is pushed out', { size: 10, color: C.muted });
+    };
+    k.update = () => {
+      const o = out(), b = back();
+      k.readout([`Model: outward push = ${pa.value} − ${OSM} = ${o} mmHg; inward osmotic pull at the venous end = ${OSM} − ${PV} = ${b} mmHg. Most fluid returns by osmosis; the remainder drains as lymph.`,
+        block.value ? 'With the lymph vessel blocked, the extra fluid stays in the tissue and it swells.' : inf.value ? 'Bacteria carried in the lymph are trapped in the node, where white blood cells destroy them; the node swells.' : 'Lymph is filtered in the lymph node and returned to the blood at the subclavian veins.']);
+    };
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Sample Questions (pp. 59–60)</span>
+
+  <p><strong>Q2 (vi):</strong> Most of the water from tissue fluid re-enters ___ by osmosis.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">capillaries.</p></details>
+
+  <p><strong>Q8 (c):</strong> Explain all you know about the human lymphatic system.</p>
+  <details><summary>Show answer</summary>
+    <p>Tissue fluid lies between the capillaries and the cells. Most of its water re-enters the capillaries by osmosis; some passes into the lymphatic system.</p>
+    <p>The lymphatic system has vessels like blood capillaries, the lymphatic capillaries, with valves to prevent backflow. They carry the fluid, lymph, back to the blood, opening into the subclavian veins. The lacteals, which carry fats from the villi of the small intestine, are part of it.</p>
+    <p class="answer">Lymph is filtered in lymph nodes, which remove dead cells and bacteria; their white blood cells destroy harmful bacteria. When a person has an infection, the lymph nodes often swell (swollen glands).</p></details>
+
+  <p><strong>Example:</strong> Why do the ankles swell if lymph vessels are blocked?</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">Not all of the fluid pushed out of the capillaries returns by osmosis; the rest normally drains away as lymph. If the lymph vessels are blocked, this extra fluid stays in the tissues, so they swell.</p></details>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>Tissue fluid leaks from capillaries; most returns by osmosis, the rest drains as lymph.</li>
+    <li>Lymph capillaries have valves; lymph rejoins the blood at the subclavian veins; lacteals carry fats.</li>
+    <li>Lymph nodes filter lymph; their white cells destroy bacteria and they swell in infection.</li>
+  </ul>
+</div>
+
+</article>

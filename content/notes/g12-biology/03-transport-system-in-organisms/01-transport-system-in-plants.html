@@ -1,0 +1,164 @@
+<!-- tags: Transport System in Organisms, G12 Biology Myanmar -->
+<!-- Grade 12 Biology textbook, Chapter 3, section 3.1 (pages 39–41) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Transport System in Organisms">Transport System in Plants</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; Spread Out to Collect, Pipe to Share</span>
+  <p>Plants make their own organic molecules by photosynthesis: CO₂ is the source of carbon and light the source of energy. The leaves have a <strong>large surface area to volume ratio</strong>, which gives more area to collect light and CO₂ and a shorter distance for CO₂ to diffuse in and O₂ to diffuse out. So plants are not compact like animals: they have branching bodies with leaves above ground and extensive root systems below ground for water and mineral salts.</p>
+  <p><strong>Transport systems are needed</strong> to move substances:</p>
+  <ul>
+    <li>from where they are <strong>absorbed</strong> to where they are needed: water and mineral ions from the roots, through the <strong>xylem</strong>, to other parts;</li>
+    <li>from where they are <strong>produced</strong> to where they are needed for metabolism: sugars made in the leaves go to all parts for respiration and for making cellulose cell walls in growing regions (carried in the phloem as sucrose);</li>
+    <li>to <strong>storage</strong> places: sugars are changed into starch, e.g. in a potato tuber.</li>
+  </ul>
+  <p>Plants have a branching shape that keeps their surface area to volume ratio large, and their energy needs are small compared with animals, so respiration is slow. Diffusion alone can supply cells with oxygen and remove CO₂; leaves are thin with air spaces inside, so diffusion supplies the mesophyll cells with CO₂ for photosynthesis.</p>
+  <p><strong>Two transport tissues:</strong></p>
+  <ul>
+    <li><strong>Xylem</strong> transports <strong>water and inorganic ions</strong> from the roots to all parts. It has <strong>dead, empty, hollow cells with no end walls</strong>: <strong>xylem vessels</strong> in long lines form hollow tubes, and water moves through them by <strong>mass flow</strong>. Xylem also has tracheids, xylem fibres and xylem parenchyma.</li>
+    <li><strong>Phloem</strong> transports substances <strong>made in the plant</strong> (sucrose, amino acids) from the leaves to all other parts. Its <strong>sieve tubes</strong> are <strong>living</strong> cells with cytoplasm and a few organelles but <strong>no nucleus</strong>; their walls are cellulose. A <strong>companion cell</strong> sits beside each sieve tube. Phloem also has phloem fibres and phloem parenchyma.</li>
+  </ul>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Surface Area to Volume</span>
+  <div class="formula-main">
+    $$\text{cube of side } s: \quad A = 6s^2, \quad V = s^3, \quad \frac{A}{V} = \frac{6}{s}$$
+  </div>
+  <ul class="symbols">
+    <li>The bigger and more compact the body, the smaller A/V</li>
+    <li>A thin, flat leaf of the same volume has a much larger A/V</li>
+  </ul>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>"Xylem cells are living":</strong> xylem vessels are <em>dead, empty</em> tubes with no end walls. Phloem sieve tubes are living (but have no nucleus).</li>
+    <li><strong>Phloem only carries sugar downwards:</strong> phloem carries sugar from leaves to <em>wherever</em> it is needed, up to growing tips and fruits or down to roots and tubers.</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; Why Plants Branch, and What Each Pipe Carries</span>
+  <p class="demo-question">How does shape change the surface area to volume ratio, and where do the xylem and phloem carry their loads?</p>
+  <p class="demo-instruction"><em>Surface area : volume:</em> change the size of the cube and compare it with a thin leaf of the same volume. <em>Xylem and phloem:</em> watch water (blue) rise in the xylem and sugar (orange) leave the leaves in the phloem; tick the boxes to show one at a time.</p>
+  <div id="pk-plantT"></div>
+  <script>
+  (function () {
+    const k = PhysKit.mount('pk-plantT', { x: [-6, 6], y: [-3, 3] });
+    const C = PhysKit.C;
+    const mode = k.choice(['Surface area : volume', 'Xylem and phloem'], 0);
+    k.row();
+    const s = k.slider({ label: 'cube side s', unit: 'cm', min: 1, max: 5, step: 0.5, value: 2 });
+    const showX = k.check('xylem', true), showP = k.check('phloem', true);
+    let t = 0;
+    k.loop(dt => { t += dt; }, { button: false });
+
+    const T = 0.2;                                    // leaf thickness (cm)
+    function sav(g) {
+      const S = s.value, A = 6 * S * S, V = S * S * S;
+      // a leaf slab with the same volume: a × a × T
+      const a = Math.sqrt(V / T), AL = 2 * a * a + 4 * a * T;
+      // cube drawn as a front square plus a top and side face (oblique view)
+      const sc = 0.55, x0 = -4.8, y0 = -1.6, w = S * sc, d = w * 0.4;
+      g.path([[x0, y0], [x0 + w, y0], [x0 + w, y0 + w], [x0, y0 + w]], { close: true, fill: '#dcfce7', color: C.vel });
+      g.path([[x0, y0 + w], [x0 + d, y0 + w + d], [x0 + w + d, y0 + w + d], [x0 + w, y0 + w]], { close: true, fill: '#bbf7d0', color: C.vel });
+      g.path([[x0 + w, y0], [x0 + w + d, y0 + d], [x0 + w + d, y0 + w + d], [x0 + w, y0 + w]], { close: true, fill: '#86efac', color: C.vel });
+      g.text([x0 + w / 2, y0 - 0.35], `cube ${S} cm`, { size: 11, bold: true });
+      // the leaf: a wide flat slab (scaled to fit)
+      const lw = Math.min(5.0, a * 0.42), lh = Math.max(0.08, T * 0.42), lx = 0.4, ly = -1.4;
+      g.path([[lx, ly], [lx + lw, ly], [lx + lw, ly + lh], [lx, ly + lh]], { close: true, fill: '#86efac', color: C.vel });
+      g.path([[lx, ly + lh], [lx + 0.6, ly + lh + 0.6], [lx + lw + 0.6, ly + lh + 0.6], [lx + lw, ly + lh]], { close: true, fill: '#dcfce7', color: C.vel });
+      g.text([lx + lw / 2, ly - 0.35], `leaf ${a.toFixed(1)} × ${a.toFixed(1)} × ${T} cm (same volume)`, { size: 11, bold: true });
+      g.text([-3.6, 2.5], `A = 6s² = ${A.toFixed(0)} cm²,  V = s³ = ${V.toFixed(V < 10 ? 1 : 0)} cm³`, { size: 12 });
+      g.text([-3.6, 2.0], `A/V = ${(A / V).toFixed(2)} per cm`, { size: 14, bold: true, color: C.vel });
+      g.text([2.9, 2.5], `A = ${AL.toFixed(0)} cm²`, { size: 12 });
+      g.text([2.9, 2.0], `A/V = ${(AL / V).toFixed(2)} per cm`, { size: 14, bold: true, color: C.good });
+      g.text([2.9, 1.4], `${(AL / A).toFixed(1)} × the cube's surface`, { size: 11, color: C.muted });
+    }
+
+    // the plant: root at the bottom, stem, two leaves, a growing tip and a tuber
+    const P = { root: [0, -2.4], base: [0, -1.4], top: [0, 2.3], leafL: [-2.3, 0.9], leafR: [2.3, 0.2], tuber: [-1.6, -2.3] };
+    function along(path, u) {                          // point at fraction u of a poly-line
+      const L = []; let tot = 0;
+      for (let i = 1; i < path.length; i++) { const d = Math.hypot(path[i][0] - path[i - 1][0], path[i][1] - path[i - 1][1]); L.push(d); tot += d; }
+      let r = u * tot;
+      for (let i = 1; i < path.length; i++) { if (r <= L[i - 1]) { const f = r / L[i - 1]; return [path[i - 1][0] + (path[i][0] - path[i - 1][0]) * f, path[i - 1][1] + (path[i][1] - path[i - 1][1]) * f]; } r -= L[i - 1]; }
+      return path[path.length - 1];
+    }
+    function plant(g) {
+      g.rect(-6, -3, 12, 1.6, { fill: '#a16207', fillAlpha: 0.18, color: 'none' });
+      g.text([4.8, -1.65], 'soil', { size: 10, color: '#a16207' });
+      // roots
+      [[-1.2, -2.8], [1.2, -2.7], [0.3, -2.9], [-0.6, -2.95]].forEach(r => g.line(P.base, r, { color: '#92400e', width: 2 }));
+      g.circle(P.tuber, 0.45, { fill: '#fde68a', color: '#b45309' }); g.line([-0.6, -1.9], P.tuber, { color: '#92400e', width: 2 });
+      g.text([-2.6, -2.75], 'tuber (stores starch)', { size: 9, color: '#b45309' });
+      // stem with xylem (left side, blue) and phloem (right side, orange)
+      g.rect(-0.25, -1.4, 0.5, 3.7, { fill: '#dcfce7', color: C.vel, radius: 6 });
+      g.line([-0.1, -1.4], [-0.1, 2.3], { color: '#93c5fd', width: 3 });
+      g.line([0.1, -1.4], [0.1, 2.3], { color: '#fdba74', width: 3 });
+      // leaves
+      g.path([[0, 0.9], [-1.2, 1.5], [-2.8, 1.2], [-1.5, 0.6]], { close: true, fill: '#86efac', color: C.vel });
+      g.path([[0, 0.2], [1.2, 0.8], [2.8, 0.4], [1.4, -0.1]], { close: true, fill: '#86efac', color: C.vel });
+      g.text([0, 2.65], 'growing tip', { size: 10, color: C.vel, bold: true });
+      g.text([-2.6, 1.75], 'leaf (makes sugar)', { size: 10, color: C.vel });
+      // moving loads
+      const XP = [[[0, -2.6], [-0.1, -1.4], [-0.1, 0.9], [-1.8, 1.2]], [[0, -2.6], [-0.1, -1.4], [-0.1, 0.2], [1.9, 0.45]], [[0, -2.6], [-0.1, -1.4], [-0.1, 2.25]]];
+      const PP = [[[-1.8, 1.0], [0.1, 0.9], [0.1, -1.6], [-0.6, -1.9], P.tuber], [[1.9, 0.3], [0.1, 0.2], [0.1, 2.25]], [[-1.8, 1.0], [0.1, 0.9], [0.1, 2.25]]];
+      if (showX.value) XP.forEach((path, j) => { for (let i = 0; i < 4; i++) g.dot(along(path, ((t * 0.18 + i / 4 + j * 0.11) % 1)), 4.5, C.fluid); });
+      if (showP.value) PP.forEach((path, j) => { for (let i = 0; i < 3; i++) g.dot(along(path, ((t * 0.12 + i / 3 + j * 0.17) % 1)), 4.5, '#ea580c'); });
+      // key
+      g.text([3.9, 2.4], 'xylem: water + mineral ions', { size: 11, bold: true, color: '#0284c7' });
+      g.text([3.9, 2.0], 'roots → all parts (dead hollow tubes)', { size: 9, color: C.muted });
+      g.text([3.9, 1.5], 'phloem: sucrose + amino acids', { size: 11, bold: true, color: '#c2410c' });
+      g.text([3.9, 1.1], 'leaves → growing tip, roots, tuber', { size: 9, color: C.muted });
+      g.text([3.9, 0.7], '(living sieve tubes, no nucleus)', { size: 9, color: C.muted });
+    }
+
+    k.draw = g => {
+      const M = mode.value;
+      s.input.parentElement.style.display = M === 0 ? '' : 'none';
+      showX.input.parentElement.style.display = showP.input.parentElement.style.display = M === 1 ? '' : 'none';
+      if (M === 0) sav(g); else plant(g);
+    };
+    k.update = () => {
+      if (mode.value === 0) { const S = s.value; k.readout([`A ${S} cm cube has A/V = 6/${S} = ${(6 / S).toFixed(2)} per cm. Spreading the same volume into a thin leaf gives far more surface for light and CO₂, and short diffusion distances.`]); }
+      else k.readout(['Xylem carries water and ions up from the roots; phloem carries sugars from the leaves (where they are made) to where they are used or stored.']);
+    };
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Sample Questions (pp. 59–60)</span>
+
+  <p><strong>Example A:</strong> Find the surface area to volume ratio of cubes of side 1 cm and 4 cm. Which shape is better for exchange by diffusion?</p>
+  <details><summary>Show answer</summary>
+    <p>1 cm: A = 6 cm², V = 1 cm³, A/V = 6 per cm. 4 cm: A = 96 cm², V = 64 cm³, A/V = 1.5 per cm.</p>
+    <p class="answer">The small cube has 4 times the surface per unit volume, so diffusion can supply it far more easily. A large plant keeps its A/V high by branching and having thin leaves.</p></details>
+
+  <p><strong>Q1 (i), (ii):</strong> TRUE or FALSE. (i) Plants have extensive root systems below the ground. (ii) Xylem tissue contains living, empty cells with no end walls.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">(i) TRUE. (ii) FALSE: xylem contains <em>dead</em>, empty hollow cells with no end walls.</p></details>
+
+  <p><strong>Q3 (i):</strong> (A. Xylem B. Phloem C. Parenchyma D. Fibre) transports water and minerals from the roots to the leaves.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">A, xylem.</p></details>
+
+  <p><strong>Q4 (ii):</strong> "Transport substances made in plant" is matched with (C) phloem.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">Phloem: it carries sucrose and amino acids made in the leaves.</p></details>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>Branching bodies and thin leaves keep a large surface area to volume ratio.</li>
+    <li>Transport moves substances from where they are absorbed or made to where they are used or stored.</li>
+    <li>Xylem: dead hollow vessels, water and ions up by mass flow. Phloem: living sieve tubes + companion cells, sugars and amino acids.</li>
+  </ul>
+</div>
+
+</article>
