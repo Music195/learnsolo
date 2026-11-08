@@ -1,0 +1,180 @@
+<!-- tags: Biodiversity and Conservation, G12 Biology Myanmar -->
+<!-- Grade 12 Biology textbook, Chapter 6, section 6.1 (pages 104–106) -->
+<article class="note-page">
+
+  <h1 class="note-title" data-topic="Biodiversity and Conservation">Biodiversity</h1>
+
+<div class="note-concept">
+  <span class="block-label">Concept &mdash; The Variety of Life</span>
+  <p><strong>Biodiversity</strong> comes from <em>bio</em> (life) and <em>diversity</em> (variability). The term was coined by Walter G. Rosen in 1985 and popularised by Edward O. Wilson, the "Father of Biodiversity". It is the variety and variability among living organisms and the ecological complexes in which they occur: the totality of genes, species and ecosystems of a region. It keeps the balance of the ecosystem.</p>
+  <p><strong>Three levels of biodiversity:</strong></p>
+  <ul>
+    <li><strong>Ecosystem diversity:</strong> the variation in ecosystems or habitats. An ecosystem is a community of organisms and their physical environment interacting together. Ecosystems (deserts, rainforests, mangroves) differ in niches, trophic structure, food webs and nutrient cycling, and with moisture, temperature, altitude and rainfall.</li>
+    <li><strong>Species diversity:</strong> the number of species <em>and</em> the abundance of each species in a place. The number of species alone is <strong>species richness</strong>. The more species there are, and the more <strong>evenly</strong> the organisms are spread among them, the greater the species diversity. Coral reefs have very high diversity. Ecosystems with high species diversity tend to be more <strong>stable</strong> and better able to resist changes.</li>
+    <li><strong>Genetic diversity:</strong> the variety of genes <strong>within a species</strong> (e.g. differently coloured shells of the snail <em>Cepaea nemoralis</em>; varieties of crops and domestic animals). It helps populations adapt to competition, new predators, new diseases and changes in temperature, salinity, humidity and rainfall.</li>
+  </ul>
+  <p><strong>Importance:</strong> biodiversity matters for the planet, human health, food security, the economy and livelihoods. Organisms live in interdependence, sharing space, shelter and food. A healthy ecosystem and rich biodiversity will: (a) increase ecosystem productivity (each species has a niche, a role to play); (b) support more plant species and so a greater variety of crops; (c) protect fresh water; (d) promote soil formation and protection; (e) provide nutrient storage and recycling; (f) help break down pollutants; (g) contribute to climate stability; (h) speed recovery from natural disasters; (i) provide more food; (j) provide more medicinal resources and drugs.</p>
+</div>
+
+<div class="note-formula">
+  <span class="block-label">Richness vs Diversity</span>
+  <div class="formula-main">
+    $$\text{species richness} = \text{number of species}$$
+    $$\text{diversity index } D = 1 - \sum p_i^{2}, \qquad p_i = \frac{\text{number of species } i}{\text{total number}}$$
+  </div>
+  <ul class="symbols">
+    <li><em>D</em> (Simpson's index, an extra measure not in the textbook) is the chance that two organisms picked at random belong to different species: it rises with both richness and evenness.</li>
+  </ul>
+</div>
+
+<div class="note-warning">
+  <span class="block-label">Common Mistakes to Avoid</span>
+  <ul>
+    <li><strong>Richness = diversity:</strong> two places with the same number of species can differ in diversity if one species dominates.</li>
+    <li><strong>Genetic diversity is "between species":</strong> it is the variety of genes <em>within</em> a species.</li>
+  </ul>
+</div>
+
+<div class="note-demo">
+  <span class="block-label">Interactive Demo &mdash; Evenness and Stability</span>
+  <p class="demo-question">Why does species diversity depend on evenness as well as richness, and why are diverse ecosystems more stable?</p>
+  <p class="demo-instruction"><strong>Richness &amp; evenness:</strong> both meadows have the same number of species and 24 plants; in meadow B one species makes up 75 %. Change the richness and compare the diversity index. <strong>Stability:</strong> click a species in either food web to remove it. A consumer dies out only if all of its food is gone.</p>
+  <div id="pk-bdiv"></div>
+  <script>
+  (function () {
+    const k = PhysKit.mount('pk-bdiv', { x: [-6, 6], y: [-3, 3] });
+    const C = PhysKit.C;
+    let click = null;
+    const mode = k.choice(['Richness & evenness', 'Stability (food webs)'], 0);
+    k.row();
+    const S = k.slider({ label: 'species richness', min: 2, max: 6, step: 1, value: 4 });
+    const reset = k.button('Restore all species', () => { gone.clear(); });
+    const COLS = ['#16a34a', '#f59e0b', '#dc2626', '#7c3aed', '#0ea5e9', '#db2777'];
+    const N = 24;
+
+    function counts(even, s) {
+      if (even) { const b = Math.floor(N / s), r = N % s; return Array.from({ length: s }, (_, i) => b + (i < r ? 1 : 0)); }
+      const dom = 18, rest = N - dom, b = Math.floor(rest / (s - 1)), r = rest % (s - 1);
+      return [dom].concat(Array.from({ length: s - 1 }, (_, i) => b + (i < r ? 1 : 0)));
+    }
+    const simpson = c => 1 - c.reduce((a, n) => a + (n / N) ** 2, 0);
+
+    function flower(g, p, col, kind) {
+      g.line([p[0], p[1] - 0.25], [p[0], p[1]], { color: '#4d7c0f', width: 2 });
+      if (kind % 3 === 0) for (let i = 0; i < 5; i++) { const a = i * 1.2566; g.circle([p[0] + 0.1 * Math.cos(a), p[1] + 0.1 * Math.sin(a)], 0.08, { fill: col, color: 'none' }); }
+      else if (kind % 3 === 1) g.path([[p[0], p[1] + 0.18], [p[0] - 0.14, p[1] - 0.06], [p[0] + 0.14, p[1] - 0.06]], { close: true, fill: col, color: 'none' });
+      else g.rect(p[0] - 0.1, p[1] - 0.08, 0.2, 0.2, { fill: col, color: 'none', radius: 3 });
+      g.circle(p, 0.04, { fill: '#fff', color: 'none' });
+    }
+    function meadow(g, x0, c, title) {
+      g.rect(x0 - 2.7, -1.75, 5.4, 3.7, { fill: '#f0fdf4', color: '#86efac', radius: 12 });
+      g.text([x0, 2.4], title, { size: 13, bold: true, color: '#166534' });
+      let k2 = 0;
+      c.forEach((n, sp) => { for (let j = 0; j < n; j++, k2++) {
+        const col = k2 % 6, row = Math.floor(k2 / 6);
+        const jit = [((k2 * 37) % 10) / 10 - 0.5, ((k2 * 53) % 10) / 10 - 0.5];
+        flower(g, [x0 - 2.1 + col * 0.84 + 0.2 * jit[0], 1.45 - row * 0.85 + 0.2 * jit[1]], COLS[sp], sp);
+      } });
+      // bar of proportions
+      let x = x0 - 2.5;
+      c.forEach((n, sp) => { const w = 5.0 * n / N; g.rect(x, -2.3, w, 0.3, { fill: COLS[sp], color: '#fff', width: 1 }); x += w; });
+      g.text([x0, -2.65], `counts ${c.join(', ')}   ·   D = ${simpson(c).toFixed(2)}`, { size: 12, bold: true, color: '#334155' });
+    }
+
+    // food webs: [name, x, y, prey indices]
+    const SIMPLE = [['grass', -4.5, -2.0, []], ['rabbit', -4.5, -0.3, [0]], ['fox', -4.5, 1.5, [1]]];
+    const RICH = [['grass', -0.4, -2.1, []], ['shrubs', 1.8, -2.1, []], ['seeds', 4.0, -2.1, []],
+      ['rabbit', -0.6, -0.4, [0, 1]], ['insects', 1.0, -0.4, [0, 1]], ['mouse', 2.6, -0.4, [2, 4]], ['deer', 4.4, -0.4, [1]],
+      ['fox', 0.2, 1.4, [3, 5]], ['owl', 2.2, 1.4, [5, 4]], ['hawk', 4.2, 1.4, [3, 5]]];
+    const gone = new Set();             // keys like 's0' or 'r3' for removed species
+    function alive(web, tag) {
+      const ok = web.map((n, i) => !gone.has(tag + i));
+      for (let pass = 0; pass < 4; pass++) web.forEach((n, i) => { if (n[3].length && !n[3].some(j => ok[j])) ok[i] = false; });
+      return ok;
+    }
+    function drawWeb(g, web, tag) {
+      const ok = alive(web, tag);
+      web.forEach(([, x, y, prey], i) => prey.forEach(j => g.arrow([web[j][1], web[j][2] + 0.3], [x - web[j][1], y - web[j][2] - 0.6], { color: ok[i] && ok[j] ? '#64748b' : '#e2e8f0', width: 1.5, head: 7 })));
+      web.forEach(([name, x, y], i) => {
+        const removed = gone.has(tag + i);
+        g.rect(x - 0.65, y - 0.25, 1.3, 0.5, { fill: removed ? '#fee2e2' : ok[i] ? '#ecfccb' : '#e5e7eb', color: removed ? '#dc2626' : ok[i] ? '#4d7c0f' : '#94a3b8', width: 1.5, radius: 8 });
+        g.text([x, y], removed ? '✕ ' + name : name, { size: 11, bold: true, color: removed ? '#dc2626' : ok[i] ? '#1a2e05' : '#94a3b8' });
+      });
+      return ok.filter(v => !v).length;
+    }
+    k.view.drag({ hit: p => { click = p; return mode.value === 1; }, start() {
+      [[SIMPLE, 's'], [RICH, 'r']].forEach(([web, tag]) => web.forEach(([, x, y], i) => {
+        if (Math.abs(click[0] - x) < 0.65 && Math.abs(click[1] - y) < 0.3) { const key = tag + i; gone.has(key) ? gone.delete(key) : gone.add(key); }
+      }));
+    }, get: () => [0, 0], set() {} });
+
+    k.loop(() => {}, { button: false });
+    k.draw = g => {
+      if (mode.value === 0) {
+        meadow(g, -3.0, counts(true, S.value), 'Meadow A: even');
+        meadow(g, 3.0, counts(false, S.value), 'Meadow B: one species dominates');
+      } else {
+        g.line([-3.3, -2.8], [-3.3, 2.8], { color: '#cbd5e1', dash: [5, 4] });
+        g.text([-4.5, 2.55], 'Simple food chain', { size: 12, bold: true, color: '#0f766e' });
+        g.text([1.9, 2.55], 'Diverse food web', { size: 12, bold: true, color: '#0f766e' });
+        const l1 = drawWeb(g, SIMPLE, 's'), l2 = drawWeb(g, RICH, 'r');
+        g.text([-4.5, -2.65], `${l1} of 3 species gone`, { size: 11, bold: true, color: l1 ? '#dc2626' : '#16a34a' });
+        g.text([1.9, -2.65], `${l2} of 10 species gone`, { size: 11, bold: true, color: l2 ? '#dc2626' : '#16a34a' });
+      }
+    };
+    function vis() {
+      S.input.parentElement.style.display = mode.value === 0 ? '' : 'none';
+      reset.style.display = mode.value === 1 ? '' : 'none';
+    }
+    k.update = () => {
+      vis();
+      if (mode.value === 0) {
+        const a = counts(true, S.value), b = counts(false, S.value);
+        k.readout([`Both meadows have species richness ${S.value}. D(A) = 1 − Σp² = ${simpson(a).toFixed(2)}, D(B) = ${simpson(b).toFixed(2)}.`, 'Same richness, but the even meadow is more diverse: two plants picked at random are more likely to be different species.']);
+      } else k.readout(['Remove the rabbit from the simple chain and the fox starves. In the diverse web, a predator can switch to other prey, so removing one species causes fewer extinctions.', 'This is why ecosystems with high species diversity are more stable and better able to resist change.']);
+    };
+    vis();
+  })();
+  </script>
+</div>
+
+<div class="note-example">
+  <span class="block-label">Worked Examples &mdash; Sample Questions (pp. 120–121)</span>
+
+  <p><strong>Q1 (i)&ndash;(iii):</strong> True or false? (i) Biodiversity is the variety of all living things. (ii) Genetic diversity is the variety of genes within a genus. (iii) Some organisms in an ecosystem live in interdependence.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">(i) True. (ii) False: genetic diversity is the variety of genes within a <em>species</em>. (iii) True.</p></details>
+
+  <p><strong>Q2 (i):</strong> Healthy ecosystem and rich ___ will provide for nutrient storage and recycling.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">biodiversity.</p></details>
+
+  <p><strong>Q3 (i):</strong> The (A. ecology B. ecosystem C. biodiversity D. conservation) is a community of organisms and their physical environment interacting together.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">B. ecosystem.</p></details>
+
+  <p><strong>Q4 (i), (ii):</strong> Match: Variation of life forms in an ecosystem; Number of species in a particular location.</p>
+  <details><summary>Show answer</summary>
+    <p class="answer">Variation of life forms in an ecosystem &rarr; C. Biodiversity; Number of species in a particular location &rarr; D. Species diversity.</p></details>
+
+  <p><strong>Q6 (a), (b):</strong> Define the term 'biodiversity'. Differentiate the terms species diversity and species richness.</p>
+  <details><summary>Show answer</summary>
+    <p>(a) Biodiversity is the variety and variability among living organisms and the ecological complexes in which they occur: the totality of genes, species and ecosystems of a region.</p>
+    <p class="answer">(b) Species richness is the number of species in a community. Species diversity is the number of species <em>and</em> the abundance of each species in a location, so it also includes evenness: the more species and the more evenly the organisms are spread among them, the greater the diversity.</p></details>
+
+  <p><strong>Q8 (a):</strong> Explain how biodiversity is important.</p>
+  <details><summary>Show answer</summary>
+    <p>Biodiversity is very important for the planet, human health, food security, the economy and livelihoods. All organisms in an ecosystem live in interdependence, sharing space, shelter and food. Rich biodiversity lets large ecosystems function and self-regulate, and ecosystems are linked across the earth, so a loss in one area can upset the balance elsewhere.</p>
+    <p class="answer">A healthy ecosystem with rich biodiversity will increase productivity (each species has a niche), support more plant species and crop varieties, protect fresh water, promote soil formation, store and recycle nutrients, break down pollutants, contribute to climate stability, speed recovery from natural disasters, and provide more food and more medicines.</p></details>
+</div>
+
+<div class="note-takeaways">
+  <span class="block-label">Key Takeaways</span>
+  <ul>
+    <li>Biodiversity: variety of genes, species and ecosystems (three levels).</li>
+    <li>Species richness counts species; species diversity also counts how evenly organisms are spread.</li>
+    <li>Genetic diversity is within a species and helps it adapt; diverse ecosystems are more stable.</li>
+  </ul>
+</div>
+
+</article>
